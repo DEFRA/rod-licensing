@@ -1,0 +1,73 @@
+version: '3.7'
+services:
+  #######################################################
+  # Localstack services for development
+  #
+  # - DynamoDB (http port 4569)
+  # - S3 (http port 4572)...
+  # - SQS (http port 4576)
+  # - CloudFormation (http port 4581)
+  #######################################################
+  localstack:
+    image: localstack/localstack:latest
+    networks:
+      - internal
+    ports:
+      - '4563-4599:4563-4599'
+      - '${PORT_WEB_UI-4080}:${PORT_WEB_UI-8080}'
+    environment:
+      - SERVICES=s3,dynamodb,cloudformation
+      - DEBUG=1
+      - DEFAULT_REGION=eu-west-1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=docker
+      - LAMBDA_REMOTE_DOCKER=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./volumes/localstack:/tmp/localstack
+      - ./resources/infrastructure/localstack-init.sh:/docker-entrypoint-initaws.d/init.sh
+      - ./resources/infrastructure/localstack-cfn.yml:/docker-entrypoint-initaws.d/localstack-cfn.yml
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  #######################################################
+  # Redis
+  #######################################################
+  redis:
+    image: redis:alpine
+    networks:
+      - internal
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./volumes/redis:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  #######################################################
+  # Elasticmq (SQS provider)
+  #######################################################
+  elasticmq:
+    image: s12v/elasticmq
+    networks:
+      - internal
+    ports:
+      - '9324:9324'
+    volumes:
+      - type: bind
+        read_only: true
+        source: resources/infrastructure/elasticmq.conf
+        target: /etc/elasticmq/elasticmq.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+#######################################################
+# Network configuration
+#######################################################
+networks:
+  internal:
+    driver: overlay

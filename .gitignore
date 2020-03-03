@@ -47,3 +47,7 @@ node_modules/
 
 # IntelliJ Prefs
 .idea/
+
+# Ignore subdirectories of the docker/volumes folder (used for persistence)
+docker/volumes/**/*.*
+!docker/volumes/**/README.md
