@@ -1,6 +1,4 @@
 [![Build Status](https://img.shields.io/travis/DEFRA/rod-licencing)](https://travis-ci.org/DEFRA/rod-licencing)
-[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/DEFRA/rod-licencing)](https://codeclimate.com/github/DEFRA/rod-licencing/maintainability)
-[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/DEFRA/rod-licencing)](https://codeclimate.com/github/DEFRA/rod-licencing/test_coverage)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=alert_status)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
