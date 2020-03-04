@@ -12,6 +12,7 @@
 [![Lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
+[![Dependabot](https://api.dependabot.com/badges/status?host=github&repo=DEFRA/rod-licencing)](https://dependabot.com/)
 [![GitHub issues](https://img.shields.io/github/issues/DEFRA/rod-licencing.svg)](https://github.com/DEFRA/rod-licencing/issues/)
 [![Repo size](https://img.shields.io/github/languages/code-size/DEFRA/rod-licencing.svg)]()
 [![Repo size](https://img.shields.io/github/repo-size/DEFRA/rod-licencing.svg)]()
