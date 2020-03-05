@@ -1,0 +1,27 @@
+{
+  "name": "sqs-receiver-service",
+  "version": "1.0.0",
+  "description": "SQS Receiver service",
+  "main": "./service.js",
+  "type": "module",
+  "engines": {
+    "node": ">=13"
+  },
+  "scripts": {
+    "run": "pm2 start ecosystem.config.yml",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@hapi/joi": "^17.1.0",
+    "aws-sdk": "^2.627.0",
+    "babel-jest": "^25.1.0",
+    "bottleneck": "^2.19.5",
+    "debug": "^4.1.1",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0",
+    "pm2": "^4.2.3",
+    "uuid": "^7.0.1"
+  },
+  "author": "",
+  "license": "ISC"
+}

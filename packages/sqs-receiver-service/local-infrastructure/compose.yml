@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  #######################################################
+  # Elasticmq (SQS provider)
+  #######################################################
+  elasticmq:
+    image: s12v/elasticmq
+    ports:
+      - "9325:9325"
+    volumes:
+      - type: bind
+        read_only: true
+        source: ./elasticmq.conf
+        target: /etc/elasticmq/elasticmq.conf
