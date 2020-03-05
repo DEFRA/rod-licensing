@@ -1,0 +1,50 @@
+{
+  "name": "@defra-fish/sales-api-service",
+  "version": "0.0.0",
+  "description": "Rod Licencing Sales API",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "rod",
+    "licencing",
+    "sales",
+    "api"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/sales-api-service.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@ssh.github.com:443/DEFRA/rod-licencing"
+  },
+  "scripts": {
+    "start": "node src/sales-api-service.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@defra-fish/dynamics-lib": "^0.0.0",
+    "@hapi/boom": "^9.0.0",
+    "@hapi/hapi": "^19.1.1",
+    "@hapi/inert": "^6.0.1",
+    "@hapi/joi": "^17.1.0",
+    "@hapi/vision": "^6.0.0",
+    "aws-sdk": "^2.633.0",
+    "hapi-and-healthy": "^7.0.6",
+    "hapi-swagger": "^12.1.2"
+  },
+  "devDependencies": {
+    "@types/hapi__hapi": "^19.0.2",
+    "adal-node": "^0.2.1",
+    "dynamics-web-api": "^1.6.2"
+  }
+}

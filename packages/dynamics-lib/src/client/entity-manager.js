@@ -1,13 +1,13 @@
-import dynamicsWebApi from '../client/dynamics-client.js'
+import { dynamicsClient } from '../client/dynamics-client.js'
 
 export async function persist (...entities) {
-  dynamicsWebApi.startBatch()
+  dynamicsClient.startBatch()
   entities.forEach(e => {
     const body = e.toRequestBody()
     if (e.isNew()) {
-      dynamicsWebApi.createRequest({ entity: body, collection: e.constructor.definition.collection, contentId: e.uniqueContentId })
+      dynamicsClient.createRequest({ entity: body, collection: e.constructor.definition.collection, contentId: e.uniqueContentId })
     } else {
-      dynamicsWebApi.updateRequest({
+      dynamicsClient.updateRequest({
         key: e.id,
         entity: body,
         collection: e.constructor.definition.collection,
@@ -15,14 +15,24 @@ export async function persist (...entities) {
       })
     }
   })
-  return dynamicsWebApi.executeBatch()
+  return dynamicsClient.executeBatch()
 }
 
 export async function retrieveMultiple (...entityClasses) {
-  dynamicsWebApi.startBatch()
-  entityClasses.forEach(cls => dynamicsWebApi.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
-  const results = (await dynamicsWebApi.executeBatch()).map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v)))
+  dynamicsClient.startBatch()
+  entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
+  const results = (await dynamicsClient.executeBatch()).map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v)))
   return (results.length === 1 && results[0]) || results
+}
+
+export async function retrieveMultipleAsMap (...entityClasses) {
+  dynamicsClient.startBatch()
+  entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
+  const results = (await dynamicsClient.executeBatch()).map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v)))
+  return results.reduce((acc, val, idx) => {
+    acc[entityClasses[idx].name] = val
+    return acc
+  }, {})
 }
 
 export async function findByExample (entity) {
@@ -45,6 +55,6 @@ export async function findByExample (entity) {
   ]
 
   const filterString = filter.join(' and ')
-  const results = await dynamicsWebApi.retrieveMultipleRequest(entity.constructor.definition.toRetrieveRequest(filterString))
+  const results = await dynamicsClient.retrieveMultipleRequest(entity.constructor.definition.toRetrieveRequest(filterString))
   return results.value.map(result => entity.constructor.fromResponse(result))
 }
