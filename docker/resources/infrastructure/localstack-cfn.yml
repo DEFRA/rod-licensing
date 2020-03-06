@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Cloudformation template to create infrastructure for the rod licencing digital services (local development only)
 Resources:
   CrmStaging:
-    Type: AWS::DynamoDB::Table
+    Type: AwsSdk::DynamoDB::Table
     Properties:
       TableName: CrmStaging
       AttributeDefinitions:
@@ -16,17 +16,17 @@ Resources:
         WriteCapacityUnits: 1
 
   PoclAuditBucket:
-    Type: AWS::S3::Bucket
+    Type: AwsSdk::S3::Bucket
     Properties:
       BucketName: pocl-audit
 
   FulfilmentAuditBucket:
-    Type: AWS::S3::Bucket
+    Type: AwsSdk::S3::Bucket
     Properties:
       BucketName: fulfilment-audit
 # At the time of writing (Mar 2020) there are problems using cloudformation templates to initialise SQS queues (FIFO support)
 # SalesQueue:
-#    Type: AWS::SQS::Queue
+#    Type: AwsSdk::SQS::Queue
 #    Properties:
 #      QueueName: SalesQueue.fifo
 #      FifoQueue: True
@@ -41,7 +41,7 @@ Resources:
 #            - Arn
 #        maxReceiveCount: 5
 #  SalesDeadLetterQueue:
-#    Type: AWS::SQS::Queue
+#    Type: AwsSdk::SQS::Queue
 #    Properties:
 #      QueueName: SalesDeadLetterQueue.fifo
 #      FifoQueue: True

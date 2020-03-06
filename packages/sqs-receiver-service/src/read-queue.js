@@ -33,7 +33,7 @@ const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
      * If we have an http error log it.
      * Any more general errors such as networking errors will terminate the process
      */
-    console.error('Error reading queue: ' + url)
+    console.error(`Error reading queue: ${url}`)
     console.error(err)
 
     if (!err.statusCode) {

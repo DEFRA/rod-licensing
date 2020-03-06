@@ -2,8 +2,6 @@
 
 import deleteMessages from '../delete-messages'
 import AWS from 'aws-sdk'
-import fetch from 'node-fetch'
-import readQueue from '../read-queue'
 
 test('Delete messages successfully', async () => {
   const results = await deleteMessages('http://0.0.0.0:0000/queue', [
@@ -24,20 +22,7 @@ test('Delete messages successfully', async () => {
     }
   ])
 
-  expect(results).toEqual({
-    ResponseMetadata: {
-      RequestId: '00000000-0000-0000-0000-000000000000'
-    },
-    Successful: [
-      {
-        Id: '58f6f3c9-97f8-405a-a3a7-5ac467277521'
-      },
-      {
-        Id: '58f6f3c9-97f8-405a-a3a7-5ac467277522'
-      }
-    ],
-    Failed: []
-  })
+  expect(results).toBeUndefined()
 })
 
 test('Delete messages with failures', async () => {
@@ -60,20 +45,7 @@ test('Delete messages with failures', async () => {
     }
   ])
 
-  expect(results).toEqual({
-    ResponseMetadata: {
-      RequestId: '00000000-0000-0000-0000-000000000000'
-    },
-    Successful: [],
-    Failed: [
-      {
-        Id: '58f6f3c9-97f8-405a-a3a7-5ac467277521'
-      },
-      {
-        Id: '58f6f3c9-97f8-405a-a3a7-5ac467277522'
-      }
-    ]
-  })
+  expect(results).toEqual(expect(results).toBeUndefined())
 })
 
 test('Delete message does not throw exception', async () => {
@@ -86,5 +58,5 @@ test('Delete message does not throw exception', async () => {
       status: 200
     }
   ])
-  expect(result).toStrictEqual([])
+  expect(result).toBeUndefined()
 })

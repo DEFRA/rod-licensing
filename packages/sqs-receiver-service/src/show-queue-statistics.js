@@ -17,15 +17,11 @@ let last = {
   ApproximateNumberOfMessages: 0
 }
 
-const showQueueStatistics = async (url) => {
+const showQueueStatistics = async url => {
   try {
     const params = {
       QueueUrl: url,
-      AttributeNames: [
-        'ApproximateNumberOfMessages',
-        'ApproximateNumberOfMessagesNotVisible',
-        'ApproximateNumberOfMessagesDelayed'
-      ]
+      AttributeNames: ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible', 'ApproximateNumberOfMessagesDelayed']
     }
 
     const { Attributes } = await sqs.getQueueAttributes(params).promise()

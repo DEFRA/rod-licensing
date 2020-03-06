@@ -17,7 +17,10 @@ test('One message queued', async () => {
     MessageId: '15eb8abc-c7c1-4167-9590-839c8feed6dd',
     ReceiptHandle: '15eb8abc-c7c1-4167-9590-839c8feed6dd#9be8971c-f9a9-4bb2-8515-98cdab660e1b',
     MD5OfBody: '640ad880b5be372fcb5c5ad8b5eb50af',
-    Body: '{"id":"7f6e04fe-4cec-4f40-b763-8c66d71062d9"}'
+    Body: '{"id":"7f6e04fe-4cec-4f40-b763-8c66d71062d9"}',
+    Attributes: {
+      MessageGroupId: 'service-1'
+    }
   })
 })
 

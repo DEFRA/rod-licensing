@@ -14,7 +14,7 @@ const processMessage = async (message, subscriber, subscriberTimeoutMs) => {
     : new URL(subscriber)
 
   try {
-    debug('Processing message ' + message.MessageId + ' from ' + subscriberURL)
+    debug(`Processing message ${message.MessageId} from ${subscriberURL}`)
 
     const response = await fetch(subscriberURL, {
       method: 'post',
@@ -29,7 +29,7 @@ const processMessage = async (message, subscriber, subscriberTimeoutMs) => {
 
     // If we have an error log it and continue. We will not remove the message
     if (!response.ok) {
-      console.error('Error from subscriber: ' + subscriberURL.toString())
+      console.error(`Error from subscriber: ${subscriberURL.toString()}`)
       console.error({ result })
 
       return {
@@ -47,7 +47,7 @@ const processMessage = async (message, subscriber, subscriberTimeoutMs) => {
       status: 200
     }
   } catch (err) {
-    console.error('Error from subscriber: ' + subscriberURL.toString())
+    console.error(`Error from subscriber: ${subscriberURL.toString()}`)
     console.error(err)
 
     return {

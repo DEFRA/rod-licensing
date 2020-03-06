@@ -1,10 +1,10 @@
 process.env.RECEIVER_PREFIX = 'TEST'
 process.env.TEST_URL = 'http://0.0.0.0:9325/queue/SalesQueue.fifo'
-process.env.TEST_POLLING_RATE_MS = 10000
-process.env.TEST_VISIBILITY_TIMEOUT_MS = 120000
-process.env.TEST_WAIT_TIME_MS = 2000
+process.env.TEST_POLLING_RATE_MS = 1
+process.env.TEST_VISIBILITY_TIMEOUT_MS = 1
+process.env.TEST_WAIT_TIME_MS = 2
 process.env.TEST_NO_DELAY_THRESHOLD = 4
 process.env.TEST_SUBSCRIBER = 'http://localhost:4000'
-process.env.TEST_SUBSCRIBER_RATE_LIMIT_MS = 200
+process.env.TEST_SUBSCRIBER_RATE_LIMIT_MS = 2
 process.env.TEST_SUBSCRIBER_PARALLEL_LIMIT = 4
-process.env.TEST_SUBSCRIBER_TIMEOUT_MS = 5000
+process.env.TEST_SUBSCRIBER_TIMEOUT_MS = 5

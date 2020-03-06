@@ -2,15 +2,16 @@
 
 This service is configured to poll a set of SQS queues and on receipt of a message from the queue it will notify a subscribing service.
 
-If the response from the subscriber is successful the message will be removed from the queue. If not the message will become visible again after the visibility timeout and maybe reprocessed subject to the SQS re-drive policy.  
+If the response from the subscriber is successful the message will be removed from the queue. If not the message will become visible again after the visibility timeout and maybe reprocessed subject to the SQS re-drive policy.
 
 ## To control via pm2
-```pm2 [start|restart|stop|delete] ecosystem.config.js```
+
+`pm2 [start|restart|stop|delete] ecosystem.config.js`
 
 The `ecosystem.config.js` file contains the set of receiver services to run. An example entry is shown:
 
 ```apps:
-   - script: ./service.js
+   - script: ./index.js
      name: 'Sales Queue'
      env:
        RECEIVER_PREFIX: SALES_QUEUE
@@ -40,27 +41,19 @@ SALES_QUEUE_SUBSCRIBER_TIMEOUT_MS=5000
 - NO_DELAY_THRESHOLD - The number of messages above which the delay is not observed
 - SUBSCRIBER - The location of the subscriber. The message group id is appended
 - SUBSCRIBER_PARALLEL_LIMIT - The number of subscriber requests which can occur concurrently
-- SUBSCRIBER_RATE_LIMIT_MS - The minimum time between requests to the subscriber 
-
-It is also necessary to set
-- AWS_ACCESS_KEY_ID
-- AWS_SECRET_ACCESS_KEY
-- AWS_DEFAULT_REGION
-
-## Local queues
-A local queue setup is available via docker. Please see the following compose file [here](./local-infrastructure/compose.yml) 
+- SUBSCRIBER_RATE_LIMIT_MS - The minimum time between requests to the subscriber
 
 ## Debug
+
 The service uses the debug package use set `DEBUG=[receiver|queue-stats|process-message|read-queue|delete-messages]`
 
 ## Failures
 
 The service will fail early where a general error reading an SQS queue is encountered such as ECONNREFUSED
 
-In the case of all http errors reading SQS queues the service will log the error continue. 
-See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/CommonErrors.html 
+In the case of all http errors reading SQS queues the service will log the error continue.
+See: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/CommonErrors.html
 
 In the case of all errors encountered in the subscriber process queues the service will log the error continue
 
 Only in the cases where the subscriber return an http success status will the message be removed from the SQS queue
-

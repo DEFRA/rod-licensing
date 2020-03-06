@@ -12,7 +12,7 @@ test('process-message returns payload', async () => {
 
 test('process-message returns payload with no message group', async () => {
   fetch.__goodResult()
-  const result = await processMessage({ Attributes: { }, ReceiptHandle: '123' }, 'http://0.0.0.0/')
+  const result = await processMessage({ Attributes: {}, ReceiptHandle: '123' }, 'http://0.0.0.0/')
   expect(result).toEqual({
     handle: '123',
     status: 200
@@ -21,7 +21,7 @@ test('process-message returns payload with no message group', async () => {
 
 test('process-message bad gateway', async () => {
   fetch.__BadGateway()
-  const result = await processMessage({ Attributes: { }, ReceiptHandle: '2342' }, 'http://0.0.0.0/')
+  const result = await processMessage({ Attributes: {}, ReceiptHandle: '2342' }, 'http://0.0.0.0/')
   expect(result).toEqual({
     error: 'Bad Gateway',
     handle: '2342',

@@ -2,8 +2,10 @@
   "name": "sqs-receiver-service",
   "version": "1.0.0",
   "description": "SQS Receiver service",
-  "main": "./service.js",
+  "main": "index.js",
   "type": "module",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=13"
   },

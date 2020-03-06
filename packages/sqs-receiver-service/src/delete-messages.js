@@ -14,24 +14,20 @@ const deleteMessages = async (url, messageSubscriberResults) => {
   try {
     const params = {
       QueueUrl: url,
-      Entries: messageSubscriberResults.filter(msr => msr.status === 200)
-        .map(msr => ({ Id: msr.id, ReceiptHandle: msr.handle }))
+      Entries: messageSubscriberResults.filter(msr => msr.status === 200).map(msr => ({ Id: msr.id, ReceiptHandle: msr.handle }))
     }
 
     if (params.Entries.length) {
       const results = await sqs.deleteMessageBatch(params).promise()
 
       if (results.Failed.length) {
-        console.error('Failed to delete from batch' + JSON.stringify(results.Failed))
+        console.error(`Failed to delete from batch${JSON.stringify(results.Failed)}`)
       }
 
       debug({ success: results.Successful, failed: results.Failed })
-
-      return (results)
     }
   } catch (err) {
-    console.error('Error deleting message: ' + JSON.stringify({ url, err }))
-    return []
+    console.error(`Error deleting message: ${JSON.stringify({ url, err })}`)
   }
 }
 
