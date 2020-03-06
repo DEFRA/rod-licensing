@@ -45,7 +45,7 @@ test('Delete messages with failures', async () => {
     }
   ])
 
-  expect(results).toEqual(expect(results).toBeUndefined())
+  expect(results).toBeUndefined()
 })
 
 test('Delete message does not throw exception', async () => {

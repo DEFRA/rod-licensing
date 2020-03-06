@@ -10,7 +10,7 @@ const debug = db('process-message')
 
 const processMessage = async (message, subscriber, subscriberTimeoutMs) => {
   const subscriberURL = message.Attributes.MessageGroupId
-    ? new URL(subscriber + '/' + message.Attributes.MessageGroupId)
+    ? new URL(`${subscriber}/${message.Attributes.MessageGroupId}`)
     : new URL(subscriber)
 
   try {

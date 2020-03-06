@@ -2,6 +2,14 @@ import AWS from 'aws-sdk'
 import receiver from '../receiver'
 import fetch from 'node-fetch'
 
+beforeEach(() => {
+  jest.clearAllMocks()
+})
+
+afterAll(() => {
+  jest.clearAllMocks()
+})
+
 test('Complete without error', async () => {
   AWS.__mockOneMessage()
   fetch.__goodResult()

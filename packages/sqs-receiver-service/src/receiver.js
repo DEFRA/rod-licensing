@@ -18,7 +18,7 @@ const { envError, env } = environment(process.env, process.env.RECEIVER_PREFIX)
 
 if (envError) {
   console.error(envError)
-  process.exit(9)
+  throw new Error('Incorrectly configured environment')
 }
 
 console.log(`Running receiver process:${JSON.stringify(env, null, 4)}`)
