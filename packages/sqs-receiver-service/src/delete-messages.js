@@ -7,7 +7,6 @@ import db from 'debug'
  * This removes any messages from the queue that have been processed without error
  */
 const debug = db('delete-messages')
-AWS.config.update({ region: process.env.AWS_DEFAULT_REGION })
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 
 const deleteMessages = async (url, messageSubscriberResults) => {

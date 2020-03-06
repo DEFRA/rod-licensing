@@ -8,7 +8,6 @@ import AWS from 'aws-sdk'
 import db from 'debug'
 
 dotenv.config() // Loads at  this point in the import sequence
-AWS.config.update({ region: process.env.AWS_DEFAULT_REGION })
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 
 const debug = db('read-queue')
