@@ -10,8 +10,20 @@ afterAll(() => {
   jest.clearAllMocks()
 })
 
-test('Complete without error', async () => {
+test('One message: completes without error', async () => {
   AWS.__mockOneMessage()
+  fetch.__goodResult()
+  await expect(receiver()).resolves.toBeUndefined()
+})
+
+test('No messages: complete without error', async () => {
+  AWS.__mockEmptyQueue()
+  fetch.__goodResult()
+  await expect(receiver()).resolves.toBeUndefined()
+})
+
+test('10 messages: complete without error', async () => {
+  AWS.__mockNMessages(10)
   fetch.__goodResult()
   await expect(receiver()).resolves.toBeUndefined()
 })

@@ -27,3 +27,10 @@ test('Call index fails with general error', async () => {
   }
   expect(() => test()).not.toThrow()
 })
+
+test('Call jest-set-env', () => {
+  const test = () => {
+    require('../jest.set-env')
+  }
+  expect(() => test()).not.toThrow()
+})

@@ -11,7 +11,7 @@ import Joi from '@hapi/joi'
  */
 const environment = (e, receiverName) => {
   if (!receiverName) {
-    return { error: 'RECEIVER_PREFIX not set' }
+    throw new Error('RECEIVER_PREFIX not set')
   }
 
   const env = {
@@ -74,8 +74,12 @@ const environment = (e, receiverName) => {
   // Validate
   const validationResults = schema.validate(env)
 
+  if (validationResults.error) {
+    throw new Error(validationResults.error)
+  }
+
   // Return the error or the validated environment object
-  return validationResults.error ? { error: validationResults.error } : { env: validationResults.value }
+  return { env: validationResults.value }
 }
 
 export default environment

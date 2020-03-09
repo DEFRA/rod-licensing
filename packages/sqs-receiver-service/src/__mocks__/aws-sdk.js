@@ -142,19 +142,49 @@ const deleteMessageBatch = params => {
   }
 }
 
+AwsSdk.__mockGetAttributesThrows = () => {
+  exception = new Error()
+}
+
+const mockGetQueueAttributes = jest.fn()
+
+mockGetQueueAttributes
+  .mockReturnValueOnce({
+    promise: () => {
+      if (exception) {
+        throw exception
+      }
+
+      return {
+        Attributes: {
+          ApproximateNumberOfMessagesDelayed: 1,
+          ApproximateNumberOfMessagesNotVisible: 2,
+          ApproximateNumberOfMessages: 3
+        }
+      }
+    }
+  })
+  .mockReturnValue({
+    promise: () => {
+      if (exception) {
+        throw exception
+      }
+
+      return {
+        Attributes: {
+          ApproximateNumberOfMessagesDelayed: 0,
+          ApproximateNumberOfMessagesNotVisible: 0,
+          ApproximateNumberOfMessages: 0
+        }
+      }
+    }
+  })
+
 AwsSdk.SQS.mockImplementation(() => {
   return {
     receiveMessage: receiveMessage,
     deleteMessageBatch: deleteMessageBatch,
-    getQueueAttributes: () => ({
-      promise: () => ({
-        Attributes: {
-          ApproximateNumberOfMessagesDelayed: Math.floor(Math.random * 100),
-          ApproximateNumberOfMessagesNotVisible: Math.floor(Math.random * 100),
-          ApproximateNumberOfMessages: Math.floor(Math.random * 100)
-        }
-      })
-    })
+    getQueueAttributes: mockGetQueueAttributes
   }
 })
 
