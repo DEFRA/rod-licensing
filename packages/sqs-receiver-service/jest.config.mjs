@@ -4,5 +4,5 @@
 export default {
   verbose: true,
   setupFiles: ['./jest.set-env.js'],
-  testPathIgnorePatterns: ['./jest.set-env.js']
+  coveragePathIgnorePatterns: ['./jest.set-env.js']
 }
