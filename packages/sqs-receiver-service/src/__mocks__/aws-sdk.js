@@ -149,9 +149,9 @@ AwsSdk.SQS.mockImplementation(() => {
     getQueueAttributes: () => ({
       promise: () => ({
         Attributes: {
-          ApproximateNumberOfMessagesDelayed: 0,
-          ApproximateNumberOfMessagesNotVisible: 0,
-          ApproximateNumberOfMessages: 0
+          ApproximateNumberOfMessagesDelayed: Math.floor(Math.random * 100),
+          ApproximateNumberOfMessagesNotVisible: Math.floor(Math.random * 100),
+          ApproximateNumberOfMessages: Math.floor(Math.random * 100)
         }
       })
     })

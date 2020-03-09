@@ -16,7 +16,7 @@ test('Call index', async () => {
   expect(() => test()).not.toThrow()
 })
 
-test('Call index fails', async () => {
+test('Call index fails with general error', async () => {
   const mockReceiver = jest.mock(receiver)
 
   mockReceiver.fn(() => {

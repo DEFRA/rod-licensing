@@ -14,10 +14,10 @@ import showQueueStatistics from './show-queue-statistics.js'
 const debug = db('receiver')
 
 // Validate the environment and return a standard object
-const { envError, env } = environment(process.env, process.env.RECEIVER_PREFIX)
+const { error, env } = environment(process.env, process.env.RECEIVER_PREFIX)
 
-if (envError) {
-  console.error(envError)
+if (error) {
+  console.error(error)
   throw new Error('Incorrectly configured environment')
 }
 

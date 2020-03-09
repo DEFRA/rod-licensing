@@ -10,6 +10,10 @@ import Joi from '@hapi/joi'
  * @returns {{error: string}|*}
  */
 const environment = (e, receiverName) => {
+  if (!receiverName) {
+    return { error: 'RECEIVER_PREFIX not set' }
+  }
+
   const env = {
     URL: e[`${receiverName}_URL`],
     SUBSCRIBER: e[`${receiverName}_SUBSCRIBER`],
