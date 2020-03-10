@@ -19,8 +19,6 @@ const environment = (e, receiverName) => {
     SUBSCRIBER: e[`${receiverName}_SUBSCRIBER`],
     POLLING_RATE_MS: e[`${receiverName}_POLLING_RATE_MS`],
     VISIBILITY_TIMEOUT_MS: e[`${receiverName}_VISIBILITY_TIMEOUT_MS`],
-    SUBSCRIBER_RATE_LIMIT_MS: e[`${receiverName}_SUBSCRIBER_RATE_LIMIT_MS`],
-    SUBSCRIBER_PARALLEL_LIMIT: e[`${receiverName}_SUBSCRIBER_PARALLEL_LIMIT`],
     WAIT_TIME_MS: e[`${receiverName}_WAIT_TIME_MS`],
     NO_DELAY_THRESHOLD: e[`${receiverName}_NO_DELAY_THRESHOLD`],
     SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`]
@@ -44,16 +42,6 @@ const environment = (e, receiverName) => {
       .required()
       .min(1)
       .max(12 * 60 * 60 * 1000),
-    SUBSCRIBER_RATE_LIMIT_MS: Joi.number()
-      .integer()
-      .required()
-      .min(1)
-      .max(60 * 1000),
-    SUBSCRIBER_PARALLEL_LIMIT: Joi.number()
-      .integer()
-      .required()
-      .min(1)
-      .max(24),
     WAIT_TIME_MS: Joi.number()
       .integer()
       .required()

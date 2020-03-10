@@ -1,7 +1,6 @@
 'use strict'
 
 import db from 'debug'
-import Bottleneck from 'bottleneck'
 import environment from './environment.js'
 import readQueue from './read-queue.js'
 import processMessage from './process-message.js'
@@ -18,13 +17,6 @@ const { env } = environment(process.env, process.env.RECEIVER_PREFIX)
 
 console.log(`Running receiver process:${JSON.stringify(env, null, 4)}`)
 
-const limiter = new Bottleneck({
-  minTime: env.SUBSCRIBER_RATE_LIMIT_MS,
-  maxConcurrent: env.SUBSCRIBER_PARALLEL_LIMIT
-})
-
-const processMessageLimited = limiter.wrap(processMessage)
-
 /**
  * An infinite async loop to poll the queue
  * @returns {Promise<void>}
@@ -39,7 +31,7 @@ const receiver = async () => {
     debug({ messages })
 
     const messageSubscriberResults = await Promise.all(
-      messages.map(async m => processMessageLimited(m, env.SUBSCRIBER, Number.parseInt(env.SUBSCRIBER_TIMEOUT_MS)))
+      messages.map(async m => processMessage(m, env.SUBSCRIBER, Number.parseInt(env.SUBSCRIBER_TIMEOUT_MS)))
     )
 
     debug({ messageSubscriberResults })
