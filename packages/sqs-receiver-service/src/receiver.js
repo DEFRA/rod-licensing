@@ -46,7 +46,9 @@ const receiver = async () => {
     await deleteMessages(env.URL, messageSubscriberResults)
   }
 
-  await showQueueStatistics(env.URL)
+  if (process.env.debug) {
+    await showQueueStatistics(env.URL)
+  }
 
   // Invoke the poll delay only on a small number of messages processed
   // if they are coming in thick-and-fast then read again immediately

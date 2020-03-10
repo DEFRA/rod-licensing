@@ -18,10 +18,6 @@ let last = {
 
 const showQueueStatistics = async url => {
   try {
-    if (!process.env.debug) {
-      return
-    }
-
     const params = {
       QueueUrl: url,
       AttributeNames: ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible', 'ApproximateNumberOfMessagesDelayed']
