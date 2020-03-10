@@ -1,0 +1,11 @@
+export default {
+  DEBUG: 'queue-stats',
+  RECEIVER_PREFIX: 'TEST',
+  TEST_URL: 'http://0.0.0.0:9325/queue/SalesQueue.fifo',
+  TEST_POLLING_RATE_MS: 1,
+  TEST_VISIBILITY_TIMEOUT_MS: 1,
+  TEST_WAIT_TIME_MS: 2,
+  TEST_NO_DELAY_THRESHOLD: 1,
+  TEST_SUBSCRIBER: 'http://localhost:4000',
+  TEST_SUBSCRIBER_TIMEOUT_MS: 5
+}

@@ -1,0 +1,19 @@
+apps:
+  - script: ./index.js
+    name: 'Sales Queue'
+    env:
+      RECEIVER_PREFIX: SALES_QUEUE
+      DEBUG: queue-stats
+    output: ./logs/sales-queue.out
+    error: ./logs/sales-queue.err
+    interpreter: 'node@13.9.0'
+    autorestart: false
+
+  - script: ./index.js
+    name: 'Sales dead letter queue'
+    env:
+      RECEIVER_PREFIX: SALES_DEAD_LETTER_QUEUE
+    output: ./logs/sales-dead-letter-queue.out
+    error: ./logs/sales-dead-letter-queue.err
+    interpreter: 'node@13.9.0'
+    autorestart: false
