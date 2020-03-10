@@ -75,7 +75,7 @@ const environment = (e, receiverName) => {
   const validationResults = schema.validate(env)
 
   if (validationResults.error) {
-    throw new Error(validationResults.error)
+    throw validationResults.error
   }
 
   // Return the error or the validated environment object

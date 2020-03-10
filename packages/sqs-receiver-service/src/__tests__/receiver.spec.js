@@ -1,9 +1,13 @@
 import AWS from 'aws-sdk'
-import receiver from '../receiver'
 import fetch from 'node-fetch'
+import testEnv from '../../test-env'
+
+let receiver
 
 beforeEach(() => {
   jest.clearAllMocks()
+  process.env = Object.assign(process.env, testEnv)
+  receiver = require('../receiver').default
 })
 
 afterAll(() => {

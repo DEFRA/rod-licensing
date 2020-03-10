@@ -2,6 +2,11 @@
 
 import showQueueStatistics from '../show-queue-statistics'
 import AWS from 'aws-sdk'
+import testEnv from '../../test-env'
+
+beforeEach(() => {
+  process.env = Object.assign(process.env, testEnv)
+})
 
 test('Show queue statistics', async () => {
   async function check () {

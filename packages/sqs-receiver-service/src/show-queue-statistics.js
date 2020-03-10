@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk'
 import db from 'debug'
 
-AWS.config.update({ region: process.env.AWS_DEFAULT_REGION })
 const sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 /**
  * Returns a string containing current message statistics
@@ -19,6 +18,10 @@ let last = {
 
 const showQueueStatistics = async url => {
   try {
+    if (!process.env.debug) {
+      return
+    }
+
     const params = {
       QueueUrl: url,
       AttributeNames: ['ApproximateNumberOfMessages', 'ApproximateNumberOfMessagesNotVisible', 'ApproximateNumberOfMessagesDelayed']
