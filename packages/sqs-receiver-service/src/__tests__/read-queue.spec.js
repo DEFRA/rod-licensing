@@ -31,6 +31,7 @@ test('Five messages queued', async () => {
 })
 
 test('Throws exception on no queue available', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   AWS.__mockFailNoQueue()
   async function check () {
     try {
@@ -40,10 +41,13 @@ test('Throws exception on no queue available', async () => {
     }
   }
   await expect(check()).rejects.toThrow(Error)
+  expect(consoleError).toHaveBeenCalled()
 })
 
 test('Completes on general processing error', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   AWS.__mockAWSError()
   const result = await readQueue('http://0.0.0.0:0000/queue')
   expect(result).toStrictEqual([])
+  expect(consoleError).toHaveBeenCalled()
 })

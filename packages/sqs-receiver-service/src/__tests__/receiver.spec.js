@@ -33,6 +33,7 @@ test('10 messages: complete without error', async () => {
 })
 
 test('Receiver: throws exception on general error', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   AWS.__mockFailNoQueue()
 
   async function check () {
@@ -43,4 +44,5 @@ test('Receiver: throws exception on general error', async () => {
     }
   }
   await expect(check()).rejects.toThrow(Error)
+  expect(consoleError).toHaveBeenCalled()
 })

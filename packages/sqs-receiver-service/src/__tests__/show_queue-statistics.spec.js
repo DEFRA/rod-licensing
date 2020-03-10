@@ -21,6 +21,7 @@ test('Show queue statistics', async () => {
 })
 
 test('Show queue statistics does not throw on error', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   AWS.__mockGetAttributesThrows()
   async function check () {
     try {
@@ -30,4 +31,5 @@ test('Show queue statistics does not throw on error', async () => {
     }
   }
   await expect(check()).resolves.toBeUndefined()
+  expect(consoleError).toHaveBeenCalled()
 })

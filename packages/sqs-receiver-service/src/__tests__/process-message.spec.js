@@ -20,6 +20,7 @@ test('process-message returns payload with no message group', async () => {
 })
 
 test('process-message bad gateway', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   fetch.__BadGateway()
   const result = await processMessage({ Attributes: {}, ReceiptHandle: '2342' }, 'http://0.0.0.0/')
   expect(result).toEqual({
@@ -28,9 +29,11 @@ test('process-message bad gateway', async () => {
     message: 'Bad Gateway',
     status: 502
   })
+  expect(consoleError).toHaveBeenCalled()
 })
 
 test('Completes on not found error', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   fetch.__NotFound()
   const result = await processMessage({ MessageId: '123', Attributes: {}, ReceiptHandle: '2342' }, 'http://0.0.0.0/')
   await expect(result).toStrictEqual({
@@ -39,4 +42,5 @@ test('Completes on not found error', async () => {
     status: 500,
     message: 'Error'
   })
+  expect(consoleError).toHaveBeenCalled()
 })

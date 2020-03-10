@@ -48,6 +48,7 @@ test('Delete messages nothing to delete', async () => {
 })
 
 test('Delete messages with failures', async () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   AWS.__mockDeleteMessageFailures()
   const results = await deleteMessages('http://0.0.0.0:0000/queue', [
     {
@@ -68,6 +69,7 @@ test('Delete messages with failures', async () => {
   ])
 
   expect(results).toBeUndefined()
+  expect(consoleError).toHaveBeenCalled()
 })
 
 test('Delete message does not throw exception', async () => {

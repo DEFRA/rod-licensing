@@ -12,7 +12,7 @@ import receiver from './src/receiver.js'
     try {
       await receiver()
     } catch (err) {
-      console.log(err)
+      console.error(err)
       break
     }
   }
