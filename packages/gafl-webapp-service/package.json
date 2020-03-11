@@ -18,11 +18,8 @@
     "@hapi/hapi": "^19.1.1",
     "@hapi/joi": "^17.1.0",
     "@hapi/vision": "^6.0.0",
-    "debug": "^4.1.1",
     "glob": "^7.1.6",
-    "moment": "^2.24.0",
-    "nunjucks": "^3.2.0",
-    "uuid": "^7.0.2"
+    "nunjucks": "^3.2.0"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0"

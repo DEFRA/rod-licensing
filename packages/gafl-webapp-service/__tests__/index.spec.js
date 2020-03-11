@@ -10,6 +10,7 @@ import CatboxMemory from '@hapi/catbox-memory'
 createServer({
   cache: [
     {
+      name: 'hapi-cache',
       provider: {
         constructor: CatboxMemory
       }
