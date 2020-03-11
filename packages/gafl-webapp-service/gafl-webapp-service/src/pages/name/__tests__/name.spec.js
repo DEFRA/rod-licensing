@@ -1,18 +1,6 @@
 'use strict'
 
-import { createServer, init, server } from '../../../../src/server.js'
-import CatboxMemory from '@hapi/catbox-memory'
-
-createServer({
-  cache: [
-    {
-      name: 'hapi-cache',
-      provider: {
-        constructor: CatboxMemory
-      }
-    }
-  ]
-})
+import { init, server } from '../../../server'
 
 // Start application before running the test case
 beforeAll(async done => {
