@@ -35,9 +35,7 @@ export default [
     method: 'GET',
     path: '/reference-data',
     options: {
-      handler: (request, h) => {
-        return getReferenceData()
-      },
+      handler: () => getReferenceData(),
       description: 'Retrieve all reference data',
       notes: 'Retrieves all reference data',
       tags: ['api'],
@@ -55,7 +53,7 @@ export default [
     method: 'GET',
     path: '/reference-data/{collection}',
     options: {
-      handler: async (request, h) => {
+      handler: async request => {
         const data = await getReferenceData()
         return data[request.params.collection] || Boom.badRequest(errors.unrecognised_colllection)
       },
