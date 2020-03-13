@@ -8,32 +8,31 @@ import Hapi from '@hapi/hapi'
 import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
 import Nunjucks from 'nunjucks'
-import glob from 'glob'
-import db from 'debug'
+import find from 'find'
+import path from 'path'
 
 import routes from './routes.js'
 import sessionManager from './lib/session-manager.js'
 import cacheDecorator from './lib/cache-decorator.js'
 
-const debug = db('server')
-
-// Get a list of the available views
-const views = glob.sync('./src/pages/*/')
-
 let server
 
 const createServer = options => {
-  server = Hapi.server(Object.assign({
-    port: 3000,
-    host: 'localhost',
-    cache: [
+  server = Hapi.server(
+    Object.assign(
       {
-        provider: {
-          constructor: CatboxRedis
-        }
-      }
-    ]
-  }, options))
+        host: 'localhost',
+        cache: [
+          {
+            provider: {
+              constructor: CatboxRedis
+            }
+          }
+        ]
+      },
+      options
+    )
+  )
 }
 
 const init = async () => {
@@ -48,13 +47,14 @@ const init = async () => {
       njk: {
         compile: (src, options) => {
           const template = Nunjucks.compile(src, options.environment)
-          return (context) => {
+          return context => {
             return template.render(context)
           }
         }
       }
     },
-    path: views
+
+    path: find.fileSync(/\.njk$/, './').map(f => path.dirname(f))
   })
 
   const sessionCookieName = process.env.SESSION_COOKIE_NAME || 'sid'
@@ -81,12 +81,12 @@ const init = async () => {
   })
 
   /*
-  * Decorator to make access to the session cache available as
-  * simple setters and getters hiding the session key.
-  */
+   * Decorator to make access to the session cache available as
+   * simple setters and getters hiding the session key.
+   */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
-  process.on('unhandledRejection', (err) => {
+  process.on('unhandledRejection', err => {
     console.log(err)
     process.exit(1)
   })

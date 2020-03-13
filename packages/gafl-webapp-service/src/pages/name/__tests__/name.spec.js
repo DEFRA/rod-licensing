@@ -3,6 +3,8 @@
 import { createServer, init, server } from '../../../../src/server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 
+console.log(process.cwd())
+
 createServer({
   cache: [
     {
@@ -32,10 +34,7 @@ afterAll(done => {
 test('Should return success requesting the name page', async () => {
   const options = {
     method: 'GET',
-    url: '/name',
-    headers: {
-      Cookie: 'sid=eyJpZCI6IjRiY2NhMmE2LTMyYmItNGM4Zi1hNjQxLThhNWRkNTk5ZTdiNiJ9'
-    }
+    url: '/name'
   }
   const data = await server.inject(options)
   expect(data.statusCode).toBe(200)
