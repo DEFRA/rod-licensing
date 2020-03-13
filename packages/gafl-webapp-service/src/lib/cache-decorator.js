@@ -15,8 +15,8 @@ const cacheDecorator = sessionCookieName =>
         const cache = await this.server.app.cache.get(id())
         await this.server.app.cache.set(id(), Object.assign(cache || {}, obj))
       },
-      get: async () => this.server.app.cache.get(id()),
-      drop: async () => this.server.cache.drop(id())
+      get: async () => this.server.app.cache.get(id())
+      // drop: async () => this.server.cache.drop(id())
     }
   }
 

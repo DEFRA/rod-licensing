@@ -1,43 +1,12 @@
 'use strict'
 
-import { createServer, init, server } from '../../../../src/server.js'
-import CatboxMemory from '@hapi/catbox-memory'
-
-const getCookies = response => {
-  const cookies = {}
-  response.headers['set-cookie'] &&
-    response.headers['set-cookie'].forEach(cookie => {
-      const parts = cookie.split(';')[0].match(/(.*?)=(.*)$/)
-      cookies[parts[1].trim()] = (parts[2] || '').trim()
-    })
-  return cookies
-}
-
-createServer({
-  cache: [
-    {
-      provider: {
-        constructor: CatboxMemory
-      }
-    }
-  ]
-})
+import { start, stop, server, getCookies } from '../../../test-utils.js'
 
 // Start application before running the test case
-beforeAll(async done => {
-  server.events.on('start', () => {
-    done()
-  })
-  await init()
-})
+beforeAll(d => start(d))
 
 // Stop application after running the test case
-afterAll(done => {
-  server.events.on('stop', () => {
-    done()
-  })
-  server.stop()
-})
+afterAll(d => stop(d))
 
 let cookie
 
