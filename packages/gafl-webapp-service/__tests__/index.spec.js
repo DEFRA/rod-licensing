@@ -1,5 +1,3 @@
-import '../index.js'
-
 jest.mock('../src/server.js', () => {
   // return jest.fn( () => {
   global.initialised = true
@@ -9,6 +7,7 @@ jest.mock('../src/server.js', () => {
 // const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
 describe('gafl-web-service', () => {
   it('initialises', () => {
+    require('../index')
     expect(global.initialised).toBeTruthy()
     // expect(consoleError).toHaveBeenCalled()
   })

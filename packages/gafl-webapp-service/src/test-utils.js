@@ -30,7 +30,7 @@ const getCookies = response => {
   response.headers['set-cookie'] &&
     response.headers['set-cookie'].forEach(cookie => {
       const parts = cookie.split(';')[0].match(/(.*?)=(.*)$/)
-      cookies[parts[1].trim()] = (parts[2] || '').trim()
+      cookies[parts[1].trim()] = parts[2].trim()
     })
   return cookies
 }
