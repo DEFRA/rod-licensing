@@ -32,7 +32,10 @@ afterAll(done => {
 test('Should return success requesting the name page', async () => {
   const options = {
     method: 'GET',
-    url: '/name'
+    url: '/name',
+    headers: {
+      Cookie: 'sid=eyJpZCI6IjRiY2NhMmE2LTMyYmItNGM4Zi1hNjQxLThhNWRkNTk5ZTdiNiJ9'
+    }
   }
   const data = await server.inject(options)
   expect(data.statusCode).toBe(200)

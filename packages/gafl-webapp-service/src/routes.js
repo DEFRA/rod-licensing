@@ -1,8 +1,11 @@
 'use strict'
 
-import * as name from './pages/name/route.js'
-import * as dateOfBirth from './pages/date-of-birth/route.js'
+import name from './pages/name/route.js'
+import dateOfBirth from './pages/date-of-birth/route.js'
 
-const routes = [name, dateOfBirth].map(r => r.default)
+const routes = [
+  ...name,
+  ...dateOfBirth
+]
 
 export default routes

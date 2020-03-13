@@ -4,9 +4,21 @@
 <title>Name</title>
 </head>
 <body>
-
-<h1>Name</h1>
-<p>This is a paragraph.</p>
-
-</body>
+<form method="post">
+  <div class="form-example">
+    <label for="name">Enter your name: </label>
+    <input type="text" name="name" id="name" value="{{ payload.name }}">
+  </div>
+  <div class="form-example">
+    <label for="email">Enter your email: </label>
+    <input name="email" id="email" value="{{ payload.email }}">
+  </div>
+  <div class="form-example">
+    <input type="submit" value="Continue">
+  </div>
+</form</body>
+{{ error | dump}}
 </html>
+
+
+
