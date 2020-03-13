@@ -3,6 +3,6 @@
 /**
  * Start the hapi
  */
-import { createServer, init } from './src/server.js'
+import { createServer, init } from './server.js'
 createServer({ port: 3000 })
 init()
