@@ -2,6 +2,7 @@
 
 import handler from './page-handler.js'
 
+<<<<<<< HEAD
 export default (view, path, validator, completion) => [
   {
     method: 'GET',
@@ -20,3 +21,21 @@ export default (view, path, validator, completion) => [
     }
   }
 ]
+=======
+export default (view, path, validator) => ([{
+  method: 'GET',
+  path: path,
+  handler: handler(path, view).get
+}, {
+  method: 'POST',
+  path: path,
+  handler: handler(path, view).post,
+  options: {
+    validate: {
+      payload: validator,
+      failAction: handler(path, view).error
+    }
+  }
+}]
+)
+>>>>>>> work in progress: generic handlers

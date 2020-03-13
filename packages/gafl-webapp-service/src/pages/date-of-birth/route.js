@@ -1,9 +1,8 @@
 'use strict'
 
-import handler from './handler.js'
+import pageRoute from '../../page-route.js'
+import Joi from '@hapi/joi'
 
-export default {
-  method: 'GET',
-  path: '/date-of-birth',
-  handler: handler
-}
+export default pageRoute('date-of-birth', '/date-of-birth', Joi.object({
+  dob: Joi.string().min(3).max(10)
+}))
