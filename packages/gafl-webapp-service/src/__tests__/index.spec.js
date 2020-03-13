@@ -1,4 +1,4 @@
-jest.mock('../src/server.js', () => {
+jest.mock('../server.js', () => {
   // return jest.fn( () => {
   global.initialised = true
   return { createServer: () => {}, init: () => {} }
