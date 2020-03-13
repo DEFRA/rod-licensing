@@ -10,5 +10,6 @@ export default pageRoute(
     dob: Joi.string()
       .min(3)
       .max(10)
-  })
+  }),
+  '/controller'
 )
