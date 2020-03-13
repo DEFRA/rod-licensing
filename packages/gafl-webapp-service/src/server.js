@@ -35,10 +35,6 @@ const createServer = options => {
 }
 
 const init = async () => {
-  if (!server) {
-    throw new Error('No server created')
-  }
-
   await server.register(Vision)
 
   server.views({

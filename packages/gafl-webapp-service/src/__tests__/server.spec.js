@@ -1,8 +1,25 @@
-import { start, stop, server } from '../test-utils.js'
+import { createServer, init, server } from '../server.js'
+import CatboxMemory from '@hapi/catbox-memory'
 
-beforeAll(d => start(d))
-afterAll(d => stop(d))
+describe('The server', () => {
+  it('starts', async done => {
+    createServer({
+      cache: [
+        {
+          provider: {
+            constructor: CatboxMemory
+          }
+        }
+      ]
+    })
 
-test('Server is alive', () => {
-  expect(server.info).toBeTruthy()
+    server.events.on('start', () => {
+      expect(server.info).toBeTruthy()
+      server.stop()
+      done()
+    })
+
+    await init()
+    expect(server.info).toBeTruthy()
+  })
 })
