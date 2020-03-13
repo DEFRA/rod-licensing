@@ -5,7 +5,7 @@ const authorityUrl = `${process.env.oauth_authority_host_url}${process.env.oauth
 const adalContext = new AdalNode.AuthenticationContext(authorityUrl)
 const acquireTokenWithClientCredentials = util.promisify(adalContext.acquireTokenWithClientCredentials).bind(adalContext)
 
-const dynamicsWebApi = new DynamicsWebApi({
+const dynamicsClient = new DynamicsWebApi({
   webApiUrl: process.env.dynamics_api_path,
   webApiVersion: process.env.dynamics_api_version,
   timeout: 60000,
@@ -15,7 +15,7 @@ const dynamicsWebApi = new DynamicsWebApi({
     )
 })
 
-export default dynamicsWebApi
+export { dynamicsClient }
 
 // /**
 //  * Retrieve all pages calling onPageCallback for each response.

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "rod licencing digital services",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=12"
   },
@@ -57,6 +58,9 @@
   },
   "jest": {
     "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/src/**/*.js"
+    ],
     "coverageReporters": [
       "lcov",
       "text"
@@ -71,6 +75,16 @@
     },
     "projects": [
       "<rootDir>/packages/*"
-    ]
+    ],
+    "moduleDirectories": [],
+    "transform": {
+      "\\.js$": [
+        "babel-jest",
+        {
+          "rootMode": "upward"
+        }
+      ]
+    },
+    "testEnvironment": "node"
   }
 }
