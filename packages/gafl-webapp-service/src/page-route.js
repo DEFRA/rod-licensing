@@ -2,20 +2,20 @@
 
 import handler from './page-handler.js'
 
-export default (view, path, validator) => [
+export default (view, path, validator, completion) => [
   {
     method: 'GET',
     path: path,
-    handler: handler(path, view).get
+    handler: handler(path, view, completion).get
   },
   {
     method: 'POST',
     path: path,
-    handler: handler(path, view).post,
+    handler: handler(path, view, completion).post,
     options: {
       validate: {
         payload: validator,
-        failAction: handler(path, view).error
+        failAction: handler(path, view, completion).error
       }
     }
   }

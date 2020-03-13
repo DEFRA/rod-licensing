@@ -1,6 +1,6 @@
 'use strict'
 
-export default (path, view) => ({
+export default (path, view, completion) => ({
   /**
    * Generic get handler for pages
    * @param request
@@ -19,7 +19,7 @@ export default (path, view) => ({
    */
   post: async (request, h) => {
     await request.cache().set({ [view]: { payload: request.payload } })
-    return h.redirect(view)
+    return h.redirect(completion)
   },
   /**
    * Generic error handler for pages

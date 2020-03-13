@@ -14,7 +14,6 @@ import path from 'path'
 import routes from './routes.js'
 import sessionManager from './lib/session-manager.js'
 import cacheDecorator from './lib/cache-decorator.js'
-
 let server
 
 const createServer = options => {
@@ -47,9 +46,7 @@ const init = async () => {
       njk: {
         compile: (src, options) => {
           const template = Nunjucks.compile(src, options.environment)
-          return context => {
-            return template.render(context)
-          }
+          return context => template.render(context)
         }
       }
     },

@@ -1,36 +1,15 @@
-'use strict'
+import '../index.js'
 
-/**
- * Not a real mock hapi but hapi with no catbox-redis
- */
-
-import { createServer, init, server } from '../src/server.js'
-import CatboxMemory from '@hapi/catbox-memory'
-
-createServer({
-  cache: [
-    {
-      provider: {
-        constructor: CatboxMemory
-      }
-    }
-  ]
+jest.mock('../src/server.js', () => {
+  // return jest.fn( () => {
+  global.initialised = true
+  return { createServer: () => {}, init: () => {} }
 })
 
-beforeEach(async done => {
-  server.events.on('start', () => {
-    done()
+// const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
+describe('gafl-web-service', () => {
+  it('initialises', () => {
+    expect(global.initialised).toBeTruthy()
+    // expect(consoleError).toHaveBeenCalled()
   })
-  await init()
-})
-
-afterEach(done => {
-  server.events.on('stop', () => {
-    done()
-  })
-  server.stop()
-})
-
-test('Server is alive', () => {
-  expect(server.info).toBeTruthy()
 })
