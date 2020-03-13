@@ -13,9 +13,11 @@ const cacheDecorator = (sessionCookieName) => function () {
   return {
     get: async () => this.server.app.cache.get(id()),
     set: async (obj) => {
-      console.debug(`Saving ${JSON.stringify(obj)} to ${id()}`)
-      const existing = await this.server.app.cache.get(id())
-      await this.server.app.cache.set(id(), Object.assign(existing || {}, obj))
+      if (!obj || typeof obj !== 'object') {
+        throw new Error('Expect object')
+      }
+      const cache = await this.server.app.cache.get(id())
+      await this.server.app.cache.set(id(), Object.assign(cache || {}, obj))
     },
     drop: async () => {
       await this.server.cache.drop(id())
