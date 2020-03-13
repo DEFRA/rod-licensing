@@ -1,20 +1,9 @@
 'use strict'
 
-import handler from './handler.js'
+import pageRoute from '../../page-route.js'
 import Joi from '@hapi/joi'
 
-export default {
-  method: ['GET', 'POST'],
-  path: '/name',
-  handler: handler
-  // options: {
-  //   validate: {
-  //     payload: Joi.object({
-  //       name: Joi.string().min(3).max(10)
-  //     })
-  //   },
-  //   failAction: async (request, h, err) => {
-  //     return 'error'
-  //   }
-  // }
-}
+export default pageRoute('name', '/name', Joi.object({
+  name: Joi.string().min(3).max(10),
+  email: Joi.string().min(3).max(10)
+}))
