@@ -18,6 +18,7 @@ describe('transaction-currency entity', () => {
     }
     expect(transactionCurrency).toBeInstanceOf(TransactionCurrency)
     expect(transactionCurrency).toMatchObject(expect.objectContaining({ etag: 'W/"596274"', ...expectedFields }))
-    expect(transactionCurrency.toString()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(transactionCurrency.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(JSON.parse(transactionCurrency.toString())).toMatchObject(expect.objectContaining(expectedFields))
   })
 })

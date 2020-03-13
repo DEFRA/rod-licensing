@@ -47,6 +47,18 @@ services:
       restart_policy:
         condition: on-failure
 
+  redisinsight:
+    image: redislabs/redisinsight
+    networks:
+      - internal
+    ports:
+      - '8001:8001'
+    volumes:
+      - ./volumes/redis:/data
+    deploy:
+      restart_policy:
+        condition: on-failure
+
   #######################################################
   # Elasticmq (SQS provider)
   #######################################################

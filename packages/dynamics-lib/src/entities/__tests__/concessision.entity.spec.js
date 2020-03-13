@@ -14,6 +14,7 @@ describe('concession entity', () => {
 
     expect(concession).toBeInstanceOf(Concession)
     expect(concession).toMatchObject(expect.objectContaining({ etag: 'W/"22638892"', ...expectedFields }))
-    expect(concession.toString()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(concession.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(JSON.parse(concession.toString())).toMatchObject(expect.objectContaining(expectedFields))
   })
 })

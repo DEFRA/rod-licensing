@@ -4,13 +4,13 @@ export class Permission extends BaseEntity {
     collection: 'defra_permissions',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: { field: 'defra_permissionid' },
-      referenceNumber: { field: 'defra_name' },
-      issueDate: { field: 'defra_issuedate' },
-      startDate: { field: 'defra_startdate' },
-      endDate: { field: 'defra_enddate' },
-      stagingId: { field: 'defra_stagingid' },
-      dataSource: { field: 'defra_datasource' }
+      id: { field: 'defra_permissionid', type: 'string' },
+      referenceNumber: { field: 'defra_name', type: 'string' },
+      issueDate: { field: 'defra_issuedate', type: 'datetime' },
+      startDate: { field: 'defra_startdate', type: 'datetime' },
+      endDate: { field: 'defra_enddate', type: 'datetime' },
+      stagingId: { field: 'defra_stagingid', type: 'string' },
+      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' }
     }
   })
 

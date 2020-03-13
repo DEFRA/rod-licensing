@@ -4,8 +4,8 @@ export class Concession extends BaseEntity {
     collection: 'defra_concessions',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: { field: 'defra_concessionid' },
-      name: { field: 'defra_name' }
+      id: { field: 'defra_concessionid', type: 'string' },
+      name: { field: 'defra_name', type: 'string' }
     }
   })
 

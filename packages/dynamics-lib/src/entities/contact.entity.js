@@ -5,20 +5,20 @@ export class Contact extends BaseEntity {
     collection: 'contacts',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: { field: 'contactid' },
-      firstName: { field: 'firstname' },
-      lastName: { field: 'lastname' },
-      birthDate: { field: 'birthdate' },
-      email: { field: 'emailaddress1' },
-      mobilePhone: { field: 'mobilephone' },
-      premises: { field: 'defra_premises' },
-      street: { field: 'defra_street' },
-      locality: { field: 'defra_locality' },
-      town: { field: 'defra_town' },
-      postcode: { field: 'defra_postcode' },
-      country: { field: 'defra_country' },
-      preferredMethodOfContact: { field: 'defra_preferredmethodofcontact' },
-      gdprMarketingOptIn: { field: 'defra_gdprmarketingpreferenceoptin' }
+      id: { field: 'contactid', type: 'string' },
+      firstName: { field: 'firstname', type: 'string' },
+      lastName: { field: 'lastname', type: 'string' },
+      birthDate: { field: 'birthdate', type: 'date' },
+      email: { field: 'emailaddress1', type: 'string' },
+      mobilePhone: { field: 'mobilephone', type: 'string' },
+      premises: { field: 'defra_premises', type: 'string' },
+      street: { field: 'defra_street', type: 'string' },
+      locality: { field: 'defra_locality', type: 'string' },
+      town: { field: 'defra_town', type: 'string' },
+      postcode: { field: 'defra_postcode', type: 'string' },
+      country: { field: 'defra_country', type: 'optionset', ref: 'defra_country' },
+      preferredMethodOfContact: { field: 'defra_preferredmethodofcontact', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      gdprMarketingOptIn: { field: 'defra_gdprmarketingpreferenceoptin', type: 'boolean' }
     }
   })
 

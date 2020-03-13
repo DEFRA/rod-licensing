@@ -51,6 +51,12 @@
   "prettier": {
     "printWidth": 140
   },
+  "standard": {
+    "env": {
+      "node": true,
+      "jest": true
+    }
+  },
   "husky": {
     "hooks": {
       "pre-commit": "npm test && prettier-standard --lint --staged"

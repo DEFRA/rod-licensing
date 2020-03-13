@@ -1,16 +1,16 @@
-import { Permit, Concession, TransactionCurrency, PermitConcession, retrieveMultipleAsMap } from '@defra-fish/dynamics-lib'
-let referenceData, optionSets
-
-const fetch = async () => {
-  if (!(referenceData || optionSets)) {
-    ;[referenceData, optionSets] = await Promise.all([
-      retrieveMultipleAsMap(Permit, Concession, PermitConcession, TransactionCurrency)
-      // fetchOptionSets()
-    ])
-  }
-  return { referenceData, optionSets }
-}
+import {
+  Permit,
+  Concession,
+  TransactionCurrency,
+  PermitConcession,
+  retrieveMultipleAsMap,
+  retrieveGlobalOptionSets
+} from '@defra-fish/dynamics-lib'
 
 export async function getReferenceData () {
-  return (await fetch()).referenceData
+  return retrieveMultipleAsMap(Permit, Concession, PermitConcession, TransactionCurrency).cached()
+}
+
+export async function getGlobalOptionSets (...names) {
+  return retrieveGlobalOptionSets(...names).cached()
 }

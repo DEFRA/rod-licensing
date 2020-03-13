@@ -5,7 +5,7 @@ import Swagger from './plugins/swagger.js'
 import HealthCheck from './plugins/health.js'
 import Routes from './routes/index.js'
 
-export default async (opts = { port: 3000 }) => {
+export default async (opts = { port: process.env.PORT || 3000 }) => {
   const server = new Hapi.Server(opts)
   await server.register([Inert, Vision, HealthCheck, Swagger])
   server.route(Routes)
