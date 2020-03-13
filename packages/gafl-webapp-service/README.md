@@ -1,6 +1,7 @@
 # gafl-webapp-service
 
 ## Environment variables
+
 ```
 NODE_ENV - development|production
 SESSION_COOKIE_NAME - default sid
