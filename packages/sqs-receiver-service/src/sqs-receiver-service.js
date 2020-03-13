@@ -2,7 +2,7 @@
 /**
  * Initializes and starts the receiver loop
  */
-import receiver from './src/receiver.js'
+import receiver from './receiver.js'
 
 /**
  * Start the receiver

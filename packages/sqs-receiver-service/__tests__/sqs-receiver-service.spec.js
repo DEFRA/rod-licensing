@@ -1,4 +1,4 @@
-import '../index.js'
+import '..'
 jest.mock('../src/receiver.js', () => {
   return jest.fn(async () => {
     global.receiverInitialised = true
