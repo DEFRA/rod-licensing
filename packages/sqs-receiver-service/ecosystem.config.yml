@@ -1,5 +1,5 @@
 apps:
-  - script: ./index.js
+  - script: ./src/sqs-receiver-service.js
     name: 'Sales Queue'
     env:
       RECEIVER_PREFIX: SALES_QUEUE
@@ -9,7 +9,7 @@ apps:
     interpreter: 'node@13.9.0'
     autorestart: false
 
-  - script: ./index.js
+  - script: ./src/sqs-receiver-service.js
     name: 'Sales dead letter queue'
     env:
       RECEIVER_PREFIX: SALES_DEAD_LETTER_QUEUE
