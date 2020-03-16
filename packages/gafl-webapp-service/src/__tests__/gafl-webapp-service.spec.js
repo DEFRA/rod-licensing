@@ -7,7 +7,8 @@ jest.mock('../server.js', () => {
 // const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
 describe('gafl-web-service', () => {
   it('initialises', () => {
-    require('../gafl-webapp-service')
+    require('../index')
     expect(global.initialised).toBeTruthy()
+    // expect(consoleError).toHaveBeenCalled()
   })
 })
