@@ -1,6 +1,6 @@
 'use strict'
 
-import { start, stop, server, getCookies } from '../../../test-utils.js'
+import { start, stop, server, getCookies } from '../../../misc/test-utils.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -14,7 +14,7 @@ describe('The name page', () => {
   it('Return success on requesting', async () => {
     const data = await server.inject({
       method: 'GET',
-      url: '/name'
+      url: '/buy/name'
     })
     expect(data.statusCode).toBe(200)
 
@@ -24,7 +24,7 @@ describe('The name page', () => {
   it('Redirects back to itself on posting an invalid response', async () => {
     const data = await server.inject({
       method: 'POST',
-      url: '/name',
+      url: '/buy/name',
       payload: { name: 'a', email: 'a' },
       headers: { cookie: 'sid=' + cookie.sid }
     })
@@ -35,7 +35,7 @@ describe('The name page', () => {
   it('Redirects back to the main controller on posting an valid response', async () => {
     const data = await server.inject({
       method: 'POST',
-      url: '/name',
+      url: '/buy/name',
       payload: { name: 'Graham Willis', email: 'email@example.com' },
       headers: { cookie: 'sid=' + cookie.sid }
     })

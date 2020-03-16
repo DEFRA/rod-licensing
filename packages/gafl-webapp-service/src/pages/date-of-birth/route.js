@@ -5,7 +5,7 @@ import Joi from '@hapi/joi'
 
 export default pageRoute(
   'date-of-birth',
-  '/date-of-birth',
+  '/buy/date-of-birth',
   Joi.object({
     dob: Joi.string()
       .min(3)
