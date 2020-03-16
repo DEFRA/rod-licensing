@@ -1,0 +1,72 @@
+{% extends "template.njk" %}
+{% set assetPath = "/public" %}
+
+{% from "phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "footer/macro.njk" import govukFooter %}
+{% from "header/macro.njk" import govukHeader %}
+
+{% block head %}
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<link href="/public/stylesheets/main.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="Cache-Control" content="no-store" />
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+{% endblock %}
+
+{% block header %}
+    {{ govukHeader({
+            assetsPath: assetPath + '/images',
+            homepageUrl: "https://www.gov.uk/",
+            serviceUrl: "/",
+            containerClasses: "govuk-width-container",
+            serviceName: "Get a rod fishing license"
+        })
+    }}
+{% endblock %}
+
+{% block beforeContent %}
+    {{ govukPhaseBanner({
+            tag: {
+            text: "beta"
+        },
+        html: 'This is a new service – your <a class="govuk-link" href="" target="_blank">feedback</a> will help us to improve it.'
+    }) }}
+{% endblock %}
+
+{% block bodyStart %}{% endblock %}
+
+{% set footerHtml %}
+    <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">Environment Agency Helpline: <a class="govuk-link" href="tel:03708506506">03708 506 506</a></p>
+    <p class="govuk-!-margin-top-0">Monday to Friday, 8am to 6pm</p>
+    <ul class="govuk-footer__inline-list">
+        <li class="govuk-footer__inline-list-item">
+            <a class="govuk-link" href="">
+                Privacy Policy
+            </a>
+        </li>
+
+        <li class="govuk-footer__inline-list-item">
+            <a class="govuk-link" href="">
+                Accessibility Statement
+            </a>
+        </li>
+
+        <li class="govuk-footer__inline-list-item">
+            <a class="govuk-link" href="">
+                Cookies
+            </a>
+        </li>
+    </ul>
+{% endset -%}
+
+{% block footer %}
+    {{ govukFooter({
+        meta: {
+            html: footerHtml
+        }
+    }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+{% endblock %}

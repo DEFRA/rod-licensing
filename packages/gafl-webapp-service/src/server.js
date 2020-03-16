@@ -7,13 +7,20 @@
 import Hapi from '@hapi/hapi'
 import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
+import Inert from '@hapi/inert'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 import routes from './routes.js'
 import sessionManager from './lib/session-manager.js'
 import cacheDecorator from './lib/cache-decorator.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
 let server
 
 const createServer = options => {
@@ -35,7 +42,11 @@ const createServer = options => {
 }
 
 const init = async () => {
-  await server.register(Vision)
+  await server.register([Inert, Vision])
+
+  const base = join(__dirname, '..')
+
+  const viewPaths = [...new Set(find.fileSync(/\.njk$/, './src/pages').map(f => path.dirname(f)))]
 
   server.views({
     engines: {
@@ -43,11 +54,20 @@ const init = async () => {
         compile: (src, options) => {
           const template = Nunjucks.compile(src, options.environment)
           return context => template.render(context)
+        },
+        prepare: (options, next) => {
+          options.compileOptions.environment = Nunjucks.configure(options.path, { watch: false })
+          return next()
         }
       }
     },
 
-    path: find.fileSync(/\.njk$/, './').map(f => path.dirname(f))
+    relativeTo: base,
+    isCached: process.env.NODE_ENV !== 'development',
+    path: ['node_modules/govuk-frontend/govuk',
+           'node_modules/govuk-frontend/govuk/components',
+           'src/layout',
+            ...viewPaths]
   })
 
   const sessionCookieName = process.env.SESSION_COOKIE_NAME || 'sid'
