@@ -25,8 +25,8 @@ export default (path, view, completion) => ({
    * Generic error handler for pages
    * @param request
    * @param h
-   * @param error
-   * @returns {Promise<string|((key?: IDBValidKey) => void)>}
+   * @param err
+   * @returns {Promise}
    */
   error: async (request, h, err) => {
     await request.cache().set({ [view]: { payload: request.payload, error: err.details } })
