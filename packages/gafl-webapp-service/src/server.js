@@ -80,8 +80,7 @@ const init = async () => {
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
   process.on('unhandledRejection', err => {
-    console.log(err)
-    process.exit(1)
+    console.error(err)
   })
 
   await server.start()

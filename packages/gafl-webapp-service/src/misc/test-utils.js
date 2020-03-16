@@ -1,4 +1,4 @@
-import { createServer, init, server } from './server.js'
+import { createServer, init, server } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 
 createServer({
