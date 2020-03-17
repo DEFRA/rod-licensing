@@ -1,0 +1,18 @@
+os: linux
+language: node_js
+node_js:
+  - '13'
+cache:
+  directories:
+    - node_modules
+
+script:
+  - npm run post-install
+  - npm test
+  - sonar-scanner
+
+addons:
+  sonarcloud:
+    organization: 'defra'
+    token:
+      secure: UBZIVe16QVFTpftwVjI48vtUHrdaHQ00ue59EOpvmvlluJeQFsy7SUqKAiFT0eI1YwfSbDu7NAP/WGtRXztcczo6Aa6rYRcPH1CBNpsQu9b3cuivhapXTa7vixF0/kef7XGeMaHxLLamIj04QPvNdGw4PeSx9W6pbgeBue5Orqgaj7RdWuJ/7HayzeelXKMG70fh5J+MiWPosekbLDu7e4OHhOOOwZ7KwcRRG+JJQZvMadIbqUn1TCyvTLdLaWpw38PzlpfUCol3d9EIX+BgIvA2W8te1M8o1XBUDmo48+X5Rf3yDyh10jLiAjJrWTTFUx6/WR5Z3wiLVbyR09amKg5mZ7sXJzgcKiARdHGAKQZ9GVhYo0iJIL0DPrLJnXXCSLPBe7C2C3hCqgFLFZHfspdrQ8pLlX4w/vigb4j4ZzxvIbka1FJOSnaupj5UxKnoTx2BnNgE7ik3Jn/suFBIB+T7hDLEmU+/6/8y0n31gVbW1DiAimVI9IeDuGj80+0fVDfelirkD5b8tpPkiBlTfM1Y67rM6OK2DlqUB8Y/SrzrSHS1I8KrIVvh0zNCo7XE6ZoK7BwO4v56Gj/2yMslr6S9X4JZxjTNk7bhSqPdUuaTUrPU9GHtU1EGzPurW+OolnpaeEBJqAsJZyQccLn9Sw1r69ise0iuZr0k6RzOQyw=
