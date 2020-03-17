@@ -1,6 +1,6 @@
 {
   "name": "sqs-receiver-service",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "SQS Receiver service",
   "private": true,
   "type": "module",

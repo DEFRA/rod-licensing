@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Date of birth</title>
+</head>
+<body>
+<form method="post">
+  <div class="form-example">
+    <label for="dob">Enter your dob: </label>
+    <input type="text" name="dob" id="dob" value="{{ payload.dob }}">
+  </div>
+  <div class="form-example">
+    <input type="submit" value="Continue">
+  </div>
+</form</body>
+{{ error | dump}}
+</html>
+
