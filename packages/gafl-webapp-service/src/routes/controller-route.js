@@ -1,6 +1,6 @@
 'use strict'
 
-import controllerHandler from './controller-handler.js'
+import controllerHandler from '../handlers/controller-handler.js'
 
 export default {
   method: 'GET',

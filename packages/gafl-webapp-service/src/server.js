@@ -12,10 +12,10 @@ import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
-import routes from './routes.js'
+import routes from './routes/routes.js'
 
 import sessionManager from './lib/session-manager.js'
-import cacheDecorator from './lib/cache-decorator.js'
+import { cacheDecorator } from './lib/cache-decorator.js'
 
 let server
 
