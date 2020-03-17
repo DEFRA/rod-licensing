@@ -12,16 +12,21 @@ const debug = db('session-manager')
  * @returns {function(*, *)}
  */
 const sessionManager = sessionCookieName => async (request, h) => {
-  // If the session cookie does not exist create it
-  if (!request.state[sessionCookieName]) {
-    const id = uuidv4()
-    debug(`New session cookie: ${id}`)
-    h.state(sessionCookieName, { id })
-    request.state[sessionCookieName] = { id }
-  }
+  // Ignore on anything other than a GET request
+  // Ignore when requesting assets
+  if (!request.path.startsWith('/public') || request.method !== 'get') {
+    // If the session cookie does not exist create it
+    if (!request.state[sessionCookieName]) {
+      const id = uuidv4()
+      debug(`New session cookie: ${id}`)
+      h.state(sessionCookieName, { id })
+      request.state[sessionCookieName] = { id }
+    }
 
-  if (!(await request.cache().get())) {
-    await request.cache().set({ created: moment.utc() })
+    // If the uses cache entry does not exists create it
+    if (!(await request.cache().get())) {
+      await request.cache().set({ created: moment.utc() })
+    }
   }
 
   return h.continue

@@ -1,5 +1,8 @@
 'use strict'
 
+// flatten the errors to a usable form on the template. Expect to be refined
+const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
+
 export default (path, view, completion) => ({
   /**
    * Generic get handler for pages
@@ -29,7 +32,7 @@ export default (path, view, completion) => ({
    * @returns {Promise}
    */
   error: async (request, h, err) => {
-    await request.cache().set({ [view]: { payload: request.payload, error: err.details } })
+    await request.cache().set({ [view]: { payload: request.payload, error: errorShimm(err) } })
     return h.redirect(view).takeover()
   }
 })

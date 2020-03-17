@@ -16,7 +16,8 @@
               },
               id: "name",
               name: "name",
-              value: payload.name
+              value: payload.name,
+              errorMessage: error.name
             }) }}
 
             {{ govukInput({
@@ -25,7 +26,8 @@
               },
               id: "email",
               name: "email",
-              value: payload.email
+              value: payload.email,
+              errorMessage: error.email
             }) }}
 
             {{ govukButton({

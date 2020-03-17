@@ -11,15 +11,11 @@ import Inert from '@hapi/inert'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
+import Dirname from '../dirname.cjs'
 import routes from './routes.js'
+
 import sessionManager from './lib/session-manager.js'
 import cacheDecorator from './lib/cache-decorator.js'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 let server
 
@@ -44,9 +40,7 @@ const createServer = options => {
 const init = async () => {
   await server.register([Inert, Vision])
 
-  const base = join(__dirname, '..')
-
-  const viewPaths = [...new Set(find.fileSync(/\.njk$/, './src/pages').map(f => path.dirname(f)))]
+  const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
     engines: {
@@ -62,12 +56,16 @@ const init = async () => {
       }
     },
 
-    relativeTo: base,
+    relativeTo: Dirname,
     isCached: process.env.NODE_ENV !== 'development',
-    path: ['node_modules/govuk-frontend/govuk',
-           'node_modules/govuk-frontend/govuk/components',
-           'src/layout',
-            ...viewPaths]
+
+    // This needs all absolute paths to work with jest and in normal operation
+    path: [
+      path.join(Dirname, 'node_modules/govuk-frontend/govuk'),
+      path.join(Dirname, 'node_modules/govuk-frontend/govuk/components'),
+      path.join(Dirname, 'src/layout'),
+      ...viewPaths
+    ]
   })
 
   const sessionCookieName = process.env.SESSION_COOKIE_NAME || 'sid'
