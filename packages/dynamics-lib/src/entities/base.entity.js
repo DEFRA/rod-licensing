@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4.js'
 import util from 'util'
 import Joi from '@hapi/joi'
-import GlobalOptionSetEntry from '../optionset/global-option-set.js'
+import GlobalOptionSetDefinition from '../optionset/global-option-set-definition.js'
 import moment from 'moment'
 
 /**
@@ -86,8 +86,8 @@ export class BaseEntity {
           throw new Error('Value is not a valid date')
         }
       } else if (mapping.type === 'optionset') {
-        if (!(valueToSet instanceof GlobalOptionSetEntry) || valueToSet.optionSetName !== mapping.ref) {
-          throw new Error('Value is not a valid GlobalOptionSetEntry')
+        if (!(valueToSet instanceof GlobalOptionSetDefinition) || valueToSet.optionSetName !== mapping.ref) {
+          throw new Error('Value is not a valid GlobalOptionSetDefinition')
         }
       }
     }

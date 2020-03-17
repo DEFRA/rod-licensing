@@ -1,5 +1,5 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
-import GlobalOptionSetEntry from '../optionset/global-option-set.js'
+import GlobalOptionSetDefinition from '../optionset/global-option-set-definition.js'
 // Note: When node14 is released we can replace dotProp with optional chaining!
 import dotProp from 'dot-prop'
 import cache from './cache.js'
@@ -39,15 +39,17 @@ class CacheableOperation {
   }
 }
 
+const retrieveMultipleFetchOperation = async entityClasses => {
+  dynamicsClient.startBatch()
+  entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
+  return dynamicsClient.executeBatch()
+}
+
 export function retrieveMultiple (...entityClasses) {
   const entityClsKeys = entityClasses.map(e => e.name).join('_')
   return new CacheableOperation(
     `dynamics_${entityClsKeys}`,
-    async () => {
-      dynamicsClient.startBatch()
-      entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
-      return dynamicsClient.executeBatch()
-    },
+    async () => retrieveMultipleFetchOperation(entityClasses),
     async data => {
       const optionSetData = await retrieveGlobalOptionSets().cached()
       const results = data.map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v, optionSetData)))
@@ -60,11 +62,7 @@ export function retrieveMultipleAsMap (...entityClasses) {
   const entityClsKeys = entityClasses.map(e => e.name).join('_')
   return new CacheableOperation(
     `dynamics_${entityClsKeys}`,
-    async () => {
-      dynamicsClient.startBatch()
-      entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
-      return dynamicsClient.executeBatch()
-    },
+    async () => retrieveMultipleFetchOperation(entityClasses),
     async data => {
       const optionSetData = await retrieveGlobalOptionSets().cached()
       return data
@@ -94,15 +92,15 @@ export function retrieveGlobalOptionSets (...names) {
     data => {
       return data
         .filter(({ name }) => !names.length || names.includes(name))
-        .reduce((acc, { name, options }) => {
-          acc[name] = {
+        .reduce((optionSetData, { name, options }) => {
+          optionSetData[name] = {
             name,
-            options: options.reduce((acc, o) => {
-              acc[o.id] = new GlobalOptionSetEntry(name, o)
-              return acc
+            options: options.reduce((optionSetMapping, o) => {
+              optionSetMapping[o.id] = new GlobalOptionSetDefinition(name, o)
+              return optionSetMapping
             }, {})
           }
-          return acc
+          return optionSetData
         }, {})
     }
   )

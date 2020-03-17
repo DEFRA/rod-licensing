@@ -1,5 +1,5 @@
 import { BaseEntity, EntityDefinition } from '../base.entity'
-import GlobalOptionSetEntry from '../../optionset/global-option-set'
+import GlobalOptionSetDefinition from '../../optionset/global-option-set-definition'
 
 class TestTypeClass extends BaseEntity {
   static #definition = new EntityDefinition({
@@ -114,17 +114,17 @@ describe('BaseEntity', () => {
   })
 
   it('validates global option set references when type=optionset', () => {
-    const testGlobalOptionSet = new GlobalOptionSetEntry('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
+    const testGlobalOptionSet = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
     runTestTypeConversion('optionSetVal', testGlobalOptionSet, testGlobalOptionSet, 910400000)
 
     const test = new TestTypeClass()
-    const testWrongGlobalOptionSet = new GlobalOptionSetEntry('test_wrongglobaloption', {
+    const testWrongGlobalOptionSet = new GlobalOptionSetDefinition('test_wrongglobaloption', {
       id: 910400000,
       label: 'test',
       description: 'test'
     })
-    expect(() => test._setState('optionSetVal', testWrongGlobalOptionSet)).toThrow('Value is not a valid GlobalOptionSetEntry')
-    expect(() => test._setState('optionSetVal', 'wrong type')).toThrow('Value is not a valid GlobalOptionSetEntry')
+    expect(() => test._setState('optionSetVal', testWrongGlobalOptionSet)).toThrow('Value is not a valid GlobalOptionSetDefinition')
+    expect(() => test._setState('optionSetVal', 'wrong type')).toThrow('Value is not a valid GlobalOptionSetDefinition')
   })
 
   it('throws an error if an optionset cannot be resolved in a server response', () => {

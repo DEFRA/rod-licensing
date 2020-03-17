@@ -1,6 +1,6 @@
 import util from 'util'
 
-export default class GlobalOptionSetEntry {
+export default class GlobalOptionSetDefinition {
   constructor (optionSetName, { id, label, description }) {
     this._optionSetName = optionSetName
     this._properties = {
