@@ -3,6 +3,8 @@
 // flatten the errors to a usable form on the template. Expect to be refined
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 
+const cacheContext = 'page'
+
 export default (path, view, completion) => ({
   /**
    * Generic get handler for pages
@@ -11,7 +13,8 @@ export default (path, view, completion) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
-    const cache = await request.cache().get()
+    const cache = await request.cache().get(cacheContext)
+    cache.page = cache.page || {}
     return h.view(view, cache[view])
   },
   /**
@@ -21,7 +24,7 @@ export default (path, view, completion) => ({
    * @returns {Promise<*|Response>}
    */
   post: async (request, h) => {
-    await request.cache().set({ [view]: { payload: request.payload } })
+    await request.cache().set(cacheContext, { [view]: { payload: request.payload } })
     return h.redirect(completion)
   },
   /**
@@ -32,7 +35,7 @@ export default (path, view, completion) => ({
    * @returns {Promise}
    */
   error: async (request, h, err) => {
-    await request.cache().set({ [view]: { payload: request.payload, error: errorShimm(err) } })
-    return h.redirect(view).takeover()
+    await request.cache().set(cacheContext, { [view]: { payload: request.payload, error: errorShimm(err) } })
+    return h.redirect(path).takeover()
   }
 })

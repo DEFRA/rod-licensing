@@ -1,6 +1,6 @@
 'use strict'
 
-import pageRoute from '../../page-route.js'
+import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'
 
 const validator = Joi.object({

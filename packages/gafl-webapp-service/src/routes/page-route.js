@@ -1,6 +1,6 @@
 'use strict'
 
-import handler from './page-handler.js'
+import handler from '../handlers/page-handler.js'
 
 export default (view, path, validator, completion) => [
   {

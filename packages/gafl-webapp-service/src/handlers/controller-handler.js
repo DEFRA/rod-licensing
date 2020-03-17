@@ -3,5 +3,5 @@
  */
 export default async (request, h) => {
   console.log('controller')
-  return h.redirect('/name')
+  return h.redirect('/buy/name')
 }

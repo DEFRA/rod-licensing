@@ -11,26 +11,26 @@ const sass = require('gulp-sass')
 const sourcemaps = require('gulp-sourcemaps')
 const del = require('del')
 const minify = require('gulp-minify')
-const merge = require('merge-stream')
+const merge = require('gulp-merge')
 
 const paths = {
-  assets: 'src/assets/',
-  public: 'public/'
+  assets: '../src/assets/',
+  public: '../public/'
 }
 
 const clean = () => {
-  return del(paths.public)
+  return del(paths.public, { force: true })
 }
 
 const copyAssets = () => {
-  return gulp.src('node_modules/govuk-frontend/govuk/assets/{images/**/*.*,fonts/**/*.*}')
+  return gulp.src('../node_modules/govuk-frontend/govuk/assets/{images/**/*.*,fonts/**/*.*}')
     .pipe(gulp.dest(paths.public))
 }
 
 const copyJs = () => {
   return merge(
-    gulp.src('node_modules/govuk-frontend/govuk/all.js'),
-    gulp.src('src/assets/javascript/**/*.*')
+    gulp.src('../node_modules/govuk-frontend/govuk/all.js'),
+    gulp.src('../src/assets/javascript/**/*.*')
   ).pipe(minify({ noSource: true })).pipe(gulp.dest(paths.public + '/javascript'))
 }
 

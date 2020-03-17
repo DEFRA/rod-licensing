@@ -29,7 +29,7 @@ describe('The name page', () => {
       headers: { cookie: 'sid=' + cookie.sid }
     })
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('name')
+    expect(data.headers.location).toBe('/buy/name')
   })
 
   it('Redirects back to the main controller on posting an valid response', async () => {

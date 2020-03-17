@@ -12,7 +12,8 @@ export default [
         path: 'public'
       }
     }
-  }, {
+  },
+  {
     method: 'GET',
     path: '/favicon.ico',
     handler: {

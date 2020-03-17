@@ -11,26 +11,27 @@
   },
   "scripts": {
     "test": "node test",
-    "post-install": "node node_modules/gulp/bin/gulp.js"
+    "post-install": "node node_modules/gulp/bin/gulp.js --gulpfile build/gulpfile.cjs"
   },
   "author": "",
   "dependencies": {
     "@hapi/catbox-redis": "^5.0.5",
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.1",
-    "@hapi/joi": "^17.1.0",
+    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
     "debug": "^4.1.1",
     "find": "^0.3.0",
     "govuk-frontend": "^3.6.0",
     "moment": "^2.24.0",
-    "nunjucks": "^3.2.0",
+    "nunjucks": "^3.2.1",
     "uuid": "^7.0.2-beta.0"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-merge": "^0.1.1",
+    "del": "^5.1.0",
     "gulp-minify": "^3.1.0",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5"
