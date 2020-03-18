@@ -10,18 +10,21 @@
     "node": ">=13"
   },
   "scripts": {
-    "test": "node test"
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "postinstall": "gulp --gulpfile build/gulpfile.cjs"
   },
-  "author": "",
+  "author": "DEFRA",
   "dependencies": {
     "@hapi/catbox-redis": "^5.0.5",
     "@hapi/hapi": "^19.1.1",
-    "@hapi/joi": "^17.1.0",
+    "@hapi/inert": "^6.0.1",
+    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
     "debug": "^4.1.1",
     "find": "^0.3.0",
+    "govuk-frontend": "^3.6.0",
     "moment": "^2.24.0",
-    "nunjucks": "^3.2.0",
+    "nunjucks": "^3.2.1",
     "uuid": "^7.0.2-beta.0"
   }
 }

@@ -1,24 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Name</title>
-</head>
-<body>
-<form method="post">
-  <div class="form-example">
-    <label for="name">Enter your name: </label>
-    <input type="text" name="name" id="name" value="{{ payload.name }}">
-  </div>
-  <div class="form-example">
-    <label for="email">Enter your email: </label>
-    <input name="email" id="email" value="{{ payload.email }}">
-  </div>
-  <div class="form-example">
-    <input type="submit" value="Continue">
-  </div>
-</form</body>
-{{ error | dump}}
-</html>
+{% extends "layout.njk" %}
+
+{% from "input/macro.njk" import govukInput %}
+{% from "button/macro.njk" import govukButton %}
+
+{% block pageTitle %}Name - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post">
+
+            {{ govukInput({
+              label: {
+                text: "Name"
+              },
+              id: "name",
+              name: "name",
+              value: payload.name,
+              errorMessage: error.name
+            }) }}
+
+            {{ govukInput({
+              label: {
+                text: "Email"
+              },
+              id: "email",
+              name: "email",
+              value: payload.email,
+              errorMessage: error.email
+            }) }}
+
+            {{ govukButton({
+                text: "Continue"
+            }) }}
+
+        </form>
+    </div>
+</div>
+{% endblock %}
 
 
 

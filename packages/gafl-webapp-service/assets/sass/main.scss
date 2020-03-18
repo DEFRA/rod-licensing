@@ -1,0 +1,6 @@
+// Change the default location where scss generated assets are server from
+$govuk-assets-path: '/public/';
+$govuk-images-path: '#{$govuk-assets-path}images/';
+$govuk-fonts-path: '#{$govuk-assets-path}fonts/';
+
+@import '../node_modules/govuk-frontend/govuk/all';

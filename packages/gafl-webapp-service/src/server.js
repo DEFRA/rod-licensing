@@ -7,13 +7,17 @@
 import Hapi from '@hapi/hapi'
 import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
+import Inert from '@hapi/inert'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
+import fs from 'fs'
+import Dirname from '../dirname.cjs'
+import routes from './routes/routes.js'
 
-import routes from './routes.js'
 import sessionManager from './lib/session-manager.js'
-import cacheDecorator from './lib/cache-decorator.js'
+import { cacheDecorator } from './lib/cache-decorator.js'
+
 let server
 
 const createServer = options => {
@@ -34,8 +38,19 @@ const createServer = options => {
   )
 }
 
+const nodeModulesDir = (() => {
+  let resolved = false
+  let dir = path.join(Dirname)
+  while (!resolved) {
+    dir = path.join(dir, '..')
+    resolved = fs.existsSync(path.join(dir, 'node_modules'))
+  }
+  return path.join(dir, 'node_modules')
+})()
+
 const init = async () => {
-  await server.register(Vision)
+  await server.register([Inert, Vision])
+  const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
     engines: {
@@ -43,11 +58,24 @@ const init = async () => {
         compile: (src, options) => {
           const template = Nunjucks.compile(src, options.environment)
           return context => template.render(context)
+        },
+        prepare: (options, next) => {
+          options.compileOptions.environment = Nunjucks.configure(options.path, { watch: false })
+          return next()
         }
       }
     },
 
-    path: find.fileSync(/\.njk$/, './').map(f => path.dirname(f))
+    relativeTo: Dirname,
+    isCached: process.env.NODE_ENV !== 'development',
+
+    // This needs all absolute paths to work with jest and in normal operation
+    path: [
+      path.join(nodeModulesDir, 'govuk-frontend/govuk'),
+      path.join(nodeModulesDir, 'govuk-frontend/govuk/components'),
+      path.join(Dirname, 'src/layout'),
+      ...viewPaths
+    ]
   })
 
   const sessionCookieName = process.env.SESSION_COOKIE_NAME || 'sid'

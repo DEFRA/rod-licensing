@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest",
     "format": "prettier-standard",
-    "postinstall": "lerna bootstrap"
+    "postinstall": "lerna run postinstall"
   },
   "repository": {
     "type": "git",
@@ -26,8 +26,8 @@
   "dependencies": {
     "@defra-fish/dynamics-lib": "file:packages/dynamics-lib",
     "@defra-fish/sales-api-service": "file:packages/sales-api-service",
-    "@defra-fish/gafl-webapp-service": "file:packages/gafl-webapp-service",
-    "@defra-fish/sqs-receiver-service": "file:packages/sqs-receiver-service"
+    "@defra-fish/sqs-receiver-service": "file:packages/sqs-receiver-service",
+    "@defra-fish/gafl-webapp-service": "file:packages/gafl-webapp-service"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -43,7 +43,13 @@
     "adal-node": "^0.2.1",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^25.1.0",
+    "del": "^5.1.0",
     "dynamics-web-api": "^1.6.2",
+    "gulp": "^4.0.2",
+    "gulp-merge": "^0.1.1",
+    "gulp-minify": "^3.1.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-sourcemaps": "^2.6.5",
     "husky": "^4.2.3",
     "jest": "^25.1.0",
     "lerna": "^3.20.2",
