@@ -2,10 +2,8 @@ os: linux
 language: node_js
 node_js:
   - '13'
-cache:
-  directories:
-    - node_modules
-
+install:
+  - npm install
 script:
   - npm test
   - sonar-scanner
