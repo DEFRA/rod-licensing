@@ -74,6 +74,7 @@ const init = async () => {
       path.join(nodeModulesDir, 'govuk-frontend/govuk'),
       path.join(nodeModulesDir, 'govuk-frontend/govuk/components'),
       path.join(Dirname, 'src/layout'),
+      path.join(Dirname, 'src/pages/macros'),
       ...viewPaths
     ]
   })

@@ -2,12 +2,29 @@
 
 {% from "input/macro.njk" import govukInput %}
 {% from "button/macro.njk" import govukButton %}
+{% from "error-summary.njk" import errorSummary %}
 
 {% block pageTitle %}Name - GOV.UK{% endblock %}
+
+{%
+    set errorMap = {
+        name: {
+            'string.empty': { ref: '#name', text: 'You did not add a name' },
+            'string.min': { ref: '#name', text: 'The name was to short' }
+        },
+        email: {
+            'string.empty': { ref: '#email', text: 'You did not add an email' },
+            'string.email': { ref: '#email', text: 'Not a good email' }
+        }
+    }
+%}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+        {{ errorSummary(error, errorMap) }}
+
         <form method="post">
 
             {{ govukInput({
