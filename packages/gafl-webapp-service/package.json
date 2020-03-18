@@ -10,8 +10,8 @@
     "node": ">=13"
   },
   "scripts": {
-    "test": "node test",
-    "post-install": "node node_modules/gulp/bin/gulp.js --gulpfile build/gulpfile.cjs"
+    "test": "echo \"Error: run tests from root\" && exit 1",
+    "postinstall": "node node_modules/gulp/bin/gulp.js --gulpfile build/gulpfile.cjs"
   },
   "author": "",
   "dependencies": {
