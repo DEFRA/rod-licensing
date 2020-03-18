@@ -1,5 +1,5 @@
 {
-  "name": "gafl-webapp-service",
+  "name": "@defra-fish/gafl-webapp-service",
   "version": "0.0.0",
   "description": "The websales frontend for the GAFL service",
   "main": "src/gafl-webapp-service.js",
@@ -11,9 +11,9 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "postinstall": "node node_modules/gulp/bin/gulp.js --gulpfile build/gulpfile.cjs"
+    "postinstall": "gulp --gulpfile build/gulpfile.cjs"
   },
-  "author": "",
+  "author": "DEFRA",
   "dependencies": {
     "@hapi/catbox-redis": "^5.0.5",
     "@hapi/hapi": "^19.1.1",
@@ -26,14 +26,5 @@
     "moment": "^2.24.0",
     "nunjucks": "^3.2.1",
     "uuid": "^7.0.2-beta.0"
-  },
-  "devDependencies": {
-    "@hapi/catbox-memory": "^5.0.0",
-    "gulp": "^4.0.2",
-    "gulp-merge": "^0.1.1",
-    "del": "^5.1.0",
-    "gulp-minify": "^3.1.0",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5"
   }
 }

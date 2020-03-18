@@ -32,7 +32,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/dynamics-lib": "^0.0.0",
+    "@defra-fish/dynamics-lib": "file:../dynamics-lib",
     "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.1",
@@ -41,10 +41,5 @@
     "aws-sdk": "^2.633.0",
     "hapi-and-healthy": "^7.0.6",
     "hapi-swagger": "^12.1.2"
-  },
-  "devDependencies": {
-    "@types/hapi__hapi": "^19.0.2",
-    "adal-node": "^0.2.1",
-    "dynamics-web-api": "^1.6.2"
   }
 }
