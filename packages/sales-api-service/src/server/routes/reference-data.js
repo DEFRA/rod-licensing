@@ -42,8 +42,7 @@ export default [
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { schema: referenceDataCollectionList },
-            400: { description: errors.unrecognised_colllection }
+            200: { schema: referenceDataCollectionList }
           }
         }
       }
@@ -57,8 +56,8 @@ export default [
         const data = await getReferenceData()
         return data[request.params.collection] || Boom.badRequest(errors.unrecognised_colllection)
       },
-      description: 'Query reference data',
-      notes: 'Query reference data notes...',
+      description: 'Retrieve a specific reference data collection',
+      notes: 'Retrieve a specific reference data collection',
       tags: ['api'],
       validate: {
         params: Joi.object({

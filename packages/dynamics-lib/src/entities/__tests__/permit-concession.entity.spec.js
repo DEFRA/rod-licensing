@@ -15,6 +15,7 @@ describe('permit-concession entity', () => {
 
     expect(permitConcessionMapping).toBeInstanceOf(PermitConcession)
     expect(permitConcessionMapping).toMatchObject(expect.objectContaining(expectedFields))
-    expect(permitConcessionMapping.toString()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(permitConcessionMapping.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(JSON.parse(permitConcessionMapping.toString())).toMatchObject(expect.objectContaining(expectedFields))
   })
 })

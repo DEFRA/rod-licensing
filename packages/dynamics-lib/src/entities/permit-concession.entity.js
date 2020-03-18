@@ -4,9 +4,9 @@ export class PermitConcession extends BaseEntity {
     collection: 'defra_defra_concession_defra_permitset',
     defaultFilter: undefined,
     mappings: {
-      id: { field: 'defra_defra_concession_defra_permitid' },
-      concessionId: { field: 'defra_concessionid' },
-      permitId: { field: 'defra_permitid' }
+      id: { field: 'defra_defra_concession_defra_permitid', type: 'string' },
+      concessionId: { field: 'defra_concessionid', type: 'string' },
+      permitId: { field: 'defra_permitid', type: 'string' }
     }
   })
 

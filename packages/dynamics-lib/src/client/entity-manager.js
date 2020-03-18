@@ -1,4 +1,8 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
+import GlobalOptionSetDefinition from '../optionset/global-option-set-definition.js'
+// Note: When node14 is released we can replace dotProp with optional chaining!
+import dotProp from 'dot-prop'
+import cache from './cache.js'
 
 export async function persist (...entities) {
   dynamicsClient.startBatch()
@@ -18,21 +22,88 @@ export async function persist (...entities) {
   return dynamicsClient.executeBatch()
 }
 
-export async function retrieveMultiple (...entityClasses) {
-  dynamicsClient.startBatch()
-  entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
-  const results = (await dynamicsClient.executeBatch()).map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v)))
-  return (results.length === 1 && results[0]) || results
+class CacheableOperation {
+  constructor (cacheKey, fetchOp, resultProcessor) {
+    this._cacheKey = cacheKey
+    this._fetchOp = fetchOp
+    this._resultProcessor = resultProcessor
+  }
+
+  async execute () {
+    return this._resultProcessor(await this._fetchOp())
+  }
+
+  async cached () {
+    const data = await cache.wrap(this._cacheKey, this._fetchOp)
+    return this._resultProcessor(data)
+  }
 }
 
-export async function retrieveMultipleAsMap (...entityClasses) {
+const retrieveMultipleFetchOperation = async entityClasses => {
   dynamicsClient.startBatch()
   entityClasses.forEach(cls => dynamicsClient.retrieveMultipleRequest(cls.definition.toRetrieveRequest()))
-  const results = (await dynamicsClient.executeBatch()).map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v)))
-  return results.reduce((acc, val, idx) => {
-    acc[entityClasses[idx].name] = val
-    return acc
-  }, {})
+  return dynamicsClient.executeBatch()
+}
+
+export function retrieveMultiple (...entityClasses) {
+  const entityClsKeys = entityClasses.map(e => e.name).join('_')
+  return new CacheableOperation(
+    `dynamics_${entityClsKeys}`,
+    async () => retrieveMultipleFetchOperation(entityClasses),
+    async data => {
+      const optionSetData = await retrieveGlobalOptionSets().cached()
+      const results = data.map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v, optionSetData)))
+      return (results.length === 1 && results[0]) || results
+    }
+  )
+}
+
+export function retrieveMultipleAsMap (...entityClasses) {
+  const entityClsKeys = entityClasses.map(e => e.name).join('_')
+  return new CacheableOperation(
+    `dynamics_${entityClsKeys}`,
+    async () => retrieveMultipleFetchOperation(entityClasses),
+    async data => {
+      const optionSetData = await retrieveGlobalOptionSets().cached()
+      return data
+        .map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v, optionSetData)))
+        .reduce((acc, val, idx) => {
+          acc[entityClasses[idx].name] = val
+          return acc
+        }, {})
+    }
+  )
+}
+
+export function retrieveGlobalOptionSets (...names) {
+  return new CacheableOperation(
+    'dynamics_optionsets',
+    async () => {
+      const data = await dynamicsClient.retrieveGlobalOptionSets('Microsoft.Dynamics.CRM.OptionSetMetadata', ['Name', 'Options'])
+      return data.value.map(({ Name: name, Options: options }) => ({
+        name,
+        options: options.map(o => ({
+          id: o.Value,
+          label: dotProp.get(o, 'Label.UserLocalizedLabel.Label', ''),
+          description: dotProp.get(o, 'Description.UserLocalizedLabel.Label', '')
+        }))
+      }))
+    },
+    data => {
+      return data
+        .filter(({ name }) => !names.length || names.includes(name))
+        .reduce((optionSetData, { name, options }) => {
+          optionSetData[name] = {
+            name,
+            options: options.reduce((optionSetMapping, o) => {
+              optionSetMapping[o.id] = new GlobalOptionSetDefinition(name, o)
+              return optionSetMapping
+            }, {})
+          }
+          return optionSetData
+        }, {})
+    }
+  )
 }
 
 export async function findByExample (entity) {

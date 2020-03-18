@@ -4,10 +4,10 @@ export class TransactionCurrency extends BaseEntity {
     collection: 'transactioncurrencies',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: { field: 'transactioncurrencyid' },
-      name: { field: 'currencyname' },
-      code: { field: 'isocurrencycode' },
-      symbol: { field: 'currencysymbol' }
+      id: { field: 'transactioncurrencyid', type: 'string' },
+      name: { field: 'currencyname', type: 'string' },
+      code: { field: 'isocurrencycode', type: 'string' },
+      symbol: { field: 'currencysymbol', type: 'string' }
     }
   })
 

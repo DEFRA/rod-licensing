@@ -1,6 +1,2 @@
-const AdalNode = jest.genMockFromModule('adal-node')
-AdalNode.AuthenticationContext = jest.fn(() => ({
-  acquireTokenWithClientCredentials: jest.fn(() => ({}))
-}))
-
+import AdalNode from '../../dynamics-lib/__mocks__/adal-node'
 export default AdalNode

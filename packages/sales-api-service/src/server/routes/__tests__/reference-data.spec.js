@@ -12,21 +12,17 @@ describe('reference-data endpoint', () => {
             '@odata.etag': 'W/"22639016"',
             defra_availablefrom: '2017-03-31T23:00:00Z',
             defra_availableto: '2020-03-31T22:59:00Z',
-            'defra_duration@OData.Community.Display.V1.FormattedValue': '1 day',
             defra_duration: 910400000,
-            'defra_permittype@OData.Community.Display.V1.FormattedValue': 'Rod Fishing Licence',
             defra_permittype: 910400000,
             defra_advertisedprice: 6.0,
             defra_permitid: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
             defra_name: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
-            'defra_permitsubtype@OData.Community.Display.V1.FormattedValue': 'Trout and coarse',
             defra_permitsubtype: 910400001,
-            'defra_equipment@OData.Community.Display.V1.FormattedValue': 'Up to 2 rods',
             defra_equipment: 910400000,
             defra_isforfulfilment: false,
             defra_iscountersales: true,
             defra_advertisedprice_base: 6.0,
-            defra_itemid: '42289'
+            defra_itemid: 42289
           }
         ]
       },
@@ -70,27 +66,21 @@ describe('reference-data endpoint', () => {
     })
     const payload = JSON.parse(result.payload)
     expect(payload).toHaveLength(1)
-    expect(payload).toContainEqual(
-      expect.objectContaining({
-        availableFrom: '2017-03-31T23:00:00Z',
-        availableTo: '2020-03-31T22:59:00Z',
-        cost: 6,
-        description: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
-        duration: '1 day',
-        durationId: 910400000,
-        equipment: 'Up to 2 rods',
-        equipmentId: 910400000,
-        id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-        isCounterSales: true,
-        isForFulfilment: false,
-        itemId: '42289',
-        permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-        permitSubtype: 'Trout and coarse',
-        permitSubtypeId: 910400001,
-        permitType: 'Rod Fishing Licence',
-        permitTypeId: 910400000
-      })
-    )
+    expect(payload[0]).toMatchObject({
+      id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
+      permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
+      description: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
+      permitType: expect.objectContaining({ id: 910400000, label: 'Rod Fishing Licence', description: '' }),
+      permitSubtype: expect.objectContaining({ id: 910400001, label: 'Trout and coarse', description: '' }),
+      duration: expect.objectContaining({ id: 910400000, label: '1 day', description: '' }),
+      equipment: expect.objectContaining({ id: 910400000, label: 'Up to 2 rods', description: '' }),
+      availableFrom: '2017-03-31T23:00:00Z',
+      availableTo: '2020-03-31T22:59:00Z',
+      cost: 6,
+      isCounterSales: true,
+      isForFulfilment: false,
+      itemId: 42289
+    })
   })
 
   it('returns a 400 error if a unknown key is used', async () => {

@@ -5,31 +5,19 @@ export class Permit extends BaseEntity {
     collection: 'defra_permits',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: { field: 'defra_permitid' },
-      description: { field: 'defra_name' },
-      permitId: { field: 'defra_permitid' },
-      permitTypeId: { field: 'defra_permittype' },
-      permitType: {
-        field: 'defra_permittype@OData.Community.Display.V1.FormattedValue'
-      },
-      permitSubtypeId: { field: 'defra_permitsubtype' },
-      permitSubtype: {
-        field: 'defra_permitsubtype@OData.Community.Display.V1.FormattedValue'
-      },
-      durationId: { field: 'defra_duration' },
-      duration: {
-        field: 'defra_duration@OData.Community.Display.V1.FormattedValue'
-      },
-      equipmentId: { field: 'defra_equipment' },
-      equipment: {
-        field: 'defra_equipment@OData.Community.Display.V1.FormattedValue'
-      },
-      availableFrom: { field: 'defra_availablefrom' },
-      availableTo: { field: 'defra_availableto' },
-      isForFulfilment: { field: 'defra_isforfulfilment' },
-      isCounterSales: { field: 'defra_iscountersales' },
-      cost: { field: 'defra_advertisedprice' },
-      itemId: { field: 'defra_itemid' }
+      id: { field: 'defra_permitid', type: 'string' },
+      description: { field: 'defra_name', type: 'string' },
+      permitId: { field: 'defra_permitid', type: 'string' },
+      permitType: { field: 'defra_permittype', type: 'optionset', ref: 'defra_permittype' },
+      permitSubtype: { field: 'defra_permitsubtype', type: 'optionset', ref: 'defra_permitsubtype' },
+      duration: { field: 'defra_duration', type: 'optionset', ref: 'defra_duration' },
+      equipment: { field: 'defra_equipment', type: 'optionset', ref: 'defra_equipment' },
+      availableFrom: { field: 'defra_availablefrom', type: 'datetime' },
+      availableTo: { field: 'defra_availableto', type: 'datetime' },
+      isForFulfilment: { field: 'defra_isforfulfilment', type: 'boolean' },
+      isCounterSales: { field: 'defra_iscountersales', type: 'boolean' },
+      cost: { field: 'defra_advertisedprice', type: 'decimal' },
+      itemId: { field: 'defra_itemid', type: 'integer' }
     }
   })
 
@@ -48,19 +36,9 @@ export class Permit extends BaseEntity {
     return super._getState('permitId')
   }
 
-  /** get the permitTypeId of the entity */
-  get permitTypeId () {
-    return super._getState('permitTypeId')
-  }
-
   /** get the permitType of the entity */
   get permitType () {
     return super._getState('permitType')
-  }
-
-  /** get the permitSubtypeId of the entity */
-  get permitSubtypeId () {
-    return super._getState('permitSubtypeId')
   }
 
   /** get the permitSubtype of the entity */
@@ -68,19 +46,9 @@ export class Permit extends BaseEntity {
     return super._getState('permitSubtype')
   }
 
-  /** get the durationId of the entity */
-  get durationId () {
-    return super._getState('durationId')
-  }
-
   /** get the duration of the entity */
   get duration () {
     return super._getState('duration')
-  }
-
-  /** get the equipmentId of the entity */
-  get equipmentId () {
-    return super._getState('equipmentId')
   }
 
   /** get the equipment of the entity */
