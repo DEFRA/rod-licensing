@@ -11,6 +11,7 @@ import Inert from '@hapi/inert'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
+import fs from 'fs'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
 
@@ -37,9 +38,18 @@ const createServer = options => {
   )
 }
 
+const nodeModulesDir = (() => {
+  let resolved = false
+  let dir = path.join(Dirname)
+  while (!resolved) {
+    dir = path.join(dir, '..')
+    resolved = fs.existsSync(path.join(dir, 'node_modules'))
+  }
+  return path.join(dir, 'node_modules')
+})()
+
 const init = async () => {
   await server.register([Inert, Vision])
-
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
@@ -61,8 +71,8 @@ const init = async () => {
 
     // This needs all absolute paths to work with jest and in normal operation
     path: [
-      path.join(Dirname, 'node_modules/govuk-frontend/govuk'),
-      path.join(Dirname, 'node_modules/govuk-frontend/govuk/components'),
+      path.join(nodeModulesDir, 'govuk-frontend/govuk'),
+      path.join(nodeModulesDir, 'govuk-frontend/govuk/components'),
       path.join(Dirname, 'src/layout'),
       ...viewPaths
     ]
