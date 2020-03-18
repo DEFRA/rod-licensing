@@ -96,6 +96,19 @@ const init = async () => {
 
   server.ext('onPreHandler', sessionManager(sessionCookieName))
 
+  // TODO Display 500 page for any errors thrown in handlers
+  server.ext('onPreResponse', (request, h) => {
+    const response = request.response
+
+    if (!response.isBoom) {
+      return h.continue
+    }
+
+    console.error(response)
+
+    return 'Unexpected error'
+  })
+
   // Point the server plugin cache to an application cache to hold authenticated session data
   server.app.cache = server.cache({
     segment: 'sessions',
