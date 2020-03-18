@@ -2,8 +2,6 @@ export default [
   {
     method: '*',
     path: '/{p*}',
-    handler: async (request, h) => {
-      return h.redirect('/controller')
-    }
+    handler: async (request, h) => h.redirect('/controller')
   }
 ]

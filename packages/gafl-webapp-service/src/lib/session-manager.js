@@ -14,17 +14,14 @@ const debug = db('session-manager')
 const sessionManager = sessionCookieName => async (request, h) => {
   // Ignore on anything other than a GET request
   // Ignore when requesting assets
-  if (request.path.startsWith('/buy') || request.method !== 'get') {
-    // If the session cookie does not exist create it
-    if (!request.state[sessionCookieName]) {
-      const id = uuidv4()
-      debug(`New session cookie: ${id}`)
-      h.state(sessionCookieName, { id })
-      request.state[sessionCookieName] = { id }
+  if (request.path.startsWith('/buy') && !request.state[sessionCookieName]) {
+    const id = uuidv4()
+    debug(`New session cookie: ${id}`)
+    h.state(sessionCookieName, { id })
+    request.state[sessionCookieName] = { id }
 
-      // Initialize cache contexts
-      await request.cache().initialize()
-    }
+    // Initialize cache contexts
+    await request.cache().initialize()
   }
 
   return h.continue

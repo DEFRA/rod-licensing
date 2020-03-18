@@ -14,12 +14,12 @@ const minify = require('gulp-minify')
 const merge = require('gulp-merge')
 const path = require('path')
 
-const base = path.join(__dirname, '..')
+// const base = path.join(__dirname, '..')
 
 const paths = {
-  assets: path.join(base, 'src/assets/'),
-  public: path.join(base, 'public/'),
-  govUk: path.join(base, 'node_modules/govuk-frontend/govuk/')
+  assets: path.join('..' , 'assets/'),
+  public: path.join('..', 'public/'),
+  govUk: path.join('..', 'node_modules/govuk-frontend/govuk/')
 }
 
 Object.assign(paths, {
@@ -50,7 +50,7 @@ const buildSass = () => {
     .pipe(sourcemaps.init())
     .pipe(sass({
       outputStyle: 'compressed',
-      includePaths: path.join(base, 'node_modules')
+      includePaths: path.join('../node_modules')
     }).on('error', sass.logError))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(`${paths.public}stylesheets/`))
