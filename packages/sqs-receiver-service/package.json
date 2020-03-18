@@ -1,5 +1,5 @@
 {
-  "name": "sqs-receiver-service",
+  "name": "@defra-fish/sqs-receiver-service",
   "version": "0.0.0",
   "description": "SQS Receiver service",
   "private": true,
