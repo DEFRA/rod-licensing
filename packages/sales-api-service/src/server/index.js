@@ -6,7 +6,7 @@ import HealthCheck from './plugins/health.js'
 import Routes from './routes/index.js'
 
 export default async (opts = { port: process.env.PORT || 4000 }) => {
-  const server = new Hapi.Server(opts)
+  const server = new Hapi.Server(Object.assign({ host: '0.0.0.0' }, opts))
   await server.register([Inert, Vision, HealthCheck, Swagger])
   server.route(Routes)
 

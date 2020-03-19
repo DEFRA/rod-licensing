@@ -3,17 +3,18 @@ apps:
     name: 'Sales Queue'
     env:
       RECEIVER_PREFIX: SALES_QUEUE
-      DEBUG: queue-stats
-    output: ./logs/sales-queue.out
-    error: ./logs/sales-queue.err
-    interpreter: 'node@13.9.0'
-    autorestart: false
+    exec_mode: cluster
+    instances: 1
+    autorestart: true
+    max_restarts: 5
+    restart_delay: 1000
 
   - script: ./src/sqs-receiver-service.js
     name: 'Sales dead letter queue'
     env:
-      RECEIVER_PREFIX: SALES_DEAD_LETTER_QUEUE
-    output: ./logs/sales-dead-letter-queue.out
-    error: ./logs/sales-dead-letter-queue.err
-    interpreter: 'node@13.9.0'
-    autorestart: false
+      RECEIVER_PREFIX: SALES_DLQ
+    exec_mode: cluster
+    instances: 1
+    autorestart: true
+    max_restarts: 5
+    restart_delay: 1000
