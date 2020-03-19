@@ -13,22 +13,11 @@ const del = require('del')
 const minify = require('gulp-minify')
 const merge = require('gulp-merge')
 const path = require('path')
-const fs = require('fs')
-
-const nodeModulesDir = (() => {
-  let resolved = false
-  let dir = path.join('.')
-  while (!resolved) {
-    dir = path.join(dir, '..')
-    resolved = fs.existsSync(path.join(dir, 'node_modules'))
-  }
-  return path.join(dir, 'node_modules')
-})()
 
 const paths = {
   assets: path.join('..', 'assets/'),
   public: path.join('..', 'public/'),
-  govUk: path.join(nodeModulesDir, 'govuk-frontend/govuk/')
+  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'govuk/')
 }
 
 Object.assign(paths, {
@@ -59,7 +48,7 @@ const buildSass = () => {
     .pipe(sourcemaps.init())
     .pipe(sass({
       outputStyle: 'compressed',
-      includePaths: path.join(nodeModulesDir)
+      includePaths: path.join('..', 'node_modules')
     }).on('error', sass.logError))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(`${paths.public}stylesheets/`))
