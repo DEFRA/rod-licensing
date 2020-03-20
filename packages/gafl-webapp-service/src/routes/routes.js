@@ -11,12 +11,14 @@ import noLicenceRequired from '../pages/no-licence-required/route.js'
 
 import controller from './controller-route.js'
 import newTransactionRoute from './new-transaction-route.js'
+import addPermissionRoute from './add-permission-route.js'
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
 
 const routes = [
   controller,
   newTransactionRoute,
+  addPermissionRoute,
   ...staticAssets,
   ...miscRoutes,
   ...licenceLength,

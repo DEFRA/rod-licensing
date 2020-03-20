@@ -2,19 +2,32 @@
 
 export default [
   {
-    currentPage: '/date-of-birth',
+    currentPage: 'start',
+    nextPage: {
+      ok: {
+        page: '/buy/name'
+      }
+    }
+  },
+  {
+    currentPage: 'name',
+    nextPage: {
+      ok: {
+        page: '/buy/date-of-birth'
+      }
+    }
+  },
+  {
+    currentPage: 'date-of-birth',
     nextPage: {
       adult: {
-        page: '/name',
-        skipIfComplete: true
+        page: '/1'
       },
       junior: {
-        page: '/name',
-        skipIfComplete: true
+        page: '/buy/no-licence-required'
       },
       senior: {
-        page: '/name',
-        skipIfComplete: true
+        page: '/3'
       }
     }
   }
