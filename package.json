@@ -14,18 +14,11 @@
   ],
   "author": "DEFRA",
   "license": "SEE LICENSE IN LICENSE",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/DEFRA/rod-licencing.git"
-  },
-  "scripts": {
-    "postinstall": "npm run lerna:bootstrap",
-    "test": "jest",
-    "format": "prettier-standard",
-    "lerna:clean": "lerna clean --yes",
-    "lerna:bootstrap": "lerna bootstrap",
-    "lerna:prerelease": "lerna version prerelease --yes --preid beta",
-    "lerna:publish": "lerna publish from-git --yes --dist-tag beta"
+  "dependencies": {
+    "@defra-fish/dynamics-lib": "file:packages/dynamics-lib",
+    "@defra-fish/sales-api-service": "file:packages/sales-api-service",
+    "@defra-fish/sqs-receiver-service": "file:packages/sqs-receiver-service",
+    "@defra-fish/gafl-webapp-service": "file:packages/gafl-webapp-service"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

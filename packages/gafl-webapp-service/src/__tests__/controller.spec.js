@@ -10,7 +10,7 @@ describe('The controller handler', () => {
   it('Return redirect on requesting', async () => {
     const data = await server.inject({
       method: 'GET',
-      url: '/controller'
+      url: '/buy'
     })
     expect(data.statusCode).toBe(302)
   })
