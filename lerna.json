@@ -10,7 +10,6 @@
     "publish": {
       "message": "chore(release): publish %s",
       "allowBranch": "master",
-      "registry": "https://npm.pkg.github.com",
       "ignoreChanges": [".*", "*.md", "docker/*", "sonar-project.properties"]
     }
   }

@@ -27,6 +27,9 @@
     "url": "git://github.com/DEFRA/rod-licencing.git",
     "directory": "packages/sales-api-service"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "node src/sales-api-service.js",
     "test": "echo \"Error: run tests from root\" && exit 1"

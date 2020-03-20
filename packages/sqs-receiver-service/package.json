@@ -26,6 +26,9 @@
     "url": "git://github.com/DEFRA/rod-licencing.git",
     "directory": "packages/sqs-receiver-service"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "pm2 start ecosystem.config.yml",
     "test": "echo \"Error: run tests from root\" && exit 1"

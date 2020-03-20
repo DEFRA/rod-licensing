@@ -27,6 +27,9 @@
     "url": "git://github.com/DEFRA/rod-licencing.git",
     "directory": "packages/gafl-webapp-service"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "node src/gafl-webapp-service.js",
     "test": "echo \"Error: run tests from root\" && exit 1",
