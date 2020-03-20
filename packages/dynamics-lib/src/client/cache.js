@@ -2,7 +2,7 @@ import cacheManager from 'cache-manager'
 import redisStore from 'cache-manager-ioredis'
 const cache = cacheManager.caching({
   store: 'memory',
-  ttl: 60 * 60 * 12,
+  ttl: process.env.DYNAMICS_CACHE_TTL || 60 * 60 * 12,
   ...(process.env.REDIS_HOST && { store: redisStore, host: process.env.REDIS_HOST, port: process.env.REDIS_PORT || 6379 })
 })
 

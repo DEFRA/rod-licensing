@@ -12,7 +12,7 @@ before_deploy:
   - git config --global user.email ${GITHUB_EMAIL}
   - git config --global user.name ${GITHUB_USER}
   - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licencing.git" > /dev/null 2>&1
-  - git checkout master
+  - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 
 deploy:
