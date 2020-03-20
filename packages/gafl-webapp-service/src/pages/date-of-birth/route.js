@@ -9,8 +9,7 @@ const JoiX = Joi.extend(JoiDate)
 const formats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
 const schema = Joi.object({
-  'date-of-birth': JoiX
-    .date()
+  'date-of-birth': JoiX.date()
     .format(formats)
     .min('01-01-1900')
     .max('now')

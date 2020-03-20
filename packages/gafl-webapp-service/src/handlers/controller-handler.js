@@ -4,7 +4,7 @@
 
 import resultFunctions from './result-functions.js'
 
-const updateTransaction = (request) => {}
+const updateTransaction = request => {}
 
 export default async (request, h) => {
   // Determine the current page
