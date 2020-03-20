@@ -25,9 +25,10 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@defra-fish/dynamics-lib": "file:packages/dynamics-lib",
+    "@defra-fish/gafl-webapp-service": "file:packages/gafl-webapp-service",
     "@defra-fish/sales-api-service": "file:packages/sales-api-service",
     "@defra-fish/sqs-receiver-service": "file:packages/sqs-receiver-service",
-    "@defra-fish/gafl-webapp-service": "file:packages/gafl-webapp-service"
+    "@hapi/joi-date": "^2.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
