@@ -1,17 +1,17 @@
 import util from 'util'
 import DynamicsWebApi from 'dynamics-web-api'
 import AdalNode from 'adal-node'
-const authorityUrl = `${process.env.oauth_authority_host_url}${process.env.oauth_tenant}`
+const authorityUrl = `${process.env.OAUTH_AUTHORITY_HOST_URL}${process.env.OAUTH_TENANT}`
 const adalContext = new AdalNode.AuthenticationContext(authorityUrl)
 const acquireTokenWithClientCredentials = util.promisify(adalContext.acquireTokenWithClientCredentials).bind(adalContext)
 
 const dynamicsClient = new DynamicsWebApi({
-  webApiUrl: process.env.dynamics_api_path,
-  webApiVersion: process.env.dynamics_api_version,
+  webApiUrl: process.env.DYNAMICS_API_PATH,
+  webApiVersion: process.env.DYNAMICS_API_VERSION,
   timeout: 60000,
   onTokenRefresh: async dynamicsWebApiCallback =>
     dynamicsWebApiCallback(
-      await acquireTokenWithClientCredentials(process.env.oauth_resource, process.env.oauth_client_id, process.env.oauth_client_secret)
+      await acquireTokenWithClientCredentials(process.env.OAUTH_RESOURCE, process.env.OAUTH_CLIENT_ID, process.env.OAUTH_CLIENT_SECRET)
     )
 })
 

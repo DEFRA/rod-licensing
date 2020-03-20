@@ -24,8 +24,8 @@
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
     "lerna:bootstrap": "lerna bootstrap",
-    "lerna:version": "lerna version prerelease --preid beta",
-    "lerna:publish": "lerna publish from-git --yes --npm-tag beta"
+    "lerna:prerelease": "lerna version prerelease --yes --preid beta",
+    "lerna:publish": "lerna publish from-git --yes --dist-tag beta"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
