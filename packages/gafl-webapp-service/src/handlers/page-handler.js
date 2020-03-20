@@ -14,6 +14,11 @@ export default (path, view, completion) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
+    // Test for cache
+    if (!(await request.cache().get('status'))) {
+      return h.redirect(completion)
+    }
+
     const cache = await request.cache().get(pageCtx)
     return h.view(view, cache[view])
   },
