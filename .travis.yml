@@ -1,12 +1,23 @@
 os: linux
 language: node_js
+
 node_js:
   - '13'
-install:
-  - npm install
+
 script:
   - npm test
   - sonar-scanner
+
+before_deploy:
+  - echo "//npm.pkg.github.com/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+
+deploy:
+  provider: script
+  script: 'npm run lerna:publish'
+  skip_cleanup: true
+  on:
+    branch: master
+    tags: true
 
 addons:
   sonarcloud:

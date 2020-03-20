@@ -2,18 +2,36 @@
   "name": "@defra-fish/gafl-webapp-service",
   "version": "0.0.0",
   "description": "The websales frontend for the GAFL service",
-  "main": "src/gafl-webapp-service.js",
-  "private": true,
-  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "engines": {
     "node": ">=13"
   },
+  "keywords": [
+    "rod",
+    "licencing",
+    "frontend",
+    "webapp"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/gafl-webapp-service.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "directory": "packages/gafl-webapp-service"
+  },
   "scripts": {
+    "start": "node src/gafl-webapp-service.js",
     "test": "echo \"Error: run tests from root\" && exit 1",
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
-  "author": "DEFRA",
   "dependencies": {
     "@hapi/catbox-redis": "^5.0.5",
     "@hapi/hapi": "^19.1.1",

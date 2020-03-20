@@ -5,17 +5,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=12"
-  },
-  "scripts": {
-    "test": "jest",
-    "format": "prettier-standard",
-    "lerna:clean": "lerna clean --yes",
-    "lerna:bootstrap": "lerna bootstrap"
-  },
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@ssh.github.com:443/DEFRA/rod-licencing"
+    "node": ">=13"
   },
   "keywords": [
     "rod",
@@ -24,6 +14,19 @@
   ],
   "author": "DEFRA",
   "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licencing.git"
+  },
+  "scripts": {
+    "postinstall": "npm run lerna:bootstrap",
+    "test": "jest",
+    "format": "prettier-standard",
+    "lerna:clean": "lerna clean --yes",
+    "lerna:bootstrap": "lerna bootstrap",
+    "lerna:version": "lerna version prerelease --preid beta",
+    "lerna:publish": "lerna publish from-git --yes --npm-tag beta"
+  },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.6",

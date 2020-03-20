@@ -2,10 +2,9 @@
   "name": "@defra-fish/sales-api-service",
   "version": "0.0.0",
   "description": "Rod Licencing Sales API",
-  "private": true,
   "type": "module",
   "engines": {
-    "node": ">=12"
+    "node": ">=13"
   },
   "keywords": [
     "rod",
@@ -25,7 +24,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@ssh.github.com:443/DEFRA/rod-licencing"
+    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "directory": "packages/sales-api-service"
   },
   "scripts": {
     "start": "node src/sales-api-service.js",

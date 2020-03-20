@@ -2,11 +2,15 @@
   "name": "@defra-fish/dynamics-lib",
   "version": "0.0.0",
   "description": "Framework to support integration with dynamics",
-  "private": true,
   "type": "module",
   "engines": {
-    "node": ">=12"
+    "node": ">=13"
   },
+  "keywords": [
+    "rod",
+    "licencing",
+    "dynamics"
+  ],
   "author": "DEFRA",
   "license": "SEE LICENSE IN LICENSE",
   "main": "src/index.js",
@@ -19,7 +23,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@ssh.github.com:443/DEFRA/rod-licencing"
+    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "directory": "packages/dynamics-lib"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"

@@ -2,11 +2,15 @@
   "name": "@defra-fish/sqs-receiver-service",
   "version": "0.0.0",
   "description": "SQS Receiver service",
-  "private": true,
   "type": "module",
   "engines": {
     "node": ">=13"
   },
+  "keywords": [
+    "rod",
+    "licencing",
+    "sqs"
+  ],
   "author": "DEFRA",
   "license": "SEE LICENSE IN LICENSE",
   "main": "src/sqs-receiver-service.js",
@@ -19,7 +23,8 @@
   ],
   "repository": {
     "type": "git",
-    "url": "ssh://git@ssh.github.com:443/DEFRA/rod-licencing"
+    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "directory": "packages/sqs-receiver-service"
   },
   "scripts": {
     "start": "pm2 start ecosystem.config.yml",
