@@ -1,7 +1,7 @@
 import transactionHelper from '../../lib/transaction-helper.js'
 import moment from 'moment'
 /**
- * Transfer the validate page object
+ * Transfer the validated page object
  * @param request
  * @returns {Promise<void>}
  */

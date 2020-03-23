@@ -23,7 +23,7 @@ export default async (request, h) => {
 
   // Determine the result of the page
   const defaultResultFunction = () => 'ok'
-  const result = (resultFunctions[currentPage] || defaultResultFunction)(request)
+  const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
   const routeNode = routeDefinition.find(p => p.currentPage === currentPage)
   return h.redirect(routeNode.nextPage[result].page)

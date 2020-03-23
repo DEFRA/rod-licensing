@@ -5,29 +5,43 @@ export default [
     currentPage: 'start',
     nextPage: {
       ok: {
-        page: '/buy/name'
+        page: '/buy/licence-type'
       }
     }
   },
+
   {
-    currentPage: 'name',
+    currentPage: 'licence-type',
+    nextPage: {
+      troutAndCoarse: {
+        page: '/buy/number-of-rods'
+      },
+      salmonAndSeaTrout: {
+        page: '/buy/licence-length'
+      }
+    }
+  },
+
+  {
+    currentPage: 'number-of-rods',
     nextPage: {
       ok: {
-        page: '/buy/date-of-birth'
+        page: '/buy/licence-length'
       }
     }
   },
+
   {
     currentPage: 'date-of-birth',
     nextPage: {
       adult: {
-        page: '/buy/name'
+        page: '/1'
       },
       junior: {
-        page: '/buy/no-licence-required'
+        page: '/2'
       },
       senior: {
-        page: '/buy/name'
+        page: '/3'
       }
     }
   }

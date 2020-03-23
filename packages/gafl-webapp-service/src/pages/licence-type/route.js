@@ -3,7 +3,7 @@ import Joi from '@hapi/joi'
 
 const validator = Joi.object({
   'licence-type': Joi.string()
-    .valid('trout-and-course', 'salmon-and-sea-trout')
+    .valid('trout-and-coarse', 'salmon-and-sea-trout')
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 

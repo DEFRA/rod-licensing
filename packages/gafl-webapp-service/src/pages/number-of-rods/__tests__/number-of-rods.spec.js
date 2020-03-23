@@ -51,6 +51,6 @@ describe('The number of rods page', () => {
       headers: { cookie: 'sid=' + cookie.sid }
     })
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/controller')
+    expect(data.headers.location).toBe('/buy')
   })
 })
