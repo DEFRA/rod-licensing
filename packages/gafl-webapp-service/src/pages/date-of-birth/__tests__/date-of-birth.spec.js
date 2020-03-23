@@ -12,13 +12,18 @@ let cookie
 
 describe('The date of birth page', () => {
   it('Return success on requesting', async () => {
+    cookie = getCookies(
+      await server.inject({
+        method: 'GET',
+        url: '/buy/add'
+      })
+    )
+
     const data = await server.inject({
       method: 'GET',
       url: '/buy/date-of-birth'
     })
     expect(data.statusCode).toBe(200)
-
-    cookie = getCookies(data)
   })
 
   it('Redirects back to itself on posting no response', async () => {
@@ -60,5 +65,31 @@ describe('The date of birth page', () => {
     })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('/buy')
+  })
+
+  it('The main controller returns a redirect to the next page', async () => {
+    const data = await server.inject({
+      method: 'GET',
+      url: '/buy',
+      headers: { cookie: 'sid=' + cookie.sid }
+    })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe('/buy/no-licence-required')
+  })
+
+  it('The transaction contains the date of birth information', async () => {
+    server.route({
+      method: 'GET',
+      path: '/transaction',
+      handler: async request => request.cache().get('transaction')
+    })
+
+    const { payload } = await server.inject({
+      method: 'GET',
+      url: '/transaction',
+      headers: { cookie: 'sid=' + cookie.sid }
+    })
+
+    expect(JSON.parse(payload).permissions[0].dateOfBirth).toBe('1970-02-21T23:00:00.000Z')
   })
 })

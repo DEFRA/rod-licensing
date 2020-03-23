@@ -117,13 +117,13 @@ const init = async () => {
 
   server.route(routes)
 
-  server.ext('onPostStart', async server => {
+  server.ext('onPostStart', async srv => {
     const definedRoutes = [].concat(...routeDefinitions.map(r => Object.values(r.nextPage))).map(p => p.page)
-    const serverRoutes = server.table().map(t => t.path)
+    const serverRoutes = srv.table().map(t => t.path)
     const notFoundRoutes = definedRoutes.filter(r => !serverRoutes.includes(r))
     if (notFoundRoutes.length) {
       console.error(`The following routes are not found. Cannot start  ${notFoundRoutes}`)
-      server.stop()
+      srv.stop()
     }
   })
 
