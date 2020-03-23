@@ -3,6 +3,10 @@
 import db from 'debug'
 const debug = db('add-permission')
 
+// TODO Ensure there is a hard limit here to prevent an attach on the redis cache
+/**
+ * A route to add a permission to the transaction for the multi-buy operation
+ */
 export default {
   method: 'GET',
   path: '/buy/add',

@@ -14,6 +14,7 @@ import path from 'path'
 import fs from 'fs'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
+import routeDefinitions from './handlers/route-definition.js'
 
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
@@ -125,10 +126,21 @@ const init = async () => {
     console.error(err)
   })
 
-  await server.start()
-  console.log('Server running on %s', server.info.uri)
-
   server.route(routes)
+
+  server.ext('onPostStart', async server => {
+    const definedRoutes = [].concat(...routeDefinitions.map(r => Object.values(r.nextPage))).map(p => p.page)
+    const serverRoutes = server.table().map(t => t.path)
+    const notFoundRoutes = definedRoutes.filter(r => !serverRoutes.includes(r))
+    if (notFoundRoutes.length) {
+      console.error(`The following routes are not found. Cannot start  ${notFoundRoutes}`)
+      server.stop()
+    }
+  })
+
+  await server.start()
+
+  console.log('Server running on %s', server.info.uri)
 }
 
 export { createServer, server, init }

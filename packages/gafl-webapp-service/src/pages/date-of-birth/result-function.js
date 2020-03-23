@@ -1,1 +1,1 @@
-export default request => 'junior'
+export default () => 'junior'
