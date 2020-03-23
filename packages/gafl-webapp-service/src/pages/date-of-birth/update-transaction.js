@@ -12,6 +12,6 @@ export default async request => {
     year: payload['date-of-birth-year'],
     month: payload['date-of-birth-month'],
     day: payload['date-of-birth-day']
-  })
+  }).format('YYYY-MM-DD')
   await transactionHelper.setPermission(request, { dateOfBirth })
 }
