@@ -1,7 +1,7 @@
 export default [
   {
-    method: '*',
-    path: '/{p*}',
-    handler: async (request, h) => h.redirect('/controller')
+    method: 'GET',
+    path: '/',
+    handler: async (request, h) => h.redirect('/buy')
   }
 ]

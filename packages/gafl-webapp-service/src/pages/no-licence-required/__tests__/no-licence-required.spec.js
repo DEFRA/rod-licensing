@@ -1,6 +1,6 @@
 'use strict'
 
-import { start, stop, server } from '../../misc/test-utils.js'
+import { start, stop, server } from '../../../misc/test-utils.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -8,13 +8,12 @@ beforeAll(d => start(d))
 // Stop application after running the test case
 afterAll(d => stop(d))
 
-describe('The default route invokes the controller', () => {
+describe('The no licence required page', () => {
   it('Return success on requesting', async () => {
     const data = await server.inject({
       method: 'GET',
-      url: '/'
+      url: '/buy/no-licence-required'
     })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy')
+    expect(data.statusCode).toBe(200)
   })
 })

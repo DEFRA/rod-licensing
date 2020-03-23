@@ -13,6 +13,7 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
+import routeDefinitions from './handlers/route-definition.js'
 
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
@@ -63,6 +64,7 @@ const init = async () => {
       path.join(Dirname, 'node_modules', 'govuk-frontend', 'govuk'),
       path.join(Dirname, 'node_modules', 'govuk-frontend', 'govuk', 'components'),
       path.join(Dirname, 'src/layout'),
+      path.join(Dirname, 'src/pages/macros'),
       ...viewPaths
     ]
   })
@@ -84,6 +86,19 @@ const init = async () => {
 
   server.ext('onPreHandler', sessionManager(sessionCookieName))
 
+  // TODO Display 500 page for any errors thrown in handlers
+  server.ext('onPreResponse', (request, h) => {
+    const response = request.response
+
+    if (!response.isBoom) {
+      return h.continue
+    }
+
+    console.error(response)
+
+    return 'Unexpected error'
+  })
+
   // Point the server plugin cache to an application cache to hold authenticated session data
   server.app.cache = server.cache({
     segment: 'sessions',
@@ -100,10 +115,21 @@ const init = async () => {
     console.error(err)
   })
 
-  await server.start()
-  console.log('Server running on %s', server.info.uri)
-
   server.route(routes)
+
+  server.ext('onPostStart', async srv => {
+    const definedRoutes = [].concat(...routeDefinitions.map(r => Object.values(r.nextPage))).map(p => p.page)
+    const serverRoutes = srv.table().map(t => t.path)
+    const notFoundRoutes = definedRoutes.filter(r => !serverRoutes.includes(r))
+    if (notFoundRoutes.length) {
+      console.error(`The following routes are not found. Cannot start  ${notFoundRoutes}`)
+      srv.stop()
+    }
+  })
+
+  await server.start()
+
+  console.log('Server running on %s', server.info.uri)
 }
 
 export { createServer, server, init }
