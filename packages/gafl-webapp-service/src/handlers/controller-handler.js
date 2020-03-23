@@ -8,11 +8,6 @@ import transactionHelper from '../lib/transaction-helper.js'
 import routeDefinition from './route-definition.js'
 
 export default async (request, h) => {
-  // If there is no transaction then initialize
-  if (!(await request.cache().get('status'))) {
-    await request.cache().initialize()
-  }
-
   // If there is no permissions then initialize
   if (!(await transactionHelper.hasPermission(request))) {
     return h.redirect('/buy/add')
