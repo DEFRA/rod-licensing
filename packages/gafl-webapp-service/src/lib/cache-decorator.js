@@ -2,7 +2,11 @@
 /*
  * Decorators to make access to the session cache available as
  * simple setters and getters hiding the session key.
+ *
+ * The cache is divided into individually addressable contexts
  */
+import db from 'debug'
+const debug = db('cache')
 
 const contexts = {
   page: 'page-context',
@@ -16,6 +20,7 @@ const cacheDecorator = sessionCookieName =>
 
     return {
       initialize: async () => {
+        debug(`Initialize cache: ${id()}`)
         const cache = Object.values(contexts).reduce((a, c) => ({ ...a, [c]: {} }), {})
         await this.server.app.cache.set(id(), cache)
       },

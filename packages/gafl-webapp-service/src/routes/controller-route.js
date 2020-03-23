@@ -4,6 +4,6 @@ import controllerHandler from '../handlers/controller-handler.js'
 
 export default {
   method: 'GET',
-  path: '/controller',
+  path: '/buy',
   handler: controllerHandler
 }

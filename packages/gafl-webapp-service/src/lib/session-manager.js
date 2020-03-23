@@ -12,8 +12,6 @@ import db from 'debug'
 const debug = db('session-manager')
 
 const sessionManager = sessionCookieName => async (request, h) => {
-  // Ignore on anything other than a GET request
-  // Ignore when requesting assets
   if (request.path.startsWith('/buy') && !request.state[sessionCookieName]) {
     const id = uuidv4()
     debug(`New session cookie: ${id}`)

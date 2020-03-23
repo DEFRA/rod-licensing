@@ -3,7 +3,8 @@
 // flatten the errors to a usable form on the template. Expect to be refined
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 
-const cacheContext = 'page'
+const pageCtx = 'page'
+const statusCtx = 'status'
 
 export default (path, view, completion) => ({
   /**
@@ -13,8 +14,7 @@ export default (path, view, completion) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
-    const cache = await request.cache().get(cacheContext)
-    cache.page = cache.page || {}
+    const cache = await request.cache().get(pageCtx)
     return h.view(view, cache[view])
   },
   /**
@@ -24,7 +24,10 @@ export default (path, view, completion) => ({
    * @returns {Promise<*|Response>}
    */
   post: async (request, h) => {
-    await request.cache().set(cacheContext, { [view]: { payload: request.payload } })
+    await request.cache().set(pageCtx, { [view]: { payload: request.payload } })
+    await request.cache().set(statusCtx, { [view]: 'completed' })
+    await request.cache().set(statusCtx, { currentPage: view })
+
     return h.redirect(completion)
   },
   /**
@@ -35,7 +38,9 @@ export default (path, view, completion) => ({
    * @returns {Promise}
    */
   error: async (request, h, err) => {
-    await request.cache().set(cacheContext, { [view]: { payload: request.payload, error: errorShimm(err) } })
+    await request.cache().set(pageCtx, { [view]: { payload: request.payload, error: errorShimm(err) } })
+    await request.cache().set(statusCtx, { [view]: 'error' })
+    await request.cache().set(statusCtx, { currentPage: view })
     return h.redirect(path).takeover()
   }
 })
