@@ -1,13 +1,7 @@
-{% extends "layout.njk" %}
+{% extends "standard-form.njk" %}
 
-{% from "fieldset/macro.njk" import govukFieldset %}
-{% from "button/macro.njk" import govukButton %}
 {% from "date-input/macro.njk" import govukDateInput %}
-{% from "error-summary.njk" import errorSummary %}
-
 {% set title = 'What\'s your date of birth?' %}
-
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {%
     set errorMap = {
@@ -38,40 +32,17 @@
   ]
 %}
 
-{% block content %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{ errorSummary(error, errorMap) }}
+{% block pageContent %}
+    <p class="govuk-caption-m">We use this information to find out if you're eligible for a senior or junior concession</p>
 
-        <form method="post">
+    {{ govukDateInput({
+      id: "date-of-birth",
+      namePrefix: "date-of-birth",
+      items: dateInputItems,
+      errorMessage: { text: 'Enter your date of birth' } if error,
+      hint: {
+        text: "For example, 22 11 1970"
+      }
+    }) }}
 
-            {% call govukFieldset({
-              legend: {
-                text: title,
-                classes: "govuk-fieldset__legend--m",
-                isPageHeading: true
-              }
-            }) %}
-
-                <p class="govuk-caption-m">We use this information to find out if you're eligible for a senior or junior concession</p>
-
-                {{ govukDateInput({
-                  id: "date-of-birth",
-                  namePrefix: "date-of-birth",
-                  items: dateInputItems,
-                  errorMessage: { text: 'Enter your date of birth' } if error,
-                  hint: {
-                    text: "For example, 22 11 1970"
-                  }
-                }) }}
-
-                {{ govukButton({
-                    name: "continue",
-                    text: "Continue"
-                }) }}
-
-            {% endcall %}
-        </form>
-    </div>
-</div>
 {% endblock %}

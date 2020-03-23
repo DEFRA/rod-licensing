@@ -7,4 +7,4 @@ const validator = Joi.object({
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute('number-of-rods', '/buy/number-of-rods', validator, '/controller')
+export default pageRoute('number-of-rods', '/buy/number-of-rods', validator, '/buy')
