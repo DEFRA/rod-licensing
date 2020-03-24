@@ -35,13 +35,13 @@ export default [
     currentPage: 'date-of-birth',
     nextPage: {
       adult: {
-        page: '/1'
+        page: '/buy/no-licence-required'
       },
       junior: {
-        page: '/2'
+        page: '/buy/no-licence-required'
       },
       senior: {
-        page: '/3'
+        page: '/buy/no-licence-required'
       }
     }
   }
