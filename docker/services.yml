@@ -1,0 +1,44 @@
+version: '3.7'
+services:
+  ##############################################################################################################
+  # rod-licencing webapp
+  ##############################################################################################################
+  webapp:
+    image: rod-licencing/webapp:${TAG:-latest}
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  ##############################################################################################################
+  # rod-licencing sales_api
+  ##############################################################################################################
+  sales_api:
+    image: rod-licencing/sales_api:${TAG:-latest}
+    ports:
+      - 4000:4000
+    env_file:
+      - .env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  ##############################################################################################################
+  # rod-licencing sqs_receiver
+  ##############################################################################################################
+  sqs_receiver:
+    image: rod-licencing/sqs_receiver:${TAG:-latest}
+    env_file:
+      - .env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure

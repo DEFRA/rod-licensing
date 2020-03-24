@@ -1,0 +1,7 @@
+apps:
+  - script: ./src/sales-api-service.js
+    exec_mode: cluster
+    instances: 1
+    autorestart: true
+    max_restarts: 5
+    restart_delay: 1000

@@ -1,13 +1,12 @@
 'use strict'
-
-import AWS from 'aws-sdk'
 import db from 'debug'
+import AWS from './aws.js'
+const { sqs } = AWS()
 
 /**
  * This removes any messages from the queue that have been processed without error
  */
 const debug = db('delete-messages')
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 
 const deleteMessages = async (url, messageSubscriberResults) => {
   try {

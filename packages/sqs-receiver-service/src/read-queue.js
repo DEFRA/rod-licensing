@@ -3,10 +3,9 @@
 /**
  * Reads the queue with the long poll and returns the { err, messages }
  */
-import AWS from 'aws-sdk'
 import db from 'debug'
-
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
+import AWS from './aws.js'
+const { sqs } = AWS()
 
 const debug = db('read-queue')
 const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
