@@ -2,11 +2,11 @@
 
 import handler from '../handlers/page-handler.js'
 
-export default (view, path, validator, completion) => [
+export default (view, path, validator, completion, getData) => [
   {
     method: 'GET',
     path: path,
-    handler: handler(path, view, completion).get
+    handler: handler(path, view, completion, getData).get
   },
   {
     method: 'POST',

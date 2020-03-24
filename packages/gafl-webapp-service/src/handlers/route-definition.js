@@ -41,9 +41,24 @@ export default [
   },
 
   {
-    currentPage: '/buy/start-kind',
+    currentPage: 'licence-to-start',
     nextPage: {
-      ok: {
+      afterPayment: {
+        page: '/buy/no-licence-required'
+      },
+      anotherDateOrTime: {
+        page: '/buy/start-date'
+      }
+    }
+  },
+
+  {
+    currentPage: 'licence-start-date',
+    nextPage: {
+      andStartTime: {
+        page: '/buy/no-licence-required'
+      },
+      andContinue: {
         page: '/buy/no-licence-required'
       }
     }

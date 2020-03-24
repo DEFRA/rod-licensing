@@ -10,7 +10,7 @@ export default async request => {
   const { payload } = cache['date-of-birth']
   const dateOfBirth = moment({
     year: payload['date-of-birth-year'],
-    month: payload['date-of-birth-month'],
+    month: Number.parseInt(payload['date-of-birth-month']) - 1,
     day: payload['date-of-birth-day']
   }).format('YYYY-MM-DD')
   await transactionHelper.setPermission(request, { dateOfBirth })

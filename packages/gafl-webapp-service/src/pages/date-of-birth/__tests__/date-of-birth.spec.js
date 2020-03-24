@@ -90,6 +90,6 @@ describe('The date of birth page', () => {
       headers: { cookie: 'sid=' + cookie.sid }
     })
 
-    expect(JSON.parse(payload).permissions[0].dateOfBirth).toBe('1970-02-22')
+    expect(JSON.parse(payload).permissions[0].dateOfBirth).toBe('1970-01-22')
   })
 })

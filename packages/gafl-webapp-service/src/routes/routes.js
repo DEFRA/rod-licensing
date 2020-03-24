@@ -4,6 +4,7 @@ import licenceLength from '../pages/licence-length/route.js'
 import licenceType from '../pages/licence-type/route.js'
 import numberOfRods from '../pages/number-of-rods/route.js'
 import licenceToStart from '../pages/licence-to-start/route.js'
+import licenceStartDate from '../pages/licence-start-date/route.js'
 
 import summary from '../pages/summary/route.js'
 
@@ -27,6 +28,7 @@ const routes = [
   ...licenceType,
   ...numberOfRods,
   ...licenceToStart,
+  ...licenceStartDate,
   ...name,
   ...summary,
   ...dateOfBirth,
