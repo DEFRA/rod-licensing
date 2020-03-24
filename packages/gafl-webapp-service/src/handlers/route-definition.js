@@ -5,6 +5,15 @@ export default [
     currentPage: 'start',
     nextPage: {
       ok: {
+        page: '/buy/licence-length'
+      }
+    }
+  },
+
+  {
+    currentPage: 'licence-length',
+    nextPage: {
+      ok: {
         page: '/buy/licence-type'
       }
     }
@@ -17,7 +26,7 @@ export default [
         page: '/buy/number-of-rods'
       },
       salmonAndSeaTrout: {
-        page: '/buy/licence-length'
+        page: '/buy/start-kind'
       }
     }
   },
@@ -26,13 +35,13 @@ export default [
     currentPage: 'number-of-rods',
     nextPage: {
       ok: {
-        page: '/buy/licence-length'
+        page: '/buy/start-kind'
       }
     }
   },
 
   {
-    currentPage: '/buy/licence-length',
+    currentPage: '/buy/start-kind',
     nextPage: {
       ok: {
         page: '/buy/no-licence-required'

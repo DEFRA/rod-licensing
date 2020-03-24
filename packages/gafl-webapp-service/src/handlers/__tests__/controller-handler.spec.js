@@ -54,6 +54,6 @@ describe('The controller handler', () => {
     })
 
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/licence-type')
+    expect(data.headers.location).toBe('/buy/licence-length')
   })
 })

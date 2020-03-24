@@ -11,10 +11,10 @@ export default {
   method: 'GET',
   path: '/buy/add',
   handler: async (request, h) => {
-    debug('Add permission')
     const transaction = await request.cache().get('transaction')
     transaction.permissions = transaction.permissions || []
     transaction.permissions.push({})
+    debug(`Add permission: ${transaction.permissions.length}`)
     await request.cache().set('transaction', transaction)
     return h.redirect('/buy')
   }
