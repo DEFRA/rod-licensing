@@ -14,7 +14,7 @@ describe('The when would you like you licence to start page', () => {
   it('Return success on requesting', async () => {
     const data = await server.inject({
       method: 'GET',
-      url: '/buy/licence-to-start'
+      url: '/buy/start-kind'
     })
     expect(data.statusCode).toBe(200)
 
@@ -24,29 +24,29 @@ describe('The when would you like you licence to start page', () => {
   it('Redirects back to itself on posting no response', async () => {
     const data = await server.inject({
       method: 'POST',
-      url: '/buy/licence-to-start',
+      url: '/buy/start-kind',
       payload: {},
       headers: { cookie: 'sid=' + cookie.sid }
     })
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/licence-to-start')
+    expect(data.headers.location).toBe('/buy/start-kind')
   })
 
   it('Redirects back to itself on posting an invalid response', async () => {
     const data = await server.inject({
       method: 'POST',
-      url: '/buy/licence-to-start',
+      url: '/buy/start-kind',
       payload: { 'licence-to-start': 'foo' },
       headers: { cookie: 'sid=' + cookie.sid }
     })
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/licence-to-start')
+    expect(data.headers.location).toBe('/buy/start-kind')
   })
 
   it('Redirects back to the main controller on posting an valid after payment response', async () => {
     const data = await server.inject({
       method: 'POST',
-      url: '/buy/licence-to-start',
+      url: '/buy/start-kind',
       payload: { 'licence-to-start': 'after-payment' },
       headers: { cookie: 'sid=' + cookie.sid }
     })
@@ -57,7 +57,7 @@ describe('The when would you like you licence to start page', () => {
   it('Redirects back to the main controller on posting an valid another data or time', async () => {
     const data = await server.inject({
       method: 'POST',
-      url: '/buy/licence-to-start',
+      url: '/buy/start-kind',
       payload: { 'licence-to-start': 'another-date-or-time' },
       headers: { cookie: 'sid=' + cookie.sid }
     })
