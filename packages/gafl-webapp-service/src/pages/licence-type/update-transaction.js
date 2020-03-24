@@ -8,5 +8,14 @@ import transactionHelper from '../../lib/transaction-helper.js'
 export default async request => {
   const cache = await request.cache().get('page')
   const { payload } = cache['licence-type']
-  await transactionHelper.setPermission(request, { licenceType: payload['licence-type'] })
+
+  const permission = {
+    licenceType: payload['licence-type']
+  }
+
+  if (permission.licenceType === 'salmon-and-sea-trout') {
+    permission.numberOfRods = '3'
+  }
+
+  await transactionHelper.setPermission(request, permission)
 }

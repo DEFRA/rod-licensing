@@ -32,6 +32,15 @@ export default [
   },
 
   {
+    currentPage: '/buy/licence-length',
+    nextPage: {
+      ok: {
+        page: '/buy/no-licence-required'
+      }
+    }
+  },
+
+  {
     currentPage: 'date-of-birth',
     nextPage: {
       adult: {
