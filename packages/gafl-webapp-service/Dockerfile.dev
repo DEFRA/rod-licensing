@@ -1,0 +1,8 @@
+####################################################################################################################################
+# Used for local development debugging
+####################################################################################################################################
+FROM rod-licencing/base
+WORKDIR /app/packages/gafl-webapp-service
+ARG PORT=3000
+EXPOSE ${PORT}
+ENTRYPOINT [ "pm2-dev", "ecosystem.config.yml" ]

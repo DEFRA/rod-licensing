@@ -1,7 +1,7 @@
-import AWS from 'aws-sdk'
 import db from 'debug'
+import AWS from './aws.js'
+const { sqs } = AWS()
 
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 /**
  * Returns a string containing current message statistics
  * @param url

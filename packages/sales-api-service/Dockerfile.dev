@@ -1,0 +1,8 @@
+####################################################################################################################################
+# Used for local development debugging
+####################################################################################################################################
+FROM rod-licencing/base
+WORKDIR /app/packages/sales-api-service
+ARG PORT=4000
+EXPOSE ${PORT}
+ENTRYPOINT [ "pm2-dev", "ecosystem.config.yml" ]

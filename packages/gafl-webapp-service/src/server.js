@@ -24,11 +24,17 @@ const createServer = options => {
   server = Hapi.server(
     Object.assign(
       {
-        host: 'localhost',
+        host: '0.0.0.0',
         cache: [
           {
             provider: {
-              constructor: CatboxRedis
+              constructor: CatboxRedis,
+              options: {
+                partition: 'web-app',
+                host: process.env.REDIS_HOST,
+                port: process.env.REDIS_PORT || 6379,
+                db: 0
+              }
             }
           }
         ]
