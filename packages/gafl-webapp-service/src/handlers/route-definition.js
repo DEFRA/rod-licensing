@@ -53,7 +53,7 @@ export default [
     currentPage: 'licence-to-start',
     nextPage: {
       afterPayment: {
-        page: NO_LICENCE_REQUIRED
+        page: DATE_OF_BIRTH
       },
       anotherDateOrTime: {
         page: LICENCE_START_DATE
@@ -92,6 +92,9 @@ export default [
         page: NO_LICENCE_REQUIRED
       },
       senior: {
+        page: NO_LICENCE_REQUIRED
+      },
+      noLicenceRequired: {
         page: NO_LICENCE_REQUIRED
       }
     }
