@@ -1,11 +1,20 @@
 'use strict'
 
+const LICENCE_LENGTH = '/buy/licence-length'
+const LICENCE_TYPE = '/buy/licence-type'
+const NUMBER_OF_RODS = '/buy/number-of-rods'
+const LICENCE_TO_START = '/buy/start-kind'
+const LICENCE_START_DATE = '/buy/start-date'
+const LICENCE_START_TIME = '/buy/start-time'
+const DATE_OF_BIRTH = '/buy/date-of-birth'
+const NO_LICENCE_REQUIRED = '/buy/no-licence-required'
+
 export default [
   {
     currentPage: 'start',
     nextPage: {
       ok: {
-        page: '/buy/licence-length'
+        page: LICENCE_LENGTH
       }
     }
   },
@@ -14,7 +23,7 @@ export default [
     currentPage: 'licence-length',
     nextPage: {
       ok: {
-        page: '/buy/licence-type'
+        page: LICENCE_TYPE
       }
     }
   },
@@ -23,10 +32,10 @@ export default [
     currentPage: 'licence-type',
     nextPage: {
       troutAndCoarse: {
-        page: '/buy/number-of-rods'
+        page: NUMBER_OF_RODS
       },
       salmonAndSeaTrout: {
-        page: '/buy/start-kind'
+        page: LICENCE_TO_START
       }
     }
   },
@@ -35,7 +44,7 @@ export default [
     currentPage: 'number-of-rods',
     nextPage: {
       ok: {
-        page: '/buy/start-kind'
+        page: LICENCE_TO_START
       }
     }
   },
@@ -44,10 +53,10 @@ export default [
     currentPage: 'licence-to-start',
     nextPage: {
       afterPayment: {
-        page: '/buy/no-licence-required'
+        page: NO_LICENCE_REQUIRED
       },
       anotherDateOrTime: {
-        page: '/buy/start-date'
+        page: LICENCE_START_DATE
       }
     }
   },
@@ -56,10 +65,10 @@ export default [
     currentPage: 'licence-start-date',
     nextPage: {
       andStartTime: {
-        page: '/buy/start-time'
+        page: LICENCE_START_TIME
       },
       andContinue: {
-        page: '/buy/date-of-birth'
+        page: DATE_OF_BIRTH
       }
     }
   },
@@ -68,7 +77,7 @@ export default [
     currentPage: 'licence-start-time',
     nextPage: {
       ok: {
-        page: '/buy/date-of-birth'
+        page: DATE_OF_BIRTH
       }
     }
   },
@@ -77,13 +86,13 @@ export default [
     currentPage: 'date-of-birth',
     nextPage: {
       adult: {
-        page: '/buy/no-licence-required'
+        page: NO_LICENCE_REQUIRED
       },
       junior: {
-        page: '/buy/no-licence-required'
+        page: NO_LICENCE_REQUIRED
       },
       senior: {
-        page: '/buy/no-licence-required'
+        page: NO_LICENCE_REQUIRED
       }
     }
   }

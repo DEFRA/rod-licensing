@@ -62,9 +62,33 @@ describe('The licence start date page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('/buy')
 
-    await injectWithCookie('GET', '/buy')
+    const controllerResult = await injectWithCookie('GET', '/buy')
+    expect(controllerResult.statusCode).toBe(302)
+    expect(controllerResult.headers.location).toBe('/buy/start-time')
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licenceStartDate).toBe(fdate.format('YYYY-MM-DD'))
+  })
+
+  it('on successful submission of a valid date and continues to date-of-birth where a 12 month licence is selected', async () => {
+    await injectWithCookie('POST', '/buy/licence-length', { 'licence-length': '12M' })
+    await injectWithCookie('GET', '/buy')
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licenceLength).toBe('12M')
+
+    const fdate = moment().add(5, 'days')
+    const body = {
+      'licence-start-date-year': fdate.year().toString(),
+      'licence-start-date-month': (fdate.month() + 1).toString(),
+      'licence-start-date-day': fdate.date().toString()
+    }
+
+    const data = await injectWithCookie('POST', '/buy/start-date', body)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe('/buy')
+
+    const controllerResult = await injectWithCookie('GET', '/buy')
+    expect(controllerResult.statusCode).toBe(302)
+    expect(controllerResult.headers.location).toBe('/buy/date-of-birth')
   })
 })
