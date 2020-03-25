@@ -1,0 +1,68 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = 'When would you like your licence to start on ' + data.startDateStr + '?' %}
+
+{%
+    set errorMap = {
+        'licence-start-time': {
+            'any.required': { ref: '#licence-start-time-am', text: 'Enter the time you want the licence to start on ' + data.startDateStr }
+        }
+    }
+%}
+
+
+{% set am = [
+    { text: "Midnight",value: "0", checked: payload['licence-start-time'] === '0' },
+    { text: "1am", value: "1", checked: payload['licence-start-time'] === '1' },
+    { text: "2am", value: "2", checked: payload['licence-start-time'] === '2' },
+    { text: "3am", value: "3", checked: payload['licence-start-time'] === '3' },
+    { text: "4am", value: "4", checked: payload['licence-start-time'] === '4' },
+    { text: "5am", value: "5", checked: payload['licence-start-time'] === '5' },
+    { text: "6am", value: "6", checked: payload['licence-start-time'] === '6' },
+    { text: "7am", value: "7", checked: payload['licence-start-time'] === '7' },
+    { text: "8am", value: "8", checked: payload['licence-start-time'] === '8' },
+    { text: "9am", value: "9", checked: payload['licence-start-time'] === '9' },
+    { text: "10am", value: "10", checked: payload['licence-start-time'] === '10' },
+    { text: "11am", value: "11", checked: payload['licence-start-time'] === '11' }
+] %}
+
+{% set pm = [
+    { text: "Midday", value: "12", checked: payload['licence-start-time'] === '12' },
+    { text: "1pm", value: "13", checked: payload['licence-start-time'] === '13' },
+    { text: "2pm", value: "14", checked: payload['licence-start-time'] === '14' },
+    { text: "3pm", value: "15", checked: payload['licence-start-time'] === '15' },
+    { text: "4pm", value: "16", checked: payload['licence-start-time'] === '16' },
+    { text: "5pm", value: "17", checked: payload['licence-start-time'] === '17' },
+    { text: "6pm", value: "18", checked: payload['licence-start-time'] === '18' },
+    { text: "7pm", value: "19", checked: payload['licence-start-time'] === '19' },
+    { text: "8pm", value: "20", checked: payload['licence-start-time'] === '20' },
+    { text: "9pm", value: "21", checked: payload['licence-start-time'] === '21' },
+    { text: "10pm", value: "22", checked: payload['licence-start-time'] === '22' },
+    { text: "11pm", value: "23", checked: payload['licence-start-time'] === '23' }
+] %}
+
+{% block pageContent %}
+{{error|dump}}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+            {{ govukRadios({
+                   idPrefix: "licence-start-time-am",
+                   name: "licence-start-time",
+                   items: am,
+                   errorMessage: { text: 'Select a start time' } if error
+               })
+             }}
+        </div>
+
+        <div class="govuk-grid-column-one-half">
+             {{ govukRadios({
+                    idPrefix: "licence-start-time-pm",
+                    name: "licence-start-time",
+                    items: pm
+                })
+              }}
+          </div>
+    </div>
+{% endblock %}

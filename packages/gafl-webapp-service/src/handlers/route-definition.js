@@ -56,10 +56,19 @@ export default [
     currentPage: 'licence-start-date',
     nextPage: {
       andStartTime: {
-        page: '/buy/no-licence-required'
+        page: '/buy/start-time'
       },
       andContinue: {
-        page: '/buy/no-licence-required'
+        page: '/buy/date-of-birth'
+      }
+    }
+  },
+
+  {
+    currentPage: 'licence-start-time',
+    nextPage: {
+      ok: {
+        page: '/buy/date-of-birth'
       }
     }
   },
