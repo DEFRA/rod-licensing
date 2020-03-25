@@ -1,56 +1,47 @@
 'use strict'
 
-import { start, stop, server, getCookies } from '../../../misc/test-utils.js'
+import each from 'jest-each'
+import { start, stop, initialize, injectWithCookie } from '../../../misc/test-utils.js'
 
-// Start application before running the test case
 beforeAll(d => start(d))
-
-// Stop application after running the test case
+beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-let cookie
-
 describe('The licence length page', () => {
-  it('Return success on requesting', async () => {
-    const data = await server.inject({
-      method: 'GET',
-      url: '/buy/licence-length'
-    })
+  it('returns success on requesting', async () => {
+    const data = await injectWithCookie('GET', '/buy/licence-length')
     expect(data.statusCode).toBe(200)
-
-    cookie = getCookies(data)
   })
 
-  it('Redirects back to itself on posting no response', async () => {
-    const data = await server.inject({
-      method: 'POST',
-      url: '/buy/licence-length',
-      payload: {},
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
+  it('redirects back to itself on posting no response', async () => {
+    const data = await injectWithCookie('POST', '/buy/licence-length', {})
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('/buy/licence-length')
   })
 
-  it('Redirects back to itself on posting an invalid response', async () => {
-    const data = await server.inject({
-      method: 'POST',
-      url: '/buy/licence-length',
-      payload: { 'licence-length': '8M' },
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
+  it('redirects back to itself on posting an invalid response', async () => {
+    const data = await injectWithCookie('POST', '/buy/licence-length', { 'licence-length': '8M' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('/buy/licence-length')
   })
 
-  it('Redirects back to the main controller on posting an valid response', async () => {
-    const data = await server.inject({
-      method: 'POST',
-      url: '/buy/licence-length',
-      payload: { 'licence-length': '12M' },
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
+  each([
+    ['12 Months', '12M'],
+    ['8 day', '8D'],
+    ['1 day', '1D']
+  ]).it('stores the transaction on a successful submission of %s', async (desc, lenCode) => {
+    await injectWithCookie('GET', '/buy/licence-length')
+    const data = await injectWithCookie('POST', '/buy/licence-length', { 'licence-length': lenCode })
+
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('/buy')
+
+    // Hit the controller
+    await injectWithCookie('GET', '/buy')
+
+    // Get the transaction
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+
+    expect(JSON.parse(payload).permissions[0].licenceLength).toBe(lenCode)
   })
 })
