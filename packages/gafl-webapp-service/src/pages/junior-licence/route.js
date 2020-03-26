@@ -1,5 +1,3 @@
-'use strict'
-
 import pageRoute from '../../routes/page-route.js'
 import { JUNIOR_LICENCE, CONTROLLER } from '../../constants.js'
 

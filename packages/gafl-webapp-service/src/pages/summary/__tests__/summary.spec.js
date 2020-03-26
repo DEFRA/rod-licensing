@@ -1,5 +1,3 @@
-'use strict'
-
 import { start, stop, server, getCookies } from '../../../misc/test-utils.js'
 import { CONTROLLER, SUMMARY } from '../../../constants'
 // Start application before running the test case

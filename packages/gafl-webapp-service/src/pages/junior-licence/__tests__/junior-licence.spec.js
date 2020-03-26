@@ -1,5 +1,3 @@
-'use strict'
-
 import { JUNIOR_LICENCE, CONTROLLER, NAME } from '../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../misc/test-utils.js'
 

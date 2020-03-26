@@ -1,5 +1,3 @@
-'use strict'
-
 // flatten the errors to a usable form on the template. Expect to be refined
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 

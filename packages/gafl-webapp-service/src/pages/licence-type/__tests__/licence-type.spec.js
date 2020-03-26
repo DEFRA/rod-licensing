@@ -1,4 +1,3 @@
-'use strict'
 import { LICENCE_TYPE, CONTROLLER } from '../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../misc/test-utils.js'
 import each from 'jest-each'

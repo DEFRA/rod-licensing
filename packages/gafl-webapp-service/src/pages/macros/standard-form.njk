@@ -15,7 +15,7 @@
             {% call govukFieldset({
               legend: {
                 text: title,
-                classes: "govuk-fieldset__legend--m",
+                classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-5",
                 isPageHeading: true
               }
             }) %}
@@ -24,7 +24,8 @@
 
                 {{ govukButton({
                     name: "continue",
-                    text: "Continue"
+                    text: "Continue",
+                    classes: "govuk-!-margin-top-5"
                 }) }}
 
             {% endcall %}

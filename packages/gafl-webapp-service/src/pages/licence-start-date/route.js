@@ -1,4 +1,3 @@
-'use strict'
 import { LICENCE_START_DATE, CONTROLLER } from '../../constants.js'
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'

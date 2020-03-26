@@ -1,5 +1,3 @@
-'use strict'
-
 import licenceLength from '../pages/licence-length/route.js'
 import licenceType from '../pages/licence-type/route.js'
 import numberOfRods from '../pages/number-of-rods/route.js'

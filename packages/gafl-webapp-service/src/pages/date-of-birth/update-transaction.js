@@ -1,5 +1,7 @@
 import transactionHelper from '../../lib/transaction-helper.js'
 import moment from 'moment'
+import { DATE_OF_BIRTH } from '../../constants.js'
+
 /**
  * Transfer the validated page object
  * @param request
@@ -7,7 +9,7 @@ import moment from 'moment'
  */
 export default async request => {
   const cache = await request.cache().get('page')
-  const { payload } = cache['date-of-birth']
+  const { payload } = cache[DATE_OF_BIRTH.page]
   const dateOfBirth = moment({
     year: payload['date-of-birth-year'],
     month: Number.parseInt(payload['date-of-birth-month']) - 1,

@@ -1,4 +1,3 @@
-'use strict'
 import { CONTROLLER, ADD_PERMISSION } from '../constants.js'
 import db from 'debug'
 const debug = db('add-permission')

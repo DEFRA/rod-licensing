@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Handlers to server static assets
  */

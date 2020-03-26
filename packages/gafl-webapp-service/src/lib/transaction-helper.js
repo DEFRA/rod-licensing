@@ -1,5 +1,3 @@
-'use strict'
-
 export default {
   hasPermission: async request => {
     const transaction = await request.cache().get('transaction')

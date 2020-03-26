@@ -1,5 +1,3 @@
-'use strict'
-
 import { start, stop, server } from '../../../misc/test-utils.js'
 import { NO_LICENCE_REQUIRED } from '../../../constants.js'
 

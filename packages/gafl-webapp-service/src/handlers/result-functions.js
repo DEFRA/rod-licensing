@@ -1,5 +1,3 @@
-'use strict'
-
 import dateOfBirth from '../pages/date-of-birth/result-function.js'
 import licenceType from '../pages/licence-type/result-function.js'
 import licenceToStart from '../pages/licence-to-start/result-function.js'

@@ -1,59 +1,55 @@
-{% extends "layout.njk" %}
-
+{% extends "standard-form.njk" %}
 {% from "input/macro.njk" import govukInput %}
-{% from "button/macro.njk" import govukButton %}
-{% from "error-summary.njk" import errorSummary %}
 
-{% block pageTitle %}Name - GOV.UK{% endblock %}
+{% set title = 'What\'s your name?' %}
 
-{%
-    set errorMap = {
-        name: {
-            'string.empty': { ref: '#name', text: 'You did not add a name' },
-            'string.min': { ref: '#name', text: 'The name was to short' }
+{% set errorMap = {
+        'first-name': {
+            'string.empty': { ref: '#first-name', text: 'You did not enter your first name' },
+            'string.min': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
+            'string.max': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
+            'string.forbidden': { ref: '#first-name', text: 'Your first name must only contain letters' }
         },
-        email: {
-            'string.empty': { ref: '#email', text: 'You did not add an email' },
-            'string.email': { ref: '#email', text: 'Not a good email' }
+        'last-name': {
+            'string.empty': { ref: '#last-name', text: 'You did not enter your last name' },
+            'string.min': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
+            'string.max': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
+            'string.forbidden': { ref: '#last-name', text: 'Your last name must only contain letters' }
         }
     }
 %}
 
-{% block content %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+{% block pageContent %}
+    {{ govukInput({
+      label: {
+        text: "First name"
+      },
+      id: "first-name",
+      name: "first-name",
+      hint: { text: "Don't use abbreviations or nicknames" },
+      value: payload['first-name'],
+      classes: "govuk-input--width-20",
+      autocomplete: 'given-name',
+      attributes: { maxlength: 100 },
+      errorMessage: { text: 'Enter you first name' } if error['first-name']
+    }) }}
 
-        {{ errorSummary(error, errorMap) }}
+    {{ govukInput({
+      label: {
+        text: "Last name"
+      },
+      id: "last-name",
+      name: "last-name",
+      value: payload['last-name'],
+      autocomplete: 'family-name',
+      classes: "govuk-input--width-20",
+      attributes: { maxlength: 100 },
+      errorMessage: { text: 'Enter you last name' } if error['last-name']
+    }) }}
 
-        <form method="post">
+    <p class="govuk-body-m">When you buy a fishing licence, you will need to give us some personal data such as your name, address and date of birth.</p>
+    <span class="govuk-body-m">Read about <a href="#">how we use your personal information</a>.</span>
 
-            {{ govukInput({
-              label: {
-                text: "Name"
-              },
-              id: "name",
-              name: "name",
-              value: payload.name,
-              errorMessage: error.name
-            }) }}
-
-            {{ govukInput({
-              label: {
-                text: "Email"
-              },
-              id: "email",
-              name: "email",
-              value: payload.email,
-              errorMessage: error.email
-            }) }}
-
-            {{ govukButton({
-                text: "Continue"
-            }) }}
-
-        </form>
-    </div>
-</div>
 {% endblock %}
 
 

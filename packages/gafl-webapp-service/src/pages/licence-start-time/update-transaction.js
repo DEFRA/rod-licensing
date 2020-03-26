@@ -1,4 +1,5 @@
 import transactionHelper from '../../lib/transaction-helper.js'
+import { LICENCE_START_TIME } from '../../constants.js'
 
 /**
  * Transfer the validate page object
@@ -7,6 +8,6 @@ import transactionHelper from '../../lib/transaction-helper.js'
  */
 export default async request => {
   const cache = await request.cache().get('page')
-  const { payload } = cache['licence-start-time']
+  const { payload } = cache[LICENCE_START_TIME.page]
   await transactionHelper.setPermission(request, { licenceStartTime: payload['licence-start-time'] })
 }

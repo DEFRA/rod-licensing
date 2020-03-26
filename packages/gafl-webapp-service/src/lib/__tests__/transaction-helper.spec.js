@@ -1,5 +1,3 @@
-'use strict'
-
 import { start, stop, server, getCookies } from '../../misc/test-utils.js'
 import helper from '../transaction-helper.js'
 import { NEW_TRANSACTION, ADD_PERMISSION } from '../../constants.js'

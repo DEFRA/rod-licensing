@@ -1,5 +1,3 @@
-'use strict'
-
 import { DATE_OF_BIRTH, CONTROLLER } from '../../constants.js'
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'

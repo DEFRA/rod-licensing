@@ -1,5 +1,3 @@
-'use strict'
-
 import {
   LICENCE_LENGTH,
   NUMBER_OF_RODS,
@@ -106,6 +104,15 @@ export default [
 
   {
     currentPage: JUNIOR_LICENCE.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
+      }
+    }
+  },
+
+  {
+    currentPage: NAME.page,
     nextPage: {
       ok: {
         page: NAME.uri

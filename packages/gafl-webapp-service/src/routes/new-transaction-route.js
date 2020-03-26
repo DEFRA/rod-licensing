@@ -1,5 +1,3 @@
-'use strict'
-
 import { CONTROLLER, NEW_TRANSACTION } from '../constants.js'
 
 export default {

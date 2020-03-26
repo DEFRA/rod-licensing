@@ -1,5 +1,3 @@
-'use strict'
-
 import handler from '../handlers/page-handler.js'
 
 export default (view, path, validator, completion, getData) => [

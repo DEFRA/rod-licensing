@@ -1,5 +1,3 @@
-'use strict'
-
 import moment from 'moment'
 import { start, stop, initialize, injectWithCookie } from '../../../misc/test-utils.js'
 import {
