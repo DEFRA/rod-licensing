@@ -1,7 +1,14 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+
+/**
+ * PermitConcession entity
+ * @extends BaseEntity
+ */
 export class PermitConcession extends BaseEntity {
+  /** @type {EntityDefinition} */
   static #definition = new EntityDefinition({
-    collection: 'defra_defra_concession_defra_permitset',
+    localCollection: 'permitConcessions',
+    dynamicsCollection: 'defra_defra_concession_defra_permitset',
     defaultFilter: undefined,
     mappings: {
       id: { field: 'defra_defra_concession_defra_permitid', type: 'string' },
@@ -10,17 +17,28 @@ export class PermitConcession extends BaseEntity {
     }
   })
 
-  /** Define mappings between Dynamics entity field and local entity field */
+  /**
+   * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
+   * @type {EntityDefinition}
+   */
   static get definition () {
     return PermitConcession.#definition
   }
 
-  /** get the concessionId of the entity */
+  /**
+   * The ID of the {@link Concession} associated with this mapping
+   * @type {string}
+   * @readonly
+   */
   get concessionId () {
     return super._getState('concessionId')
   }
 
-  /** get the permitId of the entity */
+  /**
+   * The ID of the {@link Permit} associated with this mapping
+   * @type {string}
+   * @readonly
+   */
   get permitId () {
     return super._getState('permitId')
   }

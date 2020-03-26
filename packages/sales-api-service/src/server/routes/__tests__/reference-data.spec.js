@@ -54,13 +54,13 @@ describe('reference-data endpoint', () => {
       }
     })
     expect(JSON.parse(result.payload)).toMatchObject({
-      Permit: expect.arrayContaining([expect.objectContaining({})]),
-      Concession: expect.arrayContaining([expect.objectContaining({})])
+      permits: expect.arrayContaining([expect.objectContaining({})]),
+      concessions: expect.arrayContaining([expect.objectContaining({})])
     })
   })
 
   it('returns a list of reference data for a given collection name', async () => {
-    const result = await server.inject({ method: 'GET', url: '/reference-data/Permit' })
+    const result = await server.inject({ method: 'GET', url: '/reference-data/permits' })
     expect(result).toMatchObject({
       statusCode: 200,
       headers: {
@@ -90,7 +90,7 @@ describe('reference-data endpoint', () => {
   })
 
   it('returns a 400 error if a unknown key is used', async () => {
-    const result = await server.inject({ method: 'GET', url: '/reference-data/Unknown' })
+    const result = await server.inject({ method: 'GET', url: '/reference-data/unknown' })
     expect(result).toMatchObject({
       statusCode: 400,
       headers: {

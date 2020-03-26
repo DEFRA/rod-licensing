@@ -8,4 +8,21 @@ const cache = cacheManager.caching({
 
 process.env.REDIS_HOST && cache.store.getClient().on('error', console.error)
 
+export class CacheableOperation {
+  constructor (cacheKey, fetchOp, resultProcessor) {
+    this._cacheKey = cacheKey
+    this._fetchOp = fetchOp
+    this._resultProcessor = resultProcessor
+  }
+
+  async execute () {
+    return this._resultProcessor(await this._fetchOp())
+  }
+
+  async cached () {
+    const data = await cache.wrap(this._cacheKey, this._fetchOp)
+    return this._resultProcessor(data)
+  }
+}
+
 export default cache

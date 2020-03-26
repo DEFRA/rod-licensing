@@ -1,8 +1,14 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
 
+/**
+ * Permit entity
+ * @extends BaseEntity
+ */
 export class Permit extends BaseEntity {
+  /** @type {EntityDefinition} */
   static #definition = new EntityDefinition({
-    collection: 'defra_permits',
+    localCollection: 'permits',
+    dynamicsCollection: 'defra_permits',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_permitid', type: 'string' },
@@ -24,82 +30,145 @@ export class Permit extends BaseEntity {
     }
   })
 
-  /** Define mappings between Dynamics entity field and local entity field */
+  /**
+   * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
+   * @type {EntityDefinition}
+   */
   static get definition () {
     return Permit.#definition
   }
 
-  /** get the description of the entity */
+  /**
+   * The description of the permit
+   * @type {string}
+   * @readonly
+   */
   get description () {
     return super._getState('description')
   }
 
-  /** get the permitId of the entity */
+  /**
+   * The id of the permit
+   * @type {string}
+   * @readonly
+   */
   get permitId () {
     return super._getState('permitId')
   }
 
-  /** get the permitType of the entity */
+  /**
+   * The type of the permit
+   * @type {GlobalOptionSetDefinition}
+   * @readonly
+   */
   get permitType () {
     return super._getState('permitType')
   }
 
-  /** get the permitSubtype of the entity */
+  /**
+   * The subtype of the permit
+   * @type {GlobalOptionSetDefinition}
+   * @readonly
+   */
   get permitSubtype () {
     return super._getState('permitSubtype')
   }
 
-  /** get the duration of the entity */
+  /**
+   * The duration of the permit
+   * @type {GlobalOptionSetDefinition}
+   * @readonly
+   */
   get duration () {
     return super._getState('duration')
   }
 
-  /** get the durationMagnitude of the entity */
+  /**
+   * The duration magnitude of the permit
+   * @type {number}
+   * @readonly
+   */
   get durationMagnitude () {
     return super._getState('durationMagnitude')
   }
 
-  /** get the durationDesignator of the entity */
+  /**
+   * The duration designator of the permit
+   * @type {GlobalOptionSetDefinition}
+   * @readonly
+   */
   get durationDesignator () {
     return super._getState('durationDesignator')
   }
 
-  /** get the equipment of the entity */
+  /**
+   * The equipment type of the permit
+   * @type {GlobalOptionSetDefinition}
+   * @readonly
+   */
   get equipment () {
     return super._getState('equipment')
   }
 
-  /** get the equipment of the entity */
+  /**
+   * The number of rods associated with the permit
+   * @type {number}
+   * @readonly
+   */
   get numberOfRods () {
     return super._getState('numberOfRods')
   }
 
-  /** get the availableFrom of the entity */
+  /**
+   * The date from which the permit is available
+   * @type {string}
+   * @readonly
+   */
   get availableFrom () {
     return super._getState('availableFrom')
   }
 
-  /** get the availableTo of the entity */
+  /**
+   * The date to which the permit is available
+   * @type {string}
+   * @readonly
+   */
   get availableTo () {
     return super._getState('availableTo')
   }
 
-  /** get the isforfulfilment of the entity */
+  /**
+   * Whether this type of permit will require fulfilment
+   * @type {boolean}
+   * @readonly
+   */
   get isForFulfilment () {
     return super._getState('isForFulfilment')
   }
 
-  /** get the iscountersales of the entity */
+  /**
+   * Whether this type of permit is allowed for counter sales
+   * @type {boolean}
+   * @readonly
+   */
   get isCounterSales () {
     return super._getState('isCounterSales')
   }
 
-  /** get the cost of the entity */
+  /**
+   * The cost of permissions associated with this permit
+   * @type {number}
+   * @readonly
+   */
   get cost () {
     return super._getState('cost')
   }
 
-  /** get the itemId of the entity */
+  /**
+   * The POCL itemId associated with this permit
+   * @type {number}
+   * @readonly
+   */
   get itemId () {
     return super._getState('itemId')
   }

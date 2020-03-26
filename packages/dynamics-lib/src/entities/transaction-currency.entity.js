@@ -1,7 +1,14 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+
+/**
+ * TransactionCurrency entity
+ * @extends BaseEntity
+ */
 export class TransactionCurrency extends BaseEntity {
+  /** @type {EntityDefinition} */
   static #definition = new EntityDefinition({
-    collection: 'transactioncurrencies',
+    localCollection: 'transactionCurrencies',
+    dynamicsCollection: 'transactioncurrencies',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'transactioncurrencyid', type: 'string' },
@@ -11,7 +18,10 @@ export class TransactionCurrency extends BaseEntity {
     }
   })
 
-  /** Define mappings between Dynamics entity field and local entity field */
+  /**
+   * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
+   * @type {EntityDefinition}
+   */
   static get definition () {
     return TransactionCurrency.#definition
   }

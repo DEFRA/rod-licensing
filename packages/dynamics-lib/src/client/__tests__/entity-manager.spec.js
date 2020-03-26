@@ -1,4 +1,14 @@
-import { Contact, Permission, persist, retrieveMultiple, findByExample, retrieveMultipleAsMap } from '../../index.js'
+import {
+  Contact,
+  Permission,
+  GlobalOptionSetDefinition,
+  persist,
+  retrieveMultiple,
+  findByExample,
+  retrieveMultipleAsMap,
+  retrieveGlobalOptionSets
+} from '../../index.js'
+import TestEntity from '../../../__mocks__/TestEntity.js'
 import uuid from 'uuid/v4.js'
 
 describe('entity manager', () => {
@@ -146,7 +156,9 @@ describe('entity manager', () => {
       )
     })
   })
+})
 
+describe('retrieveMultipleAsMap', () => {
   it('retrieves a multiple entity types as a map', async () => {
     const api = require('dynamics-web-api').default
     api.__setResponse([
@@ -179,7 +191,7 @@ describe('entity manager', () => {
 
     const result = await retrieveMultipleAsMap(Contact, Permission).execute()
     expect(result).toMatchObject({
-      Contact: expect.arrayContaining([
+      contacts: expect.arrayContaining([
         expect.objectContaining({
           etag: 'EXAMPLE_CONTACT',
           id: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
@@ -189,7 +201,7 @@ describe('entity manager', () => {
           email: 'fester@tester.com'
         })
       ]),
-      Permission: expect.arrayContaining([
+      permissions: expect.arrayContaining([
         expect.objectContaining({
           etag: 'EXAMPLE_PERMISSION',
           id: '347a9083-361e-ea11-a810-000d3a25c5d6',
@@ -204,37 +216,99 @@ describe('entity manager', () => {
   })
 })
 
-describe('findByExample', () => {
-  it('retrieves a single entity', async () => {
-    const api = require('dynamics-web-api').default
-    api.__setResponse({
-      value: [
-        {
-          '@odata.etag': 'EXAMPLE',
-          firstname: 'Some',
-          lastname: 'Person'
-        }
-      ]
+const optionSetInstance = {
+  name: expect.stringMatching(/^[a-z]+_?[a-z]+$/),
+  options: expect.objectContaining({
+    910400000: expect.objectContaining({
+      id: 910400000,
+      label: expect.anything(),
+      description: expect.anything()
     })
+  })
+}
 
-    const lookup = new Contact()
-    lookup.firstName = 'Some'
-    lookup.lastName = 'Person'
+describe('retrieveGlobalOptionSets', () => {
+  it('retrieves a full listing when given no arguments', async () => {
+    const result = await retrieveGlobalOptionSets().execute()
+    expect(result).toMatchObject({
+      defra_concessionproof: expect.objectContaining(optionSetInstance),
+      defra_country: expect.objectContaining(optionSetInstance),
+      defra_datasource: expect.objectContaining(optionSetInstance),
+      defra_datatype: expect.objectContaining(optionSetInstance),
+      defra_daymonthyear: expect.objectContaining(optionSetInstance),
+      defra_duration: expect.objectContaining(optionSetInstance),
+      defra_environmentagencyarea: expect.objectContaining(optionSetInstance),
+      defra_financialtransactionsource: expect.objectContaining(optionSetInstance),
+      defra_financialtransactiontype: expect.objectContaining(optionSetInstance),
+      defra_fulfilmentrequestfilestatus: expect.objectContaining(optionSetInstance),
+      defra_fulfilmentrequeststatus: expect.objectContaining(optionSetInstance),
+      defra_notificationstatus: expect.objectContaining(optionSetInstance),
+      defra_paymenttype: expect.objectContaining(optionSetInstance),
+      defra_permitsubtype: expect.objectContaining(optionSetInstance),
+      defra_permittype: expect.objectContaining(optionSetInstance),
+      defra_poclfiledataerrorstatus: expect.objectContaining(optionSetInstance),
+      defra_poclfiledataerrortype: expect.objectContaining(optionSetInstance),
+      defra_poclfilestatus: expect.objectContaining(optionSetInstance),
+      defra_preferredcontactmethod: expect.objectContaining(optionSetInstance)
+    })
+  })
 
+  it('retrieves listings for specific names', async () => {
+    const result = await retrieveGlobalOptionSets('defra_concessionproof', 'defra_country', 'defra_datasource').execute()
+    expect(result).toMatchObject({
+      defra_concessionproof: expect.objectContaining(optionSetInstance),
+      defra_country: expect.objectContaining(optionSetInstance),
+      defra_datasource: expect.objectContaining(optionSetInstance)
+    })
+    expect(Object.keys(result)).toHaveLength(3)
+  })
+})
+
+describe('findByExample', () => {
+  it('builds a select statement appropriate to the type definition for each field', async () => {
+    const api = require('dynamics-web-api').default
+    api.__setResponse({ value: [{}] })
+
+    const lookup = new TestEntity()
+    lookup.strVal = 'StringData'
+    lookup.intVal = 123
+    lookup.decVal = 123.45
+    lookup.boolVal = true
+    lookup.dateVal = '1946-01-01'
+    lookup.dateTimeVal = '1946-01-01T01:02:03Z'
+    lookup.optionSetVal = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
+    const expectedLookupSelect =
+      "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
     const spy = jest.spyOn(api.prototype, 'retrieveMultipleRequest')
     const result = await findByExample(lookup)
     expect(spy).toBeCalledWith(
       expect.objectContaining({
-        collection: expect.stringMatching(Contact.definition.collection),
-        select: Contact.definition.select,
-        filter: expect.stringMatching(Contact.definition.defaultFilter + " and firstname eq 'Some' and lastname eq 'Person'")
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select,
+        filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
       })
     )
-
     expect(result).toHaveLength(1)
-    expect(result[0]).toBeInstanceOf(Contact)
-    expect(result[0].etag).toEqual('EXAMPLE')
-    expect(result[0].firstName).toEqual('Some')
-    expect(result[0].lastName).toEqual('Person')
+    expect(result[0]).toBeInstanceOf(TestEntity)
+  })
+
+  it('only serializes fields into the select statement if they are set', async () => {
+    const api = require('dynamics-web-api').default
+    api.__setResponse({ value: [{}] })
+
+    const lookup = new TestEntity()
+    lookup.strVal = 'StringData'
+    const expectedLookupSelect = "strval eq 'StringData'"
+    const spy = jest.spyOn(api.prototype, 'retrieveMultipleRequest')
+    const result = await findByExample(lookup)
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select,
+        filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
+      })
+    )
+    expect(result).toHaveLength(1)
+    expect(result[0]).toBeInstanceOf(TestEntity)
   })
 })
