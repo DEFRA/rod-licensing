@@ -12,6 +12,7 @@ import summary from '../pages/summary/route.js'
 import name from '../pages/name/route.js'
 import dateOfBirth from '../pages/date-of-birth/route.js'
 import noLicenceRequired from '../pages/no-licence-required/route.js'
+import juniorLicence from '../pages/junior-licence/route.js'
 
 import controller from './controller-route.js'
 import newTransactionRoute from './new-transaction-route.js'
@@ -27,6 +28,7 @@ const routes = [
   ...miscRoutes,
   ...licenceLength,
   ...licenceType,
+  ...juniorLicence,
   ...numberOfRods,
   ...licenceToStart,
   ...licenceStartDate,

@@ -1,3 +1,4 @@
+import { LICENCE_START_TIME, CONTROLLER } from '../../constants.js'
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import moment from 'moment'
@@ -19,4 +20,4 @@ const getData = async request => {
   return { startDateStr }
 }
 
-export default pageRoute('licence-start-time', '/buy/start-time', validator, '/buy', getData)
+export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, CONTROLLER.uri, getData)

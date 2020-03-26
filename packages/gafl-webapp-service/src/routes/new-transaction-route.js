@@ -1,10 +1,12 @@
 'use strict'
 
+import { CONTROLLER, NEW_TRANSACTION } from '../constants.js'
+
 export default {
   method: 'GET',
-  path: '/buy/new',
+  path: NEW_TRANSACTION.uri,
   handler: async (request, h) => {
     await request.cache().initialize()
-    return h.redirect('/buy')
+    return h.redirect(CONTROLLER.uri)
   }
 }

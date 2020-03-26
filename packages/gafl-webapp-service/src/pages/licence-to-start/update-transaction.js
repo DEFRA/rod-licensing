@@ -5,11 +5,14 @@ import moment from 'moment'
  * @param request
  * @returns {Promise<void>}
  */
+
+const LICENCE_TO_START = 'licence-to-start'
+
 export default async request => {
   const cache = await request.cache().get('page')
-  const { payload } = cache['licence-to-start']
-  const permission = { licenceToStart: payload['licence-to-start'] }
-  if (payload['licence-to-start'] === 'after-payment') {
+  const { payload } = cache[LICENCE_TO_START]
+  const permission = { licenceToStart: payload[LICENCE_TO_START] }
+  if (payload[LICENCE_TO_START] === 'after-payment') {
     Object.assign(permission, { licenceStartDate: moment().format('YYYY-MM-DD') })
   }
   await transactionHelper.setPermission(request, permission)

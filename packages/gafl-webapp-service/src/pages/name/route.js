@@ -2,6 +2,7 @@
 
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'
+import { NAME, CONTROLLER } from '../../constants.js'
 
 const validator = Joi.object({
   name: Joi.string()
@@ -13,4 +14,4 @@ const validator = Joi.object({
     .required()
 }).options({ abortEarly: false })
 
-export default pageRoute('name', '/buy/name', validator, '/buy')
+export default pageRoute(NAME.page, NAME.uri, validator, CONTROLLER.uri)

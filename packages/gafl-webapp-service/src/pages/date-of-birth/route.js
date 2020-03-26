@@ -1,5 +1,6 @@
 'use strict'
 
+import { DATE_OF_BIRTH, CONTROLLER } from '../../constants.js'
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import JoiDate from '@hapi/joi-date'
@@ -21,4 +22,4 @@ const validator = payload => {
   Joi.assert({ 'date-of-birth': dateOfBirth }, schema)
 }
 
-export default pageRoute('date-of-birth', '/buy/date-of-birth', validator, '/buy')
+export default pageRoute(DATE_OF_BIRTH.page, DATE_OF_BIRTH.uri, validator, CONTROLLER.uri)

@@ -1,5 +1,5 @@
 'use strict'
-
+import { LICENCE_START_DATE, CONTROLLER } from '../../constants.js'
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import JoiDate from '@hapi/joi-date'
@@ -22,9 +22,12 @@ const validator = payload => {
 }
 
 const getData = () => ({
-  maxStartDate: moment()
+  exampleStartDate: moment()
     .add(1, 'days')
+    .format('DD MM YYYY'),
+  maxStartDate: moment()
+    .add(60, 'days')
     .format('DD MM YYYY')
 })
 
-export default pageRoute('licence-start-date', '/buy/start-date', validator, '/buy', getData)
+export default pageRoute(LICENCE_START_DATE.page, LICENCE_START_DATE.uri, validator, CONTROLLER.uri, getData)

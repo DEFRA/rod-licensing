@@ -1,4 +1,5 @@
 import { start, stop, server, getCookies } from '../../misc/test-utils.js'
+import { NAME } from '../../constants.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -11,7 +12,7 @@ let cookie
 beforeEach(async () => {
   const data = await server.inject({
     method: 'GET',
-    url: '/buy/name'
+    url: NAME.uri
   })
   cookie = getCookies(data)
 })

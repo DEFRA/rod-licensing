@@ -1,6 +1,7 @@
 'use strict'
 
 import { start, stop, server } from '../../../misc/test-utils.js'
+import { NO_LICENCE_REQUIRED } from '../../../constants.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -12,7 +13,7 @@ describe('The no licence required page', () => {
   it('Return success on requesting', async () => {
     const data = await server.inject({
       method: 'GET',
-      url: '/buy/no-licence-required'
+      url: NO_LICENCE_REQUIRED.uri
     })
     expect(data.statusCode).toBe(200)
   })

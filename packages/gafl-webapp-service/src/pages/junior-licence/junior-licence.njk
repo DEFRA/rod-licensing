@@ -1,0 +1,15 @@
+{% extends "standard-form.njk" %}
+
+{% from "date-input/macro.njk" import govukDateInput %}
+{% set title = 'You qualify for a free junior licence' %}
+
+{% block pageContent %}
+<p class="govuk-body-m">12-month licences for children aged between 13 and 16 are free</p>
+<p class="govuk-body-m">Your junior licence:</p>
+
+<ul class="govuk-list govuk-list--bullet">
+  <li>is free because you're between 13 and 16 - but you must still get a licence</li>
+  <li>won't get sent in the post - you'll be able to save or print it instead</li>
+</ul>
+
+{% endblock %}

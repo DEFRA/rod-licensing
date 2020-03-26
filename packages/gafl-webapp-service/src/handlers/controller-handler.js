@@ -6,11 +6,11 @@ import resultFunctions from './result-functions.js'
 import updateTransactionFunctions from './update-transaction-functions.js'
 import transactionHelper from '../lib/transaction-helper.js'
 import routeDefinition from './route-definition.js'
-
+import { ADD_PERMISSION } from '../constants.js'
 export default async (request, h) => {
   // If there is no permissions then initialize
   if (!(await transactionHelper.hasPermission(request))) {
-    return h.redirect('/buy/add')
+    return h.redirect(ADD_PERMISSION.uri)
   }
 
   // Determine the current page

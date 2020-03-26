@@ -1,3 +1,4 @@
+import { LICENCE_TO_START, CONTROLLER } from '../../constants.js'
 import pageRoute from '../../routes/page-route.js'
 import Joi from '@hapi/joi'
 
@@ -7,4 +8,4 @@ const validator = Joi.object({
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute('licence-to-start', '/buy/start-kind', validator, '/buy')
+export default pageRoute(LICENCE_TO_START.page, LICENCE_TO_START.uri, validator, CONTROLLER.uri)

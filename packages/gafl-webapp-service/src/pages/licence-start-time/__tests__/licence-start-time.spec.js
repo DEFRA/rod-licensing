@@ -1,3 +1,4 @@
+import { LICENCE_START_TIME, CONTROLLER } from '../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../misc/test-utils.js'
 import each from 'jest-each'
 
@@ -8,20 +9,20 @@ afterAll(d => stop(d))
 // Start application before running the test case
 describe('The licence start time page', () => {
   it('returns success on requesting', async () => {
-    const data = await injectWithCookie('GET', '/buy/start-time')
+    const data = await injectWithCookie('GET', LICENCE_START_TIME.uri)
     expect(data.statusCode).toBe(200)
   })
   it('redirects back to itself on posting no response', async () => {
-    const data = await injectWithCookie('POST', '/buy/start-time', {})
+    const data = await injectWithCookie('POST', LICENCE_START_TIME.uri, {})
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/start-time')
+    expect(data.headers.location).toBe(LICENCE_START_TIME.uri)
   })
   it('redirects back to itself on an invalid time', async () => {
-    const data = await injectWithCookie('POST', '/buy/start-time', {
+    const data = await injectWithCookie('POST', LICENCE_START_TIME.uri, {
       'licence-start-time': '25'
     })
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/start-time')
+    expect(data.headers.location).toBe(LICENCE_START_TIME.uri)
   })
   each([
     ['Midnight', '0'],
@@ -49,13 +50,13 @@ describe('The licence start time page', () => {
     ['10pm', '22'],
     ['11pm', '23']
   ]).it('stores the transaction on successful submission of %s', async (desc, code) => {
-    const data = await injectWithCookie('POST', '/buy/start-time', { 'licence-start-time': code })
+    const data = await injectWithCookie('POST', LICENCE_START_TIME.uri, { 'licence-start-time': code })
 
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy')
+    expect(data.headers.location).toBe(CONTROLLER.uri)
 
     // Hit the controller
-    await injectWithCookie('GET', '/buy')
+    await injectWithCookie('GET', CONTROLLER.uri)
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
 

@@ -1,101 +1,114 @@
 'use strict'
 
-const LICENCE_LENGTH = '/buy/licence-length'
-const LICENCE_TYPE = '/buy/licence-type'
-const NUMBER_OF_RODS = '/buy/number-of-rods'
-const LICENCE_TO_START = '/buy/start-kind'
-const LICENCE_START_DATE = '/buy/start-date'
-const LICENCE_START_TIME = '/buy/start-time'
-const DATE_OF_BIRTH = '/buy/date-of-birth'
-const NO_LICENCE_REQUIRED = '/buy/no-licence-required'
+import {
+  LICENCE_LENGTH,
+  NUMBER_OF_RODS,
+  LICENCE_TO_START,
+  LICENCE_START_DATE,
+  LICENCE_START_TIME,
+  DATE_OF_BIRTH,
+  NO_LICENCE_REQUIRED,
+  JUNIOR_LICENCE,
+  LICENCE_TYPE,
+  NAME
+} from '../constants.js'
 
 export default [
   {
     currentPage: 'start',
     nextPage: {
       ok: {
-        page: LICENCE_LENGTH
+        page: LICENCE_LENGTH.uri
       }
     }
   },
 
   {
-    currentPage: 'licence-length',
+    currentPage: LICENCE_LENGTH.page,
     nextPage: {
       ok: {
-        page: LICENCE_TYPE
+        page: LICENCE_TYPE.uri
       }
     }
   },
 
   {
-    currentPage: 'licence-type',
+    currentPage: LICENCE_TYPE.page,
     nextPage: {
       troutAndCoarse: {
-        page: NUMBER_OF_RODS
+        page: NUMBER_OF_RODS.uri
       },
       salmonAndSeaTrout: {
-        page: LICENCE_TO_START
+        page: LICENCE_TO_START.uri
       }
     }
   },
 
   {
-    currentPage: 'number-of-rods',
+    currentPage: NUMBER_OF_RODS.page,
     nextPage: {
       ok: {
-        page: LICENCE_TO_START
+        page: LICENCE_TO_START.uri
       }
     }
   },
 
   {
-    currentPage: 'licence-to-start',
+    currentPage: LICENCE_TO_START.page,
     nextPage: {
       afterPayment: {
-        page: DATE_OF_BIRTH
+        page: DATE_OF_BIRTH.uri
       },
       anotherDateOrTime: {
-        page: LICENCE_START_DATE
+        page: LICENCE_START_DATE.uri
       }
     }
   },
 
   {
-    currentPage: 'licence-start-date',
+    currentPage: LICENCE_START_DATE.page,
     nextPage: {
       andStartTime: {
-        page: LICENCE_START_TIME
+        page: LICENCE_START_TIME.uri
       },
       andContinue: {
-        page: DATE_OF_BIRTH
+        page: DATE_OF_BIRTH.uri
       }
     }
   },
 
   {
-    currentPage: 'licence-start-time',
+    currentPage: LICENCE_START_TIME.page,
     nextPage: {
       ok: {
-        page: DATE_OF_BIRTH
+        page: DATE_OF_BIRTH.uri
       }
     }
   },
 
   {
-    currentPage: 'date-of-birth',
+    currentPage: DATE_OF_BIRTH.page,
     nextPage: {
       adult: {
-        page: NO_LICENCE_REQUIRED
+        page: NAME.uri
       },
       junior: {
-        page: NO_LICENCE_REQUIRED
+        page: JUNIOR_LICENCE.uri
       },
       senior: {
-        page: NO_LICENCE_REQUIRED
+        page: NAME.uri
       },
       noLicenceRequired: {
-        page: NO_LICENCE_REQUIRED
+        page: NO_LICENCE_REQUIRED.uri
+      }
+    }
+  },
+
+  {
+    currentPage: JUNIOR_LICENCE.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
       }
     }
   }

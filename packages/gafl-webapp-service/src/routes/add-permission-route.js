@@ -1,5 +1,5 @@
 'use strict'
-
+import { CONTROLLER, ADD_PERMISSION } from '../constants.js'
 import db from 'debug'
 const debug = db('add-permission')
 
@@ -9,13 +9,13 @@ const debug = db('add-permission')
  */
 export default {
   method: 'GET',
-  path: '/buy/add',
+  path: ADD_PERMISSION.uri,
   handler: async (request, h) => {
     const transaction = await request.cache().get('transaction')
     transaction.permissions = transaction.permissions || []
     transaction.permissions.push({})
     debug(`Add permission: ${transaction.permissions.length}`)
     await request.cache().set('transaction', transaction)
-    return h.redirect('/buy')
+    return h.redirect(CONTROLLER.uri)
   }
 }
