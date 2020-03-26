@@ -11,7 +11,10 @@ export class Permit extends BaseEntity {
       permitType: { field: 'defra_permittype', type: 'optionset', ref: 'defra_permittype' },
       permitSubtype: { field: 'defra_permitsubtype', type: 'optionset', ref: 'defra_permitsubtype' },
       duration: { field: 'defra_duration', type: 'optionset', ref: 'defra_duration' },
+      durationMagnitude: { field: 'defra_durationnumericpart', type: 'integer' },
+      durationDesignator: { field: 'defra_durationdaymonthyearpart', type: 'optionset', ref: 'defra_daymonthyear' },
       equipment: { field: 'defra_equipment', type: 'optionset', ref: 'defra_equipment' },
+      numberOfRods: { field: 'defra_numberofrods', type: 'integer' },
       availableFrom: { field: 'defra_availablefrom', type: 'datetime' },
       availableTo: { field: 'defra_availableto', type: 'datetime' },
       isForFulfilment: { field: 'defra_isforfulfilment', type: 'boolean' },
@@ -51,9 +54,24 @@ export class Permit extends BaseEntity {
     return super._getState('duration')
   }
 
+  /** get the durationMagnitude of the entity */
+  get durationMagnitude () {
+    return super._getState('durationMagnitude')
+  }
+
+  /** get the durationDesignator of the entity */
+  get durationDesignator () {
+    return super._getState('durationDesignator')
+  }
+
   /** get the equipment of the entity */
   get equipment () {
     return super._getState('equipment')
+  }
+
+  /** get the equipment of the entity */
+  get numberOfRods () {
+    return super._getState('numberOfRods')
   }
 
   /** get the availableFrom of the entity */

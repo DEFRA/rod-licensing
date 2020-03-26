@@ -17,8 +17,13 @@ export class Contact extends BaseEntity {
       town: { field: 'defra_town', type: 'string' },
       postcode: { field: 'defra_postcode', type: 'string' },
       country: { field: 'defra_country', type: 'optionset', ref: 'defra_country' },
-      preferredMethodOfContact: { field: 'defra_preferredmethodofcontact', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      gdprMarketingOptIn: { field: 'defra_gdprmarketingpreferenceoptin', type: 'boolean' }
+      preferredMethodOfConfirmation: {
+        field: 'defra_preferredmethodofconfirmation',
+        type: 'optionset',
+        ref: 'defra_preferredcontactmethod'
+      },
+      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' }
     }
   })
 
@@ -137,23 +142,33 @@ export class Contact extends BaseEntity {
     super._setState('country', country)
   }
 
-  /** get the preferredMethodOfContact of the entity */
-  get preferredMethodOfContact () {
-    return super._getState('preferredMethodOfContact')
+  /** get the preferredMethodOfConfirmation of the entity */
+  get preferredMethodOfConfirmation () {
+    return super._getState('preferredMethodOfConfirmation')
   }
 
   /** set the preferredMethodOfContact of this entity */
-  set preferredMethodOfContact (preferredMethodOfContact) {
-    super._setState('preferredMethodOfContact', preferredMethodOfContact)
+  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
+    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
   }
 
-  /** get the gdprMarketingOptIn of the entity */
-  get gdprMarketingOptIn () {
-    return super._getState('gdprMarketingOptIn')
+  /** get the preferredMethodOfNewsletter of the entity */
+  get preferredMethodOfNewsletter () {
+    return super._getState('preferredMethodOfNewsletter')
   }
 
-  /** set the gdprMarketingOptIn of this entity */
-  set gdprMarketingOptIn (gdprMarketingOptIn) {
-    super._setState('gdprMarketingOptIn', gdprMarketingOptIn)
+  /** set the preferredMethodOfNewsletter of this entity */
+  set preferredMethodOfNewsletter (preferredMethodOfNewsletter) {
+    super._setState('preferredMethodOfNewsletter', preferredMethodOfNewsletter)
+  }
+
+  /** get the preferredMethodOfReminder of the entity */
+  get preferredMethodOfReminder () {
+    return super._getState('preferredMethodOfReminder')
+  }
+
+  /** set the preferredMethodOfReminder of this entity */
+  set preferredMethodOfReminder (preferredMethodOfReminder) {
+    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
   }
 }

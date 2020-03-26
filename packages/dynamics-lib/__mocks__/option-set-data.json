@@ -1,6 +1,198 @@
 {
   "value": [
     {
+      "@odata.context": "https://ea-fish-devmodelmaster.crm4.dynamics.com/api/data/v9.1/$metadata#GlobalOptionSetDefinitions/Microsoft.Dynamics.CRM.OptionSetMetadata/$entity",
+      "@odata.type": "#Microsoft.Dynamics.CRM.OptionSetMetadata",
+      "ParentOptionSetName": null,
+      "IsCustomOptionSet": true,
+      "IsGlobal": true,
+      "IsManaged": false,
+      "Name": "defra_daymonthyear",
+      "ExternalTypeName": "",
+      "OptionSetType": "Picklist",
+      "IntroducedVersion": "1.0.0.0",
+      "MetadataId": "0dd24f1a-b16a-ea11-a811-000d3a649213",
+      "HasChanged": null,
+      "Options": [
+        {
+          "Value": 910400000,
+          "Color": "#0000ff",
+          "IsManaged": false,
+          "ExternalValue": "",
+          "ParentValues": [],
+          "MetadataId": null,
+          "HasChanged": null,
+          "Label": {
+            "LocalizedLabels": [
+              {
+                "Label": "D",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "10d24f1a-b16a-ea11-a811-000d3a649213",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "D",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "10d24f1a-b16a-ea11-a811-000d3a649213",
+              "HasChanged": null
+            }
+          },
+          "Description": {
+            "LocalizedLabels": [
+              {
+                "Label": "Day(s)",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "12d24f1a-b16a-ea11-a811-000d3a649213",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "Day(s)",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "12d24f1a-b16a-ea11-a811-000d3a649213",
+              "HasChanged": null
+            }
+          }
+        },
+        {
+          "Value": 910400001,
+          "Color": "#0000ff",
+          "IsManaged": false,
+          "ExternalValue": "",
+          "ParentValues": [],
+          "MetadataId": null,
+          "HasChanged": null,
+          "Label": {
+            "LocalizedLabels": [
+              {
+                "Label": "M",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "13d24f1a-b16a-ea11-a811-000d3a649213",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "M",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "13d24f1a-b16a-ea11-a811-000d3a649213",
+              "HasChanged": null
+            }
+          },
+          "Description": {
+            "LocalizedLabels": [
+              {
+                "Label": "Month(s)",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "15d24f1a-b16a-ea11-a811-000d3a649213",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "Month(s)",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "15d24f1a-b16a-ea11-a811-000d3a649213",
+              "HasChanged": null
+            }
+          }
+        },
+        {
+          "Value": 910400002,
+          "Color": "#0000ff",
+          "IsManaged": false,
+          "ExternalValue": "",
+          "ParentValues": [],
+          "MetadataId": null,
+          "HasChanged": null,
+          "Label": {
+            "LocalizedLabels": [
+              {
+                "Label": "Y",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "16d24f1a-b16a-ea11-a811-000d3a649213",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "Y",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "16d24f1a-b16a-ea11-a811-000d3a649213",
+              "HasChanged": null
+            }
+          },
+          "Description": {
+            "LocalizedLabels": [
+              {
+                "Label": "Year(s)",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "18d24f1a-b16a-ea11-a811-000d3a649213",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "Year(s)",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "18d24f1a-b16a-ea11-a811-000d3a649213",
+              "HasChanged": null
+            }
+          }
+        }
+      ],
+      "Description": {
+        "LocalizedLabels": [
+          {
+            "Label": "",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "1ad24f1a-b16a-ea11-a811-000d3a649213",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "1ad24f1a-b16a-ea11-a811-000d3a649213",
+          "HasChanged": null
+        }
+      },
+      "DisplayName": {
+        "LocalizedLabels": [
+          {
+            "Label": "DayMonthYear",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "19d24f1a-b16a-ea11-a811-000d3a649213",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "DayMonthYear",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "19d24f1a-b16a-ea11-a811-000d3a649213",
+          "HasChanged": null
+        }
+      },
+      "IsCustomizable": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "iscustomizable"
+      }
+    },
+    {
       "Name": "defra_datatype",
       "MetadataId": "cf392d25-b0e5-e911-a812-000d3a64905b",
       "Options": [

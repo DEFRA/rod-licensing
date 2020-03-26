@@ -22,8 +22,9 @@ describe('contact entity', () => {
         defra_town: 'Tersterton',
         defra_postcode: 'AB12 3CD',
         defra_country: 910400184,
-        defra_preferredmethodofcontact: 910400001,
-        defra_gdprmarketingpreferenceoptin: false
+        defra_preferredmethodofconfirmation: 910400002,
+        defra_preferredmethodofnewsletter: 910400000,
+        defra_preferredmethodofreminder: 910400001
       },
       optionSetData
     )
@@ -41,8 +42,9 @@ describe('contact entity', () => {
       town: 'Tersterton',
       postcode: 'AB12 3CD',
       country: expect.objectContaining({ id: 910400184, label: 'United Kingdom', description: 'GB' }),
-      preferredMethodOfContact: expect.objectContaining({ id: 910400001, label: 'Letter', description: '' }),
-      gdprMarketingOptIn: false
+      preferredMethodOfConfirmation: expect.objectContaining({ id: 910400002, label: 'Text', description: '' }),
+      preferredMethodOfNewsletter: expect.objectContaining({ id: 910400000, label: 'Email', description: '' }),
+      preferredMethodOfReminder: expect.objectContaining({ id: 910400001, label: 'Letter', description: '' })
     }
 
     expect(contact).toBeInstanceOf(Contact)
@@ -64,8 +66,9 @@ describe('contact entity', () => {
     contact.town = 'Tersterton'
     contact.postcode = 'AB12 3CD'
     contact.country = optionSetData.defra_country.options['910400184']
-    contact.preferredMethodOfContact = optionSetData.defra_preferredcontactmethod.options['910400001']
-    contact.gdprMarketingOptIn = false
+    contact.preferredMethodOfConfirmation = optionSetData.defra_preferredcontactmethod.options['910400002']
+    contact.preferredMethodOfNewsletter = optionSetData.defra_preferredcontactmethod.options['910400000']
+    contact.preferredMethodOfReminder = optionSetData.defra_preferredcontactmethod.options['910400001']
 
     const dynamicsEntity = contact.toRequestBody()
     expect(dynamicsEntity).toMatchObject(
@@ -81,8 +84,9 @@ describe('contact entity', () => {
         defra_town: 'Tersterton',
         defra_postcode: 'AB12 3CD',
         defra_country: 910400184,
-        defra_preferredmethodofcontact: 910400001,
-        defra_gdprmarketingpreferenceoptin: false
+        defra_preferredmethodofconfirmation: 910400002,
+        defra_preferredmethodofnewsletter: 910400000,
+        defra_preferredmethodofreminder: 910400001
       })
     )
   })
