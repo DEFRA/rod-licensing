@@ -62,6 +62,19 @@ describe('The date of birth page', () => {
     expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
 
+  it('redirects back to the start of the journey where there is no licence start date', async () => {
+    let data = await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '5',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1970'
+    })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTROLLER.uri)
+    data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
+  })
+
   /*
    * These tests are for licences starting today
    */
