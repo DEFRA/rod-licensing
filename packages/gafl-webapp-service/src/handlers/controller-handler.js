@@ -7,6 +7,8 @@ import updateTransactionFunctions from './update-transaction-functions.js'
 import transactionHelper from '../lib/transaction-helper.js'
 import routeDefinition from './route-definition.js'
 import { ADD_PERMISSION } from '../constants.js'
+const defaultResultFunction = () => 'ok'
+
 export default async (request, h) => {
   // If there is no permissions then initialize
   if (!(await transactionHelper.hasPermission(request))) {
@@ -33,7 +35,6 @@ export default async (request, h) => {
   }
 
   // Determine the result of the page
-  const defaultResultFunction = () => 'ok'
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
   const routeNode = routeDefinition.find(p => p.currentPage === currentPage)

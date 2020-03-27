@@ -8,7 +8,8 @@ import {
   NO_LICENCE_REQUIRED,
   JUNIOR_LICENCE,
   LICENCE_TYPE,
-  NAME
+  NAME,
+  BENEFIT_CHECK
 } from '../constants.js'
 
 export default [
@@ -88,7 +89,7 @@ export default [
     currentPage: DATE_OF_BIRTH.page,
     nextPage: {
       adult: {
-        page: NAME.uri
+        page: BENEFIT_CHECK.uri
       },
       junior: {
         page: JUNIOR_LICENCE.uri
@@ -107,6 +108,18 @@ export default [
     nextPage: {
       ok: {
         page: NAME.uri
+      }
+    }
+  },
+
+  {
+    currentPage: BENEFIT_CHECK.page,
+    nextPage: {
+      no: {
+        page: NAME.uri
+      },
+      yes: {
+        page: BENEFIT_CHECK.uri
       }
     }
   },
