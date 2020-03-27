@@ -40,7 +40,14 @@ git clone ssh://git@ssh.github.com:443/DEFRA/rod-licencing
 This project uses [Lerna](https://lerna.js.org/) to simplify the management and versioning of multiple packages which comprise the rod licencing digital
 service.
 
-To initialise dependencies for all packages in the repository, use the bootstrap command: `lerna bootstrap`
+Running `npm install` in the root project will automatically run the `lerna bootstrap` command. The result is that any local packages which depend on
+one another will be linked locally (using symbolic links).
+
+Running `npm run lerna:clean` will remove all local node_modules.
+
+Running `lernaupdate` will enter an interactive wizard to allow updates of each packages dependencies.
+
+Running `lernaupdate --non-interactive --dependency "aws-sdk@latest"` will update the aws-sdk dependency in all packages which use it.
 
 ## Package structure
 
