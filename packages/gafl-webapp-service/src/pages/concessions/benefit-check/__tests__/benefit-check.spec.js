@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
-import { BENEFIT_CHECK, CONTROLLER, NAME, CONCESSION, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START } from '../../../../constants'
+import { BENEFIT_CHECK, CONTROLLER, NAME, CONCESSION, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START } from '../../../../constants.js'
 import moment from 'moment'
 
 beforeAll(d => start(d))
