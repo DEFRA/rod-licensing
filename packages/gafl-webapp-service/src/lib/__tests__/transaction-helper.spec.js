@@ -1,5 +1,5 @@
 import { start, stop, server, getCookies } from '../../misc/test-utils.js'
-import helper from '../transaction-helper.js'
+import helper from '../cache-helper.js'
 import { NEW_TRANSACTION, ADD_PERMISSION } from '../../constants.js'
 
 // Start application before running the test case

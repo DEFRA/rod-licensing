@@ -1,4 +1,4 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
+import transactionHelper from '../../../lib/cache-helper.js'
 import { CONCESSION } from '../../../constants.js'
 
 export default async request => {

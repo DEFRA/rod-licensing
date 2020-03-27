@@ -1,4 +1,4 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
+import transactionHelper from '../../../lib/cache-helper.js'
 
 export default async request => {
   const permission = await transactionHelper.getPermission(request)

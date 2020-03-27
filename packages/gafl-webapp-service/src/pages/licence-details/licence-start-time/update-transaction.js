@@ -1,4 +1,4 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
+import cacheHelper from '../../../lib/cache-helper.js'
 import { LICENCE_START_TIME } from '../../../constants.js'
 
 /**
@@ -7,7 +7,6 @@ import { LICENCE_START_TIME } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const cache = await request.cache().get('page')
-  const { payload } = cache[LICENCE_START_TIME.page]
-  await transactionHelper.setPermission(request, { licenceStartTime: payload['licence-start-time'] })
+  const { payload } = (await cacheHelper.getPageData(request))[LICENCE_START_TIME.page]
+  await cacheHelper.setPermission(request, { licenceStartTime: payload['licence-start-time'] })
 }

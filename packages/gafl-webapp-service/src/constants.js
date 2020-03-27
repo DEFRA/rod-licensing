@@ -16,6 +16,7 @@ const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
+const MAX_PERMISSIONS = 500
 
 export {
   LICENCE_LENGTH,
@@ -33,5 +34,6 @@ export {
   NEW_TRANSACTION,
   ADD_PERMISSION,
   BENEFIT_CHECK,
-  CONCESSION
+  CONCESSION,
+  MAX_PERMISSIONS
 }

@@ -8,9 +8,9 @@ import db from 'debug'
 const debug = db('cache')
 
 const contexts = {
-  page: 'page-context',
-  transaction: 'transaction-context',
-  status: 'status-context'
+  page: { identifier: 'page-context', initializer: { permissions: [] } },
+  transaction: { identifier: 'transaction-context', initializer: { permissions: [] } },
+  status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: 0 } }
 }
 
 const cacheDecorator = sessionCookieName =>
@@ -20,7 +20,7 @@ const cacheDecorator = sessionCookieName =>
     return {
       initialize: async () => {
         debug(`Initialize cache: ${id()}`)
-        const cache = Object.values(contexts).reduce((a, c) => ({ ...a, [c]: {} }), {})
+        const cache = Object.values(contexts).reduce((a, c) => ({ ...a, [c.identifier]: c.initializer }), {})
         await this.server.app.cache.set(id(), cache)
       },
 
@@ -30,7 +30,7 @@ const cacheDecorator = sessionCookieName =>
         }
 
         const cache = await this.server.app.cache.get(id())
-        return cache ? cache[contexts[context]] : null
+        return cache ? cache[contexts[context].identifier] : null
       },
 
       set: async (context, obj) => {
@@ -43,9 +43,9 @@ const cacheDecorator = sessionCookieName =>
         }
 
         const cache = await this.server.app.cache.get(id())
-        const contextCache = cache[contexts[context]]
+        const contextCache = cache[contexts[context].identifier]
         Object.assign(contextCache, obj)
-        Object.assign(cache, { [contexts[context]]: contextCache })
+        Object.assign(cache, { [contexts[context].identifier]: contextCache })
         await this.server.app.cache.set(id(), cache)
       }
     }

@@ -1,9 +1,5 @@
-// flatten the errors to a usable form on the template. Expect to be refined
+import cacheHelper from '../lib/cache-helper.js'
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
-
-const pageCtx = 'page'
-const statusCtx = 'status'
-
 /**
  * @param path - the path attached to the handler
  * @param view - the name of the view template
@@ -19,7 +15,7 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
-    const cache = await request.cache().get(pageCtx)
+    const cache = await cacheHelper.getPageData(request)
     const pageData = cache[view] || {}
     if (getData && typeof getData === 'function') {
       const data = await getData(request)
@@ -34,10 +30,9 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*|Response>}
    */
   post: async (request, h) => {
-    await request.cache().set(pageCtx, { [view]: { payload: request.payload } })
-    await request.cache().set(statusCtx, { [view]: 'completed' })
-    await request.cache().set(statusCtx, { currentPage: view })
-
+    await cacheHelper.setPageData(request, { [view]: { payload: request.payload } })
+    await cacheHelper.setStatusData(request, { [view]: 'completed' })
+    await cacheHelper.setStatusData(request, { currentPage: view })
     return h.redirect(completion)
   },
   /**
@@ -48,9 +43,9 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise}
    */
   error: async (request, h, err) => {
-    await request.cache().set(pageCtx, { [view]: { payload: request.payload, error: errorShimm(err) } })
-    await request.cache().set(statusCtx, { [view]: 'error' })
-    await request.cache().set(statusCtx, { currentPage: view })
+    await cacheHelper.setPageData(request, { [view]: { payload: request.payload, error: errorShimm(err) } })
+    await cacheHelper.setStatusData(request, { [view]: 'error' })
+    await cacheHelper.setStatusData(request, { currentPage: view })
     return h.redirect(path).takeover()
   }
 })

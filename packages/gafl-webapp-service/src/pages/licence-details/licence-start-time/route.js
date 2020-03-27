@@ -2,7 +2,7 @@ import { LICENCE_START_TIME, CONTROLLER } from '../../../constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import moment from 'moment'
-import transactionHelper from '../../../lib/transaction-helper.js'
+import transactionHelper from '../../../lib/cache-helper.js'
 
 const hours = Array(24)
   .fill(0)

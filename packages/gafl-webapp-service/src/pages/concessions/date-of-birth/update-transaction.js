@@ -1,4 +1,4 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
+import cacheHelper from '../../../lib/cache-helper.js'
 import moment from 'moment'
 import { DATE_OF_BIRTH, CONCESSION } from '../../../constants.js'
 
@@ -8,8 +8,8 @@ import { DATE_OF_BIRTH, CONCESSION } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const cache = await request.cache().get('page')
-  const { payload } = cache[DATE_OF_BIRTH.page]
+  const { payload } = (await cacheHelper.getPageData(request))[DATE_OF_BIRTH.page]
+
   const dateOfBirth = moment({
     year: payload['date-of-birth-year'],
     month: Number.parseInt(payload['date-of-birth-month']) - 1,
@@ -19,11 +19,11 @@ export default async request => {
   const result = { dateOfBirth, noLicenceRequired: false }
 
   // Work out the junior or senior concession at the point at which the licence starts
-  const permission = await transactionHelper.getPermission(request)
+  const permission = await cacheHelper.getPermission(request)
 
   // We need a licence start date
   if (!permission.licenceStartDate) {
-    throw new transactionHelper.TransactionError()
+    throw new cacheHelper.TransactionError()
   }
 
   // Calculate the age when the licence starts
@@ -43,5 +43,5 @@ export default async request => {
     }
   }
 
-  await transactionHelper.setPermission(request, result)
+  await cacheHelper.setPermission(request, result)
 }
