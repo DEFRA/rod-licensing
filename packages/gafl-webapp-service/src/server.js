@@ -1,7 +1,5 @@
-'use strict'
-
 /**
- * The hapi
+ * The hapi server
  */
 
 import Hapi from '@hapi/hapi'

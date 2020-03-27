@@ -1,5 +1,3 @@
-'use strict'
-
 export default {
   hasPermission: async request => {
     const transaction = await request.cache().get('transaction')
@@ -14,5 +12,6 @@ export default {
   getPermission: async (request, idx) => {
     const transaction = await request.cache().get('transaction')
     return idx ? transaction.permissions[idx] : transaction.permissions[transaction.permissions.length - 1]
-  }
+  },
+  TransactionError: class TransactionError extends Error {}
 }

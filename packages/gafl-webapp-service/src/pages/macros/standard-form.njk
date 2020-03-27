@@ -1,0 +1,36 @@
+{% extends "layout.njk" %}
+
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "button/macro.njk" import govukButton %}
+{% from "error-summary.njk" import errorSummary %}
+
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(error, errorMap) }}
+        <form method="post">
+
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                {% block pageContent %}{% endblock %}
+
+                {{ govukButton({
+                    name: "continue",
+                    text: "Continue",
+                    classes: "govuk-!-margin-top-5"
+                }) }}
+
+            {% endcall %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+

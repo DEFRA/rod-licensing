@@ -1,7 +1,6 @@
-'use strict'
-
 import { start, stop, server, getCookies } from '../../misc/test-utils.js'
 import helper from '../transaction-helper.js'
+import { NEW_TRANSACTION, ADD_PERMISSION } from '../../constants.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -12,14 +11,14 @@ afterAll(d => stop(d))
 const nu = async cookie =>
   server.inject({
     method: 'GET',
-    url: '/buy/new',
+    url: NEW_TRANSACTION.uri,
     headers: cookie ? { cookie: 'sid=' + cookie.sid } : {}
   })
 
 const add = async cookie =>
   server.inject({
     method: 'GET',
-    url: '/buy/add',
+    url: ADD_PERMISSION.uri,
     headers: cookie ? { cookie: 'sid=' + cookie.sid } : {}
   })
 

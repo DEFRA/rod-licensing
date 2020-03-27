@@ -1,5 +1,3 @@
-'use strict'
-
 import uuidv4 from 'uuid/v4.js'
 import db from 'debug'
 

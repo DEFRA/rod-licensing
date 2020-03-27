@@ -1,13 +1,17 @@
-'use strict'
+import licenceLength from '../pages/licence-details/licence-length/route.js'
+import licenceType from '../pages/licence-details/licence-type/route.js'
+import numberOfRods from '../pages/licence-details/number-of-rods/route.js'
+import licenceToStart from '../pages/licence-details/licence-to-start/route.js'
+import licenceStartDate from '../pages/licence-details/licence-start-date/route.js'
+import licenceStartTime from '../pages/licence-details/licence-start-time/route.js'
 
-import licenceLength from '../pages/licence-length/route.js'
-import licenceType from '../pages/licence-type/route.js'
-import numberOfRods from '../pages/number-of-rods/route.js'
 import summary from '../pages/summary/route.js'
 
-import name from '../pages/name/route.js'
-import dateOfBirth from '../pages/date-of-birth/route.js'
-import noLicenceRequired from '../pages/no-licence-required/route.js'
+import name from '../pages/contact/name/route.js'
+import dateOfBirth from '../pages/concessions/date-of-birth/route.js'
+import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
+import juniorLicence from '../pages/concessions/junior-licence/route.js'
+import benefitCheck from '../pages/concessions/benefit-check/route.js'
 
 import controller from './controller-route.js'
 import newTransactionRoute from './new-transaction-route.js'
@@ -24,10 +28,15 @@ const routes = [
   ...licenceLength,
   ...licenceType,
   ...numberOfRods,
-  ...name,
-  ...summary,
+  ...licenceToStart,
+  ...licenceStartDate,
+  ...licenceStartTime,
+  ...juniorLicence,
+  ...benefitCheck,
   ...dateOfBirth,
-  ...noLicenceRequired
+  ...noLicenceRequired,
+  ...name,
+  ...summary
 ]
 
 export default routes

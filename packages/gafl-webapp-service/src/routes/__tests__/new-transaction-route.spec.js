@@ -1,5 +1,3 @@
-'use strict'
-
 import { start, stop, server } from '../../misc/test-utils.js'
 import * as sessionManager from '../../lib/session-manager'
 const spy = jest.spyOn(sessionManager, 'default')

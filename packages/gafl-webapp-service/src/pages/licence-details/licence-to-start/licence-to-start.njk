@@ -1,0 +1,32 @@
+{% extends "standard-form.njk" %}
+
+{% from "radios/macro.njk" import govukRadios %}
+{% set title = 'When would you like your licence to start?' %}
+
+{%
+    set errorMap = {
+        'licence-to-start': {
+            'any.required': { ref: '#licence-to-start', text: 'Tell us when would you like your licence to start?' }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+        idPrefix: "licence-to-start",
+        name: "licence-to-start",
+        items: [
+            {
+                text: "30 minutes after payment",
+                value: "after-payment",
+                checked: payload['licence-to-start'] === 'after-payment'
+            },
+            {
+                text: "Another time or date",
+                value: "another-date-or-time",
+                checked: payload['licence-to-start'] === 'another-date-or-time'
+            }
+        ],
+        errorMessage: { text: 'Select when you\'d like your licence to start' } if error
+    }) }}
+{% endblock %}

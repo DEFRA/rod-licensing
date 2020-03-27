@@ -1,0 +1,33 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = 'How many rods would you like to licence?' %}
+
+{%
+    set errorMap = {
+        'number-of-rods': {
+            'any.required': { ref: '#number-of-rods', text: 'You did not tell us how many rods would you like to licence?' }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+           idPrefix: "number-of-rods",
+           name: "number-of-rods",
+           items: [
+               {
+                   text: "Up to 2 rods",
+                   value: "2",
+                   checked: payload['number-of-rods'] === '2'
+               },
+               {
+                   text: "Up to 3 rods",
+                   value: "3",
+                   checked: payload['number-of-rods'] === '3'
+               }
+           ],
+           errorMessage: { text: 'Choose the number of rods' } if error
+       })
+     }}
+{% endblock %}

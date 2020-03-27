@@ -1,4 +1,3 @@
-'use strict'
 /*
  * Decorators to make access to the session cache available as
  * simple setters and getters hiding the session key.
