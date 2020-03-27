@@ -119,9 +119,8 @@ export function retrieveGlobalOptionSets (...names) {
           }))
         }))
       } catch (e) {
-        const error = e.length ? e[0] : e
-        console.error('Error attempting to retrieveGlobalOptionSets', error)
-        throw error
+        console.error('Error attempting to retrieveGlobalOptionSets', e)
+        throw e
       }
     },
     data => {
@@ -154,7 +153,9 @@ export async function findByExample (entity) {
       ...Object.entries(entity.constructor.definition.mappings).reduce((acc, [property, { field, type }]) => {
         let serialized = entity._toSerialized(property)
         if (serialized !== undefined) {
-          if (type === 'string') serialized = `'${serialized}'`
+          if (type === 'string') {
+            serialized = `'${serialized}'`
+          }
           acc[acc.length] = `${field} eq ${serialized}`
         }
         return acc
@@ -164,8 +165,7 @@ export async function findByExample (entity) {
     const results = await dynamicsClient.retrieveMultipleRequest(entity.constructor.definition.toRetrieveRequest(filter))
     return results.value.map(result => entity.constructor.fromResponse(result, optionSetData))
   } catch (e) {
-    const error = e.length ? e[0] : e
-    console.error('Unable to findByExample:', error)
-    throw error
+    console.error('Unable to findByExample:', e)
+    throw e
   }
 }

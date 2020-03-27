@@ -5,7 +5,8 @@ describe('reference-data endpoint', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
     const api = require('dynamics-web-api').default
-    api.__setResponse([
+    api.__reset()
+    api.__setResponse('executeBatch', [
       {
         value: [
           {

@@ -33,7 +33,7 @@ export class BaseEntity {
    * @returns {boolean} true if the entity has not been persisted, false otherwise
    */
   isNew () {
-    return !!this.#etag
+    return this.#etag === null
   }
 
   /**
