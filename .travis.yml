@@ -27,10 +27,12 @@ before_deploy:
 deploy:
   - provider: script
     script: 'npm run lerna:prerelease'
+    skip_cleanup: true
     on:
       branch: master
   - provider: script
     script: 'npm run lerna:publish'
+    skip_cleanup: true
     on:
       tags: true
 
