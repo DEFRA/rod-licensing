@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class TransactionCurrency extends BaseEntity {
   /** @type {EntityDefinition} */
-  static #definition = new EntityDefinition({
+  static _definition = new EntityDefinition({
     localCollection: 'transactionCurrencies',
     dynamicsCollection: 'transactioncurrencies',
     defaultFilter: 'statecode eq 0',
@@ -23,7 +23,7 @@ export class TransactionCurrency extends BaseEntity {
    * @type {EntityDefinition}
    */
   static get definition () {
-    return TransactionCurrency.#definition
+    return TransactionCurrency._definition
   }
 
   /** get the name of the entity */

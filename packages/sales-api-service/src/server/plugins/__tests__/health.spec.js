@@ -16,7 +16,7 @@ jest.mock('aws-sdk', () => ({
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   dynamicsClient: {
-    executeUnboundFunction: async fn => {
+    executeUnboundFunction: async () => {
       return {
         '@odata.context': 'https://dynamics-host.crm4.dynamics.com/api/data/v9.1/$metadata#Microsoft.Dynamics.CRM.RetrieveVersionResponse',
         Version: '9.1.0.14134'
@@ -84,7 +84,7 @@ describe('hapi healthcheck', () => {
 
   it('exposes a service status page returning a 500 error when unhealthy', async () => {
     const { dynamicsClient } = require('@defra-fish/dynamics-lib')
-    jest.spyOn(dynamicsClient, 'executeUnboundFunction').mockImplementation(async fn => {
+    jest.spyOn(dynamicsClient, 'executeUnboundFunction').mockImplementation(async () => {
       throw new Error('Simulated')
     })
     const result = await server.inject({ method: 'GET', url: '/service-status' })

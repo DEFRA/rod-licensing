@@ -15,14 +15,14 @@ describe('aws service', () => {
 
   it('uses the default dynamodb endpoint if it is not overridden in configuration', async () => {
     process.env.AWS_REGION = 'eu-west-2'
-    Config.aws.dynamodb.endpoint = undefined
+    delete Config.aws.dynamodb.endpoint
     const { ddb } = require('../aws.js').default()
     expect(ddb.config.endpoint).toEqual('dynamodb.eu-west-2.amazonaws.com')
   })
 
   it('uses the default sqs endpoint if it is not overridden in configuration', async () => {
     process.env.AWS_REGION = 'eu-west-2'
-    Config.aws.sqs.endpoint = undefined
+    delete Config.aws.sqs.endpoint
     const { sqs } = require('../aws.js').default()
     expect(sqs.config.endpoint).toEqual('sqs.eu-west-2.amazonaws.com')
   })
