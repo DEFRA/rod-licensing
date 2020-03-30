@@ -1,7 +1,14 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+
+/**
+ * Concessions entity
+ * @extends BaseEntity
+ */
 export class Concession extends BaseEntity {
+  /** @type {EntityDefinition} */
   static #definition = new EntityDefinition({
-    collection: 'defra_concessions',
+    localCollection: 'concessions',
+    dynamicsCollection: 'defra_concessions',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_concessionid', type: 'string' },
@@ -9,12 +16,20 @@ export class Concession extends BaseEntity {
     }
   })
 
-  /** Define mappings between Dynamics entity field and local entity field */
+  /**
+   * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
+   * @type {EntityDefinition}
+   */
   static get definition () {
     return Concession.#definition
   }
 
-  /** get the name of the entity */
+  /**
+   * The name of the concession
+   *
+   * @type {string}
+   * @readonly
+   */
   get name () {
     return super._getState('name')
   }

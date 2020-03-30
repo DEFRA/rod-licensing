@@ -1,11 +1,13 @@
 import uuidv4 from 'uuid/v4.js'
 import util from 'util'
 import Joi from '@hapi/joi'
-import GlobalOptionSetDefinition from '../optionset/global-option-set-definition.js'
+import { GlobalOptionSetDefinition } from '../optionset/global-option-set-definition.js'
 import moment from 'moment'
 
 /**
  * Base class for Dynamics entities
+ * @class
+ * @abstract
  */
 export class BaseEntity {
   #etag = null
@@ -18,21 +20,26 @@ export class BaseEntity {
   }
 
   /**
-   * Define mappings between Dynamics entity field and local entity field
+   * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
+   * @type {EntityDefinition}
    */
   static get definition () {
     throw new Error('Definition not defined in subclass')
   }
 
   /**
-   * @returns {boolean} determining whether the entity is new (true) or existing (false) based on the presence of an etag
+   * Indicates whether the entity is new (true) or existing (false) based on the presence of an etag
+   *
+   * @returns {boolean} true if the entity has not been persisted, false otherwise
    */
   isNew () {
-    return !!this.#etag
+    return this.#etag === null
   }
 
   /**
-   * @returns {string} the etag of the entity or null if not yet persisted
+   * the etag of the entity or null if not yet persisted
+   * @readonly
+   * @returns {string}
    */
   get etag () {
     return this.#etag
@@ -65,9 +72,7 @@ export class BaseEntity {
 
     let valueToSet = value
     if (valueToSet !== undefined && valueToSet !== null) {
-      if (mapping.type === 'string') {
-        valueToSet = String(value)
-      } else if (mapping.type === 'integer') {
+      if (mapping.type === 'integer') {
         valueToSet = Number(value)
         if (Number.isNaN(valueToSet) || valueToSet - Math.floor(valueToSet) !== 0) {
           throw new Error('Value is not an integer')
@@ -89,11 +94,20 @@ export class BaseEntity {
         if (!(valueToSet instanceof GlobalOptionSetDefinition) || valueToSet.optionSetName !== mapping.ref) {
           throw new Error('Value is not a valid GlobalOptionSetDefinition')
         }
+      } else {
+        valueToSet = String(value)
       }
     }
     return (this.#localState[property] = valueToSet)
   }
 
+  /**
+   * Serialize an entity property into the format suitable for a Dynamics request
+   *
+   * @param property the field name
+   * @returns {*} the value that is set
+   * @protected
+   */
   _toSerialized (property) {
     let value = this.#localState[property]
     if (value !== undefined && value !== null) {
@@ -124,14 +138,18 @@ export class BaseEntity {
   }
 
   /**
-   * @returns {string} a unique (uuid) identifier for this object instance (useful for batch creation requests)
+   * a unique (uuid) identifier for this object instance (useful for batch creation requests)
+   * @type {string}
+   * @readonly
    */
   get uniqueContentId () {
     return this.#contentId || (this.#contentId = uuidv4())
   }
 
   /**
-   * @returns {string} the id of the entity
+   * the id of the entity
+   * @type {string}
+   * @readonly
    */
   get id () {
     return this._getState('id')
@@ -167,7 +185,7 @@ export class BaseEntity {
           return acc
         },
         Object.entries(this.#bindings).reduce((acc, [k, v]) => {
-          acc[k] = v.id ? `/${v.constructor.definition.collection}(${v.id})` : `$${v.uniqueContentId}`
+          acc[k] = v.id ? `/${v.constructor.definition.dynamicsCollection}(${v.id})` : `$${v.uniqueContentId}`
           return acc
         }, {})
       )
@@ -176,9 +194,9 @@ export class BaseEntity {
   /**
    * Create a new entity using the response from a query to the Dynamics ODATA Web API
    *
-   * @param etag the etag of the entity
-   * @param fields the fields of the entity
-   * @params optionSetData the global option set data used to resolve option set fields
+   * @param {string} etag the etag of the entity
+   * @param {Object} fields the fields of the entity
+   * @params {Object} optionSetData the global option set data used to resolve option set fields
    * @returns {BaseEntity} an instance of a BaseEntity subclass
    */
   static fromResponse ({ '@odata.etag': etag, ...fields }, optionSetData) {
@@ -208,9 +226,22 @@ export class BaseEntity {
   }
 }
 
+/**
+ * Schema for entity definitions
+ *
+ * @typedef {Object} MetadataSchema
+ * @property {!string} localCollection the local collection name
+ * @property {!string} dynamicsCollection the dynamics collection name
+ * @property {string} [defaultFilter] the default filter to use when retrieving records
+ * @property {Object} mappings the mappings between the local collection fields and the dynamics fields
+ */
 const metadataSchema = Joi.object({
-  // Entity collection name
-  collection: Joi.string()
+  // Local entity collection name
+  localCollection: Joi.string()
+    .min(1)
+    .required(),
+  // Dynamics entity collection name
+  dynamicsCollection: Joi.string()
     .min(1)
     .required(),
   // Default filter to apply
@@ -236,10 +267,18 @@ const metadataSchema = Joi.object({
   )
 })
 
+/**
+ * Definition metadata for an entity
+ * @class
+ */
 export class EntityDefinition {
+  /** @type {MetadataSchema} */
   #metadata = null
   #fields = null
 
+  /***
+   * @param metadata {MetadataSchema} the metadata to be associated with the entity
+   */
   constructor (metadata) {
     const validation = metadataSchema.validate(metadata)
     if (validation.error) throw validation.error
@@ -249,25 +288,51 @@ export class EntityDefinition {
       .filter(field => !field.includes('@'))
   }
 
-  get collection () {
-    return this.#metadata.collection
+  /**
+   * @returns {!string} the entity collection name used locally
+   */
+  get localCollection () {
+    return this.#metadata.localCollection
   }
 
+  /**
+   * @returns {!string} the entity collection name used by dynamics
+   */
+  get dynamicsCollection () {
+    return this.#metadata.dynamicsCollection
+  }
+
+  /**
+   * @returns {string} the default filter string used in any request to dynamics
+   */
   get defaultFilter () {
     return this.#metadata.defaultFilter
   }
 
+  /**
+   * @returns {Object} the field mappings used to map between the dynamics entity and the local entity
+   */
   get mappings () {
     return this.#metadata.mappings
   }
 
+  /**
+   * @returns {Array<String>} the fields used to populate the select statement in any retrieve request to dynamics
+   */
   get select () {
     return this.#fields
   }
 
+  /**
+   * Builds a request object to be used with the the dynamics-web-api package
+   * as per {@link https://www.npmjs.com/package/dynamics-web-api#advanced-using-request-object-4}
+   *
+   * @param filterString an optional filter string to use, otherwise defaults to the defaultFilter configured for the entity
+   * @returns {{filter: string, select: Array<String>, collection: !string}}
+   */
   toRetrieveRequest (filterString = this.defaultFilter) {
     return {
-      collection: this.collection,
+      collection: this.dynamicsCollection,
       select: this.select,
       filter: filterString
     }

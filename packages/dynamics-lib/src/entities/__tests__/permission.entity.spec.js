@@ -81,7 +81,7 @@ describe('permission entity', () => {
         defra_enddate: '2020-12-13T23:59:59Z',
         defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
         defra_datasource: 910400003,
-        'defra_PermitId@odata.bind': `/${Permit.definition.collection}(${permit.id})`,
+        'defra_PermitId@odata.bind': `/${Permit.definition.dynamicsCollection}(${permit.id})`,
         'defra_ContactId@odata.bind': '$' + contact.uniqueContentId
       })
     )
