@@ -53,16 +53,14 @@ const cacheDecorator = sessionCookieName =>
 
           setCurrentPermission: async data => {
             const status = await contextCache(this.server.app.cache, id(), 'status').get()
-            const idx = status.currentPermissionIdx
-            const current = status.permissions[idx]
+            const current = status.permissions[status.currentPermissionIdx]
             Object.assign(current, data)
             await contextCache(this.server.app.cache, id(), 'status').set(status)
           },
 
           getCurrentPermission: async () => {
             const status = await contextCache(this.server.app.cache, id(), 'status').get()
-            const idx = status.currentPermissionIdx
-            return status.permissions[idx]
+            return status.permissions[status.currentPermissionIdx]
           }
         },
 

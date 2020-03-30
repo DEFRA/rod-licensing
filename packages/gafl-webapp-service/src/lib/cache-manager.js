@@ -1,6 +1,5 @@
 /**
  * The cache is divided into individually addressable contexts
- * @type {{page: {identifier: string, initializer: {permissions: []}}, transaction: {identifier: string, initializer: {permissions: [], payment: {}}}, status: {identifier: string, initializer: {permissions: [], currentPermissionIdx: number}}}}
  */
 const contexts = {
   page: { identifier: 'page-context', initializer: { permissions: [] } },
@@ -37,9 +36,9 @@ const contextCache = (appCache, id, context) => ({
       throw new Error('Expect object')
     }
     const cache = await base(appCache, id).get()
-    const contextCache = cache[contexts[context].identifier]
-    Object.assign(contextCache, obj)
-    Object.assign(cache, { [contexts[context].identifier]: contextCache })
+    const local = cache[contexts[context].identifier]
+    Object.assign(local, obj)
+    Object.assign(cache, { [contexts[context].identifier]: local })
     await base(appCache, id).set(cache)
   }
 })
