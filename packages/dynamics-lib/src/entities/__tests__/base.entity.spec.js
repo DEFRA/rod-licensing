@@ -1,30 +1,10 @@
 import { BaseEntity, EntityDefinition } from '../base.entity'
-import GlobalOptionSetDefinition from '../../optionset/global-option-set-definition'
-
-class TestTypeClass extends BaseEntity {
-  static #definition = new EntityDefinition({
-    collection: 'test',
-    defaultFilter: 'statecode eq 0',
-    mappings: {
-      strVal: { field: 'strval', type: 'string' },
-      intVal: { field: 'intval', type: 'integer' },
-      decVal: { field: 'decval', type: 'decimal' },
-      boolVal: { field: 'boolval', type: 'boolean' },
-      dateVal: { field: 'dateval', type: 'date' },
-      dateTimeVal: { field: 'datetimeval', type: 'datetime' },
-      optionSetVal: { field: 'optionsetval', type: 'optionset', ref: 'test_globaloption' }
-    }
-  })
-
-  /** Define mappings between Dynamics entity field and local entity field */
-  static get definition () {
-    return TestTypeClass.#definition
-  }
-}
+import { GlobalOptionSetDefinition } from '../../optionset/global-option-set-definition'
+import TestEntity from '../../../__mocks__/TestEntity.js'
 
 describe('BaseEntity', () => {
   const runTestTypeConversion = (propertyName, value, expected = value, expectedSerialized = expected) => {
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     expect(test._setState(propertyName, value)).toEqual(expected)
     expect(test._toSerialized(propertyName)).toEqual(expectedSerialized)
   }
@@ -36,7 +16,7 @@ describe('BaseEntity', () => {
   })
 
   it('throws an error if an undefined mapping is used', () => {
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     expect(() => test._setState('unknown', 'some string')).toThrow('Unrecognised property mapping')
   })
 
@@ -64,7 +44,7 @@ describe('BaseEntity', () => {
   it('expects an integer when a property is mapped to type=integer', () => {
     runTestTypeConversion('intVal', 123)
     runTestTypeConversion('intVal', '123', 123)
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     expect(() => test._setState('intVal', 'some string')).toThrow('Value is not an integer')
     expect(() => test._setState('intVal', 123.45)).toThrow('Value is not an integer')
   })
@@ -74,14 +54,14 @@ describe('BaseEntity', () => {
     runTestTypeConversion('decVal', '123', 123)
     runTestTypeConversion('decVal', 123.45)
     runTestTypeConversion('decVal', '123.45', 123.45)
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     expect(() => test._setState('decVal', 'some string')).toThrow('Value is not an decimal')
   })
 
   it('expects a boolean when a property is mapped to type=boolean', () => {
     runTestTypeConversion('boolVal', true)
     runTestTypeConversion('boolVal', false)
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     expect(() => test._setState('boolVal', 'some string')).toThrow('Value is not an boolean')
   })
 
@@ -89,7 +69,7 @@ describe('BaseEntity', () => {
     const testDate = new Date('2020-01-01T01:02:03')
     runTestTypeConversion('dateVal', testDate, testDate, '2020-01-01')
     runTestTypeConversion('dateVal', '2020-01-01T01:02:03', '2020-01-01T01:02:03', '2020-01-01')
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     // Moment outputs a warning if an invalid string is given to the constructor
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     expect(() => test._setState('dateVal', 'some string')).toThrow('Value is not a valid date')
@@ -100,7 +80,7 @@ describe('BaseEntity', () => {
     const testDate = new Date('2020-01-01T01:02:03Z')
     runTestTypeConversion('dateTimeVal', testDate, testDate, '2020-01-01T01:02:03Z')
     runTestTypeConversion('dateTimeVal', '2020-01-01T01:02:03', '2020-01-01T01:02:03', '2020-01-01T01:02:03Z')
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     // Moment outputs a warning if an invalid string is given to the constructor
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
     expect(() => test._setState('dateTimeVal', 'some string')).toThrow('Value is not a valid date')
@@ -117,7 +97,7 @@ describe('BaseEntity', () => {
     const testGlobalOptionSet = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
     runTestTypeConversion('optionSetVal', testGlobalOptionSet, testGlobalOptionSet, 910400000)
 
-    const test = new TestTypeClass()
+    const test = new TestEntity()
     const testWrongGlobalOptionSet = new GlobalOptionSetDefinition('test_wrongglobaloption', {
       id: 910400000,
       label: 'test',
@@ -129,7 +109,7 @@ describe('BaseEntity', () => {
 
   it('throws an error if an optionset cannot be resolved in a server response', () => {
     expect(() =>
-      TestTypeClass.fromResponse(
+      TestEntity.fromResponse(
         {
           '@odata.etag': 'W/"22639016"',
           strval: null,
@@ -142,7 +122,7 @@ describe('BaseEntity', () => {
 })
 
 describe('EntityDefinition', () => {
-  it('to require a valid entity definition', () => {
-    expect(() => new EntityDefinition({})).toThrow('"collection" is required')
+  it('to requires a valid entity definition', () => {
+    expect(() => new EntityDefinition({})).toThrow('"localCollection" is required')
   })
 })

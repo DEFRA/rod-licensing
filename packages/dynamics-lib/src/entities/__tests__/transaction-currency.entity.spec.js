@@ -2,13 +2,16 @@ import { TransactionCurrency } from '../../index'
 
 describe('transaction-currency entity', () => {
   it('maps from dynamics', async () => {
-    const transactionCurrency = TransactionCurrency.fromResponse({
-      '@odata.etag': 'W/"596274"',
-      transactioncurrencyid: '77d7c824-b080-e611-80df-c4346bac7ed4',
-      currencyname: 'Pound Sterling',
-      currencysymbol: '£',
-      isocurrencycode: 'GBP'
-    })
+    const transactionCurrency = TransactionCurrency.fromResponse(
+      {
+        '@odata.etag': 'W/"596274"',
+        transactioncurrencyid: '77d7c824-b080-e611-80df-c4346bac7ed4',
+        currencyname: 'Pound Sterling',
+        currencysymbol: '£',
+        isocurrencycode: 'GBP'
+      },
+      {}
+    )
 
     const expectedFields = {
       id: '77d7c824-b080-e611-80df-c4346bac7ed4',

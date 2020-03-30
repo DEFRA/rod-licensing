@@ -1,8 +1,15 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
 
+/**
+ * @class
+ * @classdesc The contact entity
+ * @extends BaseEntity
+ */
 export class Contact extends BaseEntity {
+  /** @type {EntityDefinition} */
   static #definition = new EntityDefinition({
-    collection: 'contacts',
+    localCollection: 'contacts',
+    dynamicsCollection: 'contacts',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'contactid', type: 'string' },
@@ -17,143 +24,190 @@ export class Contact extends BaseEntity {
       town: { field: 'defra_town', type: 'string' },
       postcode: { field: 'defra_postcode', type: 'string' },
       country: { field: 'defra_country', type: 'optionset', ref: 'defra_country' },
-      preferredMethodOfContact: { field: 'defra_preferredmethodofcontact', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      gdprMarketingOptIn: { field: 'defra_gdprmarketingpreferenceoptin', type: 'boolean' }
+      preferredMethodOfConfirmation: {
+        field: 'defra_preferredmethodofconfirmation',
+        type: 'optionset',
+        ref: 'defra_preferredcontactmethod'
+      },
+      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' }
     }
   })
 
-  /** Define mappings between Dynamics entity field and local entity field */
+  /**
+   * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
+   * @type {EntityDefinition}
+   */
   static get definition () {
     return Contact.#definition
   }
 
-  /** get the firstName of the entity */
+  /**
+   * The first name of the contact
+   *
+   * @type {string}
+   */
   get firstName () {
     return super._getState('firstName')
   }
 
-  /** set the firstName of this entity */
   set firstName (firstName) {
     super._setState('firstName', firstName)
   }
 
-  /** get the lastName of the entity */
+  /**
+   * The last name of the contact
+   * @type {string}
+   */
   get lastName () {
     return super._getState('lastName')
   }
 
-  /** set the lastName of this entity */
   set lastName (lastName) {
     super._setState('lastName', lastName)
   }
 
-  /** get the birthDate of the entity */
+  /**
+   * The date of birth for the contact
+   * @type {string|Date}
+   */
   get birthDate () {
     return super._getState('birthDate')
   }
 
-  /** set the birthDate of this entity */
   set birthDate (birthDate) {
     super._setState('birthDate', birthDate)
   }
 
-  /** get the email of the entity */
+  /**
+   * The email address for the contact
+   * @type {string}
+   */
   get email () {
     return super._getState('email')
   }
 
-  /** set the email of this entity */
   set email (email) {
     super._setState('email', email)
   }
 
-  /** get the mobilePhone of the entity */
+  /**
+   * The mobile phone number for the contact
+   * @type {string}
+   */
   get mobilePhone () {
     return super._getState('mobilePhone')
   }
 
-  /** set the mobilePhone of this entity */
   set mobilePhone (mobilePhone) {
     super._setState('mobilePhone', mobilePhone)
   }
 
-  /** get the premises of the entity */
+  /**
+   * The premises field of the address for the contact
+   * @type {string}
+   */
   get premises () {
     return super._getState('premises')
   }
 
-  /** set the premises of this entity */
   set premises (premises) {
     super._setState('premises', premises)
   }
 
-  /** get the street of the entity */
+  /**
+   * The street field of the address for the contact
+   * @type {string}
+   */
   get street () {
     return super._getState('street')
   }
 
-  /** set the email of this entity */
   set street (street) {
     super._setState('street', street)
   }
 
-  /** get the locality of the entity */
+  /**
+   * The locality field of the address for the contact
+   * @type {string}
+   */
   get locality () {
     return super._getState('locality')
   }
 
-  /** set the locality of this entity */
   set locality (locality) {
     super._setState('locality', locality)
   }
 
-  /** get the town of the entity */
+  /**
+   * The town field of the address for the contact
+   * @type {string}
+   */
   get town () {
     return super._getState('town')
   }
 
-  /** set the town of this entity */
   set town (town) {
     super._setState('town', town)
   }
 
-  /** get the postcode of the entity */
+  /**
+   * The postcode field of the address for the contact
+   * @type {string}
+   */
   get postcode () {
     return super._getState('postcode')
   }
 
-  /** set the postcode of this entity */
   set postcode (postcode) {
     super._setState('postcode', postcode)
   }
 
-  /** get the country of the entity */
+  /**
+   * The country field of the address for the contact
+   * @type {string}
+   */
   get country () {
     return super._getState('country')
   }
 
-  /** set the country of this entity */
   set country (country) {
     super._setState('country', country)
   }
 
-  /** get the preferredMethodOfContact of the entity */
-  get preferredMethodOfContact () {
-    return super._getState('preferredMethodOfContact')
+  /**
+   * The preferred method of confirmation communications of the contact
+   * @type {GlobalOptionSetDefinition}
+   */
+  get preferredMethodOfConfirmation () {
+    return super._getState('preferredMethodOfConfirmation')
   }
 
-  /** set the preferredMethodOfContact of this entity */
-  set preferredMethodOfContact (preferredMethodOfContact) {
-    super._setState('preferredMethodOfContact', preferredMethodOfContact)
+  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
+    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
   }
 
-  /** get the gdprMarketingOptIn of the entity */
-  get gdprMarketingOptIn () {
-    return super._getState('gdprMarketingOptIn')
+  /**
+   * The preferred method of newsletter communications of the contact
+   * @type {GlobalOptionSetDefinition}
+   */
+  get preferredMethodOfNewsletter () {
+    return super._getState('preferredMethodOfNewsletter')
   }
 
-  /** set the gdprMarketingOptIn of this entity */
-  set gdprMarketingOptIn (gdprMarketingOptIn) {
-    super._setState('gdprMarketingOptIn', gdprMarketingOptIn)
+  set preferredMethodOfNewsletter (preferredMethodOfNewsletter) {
+    super._setState('preferredMethodOfNewsletter', preferredMethodOfNewsletter)
+  }
+
+  /**
+   * The preferred method to receive reminder communications
+   * @type {GlobalOptionSetDefinition}
+   */
+  get preferredMethodOfReminder () {
+    return super._getState('preferredMethodOfReminder')
+  }
+
+  set preferredMethodOfReminder (preferredMethodOfReminder) {
+    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
   }
 }
