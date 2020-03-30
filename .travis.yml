@@ -4,6 +4,10 @@ language: node_js
 node_js:
   - '13'
 cache: npm
+
+# Only run build for chores if building from a tag.
+if: commit_message !~ /(chore)/ OR tag IS NOT blank
+
 branches:
   only:
     - master
