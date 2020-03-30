@@ -1,8 +1,17 @@
 os: linux
+dist: bionic
 language: node_js
-
 node_js:
   - '13'
+cache: npm
+branches:
+  only:
+    - master
+
+stages:
+  - name: test
+    if: tag IS blank
+  - name: deploy
 
 script:
   - npm test
@@ -18,14 +27,11 @@ before_deploy:
 deploy:
   - provider: script
     script: 'npm run lerna:prerelease'
-    skip_cleanup: true
     on:
       branch: master
   - provider: script
     script: 'npm run lerna:publish'
-    skip_cleanup: true
     on:
-      branch: master
       tags: true
 
 addons:
