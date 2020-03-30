@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/sqs-receiver-service",
-  "version": "0.0.1-beta.5",
+  "version": "0.0.1-beta.7",
   "description": "SQS Receiver service",
   "type": "module",
   "engines": {
