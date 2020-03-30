@@ -1,5 +1,5 @@
 import { BENEFIT_CHECK, CONCESSION } from '../../../constants.js'
-import cacheHelper from '../../../lib/cache-helper.js'
+import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
 
 /**
  * Transfer the validate page object
@@ -7,13 +7,13 @@ import cacheHelper from '../../../lib/cache-helper.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const { payload } = (await cacheHelper.getPageData(request))[BENEFIT_CHECK.page]
-  const permission = await cacheHelper.getPermission(request)
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(BENEFIT_CHECK.page)
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   // Don't let this be set if we do not have a full adult licence
   if (permission.concession === CONCESSION.SENIOR || permission.concession === CONCESSION.JUNIOR) {
-    throw new cacheHelper.TransactionError()
+    throw new updateTransactionFunctions.TransactionError()
   }
   if (payload['benefit-check'] === 'yes') {
-    await cacheHelper.setPermission(request, { concession: CONCESSION.DISABLED })
+    await request.cache().helpers.transaction.setCurrentPermission({ concession: CONCESSION.DISABLED })
   }
 }

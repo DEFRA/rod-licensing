@@ -1,4 +1,3 @@
-import cacheHelper from '../../../lib/cache-helper.js'
 import { LICENCE_TYPE } from '../../../constants.js'
 
 /**
@@ -7,7 +6,7 @@ import { LICENCE_TYPE } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const { payload } = (await cacheHelper.getPageData(request))[LICENCE_TYPE.page]
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TYPE.page)
 
   const permission = {
     licenceType: payload['licence-type']
@@ -17,5 +16,5 @@ export default async request => {
     permission.numberOfRods = '3'
   }
 
-  await cacheHelper.setPermission(request, permission)
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

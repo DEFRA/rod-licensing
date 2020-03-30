@@ -22,7 +22,7 @@ const start = async done => {
     path: '/buy/transaction',
     handler: async request => {
       try {
-        return request.cache().get('transaction')
+        return request.cache().helpers.transaction.get()
       } catch (err) {
         return err
       }

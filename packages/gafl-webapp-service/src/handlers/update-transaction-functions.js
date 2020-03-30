@@ -31,5 +31,6 @@ export default {
   [LICENCE_TO_START.page]: licenceToStart,
   [LICENCE_START_DATE.page]: licenceStartDate,
   [LICENCE_START_TIME.page]: licenceStartTime,
-  [BENEFIT_CHECK.page]: benefitCheck
+  [BENEFIT_CHECK.page]: benefitCheck,
+  TransactionError: class TransactionError extends Error {}
 }

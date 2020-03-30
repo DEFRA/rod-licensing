@@ -1,4 +1,3 @@
-import cacheHelper from '../lib/cache-helper.js'
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 /**
  * @param path - the path attached to the handler
@@ -15,8 +14,8 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
-    const cache = await cacheHelper.getPageData(request)
-    const pageData = cache[view] || {}
+    const page = await request.cache().helpers.page.getCurrentPermission(view)
+    const pageData = page || {}
     if (getData && typeof getData === 'function') {
       const data = await getData(request)
       Object.assign(pageData, { data })
@@ -30,9 +29,9 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*|Response>}
    */
   post: async (request, h) => {
-    await cacheHelper.setPageData(request, { [view]: { payload: request.payload } })
-    await cacheHelper.setStatusData(request, { [view]: 'completed' })
-    await cacheHelper.setStatusData(request, { currentPage: view })
+    await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload })
+    await request.cache().helpers.status.setCurrentPermission({ [view]: 'completed' })
+    await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
     return h.redirect(completion)
   },
   /**
@@ -43,9 +42,9 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise}
    */
   error: async (request, h, err) => {
-    await cacheHelper.setPageData(request, { [view]: { payload: request.payload, error: errorShimm(err) } })
-    await cacheHelper.setStatusData(request, { [view]: 'error' })
-    await cacheHelper.setStatusData(request, { currentPage: view })
+    await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
+    await request.cache().helpers.status.setCurrentPermission({ [view]: 'error' })
+    await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
     return h.redirect(path).takeover()
   }
 })

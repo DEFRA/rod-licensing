@@ -1,4 +1,3 @@
-import cacheHelper from '../../../lib/cache-helper.js'
 import { NUMBER_OF_RODS } from '../../../constants.js'
 /**
  * Transfer the validate page object
@@ -6,6 +5,6 @@ import { NUMBER_OF_RODS } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const { payload } = (await cacheHelper.getPageData(request))[NUMBER_OF_RODS.page]
-  await cacheHelper.setPermission(request, { numberOfRods: payload['number-of-rods'] })
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(NUMBER_OF_RODS.page)
+  await request.cache().helpers.transaction.setCurrentPermission({ numberOfRods: payload['number-of-rods'] })
 }

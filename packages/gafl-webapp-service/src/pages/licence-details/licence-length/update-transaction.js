@@ -1,4 +1,3 @@
-import cacheHelper from '../../../lib/cache-helper.js'
 import { LICENCE_LENGTH } from '../../../constants.js'
 
 /**
@@ -7,6 +6,6 @@ import { LICENCE_LENGTH } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const { payload } = (await cacheHelper.getPageData(request))[LICENCE_LENGTH.page]
-  await cacheHelper.setPermission(request, { licenceLength: payload['licence-length'] })
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_LENGTH.page)
+  await request.cache().helpers.transaction.setCurrentPermission({ licenceLength: payload['licence-length'] })
 }

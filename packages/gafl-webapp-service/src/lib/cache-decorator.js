@@ -1,54 +1,89 @@
 /*
  * Decorators to make access to the session cache available as
- * simple setters and getters hiding the session key.
+ * functions hiding the session key.
  *
  * The cache is divided into individually addressable contexts
  */
-import db from 'debug'
-const debug = db('cache')
+import { contexts, base, contextCache } from './cache-manager.js'
 
-const contexts = {
-  page: { identifier: 'page-context', initializer: { permissions: [] } },
-  transaction: { identifier: 'transaction-context', initializer: { permissions: [] } },
-  status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: 0 } }
-}
-
+/**
+ * These functions are exposed on the request object and may be used by the handlers
+ * @param sessionCookieName
+ * @returns {function(): {helpers: {permission: {}, page: {}, status: {}}, initialize: initialize}}
+ */
 const cacheDecorator = sessionCookieName =>
   function () {
     const id = () => this.state[sessionCookieName].id
-
+    const idx = async appCache => {
+      const status = await contextCache(appCache, id(), 'status').get()
+      return status.currentPermissionIdx
+    }
     return {
       initialize: async () => {
-        debug(`Initialize cache: ${id()}`)
         const cache = Object.values(contexts).reduce((a, c) => ({ ...a, [c.identifier]: c.initializer }), {})
-        await this.server.app.cache.set(id(), cache)
+        await base(this.server.app.cache, id()).init(cache)
       },
 
-      get: async context => {
-        if (!contexts[context]) {
-          throw new Error('Expect context')
+      helpers: {
+        transaction: {
+          get: async () => contextCache(this.server.app.cache, id(), 'transaction').get(),
+          set: async obj => contextCache(this.server.app.cache, id(), 'transaction').set(obj),
+
+          hasPermission: async () => {
+            const transaction = await contextCache(this.server.app.cache, id(), 'transaction').get()
+            return !!transaction.permissions.length
+          },
+
+          setCurrentPermission: async permission => {
+            const transaction = await contextCache(this.server.app.cache, id(), 'transaction').get()
+            const current = transaction.permissions[await idx(this.server.app.cache)]
+            Object.assign(current, permission)
+            await contextCache(this.server.app.cache, id(), 'transaction').set(transaction)
+          },
+
+          getCurrentPermission: async () => {
+            const transaction = await contextCache(this.server.app.cache, id(), 'transaction').get()
+            return transaction.permissions[await idx(this.server.app.cache)]
+          }
+        },
+
+        status: {
+          get: async () => contextCache(this.server.app.cache, id(), 'status').get(),
+          set: async obj => contextCache(this.server.app.cache, id(), 'status').set(obj),
+
+          setCurrentPermission: async data => {
+            const status = await contextCache(this.server.app.cache, id(), 'status').get()
+            const idx = status.currentPermissionIdx
+            const current = status.permissions[idx]
+            Object.assign(current, data)
+            await contextCache(this.server.app.cache, id(), 'status').set(status)
+          },
+
+          getCurrentPermission: async () => {
+            const status = await contextCache(this.server.app.cache, id(), 'status').get()
+            const idx = status.currentPermissionIdx
+            return status.permissions[idx]
+          }
+        },
+
+        page: {
+          get: async () => contextCache(this.server.app.cache, id(), 'page').get(),
+          set: async obj => contextCache(this.server.app.cache, id(), 'page').set(obj),
+
+          setCurrentPermission: async (page, data) => {
+            const pages = await contextCache(this.server.app.cache, id(), 'page').get()
+            const currentPermission = pages.permissions[await idx(this.server.app.cache)]
+            Object.assign(currentPermission, { [page]: data })
+            await contextCache(this.server.app.cache, id(), 'page').set(pages)
+          },
+
+          getCurrentPermission: async page => {
+            const pages = await contextCache(this.server.app.cache, id(), 'page').get()
+            return pages.permissions[await idx(this.server.app.cache)][page]
+          }
         }
-
-        const cache = await this.server.app.cache.get(id())
-        return cache ? cache[contexts[context].identifier] : null
-      },
-
-      set: async (context, obj) => {
-        if (!contexts[context]) {
-          throw new Error('Expect context')
-        }
-
-        if (!obj || typeof obj !== 'object') {
-          throw new Error('Expect object')
-        }
-
-        const cache = await this.server.app.cache.get(id())
-        const contextCache = cache[contexts[context].identifier]
-        Object.assign(contextCache, obj)
-        Object.assign(cache, { [contexts[context].identifier]: contextCache })
-        await this.server.app.cache.set(id(), cache)
       }
     }
   }
 
-export { cacheDecorator, contexts }
+export { cacheDecorator }

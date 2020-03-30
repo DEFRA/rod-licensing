@@ -10,20 +10,20 @@ export default {
   method: 'GET',
   path: ADD_PERMISSION.uri,
   handler: async (request, h) => {
-    const transaction = await request.cache().get('transaction')
-    const page = await request.cache().get('page')
-    const status = await request.cache().get('page')
-    if (transaction.permissions.length > MAX_PERMISSIONS) {
+    const transaction = await request.cache().helpers.transaction.get()
+    const page = await request.cache().helpers.page.get()
+    const status = await request.cache().helpers.status.get('page')
+    if (transaction.permissions.length >= MAX_PERMISSIONS) {
       throw boom.badRequest('Too many permissions')
     }
     debug(`Add permission: ${transaction.permissions.length}`)
     transaction.permissions.push({})
     page.permissions.push({})
     status.permissions.push({})
-    await request.cache().set('transaction', transaction)
-    await request.cache().set('page', page)
-    await request.cache().set('status', status)
-    await request.cache().set('status', { currentPermissionIdx: transaction.permissions.length - 1 })
+    await request.cache().helpers.transaction.set(transaction)
+    await request.cache().helpers.page.set(page)
+    await request.cache().helpers.status.set(status)
+    await request.cache().helpers.status.set({ currentPermissionIdx: transaction.permissions.length - 1 })
     return h.redirect(CONTROLLER.uri)
   }
 }

@@ -2,7 +2,6 @@ import { LICENCE_START_TIME, CONTROLLER } from '../../../constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import moment from 'moment'
-import transactionHelper from '../../../lib/cache-helper.js'
 
 const hours = Array(24)
   .fill(0)
@@ -15,7 +14,7 @@ const validator = Joi.object({
 }).options({ abortEarly: false, allowUnknown: true })
 
 const getData = async request => {
-  const permission = await transactionHelper.getPermission(request)
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const startDateStr = moment(permission.licenceStartDate, 'YYYY-MM-DD').format('dddd, Do MMMM, YYYY')
   return { startDateStr }
 }
