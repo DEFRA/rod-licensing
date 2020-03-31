@@ -18,9 +18,8 @@ branches:
 stages:
   - name: test
     if: tag IS blank
-  - name: prepare-deployment
-    if: type != pull_request
   - name: deploy
+    if: type != pull_request
 
 jobs:
   include:
@@ -28,25 +27,24 @@ jobs:
       script:
         - npm test
         - sonar-scanner
-    - stage: prepare-deployment
+    - stage: deploy
       script:
         - git config --global user.email ${GITHUB_EMAIL}
         - git config --global user.name ${GITHUB_USER}
         - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licencing.git" > /dev/null 2>&1
         - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
         - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
-
-deploy:
-  - provider: script
-    script: 'npm run lerna:prerelease'
-    cleanup: false
-    on:
-      branch: master
-  - provider: script
-    script: 'npm run lerna:publish'
-    cleanup: false
-    on:
-      tags: true
+      deploy:
+        - provider: script
+          script: 'npm run lerna:prerelease'
+          cleanup: false
+          on:
+            branch: master
+        - provider: script
+          script: 'npm run lerna:publish'
+          cleanup: false
+          on:
+            tags: true
 
 addons:
   sonarcloud:
