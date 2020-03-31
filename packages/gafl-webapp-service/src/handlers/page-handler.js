@@ -56,6 +56,8 @@ export default (path, view, completion, getData) => ({
       if (err2 instanceof CacheError) {
         return h.redirect(CONTROLLER.uri).takeover()
       }
+
+      throw err2
     }
   }
 })
