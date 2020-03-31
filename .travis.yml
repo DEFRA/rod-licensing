@@ -37,12 +37,12 @@ jobs:
       deploy:
         - provider: script
           script: 'npm run lerna:prerelease'
-          cleanup: false
+          skip_cleanup: true
           on:
             branch: master
         - provider: script
           script: 'npm run lerna:publish'
-          cleanup: false
+          skip_cleanup: true
           on:
             tags: true
 
