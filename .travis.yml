@@ -13,6 +13,7 @@ if: commit_message !~ /^chore/ OR tag IS NOT blank
 branches:
   only:
     - master
+    - /^v\d+\.\d+\.\d+(-\w+\.\d+)?$/
 
 stages:
   - name: test
