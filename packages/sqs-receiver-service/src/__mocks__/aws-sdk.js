@@ -146,45 +146,43 @@ AwsSdk.__mockGetAttributesThrows = () => {
   exception = new Error()
 }
 
-const mockGetQueueAttributes = jest.fn()
+export const GetQueueAttributesMockImplementation = jest.fn()
 
-mockGetQueueAttributes
-  .mockReturnValueOnce({
-    promise: () => {
-      if (exception) {
-        throw exception
-      }
+GetQueueAttributesMockImplementation.mockReturnValueOnce({
+  promise: () => {
+    if (exception) {
+      throw exception
+    }
 
-      return {
-        Attributes: {
-          ApproximateNumberOfMessagesDelayed: 1,
-          ApproximateNumberOfMessagesNotVisible: 2,
-          ApproximateNumberOfMessages: 3
-        }
+    return {
+      Attributes: {
+        ApproximateNumberOfMessagesDelayed: 1,
+        ApproximateNumberOfMessagesNotVisible: 2,
+        ApproximateNumberOfMessages: 3
       }
     }
-  })
-  .mockReturnValue({
-    promise: () => {
-      if (exception) {
-        throw exception
-      }
+  }
+}).mockReturnValue({
+  promise: () => {
+    if (exception) {
+      throw exception
+    }
 
-      return {
-        Attributes: {
-          ApproximateNumberOfMessagesDelayed: 0,
-          ApproximateNumberOfMessagesNotVisible: 0,
-          ApproximateNumberOfMessages: 0
-        }
+    return {
+      Attributes: {
+        ApproximateNumberOfMessagesDelayed: 0,
+        ApproximateNumberOfMessagesNotVisible: 0,
+        ApproximateNumberOfMessages: 0
       }
     }
-  })
+  }
+})
 
 AwsSdk.SQS.mockImplementation(() => {
   return {
     receiveMessage: receiveMessage,
     deleteMessageBatch: deleteMessageBatch,
-    getQueueAttributes: mockGetQueueAttributes
+    getQueueAttributes: GetQueueAttributesMockImplementation
   }
 })
 

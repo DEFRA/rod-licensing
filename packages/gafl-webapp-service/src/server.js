@@ -115,9 +115,7 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
-  process.on('unhandledRejection', err => {
-    console.error(err)
-  })
+  process.on('unhandledRejection', console.error)
 
   server.route(routes)
 
