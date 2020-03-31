@@ -62,16 +62,10 @@ const getCookies = response => {
 const initialize = async done => {
   const data = await server.inject({
     method: 'GET',
-    url: '/buy/add'
+    url: '/buy'
   })
 
   global.cookies = getCookies(data)
-
-  await server.inject({
-    method: 'GET',
-    url: '/buy',
-    headers: { cookie: `sid=${global.cookies.sid}` }
-  })
 
   done()
 }

@@ -9,7 +9,6 @@ describe('The new permission handler', () => {
   it('Adds new permission objects to the transaction cache', async () => {
     // Add a permission
     await injectWithCookie('GET', NEW_TRANSACTION.uri)
-    await injectWithCookie('GET', ADD_PERMISSION.uri)
     let res = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(res.payload).permissions.length).toBe(1)
 
