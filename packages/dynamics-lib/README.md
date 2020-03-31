@@ -14,6 +14,7 @@ shared by the different packages which comprise the Rod Licencing digital servic
 | OAUTH_TENANT             | OAuth 2.0 tenant                                    |   yes    |          |                               | See [adal-node documentation](https://www.npmjs.com/package/adal-node#server-to-server-via-client-credentials) for more information |
 | DYNAMICS_API_PATH        | Full URL to the dynamics API                        |   yes    |          |                               | The full URL to the dynamics web api. e.g. https://dynamics-server/api/data/v9.1/                                                   |
 | DYNAMICS_API_VERSION     | The version of the Dynamics API                     |   yes    |          |                               | The version of the dynamics web api. e.g. 9.1                                                                                       |
+| DYNAMICS_API_TIMEOUT     | The Dynamics API request timeout                    |    no    | 90000    |                               | The time in milliseconds after which requests will timeout if Dynamics does not return a response, e.g. 90000                       |
 | DYNAMICS_CACHE_TTL       | Default TTL for cached operations                   |    no    | 12 hours |                               | The default TTL for cached operations. Specified in seconds.                                                                        |
 
 # Prerequisites
