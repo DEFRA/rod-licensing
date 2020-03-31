@@ -7,7 +7,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class Contact extends BaseEntity {
   /** @type {EntityDefinition} */
-  static #definition = new EntityDefinition({
+  static _definition = new EntityDefinition({
     localCollection: 'contacts',
     dynamicsCollection: 'contacts',
     defaultFilter: 'statecode eq 0',
@@ -39,7 +39,7 @@ export class Contact extends BaseEntity {
    * @type {EntityDefinition}
    */
   static get definition () {
-    return Contact.#definition
+    return Contact._definition
   }
 
   /**

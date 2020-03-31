@@ -5,7 +5,8 @@ import TestEntity from '../../../__mocks__/TestEntity.js'
 describe('BaseEntity', () => {
   const runTestTypeConversion = (propertyName, value, expected = value, expectedSerialized = expected) => {
     const test = new TestEntity()
-    expect(test._setState(propertyName, value)).toEqual(expected)
+    test._setState(propertyName, value)
+    expect(test._getState(propertyName)).toEqual(expected)
     expect(test._toSerialized(propertyName)).toEqual(expectedSerialized)
   }
 

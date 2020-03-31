@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "0.0.1-beta.6",
+  "version": "0.0.1-beta.10",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -49,7 +49,7 @@
     "govuk-frontend": "^3.6.0",
     "moment": "^2.24.0",
     "nunjucks": "^3.2.1",
-    "uuid": "^7.0.2-beta.0"
+    "uuid": "^7.0.2"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",

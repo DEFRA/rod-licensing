@@ -10,10 +10,10 @@ import moment from 'moment'
  * @abstract
  */
 export class BaseEntity {
-  #etag = null
-  #contentId = null
-  #localState = {}
-  #bindings = {}
+  _etag = null
+  _contentId = uuidv4()
+  _localState = {}
+  _bindings = {}
 
   constructor () {
     this[util.inspect.custom] = this.toJSON
@@ -33,7 +33,7 @@ export class BaseEntity {
    * @returns {boolean} true if the entity has not been persisted, false otherwise
    */
   isNew () {
-    return this.#etag === null
+    return this._etag === null
   }
 
   /**
@@ -42,7 +42,7 @@ export class BaseEntity {
    * @returns {string}
    */
   get etag () {
-    return this.#etag
+    return this._etag
   }
 
   /**
@@ -53,7 +53,7 @@ export class BaseEntity {
    * @protected
    */
   _getState (property) {
-    return this.#localState[property]
+    return this._localState[property]
   }
 
   /**
@@ -69,36 +69,62 @@ export class BaseEntity {
     if (!mapping) {
       throw new Error('Unrecognised property mapping')
     }
-
-    let valueToSet = value
-    if (valueToSet !== undefined && valueToSet !== null) {
-      if (mapping.type === 'integer') {
-        valueToSet = Number(value)
-        if (Number.isNaN(valueToSet) || valueToSet - Math.floor(valueToSet) !== 0) {
-          throw new Error('Value is not an integer')
-        }
-      } else if (mapping.type === 'decimal') {
-        valueToSet = Number(value)
-        if (Number.isNaN(valueToSet)) {
-          throw new Error('Value is not an decimal')
-        }
-      } else if (mapping.type === 'boolean') {
-        if (valueToSet !== false && valueToSet !== true) {
-          throw new Error('Value is not an boolean')
-        }
-      } else if (mapping.type === 'date' || mapping.type === 'datetime') {
-        if (!moment(valueToSet).isValid()) {
-          throw new Error('Value is not a valid date')
-        }
-      } else if (mapping.type === 'optionset') {
-        if (!(valueToSet instanceof GlobalOptionSetDefinition) || valueToSet.optionSetName !== mapping.ref) {
-          throw new Error('Value is not a valid GlobalOptionSetDefinition')
-        }
-      } else {
-        valueToSet = String(value)
+    if (value !== undefined && value !== null) {
+      const setOp = {
+        string: this._setString,
+        integer: this._setInteger,
+        decimal: this._setDecimal,
+        boolean: this._setBoolean,
+        date: this._setDate,
+        datetime: this._setDate,
+        optionset: this._setOptionSet
       }
+      setOp[mapping.type].bind(this)(property, value)
+    } else {
+      this._localState[property] = value
     }
-    return (this.#localState[property] = valueToSet)
+  }
+
+  _setString (property, value) {
+    this._localState[property] = String(value)
+  }
+
+  _setInteger (property, value) {
+    const valueToSet = Number(value)
+    if (Number.isNaN(valueToSet) || valueToSet - Math.floor(valueToSet) !== 0) {
+      throw new Error('Value is not an integer')
+    }
+    this._localState[property] = valueToSet
+  }
+
+  _setDecimal (property, value) {
+    const valueToSet = Number(value)
+    if (Number.isNaN(valueToSet)) {
+      throw new Error('Value is not an decimal')
+    }
+    this._localState[property] = valueToSet
+  }
+
+  _setBoolean (property, value) {
+    if (value !== false && value !== true) {
+      throw new Error('Value is not an boolean')
+    }
+    this._localState[property] = value
+  }
+
+  _setDate (property, value) {
+    if (!moment(value).isValid()) {
+      throw new Error('Value is not a valid date')
+    }
+    this._localState[property] = value
+  }
+
+  _setOptionSet (property, value) {
+    const mapping = this.constructor.definition.mappings[property]
+    if (!(value instanceof GlobalOptionSetDefinition) || value.optionSetName !== mapping.ref) {
+      throw new Error('Value is not a valid GlobalOptionSetDefinition')
+    }
+    this._localState[property] = value
   }
 
   /**
@@ -109,7 +135,7 @@ export class BaseEntity {
    * @protected
    */
   _toSerialized (property) {
-    let value = this.#localState[property]
+    let value = this._localState[property]
     if (value !== undefined && value !== null) {
       const type = this.constructor.definition.mappings[property].type
       if (type === 'date') {
@@ -134,7 +160,7 @@ export class BaseEntity {
    * @protected
    */
   _bind (property, entity) {
-    return (this.#bindings[property] = entity)
+    this._bindings[property] = entity
   }
 
   /**
@@ -143,7 +169,7 @@ export class BaseEntity {
    * @readonly
    */
   get uniqueContentId () {
-    return this.#contentId || (this.#contentId = uuidv4())
+    return this._contentId
   }
 
   /**
@@ -166,7 +192,7 @@ export class BaseEntity {
    * @returns {{}} a json representation of the entity state
    */
   toJSON () {
-    return this.#localState
+    return this._localState
   }
 
   /**
@@ -184,7 +210,7 @@ export class BaseEntity {
           }
           return acc
         },
-        Object.entries(this.#bindings).reduce((acc, [k, v]) => {
+        Object.entries(this._bindings).reduce((acc, [k, v]) => {
           acc[k] = v.id ? `/${v.constructor.definition.dynamicsCollection}(${v.id})` : `$${v.uniqueContentId}`
           return acc
         }, {})
@@ -196,15 +222,16 @@ export class BaseEntity {
    *
    * @param {string} etag the etag of the entity
    * @param {Object} fields the fields of the entity
-   * @params {Object} optionSetData the global option set data used to resolve option set fields
+   * @param {Object} optionSetData the global option set data used to resolve option set fields
    * @returns {BaseEntity} an instance of a BaseEntity subclass
    */
   static fromResponse ({ '@odata.etag': etag, ...fields }, optionSetData) {
-    const instance = new this()
-    instance.#etag = etag
-    instance.#localState = Object.entries(this.definition.mappings).reduce((acc, [property, { field, type, ref }]) => {
-      let value = fields[field]
-      if (value !== undefined) {
+    const instance = new this.prototype.constructor()
+    instance._etag = etag
+    instance._localState = Object.entries(this.definition.mappings)
+      .filter(([property, { field }]) => fields[field] !== undefined)
+      .reduce((acc, [property, { field, type, ref }]) => {
+        let value = fields[field]
         if (value !== null) {
           if (type === 'integer' || type === 'decimal') {
             value = Number(value)
@@ -218,10 +245,8 @@ export class BaseEntity {
           }
         }
         acc[property] = value
-      }
-
-      return acc
-    }, {})
+        return acc
+      }, {})
     return instance
   }
 }
@@ -273,17 +298,19 @@ const metadataSchema = Joi.object({
  */
 export class EntityDefinition {
   /** @type {MetadataSchema} */
-  #metadata = null
-  #fields = null
+  _metadata
+  _fields
 
   /***
    * @param metadata {MetadataSchema} the metadata to be associated with the entity
    */
   constructor (metadata) {
     const validation = metadataSchema.validate(metadata)
-    if (validation.error) throw validation.error
-    this.#metadata = metadata
-    this.#fields = Object.values(metadata.mappings)
+    if (validation.error) {
+      throw validation.error
+    }
+    this._metadata = metadata
+    this._fields = Object.values(metadata.mappings)
       .map(({ field }) => field)
       .filter(field => !field.includes('@'))
   }
@@ -292,35 +319,35 @@ export class EntityDefinition {
    * @returns {!string} the entity collection name used locally
    */
   get localCollection () {
-    return this.#metadata.localCollection
+    return this._metadata.localCollection
   }
 
   /**
    * @returns {!string} the entity collection name used by dynamics
    */
   get dynamicsCollection () {
-    return this.#metadata.dynamicsCollection
+    return this._metadata.dynamicsCollection
   }
 
   /**
    * @returns {string} the default filter string used in any request to dynamics
    */
   get defaultFilter () {
-    return this.#metadata.defaultFilter
+    return this._metadata.defaultFilter
   }
 
   /**
    * @returns {Object} the field mappings used to map between the dynamics entity and the local entity
    */
   get mappings () {
-    return this.#metadata.mappings
+    return this._metadata.mappings
   }
 
   /**
    * @returns {Array<String>} the fields used to populate the select statement in any retrieve request to dynamics
    */
   get select () {
-    return this.#fields
+    return this._fields
   }
 
   /**

@@ -1,31 +1,51 @@
 os: linux
+dist: bionic
 language: node_js
-
 node_js:
   - '13'
+cache: npm
+git:
+  depth: false
 
-script:
-  - npm test
-  - sonar-scanner
+# Only run build for chores if building from a tag.
+if: commit_message !~ /^chore/ OR tag IS NOT blank
 
-before_deploy:
-  - git config --global user.email ${GITHUB_EMAIL}
-  - git config --global user.name ${GITHUB_USER}
-  - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licencing.git" > /dev/null 2>&1
-  - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
-  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+(-\w+\.\d+)?$/
+
+stages:
+  - name: test
+    if: tag IS blank
+  - name: prepare-deployment
+    if: type != pull_request
+  - name: deploy
+
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm test
+        - sonar-scanner
+    - stage: prepare-deployment
+      script:
+        - git config --global user.email ${GITHUB_EMAIL}
+        - git config --global user.name ${GITHUB_USER}
+        - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licencing.git" > /dev/null 2>&1
+        - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
+        - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 
 deploy:
   - provider: script
     script: 'npm run lerna:prerelease'
-    skip_cleanup: true
+    cleanup: false
     on:
       branch: master
   - provider: script
     script: 'npm run lerna:publish'
-    skip_cleanup: true
+    cleanup: false
     on:
-      branch: master
       tags: true
 
 addons:

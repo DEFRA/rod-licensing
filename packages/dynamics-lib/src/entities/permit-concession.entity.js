@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class PermitConcession extends BaseEntity {
   /** @type {EntityDefinition} */
-  static #definition = new EntityDefinition({
+  static _definition = new EntityDefinition({
     localCollection: 'permitConcessions',
     dynamicsCollection: 'defra_defra_concession_defra_permitset',
     defaultFilter: undefined,
@@ -22,7 +22,7 @@ export class PermitConcession extends BaseEntity {
    * @type {EntityDefinition}
    */
   static get definition () {
-    return PermitConcession.#definition
+    return PermitConcession._definition
   }
 
   /**

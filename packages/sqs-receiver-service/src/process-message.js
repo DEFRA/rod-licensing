@@ -47,14 +47,13 @@ const processMessage = async (message, subscriber, subscriberTimeoutMs) => {
       status: 200
     }
   } catch (err) {
-    console.error(`Error from subscriber: ${subscriberURL.toString()}`)
-    console.error(err)
+    console.error(`Error from subscriber: ${subscriberURL.toString()}`, err)
 
     return {
       id: message.MessageId,
       handle: message.ReceiptHandle,
       status: 500,
-      message: err.message || 'Unknown error'
+      message: err.message
     }
   }
 }
