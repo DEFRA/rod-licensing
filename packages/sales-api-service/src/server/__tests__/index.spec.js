@@ -33,16 +33,4 @@ describe('hapi server', () => {
     })
     await server.stop()
   })
-
-  it('exposes a landing page', async () => {
-    const server = await initialiseServer({ port: null })
-    const result = await server.inject({ method: 'GET', url: '/' })
-    expect(result).toMatchObject({
-      statusCode: 200,
-      headers: {
-        'content-type': 'text/html; charset=utf-8'
-      }
-    })
-    await server.stop()
-  })
 })
