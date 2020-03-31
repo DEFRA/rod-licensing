@@ -9,7 +9,8 @@ import {
   JUNIOR_LICENCE,
   LICENCE_TYPE,
   NAME,
-  BENEFIT_CHECK
+  BENEFIT_CHECK,
+  BENEFIT_NI_NUMBER
 } from '../constants.js'
 
 export default [
@@ -119,7 +120,16 @@ export default [
         page: NAME.uri
       },
       yes: {
-        page: BENEFIT_CHECK.uri
+        page: BENEFIT_NI_NUMBER.uri
+      }
+    }
+  },
+
+  {
+    currentPage: BENEFIT_NI_NUMBER.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
       }
     }
   },

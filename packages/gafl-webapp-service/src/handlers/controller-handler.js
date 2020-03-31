@@ -4,7 +4,7 @@
  */
 import resultFunctions from './result-functions.js'
 import updateTransactionFunctions from './update-transaction-functions.js'
-import routeDefinition from './route-definition.js'
+import routeDefinition from '../routes/route-definition.js'
 const defaultResultFunction = () => 'ok'
 
 export default async (request, h) => {

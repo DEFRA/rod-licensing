@@ -12,6 +12,7 @@ import dateOfBirth from '../pages/concessions/date-of-birth/route.js'
 import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
 import juniorLicence from '../pages/concessions/junior-licence/route.js'
 import benefitCheck from '../pages/concessions/benefit-check/route.js'
+import benefitNINumber from '../pages/concessions/benefit-ni-number/route.js'
 
 import controller from './controller-route.js'
 import newTransactionRoute from './new-transaction-route.js'
@@ -34,6 +35,7 @@ const routes = [
   ...licenceStartTime,
   ...juniorLicence,
   ...benefitCheck,
+  ...benefitNINumber,
   ...dateOfBirth,
   ...noLicenceRequired,
   ...name,

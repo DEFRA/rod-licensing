@@ -20,13 +20,7 @@ const start = async done => {
   server.route({
     method: 'GET',
     path: '/buy/transaction',
-    handler: async request => {
-      try {
-        return request.cache().helpers.transaction.get()
-      } catch (err) {
-        return err
-      }
-    }
+    handler: async request => request.cache().helpers.transaction.get()
   })
 
   // clear cache
