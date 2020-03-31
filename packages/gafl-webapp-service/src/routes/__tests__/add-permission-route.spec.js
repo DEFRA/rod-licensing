@@ -9,13 +9,14 @@ describe('The new permission handler', () => {
   it('Adds new permission objects to the transaction cache', async () => {
     // Add a permission
     await injectWithCookie('GET', NEW_TRANSACTION.uri)
+    await injectWithCookie('GET', ADD_PERMISSION.uri)
     let res = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(res.payload).permissions.length).toBe(0)
+    expect(JSON.parse(res.payload).permissions.length).toBe(1)
 
     // Add a permission
     await injectWithCookie('GET', ADD_PERMISSION.uri)
     res = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(res.payload).permissions.length).toBe(1)
+    expect(JSON.parse(res.payload).permissions.length).toBe(2)
   })
 
   it('Ensure that we cannot overload the redis cache by doing this continually', async () => {

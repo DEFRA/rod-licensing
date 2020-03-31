@@ -7,7 +7,7 @@ export default async request => {
 
   if (permission.noLicenceRequired) {
     result = 'noLicenceRequired'
-  } else if (!permission.concession) {
+  } else if (!permission.concession || permission.concession === CONCESSION.DISABLED) {
     result = 'adult'
   } else if (permission.concession === CONCESSION.SENIOR) {
     result = 'senior'

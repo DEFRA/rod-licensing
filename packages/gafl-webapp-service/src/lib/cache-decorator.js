@@ -4,24 +4,43 @@
  *
  * The cache is divided into individually addressable contexts
  */
-import { contexts, base, contextCache } from './cache-manager.js'
+import { contexts, base, contextCache, CacheError } from './cache-manager.js'
+import db from 'debug'
+/**
+ * The cache is divided into individually addressable contexts
+ */
+const debug = db('cache')
 
 /**
  * These functions are exposed on the request object and may be used by the handlers
  * @param sessionCookieName
- * @returns {function(): {helpers: {permission: {}, page: {}, status: {}}, initialize: initialize}}
+ * @returns - cache decorator functions
  */
 const cacheDecorator = sessionCookieName =>
   function () {
-    const id = () => this.state[sessionCookieName].id
+    const id = () => {
+      if (!this.state[sessionCookieName]) {
+        throw new CacheError()
+      }
+
+      return this.state[sessionCookieName].id
+    }
+
     const idx = async appCache => {
       const status = await contextCache(appCache, id(), 'status').get()
       return status.currentPermissionIdx
     }
+
     return {
       initialize: async () => {
+        debug(`Initializing cache for key: ${id()}`)
         const cache = Object.values(contexts).reduce((a, c) => ({ ...a, [c.identifier]: c.initializer }), {})
         await base(this.server.app.cache, id()).init(cache)
+      },
+
+      clear: async () => {
+        debug(`Clearing cache for key: ${id()}`)
+        await base(this.server.app.cache, id()).clear()
       },
 
       helpers: {
@@ -70,6 +89,11 @@ const cacheDecorator = sessionCookieName =>
 
           setCurrentPermission: async (page, data) => {
             const pages = await contextCache(this.server.app.cache, id(), 'page').get()
+
+            // This covers off the sceanario where the cache has unexpectedly expired
+            if (!pages) {
+              throw new CacheError()
+            }
             const currentPermission = pages.permissions[await idx(this.server.app.cache)]
             Object.assign(currentPermission, { [page]: data })
             await contextCache(this.server.app.cache, id(), 'page').set(pages)

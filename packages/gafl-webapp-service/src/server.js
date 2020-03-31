@@ -12,7 +12,7 @@ import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
 import routeDefinitions from './handlers/route-definition.js'
-
+import { ERROR } from './constants.js'
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
 
@@ -91,14 +91,11 @@ const init = async () => {
   server.ext('onPreHandler', sessionManager(sessionCookieName))
 
   server.ext('onPreResponse', (request, h) => {
-    const response = request.response
-
-    if (!response.isBoom) {
+    if (!request.response.isBoom) {
       return h.continue
     }
 
-    console.error(response)
-    return h.view('error.njk').code(response.output.statusCode)
+    return h.view(ERROR.page).code(request.response.output.statusCode)
   })
 
   // Point the server plugin cache to an application cache to hold authenticated session data

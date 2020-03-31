@@ -14,6 +14,7 @@ const SUMMARY = { uri: '/buy/summary', page: 'summary' }
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
+const ERROR = { uri: '/error', page: 'error' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
@@ -35,5 +36,6 @@ export {
   ADD_PERMISSION,
   BENEFIT_CHECK,
   CONCESSION,
-  MAX_PERMISSIONS
+  MAX_PERMISSIONS,
+  ERROR
 }

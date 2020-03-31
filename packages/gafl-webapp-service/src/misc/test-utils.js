@@ -29,6 +29,16 @@ const start = async done => {
     }
   })
 
+  // clear cache
+  server.route({
+    method: 'GET',
+    path: '/buy/clear-cache',
+    handler: async request => {
+      await request.cache().clear()
+      return 'ok'
+    }
+  })
+
   await init()
 }
 
@@ -75,4 +85,12 @@ const injectWithCookie = async (method, url, payload) => {
   })
 }
 
-export { start, stop, server, getCookies, initialize, injectWithCookie }
+const injectWithoutCookie = async (method, url, payload) => {
+  return server.inject({
+    method,
+    url,
+    payload
+  })
+}
+
+export { start, stop, server, getCookies, initialize, injectWithCookie, injectWithoutCookie }

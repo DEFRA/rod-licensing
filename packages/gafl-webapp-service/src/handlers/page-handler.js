@@ -1,4 +1,8 @@
+import { CacheError } from '../lib/cache-manager.js'
+import { CONTROLLER } from '../constants.js'
+
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
+
 /**
  * @param path - the path attached to the handler
  * @param view - the name of the view template
@@ -42,9 +46,16 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise}
    */
   error: async (request, h, err) => {
-    await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
-    await request.cache().helpers.status.setCurrentPermission({ [view]: 'error' })
-    await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
-    return h.redirect(path).takeover()
+    try {
+      await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
+      await request.cache().helpers.status.setCurrentPermission({ [view]: 'error' })
+      await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
+      return h.redirect(path).takeover()
+    } catch (err2) {
+      // Need a catch here if the user has posted an invalid response with no cookie
+      if (err2 instanceof CacheError) {
+        return h.redirect(CONTROLLER.uri).takeover()
+      }
+    }
   }
 })

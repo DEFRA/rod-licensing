@@ -18,6 +18,7 @@ import newTransactionRoute from './new-transaction-route.js'
 import addPermissionRoute from './add-permission-route.js'
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
+import error from '../pages/error/route.js'
 
 const routes = [
   controller,
@@ -36,7 +37,8 @@ const routes = [
   ...dateOfBirth,
   ...noLicenceRequired,
   ...name,
-  ...summary
+  ...summary,
+  ...error
 ]
 
 export default routes

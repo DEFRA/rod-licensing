@@ -5,15 +5,9 @@
 import resultFunctions from './result-functions.js'
 import updateTransactionFunctions from './update-transaction-functions.js'
 import routeDefinition from './route-definition.js'
-import { ADD_PERMISSION } from '../constants.js'
 const defaultResultFunction = () => 'ok'
 
 export default async (request, h) => {
-  // If there is no permissions then initialize
-  if (!(await request.cache().helpers.transaction.hasPermission(request))) {
-    return h.redirect(ADD_PERMISSION.uri)
-  }
-
   // Determine the current page
   const currentPage = (await request.cache().helpers.status.getCurrentPermission()).currentPage || 'start'
 

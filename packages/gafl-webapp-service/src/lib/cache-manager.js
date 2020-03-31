@@ -1,11 +1,14 @@
 /**
  * The cache is divided into individually addressable contexts
  */
+
 const contexts = {
   page: { identifier: 'page-context', initializer: { permissions: [] } },
   transaction: { identifier: 'transaction-context', initializer: { payment: {}, permissions: [] } },
-  status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: 0 } }
+  status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: -1 } }
 }
+
+class CacheError extends Error {}
 
 /**
  * These functions are the pure getters and setters on the cache and are not exposed on the
@@ -17,7 +20,8 @@ const contexts = {
 const base = (appCache, id) => ({
   init: async obj => appCache.set(id, obj),
   get: async () => appCache.get(id),
-  set: async obj => appCache.set(id, obj)
+  set: async obj => appCache.set(id, obj),
+  clear: async () => appCache.drop(id)
 })
 
 /**
@@ -43,4 +47,4 @@ const contextCache = (appCache, id, context) => ({
   }
 })
 
-export { contexts, base, contextCache }
+export { contexts, base, contextCache, CacheError }

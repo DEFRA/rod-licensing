@@ -1,8 +1,26 @@
-{% extends "standard-form.njk" %}
+{% extends "layout.njk" %}
+{% from "fieldset/macro.njk" import govukFieldset %}
 
-{% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'A problem has occured' %}
+{% block pageTitle %}Error - GOV.UK{% endblock %}
 
-{% block pageContent %}
-<p class="govuk-body-m">There is an error</p>
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% set title = 'A problem has occured' %}
+
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                {% block pageContent %}
+                    <p class="govuk-body-m">An error has occured</p>
+                {% endblock %}
+
+            {% endcall %}
+     </div>
+</div>
 {% endblock %}

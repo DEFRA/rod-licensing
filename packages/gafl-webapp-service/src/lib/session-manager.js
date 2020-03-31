@@ -1,5 +1,7 @@
 import uuidv4 from 'uuid/v4.js'
 import db from 'debug'
+import addPermission from './add-permission.js'
+import { CONTROLLER } from '../constants.js'
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -10,14 +12,29 @@ import db from 'debug'
 const debug = db('session-manager')
 
 const sessionManager = sessionCookieName => async (request, h) => {
-  if (request.path.startsWith('/buy') && !request.state[sessionCookieName]) {
-    const id = uuidv4()
-    debug(`New session cookie: ${id}`)
-    h.state(sessionCookieName, { id })
-    request.state[sessionCookieName] = { id }
+  if (request.path.startsWith('/buy')) {
+    if (!request.state[sessionCookieName]) {
+      const id = uuidv4()
+      debug(`New session cookie: ${id}`)
+      h.state(sessionCookieName, { id })
+      request.state[sessionCookieName] = { id }
 
-    // Initialize cache contexts
-    await request.cache().initialize()
+      // Initialize cache contexts
+      await request.cache().initialize()
+
+      // Always redirect to the controller
+      return h.redirect(CONTROLLER.uri).takeover()
+    } else if (!(await request.cache().helpers.status.get())) {
+      // A. The redis cache has expired - or been removed. Reinitialize a new cache
+      await request.cache().initialize()
+      return h.redirect(CONTROLLER.uri).takeover()
+    }
+
+    // There is no permission initialized
+    if (!(await request.cache().helpers.transaction.hasPermission(request))) {
+      await addPermission(request)
+      return h.redirect(CONTROLLER.uri).takeover()
+    }
   }
 
   return h.continue
