@@ -61,7 +61,6 @@ export class BaseEntity {
    *
    * @param property the field name
    * @param value the value of the field to set
-   * @returns {*} the value that is set
    * @protected
    */
   _setState (property, value) {
@@ -85,10 +84,24 @@ export class BaseEntity {
     }
   }
 
+  /**
+   * Set a field value as a string
+   *
+   * @param property the field name
+   * @param value the value of the field to set
+   * @private
+   */
   _setString (property, value) {
     this._localState[property] = String(value)
   }
 
+  /**
+   * Set a field value as an integer
+   *
+   * @param property the field name
+   * @param value the value of the field to set
+   * @private
+   */
   _setInteger (property, value) {
     const valueToSet = Number(value)
     if (Number.isNaN(valueToSet) || valueToSet - Math.floor(valueToSet) !== 0) {
@@ -97,6 +110,13 @@ export class BaseEntity {
     this._localState[property] = valueToSet
   }
 
+  /**
+   * Set a field value as a decimal
+   *
+   * @param property the field name
+   * @param value the value of the field to set
+   * @private
+   */
   _setDecimal (property, value) {
     const valueToSet = Number(value)
     if (Number.isNaN(valueToSet)) {
@@ -105,6 +125,13 @@ export class BaseEntity {
     this._localState[property] = valueToSet
   }
 
+  /**
+   * Set a field value as a boolean
+   *
+   * @param property the field name
+   * @param value the value of the field to set
+   * @private
+   */
   _setBoolean (property, value) {
     if (value !== false && value !== true) {
       throw new Error('Value is not an boolean')
@@ -112,6 +139,13 @@ export class BaseEntity {
     this._localState[property] = value
   }
 
+  /**
+   * Set a field value as a date
+   *
+   * @param property the field name
+   * @param value the value of the field to set
+   * @private
+   */
   _setDate (property, value) {
     if (!moment(value).isValid()) {
       throw new Error('Value is not a valid date')
@@ -119,6 +153,13 @@ export class BaseEntity {
     this._localState[property] = value
   }
 
+  /**
+   * Set a field value as a GlobalOptionSetDefinition
+   *
+   * @param property the field name
+   * @param value the value of the field to set
+   * @private
+   */
   _setOptionSet (property, value) {
     const mapping = this.constructor.definition.mappings[property]
     if (!(value instanceof GlobalOptionSetDefinition) || value.optionSetName !== mapping.ref) {
