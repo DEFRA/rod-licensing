@@ -1,0 +1,32 @@
+{% extends "standard-form.njk" %}
+{% from "input/macro.njk" import govukInput %}
+{% set title = 'What is your National Insurance number?' %}
+
+{%
+    set errorMap = {
+        'ni-number': {
+            'string.empty': { ref: '#ni-number', text: 'You have not told us your national insurance number' },
+            'string.max': { ref: '#ni-number', text: 'You national insurance number is longer than 15 characters' }
+        }
+    }
+%}
+
+{% block pageContent %}
+    <p class="govuk-body-m">We use this information to find out if you are eligible for a disabled concession</p>
+
+{{error|dump}}
+
+    {{ govukInput({
+      label: {
+        text: "National Insurance number"
+      },
+      id: "ni-number",
+      name: "ni-number",
+      hint: { html: "<p>You can find this on your payslip, P60 or tax return</p><p>For example, ‘QQ 12 34 56 C’</p>" },
+      value: payload['ni-number'],
+      classes: "govuk-input--width-20",
+      attributes: { maxlength: 100 },
+      errorMessage: { text: 'Your national insurance number' } if error
+    }) }}
+
+{% endblock %}

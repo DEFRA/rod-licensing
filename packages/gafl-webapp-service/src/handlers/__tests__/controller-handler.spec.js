@@ -1,59 +1,32 @@
-import { start, stop, server, getCookies } from '../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../misc/test-utils.js'
+import { CONTROLLER, LICENCE_LENGTH, ADD_PERMISSION, NEW_TRANSACTION } from '../../constants.js'
 
-// Start application before running the test case
 beforeAll(d => start(d))
-
-// Stop application after running the test case
+beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-beforeAll(() =>
-  server.route({
-    method: 'GET',
-    path: '/transaction',
-    handler: request => {
-      try {
-        return request.cache().get('transaction')
-      } catch (err) {
-        return err
-      }
-    }
-  })
-)
-
-let cookie
-
 describe('The controller handler', () => {
-  it('If there is no transaction then initialize and redirect to create new permission', async () => {
-    const data = await server.inject({
-      method: 'GET',
-      url: '/buy'
-    })
-    cookie = getCookies(data)
-
-    // const { payload } = await server.inject({
-    //   method: 'GET',
-    //   url: '/transaction',
-    //   headers: { cookie: 'sid=' + cookie.sid }
-    // })
-
+  it('If there is no transaction then initialize redirect to the controller', async () => {
+    const data = await injectWithCookie('GET', '/')
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/add')
+    expect(data.headers.location).toBe(CONTROLLER.uri)
   })
 
-  it('Where there is no current page return a redirect to the start of the journey', async () => {
-    await server.inject({
-      method: 'GET',
-      url: '/buy/add',
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
-
-    const data = await server.inject({
-      method: 'GET',
-      url: '/buy',
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
-
+  it('Adding a new transaction returns a redirect to the start of the journey', async () => {
+    const data = await injectWithCookie('GET', NEW_TRANSACTION.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy/licence-length')
+    expect(data.headers.location).toBe(CONTROLLER.uri)
+  })
+
+  it('Adding a new permission returns a redirect to the controller', async () => {
+    const data = await injectWithCookie('GET', ADD_PERMISSION.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTROLLER.uri)
+  })
+
+  it('The controller returns a redirect to the start of the journey', async () => {
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 })

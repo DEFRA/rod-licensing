@@ -10,7 +10,7 @@ describe('The junior licence page', () => {
     const data = await injectWithCookie('GET', JUNIOR_LICENCE.uri)
     expect(data.statusCode).toBe(200)
   })
-  it('on submission redirectes to the name page', async () => {
+  it('on submission redirects to the name page', async () => {
     await injectWithCookie('POST', JUNIOR_LICENCE.uri)
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)

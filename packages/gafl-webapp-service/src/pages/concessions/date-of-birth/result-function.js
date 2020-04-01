@@ -1,18 +1,17 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
 import { CONCESSION } from '../../../constants.js'
 
 export default async request => {
-  const permission = await transactionHelper.getPermission(request)
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   let result
 
   if (permission.noLicenceRequired) {
     result = 'noLicenceRequired'
-  } else if (!permission.concession) {
+  } else if (!permission.concession || !permission.concession.type || permission.concession.type === CONCESSION.DISABLED) {
     result = 'adult'
-  } else if (permission.concession === CONCESSION.SENIOR) {
+  } else if (permission.concession.type === CONCESSION.SENIOR) {
     result = 'senior'
-  } else if (permission.concession === CONCESSION.JUNIOR) {
+  } else {
     result = 'junior'
   }
 

@@ -6,7 +6,6 @@ import { LICENCE_TYPE } from '../../../constants.js'
  * @returns {Promise<string>}
  */
 export default async request => {
-  const cache = await request.cache().get('page')
-  const { payload } = cache[LICENCE_TYPE.page]
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TYPE.page)
   return camelCase(payload['licence-type'])
 }

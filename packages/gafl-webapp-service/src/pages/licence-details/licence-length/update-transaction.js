@@ -1,4 +1,3 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
 import { LICENCE_LENGTH } from '../../../constants.js'
 
 /**
@@ -7,7 +6,6 @@ import { LICENCE_LENGTH } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const cache = await request.cache().get('page')
-  const { payload } = cache[LICENCE_LENGTH.page]
-  await transactionHelper.setPermission(request, { licenceLength: payload['licence-length'] })
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_LENGTH.page)
+  await request.cache().helpers.transaction.setCurrentPermission({ licenceLength: payload['licence-length'] })
 }

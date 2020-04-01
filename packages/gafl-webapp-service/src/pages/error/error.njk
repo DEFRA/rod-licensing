@@ -1,0 +1,26 @@
+{% extends "layout.njk" %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+
+{% block pageTitle %}Error - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% set title = 'A problem has occured' %}
+
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                {% block pageContent %}
+                    <p class="govuk-body-m">An error has occured</p>
+                {% endblock %}
+
+            {% endcall %}
+     </div>
+</div>
+{% endblock %}

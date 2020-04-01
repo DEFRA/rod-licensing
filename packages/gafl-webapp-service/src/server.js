@@ -11,8 +11,8 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import routeDefinitions from './handlers/route-definition.js'
-
+import routeDefinitions from './routes/journey-definition.js'
+import { ERROR } from './constants.js'
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
 
@@ -90,17 +90,13 @@ const init = async () => {
 
   server.ext('onPreHandler', sessionManager(sessionCookieName))
 
-  // TODO Display 500 page for any errors thrown in handlers
   server.ext('onPreResponse', (request, h) => {
-    const response = request.response
-
-    if (!response.isBoom) {
+    if (!request.response.isBoom) {
       return h.continue
     }
 
-    console.error(response)
-
-    return 'Unexpected error'
+    console.error(request.response)
+    return h.view(ERROR.page).code(request.response.output.statusCode)
   })
 
   // Point the server plugin cache to an application cache to hold authenticated session data

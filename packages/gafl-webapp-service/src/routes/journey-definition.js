@@ -9,7 +9,10 @@ import {
   JUNIOR_LICENCE,
   LICENCE_TYPE,
   NAME,
-  BENEFIT_CHECK
+  BENEFIT_CHECK,
+  BENEFIT_NI_NUMBER,
+  BLUE_BADGE_CHECK,
+  BLUE_BADGE_NUMBER
 } from '../constants.js'
 
 export default [
@@ -116,10 +119,49 @@ export default [
     currentPage: BENEFIT_CHECK.page,
     nextPage: {
       no: {
+        page: BLUE_BADGE_CHECK.uri
+      },
+      yes: {
+        page: BENEFIT_NI_NUMBER.uri
+      }
+    }
+  },
+
+  {
+    currentPage: BENEFIT_NI_NUMBER.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
+      }
+    }
+  },
+
+  {
+    currentPage: BLUE_BADGE_CHECK.page,
+    nextPage: {
+      no: {
         page: NAME.uri
       },
       yes: {
-        page: BENEFIT_CHECK.uri
+        page: BLUE_BADGE_NUMBER.uri
+      }
+    }
+  },
+
+  {
+    currentPage: BENEFIT_NI_NUMBER.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
+      }
+    }
+  },
+
+  {
+    currentPage: BLUE_BADGE_NUMBER.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
       }
     }
   },

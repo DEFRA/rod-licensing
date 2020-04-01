@@ -1,51 +1,31 @@
-import { start, stop, server, getCookies } from '../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../misc/test-utils.js'
+import { ADD_PERMISSION, NEW_TRANSACTION, MAX_PERMISSIONS } from '../../constants.js'
 
-// Start application before running the test case
 beforeAll(d => start(d))
-
-// Stop application after running the test case
+beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
 describe('The new permission handler', () => {
   it('Adds new permission objects to the transaction cache', async () => {
-    // Add a new route to return the transaction cache
-    server.route({
-      method: 'GET',
-      path: '/test-transaction',
-      handler: async request => {
-        return request.cache().get('transaction')
-      }
-    })
+    // Add a permission
+    await injectWithCookie('GET', NEW_TRANSACTION.uri)
+    let res = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(res.payload).permissions.length).toBe(1)
 
     // Add a permission
-    const res = await server.inject({
-      method: 'GET',
-      url: '/buy/add'
-    })
+    await injectWithCookie('GET', ADD_PERMISSION.uri)
+    res = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(res.payload).permissions.length).toBe(2)
+  })
 
-    const cookie = getCookies(res)
-
-    const transaction1 = await server.inject({
-      method: 'GET',
-      url: '/test-transaction',
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
-
-    expect(JSON.parse(transaction1.payload).permissions.length).toBe(1)
-
-    // Add another
-    await server.inject({
-      method: 'GET',
-      url: '/buy/add',
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
-
-    const transaction2 = await server.inject({
-      method: 'GET',
-      url: '/test-transaction',
-      headers: { cookie: 'sid=' + cookie.sid }
-    })
-
-    expect(JSON.parse(transaction2.payload).permissions.length).toBe(2)
+  it('Ensure that we cannot overload the redis cache by doing this continually', async () => {
+    await injectWithCookie('GET', NEW_TRANSACTION.uri)
+    for (let i = 0; i < MAX_PERMISSIONS; i++) {
+      await injectWithCookie('GET', ADD_PERMISSION.uri)
+    }
+    let res = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(res.payload).permissions.length).toBe(MAX_PERMISSIONS)
+    res = await injectWithCookie('GET', ADD_PERMISSION.uri)
+    expect(res.statusCode).toBe(400)
   })
 })

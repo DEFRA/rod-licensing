@@ -1,5 +1,9 @@
+/*
+ * Page locations, templates and other journey constants
+ */
 const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
+
 const NUMBER_OF_RODS = { uri: '/buy/number-of-rods', page: 'number-of-rods' }
 const LICENCE_TO_START = { uri: '/buy/start-kind', page: 'licence-to-start' }
 const LICENCE_START_DATE = { uri: '/buy/start-date', page: 'licence-start-date' }
@@ -8,14 +12,19 @@ const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
 const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence-required' }
 const JUNIOR_LICENCE = { uri: '/buy/junior-licence', page: 'junior-licence' }
 const BENEFIT_CHECK = { uri: '/buy/benefit-check', page: 'benefit-check' }
+const BENEFIT_NI_NUMBER = { uri: '/buy/benefit-ni-number', page: 'benefit-ni-number' }
+const BLUE_BADGE_CHECK = { uri: '/buy/blue-badge-check', page: 'blue-badge-check' }
+const BLUE_BADGE_NUMBER = { uri: '/buy/blue-badge-number', page: 'blue-badge-number' }
 
 const NAME = { uri: '/buy/name', page: 'name' }
 const SUMMARY = { uri: '/buy/summary', page: 'summary' }
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
+const ERROR = { uri: '/error', page: 'error' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
+const MAX_PERMISSIONS = 500
 
 export {
   LICENCE_LENGTH,
@@ -33,5 +42,10 @@ export {
   NEW_TRANSACTION,
   ADD_PERMISSION,
   BENEFIT_CHECK,
-  CONCESSION
+  BENEFIT_NI_NUMBER,
+  BLUE_BADGE_CHECK,
+  BLUE_BADGE_NUMBER,
+  CONCESSION,
+  MAX_PERMISSIONS,
+  ERROR
 }

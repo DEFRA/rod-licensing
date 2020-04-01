@@ -1,5 +1,13 @@
 import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
-import { BENEFIT_CHECK, CONTROLLER, NAME, CONCESSION, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START } from '../../../../constants'
+import {
+  BENEFIT_CHECK,
+  CONTROLLER,
+  BLUE_BADGE_CHECK,
+  CONCESSION,
+  DATE_OF_BIRTH,
+  LICENCE_LENGTH,
+  LICENCE_TO_START
+} from '../../../../constants.js'
 import moment from 'moment'
 
 beforeAll(d => start(d))
@@ -30,13 +38,13 @@ describe('The benefit check page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(BENEFIT_CHECK.uri)
   })
-  it('the controller redirects to the name page when answering no', async () => {
+  it('the controller redirects to the blue badge check page when answering no', async () => {
     await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(BLUE_BADGE_CHECK.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).not.toBeTruthy()
+    expect(JSON.parse(payload).permissions[0].concession).toEqual({})
   })
   it('the controller redirects to the ni page when answering yes', async () => {
     await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
@@ -44,7 +52,7 @@ describe('The benefit check page', () => {
     expect(data.statusCode).toBe(302)
     // expect(data.headers.location).toBe(NAME.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual(CONCESSION.DISABLED)
+    expect(JSON.parse(payload).permissions[0].concession).toEqual({ type: CONCESSION.DISABLED })
   })
   it('the controller redirects to the start of the journey if there already exists a junior concession', async () => {
     await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })

@@ -20,12 +20,16 @@ const start = async done => {
   server.route({
     method: 'GET',
     path: '/buy/transaction',
+    handler: async request => request.cache().helpers.transaction.get()
+  })
+
+  // clear cache
+  server.route({
+    method: 'GET',
+    path: '/buy/clear-cache',
     handler: async request => {
-      try {
-        return request.cache().get('transaction')
-      } catch (err) {
-        return err
-      }
+      await request.cache().clear()
+      return 'ok'
     }
   })
 
@@ -52,16 +56,10 @@ const getCookies = response => {
 const initialize = async done => {
   const data = await server.inject({
     method: 'GET',
-    url: '/buy/add'
+    url: '/buy'
   })
 
   global.cookies = getCookies(data)
-
-  await server.inject({
-    method: 'GET',
-    url: '/buy',
-    headers: { cookie: `sid=${global.cookies.sid}` }
-  })
 
   done()
 }
@@ -75,4 +73,12 @@ const injectWithCookie = async (method, url, payload) => {
   })
 }
 
-export { start, stop, server, getCookies, initialize, injectWithCookie }
+const injectWithoutCookie = async (method, url, payload) => {
+  return server.inject({
+    method,
+    url,
+    payload
+  })
+}
+
+export { start, stop, server, getCookies, initialize, injectWithCookie, injectWithoutCookie }

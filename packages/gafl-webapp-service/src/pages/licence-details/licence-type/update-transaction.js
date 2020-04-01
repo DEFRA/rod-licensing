@@ -1,13 +1,12 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
 import { LICENCE_TYPE } from '../../../constants.js'
+
 /**
  * Transfer the validate page object
  * @param request
  * @returns {Promise<void>}
  */
 export default async request => {
-  const cache = await request.cache().get('page')
-  const { payload } = cache[LICENCE_TYPE.page]
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TYPE.page)
 
   const permission = {
     licenceType: payload['licence-type']
@@ -17,5 +16,5 @@ export default async request => {
     permission.numberOfRods = '3'
   }
 
-  await transactionHelper.setPermission(request, permission)
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

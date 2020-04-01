@@ -1,4 +1,3 @@
-import transactionHelper from '../../../lib/transaction-helper.js'
 import { NUMBER_OF_RODS } from '../../../constants.js'
 /**
  * Transfer the validate page object
@@ -6,7 +5,6 @@ import { NUMBER_OF_RODS } from '../../../constants.js'
  * @returns {Promise<void>}
  */
 export default async request => {
-  const cache = await request.cache().get('page')
-  const { payload } = cache[NUMBER_OF_RODS.page]
-  await transactionHelper.setPermission(request, { numberOfRods: payload['number-of-rods'] })
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(NUMBER_OF_RODS.page)
+  await request.cache().helpers.transaction.setCurrentPermission({ numberOfRods: payload['number-of-rods'] })
 }
