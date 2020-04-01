@@ -26,7 +26,6 @@ jobs:
     - stage: test
       script:
         - npm test
-        - nvm install 12
         - sonar-scanner
     - stage: deploy
       script:
