@@ -14,7 +14,7 @@ jest.mock('../update-transaction-functions.js', () => {
 })
 
 describe('The controller function', () => {
-  it('The controller re-throws any exceptions which are not transaction errors ', async () => {
+  it('re-throws any exceptions which are not transaction errors', async () => {
     const request = {
       cache: () => ({
         helpers: { status: { getCurrentPermission: () => ({ currentPage: 'test' }) } }

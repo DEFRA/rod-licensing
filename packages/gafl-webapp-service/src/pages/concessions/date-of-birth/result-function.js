@@ -11,7 +11,7 @@ export default async request => {
     result = 'adult'
   } else if (permission.concession.type === CONCESSION.SENIOR) {
     result = 'senior'
-  } else if (permission.concession.type === CONCESSION.JUNIOR) {
+  } else {
     result = 'junior'
   }
 

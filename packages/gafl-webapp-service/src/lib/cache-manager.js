@@ -36,9 +36,6 @@ const contextCache = (appCache, id, context) => ({
     return cache ? cache[contexts[context].identifier] : null
   },
   set: async obj => {
-    if (!obj || typeof obj !== 'object') {
-      throw new Error('Expect object')
-    }
     const cache = await base(appCache, id).get()
     const local = cache[contexts[context].identifier]
     Object.assign(local, obj)
