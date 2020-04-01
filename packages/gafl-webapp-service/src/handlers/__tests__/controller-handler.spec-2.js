@@ -1,5 +1,9 @@
 import controllerHandler from '../controller-handler.js'
 
+/**
+ * Standalone tests on the controller
+ */
+
 jest.mock('../update-transaction-functions.js', () => {
   return {
     test: jest.fn(() => {
