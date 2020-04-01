@@ -16,7 +16,10 @@ describe('The controller function', () => {
         helpers: { status: { getCurrentPermission: () => ({ currentPage: 'test' }) } }
       })
     }
-
-    await expect(async () => controllerHandler(request)).rejects
+    try {
+      await controllerHandler(request)
+    } catch (err) {
+      expect(err.message).toBe('Random exception')
+    }
   })
 })
