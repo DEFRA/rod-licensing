@@ -26,6 +26,7 @@ jobs:
     - stage: test
       script:
         - npm test
+        - nvm use --lts
         - sonar-scanner
     - stage: deploy
       script:
