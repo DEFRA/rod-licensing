@@ -30,6 +30,7 @@ export default async (request, h) => {
   // Determine the result of the page
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
+  // Locate the next page
   const routeNode = journeyDefinition.find(p => p.currentPage === currentPage)
   return h.redirect(routeNode.nextPage[result].page)
 }
