@@ -11,7 +11,7 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import routeDefinitions from './routes/route-definition.js'
+import routeDefinitions from './routes/journey-definition.js'
 import { ERROR } from './constants.js'
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
@@ -95,6 +95,7 @@ const init = async () => {
       return h.continue
     }
 
+    console.error(request.response)
     return h.view(ERROR.page).code(request.response.output.statusCode)
   })
 

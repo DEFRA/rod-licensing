@@ -1,4 +1,4 @@
-import { BENEFIT_CHECK, CONCESSION } from '../../../constants.js'
+import { BLUE_BADGE_CHECK, CONCESSION } from '../../../constants.js'
 import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
 
 /**
@@ -7,7 +7,7 @@ import updateTransactionFunctions from '../../../handlers/update-transaction-fun
  * @returns {Promise<void>}
  */
 export default async request => {
-  const { payload } = await request.cache().helpers.page.getCurrentPermission(BENEFIT_CHECK.page)
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(BLUE_BADGE_CHECK.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // Don't let this be set if we do not have a full adult licence
@@ -19,7 +19,7 @@ export default async request => {
     throw new updateTransactionFunctions.TransactionError('Attempting to set disabled for a junior')
   }
 
-  if (payload['benefit-check'] === 'yes') {
+  if (payload['blue-badge-check'] === 'yes') {
     await request.cache().helpers.transaction.setCurrentPermission({ concession: { type: CONCESSION.DISABLED } })
   } else {
     await request.cache().helpers.transaction.setCurrentPermission({ concession: {} })

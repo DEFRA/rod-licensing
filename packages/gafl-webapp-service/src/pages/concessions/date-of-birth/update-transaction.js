@@ -22,7 +22,7 @@ export default async request => {
 
   // We need a licence start date
   if (!permission.licenceStartDate) {
-    throw new updateTransactionFunctions.TransactionError()
+    throw new updateTransactionFunctions.TransactionError('No licence start date')
   }
 
   // Calculate the age when the licence starts
@@ -33,12 +33,12 @@ export default async request => {
     Object.assign(result, { noLicenceRequired: true })
   } else if (ageAtLicenceStartDate < 16) {
     // Juniors always fun for 12 months
-    Object.assign(result, { concession: CONCESSION.JUNIOR, licenceLength: '12M' })
+    Object.assign(result, { concession: { type: CONCESSION.JUNIOR }, licenceLength: '12M' })
   } else if (ageAtLicenceStartDate >= 65) {
-    Object.assign(result, { concession: 'senior' })
+    Object.assign(result, { concession: { type: CONCESSION.SENIOR } })
   } else {
-    if (permission.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.concession)) {
-      Object.assign(result, { concession: false })
+    if (permission.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.concession.type)) {
+      Object.assign(result, { concession: {} })
     }
   }
 

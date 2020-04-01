@@ -1,8 +1,9 @@
 import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
 import {
-  BENEFIT_CHECK,
-  CONTROLLER,
   BLUE_BADGE_CHECK,
+  BLUE_BADGE_NUMBER,
+  CONTROLLER,
+  NAME,
   CONCESSION,
   DATE_OF_BIRTH,
   LICENCE_LENGTH,
@@ -23,34 +24,34 @@ const dobHelper = d => ({
   'date-of-birth-year': d.year()
 })
 
-describe('The benefit check page', () => {
+describe('The blue badge check page', () => {
   it('returns success on requesting', async () => {
-    const data = await injectWithCookie('GET', BENEFIT_CHECK.uri)
+    const data = await injectWithCookie('GET', BLUE_BADGE_CHECK.uri)
     expect(data.statusCode).toBe(200)
   })
   it('redirects back to itself on an empty response', async () => {
-    const data = await injectWithCookie('POST', BENEFIT_CHECK.uri, {})
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(BENEFIT_CHECK.uri)
-  })
-  it('redirects back to itself on an invalid response', async () => {
-    const data = await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'false' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(BENEFIT_CHECK.uri)
-  })
-  it('the controller redirects to the blue badge check page when answering no', async () => {
-    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, {})
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(BLUE_BADGE_CHECK.uri)
+  })
+  it('redirects back to itself on an invalid response', async () => {
+    const data = await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'false' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(BLUE_BADGE_CHECK.uri)
+  })
+  it('the controller redirects to the name page when answering no', async () => {
+    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(NAME.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].concession).toEqual({})
   })
-  it('the controller redirects to the ni page when answering yes', async () => {
-    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
+  it('the controller redirects to the blue badge number page when answering yes', async () => {
+    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    // expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(BLUE_BADGE_NUMBER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].concession).toEqual({ type: CONCESSION.DISABLED })
   })
@@ -59,7 +60,7 @@ describe('The benefit check page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob13Today))
     await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
+    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
@@ -69,7 +70,7 @@ describe('The benefit check page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Today))
     await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
+    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_LENGTH.uri)

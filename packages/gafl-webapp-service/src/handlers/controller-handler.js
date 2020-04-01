@@ -4,7 +4,7 @@
  */
 import resultFunctions from './result-functions.js'
 import updateTransactionFunctions from './update-transaction-functions.js'
-import routeDefinition from '../routes/route-definition.js'
+import journeyDefinition from '../routes/journey-definition.js'
 const defaultResultFunction = () => 'ok'
 
 export default async (request, h) => {
@@ -19,7 +19,7 @@ export default async (request, h) => {
       // Test if user has forced a page request in the wrong sequence and the transaction cannot evaluate
       if (err instanceof updateTransactionFunctions.TransactionError) {
         // Nothing too clever here. Get thrown to the start of the journey
-        const rn = routeDefinition.find(p => p.currentPage === 'start')
+        const rn = journeyDefinition.find(p => p.currentPage === 'start')
         return h.redirect(rn.nextPage.ok.page)
       } else {
         throw err
@@ -30,6 +30,6 @@ export default async (request, h) => {
   // Determine the result of the page
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
-  const routeNode = routeDefinition.find(p => p.currentPage === currentPage)
+  const routeNode = journeyDefinition.find(p => p.currentPage === currentPage)
   return h.redirect(routeNode.nextPage[result].page)
 }

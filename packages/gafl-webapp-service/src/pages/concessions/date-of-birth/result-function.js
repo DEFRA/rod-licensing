@@ -7,11 +7,11 @@ export default async request => {
 
   if (permission.noLicenceRequired) {
     result = 'noLicenceRequired'
-  } else if (!permission.concession || permission.concession === CONCESSION.DISABLED) {
+  } else if (!permission.concession || !permission.concession.type || permission.concession.type === CONCESSION.DISABLED) {
     result = 'adult'
-  } else if (permission.concession === CONCESSION.SENIOR) {
+  } else if (permission.concession.type === CONCESSION.SENIOR) {
     result = 'senior'
-  } else if (permission.concession === CONCESSION.JUNIOR) {
+  } else if (permission.concession.type === CONCESSION.JUNIOR) {
     result = 'junior'
   }
 

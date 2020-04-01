@@ -13,6 +13,8 @@ const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence
 const JUNIOR_LICENCE = { uri: '/buy/junior-licence', page: 'junior-licence' }
 const BENEFIT_CHECK = { uri: '/buy/benefit-check', page: 'benefit-check' }
 const BENEFIT_NI_NUMBER = { uri: '/buy/benefit-ni-number', page: 'benefit-ni-number' }
+const BLUE_BADGE_CHECK = { uri: '/buy/blue-badge-check', page: 'blue-badge-check' }
+const BLUE_BADGE_NUMBER = { uri: '/buy/blue-badge-number', page: 'blue-badge-number' }
 
 const NAME = { uri: '/buy/name', page: 'name' }
 const SUMMARY = { uri: '/buy/summary', page: 'summary' }
@@ -41,6 +43,8 @@ export {
   ADD_PERMISSION,
   BENEFIT_CHECK,
   BENEFIT_NI_NUMBER,
+  BLUE_BADGE_CHECK,
+  BLUE_BADGE_NUMBER,
   CONCESSION,
   MAX_PERMISSIONS,
   ERROR

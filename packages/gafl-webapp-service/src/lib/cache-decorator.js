@@ -90,7 +90,7 @@ const cacheDecorator = sessionCookieName =>
           setCurrentPermission: async (page, data) => {
             const pages = await contextCache(this.server.app.cache, id(), 'page').get()
 
-            // This covers off the sceanario where the cache has unexpectedly expired
+            // This covers off the scenario where the cache has unexpectedly expired
             if (!pages) {
               throw new CacheError()
             }
