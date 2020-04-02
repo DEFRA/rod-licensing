@@ -67,7 +67,7 @@ const init = async () => {
     path: [
       path.join(Dirname, 'node_modules', 'govuk-frontend', 'govuk'),
       path.join(Dirname, 'node_modules', 'govuk-frontend', 'govuk', 'components'),
-      path.join(Dirname, 'src/layout'),
+      path.join(Dirname, 'src/pages/layout'),
       path.join(Dirname, 'src/pages/macros'),
       ...viewPaths
     ]
