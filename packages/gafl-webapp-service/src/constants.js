@@ -3,20 +3,23 @@
  */
 const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
-
 const NUMBER_OF_RODS = { uri: '/buy/number-of-rods', page: 'number-of-rods' }
 const LICENCE_TO_START = { uri: '/buy/start-kind', page: 'licence-to-start' }
 const LICENCE_START_DATE = { uri: '/buy/start-date', page: 'licence-start-date' }
 const LICENCE_START_TIME = { uri: '/buy/start-time', page: 'licence-start-time' }
-const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
+
 const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence-required' }
 const JUNIOR_LICENCE = { uri: '/buy/junior-licence', page: 'junior-licence' }
+
 const BENEFIT_CHECK = { uri: '/buy/benefit-check', page: 'benefit-check' }
 const BENEFIT_NI_NUMBER = { uri: '/buy/benefit-ni-number', page: 'benefit-ni-number' }
 const BLUE_BADGE_CHECK = { uri: '/buy/blue-badge-check', page: 'blue-badge-check' }
 const BLUE_BADGE_NUMBER = { uri: '/buy/blue-badge-number', page: 'blue-badge-number' }
+const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
 
 const NAME = { uri: '/buy/name', page: 'name' }
+const ADDRESS_LOOKUP = { uri: '/buy/find-address', page: 'address-lookup' }
+
 const SUMMARY = { uri: '/buy/summary', page: 'summary' }
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
@@ -25,6 +28,14 @@ const ERROR = { uri: '/error', page: 'error' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
+const POSTCODE_REGEX = /^(([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?))\s*([0-9][A-Z]{2})$/i
+
+const ADDRESS_LOOKUP_SERVICE = {
+  url: process.env.ADDRESS_LOOKUP_URL,
+  key: process.env.ADDRESS_LOOKUP_KEY,
+  lang: 'EN',
+  dataset: 'DPA'
+}
 
 export {
   LICENCE_LENGTH,
@@ -37,6 +48,7 @@ export {
   NO_LICENCE_REQUIRED,
   JUNIOR_LICENCE,
   NAME,
+  ADDRESS_LOOKUP,
   SUMMARY,
   CONTROLLER,
   NEW_TRANSACTION,
@@ -46,6 +58,8 @@ export {
   BLUE_BADGE_CHECK,
   BLUE_BADGE_NUMBER,
   CONCESSION,
+  ADDRESS_LOOKUP_SERVICE,
+  POSTCODE_REGEX,
   MAX_PERMISSIONS,
   ERROR
 }

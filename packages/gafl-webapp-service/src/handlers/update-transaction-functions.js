@@ -16,6 +16,7 @@ import licenceStartTime from '../pages/licence-details/licence-start-time/update
 import numberOfRods from '../pages/licence-details/number-of-rods/update-transaction.js'
 
 import name from '../pages/contact/name/update-transaction.js'
+import addressLookup from '../pages/contact/address/lookup/update-transaction.js'
 
 import {
   DATE_OF_BIRTH,
@@ -29,7 +30,8 @@ import {
   BENEFIT_NI_NUMBER,
   BLUE_BADGE_CHECK,
   BLUE_BADGE_NUMBER,
-  NAME
+  NAME,
+  ADDRESS_LOOKUP
 } from '../constants.js'
 
 export default {
@@ -45,5 +47,6 @@ export default {
   [BENEFIT_NI_NUMBER.page]: benefitNiNumber,
   [BLUE_BADGE_CHECK.page]: blueBadgeCheck,
   [BLUE_BADGE_NUMBER.page]: blueBadgeNumber,
+  [ADDRESS_LOOKUP.page]: addressLookup,
   TransactionError: class TransactionError extends Error {}
 }

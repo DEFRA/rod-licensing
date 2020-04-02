@@ -7,7 +7,6 @@ import licenceStartTime from '../pages/licence-details/licence-start-time/route.
 
 import summary from '../pages/summary/route.js'
 
-import name from '../pages/contact/name/route.js'
 import dateOfBirth from '../pages/concessions/date-of-birth/route.js'
 import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
 import juniorLicence from '../pages/concessions/junior-licence/route.js'
@@ -15,6 +14,9 @@ import benefitCheck from '../pages/concessions/benefit-check/route.js'
 import benefitNINumber from '../pages/concessions/benefit-ni-number/route.js'
 import blueBadgeCheck from '../pages/concessions/blue-badge-check/route.js'
 import blueBadgeNumber from '../pages/concessions/blue-badge-number/route.js'
+
+import name from '../pages/contact/name/route.js'
+import addressLookup from '../pages/contact/address/lookup/route.js'
 
 import controller from './controller-route.js'
 import newTransactionRoute from './new-transaction-route.js'
@@ -24,9 +26,6 @@ import miscRoutes from './misc-routes.js'
 import error from '../pages/error/route.js'
 
 const routes = [
-  controller,
-  newTransactionRoute,
-  addPermissionRoute,
   ...staticAssets,
   ...miscRoutes,
   ...licenceLength,
@@ -35,16 +34,20 @@ const routes = [
   ...licenceToStart,
   ...licenceStartDate,
   ...licenceStartTime,
+  ...dateOfBirth,
+  ...noLicenceRequired,
   ...juniorLicence,
   ...benefitCheck,
   ...benefitNINumber,
   ...blueBadgeCheck,
   ...blueBadgeNumber,
-  ...dateOfBirth,
-  ...noLicenceRequired,
   ...name,
+  ...addressLookup,
   ...summary,
-  ...error
+  ...error,
+  controller,
+  newTransactionRoute,
+  addPermissionRoute
 ]
 
 export default routes
