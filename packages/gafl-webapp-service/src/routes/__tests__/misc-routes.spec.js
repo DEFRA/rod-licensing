@@ -1,4 +1,4 @@
-import { start, stop, server } from '../../misc/test-utils.js'
+import { start, stop, server } from '../../__mocks__/test-utils.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))

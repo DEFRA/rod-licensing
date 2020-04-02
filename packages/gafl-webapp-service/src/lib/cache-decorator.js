@@ -9,7 +9,7 @@ import db from 'debug'
 /**
  * The cache is divided into individually addressable contexts
  */
-const debug = db('cache')
+const debug = db('webapp:cache')
 
 /**
  * These functions are exposed on the request object and may be used by the handlers

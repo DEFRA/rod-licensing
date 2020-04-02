@@ -1,5 +1,5 @@
 import { JUNIOR_LICENCE, CONTROLLER, NAME } from '../../../../constants.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

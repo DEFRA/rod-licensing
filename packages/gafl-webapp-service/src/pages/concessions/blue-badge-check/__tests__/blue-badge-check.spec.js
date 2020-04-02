@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import {
   BLUE_BADGE_CHECK,
   BLUE_BADGE_NUMBER,

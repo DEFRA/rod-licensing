@@ -1,7 +1,7 @@
 import { MAX_PERMISSIONS } from '../constants.js'
 import boom from '@hapi/boom'
 import db from 'debug'
-const debug = db('add-permission')
+const debug = db('webapp:add-permission')
 
 export default async request => {
   const transaction = await request.cache().helpers.transaction.get()

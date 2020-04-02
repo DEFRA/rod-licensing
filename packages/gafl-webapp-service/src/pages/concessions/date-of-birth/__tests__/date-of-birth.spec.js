@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import {
   DATE_OF_BIRTH,
   LICENCE_TO_START,
