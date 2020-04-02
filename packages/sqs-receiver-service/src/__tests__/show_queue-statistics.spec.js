@@ -10,7 +10,7 @@ beforeEach(() => {
 })
 
 test('shows queue statistics when debug is enabled', async () => {
-  debug.enable('queue-stats')
+  debug.enable('sqs:queue-stats')
   const { default: showQueueStatistics } = require('../show-queue-statistics')
   const check = async () => {
     await showQueueStatistics('http://0.0.0.0:0000/queue')
@@ -22,7 +22,7 @@ test('shows queue statistics when debug is enabled', async () => {
 
 test('does not throw errors if the AWS API call fails', async () => {
   AWS.__mockGetAttributesThrows()
-  debug.enable('queue-stats')
+  debug.enable('sqs:queue-stats')
   const { default: showQueueStatistics } = require('../show-queue-statistics')
   const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   await expect(showQueueStatistics('http://0.0.0.0:0000/queue')).resolves.toBeUndefined()

@@ -1,7 +1,7 @@
 import db from 'debug'
 import AWS from './aws.js'
 const { sqs } = AWS()
-const debug = db('queue-stats')
+const debug = db('sqs:queue-stats')
 
 let last = {
   ApproximateNumberOfMessagesDelayed: 0,
@@ -32,14 +32,12 @@ const showQueueStatistics = async url => {
         }
       }
 
-      const block = {
+      debug('%o', {
         Queue: url,
         ApproximateNumberOfMessagesDelayed: prt('ApproximateNumberOfMessagesDelayed'),
         ApproximateNumberOfMessagesNotVisible: prt('ApproximateNumberOfMessagesNotVisible'),
         ApproximateNumberOfMessages: prt('ApproximateNumberOfMessages')
-      }
-
-      debug({ stats: block })
+      })
 
       last = Attributes
     } catch (err) {

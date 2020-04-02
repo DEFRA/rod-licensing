@@ -10,7 +10,7 @@ import showQueueStatistics from './show-queue-statistics.js'
 /**
  * This is the process for a single SQS queue
  */
-const debug = db('receiver')
+const debug = db('sqs:receiver')
 
 // Validate the environment and return a standard object
 const { env } = environment(process.env, process.env.RECEIVER_PREFIX)
@@ -27,8 +27,7 @@ const receiver = async () => {
 
   // If we have read any messages then post the body to the subscriber
   if (messages) {
-    debug(`Read ${messages.length} messages...`)
-    debug({ messages })
+    debug('Read %d messages: %O', messages.length, messages)
 
     const messageSubscriberResults = await Promise.all(
       messages.map(async m => processMessage(m, env.SUBSCRIBER, Number.parseInt(env.SUBSCRIBER_TIMEOUT_MS)))
