@@ -10,8 +10,6 @@ services:
   #######################################################
   localstack:
     image: localstack/localstack:latest
-    networks:
-      - internal
     ports:
       - '4563-4599:4563-4599'
       - '${PORT_WEB_UI-4080}:${PORT_WEB_UI-8080}'
@@ -32,13 +30,21 @@ services:
       restart_policy:
         condition: on-failure
 
+  dynamodb_admin:
+    image: aaronshaf/dynamodb-admin
+    ports:
+      - '8002:8001'
+    environment:
+      - DYNAMO_ENDPOINT=http://host.docker.internal:4569
+    deploy:
+      restart_policy:
+        condition: on-failure
+
   #######################################################
   # Redis
   #######################################################
   redis:
     image: redis:alpine
-    networks:
-      - internal
     ports:
       - '6379:6379'
     volumes:
@@ -49,8 +55,6 @@ services:
 
   redisinsight:
     image: redislabs/redisinsight
-    networks:
-      - internal
     ports:
       - '8001:8001'
     volumes:
@@ -64,8 +68,6 @@ services:
   #######################################################
   elasticmq:
     image: s12v/elasticmq
-    networks:
-      - internal
     ports:
       - '9324:9324'
     volumes:
