@@ -19,6 +19,8 @@ const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
 
 const NAME = { uri: '/buy/name', page: 'name' }
 const ADDRESS_LOOKUP = { uri: '/buy/find-address', page: 'address-lookup' }
+const ADDRESS_SELECT = { uri: '/buy/select-address', page: 'address-select' }
+const ADDRESS_ENTRY = { uri: '/buy/address', page: 'address-entry' }
 
 const SUMMARY = { uri: '/buy/summary', page: 'summary' }
 const CONTROLLER = { uri: '/buy' }
@@ -30,12 +32,7 @@ const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
 const POSTCODE_REGEX = /^(([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?))\s*([0-9][A-Z]{2})$/i
 
-const ADDRESS_LOOKUP_SERVICE = {
-  url: process.env.ADDRESS_LOOKUP_URL,
-  key: process.env.ADDRESS_LOOKUP_KEY,
-  lang: 'EN',
-  dataset: 'DPA'
-}
+const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 
 export {
   LICENCE_LENGTH,
@@ -49,6 +46,8 @@ export {
   JUNIOR_LICENCE,
   NAME,
   ADDRESS_LOOKUP,
+  ADDRESS_SELECT,
+  ADDRESS_ENTRY,
   SUMMARY,
   CONTROLLER,
   NEW_TRANSACTION,
