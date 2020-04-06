@@ -10,11 +10,13 @@ const debug = db('webapp:cache')
 
 /**
  * Permissions functions. These operate on a given cache context for the currently set permission
- * @param serverCache
- * @param context
- * @param id
- * @param idx
- * @returns {{set: (function(*=): *), get: (function(): *), hasPermission: (function(): boolean), setCurrentPermission: setCurrentPermission, getCurrentPermission: (function(): *)}}
+ * @param serverCache - the catbox cache wrapper object bound to the server
+ * @param context - a cache context e.g. 'page'
+ * @param id - the session cookie id function
+ * @param idx - the current permission index function
+ * @returns {{set: (function(*=): *), get: (function(): *),
+ *  hasPermission: (function(): boolean), setCurrentPermission:
+ *  setCurrentPermission, getCurrentPermission: (function(): *)}}
  */
 const cacheOfCurrentPermissionAndContext = (serverCache, context, id, idx) => ({
   get: async () => contextCache(serverCache, id(), context).get(),
