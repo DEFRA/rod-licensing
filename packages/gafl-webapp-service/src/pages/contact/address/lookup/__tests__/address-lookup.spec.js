@@ -5,7 +5,7 @@ beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-describe('The name page', () => {
+describe('The address lookup page', () => {
   it('returns success on requesting', async () => {
     const data = await injectWithCookie('GET', ADDRESS_LOOKUP.uri)
     expect(data.statusCode).toBe(200)
