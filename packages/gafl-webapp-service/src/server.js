@@ -11,7 +11,6 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import routeDefinitions from './routes/journey-definition.js'
 import { ERROR } from './constants.js'
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
@@ -106,25 +105,13 @@ const init = async () => {
   })
 
   /*
-   * Decorator to make access to the session cache available as
+   * Decorator to make access to the session cache functions available as
    * simple setters and getters hiding the session key.
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
   process.on('unhandledRejection', console.error)
-
   server.route(routes)
-
-  server.ext('onPostStart', async srv => {
-    const definedRoutes = [].concat(...routeDefinitions.map(r => Object.values(r.nextPage))).map(p => p.page)
-    const serverRoutes = srv.table().map(t => t.path)
-    const notFoundRoutes = definedRoutes.filter(r => !serverRoutes.includes(r))
-    if (notFoundRoutes.length) {
-      console.error(`The following routes are not found. Cannot start  ${notFoundRoutes}`)
-      srv.stop()
-    }
-  })
-
   await server.start()
 
   console.log('Server running on %s', server.info.uri)
