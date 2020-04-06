@@ -9,9 +9,8 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'You did not enter your house number or name' },
-            'string.max': { ref: '#premises', text: 'Your house number or name must be less than characters' },
-            'string.forbidden': { ref: '#premises', text: 'Your first name must only contain letters' }
+            'string.empty': { ref: '#premises', text: 'You did not enter your building number or name' },
+            'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },

@@ -21,6 +21,7 @@ const NAME = { uri: '/buy/name', page: 'name' }
 const ADDRESS_LOOKUP = { uri: '/buy/find-address', page: 'address-lookup' }
 const ADDRESS_SELECT = { uri: '/buy/select-address', page: 'address-select' }
 const ADDRESS_ENTRY = { uri: '/buy/address', page: 'address-entry' }
+const CONTACT = { uri: '/buy/contact', page: 'contact' }
 
 const SUMMARY = { uri: '/buy/summary', page: 'summary' }
 const CONTROLLER = { uri: '/buy' }
@@ -48,6 +49,7 @@ export {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  CONTACT,
   SUMMARY,
   CONTROLLER,
   NEW_TRANSACTION,

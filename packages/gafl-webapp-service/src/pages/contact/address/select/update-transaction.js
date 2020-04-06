@@ -10,7 +10,7 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const contact = permission.contact || {}
   const { addresses } = await request.cache().helpers.addressLookup.getCurrentPermission()
-  const { premises, street, locality, town, postcode, country } = addresses.find(a => a.id === payload.address)
-  Object.assign(contact, { address: { premises, street, locality, town, postcode, country } })
+  const { premises, street, locality, town, postcode } = addresses.find(a => a.id === payload.address)
+  Object.assign(contact, { address: { premises, street, locality, town, postcode, countryCode: 'GB' } })
   await request.cache().helpers.transaction.setCurrentPermission({ contact })
 }

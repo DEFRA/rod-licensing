@@ -15,7 +15,8 @@ import {
   BLUE_BADGE_NUMBER,
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
-  ADDRESS_ENTRY
+  ADDRESS_ENTRY,
+  CONTACT
 } from '../constants.js'
 
 export default [
@@ -194,7 +195,7 @@ export default [
     currentPage: ADDRESS_ENTRY.page,
     nextPage: {
       ok: {
-        page: ADDRESS_ENTRY.uri
+        page: CONTACT.uri
       }
     }
   },
@@ -203,7 +204,7 @@ export default [
     currentPage: ADDRESS_SELECT.page,
     nextPage: {
       ok: {
-        page: ADDRESS_SELECT.uri
+        page: CONTACT.uri
       }
     }
   }
