@@ -1,6 +1,6 @@
 import { CacheError } from '../lib/cache-manager.js'
 import { CONTROLLER } from '../constants.js'
-
+import GetDataRedirect from './get-data-redirect.js'
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 
 /**
@@ -21,8 +21,15 @@ export default (path, view, completion, getData) => ({
     const page = await request.cache().helpers.page.getCurrentPermission(view)
     const pageData = page || {}
     if (getData && typeof getData === 'function') {
-      const data = await getData(request)
-      Object.assign(pageData, { data })
+      try {
+        const data = await getData(request)
+        Object.assign(pageData, { data })
+      } catch (err) {
+        // If GetDataRedirect is thrown the getData function is requesting a redirect
+        if (err instanceof GetDataRedirect) {
+          return h.redirect(err.redirectUrl)
+        }
+      }
     }
     return h.view(view, pageData)
   },

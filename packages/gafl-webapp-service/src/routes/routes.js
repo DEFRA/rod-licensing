@@ -20,6 +20,7 @@ import addressLookup from '../pages/contact/address/lookup/route.js'
 import addressSelect from '../pages/contact/address/select/route.js'
 import addressEntry from '../pages/contact/address/entry/route.js'
 import contact from '../pages/contact/contact/route.js'
+import newsletter from '../pages/contact/newsletter/route.js'
 
 import controller from './controller-route.js'
 import newTransactionRoute from './new-transaction-route.js'
@@ -49,6 +50,7 @@ const routes = [
   ...addressSelect,
   ...addressEntry,
   ...contact,
+  ...newsletter,
   ...summary,
   ...error,
   controller,

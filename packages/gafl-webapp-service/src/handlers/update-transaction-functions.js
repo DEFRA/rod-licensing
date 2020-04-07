@@ -19,6 +19,7 @@ import name from '../pages/contact/name/update-transaction.js'
 import addressLookup from '../pages/contact/address/lookup/update-transaction.js'
 import addressSelect from '../pages/contact/address/select/update-transaction.js'
 import addressEntry from '../pages/contact/address/entry/update-transaction.js'
+import contact from '../pages/contact/contact/update-transaction.js'
 
 import {
   DATE_OF_BIRTH,
@@ -35,7 +36,8 @@ import {
   NAME,
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
-  ADDRESS_ENTRY
+  ADDRESS_ENTRY,
+  CONTACT
 } from '../constants.js'
 
 export default {
@@ -54,5 +56,6 @@ export default {
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_SELECT.page]: addressSelect,
   [ADDRESS_ENTRY.page]: addressEntry,
+  [CONTACT.page]: contact,
   TransactionError: class TransactionError extends Error {}
 }

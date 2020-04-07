@@ -1,0 +1,108 @@
+import { CONTACT, LICENCE_LENGTH, CONTROLLER, DATE_OF_BIRTH, LICENCE_TO_START, SUMMARY, HOW_CONTACTED, NEWSLETTER } from '../../../../constants.js'
+import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
+
+beforeAll(d => start(d))
+beforeAll(d => initialize(d))
+afterAll(d => stop(d))
+
+describe('The contact preferences page', () => {
+  it('redirects to the licence length page if the licence length is not set', async () => {
+    const data = await injectWithCookie('GET', CONTACT.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
+  })
+
+  it('redirects to the licence-to-start page if the licence-start-date is not set', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', CONTACT.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_TO_START.uri)
+  })
+
+  it('redirects to the date-of-birth page if the date-of-birth is not set', async () => {
+    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', CONTACT.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
+  })
+
+  it('return the page on request', async () => {
+    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '11',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1951'
+    })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', CONTACT.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('redirects to itself on an empty response', async () => {
+    const data = await injectWithCookie('POST', CONTACT.uri, {})
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
+  it('redirects to itself on an invalid contact method', async () => {
+    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'skype' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
+  it('redirects to itself on an empty email', async () => {
+    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: '' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
+  it('redirects to itself on an invalid email', async () => {
+    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'foo' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
+  it('redirects to itself on an empty mobile number', async () => {
+    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'text', text: '' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
+  it('redirects to itself on an invalid mobile number', async () => {
+    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'text', text: 'foo' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
+  it('controller redirects to the summary page if no contact given', async () => {
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(SUMMARY.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.none)
+    expect(JSON.parse(payload).permissions[0].contact.emailAddress).toBeFalsy()
+    expect(JSON.parse(payload).permissions[0].contact.textNumber).toBeFalsy()
+  })
+
+  it('controller redirects to the newsletter page if an email is given', async () => {
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(NEWSLETTER.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.email)
+    expect(JSON.parse(payload).permissions[0].contact.emailAddress).toBe('example@email.com')
+  })
+
+  it('controller redirects to the newsletter page if a text number is given', async () => {
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(NEWSLETTER.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.text)
+    expect(JSON.parse(payload).permissions[0].contact.textNumber).toBe('+22 0445638902')
+  })
+})

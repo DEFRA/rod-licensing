@@ -16,7 +16,9 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
-  CONTACT
+  CONTACT,
+  NEWSLETTER,
+  SUMMARY
 } from '../constants.js'
 
 export default [
@@ -205,6 +207,27 @@ export default [
     nextPage: {
       ok: {
         page: CONTACT.uri
+      }
+    }
+  },
+
+  {
+    currentPage: CONTACT.page,
+    nextPage: {
+      yes: {
+        page: NEWSLETTER.uri
+      },
+      no: {
+        page: SUMMARY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: NEWSLETTER.page,
+    nextPage: {
+      ok: {
+        page: SUMMARY.uri
       }
     }
   }

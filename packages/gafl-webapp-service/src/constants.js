@@ -22,6 +22,7 @@ const ADDRESS_LOOKUP = { uri: '/buy/find-address', page: 'address-lookup' }
 const ADDRESS_SELECT = { uri: '/buy/select-address', page: 'address-select' }
 const ADDRESS_ENTRY = { uri: '/buy/address', page: 'address-entry' }
 const CONTACT = { uri: '/buy/contact', page: 'contact' }
+const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 
 const SUMMARY = { uri: '/buy/summary', page: 'summary' }
 const CONTROLLER = { uri: '/buy' }
@@ -32,7 +33,7 @@ const ERROR = { uri: '/error', page: 'error' }
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
 const POSTCODE_REGEX = /^(([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?))\s*([0-9][A-Z]{2})$/i
-
+const HOW_CONTACTED = { email: 'email', text: 'text', none: 'do-not-contact' }
 const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 
 export {
@@ -50,6 +51,7 @@ export {
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
   CONTACT,
+  NEWSLETTER,
   SUMMARY,
   CONTROLLER,
   NEW_TRANSACTION,
@@ -61,6 +63,7 @@ export {
   CONCESSION,
   ADDRESS_LOOKUP_SERVICE,
   POSTCODE_REGEX,
+  HOW_CONTACTED,
   MAX_PERMISSIONS,
   ERROR
 }

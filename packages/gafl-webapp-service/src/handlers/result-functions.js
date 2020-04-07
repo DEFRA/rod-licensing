@@ -8,7 +8,8 @@ import {
   LICENCE_START_DATE,
   BENEFIT_CHECK,
   BLUE_BADGE_CHECK,
-  ADDRESS_LOOKUP
+  ADDRESS_LOOKUP,
+  CONTACT
 } from '../constants.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
@@ -18,6 +19,8 @@ import licenceStartDate from '../pages/licence-details/licence-start-date/result
 import benefitCheck from '../pages/concessions/benefit-check/result-function.js'
 import blueBadgeCheck from '../pages/concessions/blue-badge-check/result-function.js'
 import addressLookup from '../pages/contact/address/lookup/result-function.js'
+import contact from '../pages/contact/contact/result-function.js'
+
 /**
  * The result function determines the navigation in the route definition
  */
@@ -28,5 +31,6 @@ export default {
   [LICENCE_START_DATE.page]: licenceStartDate,
   [BENEFIT_CHECK.page]: benefitCheck,
   [BLUE_BADGE_CHECK.page]: blueBadgeCheck,
-  [ADDRESS_LOOKUP.page]: addressLookup
+  [ADDRESS_LOOKUP.page]: addressLookup,
+  [CONTACT.page]: contact
 }

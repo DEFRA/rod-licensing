@@ -1,0 +1,22 @@
+{% extends "standard-form.njk" %}
+{% from "input/macro.njk" import govukInput %}
+
+{% set title = 'Would you like to receive our email newsletter?' %}
+
+{% set errorMap = {
+        'first-name': {
+            'string.empty': { ref: '#first-name', text: 'You did not enter your first name' }
+        },
+        'last-name': {
+            'string.empty': { ref: '#last-name', text: 'You did not enter your last name' }
+        }
+    }
+%}
+
+{% block pageContent %}
+
+    <p class="govuk-body-m">Stay up to date with the latest news on angling and fisheries and how we spend your licence money. You can unsubscribe at any time</p>
+
+{% endblock %}
+
+
