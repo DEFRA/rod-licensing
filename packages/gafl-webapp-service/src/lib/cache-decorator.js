@@ -14,7 +14,7 @@ const debug = db('webapp:cache')
  * @param context - a cache context e.g. 'page'
  * @param id - the session cookie id function
  * @param idx - the current permission index function
- * @returns - cache operations
+ * @returns - cache operations on each context
  */
 const cacheOfCurrentPermissionAndContext = (serverCache, context, id, idx) => ({
   get: async () => contextCache(serverCache, id(), context).get(),
