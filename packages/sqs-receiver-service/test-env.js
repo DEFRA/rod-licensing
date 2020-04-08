@@ -1,5 +1,4 @@
 export default {
-  DEBUG: 'queue-stats',
   RECEIVER_PREFIX: 'TEST',
   TEST_URL: 'http://0.0.0.0:9325/queue/SalesQueue.fifo',
   TEST_POLLING_RATE_MS: 1,

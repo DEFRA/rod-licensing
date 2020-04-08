@@ -4,7 +4,7 @@ Resources:
   CrmStaging:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: CrmStaging
+      TableName: TransactionStaging
       AttributeDefinitions:
         - AttributeName: 'StagingId'
           AttributeType: 'S'
