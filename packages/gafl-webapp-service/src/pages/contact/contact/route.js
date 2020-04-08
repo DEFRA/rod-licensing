@@ -22,8 +22,7 @@ const getData = async request => {
 
   return {
     licenceLength: permission.licenceLength,
-    junior: permission.concession && permission.concession.type === CONCESSION.JUNIOR,
-    emailAddress: permission.contact && permission.contact.emailAddress ? permission.contact.emailAddress : null
+    junior: permission.concession && permission.concession.type === CONCESSION.JUNIOR
   }
 }
 

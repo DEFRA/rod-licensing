@@ -65,7 +65,7 @@
         spellcheck: "false",
         maxlength: "50"
       },
-      value: data.emailAddress if data.emailAddress else payload.email
+      value: payload.email if payload.how-contacted === 'email' else ''
     }) }}
 {% endset -%}
 
@@ -86,7 +86,7 @@
       attributes: {
         maxlength: "30"
       },
-      value: payload.text
+      value: payload.text if payload.how-contacted === 'text' else ''
     }) }}
 {% endset -%}
 
@@ -95,6 +95,7 @@
 {% endset -%}
 
 {% block pageContent %}
+
     {{ govukInsetText({
         text: insetText
     }) }}

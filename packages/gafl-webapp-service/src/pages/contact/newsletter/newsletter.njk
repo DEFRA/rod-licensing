@@ -35,10 +35,6 @@
     }) }}
 {% endset -%}
 
-{% set displayEmailHtml %}
-    <p class="govuk-body-m">{{ data.emailAddress }}</p>
-{% endset -%}
-
 {% block pageContent %}
     {{ govukRadios({
       idPrefix: "newsletter",
@@ -56,7 +52,7 @@
           text: "Yes",
           checked: payload.newsletter === 'yes',
           conditional: {
-            html: changeEmailHtml if data.method === 'text' else displayEmailHtml
+            html: changeEmailHtml
           }
         },
         {
