@@ -10,11 +10,13 @@ export default async request => {
     case 'email':
       contact.method = HOW_CONTACTED.email
       contact.emailAddress = payload.email
+      delete contact.textNumber
       break
 
     case 'text':
       contact.method = HOW_CONTACTED.text
       contact.textNumber = payload.text
+      delete contact.emailAddress
       break
 
     default:

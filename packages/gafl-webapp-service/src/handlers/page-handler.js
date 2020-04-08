@@ -29,6 +29,8 @@ export default (path, view, completion, getData) => ({
         if (err instanceof GetDataRedirect) {
           return h.redirect(err.redirectUrl)
         }
+
+        throw err
       }
     }
     return h.view(view, pageData)

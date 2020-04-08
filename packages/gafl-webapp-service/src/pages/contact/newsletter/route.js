@@ -1,14 +1,17 @@
-import { NEWSLETTER, CONTROLLER } from '../../../constants.js'
+import { CONTACT, NEWSLETTER, CONTROLLER } from '../../../constants.js'
+import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  if (permission.contact && permission.contact.emailAddress) {
-    return { emailAddress: permission.contact.emailAddress }
-  } else {
-    return { emailAddress: null }
+
+  // We need to have set contact method
+  if (!permission.contact || !permission.contact.method) {
+    throw new GetDataRedirect(CONTACT.uri)
   }
+
+  return { emailAddress: permission.contact.emailAddress, method: permission.contact.method }
 }
 
 const validator = Joi.object({

@@ -9,6 +9,7 @@
 | SESSION_TTL_MS      | Time to live for the session cookie and cache |    no    | 10800000 |                               |
 | ADDRESS_LOOKUP_URL  | Location of address lookup facade             |    no    |          |                               |
 | ADDRESS_LOOKUP_KEY  | The API key required by OS places             |    no    |          |                               |
+| ADDRESS_LOOKUP_MS   | The timeout in milliseconds for the lookup    |    no    | 10000    |                               |
 
 ## OS Places address lookup
 

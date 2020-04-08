@@ -15,7 +15,26 @@ beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
+  it('redirects to the contact page if a contact method is not set', async () => {
+    const data = await injectWithCookie('GET', NEWSLETTER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
+  })
+
   it('returns success on request', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '11',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1951'
+    })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
     const data = await injectWithCookie('GET', NEWSLETTER.uri)
     expect(data.statusCode).toBe(200)
   })
@@ -33,20 +52,6 @@ describe('The newsletter page', () => {
   })
 
   it('when posting no it saves the marketing flag without overwriting a pre-existing email', async () => {
-    // Do the necessary preperation
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1951'
-    })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'no', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
@@ -59,20 +64,6 @@ describe('The newsletter page', () => {
   })
 
   it('when posting yes it saves the marketing flag without overwriting a pre-existing email', async () => {
-    // Do the necessary preperation
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1951'
-    })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
