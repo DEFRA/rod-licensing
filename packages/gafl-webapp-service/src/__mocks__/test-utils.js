@@ -1,4 +1,6 @@
 import { createServer, init, server } from '../server.js'
+import { SESSION_COOKIE_NAME_DEFAULT } from '../constants.js'
+
 import CatboxMemory from '@hapi/catbox-memory'
 
 createServer({
@@ -69,7 +71,7 @@ const injectWithCookie = async (method, url, payload) => {
     method,
     url,
     payload,
-    headers: { cookie: `sid=${global.cookies.sid}` }
+    headers: { cookie: `${SESSION_COOKIE_NAME_DEFAULT}=${global.cookies.sid}` }
   })
 }
 
