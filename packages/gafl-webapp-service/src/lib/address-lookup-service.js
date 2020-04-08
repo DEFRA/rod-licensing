@@ -1,10 +1,8 @@
 import fetch from 'node-fetch'
-import AbortController from 'abort-controller'
 
 import { ADDRESS_LOOKUP_SERVICE, ADDRESS_LOOKUP_MS_DEFAULT } from '../constants.js'
 import db from 'debug'
 const debug = db('webapp:address-lookup-service')
-const controller = new AbortController()
 export default async (premises, postcode) => {
   const url = new URL(process.env.ADDRESS_LOOKUP_URL)
 
@@ -20,15 +18,11 @@ export default async (premises, postcode) => {
 
   debug({ url })
 
-  const timeout = setTimeout(() => {
-    controller.abort()
-  }, process.env.ADDRESS_LOOKUP_MS || ADDRESS_LOOKUP_MS_DEFAULT)
-
   const { results } = await (async () => {
     try {
       const response = await fetch(url.href, {
         headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal
+        timeout: process.env.ADDRESS_LOOKUP_MS || ADDRESS_LOOKUP_MS_DEFAULT
       })
       return response.json()
     } catch (err) {
@@ -37,8 +31,6 @@ export default async (premises, postcode) => {
       return { results: [] }
     }
   })()
-
-  clearTimeout(timeout)
 
   debug({ results })
 
