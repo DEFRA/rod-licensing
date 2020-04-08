@@ -1,21 +1,67 @@
 {% extends "standard-form.njk" %}
 {% from "input/macro.njk" import govukInput %}
+{% from "radios/macro.njk" import govukRadios %}
 
 {% set title = 'Would you like to receive our email newsletter?' %}
 
 {% set errorMap = {
-        'first-name': {
-            'string.empty': { ref: '#first-name', text: 'You did not enter your first name' }
-        },
-        'last-name': {
-            'string.empty': { ref: '#last-name', text: 'You did not enter your last name' }
+       'email': {
+            'string.empty': { ref: '#email', text: 'You did not enter your email address' },
+            'string.email': { ref: '#email', text: 'You did not enter a valid email address' },
+            'string.max': { ref: '#email', text: 'You did not enter a valid email address' }
         }
     }
 %}
 
-{% block pageContent %}
+{% set emailHtml %}
+    {{ govukInput({
+      id: "email",
+      name: "email",
+      type: "email",
+      classes: "govuk-!-width-two-thirds",
+      autocomplete: "email",
+      value: data.emailAddress if data.emailAddress else payload.email,
+      errorMessage: { text: 'Enter your email address' } if error['email'],
+      label: {
+        text: "Email address"
+      },
+      hint: {
+          text: "For example angling@email.com"
+      },
+      attributes: {
+        spellcheck: "false",
+        maxlength: "50"
+      }
+    }) }}
+{% endset -%}
 
-    <p class="govuk-body-m">Stay up to date with the latest news on angling and fisheries and how we spend your licence money. You can unsubscribe at any time</p>
+{% block pageContent %}
+    {{ govukRadios({
+      idPrefix: "newsletter",
+      name: "newsletter",
+      fieldset: {
+        legend: {
+          text: "Stay up to date with the latest news on angling and fisheries and how we spend your licence money. You can unsubscribe at any time",
+          isPageHeading: false,
+          classes: "govuk-body-m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          checked: payload.newsletter === 'yes',
+          conditional: {
+            html: emailHtml
+          }
+        },
+        {
+          value: "no",
+          text: "No",
+          checked: true if not payload else false
+        }
+      ]
+    }) }}
 
 {% endblock %}
 

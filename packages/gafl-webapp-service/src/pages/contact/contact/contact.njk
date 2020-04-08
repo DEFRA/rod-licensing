@@ -64,7 +64,8 @@
       attributes: {
         spellcheck: "false",
         maxlength: "50"
-      }
+      },
+      value: data.emailAddress if data.emailAddress else payload.email
     }) }}
 {% endset -%}
 
@@ -84,7 +85,8 @@
       },
       attributes: {
         maxlength: "30"
-      }
+      },
+      value: payload.text
     }) }}
 {% endset -%}
 

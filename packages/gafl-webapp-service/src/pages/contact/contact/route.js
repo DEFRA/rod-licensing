@@ -22,7 +22,8 @@ const getData = async request => {
 
   return {
     licenceLength: permission.licenceLength,
-    junior: permission.concession && permission.concession.type === CONCESSION.JUNIOR
+    junior: permission.concession && permission.concession.type === CONCESSION.JUNIOR,
+    emailAddress: permission.contact && permission.contact.emailAddress ? permission.contact.emailAddress : null
   }
 }
 
@@ -32,12 +33,18 @@ const validator = Joi.object({
     .required(),
   email: Joi.alternatives().conditional('how-contacted', {
     is: 'email',
-    then: Joi.string().trim().email({ minDomainSegments: 2 }).max(50),
+    then: Joi.string()
+      .trim()
+      .email({ minDomainSegments: 2 })
+      .max(50),
     otherwise: Joi.string().empty('')
   }),
   text: Joi.alternatives().conditional('how-contacted', {
     is: 'text',
-    then: Joi.string().trim().regex(/^[0-9-+\s()]*$/).max(30),
+    then: Joi.string()
+      .trim()
+      .regex(/^[0-9-+\s()]*$/)
+      .max(30),
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })
