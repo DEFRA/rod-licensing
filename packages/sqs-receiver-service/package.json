@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/sqs-receiver-service",
-  "version": "0.0.1-beta.10",
+  "version": "0.0.1-beta.14",
   "description": "SQS Receiver service",
   "type": "module",
   "engines": {
@@ -30,7 +30,8 @@
     "access": "public"
   },
   "scripts": {
-    "start": "pm2 start ecosystem.config.yml",
+    "start": "pm2 start ecosystem.config.yml --no-daemon --watch --update-env",
+    "stop": "pm2 delete ecosystem.config.yml",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
@@ -38,7 +39,6 @@
     "aws-sdk": "^2.648.0",
     "debug": "^4.1.1",
     "node-fetch": "^2.6.0",
-    "pm2": "^4.2.3",
     "uuid": "^7.0.2"
   }
 }

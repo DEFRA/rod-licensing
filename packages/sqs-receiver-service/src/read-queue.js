@@ -1,13 +1,17 @@
 'use strict'
-
-/**
- * Reads the queue with the long poll and returns the { err, messages }
- */
 import db from 'debug'
 import AWS from './aws.js'
 const { sqs } = AWS()
+const debug = db('sqs:read-queue')
 
-const debug = db('read-queue')
+/**
+ * Reads the queue with the long polling operation
+ *
+ * @param {string} url the URL of the queue to read
+ * @param {number} visibilityTimeoutMs the visibility timeout to use for messages that aren't successfully processed
+ * @param {number} waitTimeMs the amount of time to wait for messages to become available
+ * @returns {Promise<SQS.Message[]|*[]>}
+ */
 const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
   try {
     const params = {

@@ -19,7 +19,7 @@ const environment = (e, receiverName) => {
     SUBSCRIBER: e[`${receiverName}_SUBSCRIBER`],
     POLLING_RATE_MS: e[`${receiverName}_POLLING_RATE_MS`],
     VISIBILITY_TIMEOUT_MS: e[`${receiverName}_VISIBILITY_TIMEOUT_MS`],
-    WAIT_TIME_MS: e[`${receiverName}_WAIT_TIME_MS`],
+    WAIT_TIME_MS: e[`${receiverName}_WAIT_TIME_MS`] || 20000,
     NO_DELAY_THRESHOLD: e[`${receiverName}_NO_DELAY_THRESHOLD`],
     SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`]
   }
