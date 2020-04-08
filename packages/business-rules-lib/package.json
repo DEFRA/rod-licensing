@@ -1,0 +1,40 @@
+{
+  "name": "@defra-fish/business-rules-lib",
+  "version": "0.0.1-beta.15",
+  "description": "Shared business rules for the rod licencing digital services",
+  "type": "module",
+  "engines": {
+    "node": ">=13"
+  },
+  "keywords": [
+    "rod",
+    "licencing",
+    "dynamics"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/index.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "directory": "packages/business-rules-lib"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "moment": "^2.24.0",
+    "uuid": "^7.0.3"
+  }
+}
