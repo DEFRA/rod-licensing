@@ -26,7 +26,7 @@ describe('reference-data endpoint', () => {
             defra_isforfulfilment: false,
             defra_iscountersales: true,
             defra_advertisedprice_base: 6.0,
-            defra_itemid: 42289
+            defra_itemid: '42289'
           }
         ]
       },
@@ -86,7 +86,7 @@ describe('reference-data endpoint', () => {
       cost: 6,
       isCounterSales: true,
       isForFulfilment: false,
-      itemId: 42289
+      itemId: '42289'
     })
   })
 

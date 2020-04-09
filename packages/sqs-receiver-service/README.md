@@ -4,6 +4,22 @@ This service is configured to poll a set of SQS queues and on receipt of a messa
 
 If the response from the subscriber is successful the message will be removed from the queue. If not the message will become visible again after the visibility timeout and maybe reprocessed subject to the SQS re-drive policy.
 
+# Environment variables
+
+| name                                       | description                                                              | required | default               | valid                                                                                           | notes                                                                                                                         |
+| ------------------------------------------ | ------------------------------------------------------------------------ | :------: | --------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| NODE_ENV                                   | Node environment                                                         |    no    |                       | development, test, production                                                                   |                                                                                                                               |
+| AWS_REGION                                 | The AWS region to use                                                    |   yes    |                       | See [AWS Regions](https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints)  |                                                                                                                               |
+| AWS_SQS_ENDPOINT                           | Custom SQS Endpoint                                                      |    no    | Region specific       |                                                                                                 | Used to override the SQS service endpoint for local development                                                               |
+| RECEIVER_PREFIX                            | Prefix for reading environment variables specific to a receiver instance |   yes    |                       |                                                                                                 | The prefix to use to retrieve further settings via the environment (see below)                                                |
+| <RECEIVER_PREFIX>\_URL                     | The SQS queue URL                                                        |   yes    |                       |                                                                                                 |                                                                                                                               |
+| <RECEIVER_PREFIX>\_WAIT_TIME_MS            | The amount of time to block while long polling a queue for messages      |    no    | 20000 (20 seconds)    |                                                                                                 |                                                                                                                               |
+| <RECEIVER_PREFIX>\_VISIBILITY_TIMEOUT_MS   | The length of time the message is made invisible to other processes      |   yes    |                       |                                                                                                 |                                                                                                                               |
+| <RECEIVER_PREFIX>\_MAX_POLLING_INTERVAL_MS | The maximum amount of time to wait between subsequent read requests      |    no    | 300000 (5 minutes)    |                                                                                                 | For each read request returning no messages, an exponential delay is calculated before reading again. This limits that delay. |
+| <RECEIVER_PREFIX>\_SUBSCRIBER              | The location of the subscriber. The message group id is appended         |   yes    |                       |                                                                                                 |                                                                                                                               |
+| <RECEIVER_PREFIX>\_SUBSCRIBER_TIMEOUT_MS   | Prefix for reading environment variables specific to a receiver instance |    no    | 90000 (1m 30 seconds) |                                                                                                 |                                                                                                                               |
+| DEBUG                                      | Enable debug output                                                      |    no    |                       | sqs:\*, sqs:receiver, sqs:read-queue, sqs:process-message, sqs:delete-messages, sqs:queue-stats | Enables debug output for the given category, accepts wildcards                                                                |
+
 ## To control via pm2
 
 `pm2 [start|restart|stop|delete] ecosystem.config.js`
@@ -20,28 +36,9 @@ The `ecosystem.config.js` file contains the set of receiver services to run. An 
      autorestart: false
 ```
 
-There is a required set of environment variables which must be set for each receiver. For example:
-
-```
-SALES_QUEUE_URL=http://0.0.0.0:9325/queue/SalesQueue.fifo
-SALES_QUEUE_POLLING_RATE_MS=10000
-SALES_QUEUE_VISIBILITY_TIMEOUT_MS=120000
-SALES_QUEUE_WAIT_TIME_MS=2000
-SALES_QUEUE_NO_DELAY_THRESHOLD=4
-SALES_QUEUE_SUBSCRIBER=http://localhost:4000
-SALES_QUEUE_SUBSCRIBER_TIMEOUT_MS=5000
-```
-
-- URL - The SQS queue location
-- POLLING_RATE_MS - The duration of the long poll
-- VISIBILITY_TIMEOUT_MS - The length of time the message is made invisible to other processes
-- WAIT_TIME_MS - The delay between polling events
-- NO_DELAY_THRESHOLD - The number of messages above which the delay is not observed
-- SUBSCRIBER - The location of the subscriber. The message group id is appended
-
 ## Debug
 
-The service uses the debug package use set `DEBUG=[receiver|queue-stats|process-message|read-queue|delete-messages]`
+The service uses the debug package see the DEBUG environment variable guidance
 
 ## Failures
 
@@ -57,25 +54,20 @@ Only in the cases where the subscriber return an http success status will the me
 ## A development environment can be set up as follows
 
 ```
-SALES_QUEUE_URL=http://0.0.0.0:9325/queue/SalesQueue.fifo
-SALES_QUEUE_POLLING_RATE_MS=5000
-SALES_QUEUE_VISIBILITY_TIMEOUT_MS=15000
-SALES_QUEUE_WAIT_TIME_MS=5000
-SALES_QUEUE_NO_DELAY_THRESHOLD=4
-SALES_QUEUE_SUBSCRIBER=http://localhost:4000
-SALES_QUEUE_SUBSCRIBER_TIMEOUT_MS=5000
+AWS_REGION=eu-west-2
+AWS_ACCESS_KEY_ID=local
+AWS_SECRET_ACCESS_KEY=local
+AWS_SQS_ENDPOINT=http://0.0.0.0:9324
 
-SALES_DEAD_LETTER_QUEUE_URL=http://0.0.0.0:9325/queue/SalesDeadLetterQueue.fifo
-SALES_DEAD_LETTER_QUEUE_POLLING_RATE_MS=5000
-SALES_DEAD_LETTER_QUEUE_VISIBILITY_TIMEOUT_MS=15000
-SALES_DEAD_LETTER_QUEUE_WAIT_TIME_MS=2000
-SALES_DEAD_LETTER_QUEUE_NO_DELAY_THRESHOLD=4
-SALES_DEAD_LETTER_QUEUE_SUBSCRIBER=http://localhost:4000/error
-SALES_DEAD_LETTER_QUEUE_SUBSCRIBER_TIMEOUT_MS=5000
+DEBUG=sqs:*
 
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_REGION=eu-west-1
+TRANSACTIONS_QUEUE_URL=http://0.0.0.0:9324/queue/TransactionsQueue.fifo
+TRANSACTIONS_QUEUE_MAX_POLLING_INTERVAL_MS=30000
+TRANSACTIONS_QUEUE_VISIBILITY_TIMEOUT_MS=120000
+TRANSACTIONS_QUEUE_SUBSCRIBER=http://0.0.0.0:4000/process-queue
 
-DEBUG=queue-stats
+TRANSACTIONS_DLQ_URL=http://0.0.0.0:9324/queue/TransactionsDlq.fifo
+TRANSACTIONS_DLQ_MAX_POLLING_INTERVAL_MS=180000
+TRANSACTIONS_DLQ_VISIBILITY_TIMEOUT_MS=120000
+TRANSACTIONS_DLQ_SUBSCRIBER=http://0.0.0.0:4000/process-dlq
 ```

@@ -4,6 +4,7 @@ import {
   GlobalOptionSetDefinition,
   persist,
   retrieveMultiple,
+  findById,
   findByExample,
   retrieveMultipleAsMap,
   retrieveGlobalOptionSets
@@ -20,12 +21,12 @@ describe('entity manager', () => {
       api.__setResponse('executeBatch', [resultUuid])
       const createRequestSpy = jest.spyOn(api.prototype, 'createRequest')
 
-      const c = new Contact()
-      c.firstName = 'Fester'
-      c.lastName = 'Tester'
-      c.email = 'fester@thetester.com'
+      const t = new TestEntity()
+      t.strVal = 'Fester'
+      t.intVal = 1
+      t.boolVal = true
 
-      const result = await persist(c)
+      const result = await persist(t)
       expect(createRequestSpy).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
@@ -38,26 +39,18 @@ describe('entity manager', () => {
       api.__setResponse('executeBatch', [resultUuid])
       const updateRequestSpy = jest.spyOn(api.prototype, 'updateRequest')
 
-      const c = Contact.fromResponse(
+      const t = TestEntity.fromResponse(
         {
           '@odata.etag': 'W/"202465000"',
-          contactid: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
-          firstname: 'Fester',
-          lastname: 'Tester',
-          birthdate: '1946-01-01',
-          emailaddress1: 'fester@tester.com',
-          mobilephone: '01234 567890',
-          defra_premises: '1',
-          defra_street: 'Tester Avenue',
-          defra_locality: 'Testville',
-          defra_town: 'Tersterton',
-          defra_postcode: 'AB12 3CD',
-          defra_gdprmarketingpreferenceoptin: false
+          idval: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
+          strval: 'Fester',
+          intval: 1,
+          boolval: true
         },
         {}
       )
 
-      const result = await persist(c)
+      const result = await persist(t)
       expect(updateRequestSpy).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
@@ -314,6 +307,65 @@ describe('entity manager', () => {
     })
   })
 
+  describe('findById', () => {
+    it('finds by a primary key guid', async () => {
+      const api = require('dynamics-web-api').default
+      api.__reset()
+      api.__setResponse('retrieveRequest', {
+        '@odata.etag': 'W/"202465000"',
+        idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+        strval: 'example'
+      })
+
+      const spy = jest.spyOn(api.prototype, 'retrieveRequest')
+      const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
+      expect(spy).toBeCalledWith({
+        key: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select
+      })
+      expect(result).toBeInstanceOf(TestEntity)
+    })
+
+    it('finds by an alternate key', async () => {
+      const api = require('dynamics-web-api').default
+      api.__reset()
+      api.__setResponse('retrieveRequest', {
+        '@odata.etag': 'W/"202465000"',
+        idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+        strval: 'example'
+      })
+      const spy = jest.spyOn(api.prototype, 'retrieveRequest')
+      const alternateKeyLookup = `${TestEntity.definition.mappings.strVal.field}='example'`
+      const result = await findById(TestEntity, alternateKeyLookup)
+      expect(spy).toBeCalledWith({
+        key: alternateKeyLookup,
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select
+      })
+
+      expect(result).toBeInstanceOf(TestEntity)
+    })
+
+    it('returns null if not found', async () => {
+      const api = require('dynamics-web-api').default
+      const notFoundError = new Error('Not found')
+      notFoundError.status = 404
+
+      api.__reset()
+      api.__throwWithErrorOn('retrieveRequest', notFoundError)
+      const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
+      expect(result).toEqual(null)
+    })
+
+    it('throws an exception on general errors', async () => {
+      const api = require('dynamics-web-api').default
+      api.__reset()
+      api.__throwWithErrorOn('retrieveRequest')
+      await expect(findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')).rejects.toThrow('Test error')
+    })
+  })
+
   describe('findByExample', () => {
     it('builds a select statement appropriate to the type definition for each field', async () => {
       const api = require('dynamics-web-api').default
@@ -332,13 +384,11 @@ describe('entity manager', () => {
         "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
       const spy = jest.spyOn(api.prototype, 'retrieveMultipleRequest')
       const result = await findByExample(lookup)
-      expect(spy).toBeCalledWith(
-        expect.objectContaining({
-          collection: TestEntity.definition.dynamicsCollection,
-          select: TestEntity.definition.select,
-          filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
-        })
-      )
+      expect(spy).toBeCalledWith({
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select,
+        filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
+      })
       expect(result).toHaveLength(1)
       expect(result[0]).toBeInstanceOf(TestEntity)
     })
@@ -353,13 +403,11 @@ describe('entity manager', () => {
       const expectedLookupSelect = "strval eq 'StringData'"
       const spy = jest.spyOn(api.prototype, 'retrieveMultipleRequest')
       const result = await findByExample(lookup)
-      expect(spy).toBeCalledWith(
-        expect.objectContaining({
-          collection: TestEntity.definition.dynamicsCollection,
-          select: TestEntity.definition.select,
-          filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
-        })
-      )
+      expect(spy).toBeCalledWith({
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select,
+        filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
+      })
       expect(result).toHaveLength(1)
       expect(result[0]).toBeInstanceOf(TestEntity)
     })

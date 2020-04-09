@@ -59,9 +59,7 @@ describe('option-sets endpoint', () => {
     })
 
     expect(JSON.parse(result.payload)).toMatchObject(
-      expect.objectContaining({
-        defra_duration: getOptionSetMappingExpectation('defra_duration', 910400000, 910400001, 910400002, 910400003)
-      })
+      getOptionSetMappingExpectation('defra_duration', 910400000, 910400001, 910400002, 910400003)
     )
   })
 

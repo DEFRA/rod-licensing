@@ -6,6 +6,8 @@ export default {
     info: {
       title: 'Rod Licencing Sales API Documentation',
       version: Project.packageJson.version
-    }
+    },
+    grouping: 'tags',
+    sortEndpoints: 'ordered'
   }
 }

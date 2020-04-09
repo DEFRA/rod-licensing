@@ -9,6 +9,7 @@ export default {
   options: {
     id: Project.packageJson.name,
     name: Project.packageJson.description,
+    tags: ['api', 'health'],
     test: {
       node: [
         async () => {

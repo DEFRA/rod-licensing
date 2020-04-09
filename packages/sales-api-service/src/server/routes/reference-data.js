@@ -1,34 +1,11 @@
 import Boom from '@hapi/boom'
 import Joi from '@hapi/joi'
-import { getReferenceData } from '../../services/reference-data.js'
+import { getReferenceData } from '../../services/reference-data.service.js'
+import { referenceDataCollectionList, referenceDataItemListSchema } from '../../schema/reference-data.schema.js'
 
 const errors = {
   unrecognised_colllection: 'the specified collection does not exist'
 }
-
-const referenceDataItemExample = {
-  id: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
-  description: 'Field example'
-}
-const referenceDataItemSchema = Joi.object({
-  id: Joi.string()
-    .required()
-    .example('f1bb733e-3b1e-ea11-a810-000d3a25c5d6')
-})
-  .example(referenceDataItemExample)
-  .label('reference-data-item')
-
-const referenceDataItemListSchema = Joi.array()
-  .items(referenceDataItemSchema)
-  .label('reference-data-item-list')
-const referenceDataCollection = Joi.object()
-  .example({ ExampleCollection: [referenceDataItemExample] })
-  .pattern(Joi.string(), referenceDataItemListSchema)
-  .label('reference-data-collection')
-
-const referenceDataCollectionList = Joi.array()
-  .items(referenceDataCollection)
-  .label('reference-data-collection-list')
 
 export default [
   {
@@ -38,7 +15,7 @@ export default [
       handler: () => getReferenceData(),
       description: 'Retrieve all reference data',
       notes: 'Retrieves all reference data',
-      tags: ['api'],
+      tags: ['api', 'reference-data'],
       plugins: {
         'hapi-swagger': {
           responses: {
@@ -58,7 +35,7 @@ export default [
       },
       description: 'Retrieve a specific reference data collection',
       notes: 'Retrieve a specific reference data collection',
-      tags: ['api'],
+      tags: ['api', 'reference-data'],
       validate: {
         params: Joi.object({
           collection: Joi.string()

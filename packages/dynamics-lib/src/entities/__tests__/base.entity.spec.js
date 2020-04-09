@@ -120,6 +120,13 @@ describe('BaseEntity', () => {
       )
     ).toThrow('Unable to find optionset entries for test_globaloption')
   })
+
+  it('throws an error if attempting to bind to a null entity', () => {
+    expect(() => {
+      const t = new TestEntity()
+      t._bind('any', null)
+    }).toThrow()
+  })
 })
 
 describe('EntityDefinition', () => {

@@ -1,5 +1,6 @@
 import Config from '../../config.js'
 const TEST_ENDPOINT = 'http://localhost:8080'
+jest.dontMock('aws-sdk')
 describe('aws service', () => {
   it('configures dynamodb with a custom endpoint if one is defined in configuration', async () => {
     Config.aws.dynamodb.endpoint = TEST_ENDPOINT

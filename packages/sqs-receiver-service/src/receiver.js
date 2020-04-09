@@ -16,6 +16,7 @@ const debug = db('sqs:receiver')
 const { env } = environment(process.env, process.env.RECEIVER_PREFIX)
 
 console.log(`Running receiver process:${JSON.stringify(env, null, 4)}`)
+let messageLastReceived = Date.now()
 
 /**
  * An infinite async loop to poll the queue
@@ -23,27 +24,30 @@ console.log(`Running receiver process:${JSON.stringify(env, null, 4)}`)
  */
 const receiver = async () => {
   // Read the SQS message queue
-  const messages = await readQueue(env.URL, Number.parseInt(env.VISIBILITY_TIMEOUT_MS), Number.parseInt(env.WAIT_TIME_MS))
+  const messages = await readQueue(env.URL, env.VISIBILITY_TIMEOUT_MS, env.WAIT_TIME_MS)
 
   // If we have read any messages then post the body to the subscriber
   if (messages) {
     debug('Read %d messages: %O', messages.length, messages)
 
     const messageSubscriberResults = await Promise.all(
-      messages.map(async m => processMessage(m, env.SUBSCRIBER, Number.parseInt(env.SUBSCRIBER_TIMEOUT_MS)))
+      messages.map(async m => processMessage(m, env.SUBSCRIBER, env.SUBSCRIBER_TIMEOUT_MS))
     )
 
     debug({ messageSubscriberResults })
     await deleteMessages(env.URL, messageSubscriberResults)
+
+    messageLastReceived = Date.now()
   }
 
   await showQueueStatistics(env.URL)
 
   // Invoke the poll delay only on a small number of messages processed
   // if they are coming in thick-and-fast then read again immediately
-  if (!messages || messages.length < env.NO_DELAY_THRESHOLD) {
-    debug(`Waiting ${env.POLLING_RATE_MS} milliseconds`)
-    await new Promise(resolve => setTimeout(resolve, Number.parseInt(env.POLLING_RATE_MS)))
+  if (!messages) {
+    const delay = Math.min(env.MAX_POLLING_INTERVAL_MS, Math.floor((0.5 * (Date.now() - messageLastReceived)) / 5000) * 5000)
+    debug('waiting %d milliseconds before polling again', delay)
+    await new Promise(resolve => setTimeout(resolve, delay))
   }
 }
 

@@ -6,6 +6,10 @@ export default class TestEntity extends BaseEntity {
     dynamicsCollection: 'test',
     defaultFilter: 'statecode eq 0',
     mappings: {
+      id: {
+        field: 'idval',
+        type: 'string'
+      },
       strVal: {
         field: 'strval',
         type: 'string'

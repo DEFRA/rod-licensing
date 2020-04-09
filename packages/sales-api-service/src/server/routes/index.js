@@ -1,6 +1,7 @@
 import ReferenceData from './reference-data.js'
 import OptionSets from './option-sets.js'
+import Transactions from './transactions.js'
 
 import Static from './static.js'
 
-export default [...Static, ...ReferenceData, ...OptionSets]
+export default [...Static, ...ReferenceData, ...OptionSets, ...Transactions]

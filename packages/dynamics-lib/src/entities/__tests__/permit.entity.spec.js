@@ -24,7 +24,7 @@ describe('permit entity', () => {
         defra_isforfulfilment: false,
         defra_iscountersales: true,
         defra_advertisedprice_base: 6.0,
-        defra_itemid: 42289
+        defra_itemid: '42289'
       },
       optionSetData
     )
@@ -45,7 +45,7 @@ describe('permit entity', () => {
       isForFulfilment: false,
       isCounterSales: true,
       cost: 6,
-      itemId: 42289
+      itemId: '42289'
     }
 
     expect(permit).toBeInstanceOf(Permit)

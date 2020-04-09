@@ -1,25 +1,5 @@
 apps:
   - script: ./src/sqs-receiver-service.js
-    name: 'Web-sales Queue'
-    env:
-      RECEIVER_PREFIX: WEBSALES_QUEUE
-    exec_mode: cluster
-    instances: 1
-    autorestart: true
-    max_restarts: 5
-    restart_delay: 1000
-
-  - script: ./src/sqs-receiver-service.js
-    name: 'Web-sales DLQ'
-    env:
-      RECEIVER_PREFIX: WEBSALES_DLQ
-    exec_mode: cluster
-    instances: 1
-    autorestart: true
-    max_restarts: 5
-    restart_delay: 1000
-
-  - script: ./src/sqs-receiver-service.js
     name: 'Transactions Queue'
     env:
       RECEIVER_PREFIX: TRANSACTIONS_QUEUE
