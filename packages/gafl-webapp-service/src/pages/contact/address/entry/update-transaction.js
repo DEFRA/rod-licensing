@@ -7,7 +7,7 @@ import { ADDRESS_ENTRY, POSTCODE_REGEX } from '../../../../constants.js'
  */
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(ADDRESS_ENTRY.page)
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
 
   // Clean up the postcode if GB
   if (payload['country-code'] === 'GB') {
@@ -15,8 +15,7 @@ export default async request => {
     await request.cache().helpers.page.setCurrentPermission(ADDRESS_ENTRY.page, payload)
   }
 
-  const contact = permission.contact || {}
   const { premises, street, locality, town, postcode, 'country-code': countryCode } = payload
-  Object.assign(contact, { address: { premises, street, locality, town, postcode, countryCode } })
-  await request.cache().helpers.transaction.setCurrentPermission({ contact })
+  Object.assign(licensee, { premises, street, locality, town, postcode, countryCode })
+  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }

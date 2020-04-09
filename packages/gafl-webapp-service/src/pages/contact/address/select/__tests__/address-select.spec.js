@@ -37,7 +37,7 @@ describe('The address select page', () => {
 
   it('The contact information has been set in the transaction', async () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].contact.address).toEqual({
+    expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
       locality: null,
