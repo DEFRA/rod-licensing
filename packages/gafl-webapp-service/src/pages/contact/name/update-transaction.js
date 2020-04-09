@@ -8,12 +8,9 @@ import substitutes from './substitutes.js'
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(NAME.page)
 
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const contact = permission.contact || {}
-  contact.name = {
-    firstName: substitutes(payload['first-name']),
-    lastName: substitutes(payload['last-name'])
-  }
-  Object.assign(permission, contact)
-  await request.cache().helpers.transaction.setCurrentPermission({ contact })
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  licensee.firstName = substitutes(payload['first-name'])
+  licensee.lastName = substitutes(payload['last-name'])
+
+  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }
