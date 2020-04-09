@@ -8,17 +8,19 @@ import updateTransactionFunctions from '../../../handlers/update-transaction-fun
  */
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(BENEFIT_NI_NUMBER.page)
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
 
   // Don't let this be set if we do not have a disabled concession set
-  if (!permission.concession || permission.concession.type !== CONCESSION.DISABLED) {
+  if (!licensee.concession || licensee.concession.type !== CONCESSION.DISABLED) {
     throw new updateTransactionFunctions.TransactionError('Attempting to set an NI number without a disabled concessions')
   }
 
-  await request.cache().helpers.transaction.setCurrentPermission({
+  Object.assign(licensee, {
     concession: {
       type: CONCESSION.DISABLED,
       niNumber: payload['ni-number']
     }
   })
+
+  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }

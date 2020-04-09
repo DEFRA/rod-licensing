@@ -7,7 +7,7 @@ import licenceStartTime from '../pages/licence-details/licence-start-time/route.
 
 import summary from '../pages/summary/route.js'
 
-import dateOfBirth from '../pages/concessions/date-of-birth/route.js'
+import dateOfBirth from '../pages/contact/date-of-birth/route.js'
 import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
 import juniorLicence from '../pages/concessions/junior-licence/route.js'
 import benefitCheck from '../pages/concessions/benefit-check/route.js'

@@ -2,7 +2,7 @@
  * This maps the functions to manipulate the transaction object to the pages
  */
 
-import dateOfBirth from '../pages/concessions/date-of-birth/update-transaction.js'
+import dateOfBirth from '../pages/contact/date-of-birth/update-transaction.js'
 import benefitCheck from '../pages/concessions/benefit-check/update-transaction.js'
 import benefitNiNumber from '../pages/concessions/benefit-ni-number/update-transaction.js'
 import blueBadgeCheck from '../pages/concessions/blue-badge-check/update-transaction.js'

@@ -19,7 +19,7 @@ export default async request => {
   }
 
   debug(`Add permission: ${transaction.permissions.length}`)
-  transaction.permissions.push({})
+  transaction.permissions.push({ licensee: {} })
   page.permissions.push({})
   status.permissions.push({})
   addressLookup.permissions.push({})

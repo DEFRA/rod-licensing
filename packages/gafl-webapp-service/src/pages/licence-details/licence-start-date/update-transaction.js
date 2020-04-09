@@ -16,12 +16,12 @@ export default async request => {
   }).format('YYYY-MM-DD')
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const result = { licenceStartDate }
+  permission.licenceStartDate = licenceStartDate
 
   // Remove any junior or senior concessions when selecting a licence start date
-  if (permission.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.concession.type)) {
-    Object.assign(result, { concession: {} })
+  if (permission.licensee.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.licensee.concession.type)) {
+    Object.assign(permission.licensee, { concession: {} })
   }
 
-  await request.cache().helpers.transaction.setCurrentPermission(result)
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

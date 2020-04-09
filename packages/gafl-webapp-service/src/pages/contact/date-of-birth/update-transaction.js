@@ -15,8 +15,6 @@ export default async request => {
     day: payload['date-of-birth-day']
   }).format('YYYY-MM-DD')
 
-  const result = { dateOfBirth, noLicenceRequired: false }
-
   // Work out the junior or senior concession at the point at which the licence starts
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -25,22 +23,27 @@ export default async request => {
     throw new updateTransactionFunctions.TransactionError('No licence start date')
   }
 
+  // Set the data of birth in the licensee object
+  permission.licensee.birthDate = dateOfBirth
+  delete permission.licensee.noLicenceRequired
+
   // Calculate the age when the licence starts
   const ageAtLicenceStartDate = moment(permission.licenceStartDate).diff(moment(dateOfBirth), 'years')
 
   if (ageAtLicenceStartDate < 13) {
     // Just flag as being under 13 for the router
-    Object.assign(result, { noLicenceRequired: true })
+    Object.assign(permission.licensee, { noLicenceRequired: true })
   } else if (ageAtLicenceStartDate < 16) {
-    // Juniors always fun for 12 months
-    Object.assign(result, { concession: { type: CONCESSION.JUNIOR }, licenceLength: '12M' })
+    // Juniors always get a 12 months licence
+    Object.assign(permission, { licenceLength: '12M' })
+    Object.assign(permission.licensee, { concession: { type: CONCESSION.JUNIOR } })
   } else if (ageAtLicenceStartDate >= 65) {
-    Object.assign(result, { concession: { type: CONCESSION.SENIOR } })
+    Object.assign(permission.licensee, { concession: { type: CONCESSION.SENIOR } })
   } else {
-    if (permission.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.concession.type)) {
-      Object.assign(result, { concession: {} })
+    if (permission.licensee.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.licensee.concession.type)) {
+      Object.assign(permission.licensee, { concession: {} })
     }
   }
 
-  await request.cache().helpers.transaction.setCurrentPermission(result)
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

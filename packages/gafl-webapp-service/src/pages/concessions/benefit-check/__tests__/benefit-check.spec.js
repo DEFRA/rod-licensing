@@ -44,7 +44,7 @@ describe('The benefit check page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(BLUE_BADGE_CHECK.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual({})
+    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({})
   })
   it('the controller redirects to the ni page when answering yes', async () => {
     await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
@@ -52,7 +52,7 @@ describe('The benefit check page', () => {
     expect(data.statusCode).toBe(302)
     // expect(data.headers.location).toBe(NAME.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual({ type: CONCESSION.DISABLED })
+    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.DISABLED })
   })
   it('the controller redirects to the start of the journey if there already exists a junior concession', async () => {
     await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })

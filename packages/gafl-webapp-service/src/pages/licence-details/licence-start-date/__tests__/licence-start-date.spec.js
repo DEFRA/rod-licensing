@@ -106,7 +106,7 @@ describe('The licence start date page', () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob13Today))
     await injectWithCookie('GET', CONTROLLER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual({ type: 'junior' })
+    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: 'junior' })
 
     const fdate = moment().add(5, 'days')
     const body = {
@@ -119,14 +119,14 @@ describe('The licence start date page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
 
     const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload2).permissions[0].concession).toEqual({ })
+    expect(JSON.parse(payload2).permissions[0].licensee.concession).toEqual({})
   })
 
   it('setting licence start date removes any senior concession', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Today))
     await injectWithCookie('GET', CONTROLLER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual({ type: 'senior' })
+    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: 'senior' })
 
     const fdate = moment().add(4, 'days')
     const body = {
@@ -139,7 +139,6 @@ describe('The licence start date page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
 
     const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload2).permissions[0].concession).toEqual({ })
+    expect(JSON.parse(payload2).permissions[0].licensee.concession).toEqual({})
   })
-
 })

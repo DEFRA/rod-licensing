@@ -31,7 +31,7 @@ describe('The blue badge number page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NAME.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual({ type: CONCESSION.DISABLED, blueBadgeNumber: '1234' })
+    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.DISABLED, blueBadgeNumber: '1234' })
   })
 
   it('the controller redirects to the journey start trying to set a blue badge number without a disabled concession in the transaction', async () => {
@@ -42,6 +42,6 @@ describe('The blue badge number page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].concession).toEqual({})
+    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({})
   })
 })

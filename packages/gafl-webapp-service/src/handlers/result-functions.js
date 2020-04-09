@@ -12,7 +12,7 @@ import {
   CONTACT
 } from '../constants.js'
 
-import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
+import dateOfBirth from '../pages/contact/date-of-birth/result-function.js'
 import licenceType from '../pages/licence-details/licence-type/result-function.js'
 import licenceToStart from '../pages/licence-details/licence-to-start/result-function.js'
 import licenceStartDate from '../pages/licence-details/licence-start-date/result-function.js'

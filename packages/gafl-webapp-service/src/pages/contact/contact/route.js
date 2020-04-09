@@ -16,13 +16,13 @@ const getData = async request => {
     throw new GetDataRedirect(LICENCE_TO_START.uri)
   }
 
-  if (!permission.dateOfBirth) {
+  if (!permission.licensee.birthDate) {
     throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
 
   return {
     licenceLength: permission.licenceLength,
-    junior: permission.concession && permission.concession.type === CONCESSION.JUNIOR
+    junior: permission.licensee.concession && permission.licensee.concession.type === CONCESSION.JUNIOR
   }
 }
 
