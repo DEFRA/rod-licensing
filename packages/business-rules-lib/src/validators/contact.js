@@ -15,6 +15,8 @@ const dateString = Joi.string().extend({
     if (!dateValue.isValid()) {
       return { value, errors: helpers.error('date.format') }
     }
+
+    return { value }
   },
   rules: {
     birthDate: {
