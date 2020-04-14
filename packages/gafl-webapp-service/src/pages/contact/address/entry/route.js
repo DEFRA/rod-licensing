@@ -1,31 +1,17 @@
 import countryCodes from './country-codes.js'
-import { ADDRESS_ENTRY, CONTROLLER, POSTCODE_REGEX, ADDRESS_LOOKUP } from '../../../../constants.js'
+import { ADDRESS_ENTRY, CONTROLLER, ADDRESS_LOOKUP } from '../../../../constants.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from '@hapi/joi'
+import { validation } from '@defra-fish/business-rules-lib'
 
 const validator = Joi.object({
-  premises: Joi.string()
-    .max(50)
-    .trim()
-    .required(),
-  street: Joi.string()
-    .max(50)
-    .trim()
-    .empty(''),
-  locality: Joi.string()
-    .max(50)
-    .trim()
-    .empty(''),
-  town: Joi.string()
-    .max(50)
-    .trim()
-    .required(),
-  postcode: Joi.alternatives().conditional('country', {
+  premises: validation.contact.premisesValidator,
+  street: validation.contact.streetValidator,
+  locality: validation.contact.localityValidator,
+  town: validation.contact.townValidator,
+  postcode: Joi.alternatives().conditional('country-code', {
     is: 'GB',
-    then: Joi.string()
-      .trim()
-      .required()
-      .regex(POSTCODE_REGEX),
+    then: validation.contact.ukPostcodeValidator,
     otherwise: Joi.string()
       .trim()
       .required()

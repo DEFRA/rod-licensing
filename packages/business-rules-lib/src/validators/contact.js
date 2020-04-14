@@ -53,7 +53,7 @@ export const birthDateValidator = dateString
 
 export const emailValidator = Joi.string()
   .trim()
-  .email({ minDomainSegments: 2 })
+  .email()
   .max(50)
   .example('person@example.com')
 
@@ -63,20 +63,89 @@ export const mobilePhoneValidator = Joi.string()
   .pattern(mobilePhoneRegex)
   .example('+44 7700 900088')
 
-export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s*([0-9][A-Z]{2})$/i
-/**
- * Validates a contact postcode.  This validator will apply appropriate formatting to UK postcodes
+/*
+ * The standard DEFRA address components
  */
-export const postcodeValidator = Joi.string()
+export const premisesValidator = Joi.string()
+  .trim()
+  .required()
+  .uppercase()
+  .max(50)
+
+export const streetValidator = Joi.string()
+  .max(50)
+  .trim()
+  .uppercase()
+  .empty('')
+
+export const localityValidator = Joi.string()
+  .max(50)
+  .trim()
+  .uppercase()
+  .empty('')
+
+export const townValidator = Joi.string()
+  .max(50)
+  .trim()
+  .uppercase()
+  .required()
+
+export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s*([0-9][A-Z]{2})$/i
+export const ukPostcodeValidator = Joi.string()
   .trim()
   .min(1)
-  .external(postcode => {
-    const pcChars = postcode.replace(/\s/g, '')
-    const matches = pcChars.match(ukPostcodeRegex)
-    if (matches) {
-      postcode = `${matches[1]} ${matches[2]}`.toUpperCase()
-    }
-    return postcode
-  })
   .required()
+  .pattern(ukPostcodeRegex)
+  .replace(ukPostcodeRegex, '$1 $2')
+  .uppercase()
   .example('AB12 3CD')
+
+const regexApostrophe = /\u2019/g
+const regexHyphen = /\u2014/g
+const regexMultiSpace = /\u0020{2,}/g
+
+const substitutes = txt =>
+  txt
+    .replace(regexApostrophe, '\u0027')
+    .replace(regexHyphen, '\u2010')
+    .replace(regexMultiSpace, '\u0020')
+
+const nameString = Joi.string().extend({
+  type: 'name',
+  coerce (value) {
+    return { value: substitutes(value) }
+  },
+  rules: {
+    allowable: {
+      validate (value, helpers) {
+        if (
+          !/^[A-Za-z\u0020\u0027\u002c\u002d\u002e\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff\u0100-\u017f\u0180-\u01ff\u0200-\u024f\u0250-\u02af\u0370-\u0fff]+$/g.test(
+            value
+          )
+        ) {
+          return helpers.error('string.forbidden')
+        }
+        return value
+      }
+    }
+  },
+  messages: {
+    'string.forbidden': '{{#label}} contains forbidden characters'
+  }
+})
+
+export const firstNameValidator = nameString
+  .allowable()
+  .min(2)
+  .max(100)
+  .trim()
+  .uppercase()
+  .required()
+
+export const lastNameValidator = nameString
+  .allowable()
+  .min(2)
+  .max(100)
+  .trim()
+  .uppercase()
+  .required()

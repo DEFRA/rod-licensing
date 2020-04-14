@@ -1,4 +1,5 @@
-import { ADDRESS_ENTRY, POSTCODE_REGEX } from '../../../../constants.js'
+import { ADDRESS_ENTRY } from '../../../../constants.js'
+import { validation } from '@defra-fish/business-rules-lib'
 
 /**
  * In this case the result of the address search is placed into the page data of the select address page
@@ -11,7 +12,7 @@ export default async request => {
 
   // Clean up the postcode if GB
   if (payload['country-code'] === 'GB') {
-    payload.postcode = payload.postcode.replace(POSTCODE_REGEX, '$2 $3').toUpperCase()
+    payload.postcode = payload.postcode.replace(validation.contact.ukPostcodeRegex, '$1 $2').toUpperCase()
     await request.cache().helpers.page.setCurrentPermission(ADDRESS_ENTRY.page, payload)
   }
 

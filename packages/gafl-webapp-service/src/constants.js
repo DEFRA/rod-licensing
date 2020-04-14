@@ -32,7 +32,6 @@ const ERROR = { uri: '/error', page: 'error' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
-const POSTCODE_REGEX = /^(([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?))\s*([0-9][A-Z]{2})$/i
 const HOW_CONTACTED = { email: 'email', text: 'text', none: 'do-not-contact' }
 const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 const ADDRESS_LOOKUP_MS_DEFAULT = 10000
@@ -70,7 +69,6 @@ export {
   CONCESSION,
   ADDRESS_LOOKUP_SERVICE,
   ADDRESS_LOOKUP_MS_DEFAULT,
-  POSTCODE_REGEX,
   HOW_CONTACTED,
   MAX_PERMISSIONS,
   ERROR

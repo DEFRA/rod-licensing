@@ -81,6 +81,6 @@ describe('The name page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
 
-    expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'Graham Michael', lastName: 'Willis' })
+    expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'GRAHAM MICHAEL', lastName: 'WILLIS' })
   })
 })

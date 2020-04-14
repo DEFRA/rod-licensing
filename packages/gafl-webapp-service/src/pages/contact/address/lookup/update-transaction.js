@@ -1,6 +1,7 @@
-import { ADDRESS_LOOKUP, POSTCODE_REGEX } from '../../../../constants.js'
+import { ADDRESS_LOOKUP } from '../../../../constants.js'
 import addressLookupService from '../../../../lib/address-lookup-service.js'
 import db from 'debug'
+import { validation } from '@defra-fish/business-rules-lib'
 const debug = db('webapp:address-lookup')
 
 /**
@@ -11,7 +12,7 @@ const debug = db('webapp:address-lookup')
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(ADDRESS_LOOKUP.page)
   // Clean up the postcode
-  payload.postcode = payload.postcode.replace(POSTCODE_REGEX, '$2 $3').toUpperCase()
+  payload.postcode = payload.postcode.replace(validation.contact.ukPostcodeRegex, '$1 $2').toUpperCase()
   // We can only process this request if there is access to the address lookup
   if (process.env.ADDRESS_LOOKUP_URL && process.env.ADDRESS_LOOKUP_KEY) {
     const addresses = await addressLookupService(payload.premises, payload.postcode)
