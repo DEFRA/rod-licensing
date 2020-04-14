@@ -30,8 +30,9 @@ export const generatePermissionNumber = async (
   const dataSourceOptionSetValue = await getGlobalOptionSetValue('defra_datasource', dataSource)
   const channel = dataSourceOptionSetValue.label.charAt(0)
   const type = permit.permitSubtype.label.charAt(0)
-  // FIXME: Used to be 1/8/3
-  const duration = String(permit.durationMagnitude).charAt(0)
+
+  const durationInDays = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.label}`).asDays()
+  const duration = String(durationInDays).charAt(0)
   const age = getAgeCategory(birthDate, issueDate)
   const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
   const block2 = permit.numberOfRods + channel + type + duration + age + initials

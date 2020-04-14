@@ -87,7 +87,7 @@ describe('permissions service', () => {
         .startOf('hour')
         .add(1, 'year')
         .format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-1TS1FFT-[A-HJ-NP-Z0-9]{6}$`)
+      const expected = new RegExp(`^${block1}-1TS3FFT-[A-HJ-NP-Z0-9]{6}$`)
       expect(number).toMatch(expected)
     })
 

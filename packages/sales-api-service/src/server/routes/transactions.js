@@ -34,7 +34,7 @@ export default [
         'hapi-swagger': {
           responses: {
             201: { description: 'Transaction created', schema: createTransactionResponseSchema },
-            422: { description: 'Invalid request payload' }
+            422: { description: 'The new transaction payload was invalid' }
           },
           order: 1
         }
@@ -62,7 +62,7 @@ export default [
             204: { description: 'Transaction accepted' },
             400: { description: 'Invalid request params' },
             404: { description: 'Transaction ID not found' },
-            422: { description: 'Invalid request payload' }
+            422: { description: 'The transaction completion payload was invalid' }
           },
           order: 2
         }
@@ -84,7 +84,7 @@ export default [
         'hapi-swagger': {
           responses: {
             204: { description: 'Transaction message processed' },
-            422: { description: 'Invalid request payload' }
+            422: { description: 'The transaction queue processing payload was invalid' }
           },
           order: 3
         }
@@ -106,7 +106,7 @@ export default [
         'hapi-swagger': {
           responses: {
             204: { description: 'Failure processed successfully' },
-            422: { description: 'Invalid request payload' }
+            422: { description: 'The transaction dlq processing payload was invalid' }
           },
           order: 4
         }
