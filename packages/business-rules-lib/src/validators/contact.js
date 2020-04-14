@@ -53,7 +53,8 @@ export const birthDateValidator = dateString
 
 export const emailValidator = Joi.string()
   .trim()
-  .email()
+  .email({ minDomainSegments: 2 })
+  .max(50)
   .example('person@example.com')
 
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/

@@ -2,6 +2,7 @@ import { CONTACT, CONTROLLER, CONCESSION, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
+import { validation } from '@defra-fish/business-rules-lib'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -32,18 +33,12 @@ const validator = Joi.object({
     .required(),
   email: Joi.alternatives().conditional('how-contacted', {
     is: 'email',
-    then: Joi.string()
-      .trim()
-      .email({ minDomainSegments: 2 })
-      .max(50),
+    then: validation.contact.emailValidator,
     otherwise: Joi.string().empty('')
   }),
   text: Joi.alternatives().conditional('how-contacted', {
     is: 'text',
-    then: Joi.string()
-      .trim()
-      .regex(/^[0-9-+\s()]*$/)
-      .max(30),
+    then: validation.contact.mobilePhoneValidator,
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })
