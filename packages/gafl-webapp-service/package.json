@@ -36,6 +36,7 @@
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
   "dependencies": {
+    "@defra-fish/business-rules-lib": "^0.0.1-beta.15",
     "@hapi/boom": "^9.1.0",
     "@hapi/catbox-redis": "^5.0.5",
     "@hapi/hapi": "^19.1.1",
@@ -50,7 +51,7 @@
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.1",
-    "uuid": "^7.0.2"
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",

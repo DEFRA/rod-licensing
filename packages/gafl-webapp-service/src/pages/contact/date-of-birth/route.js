@@ -1,18 +1,10 @@
 import { DATE_OF_BIRTH, CONTROLLER } from '../../../constants.js'
-import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
-import JoiDate from '@hapi/joi-date'
-
-const JoiX = Joi.extend(JoiDate)
-
-const formats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
+import pageRoute from '../../../routes/page-route.js'
+import { validation } from '@defra-fish/business-rules-lib'
 
 const schema = Joi.object({
-  'date-of-birth': JoiX.date()
-    .format(formats)
-    .min('01-01-1900')
-    .max('now')
-    .required()
+  'date-of-birth': validation.contact.birthDateValidator
 })
 
 const validator = payload => {

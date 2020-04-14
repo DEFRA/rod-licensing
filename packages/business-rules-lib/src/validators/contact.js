@@ -1,17 +1,53 @@
 import Joi from '@hapi/joi'
 import moment from 'moment'
 
-export const birthDateValidator = Joi.string()
+const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
+
+const dateString = Joi.string().extend({
+  type: 'birthDate',
+  messages: {
+    'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
+    'date.min': '{{#label}} date before minimum allowed',
+    'date.max': '{{#label}} must be less than or equal to "now"'
+  },
+  validate (value, helpers) {
+    const dateValue = moment(value, dateStringFormats, true)
+    if (!dateValue.isValid()) {
+      return { value, errors: helpers.error('date.format') }
+    }
+  },
+  rules: {
+    birthDate: {
+      args: [
+        {
+          name: 'maxAge',
+          ref: false,
+          assert: value => typeof value === 'number' && !isNaN(value),
+          message: 'maxAge must be a number'
+        }
+      ],
+      method (maxAge) {
+        return this.$_addRule({ name: 'birthDate', args: { maxAge } })
+      },
+      validate (value, helpers, args) {
+        const birthDate = moment(value, dateStringFormats, true)
+        if (!birthDate.isBefore(moment().startOf('day'))) {
+          return helpers.error('date.max')
+        }
+
+        if (birthDate.isBefore(moment().subtract(args.maxAge, 'years'))) {
+          return helpers.error('date.min')
+        }
+
+        return birthDate.format('YYYY-MM-DD')
+      }
+    }
+  }
+})
+
+export const birthDateValidator = dateString
   .trim()
-  .external(birthDateString => {
-    const birthDate = moment(birthDateString, 'YYYY-MM-DD', true)
-    if (!birthDate.isValid()) {
-      throw new Error('birthDate must be in the format YYYY-MM-DD')
-    }
-    if (!birthDate.isBefore(moment().startOf('day'))) {
-      throw new Error('birthDate cannot be in the future')
-    }
-  })
+  .birthDate(120)
   .required()
   .example('2000-01-01')
 

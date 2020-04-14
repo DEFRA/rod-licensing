@@ -11,16 +11,41 @@ describe('contact validators', () => {
       await expect(contactValidation.birthDateValidator.validateAsync(testValue)).resolves.toEqual(testValue)
     })
 
+    it('allows a date in alternative format', async () => {
+      const testValueIn = validDate.format('YY-MM-DD')
+      const testValueOut = validDate.format('YYYY-MM-DD')
+      await expect(contactValidation.birthDateValidator.validateAsync(testValueIn)).resolves.toEqual(testValueOut)
+    })
+
     it('throws if given an invalid format', async () => {
       await expect(contactValidation.birthDateValidator.validateAsync(validDate.format('YYYY-MM-DDThh:mm:ss'))).rejects.toThrow(
-        'birthDate must be in the format YYYY-MM-DD (value)'
+        '"value" must be in [YYYY-MM-DD] format'
       )
     })
 
-    it("throws if given today's date", async () => {
-      await expect(contactValidation.birthDateValidator.validateAsync(moment().format('YYYY-MM-DD'))).rejects.toThrow(
-        'birthDate cannot be in the future (value)'
-      )
+    it('throws if given an invalid date', async () => {
+      await expect(contactValidation.birthDateValidator.validateAsync('1-111-19')).rejects.toThrow('"value" must be in [YYYY-MM-DD] format')
+    })
+
+    it("throws if given tommorows's date", async () => {
+      await expect(
+        contactValidation.birthDateValidator.validateAsync(
+          moment()
+            .add(1, 'days')
+            .format('YYYY-MM-DD')
+        )
+      ).rejects.toThrow('"value" must be less than or equal to "now"')
+    })
+
+    it('throws if given a date of a person aged over 120', async () => {
+      await expect(
+        contactValidation.birthDateValidator.validateAsync(
+          moment()
+            .subtract(120, 'years')
+            .subtract(1, 'days')
+            .format('YYYY-MM-DD')
+        )
+      ).rejects.toThrow('"value" date before minimum allowed')
     })
   })
 
