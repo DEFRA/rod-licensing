@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.1-beta.15",
+  "version": "0.0.1-beta.16",
   "npmClient": "npm",
   "command": {
     "bootstrap": {},
@@ -12,7 +12,12 @@
     "publish": {
       "message": "chore(release): publish %s",
       "allowBranch": "master",
-      "ignoreChanges": [".*", "*.md", "docker/*", "sonar-project.properties"]
+      "ignoreChanges": [
+        ".*",
+        "*.md",
+        "docker/*",
+        "sonar-project.properties"
+      ]
     }
   }
 }
