@@ -1,4 +1,13 @@
-import { CONTACT, LICENCE_LENGTH, CONTROLLER, DATE_OF_BIRTH, LICENCE_TO_START, SUMMARY, HOW_CONTACTED, NEWSLETTER } from '../../../../constants.js'
+import {
+  CONTACT,
+  LICENCE_LENGTH,
+  CONTROLLER,
+  DATE_OF_BIRTH,
+  LICENCE_TO_START,
+  SUMMARY,
+  HOW_CONTACTED,
+  NEWSLETTER
+} from '../../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
@@ -81,9 +90,8 @@ describe('The contact preferences page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.none)
-    expect(JSON.parse(payload).permissions[0].contact.emailAddress).toBeFalsy()
-    expect(JSON.parse(payload).permissions[0].contact.textNumber).toBeFalsy()
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
   })
 
   it('controller redirects to the newsletter page if an email is given', async () => {
@@ -92,8 +100,8 @@ describe('The contact preferences page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NEWSLETTER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.email)
-    expect(JSON.parse(payload).permissions[0].contact.emailAddress).toBe('example@email.com')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.email)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.email)
   })
 
   it('controller redirects to the newsletter page if a text number is given', async () => {
@@ -102,7 +110,7 @@ describe('The contact preferences page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NEWSLETTER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.text)
-    expect(JSON.parse(payload).permissions[0].contact.textNumber).toBe('+22 0445638902')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.text)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.text)
   })
 })

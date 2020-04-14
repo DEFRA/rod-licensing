@@ -2,29 +2,29 @@ import { CONTACT, HOW_CONTACTED } from '../../../constants.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
-
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const contact = permission.contact || {}
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
 
   switch (payload['how-contacted']) {
     case 'email':
-      contact.method = HOW_CONTACTED.email
-      contact.emailAddress = payload.email
-      delete contact.textNumber
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
+      licensee.preferredMethodOfReminder = HOW_CONTACTED.email
+      licensee.email = payload.email
+      delete licensee.mobilePhone
       break
 
     case 'text':
-      contact.method = HOW_CONTACTED.text
-      contact.textNumber = payload.text
-      delete contact.emailAddress
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
+      licensee.preferredMethodOfReminder = HOW_CONTACTED.text
+      licensee.mobilePhone = payload.text
+      delete licensee.email
       break
 
     default:
-      contact.method = HOW_CONTACTED.none
-      delete contact.emailAddress
-      delete contact.textNumber
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
+      licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
+      delete licensee.mobilePhone
+      delete licensee.email
   }
 
-  Object.assign(permission, contact)
-  await request.cache().helpers.transaction.setCurrentPermission({ contact })
+  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }

@@ -15,12 +15,6 @@ beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
-  it('redirects to the contact page if a contact method is not set', async () => {
-    const data = await injectWithCookie('GET', NEWSLETTER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT.uri)
-  })
-
   it('returns success on request', async () => {
     await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookie('GET', CONTROLLER.uri)
@@ -51,27 +45,25 @@ describe('The newsletter page', () => {
     expect(data.headers.location).toBe(NEWSLETTER.uri)
   })
 
-  it('when posting no it saves the marketing flag without overwriting a pre-existing email', async () => {
+  it('when posting no it saves the newsletter response without overwriting a pre-existing email', async () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'no', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(SUMMARY.uri)
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.email)
-    expect(JSON.parse(payload).permissions[0].contact.marketingFlag).toBeFalsy()
-    expect(JSON.parse(payload).permissions[0].contact.emailAddress).toBe('example@email.com')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBeFalsy()
+    expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
   })
 
-  it('when posting yes it saves the marketing flag without overwriting a pre-existing email', async () => {
+  it('when posting yes it saves the marketing flag overwriting any pre-existing email', async () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(SUMMARY.uri)
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].contact.method).toBe(HOW_CONTACTED.email)
-    expect(JSON.parse(payload).permissions[0].contact.marketingFlag).not.toBeFalsy()
-    expect(JSON.parse(payload).permissions[0].contact.emailAddress).toBe('example2@email.com')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
+    expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example2@email.com')
   })
 })

@@ -5,6 +5,6 @@ import { HOW_CONTACTED } from '../../../constants.js'
  * @returns {Promise<string>}
  */
 export default async request => {
-  const { contact } = await request.cache().helpers.transaction.getCurrentPermission()
-  return contact.method === HOW_CONTACTED.none ? 'no' : 'yes'
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  return licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter ? 'no' : 'yes'
 }

@@ -1,4 +1,4 @@
-import { NEWSLETTER } from '../../../constants.js'
+import { NEWSLETTER, HOW_CONTACTED } from '../../../constants.js'
 
 /**
  * Transfer the validate page object
@@ -7,17 +7,14 @@ import { NEWSLETTER } from '../../../constants.js'
  */
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(NEWSLETTER.page)
-
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const contact = permission.contact || {}
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
 
   if (payload.newsletter === 'yes') {
-    contact.marketingFlag = true
-    contact.emailAddress = payload.email
+    licensee.preferredMethodOfNewsletter = HOW_CONTACTED.email
+    licensee.email = payload.email
   } else {
-    contact.marketingFlag = false
+    delete licensee.preferredMethodOfNewsletter
   }
 
-  Object.assign(permission, contact)
-  await request.cache().helpers.transaction.setCurrentPermission({ contact })
+  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }

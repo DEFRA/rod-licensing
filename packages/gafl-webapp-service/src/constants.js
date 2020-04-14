@@ -32,7 +32,7 @@ const ERROR = { uri: '/error', page: 'error' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
-const HOW_CONTACTED = { email: 'email', text: 'text', none: 'do-not-contact' }
+const HOW_CONTACTED = { email: 'Email', text: 'Text', letter: 'Letter' }
 const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 const ADDRESS_LOOKUP_MS_DEFAULT = 10000
 const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
