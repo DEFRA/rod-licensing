@@ -1,0 +1,144 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "input/macro.njk" import govukInput %}
+
+{% from "inset-text/macro.njk" import govukInsetText %}
+
+{% set title = 'How can we send you your licence details?' %}
+
+{% if data.junior %}
+    {% set insetText = "We don’t send junior licences in the post, but you must be able to produce your licence number when you go fishing" %}
+    {% set selectText = "Select how we send you your licence details" %}
+    {% set noContactMessage = "We'll show you your licence number on your confirmation and you can write it down. Your licence expiry reminders will be sent by post" %}
+    {% set errorMsg = "You have not told us how you would like to receive your licence details" %}
+{% elif data.licenceLength === '1D' %}
+    {% set insetText = "We don’t send 1-day licences in the post, but you must be able to produce your licence number when you go fishing" %}
+    {% set selectText = "Select how we send you your licence details" %}
+    {% set noContactMessage = "We'll show you your licence number on your confirmation after payment and you can write it down" %}
+    {% set errorMsg = "You have not told us how you would like to receive your licence details" %}
+{% elif data.licenceLength === '8D' %}
+    {% set insetText = "We don’t send 8-day licences in the post, but you must be able to produce your licence number when you go fishing" %}
+    {% set selectText = "Select how we send you your licence details" %}
+    {% set noContactMessage = "We'll show you your licence number on your confirmation after payment and you can write it down" %}
+    {% set errorMsg = "You have not told us how you would like to receive your licence details" %}
+{% else %}
+    {% set insetText = "Your licence will arrive in the post within 10 working days. You can go fishing before you receive it, but you must be able to produce your licence number" %}
+    {% set selectText = "Select how we send you your licence details and expiry reminders" %}
+    {% set noContactMessage = "We'll show you your licence number on your confirmation after payment and you can write it down. Your licence expiry reminders will be sent by post" %}
+    {% set errorMsg = "You have not told us how you would like to receive your licence details and expiry reminders" %}
+{% endif %}
+
+{% set errorMap = {
+        'how-contacted': {
+            'any.required': { ref: '#how-contacted', text: errorMsg }
+        },
+        'email': {
+            'string.empty': { ref: '#email', text: 'You did not enter your email address' },
+            'string.email': { ref: '#email', text: 'You did not enter a valid email address' },
+            'string.max': { ref: '#email', text: 'You did not enter a valid email address' }
+        },
+        'text': {
+            'string.empty': { ref: '#email', text: 'You did not enter your mobile phone number' },
+            'string.pattern.base': { ref: '#email', text: 'You did not enter a valid mobile phone number' },
+            'string.max': { ref: '#email', text: 'You did not enter a valid mobile phone number' }
+        }
+    }
+%}
+
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% set emailHtml %}
+    {{ govukInput({
+      id: "email",
+      name: "email",
+      type: "email",
+      classes: "govuk-!-width-two-thirds",
+      autocomplete: "email",
+      errorMessage: { text: 'Enter your email address' } if error['email'],
+      label: {
+        text: "Email address"
+      },
+      hint: {
+          text: "For example angling@email.com"
+      },
+      attributes: {
+        spellcheck: "false",
+        maxlength: "50"
+      },
+      value: payload.email if payload.how-contacted === 'email' else ''
+    }) }}
+{% endset -%}
+
+{% set textMessageHtml %}
+    {{ govukInput({
+      id: "text",
+      name: "text",
+      type: "tel",
+      autocomplete: "tel",
+      classes: "govuk-!-width-two-thirds",
+      errorMessage: { text: "Enter your mobile phone number. For overseas numbers include '+' followed by your country code" } if error['text'],
+      label: {
+        text: "Mobile phone number"
+      },
+      hint: {
+          text: "For example 07700 900 900"
+      },
+      attributes: {
+        maxlength: "30"
+      },
+      value: payload.text if payload.how-contacted === 'text' else ''
+    }) }}
+{% endset -%}
+
+{% set noneHtml %}
+    <p class="govuk-body-m">{{ noContactMessage }}</p>
+{% endset -%}
+
+{% block pageContent %}
+
+    {{ govukInsetText({
+        text: insetText
+    }) }}
+
+{{payload|dump}}
+
+    {{ govukRadios({
+      idPrefix: "how-contacted",
+      name: "how-contacted",
+      errorMessage: { text: 'Select how you would like to receive your licence details' } if error['how-contacted'],
+      fieldset: {
+        legend: {
+          text: selectText,
+          isPageHeading: false,
+          classes: "govuk-body-m"
+        }
+      },
+      items: [
+        {
+          value: "email",
+          text: "Email",
+          checked: payload['how-contacted'] === 'email',
+          conditional: {
+            html: emailHtml
+          }
+        },
+        {
+          value: "text",
+          text: "Text message",
+          checked: payload['how-contacted'] === 'text',
+          conditional: {
+            html: textMessageHtml
+          }
+        },
+        {
+          value: "none",
+          text: "I do not have either of these",
+          checked: payload['how-contacted'] === 'none',
+          conditional: {
+            html: noneHtml
+          }
+        }
+      ]
+    }) }}
+
+{% endblock %}

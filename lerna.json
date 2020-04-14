@@ -12,12 +12,7 @@
     "publish": {
       "message": "chore(release): publish %s",
       "allowBranch": "master",
-      "ignoreChanges": [
-        ".*",
-        "*.md",
-        "docker/*",
-        "sonar-project.properties"
-      ]
+      "ignoreChanges": [".*", "*.md", "docker/*", "sonar-project.properties"]
     }
   }
 }

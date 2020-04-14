@@ -1,5 +1,5 @@
 import { NUMBER_OF_RODS, CONTROLLER } from '../../../../constants.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
 
 beforeAll(d => start(d))

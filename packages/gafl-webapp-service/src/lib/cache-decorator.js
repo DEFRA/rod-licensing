@@ -2,14 +2,41 @@
  * Decorators to make access to the session cache available as
  * functions hiding the session key.
  *
- * The cache is divided into individually addressable contexts
+ * These functions wrap the functions in ./cache-manager.js
  */
 import { contexts, base, contextCache, CacheError } from './cache-manager.js'
 import db from 'debug'
+const debug = db('webapp:cache')
+
 /**
- * The cache is divided into individually addressable contexts
+ * Permissions functions. These operate on a given cache context for the currently set permission
+ * @param serverCache - the catbox cache wrapper object bound to the server
+ * @param context - a cache context e.g. 'page'
+ * @param id - the session cookie id function
+ * @param idx - the current permission index function
+ * @returns - cache operations on each context
  */
-const debug = db('cache')
+const cacheOfCurrentPermissionAndContext = (serverCache, context, id, idx) => ({
+  get: async () => contextCache(serverCache, id(), context).get(),
+  set: async obj => contextCache(serverCache, id(), context).set(obj),
+
+  hasPermission: async () => {
+    const cache = await contextCache(serverCache, id(), context).get()
+    return !!cache.permissions.length
+  },
+
+  setCurrentPermission: async data => {
+    const cache = await contextCache(serverCache, id(), context).get()
+    const current = cache.permissions[await idx(serverCache)]
+    Object.assign(current, data)
+    await contextCache(serverCache, id(), context).set(cache)
+  },
+
+  getCurrentPermission: async () => {
+    const cache = await contextCache(serverCache, id(), context).get()
+    return cache.permissions[await idx(serverCache)]
+  }
+})
 
 /**
  * These functions are exposed on the request object and may be used by the handlers
@@ -18,6 +45,10 @@ const debug = db('cache')
  */
 const cacheDecorator = sessionCookieName =>
   function () {
+    /**
+     * The cookie id
+     * @returns {*}
+     */
     const id = () => {
       if (!this.state[sessionCookieName]) {
         throw new CacheError()
@@ -26,6 +57,11 @@ const cacheDecorator = sessionCookieName =>
       return this.state[sessionCookieName].id
     }
 
+    /**
+     * The current permission index
+     * @param appCache
+     * @returns {Promise<number>}
+     */
     const idx = async appCache => {
       const status = await contextCache(appCache, id(), 'status').get()
       return status.currentPermissionIdx
@@ -44,45 +80,11 @@ const cacheDecorator = sessionCookieName =>
       },
 
       helpers: {
-        transaction: {
-          get: async () => contextCache(this.server.app.cache, id(), 'transaction').get(),
-          set: async obj => contextCache(this.server.app.cache, id(), 'transaction').set(obj),
+        transaction: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'transaction', id, idx),
+        status: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'status', id, idx),
+        addressLookup: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'addressLookup', id, idx),
 
-          hasPermission: async () => {
-            const transaction = await contextCache(this.server.app.cache, id(), 'transaction').get()
-            return !!transaction.permissions.length
-          },
-
-          setCurrentPermission: async permission => {
-            const transaction = await contextCache(this.server.app.cache, id(), 'transaction').get()
-            const current = transaction.permissions[await idx(this.server.app.cache)]
-            Object.assign(current, permission)
-            await contextCache(this.server.app.cache, id(), 'transaction').set(transaction)
-          },
-
-          getCurrentPermission: async () => {
-            const transaction = await contextCache(this.server.app.cache, id(), 'transaction').get()
-            return transaction.permissions[await idx(this.server.app.cache)]
-          }
-        },
-
-        status: {
-          get: async () => contextCache(this.server.app.cache, id(), 'status').get(),
-          set: async obj => contextCache(this.server.app.cache, id(), 'status').set(obj),
-
-          setCurrentPermission: async data => {
-            const status = await contextCache(this.server.app.cache, id(), 'status').get()
-            const current = status.permissions[status.currentPermissionIdx]
-            Object.assign(current, data)
-            await contextCache(this.server.app.cache, id(), 'status').set(status)
-          },
-
-          getCurrentPermission: async () => {
-            const status = await contextCache(this.server.app.cache, id(), 'status').get()
-            return status.permissions[status.currentPermissionIdx]
-          }
-        },
-
+        // This one differs in that it has an individual segment for each page
         page: {
           get: async () => contextCache(this.server.app.cache, id(), 'page').get(),
           set: async obj => contextCache(this.server.app.cache, id(), 'page').set(obj),

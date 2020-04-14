@@ -3,20 +3,22 @@ import updateTransactionFunctions from '../../../handlers/update-transaction-fun
 
 export default async (request, page, pageStr) => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(page.page)
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
 
   // Don't let this be set if we do not have a full adult licence
-  if (permission.concession && permission.concession.type === CONCESSION.SENIOR) {
+  if (licensee.concession && licensee.concession.type === CONCESSION.SENIOR) {
     throw new updateTransactionFunctions.TransactionError('Attempting to set disabled for a senior')
   }
 
-  if (permission.concession && permission.concession.type === CONCESSION.JUNIOR) {
+  if (licensee.concession && licensee.concession.type === CONCESSION.JUNIOR) {
     throw new updateTransactionFunctions.TransactionError('Attempting to set disabled for a junior')
   }
 
   if (payload[pageStr] === 'yes') {
-    await request.cache().helpers.transaction.setCurrentPermission({ concession: { type: CONCESSION.DISABLED } })
+    Object.assign(licensee, { concession: { type: CONCESSION.DISABLED } })
   } else {
-    await request.cache().helpers.transaction.setCurrentPermission({ concession: {} })
+    Object.assign(licensee, { concession: {} })
   }
+
+  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }

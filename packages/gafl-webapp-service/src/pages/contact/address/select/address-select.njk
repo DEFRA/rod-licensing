@@ -1,0 +1,34 @@
+{% extends "standard-form.njk" %}
+
+{% from "radios/macro.njk" import govukRadios %}
+{% set title = 'Select your address' %}
+
+{% set errorMap = {
+        'address': {
+            'any.required': { ref: '#address', text: 'You did not select an address' }
+        }
+    }
+%}
+
+{% set addressItems = [] %}
+
+{% for address in data.addresses %}
+    {{ addressItems.push({
+        text: address.address,
+        id: address.id,
+        value: address.id,
+        checked: payload['address'] === address.id
+    }) }}
+{% endfor %}
+
+{% block pageContent %}
+    <p class="govuk-body-m">{{ data.addresses.length }} addresses found for {{ data.searchTerms.premises}} and {{ data.searchTerms.postcode}}&nbsp;&nbsp;<a href="{{ data.lookupPage }}">Change</a></p>
+    {{ govukRadios({
+           idPrefix: "address",
+           name: "address",
+           items: addressItems,
+           errorMessage: { text: 'Select an address' } if error
+       })
+    }}
+     <p class="govuk-body-m"><a href="{{ data.entryPage }}">My address is not listed</a></p>
+{% endblock %}

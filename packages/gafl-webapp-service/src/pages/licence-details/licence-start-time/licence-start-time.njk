@@ -11,7 +11,6 @@
     }
 %}
 
-
 {% set am = [
     { text: "Midnight",value: "0", checked: payload['licence-start-time'] === '0' },
     { text: "1am", value: "1", checked: payload['licence-start-time'] === '1' },
@@ -43,8 +42,6 @@
 ] %}
 
 {% block pageContent %}
-{{error|dump}}
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
             {{ govukRadios({

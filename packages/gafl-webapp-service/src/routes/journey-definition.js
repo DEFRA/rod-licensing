@@ -12,7 +12,13 @@ import {
   BENEFIT_CHECK,
   BENEFIT_NI_NUMBER,
   BLUE_BADGE_CHECK,
-  BLUE_BADGE_NUMBER
+  BLUE_BADGE_NUMBER,
+  ADDRESS_LOOKUP,
+  ADDRESS_SELECT,
+  ADDRESS_ENTRY,
+  CONTACT,
+  NEWSLETTER,
+  SUMMARY
 } from '../constants.js'
 
 export default [
@@ -170,7 +176,58 @@ export default [
     currentPage: NAME.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: ADDRESS_LOOKUP.uri
+      }
+    }
+  },
+
+  {
+    currentPage: ADDRESS_LOOKUP.page,
+    nextPage: {
+      foundSome: {
+        page: ADDRESS_SELECT.uri
+      },
+      foundNone: {
+        page: ADDRESS_ENTRY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: ADDRESS_ENTRY.page,
+    nextPage: {
+      ok: {
+        page: CONTACT.uri
+      }
+    }
+  },
+
+  {
+    currentPage: ADDRESS_SELECT.page,
+    nextPage: {
+      ok: {
+        page: CONTACT.uri
+      }
+    }
+  },
+
+  {
+    currentPage: CONTACT.page,
+    nextPage: {
+      yes: {
+        page: NEWSLETTER.uri
+      },
+      no: {
+        page: SUMMARY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: NEWSLETTER.page,
+    nextPage: {
+      ok: {
+        page: SUMMARY.uri
       }
     }
   }

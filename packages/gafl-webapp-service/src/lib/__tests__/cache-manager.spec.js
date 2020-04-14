@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookie } from '../../misc/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../__mocks__/test-utils.js'
 import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE, NUMBER_OF_RODS } from '../../constants.js'
 
 beforeAll(d => start(d))

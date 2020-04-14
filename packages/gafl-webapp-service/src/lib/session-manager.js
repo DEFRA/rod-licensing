@@ -8,7 +8,7 @@ import addPermission from './add-permission.js'
  * @param sessionCookieName
  * @returns {function(*, *)}
  */
-const debug = db('session-manager')
+const debug = db('webapp:session-manager')
 
 const sessionManager = sessionCookieName => async (request, h) => {
   if (request.path.startsWith('/buy')) {

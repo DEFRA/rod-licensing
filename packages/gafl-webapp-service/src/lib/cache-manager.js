@@ -1,18 +1,22 @@
 /**
- * The cache is divided into individually addressable contexts
+ * The cache is divided into individually addressable contexts;
+ * (1) Page - the payload and error data for each individual page
+ * (2) Status - pages completed, flags
+ * (3) Transaction - the validated set of data making up the licence purchase
+ * (4) Address lookup - stores the result of the OS spaces lookup
  */
-
 const contexts = {
   page: { identifier: 'page-context', initializer: { permissions: [] } },
   transaction: { identifier: 'transaction-context', initializer: { payment: {}, permissions: [] } },
-  status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: -1 } }
+  status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: -1 } },
+  addressLookup: { identifier: 'address-lookup-context', initializer: { permissions: [] } }
 }
 
 class CacheError extends Error {}
 
 /**
- * These functions are the pure getters and setters on the cache and are not exposed on the
- * request object
+ * These functions are the pure getters and setters against the overall cache and are not exposed on the
+ * request object.
  * @param appCache
  * @param id
  * @returns {init: (function(*=): *), set: (function(*=): *), get: (function(): *)} functions

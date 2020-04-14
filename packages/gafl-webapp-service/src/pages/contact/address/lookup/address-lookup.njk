@@ -1,0 +1,79 @@
+{% extends "layout.njk" %}
+
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "button/macro.njk" import govukButton %}
+{% from "error-summary.njk" import errorSummary %}
+{% from "input/macro.njk" import govukInput %}
+
+{% block pageTitle %}Find your address - GOV.UK{% endblock %}
+
+{% set errorMap = {
+        'premises': {
+            'string.empty': { ref: '#premises', text: 'You did not enter your building number or name' },
+            'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
+        },
+        'postcode': {
+            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
+            'string.pattern.base': { ref: '#postcode', text: 'Enter a valid UK postcode. If you live outside the UK, enter your address manually.' }
+        }
+    }
+%}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(error, errorMap) }}
+        <form method="post">
+            {% call govukFieldset({
+              legend: {
+                text: 'Find your address',
+                classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                {{ govukInput({
+                  label: {
+                    text: "House number or name"
+                  },
+                  id: "premises",
+                  name: "premises",
+                  hint: { text: "For example, Flat 20A" },
+                  value: payload['premises'],
+                  classes: "govuk-input--width-20",
+                  autocomplete: 'given-name',
+                  attributes: { maxlength: 50 },
+                  errorMessage: { text: 'Enter your house number or name' } if error['premises']
+                }) }}
+
+                {{ govukInput({
+                  label: {
+                    text: "Postcode"
+                  },
+                  id: "postcode",
+                  name: "postcode",
+                  hint: { text: "For example, WA4 1AB" },
+                  value: payload['postcode'],
+                  autocomplete: 'postal-code',
+                  classes: "govuk-input--width-20",
+                  attributes: { maxlength: 10 },
+                  errorMessage: { text: 'Enter your postcode' } if error['postcode']
+                }) }}
+
+                {{ govukButton({
+                    name: "continue",
+                    text: "Find your address",
+                    classes: "govuk-!-margin-top-5"
+                }) }}
+
+            {% endcall %}
+            <p class="govuk-body-m">
+                <a href="{{ data.entryPage }}">Enter my address manually / I live outside the UK</a>
+            </p>
+        </form>
+      <p class="govuk-body-s">© Crown copyright and database rights 2016 <a href="http://www.ordnancesurvey.co.uk" target="_blank">OS</a> 100024198.
+      <br>Use of this addressing  data is subject to&nbsp;the <a href="">terms and conditions</a>.</p>
+    </div>
+</div>
+{% endblock %}
+
