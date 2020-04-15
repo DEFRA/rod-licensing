@@ -42,10 +42,22 @@ const responseCapableMethod = async methodName => {
   }
 }
 
+DynamicsWebApi.prototype.retrieveRequest = jest.fn(async () => responseCapableMethod('retrieveRequest'))
 DynamicsWebApi.prototype.createRequest = jest.fn(async () => responseCapableMethod('createRequest'))
 DynamicsWebApi.prototype.updateRequest = jest.fn(async () => responseCapableMethod('updateRequest'))
 DynamicsWebApi.prototype.retrieveMultipleRequest = jest.fn(async () => responseCapableMethod('retrieveMultipleRequest'))
 DynamicsWebApi.prototype.retrieveGlobalOptionSets = jest.fn(async () => responseCapableMethod('retrieveGlobalOptionSets'))
+DynamicsWebApi.prototype.executeUnboundFunction = jest.fn(async functionName => {
+  let returnValue = null
+  if (functionName === 'RetrieveVersion') {
+    returnValue = {
+      '@odata.context': 'https://dynamics-host.crm4.dynamics.com/api/data/v9.1/$metadata#Microsoft.Dynamics.CRM.RetrieveVersionResponse',
+      Version: '9.1.0.14134'
+    }
+  }
+  return returnValue
+})
+
 DynamicsWebApi.prototype.startBatch = jest.fn(() => {
   inBatchMode = true
 })

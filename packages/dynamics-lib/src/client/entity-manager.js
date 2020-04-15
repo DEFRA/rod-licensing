@@ -141,10 +141,35 @@ export function retrieveGlobalOptionSets (...names) {
 }
 
 /**
+ * Retrieve a record from Dynamics by it's ID
+ *
+ * @template {T<BaseEntity>}
+ *
+ * @param {typeof T} entityType the example entity to construct a query from
+ * @param {string} id the ID of the record to retrieve, can be a guid or an alternate key in the format Name='Value'
+ * @returns {Promise<T>} an array of matching records
+ */
+export async function findById (entityType, id) {
+  try {
+    const record = await dynamicsClient.retrieveRequest({ key: id, ...entityType.definition.toRetrieveRequest(null) })
+    const optionSetData = await retrieveGlobalOptionSets().cached()
+    return entityType.fromResponse(record, optionSetData)
+  } catch (e) {
+    if (e.status === 404) {
+      return null
+    }
+    console.error('Unable to findById:', e)
+    throw e
+  }
+}
+
+/**
  * Retrieve records from Dynamics which match each of the fields populated in the example entity
  *
- * @param {Object<BaseEntity>} entity the example entity to construct a query from
- * @returns {Promise<Array<BaseEntity>>} an array of matching records
+ * @template {T<BaseEntity>}
+ *
+ * @param {T} entity the example entity to construct a query from
+ * @returns {Promise<Array<T>>} an array of matching records
  */
 export async function findByExample (entity) {
   try {
@@ -161,8 +186,8 @@ export async function findByExample (entity) {
         return acc
       }, [])
     ].join(' and ')
-    const optionSetData = await retrieveGlobalOptionSets().cached()
     const results = await dynamicsClient.retrieveMultipleRequest(entity.constructor.definition.toRetrieveRequest(filter))
+    const optionSetData = await retrieveGlobalOptionSets().cached()
     return results.value.map(result => entity.constructor.fromResponse(result, optionSetData))
   } catch (e) {
     console.error('Unable to findByExample:', e)

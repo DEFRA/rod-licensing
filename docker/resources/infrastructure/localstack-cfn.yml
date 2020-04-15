@@ -6,14 +6,14 @@ Resources:
     Properties:
       TableName: TransactionStaging
       AttributeDefinitions:
-        - AttributeName: 'StagingId'
+        - AttributeName: 'id'
           AttributeType: 'S'
       KeySchema:
-        - AttributeName: 'StagingId'
+        - AttributeName: 'id'
           KeyType: 'HASH'
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      TimeToLiveSpecification:
+        AttributeName: 'expires'
+        Enabled: true
 
   PoclAuditBucket:
     Type: AWS::S3::Bucket

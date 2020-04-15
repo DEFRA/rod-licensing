@@ -17,11 +17,10 @@ const environment = (e, receiverName) => {
   const env = {
     URL: e[`${receiverName}_URL`],
     SUBSCRIBER: e[`${receiverName}_SUBSCRIBER`],
-    POLLING_RATE_MS: e[`${receiverName}_POLLING_RATE_MS`],
     VISIBILITY_TIMEOUT_MS: e[`${receiverName}_VISIBILITY_TIMEOUT_MS`],
     WAIT_TIME_MS: e[`${receiverName}_WAIT_TIME_MS`] || 20000,
-    NO_DELAY_THRESHOLD: e[`${receiverName}_NO_DELAY_THRESHOLD`],
-    SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`]
+    MAX_POLLING_INTERVAL_MS: e[`${receiverName}_MAX_POLLING_INTERVAL_MS`] || 300000,
+    SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`] || 90000
   }
 
   // Create the joi validation schemas
@@ -32,11 +31,11 @@ const environment = (e, receiverName) => {
     SUBSCRIBER: Joi.string()
       .uri()
       .required(),
-    POLLING_RATE_MS: Joi.number()
+    MAX_POLLING_INTERVAL_MS: Joi.number()
       .integer()
       .required()
       .min(1)
-      .max(1 * 60 * 60 * 1000),
+      .max(60 * 60 * 1000),
     VISIBILITY_TIMEOUT_MS: Joi.number()
       .integer()
       .required()
@@ -47,11 +46,6 @@ const environment = (e, receiverName) => {
       .required()
       .min(1)
       .max(20000),
-    NO_DELAY_THRESHOLD: Joi.number()
-      .integer()
-      .required()
-      .min(1)
-      .max(9),
     SUBSCRIBER_TIMEOUT_MS: Joi.number()
       .integer()
       .required()

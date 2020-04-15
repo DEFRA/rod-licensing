@@ -35,6 +35,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@defra-fish/business-rules-lib": "^0.0.1-beta.14",
     "@defra-fish/dynamics-lib": "^0.0.1-beta.12",
     "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^19.1.1",
@@ -42,7 +43,11 @@
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
     "aws-sdk": "^2.648.0",
+    "crypto-random-string": "^3.2.0",
+    "debug": "^4.1.1",
+    "dot-prop": "^5.2.0",
     "hapi-and-healthy": "^7.0.6",
-    "hapi-swagger": "^12.1.2"
+    "hapi-swagger": "^12.1.2",
+    "uuid": "^7.0.3"
   }
 }

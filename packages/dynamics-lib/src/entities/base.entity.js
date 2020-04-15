@@ -195,12 +195,15 @@ export class BaseEntity {
   /**
    * Bind the entity
    *
-   * @param property the binding to use including the @odata.bind directive
-   * @param entity the entity instance to bind to
+   * @param {string} property the binding to use including the @odata.bind directive
+   * @param {BaseEntity} entity the entity instance to bind to
    * @returns {*}
    * @protected
    */
   _bind (property, entity) {
+    if (!entity) {
+      throw new Error(`Unable to bind ${this.constructor.definition.localCollection}.${property}, to an undefined or null entity`)
+    }
     this._bindings[property] = entity
   }
 
@@ -402,7 +405,7 @@ export class EntityDefinition {
     return {
       collection: this.dynamicsCollection,
       select: this.select,
-      filter: filterString
+      ...(filterString && { filter: filterString })
     }
   }
 }

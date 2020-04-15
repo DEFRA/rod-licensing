@@ -54,7 +54,7 @@ describe('permission entity', () => {
         defra_isforfulfilment: false,
         defra_iscountersales: true,
         defra_advertisedprice_base: 6.0,
-        defra_itemid: 42289
+        defra_itemid: '42289'
       },
       optionSetData
     )

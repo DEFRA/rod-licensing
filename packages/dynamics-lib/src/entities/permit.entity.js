@@ -26,7 +26,7 @@ export class Permit extends BaseEntity {
       isForFulfilment: { field: 'defra_isforfulfilment', type: 'boolean' },
       isCounterSales: { field: 'defra_iscountersales', type: 'boolean' },
       cost: { field: 'defra_advertisedprice', type: 'decimal' },
-      itemId: { field: 'defra_itemid', type: 'integer' }
+      itemId: { field: 'defra_itemid', type: 'string' }
     }
   })
 
