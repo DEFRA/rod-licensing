@@ -47,7 +47,7 @@
     "debug": "^4.1.1",
     "dot-prop": "^5.2.0",
     "hapi-and-healthy": "^7.0.6",
-    "hapi-swagger": "^12.1.2",
+    "hapi-swagger": "^13.0.0",
     "uuid": "^7.0.3"
   }
 }
