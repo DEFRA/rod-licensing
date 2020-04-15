@@ -1,4 +1,4 @@
-import { getGlobalOptionSetValue, getReferenceDataForId } from '../../services/reference-data.service.js'
+import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from '../../services/reference-data.service.js'
 import { findById } from '@defra-fish/dynamics-lib'
 
 export function createOptionSetValidator (optionSetName) {
@@ -13,7 +13,7 @@ export function createOptionSetValidator (optionSetName) {
 
 export function createReferenceDataEntityValidator (entityType) {
   return async value => {
-    const entity = await getReferenceDataForId(entityType, value)
+    const entity = await getReferenceDataForEntityAndId(entityType, value)
     if (!entity) {
       throw new Error(`Unrecognised ${entityType.definition.localCollection} identifier`)
     }

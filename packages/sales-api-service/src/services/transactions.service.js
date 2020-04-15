@@ -1,5 +1,5 @@
 import { Permission, Permit, Concession, ConcessionProof, FulfilmentRequest, persist } from '@defra-fish/dynamics-lib'
-import { getReferenceDataForId, getGlobalOptionSetValue } from './reference-data.service.js'
+import { getReferenceDataForEntityAndId, getGlobalOptionSetValue } from './reference-data.service.js'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { resolveContactPayload } from './contacts.service.js'
 import Boom from '@hapi/boom'
@@ -58,7 +58,7 @@ export async function processQueue ({ id }) {
   const entities = []
   for (const { licensee, concession, permitId, referenceNumber, issueDate, startDate, endDate } of transaction.permissions) {
     const contact = await resolveContactPayload(licensee)
-    const permit = await getReferenceDataForId(Permit, permitId)
+    const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
     const permission = new Permission()
     permission.referenceNumber = referenceNumber
@@ -75,7 +75,7 @@ export async function processQueue ({ id }) {
 
     if (concession) {
       const proof = new ConcessionProof()
-      const concessionEntity = await getReferenceDataForId(Concession, concession.concessionId)
+      const concessionEntity = await getReferenceDataForEntityAndId(Concession, concession.concessionId)
       proof.proofType = await getGlobalOptionSetValue('defra_concessionproof', concession.proof.type)
       proof.referenceNumber = concession.proof.referenceNumber
 
