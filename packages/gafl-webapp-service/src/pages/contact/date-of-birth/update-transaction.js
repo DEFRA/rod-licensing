@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { DATE_OF_BIRTH, CONCESSION } from '../../../constants.js'
+import { DATE_OF_BIRTH, CONCESSION, HOW_CONTACTED } from '../../../constants.js'
 import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
 /**
  * Transfer the validated page object
@@ -37,6 +37,12 @@ export default async request => {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M' })
     Object.assign(permission.licensee, { concession: { type: CONCESSION.JUNIOR } })
+
+    // Junior licences are net sent out by post so if the contact details are by letter then reset to none
+    if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
+      permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
+      permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
+    }
   } else if (ageAtLicenceStartDate >= 65) {
     Object.assign(permission.licensee, { concession: { type: CONCESSION.SENIOR } })
   } else {

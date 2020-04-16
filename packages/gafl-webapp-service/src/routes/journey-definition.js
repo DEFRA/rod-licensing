@@ -108,6 +108,9 @@ export default [
       },
       noLicenceRequired: {
         page: NO_LICENCE_REQUIRED.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -117,6 +120,9 @@ export default [
     nextPage: {
       ok: {
         page: NAME.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -177,6 +183,9 @@ export default [
     nextPage: {
       ok: {
         page: ADDRESS_LOOKUP.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -198,6 +207,9 @@ export default [
     nextPage: {
       ok: {
         page: CONTACT.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -207,6 +219,9 @@ export default [
     nextPage: {
       ok: {
         page: CONTACT.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -218,6 +233,9 @@ export default [
         page: NEWSLETTER.uri
       },
       no: {
+        page: SUMMARY.uri
+      },
+      summary: {
         page: SUMMARY.uri
       }
     }

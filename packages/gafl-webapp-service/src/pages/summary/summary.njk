@@ -1,28 +1,205 @@
 {% extends "layout.njk" %}
 
+{% from "summary-list/macro.njk" import govukSummaryList %}
 {% from "fieldset/macro.njk" import govukFieldset %}
+{% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
 
 {% set title = 'Check your new licence details' %}
-
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% macro addressLine(line) %}
+    {% if line %}{{ line }}</br>{% endif %}
+{% endmacro %}
+
+{% set licenseeDetailsSummaryRows = [
+    {
+      key: {
+        text: "Name on licence"
+      },
+      value: {
+        text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.name,
+            text: "Change",
+            visuallyHiddenText: "name"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Date of birth"
+      },
+      value: {
+        text: data.birthDateStr
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.dateOfBirth,
+            text: "Change",
+            visuallyHiddenText: "date of birth"
+          }
+        ]
+      }
+    },
+    {
+      key: {
+        text: "Address"
+      },
+      value: {
+        html: addressLine(data.permission.licensee.premises)
+        + addressLine(data.permission.licensee.street)
+        + addressLine(data.permission.licensee.locality)
+        + addressLine(data.permission.licensee.town)
+        + addressLine(data.permission.licensee.postcode)
+        + addressLine(data.permission.licensee.countryCode)
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.address,
+            text: "Change",
+            visuallyHiddenText: "address"
+          }
+        ]
+      }
+    }
+  ]
+%}
+
+{% if data.contactMethod === data.howContacted['none'] %}
+    {{ licenseeDetailsSummaryRows.push({
+      key: {
+        text: "Contact details"
+      },
+      value: {
+        text: 'None'
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.contact,
+            text: "Add",
+            visuallyHiddenText: "contact"
+          }
+        ]
+      }
+    }) }}
+{% elif data.contactMethod === data.howContacted['letter'] %}
+    {{ licenseeDetailsSummaryRows.push({
+      key: {
+        text: "Contact details"
+      },
+      value: {
+        text: 'Letter'
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.contact,
+            text: "Change",
+            visuallyHiddenText: "letter"
+          }
+        ]
+      }
+    }) }}
+{% elif data.contactMethod === data.howContacted['email'] %}
+    {{ licenseeDetailsSummaryRows.push({
+      key: {
+        text: "Email address"
+      },
+      value: {
+        text: data.permission.licensee.email
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.contact,
+            text: "Change",
+            visuallyHiddenText: "email"
+          }
+        ]
+      }
+    }) }}
+{% elif data.contactMethod === data.howContacted['text'] %}
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Mobile number"
+        },
+        value: {
+          text: data.permission.licensee.mobilePhone
+        },
+        actions: {
+          items: [
+            {
+              href: data.uri.contact,
+              text: "Change" if data.permission.licensee.mobilePhone else "Add",
+              visuallyHiddenText: "mobile"
+            }
+          ]
+        }
+    }) }}
+{% endif %}
+
+{{ licenseeDetailsSummaryRows.push({
+    key: {
+      text: "Newsletter"
+    },
+    value: {
+      text: 'Yes' if data.newsLetter else 'No'
+    },
+    actions: {
+      items: [
+        {
+          href: data.uri.newsletter,
+          text: "Change",
+          visuallyHiddenText: "newsletter"
+        }
+      ]
+    }
+}) }}
+
+{% set licenseeDetailsSummary %}
+    {% call govukFieldset({
+      legend: {
+        text: 'Your details',
+        classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+        isPageHeading: false
+      }
+    }) %}
+        {{ govukSummaryList({ rows: licenseeDetailsSummaryRows }) }}
+    {% endcall %}
+{% endset -%}
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
         <form method="post">
+
+            {{ govukWarningText({
+              text: "Your licence is not valid until payment is complete",
+              iconFallbackText: "Warning"
+            }) }}
 
             {% call govukFieldset({
               legend: {
                 text: title,
-                classes: "govuk-fieldset__legend--m",
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
                 isPageHeading: true
               }
             }) %}
 
+                {{ licenseeDetailsSummary | trim | safe }}
+
                 {{ govukButton({
                     name: "continue",
-                    text: "Continue"
+                    text: "Continue",
+                    classes: "govuk-!-margin-top-5"
                 }) }}
 
             {% endcall %}
@@ -30,3 +207,8 @@
     </div>
 </div>
 {% endblock %}
+
+
+
+
+

@@ -8,7 +8,7 @@ afterAll(d => stop(d))
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
   street: 'EASTMEAD LANE',
-  locality: null,
+  locality: '',
   town: 'BRISTOL',
   postcode: 'BS9 1HJ',
   'country-code': 'GB'
@@ -103,7 +103,6 @@ describe('The manual address entry page', () => {
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
-      locality: null,
       town: 'BRISTOL',
       postcode: 'BS9 1HJ',
       countryCode: 'GB'
@@ -125,7 +124,6 @@ describe('The manual address entry page', () => {
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
-      locality: null,
       town: 'BRISTOL',
       postcode: 'not checked',
       countryCode: 'FR'

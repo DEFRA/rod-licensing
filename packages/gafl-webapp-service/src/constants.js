@@ -32,12 +32,13 @@ const ERROR = { uri: '/error', page: 'error' }
 
 const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
 const MAX_PERMISSIONS = 500
-const HOW_CONTACTED = { email: 'Email', text: 'Text', letter: 'Letter' }
+const HOW_CONTACTED = { email: 'Email', text: 'Text', letter: 'Letter', none: 'Prefer not to be contacted' }
 const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 const ADDRESS_LOOKUP_MS_DEFAULT = 10000
 const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 const REDIS_PORT_DEFAULT = 6379
 const SESSION_COOKIE_NAME_DEFAULT = 'sid'
+const PAGE_STATE = { completed: true, error: false }
 
 export {
   SESSION_TTL_MS_DEFAULT,
@@ -71,5 +72,6 @@ export {
   ADDRESS_LOOKUP_MS_DEFAULT,
   HOW_CONTACTED,
   MAX_PERMISSIONS,
+  PAGE_STATE,
   ERROR
 }

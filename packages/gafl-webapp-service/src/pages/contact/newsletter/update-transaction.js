@@ -14,6 +14,9 @@ export default async request => {
     licensee.email = payload.email
   } else {
     delete licensee.preferredMethodOfNewsletter
+    if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {
+      delete licensee.email
+    }
   }
 
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
