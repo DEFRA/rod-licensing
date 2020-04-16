@@ -81,62 +81,100 @@ export const mockTransactionRecord = () => ({
   permissions: [mockPermissionRecord()]
 })
 
-export const MOCK_CONCESSION = Concession.fromResponse(
-  {
-    '@odata.etag': 'W/"22638892"',
-    defra_name: 'Senior',
-    defra_concessionid: 'd0ece997-ef65-e611-80dc-c4346bad4004'
-  },
-  optionSetData
-)
+export const MOCK_CONCESSION_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"22638892"',
+  defra_name: 'Senior',
+  defra_concessionid: 'd0ece997-ef65-e611-80dc-c4346bad4004'
+}
+export const MOCK_CONCESSION = Concession.fromResponse(MOCK_CONCESSION_DYNAMICS_RESPONSE, optionSetData)
 
-export const MOCK_1DAY_PERMIT = Permit.fromResponse(
-  {
-    '@odata.etag': 'W/"51026144"',
-    defra_availablefrom: '2017-03-31T23:00:00Z',
-    defra_availableto: '2021-03-31T22:59:00Z',
-    defra_durationnumericpart: 1,
-    defra_durationdaymonthyearpart: 910400000,
-    defra_numberofrods: 2,
-    defra_duration: 910400000,
-    defra_permittype: 910400000,
-    defra_advertisedprice: 6.0,
-    defra_datasource: 910400002,
-    defra_permitid: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
-    defra_name: 'Coarse 1 day 2 Rod Licence (Senior)',
-    defra_permitsubtype: 910400001,
-    defra_equipment: 910400000,
-    defra_isforfulfilment: false,
-    defra_iscountersales: true,
-    defra_advertisedprice_base: 6.0,
-    defra_itemid: '42290'
-  },
-  optionSetData
-)
+export const MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"51026144"',
+  defra_availablefrom: '2017-03-31T23:00:00Z',
+  defra_availableto: '2021-03-31T22:59:00Z',
+  defra_durationnumericpart: 1,
+  defra_durationdaymonthyearpart: 910400000,
+  defra_numberofrods: 2,
+  defra_duration: 910400000,
+  defra_permittype: 910400000,
+  defra_advertisedprice: 6.0,
+  defra_datasource: 910400002,
+  defra_permitid: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+  defra_name: 'Coarse 1 day 2 Rod Licence (Senior)',
+  defra_permitsubtype: 910400001,
+  defra_equipment: 910400000,
+  defra_isforfulfilment: false,
+  defra_iscountersales: true,
+  defra_advertisedprice_base: 6.0,
+  defra_itemid: '42290'
+}
 
-export const MOCK_12MONTH_PERMIT = Permit.fromResponse(
-  {
-    '@odata.etag': 'W/"51026180"',
-    defra_availablefrom: '2017-03-31T23:00:00Z',
-    defra_availableto: '2021-03-31T22:59:00Z',
-    defra_durationnumericpart: 12,
-    defra_durationdaymonthyearpart: 910400001,
-    defra_numberofrods: 3,
-    defra_duration: 910400003,
-    defra_permittype: 910400000,
-    defra_advertisedprice: 30.0,
-    defra_datasource: 910400002,
-    defra_permitid: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
-    defra_name: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
-    defra_permitsubtype: 910400001,
-    defra_equipment: 910400001,
-    defra_isforfulfilment: true,
-    defra_iscountersales: true,
-    defra_advertisedprice_base: 30.0,
-    defra_itemid: '42347'
-  },
-  optionSetData
-)
+export const MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"22639016"',
+  defra_availablefrom: '2017-03-31T23:00:00Z',
+  defra_availableto: '2020-03-31T22:59:00Z',
+  defra_duration: 910400000,
+  defra_durationnumericpart: 1,
+  defra_durationdaymonthyearpart: 910400000,
+  defra_permittype: 910400000,
+  defra_advertisedprice: 6.0,
+  defra_permitid: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
+  defra_name: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
+  defra_permitsubtype: 910400000,
+  defra_equipment: 910400000,
+  defra_numberofrods: 2,
+  defra_isforfulfilment: false,
+  defra_iscountersales: true,
+  defra_advertisedprice_base: 6.0,
+  defra_itemid: '42289'
+}
+
+export const MOCK_1DAY_SENIOR_PERMIT = Permit.fromResponse(MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+export const MOCK_1DAY_FULL_PERMIT = Permit.fromResponse(MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+
+export const MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"51026180"',
+  defra_availablefrom: '2017-03-31T23:00:00Z',
+  defra_availableto: '2021-03-31T22:59:00Z',
+  defra_durationnumericpart: 12,
+  defra_durationdaymonthyearpart: 910400001,
+  defra_numberofrods: 3,
+  defra_duration: 910400003,
+  defra_permittype: 910400000,
+  defra_advertisedprice: 30.0,
+  defra_datasource: 910400002,
+  defra_permitid: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
+  defra_name: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
+  defra_permitsubtype: 910400001,
+  defra_equipment: 910400001,
+  defra_isforfulfilment: true,
+  defra_iscountersales: true,
+  defra_advertisedprice_base: 30.0,
+  defra_itemid: '42347'
+}
+export const MOCK_12MONTH_DISABLED_PERMIT_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"51026198"',
+  defra_availablefrom: '2017-03-31T23:00:00Z',
+  defra_availableto: '2021-03-31T22:59:00Z',
+  defra_durationnumericpart: 12,
+  defra_durationdaymonthyearpart: 910400001,
+  defra_numberofrods: 1,
+  defra_duration: 910400003,
+  defra_permittype: 910400000,
+  defra_advertisedprice: 54.0,
+  defra_datasource: 910400002,
+  defra_permitid: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
+  defra_name: 'Salmon 12 month 1 Rod Licence (Full, Disabled)',
+  defra_permitsubtype: 910400000,
+  defra_equipment: 910400003,
+  defra_isforfulfilment: true,
+  defra_iscountersales: true,
+  defra_advertisedprice_base: 54.0,
+  defra_itemid: '42376'
+}
+
+export const MOCK_12MONTH_SENIOR_PERMIT = Permit.fromResponse(MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+export const MOCK_12MONTH_DISABLED_PERMIT = Permit.fromResponse(MOCK_12MONTH_DISABLED_PERMIT_DYNAMICS_RESPONSE, optionSetData)
 
 export const MOCK_NEW_CONTACT_ENTITY = new Contact()
 

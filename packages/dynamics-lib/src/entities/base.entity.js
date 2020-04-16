@@ -236,7 +236,8 @@ export class BaseEntity {
    * @returns {{}} a json representation of the entity state
    */
   toJSON () {
-    return this._localState
+    // Stringify and parse to recursively call toJSON() on child objects
+    return JSON.parse(JSON.stringify(this._localState))
   }
 
   /**

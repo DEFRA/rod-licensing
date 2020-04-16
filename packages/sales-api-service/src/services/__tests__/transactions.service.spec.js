@@ -7,8 +7,8 @@ import {
   MOCK_PERMISSION_NUMBER,
   MOCK_END_DATE,
   MOCK_NEW_CONTACT_ENTITY,
-  MOCK_1DAY_PERMIT,
-  MOCK_12MONTH_PERMIT,
+  MOCK_1DAY_SENIOR_PERMIT,
+  MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 const awsMock = require('aws-sdk').default
@@ -20,13 +20,13 @@ jest.mock('../permissions.service.js', () => ({
 
 jest.mock('../reference-data.service.js', () => ({
   ...jest.requireActual('../reference-data.service.js'),
-  getReferenceDataForId: async (entityType, id) => {
+  getReferenceDataForEntityAndId: async (entityType, id) => {
     let item = null
-    if (entityType === MOCK_12MONTH_PERMIT.constructor) {
-      if (id === 'cb1b34a0-0c66-e611-80dc-c4346bad0190') {
-        item = MOCK_12MONTH_PERMIT
-      } else if (id === '9f1b34a0-0c66-e611-80dc-c4346bad0190') {
-        item = MOCK_1DAY_PERMIT
+    if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
+      if (id === MOCK_12MONTH_SENIOR_PERMIT.id) {
+        item = MOCK_12MONTH_SENIOR_PERMIT
+      } else if (id === MOCK_1DAY_SENIOR_PERMIT.id) {
+        item = MOCK_1DAY_SENIOR_PERMIT
       }
     } else if (entityType === MOCK_CONCESSION.constructor) {
       item = MOCK_CONCESSION
@@ -124,7 +124,7 @@ describe('transaction service', () => {
           'short term licences',
           () => {
             const mockRecord = mockTransactionRecord()
-            mockRecord.permissions[0].permitId = MOCK_1DAY_PERMIT.id
+            mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT.id
             return mockRecord
           },
           [expect.any(Contact), expect.any(Permission), expect.any(ConcessionProof)]
@@ -133,7 +133,7 @@ describe('transaction service', () => {
           'long term licences',
           () => {
             const mockRecord = mockTransactionRecord()
-            mockRecord.permissions[0].permitId = MOCK_12MONTH_PERMIT.id
+            mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             return mockRecord
           },
           [expect.any(Contact), expect.any(Permission), expect.any(ConcessionProof), expect.any(FulfilmentRequest)]
@@ -142,7 +142,7 @@ describe('transaction service', () => {
           'long term licences (no concession)',
           () => {
             const mockRecord = mockTransactionRecord()
-            mockRecord.permissions[0].permitId = MOCK_12MONTH_PERMIT.id
+            mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             delete mockRecord.permissions[0].concession
             return mockRecord
           },

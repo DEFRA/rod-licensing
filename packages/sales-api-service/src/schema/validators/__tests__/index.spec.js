@@ -21,14 +21,14 @@ describe('validators', () => {
 
   describe('createReferenceDataEntityValidator', () => {
     it('returns a validation function returning undefined when a cached reference data entity is successfully resolved', async () => {
-      const spy = jest.spyOn(referenceData, 'getReferenceDataForId').mockImplementation(async () => 'success')
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntityAndId').mockImplementation(async () => 'success')
       const validationFunction = require('../index.js').createReferenceDataEntityValidator(TestEntity)
       await expect(validationFunction('testValue')).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
     it('returns a validation function throwing an error when no reference data entity found', async () => {
-      const spy = jest.spyOn(referenceData, 'getReferenceDataForId').mockImplementation(async () => null)
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntityAndId').mockImplementation(async () => null)
       const validationFunction = require('../index.js').createReferenceDataEntityValidator(TestEntity)
       await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised test identifier')
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')

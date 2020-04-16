@@ -7,8 +7,15 @@ import {
   retrieveGlobalOptionSets
 } from '@defra-fish/dynamics-lib'
 
+export const ENTITY_TYPES = [Permit, Concession, TransactionCurrency, PermitConcession]
+
 export async function getReferenceData () {
-  return retrieveMultipleAsMap(Permit, Concession, PermitConcession, TransactionCurrency).cached()
+  return retrieveMultipleAsMap(...ENTITY_TYPES).cached()
+}
+
+export async function getReferenceDataForEntity (entityType) {
+  const data = await getReferenceData()
+  return data[entityType.definition.localCollection]
 }
 
 /**
@@ -18,7 +25,7 @@ export async function getReferenceData () {
  * @param {string} id
  * @returns {Promise<T>}
  */
-export async function getReferenceDataForId (entityType, id) {
+export async function getReferenceDataForEntityAndId (entityType, id) {
   const data = await getReferenceData()
   const items = data[entityType.definition.localCollection].filter(p => p.id === id)
   return (items.length && items[0]) || undefined

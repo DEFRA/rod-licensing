@@ -62,6 +62,7 @@ export class GlobalOptionSetDefinition {
    * @returns {{}} a json representation of the optionset
    */
   toJSON () {
-    return this._properties
+    // Stringify and parse to recursively call toJSON() on child objects
+    return JSON.parse(JSON.stringify(this._properties))
   }
 }

@@ -1,75 +1,38 @@
 import { generatePermissionNumber, calculateEndDate } from '../permissions.service.js'
 import moment from 'moment'
-import { Permit } from '@defra-fish/dynamics-lib'
-const MockPermit = Permit
+import {
+  MOCK_12MONTH_SENIOR_PERMIT,
+  MOCK_1DAY_SENIOR_PERMIT,
+  MOCK_12MONTH_DISABLED_PERMIT,
+  MOCK_1DAY_FULL_PERMIT,
+  MOCK_CONCESSION
+} from '../../../__mocks__/test-data.js'
+
 jest.mock('../reference-data.service.js', () => ({
   ...jest.requireActual('../reference-data.service.js'),
-  getReferenceDataForId: jest.fn(async (entityType, id) => {
-    const optionSetData = await jest
-      .requireActual('@defra-fish/dynamics-lib')
-      .retrieveGlobalOptionSets()
-      .cached()
-    let permit
-    if (id === 'e11b34a0-0c66-e611-80dc-c4346bad0190') {
-      permit = MockPermit.fromResponse(
-        {
-          '@odata.etag': 'W/"51026198"',
-          defra_availablefrom: '2017-03-31T23:00:00Z',
-          defra_availableto: '2021-03-31T22:59:00Z',
-          defra_durationnumericpart: 12,
-          defra_durationdaymonthyearpart: 910400001,
-          defra_numberofrods: 1,
-          defra_duration: 910400003,
-          defra_permittype: 910400000,
-          defra_advertisedprice: 54.0,
-          defra_datasource: 910400002,
-          defra_permitid: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
-          defra_name: 'Salmon 12 month 1 Rod Licence (Full, Disabled)',
-          defra_permitsubtype: 910400000,
-          defra_equipment: 910400003,
-          defra_isforfulfilment: true,
-          defra_iscountersales: true,
-          defra_advertisedprice_base: 54.0,
-          defra_itemid: '42376'
-        },
-        optionSetData
-      )
-    } else {
-      permit = MockPermit.fromResponse(
-        {
-          '@odata.etag': 'W/"22639016"',
-          defra_availablefrom: '2017-03-31T23:00:00Z',
-          defra_availableto: '2020-03-31T22:59:00Z',
-          defra_duration: 910400000,
-          defra_durationnumericpart: 1,
-          defra_durationdaymonthyearpart: 910400000,
-          defra_permittype: 910400000,
-          defra_advertisedprice: 6.0,
-          defra_permitid: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-          defra_name: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
-          defra_permitsubtype: 910400000,
-          defra_equipment: 910400000,
-          defra_numberofrods: 2,
-          defra_isforfulfilment: false,
-          defra_iscountersales: true,
-          defra_advertisedprice_base: 6.0,
-          defra_itemid: '42289'
-        },
-        optionSetData
-      )
+  getReferenceDataForEntityAndId: async (entityType, id) => {
+    let item = null
+    if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
+      for (const permit of [MOCK_12MONTH_DISABLED_PERMIT, MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT, MOCK_1DAY_FULL_PERMIT]) {
+        if (permit.id === id) {
+          return permit
+        }
+      }
+      return null
+    } else if (entityType === MOCK_CONCESSION.constructor) {
+      item = MOCK_CONCESSION
     }
-    return permit
-  })
+    return item
+  }
 }))
 
-// TODO: Extend tests
 describe('permissions service', () => {
   describe('generatePermissionNumber', () => {
     it('generates a permission number for adults', async () => {
       const now = moment()
       const number = await generatePermissionNumber(
         {
-          permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
+          permitId: MOCK_12MONTH_DISABLED_PERMIT.id,
           issueDate: now.toISOString(),
           startDate: now.toISOString(),
           licensee: {
@@ -95,7 +58,7 @@ describe('permissions service', () => {
       const now = moment()
       const number = await generatePermissionNumber(
         {
-          permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
+          permitId: MOCK_1DAY_FULL_PERMIT.id,
           issueDate: now.toISOString(),
           startDate: now.toISOString(),
           licensee: {
@@ -121,7 +84,7 @@ describe('permissions service', () => {
       const now = moment()
       const number = await generatePermissionNumber(
         {
-          permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
+          permitId: MOCK_1DAY_FULL_PERMIT.id,
           issueDate: now.toISOString(),
           startDate: now.toISOString(),
           licensee: {

@@ -1,56 +1,53 @@
-import Boom from '@hapi/boom'
 import Joi from '@hapi/joi'
-import { getReferenceData } from '../../services/reference-data.service.js'
-import { referenceDataCollectionList, referenceDataItemListSchema } from '../../schema/reference-data.schema.js'
+import { getReferenceDataForEntity, ENTITY_TYPES } from '../../services/reference-data.service.js'
+import { referenceDataItemListSchema } from '../../schema/reference-data.schema.js'
+import dotProp from 'dot-prop'
+import db from 'debug'
+const debug = db('sales:routes')
 
-const errors = {
-  unrecognised_colllection: 'the specified collection does not exist'
-}
-
-export default [
-  {
-    method: 'GET',
-    path: '/reference-data',
-    options: {
-      handler: () => getReferenceData(),
-      description: 'Retrieve all reference data',
-      notes: 'Retrieves all reference data',
-      tags: ['api', 'reference-data'],
-      plugins: {
-        'hapi-swagger': {
-          responses: {
-            200: { schema: referenceDataCollectionList }
+export default ENTITY_TYPES.map(e => ({
+  method: 'GET',
+  path: `/${e.definition.localCollection}`,
+  options: {
+    handler: async request => {
+      debug('Retrieving reference data for entity %s using params: %o', e.definition.localCollection, request.params)
+      const data = await getReferenceDataForEntity(e)
+      const result = data.filter(instance => {
+        const json = instance.toJSON()
+        return Object.entries(request.query).reduce((acc, [k, v]) => acc && String(dotProp.get(json, k)) === v, true)
+      })
+      debug('Retrieved %d items for entity %s', result.length, e.definition.localCollection)
+      return result
+    },
+    description: `Retrieve reference data for the collection ${e.definition.localCollection}`,
+    notes:
+      'Retrieve the reference data for the entity collection.  Data may be filtered by specifying params matching the fields for the entity being queried.',
+    tags: ['api', 'reference-data'],
+    validate: {
+      query: Joi.object(
+        Object.entries(e.definition.mappings).reduce((acc, [field, v]) => {
+          if (v.type === 'optionset') {
+            return ['id', 'label', 'description'].reduce(
+              (opts, subField) => ({
+                ...acc,
+                ...opts,
+                [`${field}.${subField}`]: Joi.string().description(
+                  `Filter for objects where the parameter matches the ${subField} field of the global option set ${field}.`
+                )
+              }),
+              {}
+            )
           }
-        }
-      }
-    }
-  },
-  {
-    method: 'GET',
-    path: '/reference-data/{collection}',
-    options: {
-      handler: async request => {
-        const data = await getReferenceData()
-        return data[request.params.collection] || Boom.badRequest(errors.unrecognised_colllection)
-      },
-      description: 'Retrieve a specific reference data collection',
-      notes: 'Retrieve a specific reference data collection',
-      tags: ['api', 'reference-data'],
-      validate: {
-        params: Joi.object({
-          collection: Joi.string()
-            .required()
-            .description('the collection to retrieve')
-        })
-      },
-      plugins: {
-        'hapi-swagger': {
-          responses: {
-            200: { schema: referenceDataItemListSchema },
-            400: { description: errors.unrecognised_colllection }
-          }
+          return { ...acc, [field]: Joi.string().description(`Filter for objects where the parameter matches the ${field} field`) }
+        }, {})
+      )
+    },
+    plugins: {
+      'hapi-swagger': {
+        responses: {
+          200: { schema: referenceDataItemListSchema }
         }
       }
     }
   }
-]
+}))
