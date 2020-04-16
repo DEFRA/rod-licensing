@@ -120,6 +120,8 @@ describe('The summary page', () => {
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(SUMMARY.uri)
+    const data2 = await injectWithCookie('GET', SUMMARY.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('contact amendment (email) causes redirect the summary page', async () => {
