@@ -143,11 +143,11 @@ export function retrieveGlobalOptionSets (...names) {
 /**
  * Retrieve a record from Dynamics by it's ID
  *
- * @template {T<BaseEntity>}
+ * @template T<typeof BaseEntity>
  *
- * @param {typeof T} entityType the example entity to construct a query from
+ * @param {T} entityType the example entity to construct a query from
  * @param {string} id the ID of the record to retrieve, can be a guid or an alternate key in the format Name='Value'
- * @returns {Promise<T>} an array of matching records
+ * @returns {Promise<T>} the record matching the given id or null if not found
  */
 export async function findById (entityType, id) {
   try {
@@ -166,7 +166,7 @@ export async function findById (entityType, id) {
 /**
  * Retrieve records from Dynamics which match each of the fields populated in the example entity
  *
- * @template {T<BaseEntity>}
+ * @template T<BaseEntity>
  *
  * @param {T} entity the example entity to construct a query from
  * @returns {Promise<Array<T>>} an array of matching records

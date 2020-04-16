@@ -2,20 +2,13 @@ import Joi from '@hapi/joi'
 import { createPermissionSchema, createPermissionResponseSchema } from './permission.schema.js'
 import { createOptionSetValidator } from './validators/index.js'
 
-const dataSourceValidator = Joi.string()
-  .trim()
-  .external(createOptionSetValidator('defra_datasource'))
-  .required()
-  .description('See defra_datasource for available options')
-  .example('Web Sales')
-
 export const createTransactionSchema = Joi.object({
   permissions: Joi.array()
     .min(1)
     .items(createPermissionSchema)
     .required()
     .label('create-transaction-request-permissions'),
-  dataSource: dataSourceValidator
+  dataSource: createOptionSetValidator('defra_datasource', 'Web Sales')
 }).label('create-transaction-request')
 
 export const createTransactionResponseSchema = Joi.object({
@@ -39,5 +32,15 @@ export const createTransactionResponseSchema = Joi.object({
     })
     .required()
     .label('create-transaction-response-permissions'),
-  dataSource: dataSourceValidator
+  dataSource: createOptionSetValidator('defra_datasource', 'Web Sales')
 }).label('create-transaction-response')
+
+export const completeTransactionSchema = Joi.object({
+  paymentTimestamp: Joi.string()
+    .isoDate()
+    .required()
+    .description('An ISO8601 compatible date string defining when the transaction was completed')
+    .example(new Date().toISOString()),
+  paymentSource: createOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
+  paymentMethod: createOptionSetValidator('defra_paymenttype', 'Debit card')
+}).label('complete-transaction-request')

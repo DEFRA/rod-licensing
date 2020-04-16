@@ -116,4 +116,12 @@ export class Permission extends BaseEntity {
   bindToContact (contact) {
     super._bind('defra_ContactId@odata.bind', contact)
   }
+
+  /**
+   * Associate the permission with a {@link Transaction}
+   * @param {Transaction} transaction the {@link Transaction} with which to create an association
+   */
+  bindToTransaction (transaction) {
+    super._bind('defra_Transaction@odata.bind', transaction)
+  }
 }

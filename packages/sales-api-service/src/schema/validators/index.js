@@ -1,14 +1,20 @@
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from '../../services/reference-data.service.js'
 import { findById } from '@defra-fish/dynamics-lib'
+import Joi from '@hapi/joi'
 
-export function createOptionSetValidator (optionSetName) {
-  return async value => {
-    const option = await getGlobalOptionSetValue(optionSetName, value)
-    if (!option) {
-      throw new Error(`Value provided is not a recognised ${optionSetName}`)
-    }
-    return undefined
-  }
+export function createOptionSetValidator (optionSetName, exampleValue) {
+  return Joi.string()
+    .trim()
+    .external(async value => {
+      const option = await getGlobalOptionSetValue(optionSetName, value)
+      if (!option) {
+        throw new Error(`Value provided is not a recognised ${optionSetName}`)
+      }
+      return undefined
+    })
+    .required()
+    .description(`See ${optionSetName} option-set for available options`)
+    .example(exampleValue)
 }
 
 export function createReferenceDataEntityValidator (entityType) {

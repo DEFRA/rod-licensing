@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi'
 import { newTransaction, completeTransaction, processQueue, processDlq } from '../../services/transactions.service.js'
-import { createTransactionSchema, createTransactionResponseSchema } from '../../schema/transaction.schema.js'
+import { createTransactionSchema, createTransactionResponseSchema, completeTransactionSchema } from '../../schema/transaction.schema.js'
 
 const stagingIdSchema = Joi.object({
   id: Joi.string()
@@ -52,16 +52,15 @@ export default [
       `,
       tags: ['api', 'transactions'],
       validate: {
-        params: stagingIdSchema
-        // TODO: Determine what the payment payload will be..
-        // payload: createTransactionSchema
+        params: stagingIdSchema,
+        payload: completeTransactionSchema
       },
       plugins: {
         'hapi-swagger': {
           responses: {
-            204: { description: 'Transaction accepted' },
+            200: { description: 'Transaction accepted' },
             400: { description: 'Invalid request params' },
-            404: { description: 'Transaction ID not found' },
+            404: { description: 'A transaction for the specified identifier was not found' },
             422: { description: 'The transaction completion payload was invalid' }
           },
           order: 2
@@ -84,6 +83,7 @@ export default [
         'hapi-swagger': {
           responses: {
             204: { description: 'Transaction message processed' },
+            404: { description: 'A transaction for the specified identifier was not found' },
             422: { description: 'The transaction queue processing payload was invalid' }
           },
           order: 3

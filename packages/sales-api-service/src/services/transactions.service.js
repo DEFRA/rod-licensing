@@ -1,5 +1,15 @@
-import { Permission, Permit, Concession, ConcessionProof, FulfilmentRequest, persist } from '@defra-fish/dynamics-lib'
-import { getReferenceDataForEntityAndId, getGlobalOptionSetValue } from './reference-data.service.js'
+import {
+  persist,
+  Permission,
+  Permit,
+  Concession,
+  ConcessionProof,
+  FulfilmentRequest,
+  Transaction,
+  TransactionCurrency,
+  TransactionJournal
+} from '@defra-fish/dynamics-lib'
+import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from './reference-data.service.js'
 import { calculateEndDate, generatePermissionNumber } from './permissions.service.js'
 import { resolveContactPayload } from './contacts.service.js'
 import Boom from '@hapi/boom'
@@ -34,35 +44,96 @@ export async function newTransaction (payload) {
 }
 
 export async function completeTransaction ({ id, ...payload }) {
-  debug('Received request to complete transaction %s with payload %O', id, payload)
-  await retrieveTransaction(id)
+  try {
+    debug('Received request to complete transaction %s with payload %O', id, payload)
+    const setFieldExpression = Object.keys(payload)
+      .map(k => `${k} = :${k}`)
+      .join(', ')
+    const expressionAttributeValues = Object.entries(payload).reduce(
+      (acc, [k, v]) => ({
+        ...acc,
+        [`:${k}`]: v
+      }),
+      {}
+    )
 
-  const receipt = await sqs
-    .sendMessage({
-      QueueUrl: process.env.TRANSACTIONS_QUEUE_URL,
-      MessageGroupId: 'transactions',
-      MessageDeduplicationId: id,
-      MessageBody: JSON.stringify({ id })
-    })
-    .promise()
+    const transactionRecord = await docClient
+      .update({
+        TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+        Key: { id },
+        ConditionExpression: 'attribute_exists(id)',
+        UpdateExpression: `SET ${setFieldExpression}`,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues: 'ALL_NEW'
+      })
+      .promise()
+    debug('Updated transaction record for identifier %s: %O', id, transactionRecord.Attributes)
 
-  debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
-  return receipt.MessageId
+    const receipt = await sqs
+      .sendMessage({
+        QueueUrl: process.env.TRANSACTIONS_QUEUE_URL,
+        MessageGroupId: 'transactions',
+        MessageDeduplicationId: id,
+        MessageBody: JSON.stringify({ id })
+      })
+      .promise()
+
+    debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
+    return receipt.MessageId
+  } catch (e) {
+    if (e.code === 'ConditionalCheckFailedException') {
+      throw Boom.notFound('A transaction for the specified identifier was not found')
+    }
+    throw e
+  }
 }
 
 export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
-  const transaction = await retrieveTransaction(id)
-
-  const dataSourceOptionValue = await getGlobalOptionSetValue('defra_datasource', transaction.dataSource)
   const entities = []
-  for (const { licensee, concession, permitId, referenceNumber, issueDate, startDate, endDate } of transaction.permissions) {
+  const transactionRecord = await retrieveTransaction(id)
+  debug('Retrieved transaction record for staging id %s: %O', id, transactionRecord)
+
+  // Currently only a single currency (GBP) is supported
+  const transactionCurrency = (await getReferenceDataForEntity(TransactionCurrency))[0]
+  let totalTransactionValue = 0.0
+
+  const transaction = new Transaction()
+  transaction.referenceNumber = transactionRecord.id
+  transaction.description = `Transaction for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.paymentTimestamp}`
+  transaction.timestamp = transactionRecord.paymentTimestamp
+  transaction.source = await getGlobalOptionSetValue('defra_financialtransactionsource', transactionRecord.paymentSource)
+  transaction.paymentType = await getGlobalOptionSetValue('defra_paymenttype', transactionRecord.paymentMethod)
+  transaction.bindToTransactionCurrency(transactionCurrency)
+
+  const chargeJournal = new TransactionJournal()
+  chargeJournal.referenceNumber = transactionRecord.id
+  chargeJournal.description = `Charge for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.paymentTimestamp}`
+  chargeJournal.timestamp = transactionRecord.paymentTimestamp
+  chargeJournal.type = await getGlobalOptionSetValue('defra_financialtransactiontype', 'Charge')
+  chargeJournal.bindToTransactionCurrency(transactionCurrency)
+  chargeJournal.bindToTransaction(transaction)
+
+  const paymentJournal = new TransactionJournal()
+  paymentJournal.referenceNumber = transactionRecord.id
+  paymentJournal.description = `Payment for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.paymentTimestamp}`
+  paymentJournal.timestamp = transactionRecord.paymentTimestamp
+  paymentJournal.type = await getGlobalOptionSetValue('defra_financialtransactiontype', 'Payment')
+  paymentJournal.bindToTransactionCurrency(transactionCurrency)
+  paymentJournal.bindToTransaction(transaction)
+
+  entities.push(transaction, chargeJournal, paymentJournal)
+
+  const dataSourceOptionValue = await getGlobalOptionSetValue('defra_datasource', transactionRecord.dataSource)
+  for (const { licensee, concession, permitId, referenceNumber, issueDate, startDate, endDate } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
+    totalTransactionValue += permit.cost
+
     const permission = new Permission()
     permission.referenceNumber = referenceNumber
-    permission.stagingId = transaction.id
+    permission.stagingId = transactionRecord.id
     permission.issueDate = issueDate
     permission.startDate = startDate
     permission.endDate = endDate
@@ -70,6 +141,7 @@ export async function processQueue ({ id }) {
 
     permission.bindToContact(contact)
     permission.bindToPermit(permit)
+    permission.bindToTransaction(transaction)
 
     entities.push(contact, permission)
 
@@ -96,6 +168,10 @@ export async function processQueue ({ id }) {
     }
   }
 
+  transaction.total = totalTransactionValue
+  chargeJournal.total = -totalTransactionValue
+  paymentJournal.total = totalTransactionValue
+
   debug('Persisting entities for staging id %s: %O', id, entities)
   await persist(...entities)
   // TODO: Move to staged audit table
@@ -113,7 +189,7 @@ const retrieveTransaction = async id => {
   const record = result.Item
   if (!record) {
     debug('Failed to retrieve a transaction with staging id %s', id)
-    throw Boom.notFound('A transaction for the provided identifier could not be found')
+    throw Boom.notFound('A transaction for the specified identifier was not found')
   }
   debug('Retrieved record for message with staging id %s: %O', id, record)
   return record
