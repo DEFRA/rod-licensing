@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/sales-api-service",
-  "version": "0.0.1-beta.18",
+  "version": "0.0.1-beta.19",
   "description": "Rod Licencing Sales API",
   "type": "module",
   "engines": {
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@defra-fish/business-rules-lib": "^0.0.1-beta.18",
-    "@defra-fish/dynamics-lib": "^0.0.1-beta.18",
+    "@defra-fish/dynamics-lib": "^0.0.1-beta.19",
     "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.1",
