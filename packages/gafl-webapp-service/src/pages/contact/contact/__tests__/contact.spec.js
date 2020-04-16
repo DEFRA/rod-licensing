@@ -84,7 +84,13 @@ describe('The contact preferences page', () => {
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
-  it('controller redirects to the summary page if no contact given', async () => {
+  it('an adult licence sets the contact method to letter', async () => {
+    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '11',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1951'
+    })
+    await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
@@ -92,6 +98,40 @@ describe('The contact preferences page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
+  })
+
+  it('a 1 day licence sets the contact method to none', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(SUMMARY.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
+  })
+
+  it('an 8 day licence sets the contact method to none', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(SUMMARY.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
+  })
+
+  it('controller redirects to the summary page if no contact given', async () => {
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(SUMMARY.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
 
   it('controller redirects to the newsletter page if an email is given', async () => {

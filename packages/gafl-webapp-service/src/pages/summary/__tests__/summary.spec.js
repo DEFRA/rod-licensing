@@ -147,6 +147,17 @@ describe('The summary page', () => {
     expect(data.headers.location).toBe(SUMMARY.uri)
   })
 
+  it('date of birth (senior) amendment causes redirect the summary page', async () => {
+    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '11',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1921'
+    })
+    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(SUMMARY.uri)
+  })
+
   it('date of birth amendment (no licence required) causes redirect the no licence required page', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',

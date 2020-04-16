@@ -66,4 +66,17 @@ describe('The newsletter page', () => {
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
     expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example2@email.com')
   })
+
+  it('with an email previously entered and the preferred method of contact is letter, when posting no - delete the email address', async () => {
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none', email: 'example@email.com' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.letter)
+
+    await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
+    const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload2).permissions[0].licensee.email).toBeFalsy()
+  })
 })
