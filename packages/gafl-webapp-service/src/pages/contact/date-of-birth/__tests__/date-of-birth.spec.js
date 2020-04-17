@@ -1,4 +1,5 @@
 import moment from 'moment'
+import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import {
   DATE_OF_BIRTH,
@@ -9,7 +10,6 @@ import {
   JUNIOR_LICENCE,
   CONTROLLER,
   NAME,
-  CONCESSION,
   BENEFIT_CHECK
 } from '../../../../constants.js'
 
@@ -108,7 +108,7 @@ describe('The date of birth page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob13Today.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.JUNIOR })
+    expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe('12M')
   })
 
@@ -123,7 +123,7 @@ describe('The date of birth page', () => {
     expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob16Tomorrow.format('YYYY-MM-DD'))
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.JUNIOR })
+    expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
   })
 
@@ -141,7 +141,7 @@ describe('The date of birth page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob16Today.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({})
+    expect(JSON.parse(payload).permissions[0].licensee.concessions.length).toBe(0)
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe('1D')
   })
 
@@ -159,7 +159,7 @@ describe('The date of birth page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob65Tomorrow.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({})
+    expect(JSON.parse(payload).permissions[0].licensee.concessions.length).toBe(0)
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe('1D')
   })
 
@@ -177,7 +177,7 @@ describe('The date of birth page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob65Today.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.SENIOR })
+    expect(concessionHelper.hasSenior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe('1D')
   })
 
@@ -198,7 +198,7 @@ describe('The date of birth page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob13Tomorrow.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.JUNIOR })
+    expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
   })
 
   it(`my licence starts tomorrow, my date of birth is ${dob16Tomorrow.format(
@@ -212,7 +212,7 @@ describe('The date of birth page', () => {
     expect(data.headers.location).toBe(BENEFIT_CHECK.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob16Tomorrow.format('YYYY-MM-DD'))
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({})
+    expect(JSON.parse(payload).permissions[0].licensee.concessions.length).toBe(0)
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
   })
 
@@ -230,7 +230,7 @@ describe('The date of birth page', () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob65Tomorrow.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.SENIOR })
+    expect(concessionHelper.hasSenior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe('1D')
   })
 })

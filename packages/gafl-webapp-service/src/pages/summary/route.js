@@ -1,3 +1,8 @@
+import pageRoute from '../../routes/page-route.js'
+import GetDataRedirect from '../../handlers/get-data-redirect.js'
+import getPermit from '../../processors/get-permit.js'
+import moment from 'moment'
+
 import {
   SUMMARY,
   CONTROLLER,
@@ -6,14 +11,11 @@ import {
   ADDRESS_SELECT,
   ADDRESS_LOOKUP,
   CONTACT,
-  HOW_CONTACTED,
   NEWSLETTER,
   DATE_OF_BIRTH
 } from '../../constants.js'
 
-import pageRoute from '../../routes/page-route.js'
-import GetDataRedirect from '../../handlers/get-data-redirect.js'
-import moment from 'moment'
+import { HOW_CONTACTED } from '../../processors/mapping-constants.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -38,6 +40,9 @@ const getData = async request => {
 
   status.fromSummary = true
   await request.cache().helpers.status.setCurrentPermission(status)
+
+  const permit = await getPermit(request)
+  console.log(permit)
 
   return {
     permission,

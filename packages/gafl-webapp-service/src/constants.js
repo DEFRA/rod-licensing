@@ -1,5 +1,5 @@
 /*
- * Page locations, templates and other journey constants
+ * Page locations, templates
  */
 const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
@@ -30,11 +30,14 @@ const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
 const ERROR = { uri: '/error', page: 'error' }
 
-const CONCESSION = { SENIOR: 'senior', JUNIOR: 'junior', DISABLED: 'disabled' }
+/**
+ * System constants and defaults
+ */
+const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
+const SALES_API_TIMEOUT_MS_DEFAULT = 10000
 const MAX_PERMISSIONS = 500
-const HOW_CONTACTED = { email: 'Email', text: 'Text', letter: 'Letter', none: 'Prefer not to be contacted' }
 const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
-const ADDRESS_LOOKUP_MS_DEFAULT = 10000
+const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
 const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 const REDIS_PORT_DEFAULT = 6379
 const SESSION_COOKIE_NAME_DEFAULT = 'sid'
@@ -67,10 +70,10 @@ export {
   BENEFIT_NI_NUMBER,
   BLUE_BADGE_CHECK,
   BLUE_BADGE_NUMBER,
-  CONCESSION,
+  SALES_API_URL_DEFAULT,
   ADDRESS_LOOKUP_SERVICE,
-  ADDRESS_LOOKUP_MS_DEFAULT,
-  HOW_CONTACTED,
+  ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT,
+  SALES_API_TIMEOUT_MS_DEFAULT,
   MAX_PERMISSIONS,
   PAGE_STATE,
   ERROR

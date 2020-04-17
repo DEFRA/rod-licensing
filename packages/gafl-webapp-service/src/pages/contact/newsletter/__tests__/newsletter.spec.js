@@ -1,13 +1,7 @@
-import {
-  CONTROLLER,
-  NEWSLETTER,
-  CONTACT,
-  DATE_OF_BIRTH,
-  HOW_CONTACTED,
-  LICENCE_LENGTH,
-  LICENCE_TO_START,
-  SUMMARY
-} from '../../../../constants.js'
+import { CONTROLLER, NEWSLETTER, CONTACT, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, SUMMARY } from '../../../../constants.js'
+
+import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
+
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))

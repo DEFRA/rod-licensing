@@ -1,4 +1,6 @@
-import { CONTACT, HOW_CONTACTED, CONCESSION } from '../../../constants.js'
+import { CONTACT } from '../../../constants.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
@@ -21,7 +23,7 @@ export default async request => {
       break
 
     default:
-      if (permission.licenceLength === '12M' && licensee.concession.type !== CONCESSION.JUNIOR) {
+      if (permission.licenceLength === '12M' && !concessionHelper.hasJunior(licensee)) {
         licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
         licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
       } else {

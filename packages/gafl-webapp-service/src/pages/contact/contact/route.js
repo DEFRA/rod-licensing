@@ -1,8 +1,10 @@
-import { CONTACT, CONTROLLER, CONCESSION, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../constants.js'
+import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../constants.js'
+
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -23,7 +25,7 @@ const getData = async request => {
 
   return {
     licenceLength: permission.licenceLength,
-    junior: permission.licensee.concession && permission.licensee.concession.type === CONCESSION.JUNIOR
+    junior: concessionHelper.hasJunior(permission.licensee)
   }
 }
 

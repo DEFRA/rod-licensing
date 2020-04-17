@@ -1,5 +1,6 @@
-import { CONCESSION } from '../../../constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
+// TODO Actually from the summary needs to route through the benefit checks
 export default async request => {
   const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -8,9 +9,9 @@ export default async request => {
 
   if (licensee.noLicenceRequired) {
     result = 'noLicenceRequired'
-  } else if (!licensee.concession || !licensee.concession.type || licensee.concession.type === CONCESSION.DISABLED) {
+  } else if (!concessionHelper.hasJunior(licensee) && !concessionHelper.hasSenior(licensee)) {
     result = status.fromSummary ? 'summary' : 'adult'
-  } else if (licensee.concession.type === CONCESSION.SENIOR) {
+  } else if (concessionHelper.hasSenior(licensee)) {
     result = status.fromSummary ? 'summary' : 'senior'
   } else {
     result = 'junior'

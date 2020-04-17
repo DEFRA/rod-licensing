@@ -11,9 +11,10 @@ import {
   DATE_OF_BIRTH,
   NEWSLETTER,
   NO_LICENCE_REQUIRED,
-  JUNIOR_LICENCE,
-  HOW_CONTACTED
+  JUNIOR_LICENCE
 } from '../../../constants.js'
+
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 
 import { start, stop, initialize, injectWithCookie } from '../../../__mocks__/test-utils.js'
 

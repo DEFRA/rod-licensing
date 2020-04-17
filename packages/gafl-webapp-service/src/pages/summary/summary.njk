@@ -197,6 +197,8 @@
                 {{ licenseeDetailsSummary | trim | safe }}
 
                 {{ govukButton({
+                    attributes: { id: 'continue' },
+                    preventDoubleClick: true,
                     name: "continue",
                     text: "Continue",
                     classes: "govuk-!-margin-top-5"

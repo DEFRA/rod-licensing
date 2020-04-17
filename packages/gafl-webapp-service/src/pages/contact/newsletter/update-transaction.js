@@ -1,4 +1,5 @@
-import { NEWSLETTER, HOW_CONTACTED } from '../../../constants.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { NEWSLETTER } from '../../../constants.js'
 
 /**
  * Transfer the validate page object

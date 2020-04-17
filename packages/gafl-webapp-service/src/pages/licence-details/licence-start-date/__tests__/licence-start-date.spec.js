@@ -1,5 +1,8 @@
 import { LICENCE_START_DATE, LICENCE_LENGTH, LICENCE_START_TIME, DATE_OF_BIRTH, CONTROLLER } from '../../../../constants.js'
+import * as concessionHelper from '../../../../processors/concession-helper.js'
+
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
+
 import moment from 'moment'
 
 beforeAll(d => start(d))
@@ -106,8 +109,7 @@ describe('The licence start date page', () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob13Today))
     await injectWithCookie('GET', CONTROLLER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: 'junior' })
-
+    expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
     const fdate = moment().add(5, 'days')
     const body = {
       'licence-start-date-year': fdate.year().toString(),
@@ -119,14 +121,14 @@ describe('The licence start date page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
 
     const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload2).permissions[0].licensee.concession).toEqual({})
+    expect(JSON.parse(payload2).permissions[0].licensee.concessions.length).toBe(0)
   })
 
   it('setting licence start date removes any senior concession', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Today))
     await injectWithCookie('GET', CONTROLLER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: 'senior' })
+    expect(concessionHelper.hasSenior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
 
     const fdate = moment().add(4, 'days')
     const body = {
@@ -139,6 +141,6 @@ describe('The licence start date page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
 
     const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload2).permissions[0].licensee.concession).toEqual({})
+    expect(JSON.parse(payload2).permissions[0].licensee.concessions.length).toBe(0)
   })
 })

@@ -1,5 +1,7 @@
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
-import { BENEFIT_NI_NUMBER, CONTROLLER, NAME, CONCESSION, BENEFIT_CHECK, LICENCE_LENGTH } from '../../../../constants.js'
+import { BENEFIT_NI_NUMBER, CONTROLLER, NAME, BENEFIT_CHECK } from '../../../../constants.js'
+import * as concessionHelper from '../../../../processors/concession-helper.js'
+import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -31,17 +33,10 @@ describe('The NI page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NAME.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({ type: CONCESSION.DISABLED, niNumber: '1234' })
-  })
-
-  it('the controller redirects to the journey start trying to set an NI number without a disabled concession in the transaction', async () => {
-    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].licensee.concession).toEqual({})
+    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
+    expect(JSON.parse(payload).permissions[0].licensee.concessions[0].proof).toEqual({
+      type: CONCESSION_PROOF.NI,
+      referenceNumber: '1234'
+    })
   })
 })

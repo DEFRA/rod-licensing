@@ -1,5 +1,5 @@
 import { ADDRESS_LOOKUP } from '../../../../constants.js'
-import addressLookupService from '../../../../lib/address-lookup-service.js'
+import addressLookupService from '../../../../services/address-lookup/address-lookup-service.js'
 import db from 'debug'
 import { validation } from '@defra-fish/business-rules-lib'
 const debug = db('webapp:address-lookup')

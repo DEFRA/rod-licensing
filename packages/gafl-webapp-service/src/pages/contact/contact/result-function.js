@@ -1,4 +1,4 @@
-import { HOW_CONTACTED } from '../../../constants.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 /**
  * Returns rod license type troutAndCourse or salmonAndSeaTrout
  * @param request

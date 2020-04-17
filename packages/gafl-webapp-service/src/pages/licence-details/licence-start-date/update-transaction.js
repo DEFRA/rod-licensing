@@ -1,5 +1,6 @@
 import moment from 'moment'
-import { LICENCE_START_DATE, CONCESSION } from '../../../constants.js'
+import { LICENCE_START_DATE } from '../../../constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 /**
  * Transfer the validated page object
@@ -19,9 +20,8 @@ export default async request => {
   permission.licenceStartDate = licenceStartDate
 
   // Remove any junior or senior concessions when selecting a licence start date
-  if (permission.licensee.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.licensee.concession.type)) {
-    Object.assign(permission.licensee, { concession: {} })
-  }
+  concessionHelper.removeJunior(permission.licensee)
+  concessionHelper.removeSenior(permission.licensee)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

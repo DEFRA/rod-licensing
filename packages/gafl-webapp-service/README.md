@@ -2,14 +2,16 @@
 
 ## Environment variables
 
-| name                | description                                   | required | default  | valid                         |
-| ------------------- | --------------------------------------------- | :------: | -------- | ----------------------------- |
-| NODE_ENV            | Node environment                              |    no    |          | development, test, production |
-| SESSION_COOKIE_NAME | Name of the session cookie                    |    no    | sid      |                               |
-| SESSION_TTL_MS      | Time to live for the session cookie and cache |    no    | 10800000 |                               |
-| ADDRESS_LOOKUP_URL  | Location of address lookup facade             |    no    |          |                               |
-| ADDRESS_LOOKUP_KEY  | The API key required by OS places             |    no    |          |                               |
-| ADDRESS_LOOKUP_MS   | The timeout in milliseconds for the lookup    |    no    | 10000    |                               |
+| name                      | description                                     | required | default             | valid                         |
+| ------------------------- | ----------------------------------------------- | :------: | ------------------- | ----------------------------- |
+| NODE_ENV                  | Node environment                                |    no    |                     | development, test, production |
+| SESSION_COOKIE_NAME       | Name of the session cookie                      |    no    | sid                 |                               |
+| SESSION_TTL_MS            | Time to live for the session cookie and cache   |    no    | 10800000            |                               |
+| ADDRESS_LOOKUP_URL        | Location of address lookup facade               |    no    |                     |                               |
+| ADDRESS_LOOKUP_KEY        | The API key required by OS places               |    no    |                     |                               |
+| ADDRESS_LOOKUP_TIMEOUT_MS | The timeout in milliseconds for the lookup      |    no    | 10000               |                               |
+| SALES_API_URL             | The address of the sales api                    |    no    | http://0.0.0.0:4000 |                               |
+| SALES_API_TIMEOUT_MS      | The timeout in milliseconds requests to the api |    no    | 10000               |                               |
 
 ## OS Places address lookup
 
