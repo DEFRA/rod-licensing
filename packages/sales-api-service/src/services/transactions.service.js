@@ -18,14 +18,15 @@ import AWS from './aws.js'
 import db from 'debug'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
-const TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 24
+const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 24
+const STAGING_HISTORY_TTL_DELTA = process.env.TRANSACTION_STAGING_HISTORY_TABLE_TTL || 60 * 60 * 24 * 28
 
 export async function newTransaction (payload) {
   const transactionId = uuid()
   debug('Creating new transaction %s', transactionId)
   const record = {
     id: transactionId,
-    expires: Math.floor(Date.now() / 1000) + TTL_DELTA,
+    expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA,
     ...payload
   }
 
@@ -49,13 +50,7 @@ export async function completeTransaction ({ id, ...payload }) {
     const setFieldExpression = Object.keys(payload)
       .map(k => `${k} = :${k}`)
       .join(', ')
-    const expressionAttributeValues = Object.entries(payload).reduce(
-      (acc, [k, v]) => ({
-        ...acc,
-        [`:${k}`]: v
-      }),
-      {}
-    )
+    const expressionAttributeValues = Object.entries(payload).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
 
     const transactionRecord = await docClient
       .update({
@@ -82,6 +77,7 @@ export async function completeTransaction ({ id, ...payload }) {
     return receipt.MessageId
   } catch (e) {
     if (e.code === 'ConditionalCheckFailedException') {
+      debug('Transaction for identifier %s was not found', id)
       throw Boom.notFound('A transaction for the specified identifier was not found')
     }
     throw e
@@ -174,9 +170,15 @@ export async function processQueue ({ id }) {
 
   debug('Persisting entities for staging id %s: %O', id, entities)
   await persist(...entities)
-  // TODO: Move to staged audit table
-  debug('Removing staging data for staging id %s', id)
+  debug('Moving staging data to history table for staging id %s', id)
   await docClient.delete({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Key: { id } }).promise()
+  await docClient
+    .put({
+      TableName: `${process.env.TRANSACTIONS_STAGING_TABLE}History`,
+      Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + STAGING_HISTORY_TTL_DELTA }),
+      ConditionExpression: 'attribute_not_exists(id)'
+    })
+    .promise()
 }
 
 export async function processDlq ({ id }) {

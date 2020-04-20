@@ -203,6 +203,18 @@ describe('transaction service', () => {
             Key: { id: mockRecord.id }
           })
         )
+        const expectedRecord = Object.assign(mockRecord, {
+          id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+          expires: expect.any(Number)
+        })
+
+        expect(awsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
+          expect.objectContaining({
+            TableName: `${process.env.TRANSACTIONS_STAGING_TABLE}History`,
+            Item: expectedRecord,
+            ConditionExpression: 'attribute_not_exists(id)'
+          })
+        )
       })
     })
 
