@@ -1,7 +1,7 @@
 {
-  "name": "rod-licencing",
+  "name": "rod-licensing",
   "version": "0.0.1",
-  "description": "rod licencing digital services",
+  "description": "rod licensing digital services",
   "private": true,
   "engines": {
     "node": ">=13"
@@ -15,7 +15,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
-    "url": "git://github.com/DEFRA/rod-licencing.git"
+    "url": "git://github.com/DEFRA/rod-licensing.git"
   },
   "scripts": {
     "postinstall": "npm run lerna:bootstrap",

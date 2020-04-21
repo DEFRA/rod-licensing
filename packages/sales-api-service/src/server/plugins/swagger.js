@@ -4,7 +4,7 @@ export default {
   plugin: HapiSwagger,
   options: {
     info: {
-      title: 'Rod Licencing Sales API Documentation',
+      title: 'Rod Licensing Sales API Documentation',
       version: Project.packageJson.version
     },
     grouping: 'tags',

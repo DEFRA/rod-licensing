@@ -1,26 +1,26 @@
-[![Build Status](https://img.shields.io/travis/DEFRA/rod-licencing)](https://travis-ci.org/DEFRA/rod-licencing)
+[![Build Status](https://api.travis-ci.org/DEFRA/rod-licensing.svg?branch=master)](https://travis-ci.org/DEFRA/rod-licensing)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=alert_status)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=security_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=ncloc)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=coverage)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=bugs)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=code_smells)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=coverage)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=ncloc)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=sqale_index)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licencing&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licencing)
 [![Lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
-[![Dependabot](https://api.dependabot.com/badges/status?host=github&repo=DEFRA/rod-licencing)](https://dependabot.com/)
-[![GitHub issues](https://img.shields.io/github/issues/DEFRA/rod-licencing.svg)](https://github.com/DEFRA/rod-licencing/issues/)
-[![Repo size](https://img.shields.io/github/languages/code-size/DEFRA/rod-licencing.svg)]()
-[![Repo size](https://img.shields.io/github/repo-size/DEFRA/rod-licencing.svg)]()
+[![Dependabot](https://api.dependabot.com/badges/status?host=github&repo=DEFRA/rod-licensing)](https://dependabot.com/)
+[![GitHub issues](https://img.shields.io/github/issues/DEFRA/rod-licensing.svg)](https://github.com/DEFRA/rod-licensing/issues/)
+[![Code size](https://img.shields.io/github/languages/code-size/DEFRA/rod-licensing.svg)]()
+[![Repo size](https://img.shields.io/github/repo-size/DEFRA/rod-licensing.svg)]()
 [![Licence](https://img.shields.io/badge/licence-OGLv3-blue.svg)](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3)
 
-# Rod Licencing Digital Services
+# Rod Licensing Digital Services
 
-Mono-repo for the rod licencing digital services.
+Mono-repo for the rod licensing digital services.
 
 ## Prerequisites
 
@@ -32,12 +32,12 @@ Mono-repo for the rod licencing digital services.
 Cloning via SSH from behind a firewall which blocks port 22:
 
 ```
-git clone ssh://git@ssh.github.com:443/DEFRA/rod-licencing
+git clone ssh://git@ssh.github.com:443/DEFRA/rod-licensing
 ```
 
 ## Using Lerna
 
-This project uses [Lerna](https://lerna.js.org/) to simplify the management and versioning of multiple packages which comprise the rod licencing digital
+This project uses [Lerna](https://lerna.js.org/) to simplify the management and versioning of multiple packages which comprise the rod licensing digital
 service.
 
 Running `npm install` in the root project will automatically run the `lerna bootstrap` command. The result is that any local packages which depend on
@@ -54,7 +54,7 @@ Running `lernaupdate --non-interactive --dependency "aws-sdk@latest"` will updat
 packages/
 
 - [business-rules-lib](packages/business-rules-lib/README.md)
-  > Shared business rules for the rod licencing services
+  > Shared business rules for the rod licensing services
 - [dynamics-lib](packages/dynamics-lib/README.md)
   > Framework to consume the Dynamics ODATA Web API
 - [gafl-webapp-service](packages/gafl-webapp-service/README.md)

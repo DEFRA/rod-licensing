@@ -7,51 +7,51 @@ x-common-build-options: &common-build-options
 
 services:
   ##############################################################################################################
-  # Rod licencing services base image
+  # Rod licensing services base image
   #
-  # This is not designed to be deployed but to serve as the base image for rod-licencing services.
+  # This is not designed to be deployed but to serve as the base image for rod-licensing services.
   ##############################################################################################################
-  rod-licencing-base:
-    image: rod-licencing/base:${TAG:-latest}
+  rod-licensing-base:
+    image: rod-licensing/base:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.base
 
   ##############################################################################################################
-  # rod-licencing services builder image
+  # rod-licensing services builder image
   #
-  # This is not designed to be deployed but to serve as the base image for building rod-licencing services.
+  # This is not designed to be deployed but to serve as the base image for building rod-licensing services.
   # Provides additional libraries for the build process not required at runtime.
   ##############################################################################################################
-  rod-licencing-builder:
-    image: rod-licencing/builder:${TAG:-latest}
+  rod-licensing-builder:
+    image: rod-licensing/builder:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.build
 
   ##############################################################################################################
-  # rod-licencing webapp
+  # rod-licensing webapp
   ##############################################################################################################
   webapp:
-    image: rod-licencing/webapp:${TAG:-latest}
+    image: rod-licensing/webapp:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/gafl-webapp-service/${PROJECT_DOCKERFILE:-Dockerfile}
 
   ##############################################################################################################
-  # rod-licencing sales_api
+  # rod-licensing sales_api
   ##############################################################################################################
   sales_api:
-    image: rod-licencing/sales_api:${TAG:-latest}
+    image: rod-licensing/sales_api:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/sales-api-service/${PROJECT_DOCKERFILE:-Dockerfile}
 
   ##############################################################################################################
-  # rod-licencing sqs_receiver
+  # rod-licensing sqs_receiver
   ##############################################################################################################
   sqs_receiver:
-    image: rod-licencing/sqs_receiver:${TAG:-latest}
+    image: rod-licensing/sqs_receiver:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/sqs-receiver-service/${PROJECT_DOCKERFILE:-Dockerfile}

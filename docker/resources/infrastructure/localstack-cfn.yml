@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Cloudformation template to create infrastructure for the rod licencing digital services (local development only)
+Description: Cloudformation template to create infrastructure for the rod licensing digital services (local development only)
 Resources:
   CrmStaging:
     Type: AWS::DynamoDB::Table
