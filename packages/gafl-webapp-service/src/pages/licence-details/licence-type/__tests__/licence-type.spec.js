@@ -1,4 +1,5 @@
 import { LICENCE_TYPE, CONTROLLER } from '../../../../constants.js'
+import * as mappings from '../../../../processors/mapping-constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
 
@@ -26,8 +27,8 @@ describe('The licence type page', () => {
   })
 
   each([
-    ['salmon and sea trout', 'salmon-and-sea-trout'],
-    ['trout and coarse', 'trout-and-coarse']
+    ['Salmon and sea trout', 'salmon-and-sea-trout'],
+    ['Trout and coarse', 'trout-and-coarse']
   ]).it('stores the transaction on successful submission of %s', async (desc, code) => {
     const data = await injectWithCookie('POST', LICENCE_TYPE.uri, { 'licence-type': code })
 
@@ -39,6 +40,6 @@ describe('The licence type page', () => {
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
 
-    expect(JSON.parse(payload).permissions[0].licenceType).toBe(code)
+    expect(JSON.parse(payload).permissions[0].licenceType).toBe(mappings.LICENCE_TYPE[code])
   })
 })

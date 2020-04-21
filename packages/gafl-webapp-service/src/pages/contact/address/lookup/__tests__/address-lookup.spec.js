@@ -1,9 +1,15 @@
 import { ADDRESS_LOOKUP, ADDRESS_SELECT, CONTROLLER, ADDRESS_ENTRY } from '../../../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../../__mocks__/test-utils.js'
+import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
+import searchResultsOne from '../../../../../services/address-lookup/__mocks__/data/search-results-one'
+import searchResultsNone from '../../../../../services/address-lookup/__mocks__/data/search-results-none'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+
+jest.mock('node-fetch')
+const fetch = require('node-fetch')
 
 describe('The address lookup page', () => {
   it('returns success on requesting', async () => {
@@ -44,6 +50,9 @@ describe('The address lookup page', () => {
   it('on finding list of multiple found addresses redirects to the select page', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
+
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany })))
+
     await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
@@ -53,8 +62,12 @@ describe('The address lookup page', () => {
   it('on finding list of a single found address redirects to the select page', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
+
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne })))
+
     await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
+
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_SELECT.uri)
   })
@@ -62,6 +75,9 @@ describe('The address lookup page', () => {
   it('redirects to the entry page where there is no result', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
+
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsNone })))
+
     await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
@@ -71,6 +87,9 @@ describe('The address lookup page', () => {
   it('redirects to the entry page where there an exception thrown in the address lookup request', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
+
+    fetch.mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error('Fetch error'))))
+
     await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)

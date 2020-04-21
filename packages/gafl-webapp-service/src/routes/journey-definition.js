@@ -100,6 +100,9 @@ export default [
       adult: {
         page: BENEFIT_CHECK.uri
       },
+      adultNoBenefitCheck: {
+        page: NAME.uri
+      },
       junior: {
         page: JUNIOR_LICENCE.uri
       },
@@ -144,6 +147,9 @@ export default [
     nextPage: {
       ok: {
         page: NAME.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -156,6 +162,9 @@ export default [
       },
       yes: {
         page: BLUE_BADGE_NUMBER.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -165,6 +174,9 @@ export default [
     nextPage: {
       ok: {
         page: NAME.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },
@@ -174,6 +186,9 @@ export default [
     nextPage: {
       ok: {
         page: NAME.uri
+      },
+      summary: {
+        page: SUMMARY.uri
       }
     }
   },

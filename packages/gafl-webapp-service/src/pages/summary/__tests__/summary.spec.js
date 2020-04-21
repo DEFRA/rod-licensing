@@ -1,3 +1,11 @@
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import mockPermits from '../../../services/sales-api/__mocks__/data/permits.js'
+import mockPermitsConcessions from '../../../services/sales-api/__mocks__/data/permit-concessions.js'
+import mockConcessions from '../../../services/sales-api/__mocks__/data/concessions.js'
+import searchResultsOne from '../../../services/address-lookup/__mocks__/data/search-results-one'
+
+import { start, stop, initialize, injectWithCookie } from '../../../__mocks__/test-utils.js'
+
 import {
   SUMMARY,
   NAME,
@@ -7,6 +15,8 @@ import {
   ADDRESS_SELECT,
   CONTACT,
   LICENCE_LENGTH,
+  LICENCE_TYPE,
+  NUMBER_OF_RODS,
   LICENCE_TO_START,
   DATE_OF_BIRTH,
   NEWSLETTER,
@@ -14,9 +24,8 @@ import {
   JUNIOR_LICENCE
 } from '../../../constants.js'
 
-import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-
-import { start, stop, initialize, injectWithCookie } from '../../../__mocks__/test-utils.js'
+jest.mock('node-fetch')
+const fetch = require('node-fetch')
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -32,17 +41,51 @@ const goodAddress = {
 }
 
 describe('The summary page', () => {
-  it('redirects to the name page if no name is set', async () => {
+  it('redirects to the licence length page if length is set', async () => {
     const data = await injectWithCookie('GET', SUMMARY.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 
-  it('redirects to the name page if an invalid name has been posted', async () => {
-    await injectWithCookie('POST', NAME.uri, {
-      'last-name': 'OK',
-      'first-name': '%%%%'
+  it('redirects to the licence type page if no licence type is set', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_TYPE.uri)
+  })
+
+  it('redirects to the licence type page if the number of rods is not set', async () => {
+    await injectWithCookie('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_TYPE.uri)
+  })
+
+  it('redirects to the licence start date if it is not set', async () => {
+    await injectWithCookie('POST', NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_TO_START.uri)
+  })
+
+  it('redirects to the date of birth page if no dob has been set', async () => {
+    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await injectWithCookie('GET', SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
+  })
+
+  it('redirects to the name page if no name has been set', async () => {
+    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '11',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1951'
     })
+    await injectWithCookie('GET', CONTROLLER.uri)
     const data = await injectWithCookie('GET', SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NAME.uri)
@@ -59,37 +102,24 @@ describe('The summary page', () => {
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })
 
-  it('redirects to the contact page if nocontact details have been set', async () => {
-    process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
-    process.env.ADDRESS_LOOKUP_KEY = 'bar'
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
+  it('redirects to the contact page if no contact details have been set', async () => {
+    await injectWithCookie('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('GET', ADDRESS_SELECT.uri)
-    await injectWithCookie('POST', ADDRESS_SELECT.uri, { address: '5' })
     const data = await injectWithCookie('GET', SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
-  it('redirects to the date of birth page if no dob has been set', async () => {
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
-  })
-
   it('responds with summary page if all necessary pages have been completed', async () => {
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
     await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1951'
-    })
-    await injectWithCookie('GET', CONTROLLER.uri)
+
+    // Mock the response from the API
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
     const data = await injectWithCookie('GET', SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
@@ -107,6 +137,7 @@ describe('The summary page', () => {
   it('address lookup amendment causes redirect the summary page', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne })))
     await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('GET', ADDRESS_SELECT.uri)

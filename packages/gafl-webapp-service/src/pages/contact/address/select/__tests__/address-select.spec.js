@@ -1,9 +1,13 @@
 import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP, CONTROLLER } from '../../../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../../__mocks__/test-utils.js'
+import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+
+jest.mock('node-fetch')
+const fetch = require('node-fetch')
 
 describe('The address select page', () => {
   it('returns success on requesting', async () => {
@@ -26,6 +30,9 @@ describe('The address select page', () => {
   it('the controller redirects to the contact page after success', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
+
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany })))
+
     await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('GET', ADDRESS_SELECT.uri)
