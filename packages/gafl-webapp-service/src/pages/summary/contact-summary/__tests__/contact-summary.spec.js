@@ -1,13 +1,13 @@
-import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-import mockPermits from '../../../services/sales-api/__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../services/sales-api/__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../services/sales-api/__mocks__/data/concessions.js'
-import searchResultsOne from '../../../services/address-lookup/__mocks__/data/search-results-one'
+import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
+import mockPermits from '../../../../services/sales-api/__mocks__/data/permits.js'
+import mockPermitsConcessions from '../../../../services/sales-api/__mocks__/data/permit-concessions.js'
+import mockConcessions from '../../../../services/sales-api/__mocks__/data/concessions.js'
+import searchResultsOne from '../../../../services/address-lookup/__mocks__/data/search-results-one'
 
-import { start, stop, initialize, injectWithCookie } from '../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 
 import {
-  SUMMARY,
+  CONTACT_SUMMARY,
   NAME,
   CONTROLLER,
   ADDRESS_ENTRY,
@@ -22,7 +22,7 @@ import {
   NEWSLETTER,
   NO_LICENCE_REQUIRED,
   JUNIOR_LICENCE
-} from '../../../constants.js'
+} from '../../../../constants.js'
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
@@ -41,40 +41,10 @@ const goodAddress = {
 }
 
 describe('The summary page', () => {
-  it('redirects to the licence length page if length is set', async () => {
-    const data = await injectWithCookie('GET', SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
-  })
-
-  it('redirects to the licence type page if no licence type is set', async () => {
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_TYPE.uri)
-  })
-
-  it('redirects to the licence type page if the number of rods is not set', async () => {
-    await injectWithCookie('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_TYPE.uri)
-  })
-
-  it('redirects to the licence start date if it is not set', async () => {
-    await injectWithCookie('POST', NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_TO_START.uri)
-  })
-
   it('redirects to the date of birth page if no dob has been set', async () => {
     await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
@@ -86,7 +56,7 @@ describe('The summary page', () => {
       'date-of-birth-year': '1951'
     })
     await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NAME.uri)
   })
@@ -97,7 +67,7 @@ describe('The summary page', () => {
       'first-name': 'Willis'
     })
     await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })
@@ -105,7 +75,7 @@ describe('The summary page', () => {
   it('redirects to the contact page if no contact details have been set', async () => {
     await injectWithCookie('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', SUMMARY.uri)
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
@@ -120,7 +90,7 @@ describe('The summary page', () => {
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
 
-    const data = await injectWithCookie('GET', SUMMARY.uri)
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -131,7 +101,7 @@ describe('The summary page', () => {
     })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('address lookup amendment causes redirect the summary page', async () => {
@@ -144,15 +114,15 @@ describe('The summary page', () => {
     await injectWithCookie('POST', ADDRESS_SELECT.uri, { address: '0' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('address entry amendment causes redirect the summary page', async () => {
     await injectWithCookie('POST', ADDRESS_ENTRY.uri, goodAddress)
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
-    const data2 = await injectWithCookie('GET', SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    const data2 = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data2.statusCode).toBe(200)
   })
 
@@ -160,14 +130,14 @@ describe('The summary page', () => {
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('newsletter amendment causes redirect the summary page', async () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('date of birth amendment causes redirect the summary page', async () => {
@@ -178,7 +148,7 @@ describe('The summary page', () => {
     })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('date of birth (senior) amendment causes redirect the summary page', async () => {
@@ -189,7 +159,7 @@ describe('The summary page', () => {
     })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('date of birth amendment (no licence required) causes redirect the no licence required page', async () => {
@@ -215,7 +185,7 @@ describe('The summary page', () => {
     await injectWithCookie('POST', JUNIOR_LICENCE.uri, {})
     data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('date of birth amendment (junior) causes a method of contact of letter to be set no none', async () => {

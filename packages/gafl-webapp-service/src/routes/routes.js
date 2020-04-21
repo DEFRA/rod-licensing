@@ -5,7 +5,8 @@ import licenceToStart from '../pages/licence-details/licence-to-start/route.js'
 import licenceStartDate from '../pages/licence-details/licence-start-date/route.js'
 import licenceStartTime from '../pages/licence-details/licence-start-time/route.js'
 
-import summary from '../pages/summary/route.js'
+import contactSummary from '../pages/summary/contact-summary/route.js'
+import licenceSummary from '../pages/summary/licence-summary/route.js'
 
 import dateOfBirth from '../pages/contact/date-of-birth/route.js'
 import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
@@ -51,7 +52,8 @@ const routes = [
   ...addressEntry,
   ...contact,
   ...newsletter,
-  ...summary,
+  ...contactSummary,
+  ...licenceSummary,
   ...error,
   controller,
   newTransactionRoute,

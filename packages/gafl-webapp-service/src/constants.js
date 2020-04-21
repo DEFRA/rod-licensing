@@ -24,7 +24,9 @@ const ADDRESS_ENTRY = { uri: '/buy/address', page: 'address-entry' }
 const CONTACT = { uri: '/buy/contact', page: 'contact' }
 const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 
-const SUMMARY = { uri: '/buy/summary', page: 'summary' }
+const CONTACT_SUMMARY = { uri: '/buy/contact-summary', page: 'contact-summary' }
+const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-summary' }
+
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
@@ -62,7 +64,8 @@ export {
   ADDRESS_ENTRY,
   CONTACT,
   NEWSLETTER,
-  SUMMARY,
+  CONTACT_SUMMARY,
+  LICENCE_SUMMARY,
   CONTROLLER,
   NEW_TRANSACTION,
   ADD_PERMISSION,

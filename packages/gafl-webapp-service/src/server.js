@@ -75,7 +75,6 @@ const init = async () => {
   const sessionCookieName = process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
 
   const sessionCookieOptions = {
-    ttl: process.env.SESSION_TTL_MS || SESSION_TTL_MS_DEFAULT, // Expire after 3 hours by default
     isSecure: process.env.NODE_ENV !== 'development',
     isHttpOnly: process.env.NODE_ENV !== 'development',
     encoding: 'base64json',

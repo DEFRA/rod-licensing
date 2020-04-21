@@ -15,6 +15,10 @@ export default async request => {
 
   if (permission.licenceType === constants.LICENCE_TYPE['salmon-and-sea-trout']) {
     permission.numberOfRods = '1'
+  } else {
+    // If we toggle in the summary page between licence type we may end up with a 1 rod on
+    // a trout and coarse which is not allowed
+    permission.numberOfRods = '2'
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
