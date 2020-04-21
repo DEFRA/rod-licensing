@@ -1,27 +1,37 @@
 import each from 'jest-each'
-import { newTransaction, completeTransaction, processQueue, processDlq } from '../transactions.service.js'
-import { ConcessionProof, Contact, FulfilmentRequest, Permission, Transaction, TransactionJournal } from '@defra-fish/dynamics-lib'
+import { createTransaction, finaliseTransaction, processQueue, processDlq } from '../transactions.service.js'
+import {
+  ConcessionProof,
+  Contact,
+  FulfilmentRequest,
+  Permission,
+  RecurringPayment,
+  RecurringPaymentInstruction,
+  Transaction,
+  TransactionJournal
+} from '@defra-fish/dynamics-lib'
 import {
   mockTransactionPayload,
   mockTransactionRecord,
   mockCompletedTransactionRecord,
   MOCK_PERMISSION_NUMBER,
   MOCK_END_DATE,
-  MOCK_NEW_CONTACT_ENTITY,
   MOCK_1DAY_SENIOR_PERMIT,
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_CONCESSION,
-  MOCK_TRANSACTION_CURRENCY
-} from '../../../__mocks__/test-data.js'
+  MOCK_TRANSACTION_CURRENCY,
+  mockContactPayload,
+  MOCK_EXISTING_CONTACT_ENTITY
+} from '../../../../__mocks__/test-data.js'
 const awsMock = require('aws-sdk').default
 
-jest.mock('../permissions.service.js', () => ({
+jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
   calculateEndDate: () => MOCK_END_DATE
 }))
 
-jest.mock('../reference-data.service.js', () => ({
-  ...jest.requireActual('../reference-data.service.js'),
+jest.mock('../../reference-data.service.js', () => ({
+  ...jest.requireActual('../../reference-data.service.js'),
   getReferenceDataForEntity: async entityType => {
     if (entityType === MOCK_TRANSACTION_CURRENCY.constructor) {
       return [MOCK_TRANSACTION_CURRENCY]
@@ -48,15 +58,15 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
   persist: jest.fn()
 }))
 
-jest.mock('../contacts.service.js', () => ({
-  ...jest.requireActual('../contacts.service.js'),
-  resolveContactPayload: async () => MOCK_NEW_CONTACT_ENTITY
+jest.mock('../../contacts.service.js', () => ({
+  ...jest.requireActual('../../contacts.service.js'),
+  resolveContactPayload: async () => MOCK_EXISTING_CONTACT_ENTITY
 }))
 
 describe('transaction service', () => {
   beforeEach(awsMock.__resetAll)
 
-  describe('newTransaction', () => {
+  describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
       awsMock.DynamoDB.DocumentClient.__setResponse('put', {})
 
@@ -66,7 +76,7 @@ describe('transaction service', () => {
       })
 
       process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
-      const result = await newTransaction(mockTransactionPayload())
+      const result = await createTransaction(mockTransactionPayload())
       expect(result).toMatchObject(expectedRecord)
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
         expect.objectContaining({
@@ -79,11 +89,11 @@ describe('transaction service', () => {
 
     it('throws exceptions back up the stack', async () => {
       awsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
-      await expect(newTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+      await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })
 
-  describe('completeTransaction', () => {
+  describe('finaliseTransaction', () => {
     it('enqueues a message to sqs', async () => {
       const mockRecord = mockTransactionRecord()
       awsMock.DynamoDB.DocumentClient.__setResponse('update', { Attributes: {} })
@@ -101,7 +111,7 @@ describe('transaction service', () => {
         .join(', ')
       const expressionAttributeValues = Object.entries(completionFields).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
 
-      const result = await completeTransaction({ id: mockRecord.id, ...completionFields })
+      const result = await finaliseTransaction({ id: mockRecord.id, ...completionFields })
       expect(result).toBe('Test_Message')
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
         expect.objectContaining({
@@ -128,7 +138,7 @@ describe('transaction service', () => {
         Object.assign(new Error('Test'), { code: 'ConditionalCheckFailedException' })
       )
       try {
-        await completeTransaction({ id: 'not_found' })
+        await finaliseTransaction({ id: 'not_found' })
       } catch (e) {
         expect(e.message).toEqual('A transaction for the specified identifier was not found')
         expect(e.output.statusCode).toEqual(404)
@@ -137,20 +147,12 @@ describe('transaction service', () => {
 
     it('throws exceptions back up the stack', async () => {
       awsMock.DynamoDB.DocumentClient.__throwWithErrorOn('update')
-      await expect(completeTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+      await expect(finaliseTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
-      const commonEntityExpectations = [
-        expect.any(Transaction),
-        expect.any(TransactionJournal),
-        expect.any(TransactionJournal),
-        expect.any(Contact),
-        expect.any(Permission)
-      ]
-
       each([
         [
           'short term licences',
@@ -159,7 +161,14 @@ describe('transaction service', () => {
             mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT.id
             return mockRecord
           },
-          [...commonEntityExpectations, expect.any(ConcessionProof)]
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(ConcessionProof)
+          ]
         ],
         [
           'long term licences',
@@ -168,7 +177,15 @@ describe('transaction service', () => {
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             return mockRecord
           },
-          [...commonEntityExpectations, expect.any(ConcessionProof), expect.any(FulfilmentRequest)]
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(ConcessionProof),
+            expect.any(FulfilmentRequest)
+          ]
         ],
         [
           'long term licences (no concession)',
@@ -178,7 +195,39 @@ describe('transaction service', () => {
             delete mockRecord.permissions[0].concession
             return mockRecord
           },
-          [...commonEntityExpectations, expect.any(FulfilmentRequest)]
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(FulfilmentRequest)
+          ]
+        ],
+        [
+          'licences with a recurring payment',
+          () => {
+            const mockRecord = mockCompletedTransactionRecord()
+            mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
+            mockRecord.recurringPayment = {
+              referenceNumber: 'Test Reference Number',
+              mandate: 'Test Mandate',
+              contact: Object.assign(mockContactPayload(), { firstName: 'Esther' })
+            }
+            return mockRecord
+          },
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(RecurringPayment),
+            expect.any(Contact),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(RecurringPaymentInstruction),
+            expect.any(ConcessionProof),
+            expect.any(FulfilmentRequest)
+          ]
         ]
       ]).it('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
         const mockRecord = initialiseMockTransactionRecord()

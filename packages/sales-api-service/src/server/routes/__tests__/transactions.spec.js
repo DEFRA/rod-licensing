@@ -1,8 +1,8 @@
 import initialiseServer from '../../index.js'
 import { mockTransactionPayload, mockTransactionRecord } from '../../../../__mocks__/test-data.js'
-jest.mock('../../../services/transactions.service.js', () => ({
-  newTransaction: jest.fn(async () => mockTransactionRecord()),
-  completeTransaction: jest.fn(async () => 'COMPLETE_TRANSACTION_RESULT'),
+jest.mock('../../../services/transactions/transactions.service.js', () => ({
+  createTransaction: jest.fn(async () => mockTransactionRecord()),
+  finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),
   processQueue: jest.fn(async () => {}),
   processDlq: jest.fn(async () => {})
 }))
@@ -39,7 +39,7 @@ describe('transaction handler', () => {
   })
 
   describe('postNewTransaction', () => {
-    it('calls newTransaction on the transaction service', async () => {
+    it('calls createTransaction on the transaction service', async () => {
       const result = await server.inject({ method: 'POST', url: '/transactions', payload: mockTransactionPayload() })
       expect(result.statusCode).toBe(201)
       expect(JSON.parse(result.payload)).toMatchObject(mockTransactionRecord())
@@ -50,14 +50,14 @@ describe('transaction handler', () => {
     })
   })
   describe('patchTransaction', () => {
-    it('calls completeTransaction on the transaction service', async () => {
+    it('calls finaliseTransaction on the transaction service', async () => {
       const result = await server.inject({
         method: 'PATCH',
         url: '/transactions/test',
         payload: { paymentSource: 'Gov Pay', paymentMethod: 'Debit card', paymentTimestamp: new Date().toISOString() }
       })
       expect(result.statusCode).toBe(200)
-      expect(result.payload).toBe('COMPLETE_TRANSACTION_RESULT')
+      expect(result.payload).toBe('FINALISE_TRANSACTION_RESULT')
     })
     it('throws 422 errors if the payload schema fails validation', async () => {
       const result = await server.inject({ method: 'PATCH', url: '/transactions/test', payload: {} })
