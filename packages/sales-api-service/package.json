@@ -4,7 +4,7 @@
   "description": "Rod Licensing Sales API",
   "type": "module",
   "engines": {
-    "node": ">=13"
+    "node": ">=14"
   },
   "keywords": [
     "rod",
@@ -42,11 +42,11 @@
     "@hapi/inert": "^6.0.1",
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
-    "aws-sdk": "^2.656.0",
+    "aws-sdk": "^2.661.0",
     "crypto-random-string": "^3.2.0",
     "debug": "^4.1.1",
     "dot-prop": "^5.2.0",
-    "hapi-and-healthy": "^7.0.6",
+    "hapi-and-healthy": "^7.0.7",
     "hapi-swagger": "^13.0.0",
     "uuid": "^7.0.3"
   }

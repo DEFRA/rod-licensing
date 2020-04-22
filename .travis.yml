@@ -2,7 +2,7 @@ os: linux
 dist: bionic
 language: node_js
 node_js:
-  - '13'
+  - '14'
 cache: npm
 git:
   depth: false
