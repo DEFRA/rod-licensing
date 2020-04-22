@@ -1,7 +1,7 @@
 ####################################################################################################################################
 # Build stage 1 - Create a distribution of the project which we can copy in the second build stage.
 ####################################################################################################################################
-FROM rod-licencing/builder AS builder
+FROM rod-licensing/builder AS builder
 WORKDIR /app
 
 # Install app dependencies
@@ -14,7 +14,7 @@ COPY packages/sales-api-service/ /app
 ####################################################################################################################################
 # Build stage 2 - Using the distribution from stage 1, build the final docker image with a minimal number of layers.
 ####################################################################################################################################
-FROM rod-licencing/base
+FROM rod-licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 

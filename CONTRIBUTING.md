@@ -20,7 +20,7 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 In short, when you submit code changes, your submissions are understood to be under the same
 [OGLv3 License](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3) that covers the project.
 
-## Report bugs using Github's [issues](https://github.com/DEFRA/rod-licencing/issues)
+## Report bugs using Github's [issues](https://github.com/DEFRA/rod-licensing/issues)
 
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue]()
 

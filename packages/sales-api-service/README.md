@@ -1,6 +1,6 @@
-# Rod Licencing - Sales API
+# Rod Licensing - Sales API
 
-The Rod Licencing Sales API is responsible for communication with Microsoft Dynamics, processing sales from each of the sales channels and managing reference data.
+The Rod Licensing Sales API is responsible for communication with Microsoft Dynamics, processing sales from each of the sales channels and managing reference data.
 
 # Environment variables
 
