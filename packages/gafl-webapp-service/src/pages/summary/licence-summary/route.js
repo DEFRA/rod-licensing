@@ -40,7 +40,7 @@ const getData = async request => {
     throw new GetDataRedirect(LICENCE_TO_START.uri)
   }
 
-  status.fromSummary = true
+  status.fromSummary = status.fromSummary || 'licence-summary'
   await request.cache().helpers.status.setCurrentPermission(status)
 
   await findPermit(permission, request)

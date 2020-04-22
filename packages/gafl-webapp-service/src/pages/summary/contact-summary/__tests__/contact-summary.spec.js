@@ -38,7 +38,7 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
-describe('The summary page', () => {
+describe('The contact summary page', () => {
   it('redirects to the date of birth page if no dob has been set', async () => {
     await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await injectWithCookie('GET', CONTROLLER.uri)
@@ -141,14 +141,14 @@ describe('The summary page', () => {
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
-  it('newsletter amendment causes redirect the summary page', async () => {
+  it('newsletter amendment causes redirect the contact summary page', async () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
-  it('date of birth amendment causes redirect the summary page', async () => {
+  it('date of birth amendment causes redirect the licence summary page', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
@@ -156,21 +156,33 @@ describe('The summary page', () => {
     })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
-  it('date of birth (senior) amendment causes redirect the summary page', async () => {
+  it('date of birth (senior) amendment causes redirect the licence summary page and then the contact summary page', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
       'date-of-birth-year': '1921'
     })
+
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
+    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookie('POST', LICENCE_SUMMARY.uri)
+
+    const data2 = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
-  it('date of birth amendment (no licence required) causes redirect the no licence required page', async () => {
+  it('date of birth amendment (no licence required) causes a redirect to the no licence required page', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
@@ -179,9 +191,21 @@ describe('The summary page', () => {
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
+
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookie('POST', LICENCE_SUMMARY.uri)
+
+    const data2 = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
-  it('date of birth amendment (junior) causes redirect the junior licence page and subsequent redirect to the summary page', async () => {
+  it('date of birth amendment (junior) causes redirect to the junior licence page and subsequent redirect to the licence summary page and then the contact summary page', async () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
@@ -193,7 +217,14 @@ describe('The summary page', () => {
     await injectWithCookie('POST', JUNIOR_LICENCE.uri, {})
     data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
+
+    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookie('POST', LICENCE_SUMMARY.uri)
+
+    const data2 = await injectWithCookie('GET', CONTROLLER.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('date of birth amendment (junior) causes a method of contact of letter to be set no none', async () => {

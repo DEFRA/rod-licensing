@@ -44,7 +44,7 @@ const getData = async request => {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
-  status.fromSummary = true
+  status.fromSummary = 'contact-summary'
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
 

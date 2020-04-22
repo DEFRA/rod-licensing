@@ -18,6 +18,7 @@ import {
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
   CONTACT,
+  LICENCE_SUMMARY,
   NAME
 } from '../constants.js'
 
@@ -38,6 +39,7 @@ import name from '../pages/contact/name/result-function.js'
 import addressLookup from '../pages/contact/address/lookup/result-function.js'
 import addressSelect from '../pages/contact/address/select/result-function.js'
 import addressEntry from '../pages/contact/address/entry/result-function.js'
+import licenceSummary from '../pages/summary/licence-summary/result-function.js'
 
 /**
  * The result function determines the navigation in the route definition
@@ -50,7 +52,7 @@ export default {
   [NUMBER_OF_RODS.page]: numberOfRods,
   [LICENCE_TO_START.page]: licenceToStart,
   [LICENCE_START_DATE.page]: licenceStartDate,
-  [LICENCE_START_TIME.page] : licenceStartTime,
+  [LICENCE_START_TIME.page]: licenceStartTime,
   [BENEFIT_CHECK.page]: benefitCheck,
   [BENEFIT_NI_NUMBER.page]: benefitNiNumber,
   [BLUE_BADGE_CHECK.page]: blueBadgeCheck,
@@ -59,5 +61,6 @@ export default {
   [ADDRESS_ENTRY.page]: addressEntry,
   [ADDRESS_SELECT.page]: addressSelect,
   [CONTACT.page]: contact,
-  [NAME.page]: name
+  [NAME.page]: name,
+  [LICENCE_SUMMARY.page]: licenceSummary
 }

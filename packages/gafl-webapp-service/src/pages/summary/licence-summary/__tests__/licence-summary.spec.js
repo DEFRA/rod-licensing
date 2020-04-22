@@ -13,8 +13,12 @@ import {
   LICENCE_TO_START,
   BENEFIT_CHECK,
   BENEFIT_NI_NUMBER,
-  BLUE_BADGE_CHECK
+  BLUE_BADGE_CHECK,
+  BLUE_BADGE_NUMBER,
+  LICENCE_START_DATE,
+  LICENCE_START_TIME
 } from '../../../../constants.js'
+import moment from 'moment'
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
@@ -68,7 +72,21 @@ describe('The licence summary page', () => {
     expect(data.statusCode).toBe(200)
   })
 
+  it('licence length causes a redirect to the summary page', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
   it('concession (NI) amendments cause a redirect to the summary page', async () => {
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
     await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('POST', BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
@@ -87,6 +105,50 @@ describe('The licence summary page', () => {
     await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
     await injectWithCookie('GET', CONTROLLER.uri)
     await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', BLUE_BADGE_NUMBER.uri, { 'blue-badge-number': '1234' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('number of rod amendments cause a redirect to the summary page', async () => {
+    await injectWithCookie('POST', NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('changing the start time causes an eventual redirect back to the summary page', async () => {
+    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
+    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
+    const fdate = moment().add(5, 'days')
+    const body = {
+      'licence-start-date-year': fdate.year().toString(),
+      'licence-start-date-month': (fdate.month() + 1).toString(),
+      'licence-start-date-day': fdate.date().toString()
+    }
+    await injectWithCookie('POST', LICENCE_START_DATE.uri, body)
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', LICENCE_START_TIME.uri, { 'licence-start-time': '14' })
     await injectWithCookie('GET', CONTROLLER.uri)
 
     fetch

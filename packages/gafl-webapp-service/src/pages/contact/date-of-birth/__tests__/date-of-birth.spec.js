@@ -9,7 +9,7 @@ import {
   NO_LICENCE_REQUIRED,
   JUNIOR_LICENCE,
   CONTROLLER,
-  NAME,
+  LICENCE_SUMMARY,
   BENEFIT_CHECK
 } from '../../../../constants.js'
 
@@ -137,7 +137,7 @@ describe('The date of birth page', () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob16Today))
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob16Today.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
@@ -155,7 +155,7 @@ describe('The date of birth page', () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Tomorrow))
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob65Tomorrow.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
@@ -173,7 +173,7 @@ describe('The date of birth page', () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Today))
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob65Today.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()
@@ -226,7 +226,7 @@ describe('The date of birth page', () => {
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Tomorrow))
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.birthDate).toBe(dob65Tomorrow.format('YYYY-MM-DD'))
     expect(JSON.parse(payload).permissions[0].licensee.noLicenceRequired).not.toBeTruthy()

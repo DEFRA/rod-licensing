@@ -120,19 +120,19 @@ export default [
         page: BENEFIT_CHECK.uri
       },
       adultNoBenefitCheck: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       junior: {
         page: JUNIOR_LICENCE.uri
       },
       senior: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       noLicenceRequired: {
         page: NO_LICENCE_REQUIRED.uri
       },
       summary: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -141,10 +141,10 @@ export default [
     currentPage: JUNIOR_LICENCE.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       summary: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -165,7 +165,7 @@ export default [
     currentPage: BENEFIT_NI_NUMBER.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       summary: {
         page: LICENCE_SUMMARY.uri
@@ -177,7 +177,7 @@ export default [
     currentPage: BLUE_BADGE_CHECK.page,
     nextPage: {
       no: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       yes: {
         page: BLUE_BADGE_NUMBER.uri
@@ -192,7 +192,7 @@ export default [
     currentPage: BENEFIT_NI_NUMBER.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       summary: {
         page: LICENCE_SUMMARY.uri
@@ -204,10 +204,22 @@ export default [
     currentPage: BLUE_BADGE_NUMBER.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       summary: {
         page: LICENCE_SUMMARY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: LICENCE_SUMMARY.page,
+    nextPage: {
+      ok: {
+        page: NAME.uri
+      },
+      summary: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
@@ -267,7 +279,7 @@ export default [
         page: NEWSLETTER.uri
       },
       no: {
-        page: LICENCE_SUMMARY.uri
+        page: CONTACT_SUMMARY.uri
       },
       summary: {
         page: CONTACT_SUMMARY.uri
@@ -279,16 +291,7 @@ export default [
     currentPage: NEWSLETTER.page,
     nextPage: {
       ok: {
-        page: LICENCE_SUMMARY.uri
-      }
-    }
-  },
-
-  {
-    currentPage: CONTACT_SUMMARY.page,
-    nextPage: {
-      ok: {
-        page: LICENCE_SUMMARY.uri
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
