@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import {
   CONTACT_SUMMARY,
+  LICENCE_SUMMARY,
   CONTROLLER,
   NAME,
   ADDRESS_ENTRY,
@@ -16,7 +17,6 @@ import {
 } from '../../../constants.js'
 
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -53,13 +53,14 @@ const getData = async request => {
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     newsLetter: !!permission.licensee.preferredMethodOfNewsletter,
     howContacted: HOW_CONTACTED,
-    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('DD MM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {
       name: NAME.uri,
       address: status[ADDRESS_ENTRY.page] ? ADDRESS_ENTRY.uri : ADDRESS_LOOKUP.uri,
       contact: CONTACT.uri,
       newsletter: NEWSLETTER.uri,
-      dateOfBirth: DATE_OF_BIRTH.uri
+      dateOfBirth: DATE_OF_BIRTH.uri,
+      licenceSummary: LICENCE_SUMMARY.uri
     }
   }
 }

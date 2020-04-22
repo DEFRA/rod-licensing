@@ -168,7 +168,7 @@ export default [
         page: NAME.uri
       },
       summary: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -183,7 +183,7 @@ export default [
         page: BLUE_BADGE_NUMBER.uri
       },
       summary: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -195,7 +195,7 @@ export default [
         page: NAME.uri
       },
       summary: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -207,7 +207,7 @@ export default [
         page: NAME.uri
       },
       summary: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -267,7 +267,7 @@ export default [
         page: NEWSLETTER.uri
       },
       no: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       },
       summary: {
         page: CONTACT_SUMMARY.uri
@@ -279,7 +279,7 @@ export default [
     currentPage: NEWSLETTER.page,
     nextPage: {
       ok: {
-        page: CONTACT_SUMMARY.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -289,6 +289,15 @@ export default [
     nextPage: {
       ok: {
         page: LICENCE_SUMMARY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: CONTACT_SUMMARY.page,
+    nextPage: {
+      ok: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   }

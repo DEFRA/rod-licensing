@@ -1,4 +1,4 @@
-import { CONTACT, LICENCE_LENGTH, CONTROLLER, DATE_OF_BIRTH, LICENCE_TO_START, CONTACT_SUMMARY, NEWSLETTER } from '../../../../constants.js'
+import { CONTACT, LICENCE_LENGTH, CONTROLLER, DATE_OF_BIRTH, LICENCE_TO_START, LICENCE_SUMMARY, NEWSLETTER } from '../../../../constants.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -88,7 +88,7 @@ describe('The contact preferences page', () => {
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
@@ -100,7 +100,7 @@ describe('The contact preferences page', () => {
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
@@ -112,7 +112,7 @@ describe('The contact preferences page', () => {
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
@@ -122,7 +122,7 @@ describe('The contact preferences page', () => {
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)

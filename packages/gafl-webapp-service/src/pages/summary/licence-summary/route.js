@@ -11,7 +11,7 @@ import {
   LICENCE_TYPE,
   LICENCE_TO_START,
   NUMBER_OF_RODS,
-  CONTACT_SUMMARY
+  BENEFIT_CHECK
 } from '../../../constants.js'
 
 const getData = async request => {
@@ -53,14 +53,17 @@ const getData = async request => {
   return {
     permission,
     startTimeString,
+    disabled: permission.licensee.concessions ? permission.licensee.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
     licenceTypes: mappings.LICENCE_TYPE,
     hasJunior: !!concessionHelper.hasJunior(permission.licensee),
+    hasSenior: !!concessionHelper.hasSenior(permission.licensee),
+    cost: permission.permit[0].cost,
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,
       numberOfRods: NUMBER_OF_RODS.uri,
-      contactSummary: CONTACT_SUMMARY.uri,
-      licenceToStart: LICENCE_TO_START.uri
+      licenceToStart: LICENCE_TO_START.uri,
+      benefitCheck: BENEFIT_CHECK.uri
     }
   }
 }

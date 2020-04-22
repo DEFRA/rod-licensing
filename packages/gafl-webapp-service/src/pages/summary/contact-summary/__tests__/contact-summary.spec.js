@@ -8,15 +8,13 @@ import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__
 
 import {
   CONTACT_SUMMARY,
+  LICENCE_SUMMARY,
   NAME,
   CONTROLLER,
   ADDRESS_ENTRY,
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   CONTACT,
-  LICENCE_LENGTH,
-  LICENCE_TYPE,
-  NUMBER_OF_RODS,
   LICENCE_TO_START,
   DATE_OF_BIRTH,
   NEWSLETTER,
@@ -80,8 +78,18 @@ describe('The summary page', () => {
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
-  it('responds with summary page if all necessary pages have been completed', async () => {
+  it('responds with the error page if the sales API fetch fails', async () => {
     await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
+    fetch.mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error('fetch error'))))
+
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    expect(data.statusCode).toBe(500)
+  })
+
+  it('responds with summary page if all necessary pages have been completed', async () => {
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new2@example.com' })
     await injectWithCookie('GET', CONTROLLER.uri)
 
     // Mock the response from the API
@@ -127,7 +135,7 @@ describe('The summary page', () => {
   })
 
   it('contact amendment (email) causes redirect the summary page', async () => {
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
+    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
@@ -137,7 +145,7 @@ describe('The summary page', () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
   it('date of birth amendment causes redirect the summary page', async () => {

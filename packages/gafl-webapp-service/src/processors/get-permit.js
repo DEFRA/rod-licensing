@@ -24,14 +24,11 @@ const getPermit = async request => {
     p => String(p.durationMagnitude + p.durationDesignator.label) === permission.licenceLength
   )
 
-  // Filter by the licence (sub) typpe
+  // Filter by the licence (sub) type
   const byLicenceType = byLicenceLength.filter(p => p.permitSubtype.label === permission.licenceType)
 
   // Filter by the number of rods
-  const byNumberOfRods = byLicenceType.filter(r => String(r.numberOfRods) === permission.numberOfRods)
-
-  // Return the singleton array
-  return byNumberOfRods
+  return byLicenceType.filter(r => String(r.numberOfRods) === permission.numberOfRods)
 }
 
 export default getPermit

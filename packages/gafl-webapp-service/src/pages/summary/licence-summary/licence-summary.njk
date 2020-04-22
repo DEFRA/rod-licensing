@@ -88,6 +88,68 @@
   }
 }) }}
 
+{% if data.hasJunior %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      value: {
+        text: "Junior"
+      }
+    }) }}
+{% elseif data.hasSenior %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      value: {
+        text: "Senior"
+      }
+    }) }}
+{% elseif data.disabled %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      value: {
+        html: "Disabled</br>" + data.disabled.proof.type + " - " + data.disabled.proof.referenceNumber
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.benefitCheck,
+            text: "Change",
+            visuallyHiddenText: "benefit check"
+          }
+        ]
+    }
+    }) }}
+{% else %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.benefitCheck,
+            text: "Add",
+            visuallyHiddenText: "benefit check"
+          }
+        ]
+      }
+    }) }}
+{% endif %}
+
+{{ licenseDetailsSummaryRows.push({
+  key: {
+    text: "Cost"
+  },
+  value: {
+    text: "£" + data.cost
+  }
+}) }}
+
 {% set licenseDetailsSummary %}
     {% call govukFieldset({
       legend: {
@@ -104,7 +166,6 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <form method="post">
-
             {{ govukWarningText({
               text: "Your licence is not valid until payment is complete",
               iconFallbackText: "Warning"
@@ -121,10 +182,6 @@
             }) }}
 
         </form>
-
-        <p class="govuk-body-m">
-            <a href="{{ data.uri.contactSummary }}">Change your contact details</a>
-        </p>
     </div>
 </div>
 {% endblock %}

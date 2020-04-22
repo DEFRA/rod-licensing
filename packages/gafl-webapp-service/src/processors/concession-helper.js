@@ -27,9 +27,7 @@ const addJunior = licensee => {
   }
 }
 
-const hasJunior = licensee => {
-  return licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.JUNIOR)
-}
+const hasJunior = licensee => licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.JUNIOR)
 
 const removeJunior = licensee => {
   if (hasJunior(licensee)) {
@@ -60,9 +58,7 @@ const addSenior = licensee => {
   }
 }
 
-const hasSenior = licensee => {
-  return licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.SENIOR)
-}
+const hasSenior = licensee => licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.SENIOR)
 
 const removeSenior = licensee => {
   if (hasSenior(licensee)) {
@@ -95,9 +91,7 @@ const addDisabled = (licensee, concessionProof, referenceNumber) => {
   })
 }
 
-const hasDisabled = licensee => {
-  return licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.DISABLED)
-}
+const hasDisabled = licensee => licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.DISABLED)
 
 const removeDisabled = licensee => {
   if (hasDisabled(licensee)) {

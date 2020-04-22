@@ -1,4 +1,4 @@
-import { CONTROLLER, NEWSLETTER, CONTACT, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, CONTACT_SUMMARY } from '../../../../constants.js'
+import { CONTROLLER, NEWSLETTER, CONTACT, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_SUMMARY } from '../../../../constants.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -43,7 +43,7 @@ describe('The newsletter page', () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'no', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBeFalsy()
@@ -54,7 +54,7 @@ describe('The newsletter page', () => {
     await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)

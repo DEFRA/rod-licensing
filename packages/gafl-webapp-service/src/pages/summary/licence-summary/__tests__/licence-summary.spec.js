@@ -10,7 +10,10 @@ import {
   LICENCE_LENGTH,
   LICENCE_TYPE,
   NUMBER_OF_RODS,
-  LICENCE_TO_START
+  LICENCE_TO_START,
+  BENEFIT_CHECK,
+  BENEFIT_NI_NUMBER,
+  BLUE_BADGE_CHECK
 } from '../../../../constants.js'
 
 jest.mock('node-fetch')
@@ -20,7 +23,7 @@ beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-describe('The summary page', () => {
+describe('The licence summary page', () => {
   it('redirects to the licence length page if length is set', async () => {
     const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
@@ -56,6 +59,36 @@ describe('The summary page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
 
     // Mock the response from the API
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('concession (NI) amendments cause a redirect to the summary page', async () => {
+    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
+    fetch
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('concession (blue-badge) amendments cause a redirect to the summary page', async () => {
+    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
+    await injectWithCookie('GET', CONTROLLER.uri)
+
     fetch
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
