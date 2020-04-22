@@ -1,10 +1,24 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Cloudformation template to create infrastructure for the rod licencing digital services (local development only)
 Resources:
-  CrmStaging:
+  TransactionStaging:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: TransactionStaging
+      AttributeDefinitions:
+        - AttributeName: 'id'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'id'
+          KeyType: 'HASH'
+      TimeToLiveSpecification:
+        AttributeName: 'expires'
+        Enabled: true
+
+  TransactionStagingHistory:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: TransactionStagingHistory
       AttributeDefinitions:
         - AttributeName: 'id'
           AttributeType: 'S'

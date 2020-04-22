@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi'
-import { newTransaction, completeTransaction, processQueue, processDlq } from '../../services/transactions.service.js'
-import { createTransactionSchema, createTransactionResponseSchema } from '../../schema/transaction.schema.js'
+import { createTransaction, finaliseTransaction, processQueue, processDlq } from '../../services/transactions/transactions.service.js'
+import { createTransactionSchema, createTransactionResponseSchema, finaliseTransactionSchema } from '../../schema/transaction.schema.js'
 
 const stagingIdSchema = Joi.object({
   id: Joi.string()
@@ -15,7 +15,7 @@ export default [
     method: 'POST',
     path: '/transactions',
     options: {
-      handler: async (request, h) => h.response(await newTransaction(request.payload)).code(201),
+      handler: async (request, h) => h.response(await createTransaction(request.payload)).code(201),
       description: 'Create a new transaction',
       notes: `
       Creates a new transaction, generating properties such as permission numbers.  The transaction will not be completed until payment data
@@ -45,23 +45,22 @@ export default [
     method: 'PATCH',
     path: '/transactions/{id}',
     options: {
-      handler: async (request, h) => h.response(await completeTransaction({ id: request.params.id, ...request.payload })).code(200),
-      description: 'Complete an existing transaction',
+      handler: async (request, h) => h.response(await finaliseTransaction({ id: request.params.id, ...request.payload })).code(200),
+      description: 'Finalise an existing transaction',
       notes: `
-        Marks an existing transaction as complete at which point it will become eligible for insertion into Dynamics.
+        Marks an existing transaction as finalised at which point it will become eligible for insertion into Dynamics.
       `,
       tags: ['api', 'transactions'],
       validate: {
-        params: stagingIdSchema
-        // TODO: Determine what the payment payload will be..
-        // payload: createTransactionSchema
+        params: stagingIdSchema,
+        payload: finaliseTransactionSchema
       },
       plugins: {
         'hapi-swagger': {
           responses: {
-            204: { description: 'Transaction accepted' },
+            200: { description: 'Transaction accepted' },
             400: { description: 'Invalid request params' },
-            404: { description: 'Transaction ID not found' },
+            404: { description: 'A transaction for the specified identifier was not found' },
             422: { description: 'The transaction completion payload was invalid' }
           },
           order: 2
@@ -84,6 +83,7 @@ export default [
         'hapi-swagger': {
           responses: {
             204: { description: 'Transaction message processed' },
+            404: { description: 'A transaction for the specified identifier was not found' },
             422: { description: 'The transaction queue processing payload was invalid' }
           },
           order: 3

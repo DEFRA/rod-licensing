@@ -42,6 +42,7 @@ export async function getGlobalOptionSet (name) {
 
 export async function getGlobalOptionSetValue (name, label) {
   const definition = await retrieveGlobalOptionSets(name).cached()
-  const options = definition[name] ? Object.values(definition[name].options).filter(o => o.label.toLowerCase() === label.toLowerCase()) : []
+  const options =
+    definition[name] && label ? Object.values(definition[name].options).filter(o => o.label.toLowerCase() === label.toLowerCase()) : []
   return (options.length && options[0]) || undefined
 }

@@ -226,7 +226,7 @@ export class BaseEntity {
   }
 
   /**
-   * @returns {{}} a json representation of the entity state
+   * @returns {String} a json representation of the entity state
    */
   toString () {
     return JSON.stringify(this.toJSON(), null, 2)

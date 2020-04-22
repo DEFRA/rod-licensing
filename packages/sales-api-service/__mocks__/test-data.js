@@ -1,4 +1,4 @@
-import { Concession, Contact, GlobalOptionSetDefinition, Permit } from '@defra-fish/dynamics-lib'
+import { Concession, Contact, GlobalOptionSetDefinition, Permit, TransactionCurrency } from '@defra-fish/dynamics-lib'
 import { readFileSync } from 'fs'
 import Project from '../src/project.cjs'
 import Path from 'path'
@@ -81,12 +81,30 @@ export const mockTransactionRecord = () => ({
   permissions: [mockPermissionRecord()]
 })
 
+export const mockCompletedTransactionRecord = () => ({
+  ...mockTransactionRecord(),
+  paymentSource: 'Gov Pay',
+  paymentMethod: 'Debit card',
+  paymentTimestamp: new Date().toISOString()
+})
+
 export const MOCK_CONCESSION_DYNAMICS_RESPONSE = {
   '@odata.etag': 'W/"22638892"',
   defra_name: 'Senior',
   defra_concessionid: 'd0ece997-ef65-e611-80dc-c4346bad4004'
 }
 export const MOCK_CONCESSION = Concession.fromResponse(MOCK_CONCESSION_DYNAMICS_RESPONSE, optionSetData)
+
+export const MOCK_TRANSACTION_CURRENCY = TransactionCurrency.fromResponse(
+  {
+    '@odata.etag': 'W/"556963"',
+    currencyname: 'Pound Sterling',
+    isocurrencycode: 'GBP',
+    currencysymbol: '£',
+    transactioncurrencyid: 'd0d0b0f4-f5e0-e711-810d-5065f38a8bc1'
+  },
+  optionSetData
+)
 
 export const MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE = {
   '@odata.etag': 'W/"51026144"',

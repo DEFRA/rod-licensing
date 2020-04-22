@@ -3,12 +3,6 @@ import { createOptionSetValidator, createEntityIdValidator } from './validators/
 import { Contact } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 
-const preferredContactMethodValidator = Joi.string()
-  .trim()
-  .external(createOptionSetValidator('defra_preferredcontactmethod'))
-  .required()
-  .description('See defra_preferredcontactmethod for available options')
-
 export const contactSchema = Joi.object({
   contactId: Joi.string()
     .guid()
@@ -54,13 +48,8 @@ export const contactSchema = Joi.object({
       .trim()
       .required()
   }),
-  country: Joi.string()
-    .trim()
-    .external(createOptionSetValidator('defra_country'))
-    .required()
-    .description('See defra_country for available options')
-    .example('United Kingdom'),
-  preferredMethodOfConfirmation: preferredContactMethodValidator.example('Text'),
-  preferredMethodOfNewsletter: preferredContactMethodValidator.example('Email'),
-  preferredMethodOfReminder: preferredContactMethodValidator.example('Letter')
+  country: createOptionSetValidator('defra_country', 'United Kingdom'),
+  preferredMethodOfConfirmation: createOptionSetValidator('defra_preferredcontactmethod', 'Text'),
+  preferredMethodOfNewsletter: createOptionSetValidator('defra_preferredcontactmethod', 'Email'),
+  preferredMethodOfReminder: createOptionSetValidator('defra_preferredcontactmethod', 'Letter')
 }).label('contact')
