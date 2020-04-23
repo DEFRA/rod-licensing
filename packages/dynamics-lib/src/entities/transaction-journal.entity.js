@@ -7,7 +7,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class TransactionJournal extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'transactions',
+    localCollection: 'transactionJournals',
     dynamicsCollection: 'defra_transactionjournals',
     defaultFilter: 'statecode eq 0',
     mappings: {

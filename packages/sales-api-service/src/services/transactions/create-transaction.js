@@ -4,7 +4,7 @@ import AWS from '../aws.js'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 24
+const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 48
 
 export async function createTransaction (payload) {
   const transactionId = uuid()
