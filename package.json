@@ -52,7 +52,7 @@
     "lerna": "^3.20.2",
     "lerna-update-wizard": "^0.17.8",
     "lint-staged": "^10.1.7",
-    "pm2": "^4.2.3",
+    "pm2": "^4.3.1",
     "prettier-standard": "^16.2.1",
     "standard": "^14.3.3"
   },
