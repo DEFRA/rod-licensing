@@ -31,10 +31,7 @@ const hasJunior = licensee => licensee.concessions && licensee.concessions.find(
 
 const removeJunior = licensee => {
   if (hasJunior(licensee)) {
-    licensee.concessions.splice(
-      licensee.concessions.find(c => c.type === CONCESSION.JUNIOR),
-      1
-    )
+    licensee.concessions = licensee.concessions.filter(c => c.type !== CONCESSION.JUNIOR)
   }
 }
 
@@ -62,10 +59,7 @@ const hasSenior = licensee => licensee.concessions && licensee.concessions.find(
 
 const removeSenior = licensee => {
   if (hasSenior(licensee)) {
-    licensee.concessions.splice(
-      licensee.concessions.find(c => c.type === CONCESSION.SENIOR),
-      1
-    )
+    licensee.concessions = licensee.concessions.filter(c => c.type !== CONCESSION.SENIOR)
   }
 }
 
@@ -95,10 +89,7 @@ const hasDisabled = licensee => licensee.concessions && licensee.concessions.fin
 
 const removeDisabled = licensee => {
   if (hasDisabled(licensee)) {
-    licensee.concessions.splice(
-      licensee.concessions.find(c => c.type === CONCESSION.DISABLED),
-      1
-    )
+    licensee.concessions = licensee.concessions.filter(c => c.type !== CONCESSION.DISABLED)
   }
 }
 

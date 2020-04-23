@@ -11,25 +11,15 @@ const fetchData = async url => {
     })
     return response.json()
   } catch (err) {
-    // On a failure to connect do not stop the user journey
     console.error('Unable to connect to the sales API service', err)
     throw err
   }
 }
 
 const permitsOperations = {
-  fetchPermits: async () => {
-    const url = new URL('/reference-data/permits', urlBase)
-    return fetchData(url)
-  },
-  fetchConcessions: async () => {
-    const url = new URL('/reference-data/concessions', urlBase)
-    return fetchData(url)
-  },
-  fetchPermitConcessions: async () => {
-    const url = new URL('/reference-data/permitConcessions', urlBase)
-    return fetchData(url)
-  }
+  fetchPermits: async () => fetchData(new URL('/permits', urlBase)),
+  fetchConcessions: async () => fetchData(new URL('/concessions', urlBase)),
+  fetchPermitConcessions: async () => fetchData(new URL('/permitConcessions', urlBase))
 }
 
 export { permitsOperations }
