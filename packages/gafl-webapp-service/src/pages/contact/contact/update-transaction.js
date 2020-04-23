@@ -1,8 +1,11 @@
-import { CONTACT, HOW_CONTACTED } from '../../../constants.js'
+import { CONTACT } from '../../../constants.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
-  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const { licensee } = permission
 
   switch (payload['how-contacted']) {
     case 'email':
@@ -20,8 +23,14 @@ export default async request => {
       break
 
     default:
-      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
+      if (permission.licenceLength === '12M' && !concessionHelper.hasJunior(licensee)) {
+        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
+        licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
+      } else {
+        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
+        licensee.preferredMethodOfReminder = HOW_CONTACTED.none
+      }
+
       delete licensee.mobilePhone
       delete licensee.email
   }

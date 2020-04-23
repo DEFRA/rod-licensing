@@ -1,5 +1,5 @@
-import { NUMBER_OF_RODS, CONTROLLER } from '../../../../constants.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
+import { NUMBER_OF_RODS } from '../../../../constants.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
 
 beforeAll(d => start(d))
@@ -28,8 +28,7 @@ describe('The number of rods page', () => {
     ['2 rod licence', '2'],
     ['three rod licence', '3']
   ]).it('stores the transaction on successful submission of %s', async (desc, code) => {
-    await injectWithCookie('POST', NUMBER_OF_RODS.uri, { 'number-of-rods': code })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': code })
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
 
     expect(JSON.parse(payload).permissions[0].numberOfRods).toBe(code)

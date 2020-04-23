@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-import { ADDRESS_LOOKUP_SERVICE, ADDRESS_LOOKUP_MS_DEFAULT } from '../constants.js'
+import { ADDRESS_LOOKUP_SERVICE, ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT } from '../../constants.js'
 import db from 'debug'
 const debug = db('webapp:address-lookup-service')
 export default async (premises, postcode) => {
@@ -22,7 +22,7 @@ export default async (premises, postcode) => {
     try {
       const response = await fetch(url.href, {
         headers: { 'Content-Type': 'application/json' },
-        timeout: process.env.ADDRESS_LOOKUP_MS || ADDRESS_LOOKUP_MS_DEFAULT
+        timeout: process.env.ADDRESS_LOOKUP_MS || ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT
       })
       return response.json()
     } catch (err) {

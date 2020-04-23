@@ -1,3 +1,16 @@
 import { BENEFIT_CHECK } from '../../../constants.js'
-import concessionTransaction from '../shared/concession-transaction.js'
-export default async request => concessionTransaction(request, BENEFIT_CHECK, 'benefit-check')
+import * as concessionHelper from '../../../processors/concession-helper.js'
+
+/**
+ * Transfer the validate page object
+ * @param request
+ * @returns {Promise<void>}
+ */
+export default async request => {
+  const { payload } = await request.cache().helpers.page.getCurrentPermission(BENEFIT_CHECK.page)
+  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  if (payload['benefit-check'] === 'no') {
+    concessionHelper.removeDisabled(licensee)
+    await request.cache().helpers.transaction.setCurrentPermission({ licensee })
+  }
+}

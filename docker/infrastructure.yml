@@ -63,6 +63,16 @@ services:
       restart_policy:
         condition: on-failure
 
+  redis-commander:
+    image: rediscommander/redis-commander
+    ports:
+      - '8003:8081'
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    deploy:
+      restart_policy:
+        condition: on-failure
+
   #######################################################
   # Elasticmq (SQS provider)
   #######################################################

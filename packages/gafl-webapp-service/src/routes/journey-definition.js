@@ -18,7 +18,8 @@ import {
   ADDRESS_ENTRY,
   CONTACT,
   NEWSLETTER,
-  SUMMARY
+  CONTACT_SUMMARY,
+  LICENCE_SUMMARY
 } from '../constants.js'
 
 export default [
@@ -36,6 +37,9 @@ export default [
     nextPage: {
       ok: {
         page: LICENCE_TYPE.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -48,6 +52,9 @@ export default [
       },
       salmonAndSeaTrout: {
         page: LICENCE_TO_START.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -57,6 +64,9 @@ export default [
     nextPage: {
       ok: {
         page: LICENCE_TO_START.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -69,6 +79,9 @@ export default [
       },
       anotherDateOrTime: {
         page: LICENCE_START_DATE.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -81,6 +94,9 @@ export default [
       },
       andContinue: {
         page: DATE_OF_BIRTH.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -90,6 +106,9 @@ export default [
     nextPage: {
       ok: {
         page: DATE_OF_BIRTH.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -100,14 +119,20 @@ export default [
       adult: {
         page: BENEFIT_CHECK.uri
       },
+      adultNoBenefitCheck: {
+        page: LICENCE_SUMMARY.uri
+      },
       junior: {
         page: JUNIOR_LICENCE.uri
       },
       senior: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       noLicenceRequired: {
         page: NO_LICENCE_REQUIRED.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -116,7 +141,10 @@ export default [
     currentPage: JUNIOR_LICENCE.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -137,7 +165,10 @@ export default [
     currentPage: BENEFIT_NI_NUMBER.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -146,10 +177,13 @@ export default [
     currentPage: BLUE_BADGE_CHECK.page,
     nextPage: {
       no: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
       },
       yes: {
         page: BLUE_BADGE_NUMBER.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -158,7 +192,10 @@ export default [
     currentPage: BENEFIT_NI_NUMBER.page,
     nextPage: {
       ok: {
-        page: NAME.uri
+        page: LICENCE_SUMMARY.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
       }
     }
   },
@@ -167,7 +204,22 @@ export default [
     currentPage: BLUE_BADGE_NUMBER.page,
     nextPage: {
       ok: {
+        page: LICENCE_SUMMARY.uri
+      },
+      summary: {
+        page: LICENCE_SUMMARY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: LICENCE_SUMMARY.page,
+    nextPage: {
+      ok: {
         page: NAME.uri
+      },
+      summary: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
@@ -177,6 +229,9 @@ export default [
     nextPage: {
       ok: {
         page: ADDRESS_LOOKUP.uri
+      },
+      summary: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
@@ -198,6 +253,9 @@ export default [
     nextPage: {
       ok: {
         page: CONTACT.uri
+      },
+      summary: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
@@ -207,6 +265,9 @@ export default [
     nextPage: {
       ok: {
         page: CONTACT.uri
+      },
+      summary: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
@@ -218,7 +279,10 @@ export default [
         page: NEWSLETTER.uri
       },
       no: {
-        page: SUMMARY.uri
+        page: CONTACT_SUMMARY.uri
+      },
+      summary: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   },
@@ -227,7 +291,16 @@ export default [
     currentPage: NEWSLETTER.page,
     nextPage: {
       ok: {
-        page: SUMMARY.uri
+        page: CONTACT_SUMMARY.uri
+      }
+    }
+  },
+
+  {
+    currentPage: CONTACT_SUMMARY.page,
+    nextPage: {
+      ok: {
+        page: CONTACT_SUMMARY.uri
       }
     }
   }

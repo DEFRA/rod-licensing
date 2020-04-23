@@ -1,5 +1,5 @@
-import { ADDRESS_ENTRY, CONTACT, CONTROLLER } from '../../../../../constants.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../../__mocks__/test-utils.js'
+import { ADDRESS_ENTRY, CONTACT } from '../../../../../constants.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -8,7 +8,7 @@ afterAll(d => stop(d))
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
   street: 'EASTMEAD LANE',
-  locality: null,
+  locality: '',
   town: 'BRISTOL',
   postcode: 'BS9 1HJ',
   'country-code': 'GB'
@@ -92,8 +92,7 @@ describe('The manual address entry page', () => {
 
   it('controller redirects to contact page on posting a valid UK address', async () => {
     const addr = Object.assign({}, goodAddress)
-    await injectWithCookie('POST', ADDRESS_ENTRY.uri, addr)
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
@@ -103,7 +102,6 @@ describe('The manual address entry page', () => {
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
-      locality: null,
       town: 'BRISTOL',
       postcode: 'BS9 1HJ',
       countryCode: 'GB'
@@ -114,8 +112,7 @@ describe('The manual address entry page', () => {
     const addr = Object.assign({}, goodAddress)
     addr['country-code'] = 'FR'
     addr.postcode = 'not checked'
-    await injectWithCookie('POST', ADDRESS_ENTRY.uri, addr)
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
@@ -125,7 +122,6 @@ describe('The manual address entry page', () => {
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
-      locality: null,
       town: 'BRISTOL',
       postcode: 'not checked',
       countryCode: 'FR'

@@ -1,5 +1,7 @@
 import moment from 'moment'
-import { DATE_OF_BIRTH, CONCESSION } from '../../../constants.js'
+import { DATE_OF_BIRTH } from '../../../constants.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
 /**
  * Transfer the validated page object
@@ -32,17 +34,22 @@ export default async request => {
 
   if (ageAtLicenceStartDate < 13) {
     // Just flag as being under 13 for the router
+    concessionHelper.clear(permission.licensee)
     Object.assign(permission.licensee, { noLicenceRequired: true })
   } else if (ageAtLicenceStartDate < 16) {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M' })
-    Object.assign(permission.licensee, { concession: { type: CONCESSION.JUNIOR } })
-  } else if (ageAtLicenceStartDate >= 65) {
-    Object.assign(permission.licensee, { concession: { type: CONCESSION.SENIOR } })
-  } else {
-    if (permission.licensee.concession && [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(permission.licensee.concession.type)) {
-      Object.assign(permission.licensee, { concession: {} })
+    concessionHelper.addJunior(permission.licensee)
+    // Junior licences are net sent out by post so if the contact details are by letter then reset to none
+    if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
+      permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
+      permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
+  } else if (ageAtLicenceStartDate >= 65) {
+    concessionHelper.addSenior(permission.licensee)
+  } else {
+    concessionHelper.removeJunior(permission.licensee)
+    concessionHelper.removeSenior(permission.licensee)
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

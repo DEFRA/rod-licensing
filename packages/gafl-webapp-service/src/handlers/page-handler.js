@@ -1,5 +1,5 @@
 import { CacheError } from '../lib/cache-manager.js'
-import { CONTROLLER } from '../constants.js'
+import { CONTROLLER, PAGE_STATE } from '../constants.js'
 import GetDataRedirect from './get-data-redirect.js'
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 
@@ -43,7 +43,7 @@ export default (path, view, completion, getData) => ({
    */
   post: async (request, h) => {
     await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload })
-    await request.cache().helpers.status.setCurrentPermission({ [view]: 'completed' })
+    await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.completed })
     await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
     return h.redirect(completion)
   },
@@ -57,7 +57,7 @@ export default (path, view, completion, getData) => ({
   error: async (request, h, err) => {
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
-      await request.cache().helpers.status.setCurrentPermission({ [view]: 'error' })
+      await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error })
       await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
       return h.redirect(path).takeover()
     } catch (err2) {

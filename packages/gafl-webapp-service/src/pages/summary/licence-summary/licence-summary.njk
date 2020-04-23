@@ -1,0 +1,192 @@
+{% extends "layout.njk" %}
+
+{% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+{% from "button/macro.njk" import govukButton %}
+
+{% set title = 'Check your new licence details' %}
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% macro addressLine(line) %}
+    {% if line %}{{ line }}</br>{% endif %}
+{% endmacro %}
+
+{% set licenseDetailsSummaryRows = [
+    {
+      key: {
+        text: "Licence length"
+      },
+      value: {
+        text: '12 months' if data.permission.licenceLength === '12M' else ('8 days' if data.permission.licenceLength === '8D' else '1 day')
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.licenceLength,
+            text: "Change",
+            visuallyHiddenText: "licence length"
+          }
+        ] if not data.hasJunior
+      }
+    },
+    {
+      key: {
+        text: "Licence type"
+      },
+      value: {
+        text: data.permission.licenceType
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.licenceType,
+            text: "Change",
+            visuallyHiddenText: "licence type"
+          }
+        ]
+      }
+    }
+  ]
+%}
+
+{% if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Number of rods"
+      },
+      value: {
+        text: 'Up to 2 rods' if data.permission.numberOfRods === '2' else 'Up to 3 rods'
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.numberOfRods,
+            text: "Change",
+            visuallyHiddenText: "number of rods"
+          }
+        ]
+      }
+    }) }}
+{% endif %}
+
+{{ licenseDetailsSummaryRows.push({
+  key: {
+    text: "Valid from"
+  },
+  value: {
+    text: '30 minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString
+  },
+  actions: {
+    items: [
+      {
+        href: data.uri.licenceToStart,
+        text: "Change",
+        visuallyHiddenText: "valid from"
+      }
+    ]
+  }
+}) }}
+
+{% if data.hasJunior %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      value: {
+        text: "Junior"
+      }
+    }) }}
+{% elseif data.hasSenior %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      value: {
+        text: "Senior"
+      }
+    }) }}
+{% elseif data.disabled %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      value: {
+        html: "Disabled</br>" + data.disabled.proof.type + " - " + data.disabled.proof.referenceNumber
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.benefitCheck,
+            text: "Change",
+            visuallyHiddenText: "benefit check"
+          }
+        ]
+    }
+    }) }}
+{% elseif data.permission.licenceLength === '12M' %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Concessions"
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.benefitCheck,
+            text: "Add",
+            visuallyHiddenText: "benefit check"
+          }
+        ]
+      }
+    }) }}
+{% endif %}
+
+{{ licenseDetailsSummaryRows.push({
+  key: {
+    text: "Cost"
+  },
+  value: {
+    text: "£" + data.cost
+  }
+}) }}
+
+{% set licenseDetailsSummary %}
+    {% call govukFieldset({
+      legend: {
+        text: title,
+        classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+        isPageHeading: true
+      }
+    }) %}
+        {{ govukSummaryList({ rows: licenseDetailsSummaryRows }) }}
+    {% endcall %}
+{% endset -%}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <form method="post">
+            {{ govukWarningText({
+              text: "Your licence is not valid until payment is complete",
+              iconFallbackText: "Warning"
+            }) }}
+
+            {{ licenseDetailsSummary | trim | safe }}
+
+            {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: "Continue",
+                classes: "govuk-!-margin-top-5"
+            }) }}
+
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+

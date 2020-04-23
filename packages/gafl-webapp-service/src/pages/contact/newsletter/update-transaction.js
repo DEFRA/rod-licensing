@@ -1,4 +1,5 @@
-import { NEWSLETTER, HOW_CONTACTED } from '../../../constants.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { NEWSLETTER } from '../../../constants.js'
 
 /**
  * Transfer the validate page object
@@ -14,6 +15,9 @@ export default async request => {
     licensee.email = payload.email
   } else {
     delete licensee.preferredMethodOfNewsletter
+    if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {
+      delete licensee.email
+    }
   }
 
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })

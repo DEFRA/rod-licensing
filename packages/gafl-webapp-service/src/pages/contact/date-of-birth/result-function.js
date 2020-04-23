@@ -1,18 +1,22 @@
-import { CONCESSION } from '../../../constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 export default async request => {
-  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const status = await request.cache().helpers.status.getCurrentPermission()
 
-  let result
+  let result = 'junior'
 
-  if (licensee.noLicenceRequired) {
+  if (permission.licensee.noLicenceRequired) {
     result = 'noLicenceRequired'
-  } else if (!licensee.concession || !licensee.concession.type || licensee.concession.type === CONCESSION.DISABLED) {
-    result = 'adult'
-  } else if (licensee.concession.type === CONCESSION.SENIOR) {
-    result = 'senior'
-  } else {
-    result = 'junior'
+  } else if (!concessionHelper.hasJunior(permission.licensee) && !concessionHelper.hasSenior(permission.licensee)) {
+    if (permission.licenceLength === '12M') {
+      result = status.fromSummary ? 'summary' : 'adult'
+    } else {
+      // Other adult licences do not ask for benefit details
+      result = status.fromSummary ? 'summary' : 'adultNoBenefitCheck'
+    }
+  } else if (concessionHelper.hasSenior(permission.licensee)) {
+    result = status.fromSummary ? 'summary' : 'senior'
   }
 
   return result

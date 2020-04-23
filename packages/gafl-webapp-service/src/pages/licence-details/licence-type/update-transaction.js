@@ -1,4 +1,5 @@
 import { LICENCE_TYPE } from '../../../constants.js'
+import * as constants from '../../../processors/mapping-constants.js'
 
 /**
  * Transfer the validate page object
@@ -9,11 +10,11 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TYPE.page)
 
   const permission = {
-    licenceType: payload['licence-type']
+    licenceType: constants.LICENCE_TYPE[payload['licence-type']]
   }
 
-  if (permission.licenceType === 'salmon-and-sea-trout') {
-    permission.numberOfRods = '3'
+  if (permission.licenceType === constants.LICENCE_TYPE['salmon-and-sea-trout']) {
+    permission.numberOfRods = '1'
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
