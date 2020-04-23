@@ -4,7 +4,7 @@
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
-    "node": ">=13"
+    "node": ">=14"
   },
   "keywords": [
     "rod",
@@ -59,7 +59,8 @@
     "gulp": "^4.0.2",
     "gulp-merge": "^0.1.1",
     "gulp-minify": "^3.1.0",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.5"
+    "gulp-sass": "^4.1.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "node-sass": "^4.14.0"
   }
 }

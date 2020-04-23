@@ -4,7 +4,7 @@
   "description": "SQS Receiver service",
   "type": "module",
   "engines": {
-    "node": ">=13"
+    "node": ">=14"
   },
   "keywords": [
     "rod",
@@ -36,12 +36,12 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "aws-sdk": "^2.656.0",
+    "aws-sdk": "^2.661.0",
     "debug": "^4.1.1",
     "node-fetch": "^2.6.0",
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "pm2": "^4.2.3"
+    "pm2": "^4.3.1"
   }
 }
