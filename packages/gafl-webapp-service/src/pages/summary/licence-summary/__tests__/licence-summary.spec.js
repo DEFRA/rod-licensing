@@ -137,7 +137,17 @@ describe('The licence summary page', () => {
     expect(data.statusCode).toBe(200)
   })
 
+  it('Setting the licence length to 1 day removes the disabled concession', async () => {
+    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
+    await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee.concessions.length).toBe(0)
+  })
+
   it('number of rod amendments cause a redirect to the summary page', async () => {
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
 
     doMockPermits()
