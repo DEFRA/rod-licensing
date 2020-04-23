@@ -1,6 +1,6 @@
-# Rod Licencing - Business Rules Lib
+# Rod Licensing - Business Rules Lib
 
-The business-rules-lib package provides shared business rules for the Rod Licencing digital service.
+The business-rules-lib package provides shared business rules for the Rod Licensing digital service.
 
 # Environment variables
 

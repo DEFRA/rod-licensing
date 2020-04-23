@@ -67,7 +67,7 @@ describe('hapi server', () => {
 
     it('implements an onPreResponse handler to capture errors', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-      const result = await server.inject({ method: 'GET', url: '/reference-data', simulate: { error: true } })
+      const result = await server.inject({ method: 'GET', url: '/permits', simulate: { error: true } })
 
       expect(JSON.parse(result.payload)).toMatchObject(
         expect.objectContaining({

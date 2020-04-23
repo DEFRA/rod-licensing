@@ -1,67 +1,47 @@
+import { MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT } from '../../../../__mocks__/test-data.js'
 import initialiseServer from '../../index.js'
 let server = null
+
+jest.mock('../../../services/reference-data.service.js', () => ({
+  ENTITY_TYPES: [MOCK_12MONTH_SENIOR_PERMIT.constructor],
+  getReferenceDataForEntity: jest.fn(async entityType => {
+    return [MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT]
+  })
+}))
 
 describe('reference-data endpoint', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
-    const api = require('dynamics-web-api').default
-    api.__reset()
-    api.__setResponse('executeBatch', [
-      {
-        value: [
-          {
-            '@odata.etag': 'W/"22639016"',
-            defra_availablefrom: '2017-03-31T23:00:00Z',
-            defra_availableto: '2020-03-31T22:59:00Z',
-            defra_duration: 910400000,
-            defra_durationnumericpart: 1,
-            defra_durationdaymonthyearpart: 910400000,
-            defra_permittype: 910400000,
-            defra_advertisedprice: 6.0,
-            defra_permitid: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-            defra_name: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
-            defra_permitsubtype: 910400001,
-            defra_equipment: 910400000,
-            defra_numberofrods: 2,
-            defra_isforfulfilment: false,
-            defra_iscountersales: true,
-            defra_advertisedprice_base: 6.0,
-            defra_itemid: '42289'
-          }
-        ]
-      },
-      {
-        value: [
-          {
-            '@odata.etag': 'W/"22638892"',
-            defra_name: 'Junior',
-            defra_concessionid: '3230c68f-ef65-e611-80dc-c4346bad4004'
-          }
-        ]
-      }
-    ])
   })
 
   afterAll(async () => {
     await server.stop()
   })
 
-  it('returns a full reference data listing', async () => {
-    const result = await server.inject({ method: 'GET', url: '/reference-data' })
+  it('returns a full reference data listing when no filter parameters are specified', async () => {
+    const result = await server.inject({ method: 'GET', url: '/permits' })
     expect(result).toMatchObject({
       statusCode: 200,
       headers: {
         'content-type': 'application/json; charset=utf-8'
       }
     })
-    expect(JSON.parse(result.payload)).toMatchObject({
-      permits: expect.arrayContaining([expect.objectContaining({})]),
-      concessions: expect.arrayContaining([expect.objectContaining({})])
-    })
+    const payload = JSON.parse(result.payload)
+    expect(payload).toHaveLength(2)
+    expect(payload).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: MOCK_12MONTH_SENIOR_PERMIT.id
+        }),
+        expect.objectContaining({
+          id: MOCK_1DAY_SENIOR_PERMIT.id
+        })
+      ])
+    )
   })
 
-  it('returns a list of reference data for a given collection name', async () => {
-    const result = await server.inject({ method: 'GET', url: '/reference-data/permits' })
+  it('allows filtering when a parameter is given which matches a field', async () => {
+    const result = await server.inject({ method: 'GET', url: `/permits?id=${MOCK_12MONTH_SENIOR_PERMIT.id}` })
     expect(result).toMatchObject({
       statusCode: 200,
       headers: {
@@ -70,33 +50,24 @@ describe('reference-data endpoint', () => {
     })
     const payload = JSON.parse(result.payload)
     expect(payload).toHaveLength(1)
-    expect(payload[0]).toMatchObject({
-      id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-      permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-      description: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
-      permitType: expect.objectContaining({ id: 910400000, label: 'Rod Fishing Licence', description: '' }),
-      permitSubtype: expect.objectContaining({ id: 910400001, label: 'Trout and coarse', description: '' }),
-      duration: expect.objectContaining({ id: 910400000, label: '1 day', description: '' }),
-      durationMagnitude: 1,
-      durationDesignator: expect.objectContaining({ id: 910400000, label: 'D', description: 'Day(s)' }),
-      equipment: expect.objectContaining({ id: 910400000, label: 'Up to 2 rods', description: '' }),
-      numberOfRods: 2,
-      availableFrom: '2017-03-31T23:00:00Z',
-      availableTo: '2020-03-31T22:59:00Z',
-      cost: 6,
-      isCounterSales: true,
-      isForFulfilment: false,
-      itemId: '42289'
-    })
+    expect(payload).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: MOCK_12MONTH_SENIOR_PERMIT.id
+        })
+      ])
+    )
   })
 
-  it('returns a 400 error if a unknown key is used', async () => {
-    const result = await server.inject({ method: 'GET', url: '/reference-data/unknown' })
+  it('returns an empty array if no match is found', async () => {
+    const result = await server.inject({ method: 'GET', url: '/permits?id=notFound' })
     expect(result).toMatchObject({
-      statusCode: 400,
+      statusCode: 200,
       headers: {
         'content-type': 'application/json; charset=utf-8'
       }
     })
+    const payload = JSON.parse(result.payload)
+    expect(payload).toHaveLength(0)
   })
 })

@@ -16,12 +16,3 @@ export const referenceDataItemSchema = Joi.object({
 export const referenceDataItemListSchema = Joi.array()
   .items(referenceDataItemSchema)
   .label('reference-data-item-list')
-
-export const referenceDataCollection = Joi.object()
-  .example({ ExampleCollection: [referenceDataItemExample] })
-  .pattern(Joi.string(), referenceDataItemListSchema)
-  .label('reference-data-collection')
-
-export const referenceDataCollectionList = Joi.array()
-  .items(referenceDataCollection)
-  .label('reference-data-collection-list')

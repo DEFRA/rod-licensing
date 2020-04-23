@@ -1,7 +1,7 @@
-# Rod Licencing - Dynamics Lib
+# Rod Licensing - Dynamics Lib
 
 The dynamics-lib package provides the interface to integrate with Microsoft Dynamics and defines the entity model to be
-shared by the different packages which comprise the Rod Licencing digital service.
+shared by the different packages which comprise the Rod Licensing digital service.
 
 # Environment variables
 

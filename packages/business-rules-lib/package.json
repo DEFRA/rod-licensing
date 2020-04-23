@@ -1,14 +1,14 @@
 {
   "name": "@defra-fish/business-rules-lib",
-  "version": "0.0.1-beta.17",
-  "description": "Shared business rules for the rod licencing digital services",
+  "version": "0.0.1-beta.20",
+  "description": "Shared business rules for the rod licensing digital services",
   "type": "module",
   "engines": {
     "node": ">=13"
   },
   "keywords": [
     "rod",
-    "licencing",
+    "licensing",
     "dynamics"
   ],
   "author": "DEFRA",
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
     "directory": "packages/business-rules-lib"
   },
   "publishConfig": {

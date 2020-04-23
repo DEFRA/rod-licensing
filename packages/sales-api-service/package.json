@@ -1,14 +1,14 @@
 {
   "name": "@defra-fish/sales-api-service",
-  "version": "0.0.1-beta.17",
-  "description": "Rod Licencing Sales API",
+  "version": "0.0.1-beta.20",
+  "description": "Rod Licensing Sales API",
   "type": "module",
   "engines": {
     "node": ">=13"
   },
   "keywords": [
     "rod",
-    "licencing",
+    "licensing",
     "sales",
     "api"
   ],
@@ -24,7 +24,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/DEFRA/rod-licencing.git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
     "directory": "packages/sales-api-service"
   },
   "publishConfig": {
@@ -35,8 +35,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "^0.0.1-beta.17",
-    "@defra-fish/dynamics-lib": "^0.0.1-beta.17",
+    "@defra-fish/business-rules-lib": "^0.0.1-beta.20",
+    "@defra-fish/dynamics-lib": "^0.0.1-beta.20",
     "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.1",

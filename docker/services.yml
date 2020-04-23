@@ -1,10 +1,10 @@
 version: '3.7'
 services:
   ##############################################################################################################
-  # rod-licencing webapp
+  # rod-licensing webapp
   ##############################################################################################################
   webapp:
-    image: rod-licencing/webapp:${TAG:-latest}
+    image: rod-licensing/webapp:${TAG:-latest}
     ports:
       - 3000:3000
     env_file:
@@ -16,10 +16,10 @@ services:
         condition: on-failure
 
   ##############################################################################################################
-  # rod-licencing sales_api
+  # rod-licensing sales_api
   ##############################################################################################################
   sales_api:
-    image: rod-licencing/sales_api:${TAG:-latest}
+    image: rod-licensing/sales_api:${TAG:-latest}
     ports:
       - 4000:4000
     env_file:
@@ -31,10 +31,10 @@ services:
         condition: on-failure
 
   ##############################################################################################################
-  # rod-licencing sqs_receiver
+  # rod-licensing sqs_receiver
   ##############################################################################################################
   sqs_receiver:
-    image: rod-licencing/sqs_receiver:${TAG:-latest}
+    image: rod-licensing/sqs_receiver:${TAG:-latest}
     env_file:
       - .env
     deploy:

@@ -1,5 +1,5 @@
 import { Permit } from '@defra-fish/dynamics-lib'
-import { getGlobalOptionSetValue, getReferenceDataForId } from './reference-data.service.js'
+import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import moment from 'moment'
 import cryptoRandomString from 'crypto-random-string'
 
@@ -19,7 +19,7 @@ export const generatePermissionNumber = async (
   { permitId, issueDate, startDate, licensee: { firstName, lastName, birthDate } },
   dataSource
 ) => {
-  const permit = await getReferenceDataForId(Permit, permitId)
+  const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
   const endDate = await calculateEndDateMoment({ permitId, startDate })
   const endTime = moment(endDate)
@@ -43,7 +43,7 @@ export const generatePermissionNumber = async (
 }
 
 export const calculateEndDateMoment = async ({ permitId, startDate }) => {
-  const permit = await getReferenceDataForId(Permit, permitId)
+  const permit = await getReferenceDataForEntityAndId(Permit, permitId)
   const duration = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.label}`)
   return moment(startDate).add(duration)
 }
