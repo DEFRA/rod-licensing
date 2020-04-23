@@ -54,33 +54,33 @@ describe('The concession helper', () => {
     expect(licensee.concessions).toContainEqual(disabledNi)
     expect(licensee.concessions.length).toBe(1)
   })
-  it('add junior', () => {
+  it('add junior to replace disabled', () => {
     f.addJunior(licensee)
     expect(licensee.concessions).toContainEqual(junior)
     expect(licensee.concessions.length).toBe(1)
   })
-  it('add NI', () => {
+  it('add NI to replace junior', () => {
     f.addDisabled(licensee, CONCESSION_PROOF.NI, '456')
     expect(licensee.concessions).toContainEqual(disabledNi)
     expect(licensee.concessions.length).toBe(1)
   })
-  it('add senior', () => {
+  it('add senior to replace NI', () => {
     f.addSenior(licensee)
     expect(licensee.concessions).toContainEqual(senior)
     expect(licensee.concessions.length).toBe(1)
   })
-  it('add junior', () => {
+  it('add junior to replace senior', () => {
     f.addJunior(licensee)
     expect(licensee.concessions).toContainEqual(junior)
     expect(licensee.concessions.length).toBe(1)
   })
-  it('add NI', () => {
+  it('add NI to replace senior', () => {
     f.clear(licensee)
     f.addDisabled(licensee, CONCESSION_PROOF.NI, '456')
     expect(licensee.concessions).toContainEqual(disabledNi)
     expect(licensee.concessions.length).toBe(1)
   })
-  it('add senior', () => {
+  it('add senior to replace NI', () => {
     f.clear(licensee)
     f.addSenior(licensee)
     expect(licensee.concessions).toContainEqual(senior)
