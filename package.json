@@ -20,6 +20,7 @@
   "scripts": {
     "postinstall": "npm run lerna:bootstrap",
     "test": "jest",
+    "test:only-changed": "jest --onlyChanged",
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
     "lerna:bootstrap": "lerna bootstrap",
@@ -74,7 +75,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test && lint-staged"
+      "pre-commit": "npm run test:only-changed && lint-staged"
     }
   },
   "lint-staged": {
