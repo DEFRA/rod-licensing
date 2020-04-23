@@ -1,6 +1,6 @@
 import moment from 'moment'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import {
   DATE_OF_BIRTH,
   LICENCE_TO_START,
@@ -83,10 +83,8 @@ describe('The date of birth page', () => {
   it(`my licence starts immediately after payment, my date of birth is ${dob13Tomorrow.format(
     'YYYY-MM-DD'
   )} and I do not require a fishing licence`, async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob13Tomorrow))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob13Tomorrow))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -97,12 +95,9 @@ describe('The date of birth page', () => {
   it(`my licence starts immediately after payment, my date of birth is ${dob13Today.format(
     'YYYY-MM-DD'
   )} and I require a junior 12 month fishing licence`, async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob13Today))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob13Today))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -115,10 +110,8 @@ describe('The date of birth page', () => {
   it(`my licence starts immediately after payment, my date of birth is ${dob16Tomorrow.format(
     'YYYY-MM-DD'
   )} and I require a 12 month fishing licence and with a junior concession`, async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob16Tomorrow))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Tomorrow))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -130,12 +123,9 @@ describe('The date of birth page', () => {
   it(`my licence starts immediately after payment, my date of birth is ${dob16Today.format(
     'YYYY-MM-DD'
   )} and I require an adult fishing licence`, async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob16Today))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -148,12 +138,9 @@ describe('The date of birth page', () => {
   it(`my licence starts immediately after payment, my date of birth is ${dob65Tomorrow.format(
     'YYYY-MM-DD'
   )} and I require an adult fishing licence`, async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Tomorrow))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob65Tomorrow))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -166,12 +153,9 @@ describe('The date of birth page', () => {
   it(`my licence starts immediately after payment, my date of birth is ${dob65Today.format(
     'YYYY-MM-DD'
   )} and I am entitled to a senior concession`, async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Today))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob65Today))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -189,10 +173,8 @@ describe('The date of birth page', () => {
     'YYYY-MM-DD'
   )} and I require a fishing licence with a junior concession`, async () => {
     const fdate = moment().add(1, 'days')
-    await injectWithCookie('POST', LICENCE_START_DATE.uri, startDateHelper(fdate))
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob13Tomorrow))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_START_DATE.uri, startDateHelper(fdate))
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob13Tomorrow))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -206,8 +188,7 @@ describe('The date of birth page', () => {
   )} and I require a 12 month adult fishing licence`, async () => {
     const fdate = moment().add(1, 'days')
     await injectWithCookie('POST', LICENCE_START_DATE.uri, startDateHelper(fdate))
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob16Tomorrow))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Tomorrow))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(BENEFIT_CHECK.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
@@ -221,10 +202,8 @@ describe('The date of birth page', () => {
   )} and I am entitled to a senior concession`, async () => {
     const fdate = moment().add(1, 'days')
     await injectWithCookie('POST', LICENCE_START_DATE.uri, startDateHelper(fdate))
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, dobHelper(dob65Tomorrow))
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const data = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob65Tomorrow))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')

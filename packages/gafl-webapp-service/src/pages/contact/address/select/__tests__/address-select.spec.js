@@ -1,5 +1,5 @@
-import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP, CONTROLLER } from '../../../../../constants.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../../__mocks__/test-utils.js'
+import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP } from '../../../../../constants.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 
 beforeAll(d => start(d))
@@ -33,11 +33,9 @@ describe('The address select page', () => {
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany })))
 
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookie('GET', ADDRESS_SELECT.uri)
-    await injectWithCookie('POST', ADDRESS_SELECT.uri, { address: '5' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_SELECT.uri, { address: '5' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })

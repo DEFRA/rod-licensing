@@ -2,7 +2,7 @@ import { CONTROLLER, NEWSLETTER, CONTACT, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
-import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -10,18 +10,15 @@ afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
   it('returns success on request', async () => {
-    await injectWithCookie('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
       'date-of-birth-year': '1951'
     })
     await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
 
     const data = await injectWithCookie('GET', NEWSLETTER.uri)
     expect(data.statusCode).toBe(200)
@@ -40,8 +37,7 @@ describe('The newsletter page', () => {
   })
 
   it('when posting no it saves the newsletter response without overwriting a pre-existing email', async () => {
-    await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'no', email: 'example2@email.com' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no', email: 'example2@email.com' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
 
@@ -51,8 +47,7 @@ describe('The newsletter page', () => {
   })
 
   it('when posting yes it saves the marketing flag overwriting any pre-existing email', async () => {
-    await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
 
@@ -62,13 +57,11 @@ describe('The newsletter page', () => {
   })
 
   it('with an email previously entered and the preferred method of contact is letter, when posting no - delete the email address', async () => {
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none', email: 'example@email.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none', email: 'example@email.com' })
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.letter)
 
-    await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'no' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
 
     const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload2).permissions[0].licensee.email).toBeFalsy()

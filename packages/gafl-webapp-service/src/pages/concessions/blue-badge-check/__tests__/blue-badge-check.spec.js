@@ -1,5 +1,5 @@
-import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
-import { BLUE_BADGE_CHECK, BLUE_BADGE_NUMBER, CONTROLLER, LICENCE_SUMMARY } from '../../../../constants.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { BLUE_BADGE_CHECK, BLUE_BADGE_NUMBER, LICENCE_SUMMARY } from '../../../../constants.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -21,16 +21,14 @@ describe('The blue badge check page', () => {
     expect(data.headers.location).toBe(BLUE_BADGE_CHECK.uri)
   })
   it('the controller redirects to the licence summary page when answering no', async () => {
-    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.concessions).toBeFalsy()
   })
   it('the controller redirects to the blue badge number page when answering yes', async () => {
-    await injectWithCookie('POST', BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(BLUE_BADGE_NUMBER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')

@@ -1,5 +1,5 @@
-import { ADDRESS_LOOKUP, ADDRESS_SELECT, CONTROLLER, ADDRESS_ENTRY } from '../../../../../constants.js'
-import { start, stop, initialize, injectWithCookie } from '../../../../../__mocks__/test-utils.js'
+import { ADDRESS_LOOKUP, ADDRESS_SELECT, ADDRESS_ENTRY } from '../../../../../constants.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 import searchResultsOne from '../../../../../services/address-lookup/__mocks__/data/search-results-one'
 import searchResultsNone from '../../../../../services/address-lookup/__mocks__/data/search-results-none'
@@ -53,8 +53,7 @@ describe('The address lookup page', () => {
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany })))
 
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_SELECT.uri)
   })
@@ -65,8 +64,7 @@ describe('The address lookup page', () => {
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne })))
 
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
 
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_SELECT.uri)
@@ -78,8 +76,7 @@ describe('The address lookup page', () => {
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsNone })))
 
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
   })
@@ -90,8 +87,7 @@ describe('The address lookup page', () => {
 
     fetch.mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error('Fetch error'))))
 
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
   })
@@ -99,8 +95,7 @@ describe('The address lookup page', () => {
   it('redirects to the entry page where there is no lookup set up', async () => {
     delete process.env.ADDRESS_LOOKUP_URL
     delete process.env.ADDRESS_LOOKUP_KEY
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
   })

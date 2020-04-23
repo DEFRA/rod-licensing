@@ -1,5 +1,5 @@
-import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
-import { BENEFIT_NI_NUMBER, CONTROLLER, LICENCE_SUMMARY, BENEFIT_CHECK } from '../../../../constants.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { BENEFIT_NI_NUMBER, LICENCE_SUMMARY, BENEFIT_CHECK } from '../../../../constants.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 
@@ -26,10 +26,8 @@ describe('The NI page', () => {
   })
 
   it('the controller redirects to the licence summary page on a valid response and sets the number in the transaction', async () => {
-    await injectWithCookie('POST', BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
+    const data = await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
