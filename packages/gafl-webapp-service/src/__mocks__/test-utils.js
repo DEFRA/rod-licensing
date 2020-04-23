@@ -1,5 +1,5 @@
 import { createServer, init, server } from '../server.js'
-import { SESSION_COOKIE_NAME_DEFAULT } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CONTROLLER } from '../constants.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
 
@@ -83,4 +83,9 @@ const injectWithoutCookie = async (method, url, payload) => {
   })
 }
 
-export { start, stop, server, getCookies, initialize, injectWithCookie, injectWithoutCookie }
+const postRedirectGet = async (uri, payload) => {
+  await injectWithCookie('POST', uri, payload)
+  return injectWithCookie('GET', CONTROLLER.uri)
+}
+
+export { start, stop, server, getCookies, initialize, injectWithCookie, injectWithoutCookie, postRedirectGet }

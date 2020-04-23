@@ -56,7 +56,7 @@ const getData = async request => {
     birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {
       name: NAME.uri,
-      address: status[ADDRESS_ENTRY.page] ? ADDRESS_ENTRY.uri : ADDRESS_LOOKUP.uri,
+      address: ADDRESS_LOOKUP.uri, // Encourage the address lookup on an amendment
       contact: CONTACT.uri,
       newsletter: NEWSLETTER.uri,
       dateOfBirth: DATE_OF_BIRTH.uri,

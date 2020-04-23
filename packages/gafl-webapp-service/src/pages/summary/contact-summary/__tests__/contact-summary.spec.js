@@ -4,7 +4,7 @@ import mockPermitsConcessions from '../../../../services/sales-api/__mocks__/dat
 import mockConcessions from '../../../../services/sales-api/__mocks__/data/concessions.js'
 import searchResultsOne from '../../../../services/address-lookup/__mocks__/data/search-results-one'
 
-import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 import {
   CONTACT_SUMMARY,
@@ -25,6 +25,12 @@ import {
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
 
+const doMockPermits = () =>
+  fetch
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
@@ -40,8 +46,7 @@ const goodAddress = {
 
 describe('The contact summary page', () => {
   it('redirects to the date of birth page if no dob has been set', async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
@@ -71,16 +76,14 @@ describe('The contact summary page', () => {
   })
 
   it('redirects to the contact page if no contact details have been set', async () => {
-    await injectWithCookie('POST', ADDRESS_ENTRY.uri, goodAddress)
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('responds with the error page if the sales API fetch fails', async () => {
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
 
     fetch.mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error('fetch error'))))
 
@@ -89,14 +92,10 @@ describe('The contact summary page', () => {
   })
 
   it('responds with summary page if all necessary pages have been completed', async () => {
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new2@example.com' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new2@example.com' })
 
     // Mock the response from the API
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+    doMockPermits()
 
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
@@ -116,18 +115,15 @@ describe('The contact summary page', () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne })))
-    await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookie('GET', ADDRESS_SELECT.uri)
-    await injectWithCookie('POST', ADDRESS_SELECT.uri, { address: '0' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_SELECT.uri, { address: '0' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('address entry amendment causes redirect the summary page', async () => {
-    await injectWithCookie('POST', ADDRESS_ENTRY.uri, goodAddress)
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
     const data2 = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
@@ -135,15 +131,13 @@ describe('The contact summary page', () => {
   })
 
   it('contact amendment (email) causes redirect the summary page', async () => {
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('newsletter amendment causes redirect the contact summary page', async () => {
-    await injectWithCookie('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
-    const data = await injectWithCookie('GET', CONTROLLER.uri)
+    const data = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
@@ -166,10 +160,7 @@ describe('The contact summary page', () => {
       'date-of-birth-year': '1921'
     })
 
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+    doMockPermits()
 
     const data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
@@ -192,10 +183,7 @@ describe('The contact summary page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
 
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+    doMockPermits()
 
     await injectWithCookie('GET', LICENCE_SUMMARY.uri)
     await injectWithCookie('POST', LICENCE_SUMMARY.uri)
@@ -214,8 +202,7 @@ describe('The contact summary page', () => {
     let data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
-    await injectWithCookie('POST', JUNIOR_LICENCE.uri, {})
-    data = await injectWithCookie('GET', CONTROLLER.uri)
+    data = await postRedirectGet(JUNIOR_LICENCE.uri, {})
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
 
@@ -234,8 +221,7 @@ describe('The contact summary page', () => {
       'date-of-birth-year': '1989'
     })
     await injectWithCookie('GET', CONTROLLER.uri)
-    await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'none' })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
