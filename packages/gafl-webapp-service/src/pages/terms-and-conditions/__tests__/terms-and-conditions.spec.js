@@ -51,7 +51,7 @@ const doMockPermits = () =>
 
 describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
-    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    const data = await injectWithCookie('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
   })

@@ -47,10 +47,21 @@ const goodAddress = {
 }
 
 describe('The contact summary page', () => {
+  it('redirects to the licence summary if the licence summary has not been completed', async () => {
+    const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
+  })
+
   it('redirects to the date of birth page if no dob has been set', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await postRedirectGet(DATE_OF_BIRTH.uri, {
+      'date-of-birth-day': '11',
+      'date-of-birth-month': '11',
+      'date-of-birth-year': '1951'
+    })
     await injectWithCookie('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
@@ -59,11 +70,6 @@ describe('The contact summary page', () => {
   })
 
   it('redirects to the name page if no name has been set', async () => {
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1951'
-    })
     await injectWithCookie('GET', CONTROLLER.uri)
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)

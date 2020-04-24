@@ -94,6 +94,21 @@ describe('The licence summary page', () => {
     expect(data.headers.location).toBe(NAME.uri)
   })
 
+  it('licence type amendment causes a redirect to the summary page', async () => {
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
+
+    doMockPermits()
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
+    doMockPermits()
+    const data2 = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data2.statusCode).toBe(200)
+  })
+
   it('licence length amendment causes a redirect to the summary page', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
 
