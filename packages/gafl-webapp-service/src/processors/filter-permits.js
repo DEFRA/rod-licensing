@@ -1,6 +1,6 @@
 import { permitsOperations } from '../services/sales-api/sales-api-service.js'
 
-const getPermit = async request => {
+const filterPermits = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const permits = await permitsOperations.fetchPermits()
   const permitConcessions = await permitsOperations.fetchPermitConcessions()
@@ -28,7 +28,9 @@ const getPermit = async request => {
   const byLicenceType = byLicenceLength.filter(p => p.permitSubtype.label === permission.licenceType)
 
   // Filter by the number of rods
-  return byLicenceType.filter(r => String(r.numberOfRods) === permission.numberOfRods)
+  const byNumberOfRods = byLicenceType.filter(r => String(r.numberOfRods) === permission.numberOfRods)
+
+  return byNumberOfRods[0]
 }
 
-export default getPermit
+export default filterPermits

@@ -19,7 +19,9 @@ import {
   CONTACT,
   NEWSLETTER,
   CONTACT_SUMMARY,
-  LICENCE_SUMMARY
+  LICENCE_SUMMARY,
+  TERMS_AND_CONDITIONS,
+  AGREED
 } from '../constants.js'
 
 export default [
@@ -49,6 +51,9 @@ export default [
     nextPage: {
       troutAndCoarse: {
         page: NUMBER_OF_RODS.uri
+      },
+      troutAndCoarseTwoRod: {
+        page: LICENCE_TO_START.uri
       },
       salmonAndSeaTrout: {
         page: LICENCE_TO_START.uri
@@ -300,7 +305,18 @@ export default [
     currentPage: CONTACT_SUMMARY.page,
     nextPage: {
       ok: {
-        page: CONTACT_SUMMARY.uri
+        page: TERMS_AND_CONDITIONS.uri
+      }
+    }
+  },
+
+  // This is the end of the journey. The rest is handled by the agreed handler
+  // and the transaction is locked
+  {
+    currentPage: TERMS_AND_CONDITIONS.page,
+    nextPage: {
+      ok: {
+        page: AGREED.uri
       }
     }
   }

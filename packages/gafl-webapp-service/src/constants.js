@@ -27,10 +27,14 @@ const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 const CONTACT_SUMMARY = { uri: '/buy/contact-summary', page: 'contact-summary' }
 const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-summary' }
 
+const TERMS_AND_CONDITIONS = { uri: '/buy/terms-conditions', page: 'terms-and-conditions' }
+const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
+
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
 const ERROR = { uri: '/error', page: 'error' }
+const AGREED = { uri: '/buy/agreed' }
 
 /**
  * System constants and defaults
@@ -67,6 +71,9 @@ export {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
   CONTROLLER,
+  TERMS_AND_CONDITIONS,
+  AGREED,
+  ORDER_COMPLETE,
   NEW_TRANSACTION,
   ADD_PERMISSION,
   BENEFIT_CHECK,

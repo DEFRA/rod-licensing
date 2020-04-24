@@ -65,7 +65,7 @@
             text: "Change",
             visuallyHiddenText: "number of rods"
           }
-        ]
+        ] if data.permission.licenceLength === '12M'
       }
     }) }}
 {% endif %}
@@ -146,7 +146,7 @@
     text: "Cost"
   },
   value: {
-    text: "£" + data.cost
+    text: "£" + data.cost if data.cost else "free"
   }
 }) }}
 
