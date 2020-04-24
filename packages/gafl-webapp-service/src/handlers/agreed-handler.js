@@ -1,3 +1,1 @@
-export default async (request, h) => {
-  return 'agreed'
-}
+export default async () => 'agreed'
