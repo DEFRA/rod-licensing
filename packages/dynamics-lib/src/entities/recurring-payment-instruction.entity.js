@@ -7,7 +7,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class RecurringPaymentInstruction extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'recurringPayments',
+    localCollection: 'recurringPaymentInstructions',
     dynamicsCollection: 'defra_recurringpaymentinstructions',
     defaultFilter: 'statecode eq 0',
     mappings: {

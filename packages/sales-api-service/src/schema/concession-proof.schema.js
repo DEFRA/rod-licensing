@@ -11,6 +11,6 @@ export const concessionProofSchema = Joi.object({
     type: createOptionSetValidator('defra_concessionproof', 'National Insurance Number'),
     referenceNumber: Joi.string()
       .optional()
-      .example('AB 01 02 03 CD')
+      .example('QQ 12 34 56 C')
   }).required()
 }).label('concession-proof')

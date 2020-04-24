@@ -13,12 +13,12 @@ import {
 } from '@defra-fish/dynamics-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
-import Boom from '@hapi/boom'
+import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import AWS from '../aws.js'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-const STAGING_HISTORY_TTL_DELTA = process.env.TRANSACTION_STAGING_HISTORY_TABLE_TTL || 60 * 60 * 24 * 28
+const STAGING_HISTORY_TTL_DELTA = process.env.TRANSACTION_STAGING_HISTORY_TABLE_TTL || 60 * 60 * 24 * 90
 
 /**
  * Process messages from the transactions queue
@@ -31,7 +31,7 @@ const STAGING_HISTORY_TTL_DELTA = process.env.TRANSACTION_STAGING_HISTORY_TABLE_
 export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
-  const transactionRecord = await retrieveTransaction(id)
+  const transactionRecord = await retrieveStagedTransaction(id)
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
 
@@ -89,17 +89,6 @@ export async function processQueue ({ id }) {
       ConditionExpression: 'attribute_not_exists(id)'
     })
     .promise()
-}
-
-const retrieveTransaction = async id => {
-  const result = await docClient.get({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Key: { id }, ConsistentRead: true }).promise()
-  const record = result.Item
-  if (!record) {
-    debug('Failed to retrieve a transaction with staging id %s', id)
-    throw Boom.notFound('A transaction for the specified identifier was not found')
-  }
-  debug('Retrieved transaction record for staging id %s: %O', id, record)
-  return record
 }
 
 const processRecurringPayment = async transactionRecord => {
