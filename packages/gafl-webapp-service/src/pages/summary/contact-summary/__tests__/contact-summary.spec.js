@@ -19,6 +19,8 @@ import {
   DATE_OF_BIRTH,
   NEWSLETTER,
   NO_LICENCE_REQUIRED,
+  LICENCE_LENGTH,
+  LICENCE_TYPE,
   JUNIOR_LICENCE
 } from '../../../../constants.js'
 
@@ -46,10 +48,14 @@ const goodAddress = {
 
 describe('The contact summary page', () => {
   it('redirects to the date of birth page if no dob has been set', async () => {
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await postRedirectGet(LICENCE_SUMMARY.uri)
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(data.headers.location).toBe(NAME.uri)
   })
 
   it('redirects to the name page if no name has been set', async () => {
@@ -83,20 +89,14 @@ describe('The contact summary page', () => {
   })
 
   it('responds with the error page if the sales API fetch fails', async () => {
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new@example.com' })
-
-    fetch.mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error('fetch error'))))
-
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new2@example.com' })
+    fetch.mockImplementation(async () => new Promise((resolve, reject) => reject(new Error('fetch error'))))
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(500)
   })
 
   it('responds with summary page if all necessary pages have been completed', async () => {
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new2@example.com' })
-
-    // Mock the response from the API
     doMockPermits()
-
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })

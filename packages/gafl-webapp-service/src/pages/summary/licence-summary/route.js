@@ -11,7 +11,8 @@ import {
   LICENCE_TYPE,
   LICENCE_TO_START,
   NUMBER_OF_RODS,
-  BENEFIT_CHECK
+  BENEFIT_CHECK,
+  DATE_OF_BIRTH
 } from '../../../constants.js'
 
 const getData = async request => {
@@ -40,6 +41,10 @@ const getData = async request => {
     throw new GetDataRedirect(LICENCE_TO_START.uri)
   }
 
+  if (!status[DATE_OF_BIRTH.page]) {
+    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  }
+
   status.fromSummary = status.fromSummary || 'licence-summary'
   await request.cache().helpers.status.setCurrentPermission(status)
 
@@ -57,7 +62,7 @@ const getData = async request => {
     licenceTypes: mappings.LICENCE_TYPE,
     hasJunior: !!concessionHelper.hasJunior(permission.licensee),
     hasSenior: !!concessionHelper.hasSenior(permission.licensee),
-    cost: permission.permit[0].cost,
+    cost: permission.permit.cost,
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,

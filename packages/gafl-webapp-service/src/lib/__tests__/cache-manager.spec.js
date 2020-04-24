@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie } from '../../__mocks__/test-utils.js'
-import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE, NUMBER_OF_RODS } from '../../constants.js'
+import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE, LICENCE_TO_START } from '../../constants.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -19,7 +19,7 @@ describe('The session cache removal', () => {
     expect(data.headers.location).toBe(CONTROLLER.uri)
     data = await injectWithCookie('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NUMBER_OF_RODS.uri)
+    expect(data.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
   /*

@@ -16,6 +16,7 @@ import {
   BLUE_BADGE_NUMBER,
   LICENCE_START_DATE,
   LICENCE_START_TIME,
+  DATE_OF_BIRTH,
   NAME
 } from '../../../../constants.js'
 import moment from 'moment'
@@ -28,6 +29,14 @@ const doMockPermits = () =>
     .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
     .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
     .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+
+const dobHelper = d => ({
+  'date-of-birth-day': d.date().toString(),
+  'date-of-birth-month': (d.month() + 1).toString(),
+  'date-of-birth-year': d.year()
+})
+
+const dob16Today = moment().add(-16, 'years')
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -62,8 +71,15 @@ describe('The licence summary page', () => {
     expect(data.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
-  it('responds with summary page if all necessary pages have been completed', async () => {
+  it('redirects to the date of birth page if it is not set', async () => {
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
+  })
+
+  it('responds with summary page if all necessary pages have been completed', async () => {
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
 
     // Mock the response from the API
     doMockPermits()
@@ -88,6 +104,7 @@ describe('The licence summary page', () => {
   })
 
   it('licence type amendments cause an eventual redirect back to the summary page', async () => {
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
 
     doMockPermits()
