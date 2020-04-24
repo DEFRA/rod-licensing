@@ -30,10 +30,6 @@ const filterPermits = async request => {
   // Filter by the number of rods
   const byNumberOfRods = byLicenceType.filter(r => String(r.numberOfRods) === permission.numberOfRods)
 
-  if (byNumberOfRods.length !== 1) {
-    throw new Error(`Cannot derive a single permit from the transaction: ${JSON.stringify(permission)}`)
-  }
-
   return byNumberOfRods[0]
 }
 
