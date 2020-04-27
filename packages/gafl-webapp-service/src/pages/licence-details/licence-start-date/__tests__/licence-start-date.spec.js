@@ -4,13 +4,14 @@ import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 import moment from 'moment'
+import { MINOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-const dob13Today = moment().add(-13, 'years')
-const dob65Today = moment().add(-65, 'years')
+const dobJuniorToday = moment().subtract(MINOR_MAX_AGE + 1, 'years')
+const dobSeniorToday = moment().subtract(SENIOR_MIN_AGE, 'years')
 
 const dobHelper = d => ({
   'date-of-birth-day': d.date().toString(),
@@ -105,7 +106,7 @@ describe('The licence start date page', () => {
   })
 
   it('setting licence start date removes any junior concession', async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob13Today))
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
     const fdate = moment().add(5, 'days')
@@ -122,7 +123,7 @@ describe('The licence start date page', () => {
   })
 
   it('setting licence start date removes any senior concession', async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob65Today))
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(concessionHelper.hasSenior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
 

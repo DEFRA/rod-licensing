@@ -3,6 +3,8 @@ import { DATE_OF_BIRTH } from '../../../constants.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
+import { isMinor, isJunior, isSenior } from '@defra-fish/business-rules-lib'
+
 /**
  * Transfer the validated page object
  * @param request
@@ -32,11 +34,11 @@ export default async request => {
   // Calculate the age when the licence starts
   const ageAtLicenceStartDate = moment(permission.licenceStartDate).diff(moment(dateOfBirth), 'years')
 
-  if (ageAtLicenceStartDate < 13) {
+  if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
     concessionHelper.clear(permission.licensee)
     Object.assign(permission.licensee, { noLicenceRequired: true })
-  } else if (ageAtLicenceStartDate < 16) {
+  } else if (isJunior(ageAtLicenceStartDate)) {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M' })
     concessionHelper.addJunior(permission.licensee)
@@ -45,7 +47,7 @@ export default async request => {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
-  } else if (ageAtLicenceStartDate >= 65) {
+  } else if (isSenior(ageAtLicenceStartDate)) {
     concessionHelper.addSenior(permission.licensee)
   } else {
     concessionHelper.removeJunior(permission.licensee)
