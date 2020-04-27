@@ -28,8 +28,8 @@ const getData = async request => {
    * journey by typing into the address bar in which case they will be redirected back to the
    * appropriate point in the journey
    */
-  if (!status[DATE_OF_BIRTH.page]) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  if (!status[LICENCE_SUMMARY.page]) {
+    throw new GetDataRedirect(LICENCE_SUMMARY.uri)
   }
 
   if (!status[NAME.page]) {

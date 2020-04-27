@@ -18,7 +18,7 @@ const start = async done => {
     done()
   })
 
-  // Add a help route to expose the transaction cache
+  // Add a helper route to expose the transaction cache
   server.route({
     method: 'GET',
     path: '/buy/transaction',

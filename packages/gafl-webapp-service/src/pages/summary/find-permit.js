@@ -1,4 +1,4 @@
-import getPermit from '../../processors/get-permit.js'
+import filterPermits from '../../processors/filter-permits.js'
 import crypto from 'crypto'
 
 export default async (permission, request) => {
@@ -9,12 +9,11 @@ export default async (permission, request) => {
    * The section of the transaction cache subject to the hashing algorithm excludes
    * name, address, or anything not effecting permit filter
    */
-  const hashOperand = Object.assign((({ hash, permit, licensee, ...p }) => p)(permission),
-    { concessions: permission.licensee.concessions })
+  const hashOperand = Object.assign((({ hash, permit, licensee, ...p }) => p)(permission), { concessions: permission.licensee.concessions })
 
   // To calculate a permit, hash and save
   const addHashAndPermit = async () => {
-    const permit = await getPermit(request)
+    const permit = await filterPermits(request)
     permission.permit = permit
     const hash = crypto.createHash('sha256')
     hash.update(JSON.stringify(hashOperand))

@@ -22,6 +22,8 @@ import addressEntry from '../pages/contact/address/entry/update-transaction.js'
 import contact from '../pages/contact/contact/update-transaction.js'
 import newsletter from '../pages/contact/newsletter/update-transaction.js'
 
+import termsAndConditions from '../pages/terms-and-conditions/update-transaction.js'
+
 import {
   DATE_OF_BIRTH,
   LICENCE_TYPE,
@@ -39,7 +41,8 @@ import {
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
   CONTACT,
-  NEWSLETTER
+  NEWSLETTER,
+  TERMS_AND_CONDITIONS
 } from '../constants.js'
 
 export default {
@@ -60,5 +63,6 @@ export default {
   [ADDRESS_ENTRY.page]: addressEntry,
   [CONTACT.page]: contact,
   [NEWSLETTER.page]: newsletter,
+  [TERMS_AND_CONDITIONS.page]: termsAndConditions,
   TransactionError: class TransactionError extends Error {}
 }
