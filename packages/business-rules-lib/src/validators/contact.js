@@ -1,6 +1,30 @@
 import Joi from '@hapi/joi'
 import moment from 'moment'
 
+/**
+ * Convert the string to use titlecase at each word boundary
+ *
+ * @param {Array<String>} exclusions Define a set of words which will not be converted
+ * @returns {function(*=): *|string}
+ */
+const toTitleCase = (exclusions = []) => {
+  const capitalisationExclusionLookahead = exclusions.length ? `(?!${exclusions.join('|')})` : ''
+  const regex = new RegExp(`(?:^|[^\\p{L}])${capitalisationExclusionLookahead}\\p{L}`, 'gu')
+  return value => value && value.toLowerCase().replace(regex, match => match.toUpperCase())
+}
+
+/**
+ * Capitalises special name prefixes - e.g. mcdonald => McDonald
+ *
+ * @param {Array<String>} prefixes Prefixes to be handled - e.g. ['Mc']
+ * @returns {function(*=): *|string}
+ */
+const capitaliseNamePrefixes = prefixes => {
+  const regex = new RegExp(`(?:^|[^\\p{L}])(${prefixes.join('|')})(\\p{L})`, 'gui')
+  const titleCaseFn = toTitleCase([])
+  return value => value && value.replace(regex, (match, g1, g2) => `${titleCaseFn(g1)}${g2.toUpperCase()}`)
+}
+
 const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
 const dateString = Joi.string().extend({
@@ -56,7 +80,7 @@ export const birthDateValidator = dateString
 export const emailValidator = Joi.string()
   .trim()
   .email()
-  .max(50)
+  .max(100)
   .example('person@example.com')
 
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
@@ -70,32 +94,38 @@ export const mobilePhoneValidator = Joi.string()
  */
 export const premisesValidator = Joi.string()
   .trim()
+  .min(1)
+  .max(100)
+  .external(toTitleCase())
   .required()
-  .uppercase()
-  .max(50)
+  .example('Example House')
 
 export const streetValidator = Joi.string()
-  .max(50)
   .trim()
-  .uppercase()
+  .max(100)
+  .external(toTitleCase())
   .empty('')
+  .example('Example Street')
 
 export const localityValidator = Joi.string()
-  .max(50)
   .trim()
-  .uppercase()
+  .max(100)
+  .external(toTitleCase())
   .empty('')
+  .example('Near Sample')
 
 export const townValidator = Joi.string()
-  .max(50)
   .trim()
-  .uppercase()
+  .max(100)
+  .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le']))
   .required()
+  .example('Exampleton')
 
-export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s*([0-9][A-Z]{2})$/i
+export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s{0,6}([0-9][A-Z]{2})$/i
 export const ukPostcodeValidator = Joi.string()
   .trim()
   .min(1)
+  .max(12)
   .required()
   .pattern(ukPostcodeRegex)
   .replace(ukPostcodeRegex, '$1 $2')
@@ -120,11 +150,7 @@ const nameString = Joi.string().extend({
   rules: {
     allowable: {
       validate (value, helpers) {
-        if (
-          !/^[A-Za-z\u0020\u0027\u002c\u002d\u002e\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff\u0100-\u017f\u0180-\u01ff\u0200-\u024f\u0250-\u02af\u0370-\u0fff]+$/g.test(
-            value
-          )
-        ) {
+        if (!/\p{L}/gu.test(value)) {
           return helpers.error('string.forbidden')
         }
         return value
@@ -141,13 +167,16 @@ export const firstNameValidator = nameString
   .min(2)
   .max(100)
   .trim()
-  .uppercase()
+  .external(toTitleCase())
   .required()
+  .example('Fester')
 
 export const lastNameValidator = nameString
   .allowable()
   .min(2)
   .max(100)
   .trim()
-  .uppercase()
+  .external(toTitleCase(['van', 'de', 'der', 'den']))
+  .external(capitaliseNamePrefixes(['Mc', "O'"]))
   .required()
+  .example('Tester')

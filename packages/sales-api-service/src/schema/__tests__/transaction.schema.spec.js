@@ -2,18 +2,11 @@ import { createTransactionSchema, createTransactionResponseSchema } from '../tra
 import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
 
 jest.mock('../validators/index.js', () => ({
-  createOptionSetValidator: optionSetName => {
-    return async value => undefined
-  },
-  createEntityIdValidator: (entityType, negate = false) => {
-    return async value => undefined
-  },
-  createAlternateKeyValidator: (entityType, alternateKeyProperty, negate = false) => {
-    return async value => undefined
-  },
-  createReferenceDataEntityValidator: entityType => {
-    return async value => undefined
-  }
+  createOptionSetValidator: () => async () => undefined,
+  createEntityIdValidator: () => async () => undefined,
+  createAlternateKeyValidator: () => async () => undefined,
+  createReferenceDataEntityValidator: () => async () => undefined,
+  createPermitConcessionValidator: () => async () => undefined
 }))
 
 describe('createTransactionSchema', () => {

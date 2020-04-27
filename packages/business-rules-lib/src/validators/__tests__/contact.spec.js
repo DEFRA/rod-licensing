@@ -27,7 +27,7 @@ describe('contact validators', () => {
       await expect(contactValidation.birthDateValidator.validateAsync('1-111-19')).rejects.toThrow('"value" must be in [YYYY-MM-DD] format')
     })
 
-    it("throws if given tommorows's date", async () => {
+    it("throws if given tommorow's date", async () => {
       await expect(
         contactValidation.birthDateValidator.validateAsync(
           moment()
@@ -50,34 +50,103 @@ describe('contact validators', () => {
   })
 
   describe('firstNameValidator', () => {
-    it('allows and trims premises', async () => {
-      await expect(contactValidation.firstNameValidator.validateAsync(' John ')).resolves.toEqual('JOHN')
+    describe('converts to title case', () => {
+      each([
+        [' mIchael-hArrY ', 'Michael-Harry'],
+        [' érmintrùdé ', 'Érmintrùdé']
+      ]).it('converts %s to %s', async (name, expected) => {
+        await expect(contactValidation.firstNameValidator.validateAsync(name)).resolves.toEqual(expected)
+      })
     })
 
-    it('throws on empty premises', async () => {
+    describe('allows specific punctuation characters', () => {
+      each("'-".split('')).it('allows the %s character', async c => {
+        await expect(contactValidation.firstNameValidator.validateAsync(`Test${c}`)).resolves.toEqual(`Test${c}`)
+      })
+    })
+
+    describe('does not allow banned characters', () => {
+      each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split('')).it('does not allow the %s character', async c => {
+        await expect(contactValidation.firstNameValidator.validateAsync(c)).rejects.toThrow('contains forbidden characters')
+      })
+    })
+
+    it('allows and trims forenames', async () => {
+      await expect(contactValidation.firstNameValidator.validateAsync(' John ')).resolves.toEqual('John')
+    })
+
+    it('throws on empty forenames', async () => {
       await expect(contactValidation.firstNameValidator.validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
     })
 
-    it('throws where the name is over 100 characters', async () => {
+    it('throws where the name exceeds the maximum allowed length', async () => {
       await expect(contactValidation.firstNameValidator.validateAsync('A'.repeat(101))).rejects.toThrow(
         '"value" length must be less than or equal to 100 characters long'
       )
     })
 
-    it('throws where the name a single character', async () => {
+    it('throws where the name is a single character', async () => {
       await expect(contactValidation.firstNameValidator.validateAsync('A')).rejects.toThrow(
         '"value" length must be at least 2 characters long'
       )
     })
 
-    it('It allows a range of unicode characters from plane 1', async () => {
-      const internationStr = 'Æçéñøķť'
-      await expect(contactValidation.firstNameValidator.validateAsync(internationStr)).resolves.toEqual('ÆÇÉÑØĶŤ')
+    it('allows a range of unicode characters from plane 1', async () => {
+      const internationStr = 'ÆÇÉÑØĶŤ'
+      await expect(contactValidation.firstNameValidator.validateAsync(internationStr)).resolves.toEqual('Æçéñøķť')
+    })
+  })
+
+  describe('lastNameValidator', () => {
+    describe('converts to title case', () => {
+      each([
+        [' SMITH-JONES ', 'Smith-Jones'],
+        ['smith-jones', 'Smith-Jones'],
+        ['smythé', 'Smythé'],
+        ["O'DELL", "O'Dell"],
+        ['mcdonald', 'McDonald'],
+        ['macdonald', 'Macdonald'],
+        ['macy', 'Macy'],
+        ['van doorn', 'van Doorn'],
+        ['de vries', 'de Vries'],
+        ['van der waals', 'van der Waals'],
+        ['van den heuvel', 'van den Heuvel']
+      ]).it('converts %s to %s', async (name, expected) => {
+        await expect(contactValidation.lastNameValidator.validateAsync(name)).resolves.toEqual(expected)
+      })
     })
 
-    it('It does not allow numbers', async () => {
-      const nbrStr = '123'
-      await expect(contactValidation.firstNameValidator.validateAsync(nbrStr)).rejects.toThrow('contains forbidden characters')
+    describe('allows specific punctuation characters', () => {
+      each("'-".split('')).it('allows the %s character', async c => {
+        await expect(contactValidation.lastNameValidator.validateAsync(`Test${c}`)).resolves.toEqual(`Test${c}`)
+      })
+    })
+
+    describe('does not allow banned characters', () => {
+      each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split('')).it('does not allow the %s character', async c => {
+        await expect(contactValidation.lastNameValidator.validateAsync(c)).rejects.toThrow('contains forbidden characters')
+      })
+    })
+
+    it('throws on empty last names', async () => {
+      await expect(contactValidation.lastNameValidator.validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
+    })
+
+    it('throws where the name exceeds the maximum allowed length', async () => {
+      await expect(contactValidation.lastNameValidator.validateAsync('A'.repeat(101))).rejects.toThrow(
+        '"value" length must be less than or equal to 100 characters long'
+      )
+    })
+
+    it('throws where the name is a single character', async () => {
+      await expect(contactValidation.lastNameValidator.validateAsync('A')).rejects.toThrow(
+        '"value" length must be at least 2 characters long'
+      )
+    })
+
+    it('allows a range of unicode characters from plane 1', async () => {
+      const internationStr = 'ÆÇÉÑØĶŤ'
+      await expect(contactValidation.lastNameValidator.validateAsync(internationStr)).resolves.toEqual('Æçéñøķť')
     })
   })
 
@@ -113,64 +182,80 @@ describe('contact validators', () => {
 
   describe('premisesValidator', () => {
     it('allows and trims premises', async () => {
-      await expect(contactValidation.premisesValidator.validateAsync(' 15 Rose Cottage ')).resolves.toEqual('15 ROSE COTTAGE')
+      await expect(contactValidation.premisesValidator.validateAsync(' 15 ROSE COTTAGE ')).resolves.toEqual('15 Rose Cottage')
     })
 
     it('throws on empty premises', async () => {
       await expect(contactValidation.premisesValidator.validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
     })
 
-    it('throws where the premises is over 50 characters', async () => {
-      await expect(contactValidation.premisesValidator.validateAsync('A'.repeat(51))).rejects.toThrow(
-        '"value" length must be less than or equal to 50 characters long'
+    it('throws where the premises exceeds the maximum allowed length', async () => {
+      await expect(contactValidation.premisesValidator.validateAsync('A'.repeat(101))).rejects.toThrow(
+        '"value" length must be less than or equal to 100 characters long'
       )
     })
   })
 
   describe('streetValidator', () => {
     it('allows and trims street', async () => {
-      await expect(contactValidation.streetValidator.validateAsync(' Bond Street ')).resolves.toEqual('BOND STREET')
+      await expect(contactValidation.streetValidator.validateAsync(' BOND STREET ')).resolves.toEqual('Bond Street')
     })
 
     it('allows empty street', async () => {
       await expect(contactValidation.streetValidator.validateAsync('')).resolves.toBeFalsy()
     })
 
-    it('throws where the street is over 50 characters', async () => {
-      await expect(contactValidation.streetValidator.validateAsync('A'.repeat(51))).rejects.toThrow(
-        '"value" length must be less than or equal to 50 characters long'
+    it('throws where the street exceeds the maximum allowed length', async () => {
+      await expect(contactValidation.streetValidator.validateAsync('A'.repeat(101))).rejects.toThrow(
+        '"value" length must be less than or equal to 100 characters long'
       )
     })
   })
 
   describe('localityValidator', () => {
     it('allows and trims locality', async () => {
-      await expect(contactValidation.localityValidator.validateAsync(' Mayfair ')).resolves.toEqual('MAYFAIR')
+      await expect(contactValidation.localityValidator.validateAsync(' MAYFAIR ')).resolves.toEqual('Mayfair')
     })
 
     it('allows empty locality', async () => {
       await expect(contactValidation.localityValidator.validateAsync('')).resolves.toBeFalsy()
     })
 
-    it('throws where the locality is over 50 characters', async () => {
-      await expect(contactValidation.localityValidator.validateAsync('A'.repeat(51))).rejects.toThrow(
-        '"value" length must be less than or equal to 50 characters long'
+    it('throws where the locality exceeds the maximum allowed length', async () => {
+      await expect(contactValidation.localityValidator.validateAsync('A'.repeat(101))).rejects.toThrow(
+        '"value" length must be less than or equal to 100 characters long'
       )
     })
   })
 
   describe('townValidator', () => {
+    describe('converts to title case', () => {
+      each([
+        ['lOndon', 'London'],
+        ['newcastle upon tyne', 'Newcastle upon Tyne'],
+        ['wotton-under-edge', 'Wotton-under-Edge'],
+        ['barrow-in-ferness', 'Barrow-in-Ferness'],
+        ['stoke-on-trent', 'Stoke-on-Trent'],
+        ['sutton cum lound', 'Sutton cum Lound'],
+        ['wells-next-the-sea', 'Wells-next-the-Sea'],
+        ['chapel-en-le-frith', 'Chapel-en-le-Frith'],
+        ['puddleby-on-the-marsh', 'Puddleby-on-the-Marsh']
+      ]).it('converts %s to %s', async (name, expected) => {
+        await expect(contactValidation.townValidator.validateAsync(name)).resolves.toEqual(expected)
+      })
+    })
+
     it('allows and trims town', async () => {
-      await expect(contactValidation.townValidator.validateAsync(' london ')).resolves.toEqual('LONDON')
+      await expect(contactValidation.townValidator.validateAsync(' LONDON ')).resolves.toEqual('London')
     })
 
     it('throws on empty town', async () => {
       await expect(contactValidation.townValidator.validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
     })
 
-    it('throws where the town is over 50 characters', async () => {
-      await expect(contactValidation.townValidator.validateAsync('A'.repeat(51))).rejects.toThrow(
-        '"value" length must be less than or equal to 50 characters long'
+    it('throws where the town exceeds the maximum allowed length', async () => {
+      await expect(contactValidation.townValidator.validateAsync('A'.repeat(101))).rejects.toThrow(
+        '"value" length must be less than or equal to 100 characters long'
       )
     })
   })

@@ -1,4 +1,5 @@
 import TestEntity from '@defra-fish/dynamics-lib/__mocks__/TestEntity.js'
+import { PermitConcession } from '@defra-fish/dynamics-lib'
 const referenceData = jest.requireActual('../../../services/reference-data.service.js')
 const entityManager = jest.requireActual('@defra-fish/dynamics-lib/src/client/entity-manager.js')
 
@@ -93,5 +94,50 @@ describe('validators', () => {
       await expect(validationFunction('testValue')).rejects.toThrow('Entity for test identifier already exists')
       expect(spy).toHaveBeenCalledWith(TestEntity, "strval='testValue'")
     })
+  })
+
+  describe('createPermitConcessionValidator', () => {
+    it('returns a validation function returning undefined when the permit and concession are successfully resolved', async () => {
+      const spy = jest
+        .spyOn(referenceData, 'getReferenceDataForEntity')
+        .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
+      const validationFunction = require('../index.js').createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          permitId: 'test-1',
+          concession: {
+            concessionId: 'test-1'
+          }
+        })
+      ).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
+  })
+  it('returns a validation function throwing an error if the permit and concession are not successfully resolved', async () => {
+    const spy = jest
+      .spyOn(referenceData, 'getReferenceDataForEntity')
+      .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
+    const validationFunction = require('../index.js').createPermitConcessionValidator()
+    await expect(
+      validationFunction({
+        permitId: 'test-1',
+        concession: {
+          concessionId: 'test-2'
+        }
+      })
+    ).rejects.toThrow("The concession 'test-2' is not valid with respect to the permit 'test-1'")
+    expect(spy).toHaveBeenCalledWith(PermitConcession)
+  })
+  it('returns a validation function throwing an error if the permit requires a concession and none is supplied', async () => {
+    const spy = jest
+      .spyOn(referenceData, 'getReferenceDataForEntity')
+      .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
+    const validationFunction = require('../index.js').createPermitConcessionValidator()
+    await expect(
+      validationFunction({
+        permitId: 'test-1'
+      })
+    ).rejects.toThrow("The concession 'undefined' is not valid with respect to the permit 'test-1'")
+    expect(spy).toHaveBeenCalledWith(PermitConcession)
   })
 })
