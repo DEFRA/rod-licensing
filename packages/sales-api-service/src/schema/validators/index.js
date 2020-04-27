@@ -1,5 +1,9 @@
-import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from '../../services/reference-data.service.js'
-import { findById } from '@defra-fish/dynamics-lib'
+import {
+  getGlobalOptionSetValue,
+  getReferenceDataForEntity,
+  getReferenceDataForEntityAndId
+} from '../../services/reference-data.service.js'
+import { findById, PermitConcession } from '@defra-fish/dynamics-lib'
 import Joi from '@hapi/joi'
 
 export function createOptionSetValidator (optionSetName, exampleValue) {
@@ -48,5 +52,22 @@ export function createAlternateKeyValidator (entityType, alternateKeyProperty, n
       throw new Error(`Entity for ${entityType.definition.localCollection} identifier already exists`)
     }
     return undefined
+  }
+}
+
+/**
+ * Create a validator that will check that the provided concessionId (if present) is valid for the given permitId
+ * @returns {function(*): undefined}
+ */
+export function createPermitConcessionValidator () {
+  return async permission => {
+    const concessionId = (permission.concession && permission.concession.concessionId) || undefined
+    const permitConcessions = await getReferenceDataForEntity(PermitConcession)
+    const entriesForPermit = permitConcessions.filter(pc => pc.permitId)
+
+    // Check that concessions is valid for the given permitId and that if a permit requires a concession reference that one is defined
+    if (entriesForPermit.length && !entriesForPermit.find(pc => concessionId === pc.concessionId)) {
+      throw new Error(`The concession '${concessionId}' is not valid with respect to the permit '${permission.permitId}'`)
+    }
   }
 }

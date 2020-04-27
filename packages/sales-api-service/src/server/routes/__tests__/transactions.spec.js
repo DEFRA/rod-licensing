@@ -11,7 +11,8 @@ jest.mock('../../../schema/validators/index.js', () => ({
   createOptionSetValidator: () => async () => undefined,
   createEntityIdValidator: () => async () => undefined,
   createAlternateKeyValidator: () => async () => undefined,
-  createReferenceDataEntityValidator: () => async () => undefined
+  createReferenceDataEntityValidator: () => async () => undefined,
+  createPermitConcessionValidator: () => async () => undefined
 }))
 
 let server = null

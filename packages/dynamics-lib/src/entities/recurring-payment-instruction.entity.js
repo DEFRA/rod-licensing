@@ -11,8 +11,7 @@ export class RecurringPaymentInstruction extends BaseEntity {
     dynamicsCollection: 'defra_recurringpaymentinstructions',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: { field: 'defra_recurringpaymentinstructionid', type: 'string' },
-      referenceNumber: { field: 'defra_name', type: 'string' }
+      id: { field: 'defra_recurringpaymentinstructionid', type: 'string' }
     }
   })
 
@@ -22,18 +21,6 @@ export class RecurringPaymentInstruction extends BaseEntity {
    */
   static get definition () {
     return RecurringPaymentInstruction._definition
-  }
-
-  /**
-   * The reference number associated with the recurring payment instruction
-   * @type {string}
-   */
-  get referenceNumber () {
-    return super._getState('referenceNumber')
-  }
-
-  set referenceNumber (referenceNumber) {
-    super._setState('referenceNumber', referenceNumber)
   }
 
   /**

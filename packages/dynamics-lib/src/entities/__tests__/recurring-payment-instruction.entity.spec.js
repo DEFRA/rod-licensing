@@ -10,15 +10,13 @@ describe('recurring payment entity', () => {
     const instruction = RecurringPaymentInstruction.fromResponse(
       {
         '@odata.etag': 'W/"53585154"',
-        defra_recurringpaymentinstructionid: 'bfb24adf-2e83-ea11-a811-000d3a649213',
-        defra_name: '18569ba8-094e-4e8c-9911-bfedd5ccc17a'
+        defra_recurringpaymentinstructionid: 'bfb24adf-2e83-ea11-a811-000d3a649213'
       },
       optionSetData
     )
 
     const expectedFields = {
-      id: 'bfb24adf-2e83-ea11-a811-000d3a649213',
-      referenceNumber: '18569ba8-094e-4e8c-9911-bfedd5ccc17a'
+      id: 'bfb24adf-2e83-ea11-a811-000d3a649213'
     }
 
     expect(instruction).toBeInstanceOf(RecurringPaymentInstruction)
@@ -33,7 +31,6 @@ describe('recurring payment entity', () => {
     const recurringPayment = new RecurringPayment()
 
     const instruction = new RecurringPaymentInstruction()
-    instruction.referenceNumber = 'Test Reference Number'
     instruction.bindToContact(contact)
     instruction.bindToPermit(permit)
     instruction.bindToRecurringPayment(recurringPayment)
@@ -41,7 +38,6 @@ describe('recurring payment entity', () => {
     const dynamicsEntity = instruction.toRequestBody()
     expect(dynamicsEntity).toMatchObject(
       expect.objectContaining({
-        defra_name: 'Test Reference Number',
         'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
         'defra_Permit@odata.bind': `$${permit.uniqueContentId}`,
         'defra_RecurringPayment@odata.bind': `$${recurringPayment.uniqueContentId}`

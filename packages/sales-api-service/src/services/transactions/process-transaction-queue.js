@@ -62,8 +62,6 @@ export async function processQueue ({ id }) {
 
     if (recurringPayment) {
       const paymentInstruction = new RecurringPaymentInstruction()
-      // TODO: Discuss with Graham/Jai - this feels like it is obsolete
-      paymentInstruction.referenceNumber = transactionRecord.recurringPayment.referenceNumber
       paymentInstruction.bindToContact(contact)
       paymentInstruction.bindToPermit(permit)
       paymentInstruction.bindToRecurringPayment(recurringPayment)

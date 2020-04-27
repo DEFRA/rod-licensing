@@ -10,37 +10,15 @@ export const contactSchema = Joi.object({
     .optional()
     .description('the contact identifier of an existing contact record to be updated')
     .example('1329a866-d175-ea11-a811-000d3a64905b'),
-  firstName: Joi.string()
-    .trim()
-    .min(2)
-    .required()
-    .example('Fester'),
-  lastName: Joi.string()
-    .trim()
-    .min(2)
-    .required()
-    .example('Tester'),
+  firstName: validation.contact.firstNameValidator,
+  lastName: validation.contact.lastNameValidator,
   birthDate: validation.contact.birthDateValidator,
   email: validation.contact.emailValidator,
   mobilePhone: validation.contact.mobilePhoneValidator,
-  premises: Joi.string()
-    .trim()
-    .min(1)
-    .required()
-    .example('Example House'),
-  street: Joi.string()
-    .trim()
-    .min(1)
-    .example('Example Street'),
-  locality: Joi.string()
-    .trim()
-    .min(1)
-    .example('Near Sample'),
-  town: Joi.string()
-    .trim()
-    .min(1)
-    .required()
-    .example('Exampleton'),
+  premises: validation.contact.premisesValidator,
+  street: validation.contact.streetValidator,
+  locality: validation.contact.localityValidator,
+  town: validation.contact.townValidator,
   postcode: Joi.alternatives().conditional('country', {
     is: 'United Kingdom',
     then: validation.contact.ukPostcodeValidator,

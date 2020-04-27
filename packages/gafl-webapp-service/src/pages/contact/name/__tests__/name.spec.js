@@ -73,14 +73,14 @@ describe('The name page', () => {
 
   it('Check character substitutions are made on a successful submission', async () => {
     const data = await injectWithCookie('POST', NAME.uri, {
-      'last-name': 'Willis',
-      'first-name': 'Graham  Michael'
+      'last-name': 'WILLIS',
+      'first-name': 'GRAHAM    MICHAEL'
     })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTROLLER.uri)
     await injectWithCookie('GET', CONTROLLER.uri)
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
 
-    expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'GRAHAM MICHAEL', lastName: 'WILLIS' })
+    expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'Graham Michael', lastName: 'Willis' })
   })
 })
