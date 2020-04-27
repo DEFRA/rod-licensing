@@ -117,7 +117,7 @@ export const localityValidator = Joi.string()
 export const townValidator = Joi.string()
   .trim()
   .max(100)
-  .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le']))
+  .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le', 'super']))
   .required()
   .example('Exampleton')
 

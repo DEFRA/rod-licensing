@@ -239,7 +239,8 @@ describe('contact validators', () => {
         ['sutton cum lound', 'Sutton cum Lound'],
         ['wells-next-the-sea', 'Wells-next-the-Sea'],
         ['chapel-en-le-frith', 'Chapel-en-le-Frith'],
-        ['puddleby-on-the-marsh', 'Puddleby-on-the-Marsh']
+        ['puddleby-on-the-marsh', 'Puddleby-on-the-Marsh'],
+        ['weston-super-mare', 'Weston-super-Mare']
       ]).it('converts %s to %s', async (name, expected) => {
         await expect(contactValidation.townValidator.validateAsync(name)).resolves.toEqual(expected)
       })
