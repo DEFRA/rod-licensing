@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi'
 import { contactSchema } from './contact.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
-import { createReferenceDataEntityValidator, createAlternateKeyValidator } from './validators/index.js'
+import { createReferenceDataEntityValidator, createAlternateKeyValidator, createPermitConcessionValidator } from './validators/index.js'
 import { Permit, Permission } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 
@@ -24,7 +24,9 @@ export const createPermissionSchema = Joi.object({
     .required()
     .description('An ISO8601 compatible date string defining when the permission commences')
     .example(new Date().toISOString())
-}).label('create-permission-request')
+})
+  .external(createPermitConcessionValidator())
+  .label('create-permission-request')
 
 export const createPermissionResponseSchema = createPermissionSchema
   .append({

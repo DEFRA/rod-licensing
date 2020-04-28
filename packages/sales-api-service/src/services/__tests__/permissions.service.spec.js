@@ -7,6 +7,7 @@ import {
   MOCK_1DAY_FULL_PERMIT,
   MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
+import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
 jest.mock('../reference-data.service.js', () => ({
   ...jest.requireActual('../reference-data.service.js'),
@@ -39,7 +40,7 @@ describe('permissions service', () => {
             firstName: 'Fester',
             lastName: 'Tester',
             birthDate: moment(now)
-              .subtract(16, 'years')
+              .subtract(JUNIOR_MAX_AGE, 'years')
               .format('YYYY-MM-DD')
           }
         },
@@ -65,7 +66,7 @@ describe('permissions service', () => {
             firstName: 'Fester',
             lastName: 'Tester',
             birthDate: moment(now)
-              .subtract(15, 'years')
+              .subtract(JUNIOR_MAX_AGE - 1, 'years')
               .format('YYYY-MM-DD')
           }
         },
@@ -91,7 +92,7 @@ describe('permissions service', () => {
             firstName: 'Fester',
             lastName: 'Tester',
             birthDate: moment(now)
-              .subtract(65, 'years')
+              .subtract(SENIOR_MIN_AGE, 'years')
               .format('YYYY-MM-DD')
           }
         },

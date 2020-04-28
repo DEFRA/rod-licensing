@@ -1,4 +1,5 @@
 import { Permit } from '@defra-fish/dynamics-lib'
+import { isJunior, isSenior } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import moment from 'moment'
 import cryptoRandomString from 'crypto-random-string'
@@ -56,9 +57,9 @@ function getAgeCategory (birthDate, issueDate) {
   let category = 'F' // Uncategorised
 
   const diff = issue.diff(dob, 'years', true)
-  if (diff <= 16) {
+  if (isJunior(diff)) {
     category = 'J'
-  } else if (diff >= 65) {
+  } else if (isSenior(diff)) {
     category = 'S'
   }
   return category

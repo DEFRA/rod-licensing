@@ -42,7 +42,7 @@ describe('The address lookup page', () => {
   })
 
   it('redirects back to itself on posting a too long premises', async () => {
-    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'a'.repeat(51), postcode: 'BS9 1HJ' })
+    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'a'.repeat(101), postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })

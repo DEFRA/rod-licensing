@@ -36,7 +36,7 @@ describe('The manual address entry page', () => {
 
   it('redirects back to itself on posting too long premises', async () => {
     const addr = Object.assign({}, goodAddress)
-    addr.premises = 'A'.repeat(51)
+    addr.premises = 'A'.repeat(101)
     const data = await injectWithCookie('POST', ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
@@ -44,7 +44,7 @@ describe('The manual address entry page', () => {
 
   it('redirects back to itself on posting too long street', async () => {
     const addr = Object.assign({}, goodAddress)
-    addr.street = 'A'.repeat(51)
+    addr.street = 'A'.repeat(101)
     const data = await injectWithCookie('POST', ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
@@ -52,7 +52,7 @@ describe('The manual address entry page', () => {
 
   it('redirects back to itself on posting too long locality', async () => {
     const addr = Object.assign({}, goodAddress)
-    addr.locality = 'A'.repeat(51)
+    addr.locality = 'A'.repeat(101)
     const data = await injectWithCookie('POST', ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
@@ -68,7 +68,7 @@ describe('The manual address entry page', () => {
 
   it('redirects back to itself on posting too long town', async () => {
     const addr = Object.assign({}, goodAddress)
-    addr.town = 'A'.repeat(51)
+    addr.town = 'A'.repeat(101)
     const data = await injectWithCookie('POST', ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
@@ -100,9 +100,9 @@ describe('The manual address entry page', () => {
   it('The contact information has been set in the transaction', async () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
-      premises: '14 HOWECROFT COURT',
-      street: 'EASTMEAD LANE',
-      town: 'BRISTOL',
+      premises: '14 Howecroft Court',
+      street: 'Eastmead Lane',
+      town: 'Bristol',
       postcode: 'BS9 1HJ',
       countryCode: 'GB'
     })
@@ -120,9 +120,9 @@ describe('The manual address entry page', () => {
   it('The contact information has been set in the transaction', async () => {
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
-      premises: '14 HOWECROFT COURT',
-      street: 'EASTMEAD LANE',
-      town: 'BRISTOL',
+      premises: '14 Howecroft Court',
+      street: 'Eastmead Lane',
+      town: 'Bristol',
       postcode: 'not checked',
       countryCode: 'FR'
     })

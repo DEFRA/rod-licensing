@@ -20,6 +20,7 @@ import {
   NAME
 } from '../../../../constants.js'
 import moment from 'moment'
+import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
@@ -35,8 +36,7 @@ const dobHelper = d => ({
   'date-of-birth-month': (d.month() + 1).toString(),
   'date-of-birth-year': d.year()
 })
-
-const dob16Today = moment().add(-16, 'years')
+const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -79,7 +79,7 @@ describe('The licence summary page', () => {
   })
 
   it('responds with summary page if all necessary pages have been completed', async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
 
     // Mock the response from the API
     doMockPermits()
