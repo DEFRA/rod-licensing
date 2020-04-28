@@ -16,8 +16,10 @@ export default async request => {
     if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
       permission.numberOfRods = '2'
     }
-    await request.cache().helpers.transaction.setCurrentPermission(permission)
+  } else {
+    permission.licenceStartTime = null
   }
 
-  await request.cache().helpers.transaction.setCurrentPermission({ licenceLength: payload['licence-length'] })
+  permission.licenceLength = payload['licence-length']
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

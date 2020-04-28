@@ -26,11 +26,6 @@ import newsletter from '../pages/contact/newsletter/route.js'
 import termsAndConditions from '../pages/terms-and-conditions/route.js'
 import orderComplete from '../pages/order-complete/route.js'
 
-import controller from './controller-route.js'
-import newTransactionRoute from './new-transaction-route.js'
-import addPermissionRoute from './add-permission-route.js'
-import agreed from './agreed-route.js'
-
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
 import error from '../pages/error/route.js'
@@ -61,11 +56,7 @@ const routes = [
   ...licenceSummary,
   ...termsAndConditions,
   ...orderComplete,
-  ...error,
-  agreed,
-  controller,
-  newTransactionRoute,
-  addPermissionRoute
+  ...error
 ]
 
 export default routes

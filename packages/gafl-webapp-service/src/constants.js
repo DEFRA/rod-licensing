@@ -35,6 +35,7 @@ const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
 const ERROR = { uri: '/error', page: 'error' }
 const AGREED = { uri: '/buy/agreed' }
+const FINALISED = { uri: '/buy/finalised' }
 
 /**
  * System constants and defaults
@@ -73,6 +74,7 @@ export {
   CONTROLLER,
   TERMS_AND_CONDITIONS,
   AGREED,
+  FINALISED,
   ORDER_COMPLETE,
   NEW_TRANSACTION,
   ADD_PERMISSION,

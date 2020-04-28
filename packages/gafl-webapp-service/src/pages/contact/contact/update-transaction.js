@@ -7,6 +7,8 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { licensee } = permission
 
+  licensee.preferredMethodOfNewsletter = licensee.preferredMethodOfNewsletter || HOW_CONTACTED.none
+
   switch (payload['how-contacted']) {
     case 'email':
       licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
