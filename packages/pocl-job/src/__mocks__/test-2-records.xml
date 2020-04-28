@@ -1,0 +1,122 @@
+<NewLicence xmlns="EAF1NewLicence.xsd" >
+  <HDR>
+    <VER>1.1</VER>
+    <FN>EAF1NewLicence2020051287863.xml</FN>
+    <DATE>20200512 15:22:16</DATE>
+    <FTYPE>1</FTYPE>
+  </HDR>
+
+  <REC>
+    <LICENSEE_FORENAME>Michael</LICENSEE_FORENAME>
+    <LICENSEE_SURNAME>Brown</LICENSEE_SURNAME>
+    <LICENSEE_ADDRESS>
+      <Result>00</Result>
+      <QueryType/>
+      <ErrorCode/>
+      <Org/>
+      <POBox/>
+      <Subprem/>
+      <Buildname>77</Buildname>
+      <Buildnum/>
+      <Depthoro>Withybush Road</Depthoro>
+      <Thoro/>
+      <Deplocal/>
+      <Local/>
+      <Town>Haverfordwest</Town>
+      <County>Walsall</County>
+      <Postcode>TR11 4BN</Postcode>
+      <Premises/>
+      <Address/>
+      <ContAddress/>
+      <TownCity/>
+      <CountyReg/>
+      <PostcodeZip/>
+      <Country>England</Country>
+    </LICENSEE_ADDRESS>
+    <DOB>12/05/2003</DOB>
+    <SENIOR_ID/>
+    <DISABLED_ID_1>67676-MNS</DISABLED_ID_1>
+    <DISABLED_ID_2/>
+    <NOTIFY_POST>N</NOTIFY_POST>
+    <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+    <NOTIFY_SMS>Y</NOTIFY_SMS>
+    <NOTIFY_SMS_NUMBER>07763 768055</NOTIFY_SMS_NUMBER>
+    <NOTIFY_EMAIL_ADDRESS>brown372@email.com</NOTIFY_EMAIL_ADDRESS>
+    <COMMS_OPTION>Y</COMMS_OPTION>
+    <COMMS_POST>Y</COMMS_POST>
+    <COMMS_EMAIL>Y</COMMS_EMAIL>
+    <COMMS_SMS>Y</COMMS_SMS>
+    <COMMS_SMS_NUMBER>07763 768055</COMMS_SMS_NUMBER>
+    <COMMS_EMAIL_ADDRESS>brown372@email.com</COMMS_EMAIL_ADDRESS>
+    <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+    <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+    <START_DATE>12/05/2020</START_DATE>
+    <START_TIME>16:52</START_TIME>
+    <CHANNEL_ID>67236X</CHANNEL_ID>
+    <SERIAL_NO>SERIAL 1</SERIAL_NO>
+    <AMOUNT>54</AMOUNT>
+    <MOPEX>2</MOPEX>
+    <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+    <SYSTEM_TIME>16:22:16</SYSTEM_TIME>
+    <ITEM_ID>42376</ITEM_ID>
+  </REC>
+  <REC>
+    <LICENSEE_FORENAME>Daniel</LICENSEE_FORENAME>
+    <LICENSEE_SURNAME>Cleaver</LICENSEE_SURNAME>
+    <LICENSEE_ADDRESS>
+      <Result>00</Result>
+      <QueryType/>
+      <ErrorCode/>
+      <Org/>
+      <POBox/>
+      <Subprem/>
+      <Buildname>65</Buildname>
+      <Buildnum/>
+      <Depthoro>Groveside Close</Depthoro>
+      <Thoro/>
+      <Deplocal/>
+      <Local/>
+      <Town>Carshalton</Town>
+      <County>Barnet</County>
+      <Postcode>PL5 2AA</Postcode>
+      <Premises/>
+      <Address/>
+      <ContAddress/>
+      <TownCity/>
+      <CountyReg/>
+      <PostcodeZip/>
+      <Country>England</Country>
+    </LICENSEE_ADDRESS>
+    <DOB>26/08/1975</DOB>
+    <SENIOR_ID/>
+    <DISABLED_ID_1/>
+    <DISABLED_ID_2/>
+    <NOTIFY_POST>N</NOTIFY_POST>
+    <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+    <NOTIFY_SMS>Y</NOTIFY_SMS>
+    <NOTIFY_SMS_NUMBER>07763 722080</NOTIFY_SMS_NUMBER>
+    <NOTIFY_EMAIL_ADDRESS>cleaver321@email.com</NOTIFY_EMAIL_ADDRESS>
+    <COMMS_OPTION>Y</COMMS_OPTION>
+    <COMMS_POST>Y</COMMS_POST>
+    <COMMS_EMAIL>Y</COMMS_EMAIL>
+    <COMMS_SMS>Y</COMMS_SMS>
+    <COMMS_SMS_NUMBER>07763 722080</COMMS_SMS_NUMBER>
+    <COMMS_EMAIL_ADDRESS>cleaver321@email.com</COMMS_EMAIL_ADDRESS>
+    <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Full)</LICENCE_CATEGORY>
+    <LICENCE_TYPE/>
+    <START_DATE>12/05/2020</START_DATE>
+    <START_TIME>16:52</START_TIME>
+    <CHANNEL_ID>21995X</CHANNEL_ID>
+    <SERIAL_NO>SERIAL 2</SERIAL_NO>
+    <AMOUNT>82</AMOUNT>
+    <MOPEX>3</MOPEX>
+    <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+    <SYSTEM_TIME>16:22:16</SYSTEM_TIME>
+    <ITEM_ID>42372</ITEM_ID>
+  </REC>
+
+  <TRL>
+    <VER>1.1</VER>
+    <TTXNS>2</TTXNS>
+  </TRL>
+</NewLicence>

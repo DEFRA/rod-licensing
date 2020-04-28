@@ -1,4 +1,4 @@
-import Config from '../config.js'
+import Config from './config.js'
 import AWS from 'aws-sdk'
 const { DynamoDB, SQS } = AWS
 

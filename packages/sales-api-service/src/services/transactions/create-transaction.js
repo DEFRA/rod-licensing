@@ -1,14 +1,52 @@
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getReferenceDataForEntityAndId } from '../reference-data.service.js'
 import { v4 as uuidv4 } from 'uuid'
-import AWS from '../aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 48
+const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 168
 
+/**
+ * Create a single new transaction
+ * @param {*} payload
+ * @returns {Promise<*>}
+ */
 export async function createTransaction (payload) {
+  const record = await createTransactionRecord(payload)
+  await docClient
+    .put({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
+    .promise()
+  debug('Transaction %s stored with payload %O', record.id, record)
+  return record
+}
+
+/**
+ * Create transactions in batch mode
+ *
+ * @param {Array<*>} payload the map containing the create transaction requests to be actioned
+ * @returns {Promise<Array<*>>}
+ */
+export async function createTransactions (payload) {
+  const records = await Promise.all(payload.map(i => createTransactionRecord(i)))
+  const params = {
+    RequestItems: {
+      [process.env.TRANSACTIONS_STAGING_TABLE]: records.map(record => ({ PutRequest: { Item: record } }))
+    }
+  }
+  await docClient.batchWrite(params).promise()
+  debug('%s transactions created in batch', records.length)
+  return records
+}
+
+/**
+ * Create a transaction record from the transaction payload provided
+ *
+ * @param {*} payload
+ * @returns {Promise<*>}
+ */
+async function createTransactionRecord (payload) {
   const transactionId = uuidv4()
   debug('Creating new transaction %s', transactionId)
   const record = {
@@ -28,11 +66,5 @@ export async function createTransaction (payload) {
     record.isRecurringPaymentSupported = record.isRecurringPaymentSupported && permit.isRecurringPaymentSupported
     record.cost += permit.cost
   }
-
-  await docClient
-    .put({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
-    .promise()
-
-  debug('Transaction %s stored with payload %O', transactionId, record)
   return record
 }

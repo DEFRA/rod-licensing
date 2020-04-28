@@ -141,7 +141,6 @@ describe('transaction service', () => {
         const dynamicsLib = require('@defra-fish/dynamics-lib')
 
         awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-        awsMock.DynamoDB.DocumentClient.__setResponse('delete', {})
         process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()

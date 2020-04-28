@@ -13,8 +13,9 @@ const prepareApiTransactionPayload = async request => {
     permissions: transactionCache.permissions.map(p => {
       const permission = {
         permitId: p.permit.id,
-        licensee: Object.assign((({ countryCode, ...l }) => l)(p.licensee),
-          { country: countriesList.find(c => c.code === p.licensee.countryCode).name }),
+        licensee: Object.assign((({ countryCode, ...l }) => l)(p.licensee), {
+          country: countriesList.find(c => c.code === p.licensee.countryCode).name
+        }),
         issueDate: moment().toISOString(),
         startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
           .add(p.licenceStartTime, 'hours')

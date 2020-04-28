@@ -4,19 +4,19 @@ The Rod Licensing Sales API is responsible for communication with Microsoft Dyna
 
 # Environment variables
 
-| name                                  | description                                                                        | required | default         | valid                                                                                          | notes                                                                                |
-| ------------------------------------- | ---------------------------------------------------------------------------------- | :------: | --------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| NODE_ENV                              | Node environment                                                                   |    no    |                 | development, test, production                                                                  |                                                                                      |
-| PORT                                  | Port number                                                                        |    no    | 4000            |                                                                                                |                                                                                      |
-| AWS_REGION                            | The AWS region to use                                                              |   yes    |                 | See [AWS Regions](https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints) |                                                                                      |
-| AWS_SQS_ENDPOINT                      | Custom SQS Endpoint                                                                |    no    | Region specific |                                                                                                | Used to override the SQS service endpoint for local development                      |
-| AWS_DYNAMODB_ENDPOINT                 | Custom DynamoDB Endpoint                                                           |    no    | Region specific |                                                                                                | Used to override the DynamoDB service endpoint for local development                 |
-| TRANSACTIONS_STAGING_TABLE            | The DynamoDB table used for transaction staging                                    |   yes    |                 |                                                                                                | A secondary table <TRANSACTION_STAGING_TABLE>History will be used for audit purposes |
-| TRANSACTIONS_STAGING_TABLE_TTL        | The time to live for records in the transaction staging table (in seconds)         |    no    | 48 hours        |                                                                                                |                                                                                      |
-| TRANSACTION_STAGING_HISTORY_TABLE_TTL | The time to live for records in the transaction staging history table (in seconds) |    no    | 90 days         |                                                                                                |                                                                                      |
-| TRANSACTIONS_QUEUE_URL                | The SQS queue URL used for processing transactions                                 |   yes    |                 |                                                                                                |                                                                                      |
+| name                                  | description                                                                        | required | default   | valid                         | notes                                                                                |
+| ------------------------------------- | ---------------------------------------------------------------------------------- | :------: | --------- | ----------------------------- | ------------------------------------------------------------------------------------ |
+| NODE_ENV                              | Node environment                                                                   |    no    |           | development, test, production |                                                                                      |
+| PORT                                  | Port number                                                                        |    no    | 4000      |                               |                                                                                      |
+| TRANSACTIONS_STAGING_TABLE            | The DynamoDB table used for transaction staging                                    |   yes    |           |                               | A secondary table <TRANSACTION_STAGING_TABLE>History will be used for audit purposes |
+| TRANSACTIONS_STAGING_TABLE_TTL        | The time to live for records in the transaction staging table (in seconds)         |    no    | 168 hours |                               |                                                                                      |
+| TRANSACTION_STAGING_HISTORY_TABLE_TTL | The time to live for records in the transaction staging history table (in seconds) |    no    | 90 days   |                               |                                                                                      |
+| TRANSACTIONS_QUEUE_URL                | The SQS queue URL used for processing transactions                                 |   yes    |           |                               |                                                                                      |
 
-See also the [environment variables required by the dynamics-lib package](../dynamics-lib/README.md).
+###See also:
+
+- Environment variables [required by the connectors-lib package](../connectors-lib/README.md).
+- Environment variables [required by the dynamics-lib package](../dynamics-lib/README.md).
 
 # Prerequisites
 

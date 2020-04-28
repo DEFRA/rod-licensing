@@ -5,13 +5,13 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { referenceDataOperations } from '../../../../services/sales-api/sales-api-service.js'
 
 const validator = Joi.object({
-  premises: validation.contact.premisesValidator,
-  street: validation.contact.streetValidator,
-  locality: validation.contact.localityValidator,
-  town: validation.contact.townValidator,
+  premises: validation.contact.createPremisesValidator(Joi),
+  street: validation.contact.createStreetValidator(Joi),
+  locality: validation.contact.createLocalityValidator(Joi),
+  town: validation.contact.createTownValidator(Joi),
   postcode: Joi.alternatives().conditional('country-code', {
     is: 'GB',
-    then: validation.contact.ukPostcodeValidator,
+    then: validation.contact.createUKPostcodeValidator(Joi),
     otherwise: Joi.string()
       .trim()
       .required()

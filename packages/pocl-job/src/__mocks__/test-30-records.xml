@@ -1,0 +1,1634 @@
+<NewLicence xmlns="EAF1NewLicence.xsd" >
+<HDR>
+  <VER>1.1</VER>
+  <FN>EAF1NewLicence2020051216670.xml</FN>
+  <DATE>20200512 15:20:55</DATE>
+  <FTYPE>1</FTYPE>
+</HDR>
+
+<REC>
+  <LICENSEE_FORENAME>David</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Godfrey</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>97</Buildname>
+    <Buildnum/>
+    <Depthoro>Polsted Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>London</Town>
+    <County>Lambeth</County>
+    <Postcode>PE27 6AA</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>23/06/1979</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 729004</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>godfrey42@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 729004</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>godfrey42@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 1 day 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>13089X</CHANNEL_ID>
+  <SERIAL_NO>6390224-47-5378153</SERIAL_NO>
+  <AMOUNT>6</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42289</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Alexander</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Oulton</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>4</Buildname>
+    <Buildnum/>
+    <Depthoro>Cookson Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Newcastle upon Tyne</Town>
+    <County>Huddersfield</County>
+    <Postcode>KT24 6HQ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1>99683-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 770783</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>oulton369@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 770783</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>oulton369@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Senior, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>95199X</CHANNEL_ID>
+  <SERIAL_NO>72200399-24-23590383</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42339</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Sally</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Bastow</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>71</Buildname>
+    <Buildnum/>
+    <Depthoro>Maudlyn Park Way</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Steyning</Town>
+    <County>Hillingdon</County>
+    <Postcode>HP3 9TT</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 751311</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>bastow64@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 751311</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>bastow64@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 8 day 2 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>11725X</CHANNEL_ID>
+  <SERIAL_NO>82666143-4-42724291</SERIAL_NO>
+  <AMOUNT>12</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42307</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Phillip</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Sneesby</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>12</Buildname>
+    <Buildnum/>
+    <Depthoro>Hednesford Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Rugeley</Town>
+    <County>Bexley</County>
+    <Postcode>SL2 1DZ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 793651</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>sneesby6@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 793651</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>sneesby6@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 1 day 2 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>69056X</CHANNEL_ID>
+  <SERIAL_NO>54443345-79-1434846</SERIAL_NO>
+  <AMOUNT>6</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42290</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>STEPHEN</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Cox</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>38</Buildname>
+    <Buildnum/>
+    <Depthoro>Lewes Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Haywards Heath</Town>
+    <County>Hammersmith and Fulham</County>
+    <Postcode>G13 3JQ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>Scotland</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1>70828-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 746109</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>cox95@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 746109</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>cox95@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Senior, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>17480X</CHANNEL_ID>
+  <SERIAL_NO>20512600-81-42070195</SERIAL_NO>
+  <AMOUNT>54</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42378</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Andrew</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Rawlings</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>97</Buildname>
+    <Buildnum/>
+    <Depthoro>Mersey Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Newcastle</Town>
+    <County>Westminster</County>
+    <Postcode>MK2 3DB</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1>95417-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 709448</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>rawlings326@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 709448</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>rawlings326@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Senior, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>55649X</CHANNEL_ID>
+  <SERIAL_NO>47750632-42-74316502</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42339</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Stephen</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Hunt</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>40</Buildname>
+    <Buildnum/>
+    <Depthoro>Brecknock Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>London</Town>
+    <County>Northampton</County>
+    <Postcode>SE3 0US</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>23/11/1977</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 765519</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>hunt111@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 765519</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>hunt111@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 8 day 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>13395X</CHANNEL_ID>
+  <SERIAL_NO>71363711-85-75166116</SERIAL_NO>
+  <AMOUNT>12</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42305</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Stephen</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Leadbetter</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>30</Buildname>
+    <Buildnum/>
+    <Depthoro>Pickmere Drive</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Runcorn</Town>
+    <County>Reading</County>
+    <Postcode>KT11 2JZ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/2003</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1>10416-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 796273</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>leadbetter133@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 796273</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>leadbetter133@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 3 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>81739X</CHANNEL_ID>
+  <SERIAL_NO>42240516-30-58020256</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42345</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Michael</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Liversidge</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>48</Buildname>
+    <Buildnum/>
+    <Depthoro>Southdowns</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Lewes</Town>
+    <County>Croydon</County>
+    <Postcode>TF10 7SN</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/2003</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1>46173-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 705948</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>liversidge300@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 705948</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>liversidge300@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>84066X</CHANNEL_ID>
+  <SERIAL_NO>29664050-84-92331619</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42337</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Colin</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>WESTGARTH</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>34</Buildname>
+    <Buildnum/>
+    <Depthoro>Albemarle Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Beckenham</Town>
+    <County>Havering</County>
+    <Postcode>RG5 3DD</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/2003</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1>34289-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 706609</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>westgarth346@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 706609</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>westgarth346@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 3 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>88002X</CHANNEL_ID>
+  <SERIAL_NO>98030386-49-47945387</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42345</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Maureen</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Skoczylas</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>55</Buildname>
+    <Buildnum/>
+    <Depthoro>Main Street</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Keswick</Town>
+    <County>Enfield</County>
+    <Postcode>KA3 7JG</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>Scotland</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/2003</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1>34063-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 730630</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>skoczylas158@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 730630</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>skoczylas158@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>73263X</CHANNEL_ID>
+  <SERIAL_NO>96167011-8-49211974</SERIAL_NO>
+  <AMOUNT>54</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42376</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Heather</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>evans</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>81</Buildname>
+    <Buildnum/>
+    <Depthoro>Swan Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Caldicot</Town>
+    <County>Barnet</County>
+    <Postcode>DL7 9HA</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>02/01/1968</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 776037</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>evans105@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 776037</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>evans105@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>32012X</CHANNEL_ID>
+  <SERIAL_NO>42253226-81-6707852</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42309</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Bradley</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Chapman</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>5</Buildname>
+    <Buildnum/>
+    <Depthoro>Cliff Park Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Paignton</Town>
+    <County>Newham</County>
+    <Postcode>BL2 2PF</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/1985</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 786722</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>chapman33@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 786722</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>chapman33@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>13298X</CHANNEL_ID>
+  <SERIAL_NO>76584360-84-39730108</SERIAL_NO>
+  <AMOUNT>82</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42372</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Robin</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Sleckius</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>12</Buildname>
+    <Buildnum/>
+    <Depthoro>Cae Hendy</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Pwllheli</Town>
+    <County>Stockport</County>
+    <Postcode>BH21 1WJ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 781284</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>sleckius343@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 781284</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>sleckius343@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 1 day 1 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>11531X</CHANNEL_ID>
+  <SERIAL_NO>40511114-84-68091844</SERIAL_NO>
+  <AMOUNT>12</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42363</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>IAN</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Joss</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>69</Buildname>
+    <Buildnum/>
+    <Depthoro>Bramber Court</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Corby</Town>
+    <County>York</County>
+    <Postcode>TW11 9HW</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>04/11/1987</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 769314</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>joss60@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 769314</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>joss60@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>75202X</CHANNEL_ID>
+  <SERIAL_NO>75032336-60-20423386</SERIAL_NO>
+  <AMOUNT>82</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42372</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Nicholas</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Ireland</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>47</Buildname>
+    <Buildnum/>
+    <Depthoro>Vicarage Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Bedford</Town>
+    <County>Haringey</County>
+    <Postcode>BS21 5HL</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/2003</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1>74836-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 756848</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>ireland161@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 756848</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>ireland161@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>71092X</CHANNEL_ID>
+  <SERIAL_NO>12010816-83-82390538</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42337</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Dale</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Knowles</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>68</Buildname>
+    <Buildnum/>
+    <Depthoro>Haywood Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Rotherham</Town>
+    <County>Cambridge</County>
+    <Postcode>SA45 9RE</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>Wales</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 792865</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>knowles145@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 792865</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>knowles145@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 1 day 2 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>20616X</CHANNEL_ID>
+  <SERIAL_NO>98195224-89-19115493</SERIAL_NO>
+  <AMOUNT>6</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42290</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Andrew</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Humphies</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>81</Buildname>
+    <Buildnum/>
+    <Depthoro>Upper Abbotts Hill</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Aylesbury</Town>
+    <County>Nottingham</County>
+    <Postcode>M20 2ED</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>04/01/1977</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 707054</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>humphies392@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 707054</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>humphies392@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>15863X</CHANNEL_ID>
+  <SERIAL_NO>82388563-46-27892533</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42309</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Frank</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Laws</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>54</Buildname>
+    <Buildnum/>
+    <Depthoro>Willowhale Avenue</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Bognor Regis</Town>
+    <County>Islington</County>
+    <Postcode>BH21 2DF</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1>68243-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 713234</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>laws36@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 713234</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>laws36@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Senior, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>41918X</CHANNEL_ID>
+  <SERIAL_NO>98181563-44-49227987</SERIAL_NO>
+  <AMOUNT>54</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42378</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>David John</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Mason</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>6</Buildname>
+    <Buildnum/>
+    <Depthoro>Grampian Drive</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Nottingham</Town>
+    <County>Southampton</County>
+    <Postcode>EH7 6HQ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>Scotland</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 791963</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>mason1@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 791963</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>mason1@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>10590X</CHANNEL_ID>
+  <SERIAL_NO>60286032-50-29236224</SERIAL_NO>
+  <AMOUNT>54</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42374</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Helen</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Robins</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>90</Buildname>
+    <Buildnum/>
+    <Depthoro>Newington Gardens</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Clacton-on-Sea</Town>
+    <County>Hammersmith and Fulham</County>
+    <Postcode>WD5 0LZ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 731804</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>robins126@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 731804</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>robins126@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 3 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>36580X</CHANNEL_ID>
+  <SERIAL_NO>56225795-14-66517996</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42343</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Marc</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Linder</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>36</Buildname>
+    <Buildnum/>
+    <Depthoro>Dove Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Herne Bay</Town>
+    <County>Peterborough</County>
+    <Postcode>N22 6HH</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/04/1982</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 707955</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>linder380@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 707955</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>linder380@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 8 day 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>81189X</CHANNEL_ID>
+  <SERIAL_NO>79463002-56-66887101</SERIAL_NO>
+  <AMOUNT>12</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42305</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>John</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Lovatt</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>32</Buildname>
+    <Buildnum/>
+    <Depthoro>Canterbury Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Lichfield</Town>
+    <County>Islington</County>
+    <Postcode>SO30 2JS</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>03/02/1983</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 772746</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>lovatt113@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 772746</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>lovatt113@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>22908X</CHANNEL_ID>
+  <SERIAL_NO>96593235-75-43904535</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42309</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Wayne</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Bell</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>67</Buildname>
+    <Buildnum/>
+    <Depthoro>Alderman Avenue</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Barking</Town>
+    <County>Leeds</County>
+    <Postcode>HD8 8FL</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 771032</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>bell335@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 771032</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>bell335@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>39639X</CHANNEL_ID>
+  <SERIAL_NO>85478743-45-72643069</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42335</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Dean</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Minor</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>16</Buildname>
+    <Buildnum/>
+    <Depthoro>Redcar Avenue</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Portsmouth</Town>
+    <County>Reading</County>
+    <Postcode>GU17 0LZ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>23/01/1983</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 728551</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>minor31@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 728551</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>minor31@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 8 day 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>11504X</CHANNEL_ID>
+  <SERIAL_NO>16409284-18-24703645</SERIAL_NO>
+  <AMOUNT>12</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42305</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Frederick</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Herbert</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>23</Buildname>
+    <Buildnum/>
+    <Depthoro>Cherwell Terrace</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Daventry</Town>
+    <County>Leeds</County>
+    <Postcode>G20 9SH</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>Scotland</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>11/07/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 730017</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>herbert310@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 730017</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>herbert310@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Salmon 12 month 1 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>11/07/2020</START_DATE>
+  <START_TIME>16:20</START_TIME>
+  <CHANNEL_ID>15803X</CHANNEL_ID>
+  <SERIAL_NO>93953361-41-32806838</SERIAL_NO>
+  <AMOUNT>54</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42374</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Mariusz</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Wheatstone</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>0</Buildname>
+    <Buildnum/>
+    <Depthoro>Rushley Close</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Doncaster</Town>
+    <County>Sheffield</County>
+    <Postcode>HR1 4DZ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1>90811-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 743349</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>wheatstone247@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 743349</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>wheatstone247@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Senior, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>55601X</CHANNEL_ID>
+  <SERIAL_NO>73673256-52-38597434</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>3</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42339</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>William</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Mcnamara</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>21</Buildname>
+    <Buildnum/>
+    <Depthoro>Gamble Avenue</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>St. Helens</Town>
+    <County>Hounslow</County>
+    <Postcode>SL2 5PQ</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>05/04/1961</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 731340</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>mcnamara199@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 731340</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>mcnamara199@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full)</LICENCE_CATEGORY>
+  <LICENCE_TYPE/>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>90020X</CHANNEL_ID>
+  <SERIAL_NO>44058163-99-53222303</SERIAL_NO>
+  <AMOUNT>30</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42309</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Conrad</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Stallard</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>35</Buildname>
+    <Buildnum/>
+    <Depthoro>Lulot Gardens</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>London</Town>
+    <County>Eastbourne</County>
+    <Postcode>CT7 9PR</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>England</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/1955</DOB>
+  <SENIOR_ID>Driving Licence</SENIOR_ID>
+  <DISABLED_ID_1/>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 796887</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>stallard244@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 796887</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>stallard244@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 1 day 2 Rod Licence (Senior)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Senior concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>92824X</CHANNEL_ID>
+  <SERIAL_NO>44702515-50-80448439</SERIAL_NO>
+  <AMOUNT>6</AMOUNT>
+  <MOPEX>1</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42290</ITEM_ID>
+</REC>
+<REC>
+  <LICENSEE_FORENAME>Igor</LICENSEE_FORENAME>
+  <LICENSEE_SURNAME>Elliott</LICENSEE_SURNAME>
+  <LICENSEE_ADDRESS>
+    <Result>00</Result>
+    <QueryType/>
+    <ErrorCode/>
+    <Org/>
+    <POBox/>
+    <Subprem/>
+    <Buildname>8</Buildname>
+    <Buildnum/>
+    <Depthoro>Gosfield Road</Depthoro>
+    <Thoro/>
+    <Deplocal/>
+    <Local/>
+    <Town>Braintree</Town>
+    <County>Brighton</County>
+    <Postcode>PA60 7XY</Postcode>
+    <Premises/>
+    <Address/>
+    <ContAddress/>
+    <TownCity/>
+    <CountyReg/>
+    <PostcodeZip/>
+    <Country>Scotland</Country>
+  </LICENSEE_ADDRESS>
+  <DOB>12/05/2003</DOB>
+  <SENIOR_ID/>
+  <DISABLED_ID_1>11597-MNS</DISABLED_ID_1>
+  <DISABLED_ID_2/>
+  <NOTIFY_POST>N</NOTIFY_POST>
+  <NOTIFY_EMAIL>Y</NOTIFY_EMAIL>
+  <NOTIFY_SMS>Y</NOTIFY_SMS>
+  <NOTIFY_SMS_NUMBER>07763 722106</NOTIFY_SMS_NUMBER>
+  <NOTIFY_EMAIL_ADDRESS>elliott195@email.com</NOTIFY_EMAIL_ADDRESS>
+  <COMMS_OPTION>Y</COMMS_OPTION>
+  <COMMS_POST>Y</COMMS_POST>
+  <COMMS_EMAIL>Y</COMMS_EMAIL>
+  <COMMS_SMS>Y</COMMS_SMS>
+  <COMMS_SMS_NUMBER>07763 722106</COMMS_SMS_NUMBER>
+  <COMMS_EMAIL_ADDRESS>elliott195@email.com</COMMS_EMAIL_ADDRESS>
+  <LICENCE_CATEGORY>Coarse 12 month 2 Rod Licence (Full, Disabled)</LICENCE_CATEGORY>
+  <LICENCE_TYPE>Disabled concession</LICENCE_TYPE>
+  <START_DATE>12/05/2020</START_DATE>
+  <START_TIME>16:50</START_TIME>
+  <CHANNEL_ID>88634X</CHANNEL_ID>
+  <SERIAL_NO>68948023-18-29604197</SERIAL_NO>
+  <AMOUNT>20</AMOUNT>
+  <MOPEX>2</MOPEX>
+  <SYSTEM_DATE>12/05/2020</SYSTEM_DATE>
+  <SYSTEM_TIME>16:20:55</SYSTEM_TIME>
+  <ITEM_ID>42337</ITEM_ID>
+</REC>
+
+<TRL>
+  <VER>1.1</VER>
+  <TTXNS>30</TTXNS>
+</TRL>
+</NewLicence>

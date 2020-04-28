@@ -1,0 +1,48 @@
+{
+  "name": "pocl-job",
+  "version": "0.0.1-beta.24",
+  "description": "Post Office Counter Licence sales processor",
+  "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "rod",
+    "licensing",
+    "sales",
+    "api"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/pocl.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
+    "directory": "packages/pocl-job"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "node src/pocl-job.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@defra-fish/connectors-lib": "^0.0.1-beta.0",
+    "JSONStream": "^1.3.5",
+    "commander": "^5.1.0",
+    "debug": "^4.1.1",
+    "dot-prop": "^5.2.0",
+    "md5-file": "^5.0.0",
+    "moment": "^2.25.1",
+    "sax-stream": "^1.3.0",
+    "through2": "^3.0.1"
+  }
+}

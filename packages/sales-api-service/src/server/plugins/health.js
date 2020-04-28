@@ -1,7 +1,7 @@
 import HapiAndHealthy from 'hapi-and-healthy'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import Project from '../../project.cjs'
-import AWS from '../../services/aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 const { ddb, sqs } = AWS()
 
 export default {

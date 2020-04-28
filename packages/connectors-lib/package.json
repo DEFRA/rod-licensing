@@ -1,0 +1,40 @@
+{
+  "name": "@defra-fish/connectors-lib",
+  "version": "0.0.1-beta.0",
+  "description": "Shared connectors",
+  "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "rod",
+    "licensing",
+    "sales",
+    "api"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/connectors.js",
+  "directories": {
+    "lib": "src",
+    "test": "src/__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
+    "directory": "packages/connectors-lib"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.672.0",
+    "node-fetch": "^2.6.0"
+  }
+}

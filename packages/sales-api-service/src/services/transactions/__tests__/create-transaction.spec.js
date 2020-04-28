@@ -1,4 +1,4 @@
-import { createTransaction } from '../create-transaction.js'
+import { createTransaction, createTransactions } from '../create-transaction.js'
 import {
   mockTransactionPayload,
   mockTransactionRecord,
@@ -34,8 +34,6 @@ describe('transaction service', () => {
 
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
-      awsMock.DynamoDB.DocumentClient.__setResponse('put', {})
-
       const expectedRecord = Object.assign(mockTransactionRecord(), {
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
@@ -50,6 +48,33 @@ describe('transaction service', () => {
         expect.objectContaining({
           TableName: process.env.TRANSACTIONS_STAGING_TABLE,
           Item: expectedRecord
+        })
+      )
+    })
+
+    it('throws exceptions back up the stack', async () => {
+      awsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
+      await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+    })
+  })
+
+  describe('createTransactions', () => {
+    it('accepts multiple transactions', async () => {
+      const expectedRecord = Object.assign(mockTransactionRecord(), {
+        id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+        expires: expect.any(Number),
+        cost: 30,
+        isRecurringPaymentSupported: true
+      })
+
+      process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
+      const result = await createTransactions([mockTransactionPayload(), mockTransactionPayload()])
+      expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
+      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
+        expect.objectContaining({
+          RequestItems: {
+            [process.env.TRANSACTIONS_STAGING_TABLE]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
+          }
         })
       )
     })

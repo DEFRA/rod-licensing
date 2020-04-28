@@ -1,11 +1,4 @@
-import {
-  LICENCE_START_DATE,
-  LICENCE_LENGTH,
-  LICENCE_START_TIME,
-  DATE_OF_BIRTH,
-  CONTROLLER,
-  TEST_TRANSACTION
-} from '../../../../uri.js'
+import { LICENCE_START_DATE, LICENCE_LENGTH, LICENCE_START_TIME, DATE_OF_BIRTH, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
