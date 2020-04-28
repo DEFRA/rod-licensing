@@ -1,10 +1,10 @@
 import { Concession, Contact, GlobalOptionSetDefinition, Permit, TransactionCurrency } from '@defra-fish/dynamics-lib'
 import { readFileSync } from 'fs'
-import Project from '../src/project.cjs'
+import Project from '../project.cjs'
 import Path from 'path'
 import dotProp from 'dot-prop'
 
-const optionSetDataPath = Path.join(Project.root, '..', 'dynamics-lib', '__mocks__', 'option-set-data.json')
+const optionSetDataPath = Path.join(Project.root, '..', 'dynamics-lib', 'src', '__mocks__', 'option-set-data.json')
 const optionSetData = JSON.parse(readFileSync(optionSetDataPath, { encoding: 'UTF-8' }))
   .value.map(({ Name: name, Options: options }) => ({
     name,

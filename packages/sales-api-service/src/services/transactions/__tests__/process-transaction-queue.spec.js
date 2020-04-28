@@ -19,7 +19,7 @@ import {
   MOCK_TRANSACTION_CURRENCY,
   mockContactPayload,
   MOCK_EXISTING_CONTACT_ENTITY
-} from '../../../../__mocks__/test-data.js'
+} from '../../../__mocks__/test-data.js'
 const awsMock = require('aws-sdk').default
 
 jest.mock('../../reference-data.service.js', () => ({

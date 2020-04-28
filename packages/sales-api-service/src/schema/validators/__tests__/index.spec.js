@@ -1,4 +1,4 @@
-import TestEntity from '@defra-fish/dynamics-lib/__mocks__/TestEntity.js'
+import TestEntity from '@defra-fish/dynamics-lib/src/__mocks__/TestEntity.js'
 import { PermitConcession } from '@defra-fish/dynamics-lib'
 const referenceData = jest.requireActual('../../../services/reference-data.service.js')
 const entityManager = jest.requireActual('@defra-fish/dynamics-lib/src/client/entity-manager.js')

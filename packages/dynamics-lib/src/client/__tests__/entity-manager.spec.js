@@ -9,7 +9,7 @@ import {
   retrieveMultipleAsMap,
   retrieveGlobalOptionSets
 } from '../../index.js'
-import TestEntity from '../../../__mocks__/TestEntity.js'
+import TestEntity from '../../__mocks__/TestEntity.js'
 import uuid from 'uuid/v4.js'
 
 describe('entity manager', () => {

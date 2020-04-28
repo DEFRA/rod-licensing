@@ -1,5 +1,5 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
-import { mockTransactionPayload, mockTransactionRecord } from '../../../../__mocks__/test-data.js'
+import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
 const awsMock = require('aws-sdk').default
 
 describe('transaction service', () => {

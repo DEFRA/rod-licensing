@@ -1,5 +1,5 @@
 import { createTransaction } from '../create-transaction.js'
-import { mockTransactionPayload, mockTransactionRecord, MOCK_PERMISSION_NUMBER, MOCK_END_DATE } from '../../../../__mocks__/test-data.js'
+import { mockTransactionPayload, mockTransactionRecord, MOCK_PERMISSION_NUMBER, MOCK_END_DATE } from '../../../__mocks__/test-data.js'
 const awsMock = require('aws-sdk').default
 
 jest.mock('../../permissions.service.js', () => ({

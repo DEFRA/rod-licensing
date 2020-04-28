@@ -1,5 +1,5 @@
 import initialiseServer from '../../index.js'
-import { mockTransactionPayload, mockTransactionRecord } from '../../../../__mocks__/test-data.js'
+import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
 jest.mock('../../../services/transactions/transactions.service.js', () => ({
   createTransaction: jest.fn(async () => mockTransactionRecord()),
   finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),

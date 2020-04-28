@@ -1,5 +1,5 @@
-import '..'
-jest.mock('../src/receiver.js', () => {
+import '../sqs-receiver-service.js'
+jest.mock('../receiver.js', () => {
   return jest.fn(async () => {
     global.receiverInitialised = true
     throw new Error('Simulated')
