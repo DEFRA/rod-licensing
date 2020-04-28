@@ -63,7 +63,7 @@ export function createPermitConcessionValidator () {
   return async permission => {
     const concessionId = (permission.concession && permission.concession.concessionId) || undefined
     const permitConcessions = await getReferenceDataForEntity(PermitConcession)
-    const entriesForPermit = permitConcessions.filter(pc => pc.permitId)
+    const entriesForPermit = permitConcessions.filter(pc => pc.permitId === permission.permitId)
 
     // Check that concessions is valid for the given permitId and that if a permit requires a concession reference that one is defined
     if (entriesForPermit.length && !entriesForPermit.find(pc => concessionId === pc.concessionId)) {
