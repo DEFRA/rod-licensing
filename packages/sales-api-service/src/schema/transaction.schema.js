@@ -35,28 +35,32 @@ export const createTransactionResponseSchema = Joi.object({
     })
     .required()
     .label('create-transaction-response-permissions'),
-  dataSource: createOptionSetValidator('defra_datasource', 'Web Sales')
+  dataSource: createOptionSetValidator('defra_datasource', 'Web Sales'),
+  cost: Joi.number().required()
 }).label('create-transaction-response')
 
 export const finaliseTransactionSchema = Joi.object({
-  paymentTimestamp: Joi.string()
-    .isoDate()
-    .required()
-    .description('An ISO8601 compatible date string defining when the transaction was completed')
-    .example(new Date().toISOString()),
-  paymentSource: createOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
-  paymentMethod: createOptionSetValidator('defra_paymenttype', 'Debit card'),
-  recurringPayment: Joi.object({
-    payer: contactSchema,
-    referenceNumber: Joi.string()
+  payment: Joi.object({
+    amount: Joi.number().required(),
+    timestamp: Joi.string()
+      .isoDate()
       .required()
-      .description('The reference number associated with the recurring payment')
-      .example(uuid()),
-    mandate: Joi.string()
-      .required()
-      .description('The mandate identifier associated with the recurring payment')
-      .example(uuid())
-  })
-    .description('Used to establish a recurring payment (e.g. via Direct Debit)')
-    .optional()
+      .description('An ISO8601 compatible date string defining when the transaction was completed')
+      .example(new Date().toISOString()),
+    source: createOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
+    method: createOptionSetValidator('defra_paymenttype', 'Debit card'),
+    recurring: Joi.object({
+      payer: contactSchema,
+      referenceNumber: Joi.string()
+        .required()
+        .description('The reference number associated with the recurring payment')
+        .example(uuid()),
+      mandate: Joi.string()
+        .required()
+        .description('The mandate identifier associated with the recurring payment')
+        .example(uuid())
+    })
+      .description('Used to establish a recurring payment (e.g. via Direct Debit)')
+      .optional()
+  }).required()
 }).label('complete-transaction-request')

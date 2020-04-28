@@ -116,7 +116,7 @@ describe('transaction service', () => {
           () => {
             const mockRecord = mockCompletedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-            mockRecord.recurringPayment = {
+            mockRecord.payment.recurring = {
               referenceNumber: 'Test Reference Number',
               mandate: 'Test Mandate',
               contact: Object.assign(mockContactPayload(), { firstName: 'Esther' })

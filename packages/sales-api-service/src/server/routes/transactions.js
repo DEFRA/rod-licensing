@@ -61,6 +61,7 @@ export default [
             200: { description: 'Transaction accepted' },
             400: { description: 'Invalid request params' },
             404: { description: 'A transaction for the specified identifier was not found' },
+            409: { description: 'The payment amount did not match the cost of the transaction' },
             422: { description: 'The transaction completion payload was invalid' }
           },
           order: 2

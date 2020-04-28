@@ -55,7 +55,14 @@ describe('transaction handler', () => {
       const result = await server.inject({
         method: 'PATCH',
         url: '/transactions/test',
-        payload: { paymentSource: 'Gov Pay', paymentMethod: 'Debit card', paymentTimestamp: new Date().toISOString() }
+        payload: {
+          payment: {
+            amount: 0,
+            timestamp: new Date().toISOString(),
+            source: 'Gov Pay',
+            method: 'Debit card'
+          }
+        }
       })
       expect(result.statusCode).toBe(200)
       expect(result.payload).toBe('FINALISE_TRANSACTION_RESULT')

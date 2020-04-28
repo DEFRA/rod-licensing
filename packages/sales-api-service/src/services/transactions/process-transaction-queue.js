@@ -92,12 +92,12 @@ export async function processQueue ({ id }) {
 const processRecurringPayment = async transactionRecord => {
   let recurringPayment = null
   let payer = null
-  if (transactionRecord.recurringPayment) {
+  if (transactionRecord.payment.recurring) {
     recurringPayment = new RecurringPayment()
-    recurringPayment.referenceNumber = transactionRecord.recurringPayment.referenceNumber
-    recurringPayment.mandate = transactionRecord.recurringPayment.mandate
-    recurringPayment.inceptionDate = transactionRecord.paymentTimestamp
-    payer = await resolveContactPayload(transactionRecord.recurringPayment.payer)
+    recurringPayment.referenceNumber = transactionRecord.payment.recurring.referenceNumber
+    recurringPayment.mandate = transactionRecord.payment.recurring.mandate
+    recurringPayment.inceptionDate = transactionRecord.payment.timestamp
+    payer = await resolveContactPayload(transactionRecord.payment.recurring.payer)
     recurringPayment.bindToContact(payer)
   }
   return { recurringPayment, payer }
@@ -109,10 +109,10 @@ const createTransactionEntities = async transactionRecord => {
 
   const transaction = new Transaction()
   transaction.referenceNumber = transactionRecord.id
-  transaction.description = `Transaction for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.paymentTimestamp}`
-  transaction.timestamp = transactionRecord.paymentTimestamp
-  transaction.source = await getGlobalOptionSetValue('defra_financialtransactionsource', transactionRecord.paymentSource)
-  transaction.paymentType = await getGlobalOptionSetValue('defra_paymenttype', transactionRecord.paymentMethod)
+  transaction.description = `Transaction for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
+  transaction.timestamp = transactionRecord.payment.timestamp
+  transaction.source = await getGlobalOptionSetValue('defra_financialtransactionsource', transactionRecord.payment.source)
+  transaction.paymentType = await getGlobalOptionSetValue('defra_paymenttype', transactionRecord.payment.method)
   transaction.bindToTransactionCurrency(currency)
 
   const chargeJournal = await createTransactionJournal(transactionRecord, transaction, 'Charge', currency)
@@ -124,8 +124,8 @@ const createTransactionEntities = async transactionRecord => {
 const createTransactionJournal = async (transactionRecord, transactionEntity, type, currency) => {
   const journal = new TransactionJournal()
   journal.referenceNumber = transactionRecord.id
-  journal.description = `${type} for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.paymentTimestamp}`
-  journal.timestamp = transactionRecord.paymentTimestamp
+  journal.description = `${type} for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
+  journal.timestamp = transactionRecord.payment.timestamp
   journal.type = await getGlobalOptionSetValue('defra_financialtransactiontype', type)
   journal.bindToTransactionCurrency(currency)
   journal.bindToTransaction(transactionEntity)
