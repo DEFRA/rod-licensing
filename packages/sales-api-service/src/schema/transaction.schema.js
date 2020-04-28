@@ -7,6 +7,7 @@ import uuid from 'uuid/v4.js'
 export const createTransactionSchema = Joi.object({
   permissions: Joi.array()
     .min(1)
+    .max(50)
     .items(createPermissionSchema)
     .required()
     .label('create-transaction-request-permissions'),
