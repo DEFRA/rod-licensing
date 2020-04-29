@@ -2,6 +2,7 @@ import prepareApiTransactionPayload from '../processors/prepare-api-transaction-
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
 import { FINALISED, ORDER_COMPLETE } from '../constants.js'
 import db from 'debug'
+import Boom from '@hapi/boom'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -23,7 +24,7 @@ export default async (request, h) => {
 
   // If the agreed flag is not set to true then throw an exception
   if (!status.agreed) {
-    throw new Error(`Attempt to access the agreed handler with no agreed flag set: ${JSON.stringify(transaction)}`)
+    throw Boom.forbidden(`Attempt to access the agreed handler with no agreed flag set: ${JSON.stringify(transaction)}`)
   }
 
   // If the transaction has already been finalised then redirect to the order completed page

@@ -13,18 +13,7 @@ export default async (request, h) => {
 
   // Update the transaction with the validated page details
   if (typeof updateTransactionFunctions[currentPage] === 'function') {
-    try {
-      await updateTransactionFunctions[currentPage](request)
-    } catch (err) {
-      // Test if user has forced a page request in the wrong sequence and the transaction cannot evaluate
-      if (err instanceof updateTransactionFunctions.TransactionError) {
-        // Nothing too clever here. Get thrown to the start of the journey
-        const rn = journeyDefinition.find(p => p.currentPage === 'start')
-        return h.redirect(rn.nextPage.ok.page)
-      } else {
-        throw err
-      }
-    }
+    await updateTransactionFunctions[currentPage](request)
   }
 
   // Determine the result of the page

@@ -2,7 +2,6 @@ import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../constants.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
 import { isMinor, isJunior, isSenior } from '@defra-fish/business-rules-lib'
 
 /**
@@ -21,11 +20,6 @@ export default async request => {
 
   // Work out the junior or senior concession at the point at which the licence starts
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
-  // We need a licence start date
-  if (!permission.licenceStartDate) {
-    throw new updateTransactionFunctions.TransactionError('No licence start date')
-  }
 
   // Set the data of birth in the licensee object
   permission.licensee.birthDate = dateOfBirth

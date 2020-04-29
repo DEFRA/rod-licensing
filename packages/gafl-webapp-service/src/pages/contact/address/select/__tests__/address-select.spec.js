@@ -31,7 +31,7 @@ describe('The address select page', () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
 
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany })))
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany, ok: true })))
 
     await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookie('GET', ADDRESS_SELECT.uri)
@@ -45,10 +45,9 @@ describe('The address select page', () => {
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
-      locality: null,
       town: 'BRISTOL',
       postcode: 'BS9 1HJ',
-      countryCode: 'GB'
+      country: 'GB'
     })
   })
 })

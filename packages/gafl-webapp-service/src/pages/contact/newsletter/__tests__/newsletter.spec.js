@@ -42,7 +42,7 @@ describe('The newsletter page', () => {
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
 
     const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBeFalsy()
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
   })
 

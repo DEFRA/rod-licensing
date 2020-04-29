@@ -33,9 +33,11 @@ const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
-const ERROR = { uri: '/error', page: 'error' }
 const AGREED = { uri: '/buy/agreed' }
 const FINALISED = { uri: '/buy/finalised' }
+
+const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
+const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 
 /**
  * System constants and defaults
@@ -88,5 +90,6 @@ export {
   SALES_API_TIMEOUT_MS_DEFAULT,
   MAX_PERMISSIONS,
   PAGE_STATE,
-  ERROR
+  CLIENT_ERROR,
+  SERVER_ERROR
 }

@@ -1,5 +1,6 @@
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
+import { referenceDataOperations } from '../../../services/sales-api/sales-api-service.js'
 import findPermit from '../find-permit.js'
 import moment from 'moment'
 
@@ -48,8 +49,12 @@ const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
 
+  const country = await referenceDataOperations.fetchCountriesList()
+  const { name: countryName } = country.find(c => c.code === permission.licensee.country)
+
   return {
     permission,
+    countryName,
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     newsLetter: !!permission.licensee.preferredMethodOfNewsletter,
     howContacted: HOW_CONTACTED,

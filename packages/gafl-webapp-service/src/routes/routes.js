@@ -28,7 +28,6 @@ import orderComplete from '../pages/order-complete/route.js'
 
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
-import error from '../pages/error/route.js'
 
 const routes = [
   ...staticAssets,
@@ -55,8 +54,7 @@ const routes = [
   ...contactSummary,
   ...licenceSummary,
   ...termsAndConditions,
-  ...orderComplete,
-  ...error
+  ...orderComplete
 ]
 
 export default routes

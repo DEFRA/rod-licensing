@@ -23,15 +23,16 @@ import {
   LICENCE_TYPE,
   JUNIOR_LICENCE
 } from '../../../../constants.js'
+import mockDefraCountries from '../../../../services/address-lookup/__mocks__/data/defra-country'
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
 
 const doMockPermits = () =>
   fetch
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -103,6 +104,7 @@ describe('The contact summary page', () => {
 
   it('responds with summary page if all necessary pages have been completed', async () => {
     doMockPermits()
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     const data = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
@@ -120,7 +122,7 @@ describe('The contact summary page', () => {
   it('address lookup amendment causes redirect the summary page', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne })))
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne, ok: true })))
     await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookie('GET', ADDRESS_SELECT.uri)
     const data = await postRedirectGet(ADDRESS_SELECT.uri, { address: '0' })

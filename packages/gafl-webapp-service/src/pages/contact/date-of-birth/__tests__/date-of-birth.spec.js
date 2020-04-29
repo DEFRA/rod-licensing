@@ -8,7 +8,6 @@ import {
   LICENCE_LENGTH,
   NO_LICENCE_REQUIRED,
   JUNIOR_LICENCE,
-  CONTROLLER,
   LICENCE_SUMMARY,
   BENEFIT_CHECK
 } from '../../../../constants.js'
@@ -45,6 +44,7 @@ const startDateHelper = d => ({
 
 describe('The date of birth page', () => {
   it('return success on requesting the page', async () => {
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     const data = await injectWithCookie('GET', DATE_OF_BIRTH.uri)
     expect(data.statusCode).toBe(200)
   })
@@ -63,19 +63,6 @@ describe('The date of birth page', () => {
     })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
-  })
-
-  it('redirects back to the start of the journey where there is no licence start date', async () => {
-    let data = await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '5',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1970'
-    })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTROLLER.uri)
-    data = await injectWithCookie('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 
   /*
@@ -169,7 +156,6 @@ describe('The date of birth page', () => {
   /*
    * These tests are for licences starting tomorrow
    */
-
   it(`my licence starts tomorrow, my date of birth is ${dobJuniorTomorrow.format(
     'YYYY-MM-DD'
   )} and I require a fishing licence with a junior concession`, async () => {

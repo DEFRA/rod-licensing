@@ -51,7 +51,7 @@ describe('The address lookup page', () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
 
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany })))
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsMany, ok: true })))
 
     const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
@@ -62,7 +62,7 @@ describe('The address lookup page', () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
 
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne })))
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne, ok: true })))
 
     const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
 
@@ -74,7 +74,7 @@ describe('The address lookup page', () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
 
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsNone })))
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsNone, ok: true })))
 
     const data = await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)

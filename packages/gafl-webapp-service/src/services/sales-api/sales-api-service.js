@@ -1,18 +1,26 @@
 import fetch from 'node-fetch'
 import { SALES_API_URL_DEFAULT, SALES_API_TIMEOUT_MS_DEFAULT } from '../../constants.js'
+import countryCodeProcessor from '../../processors/countries-helper.js'
 
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
 
 const fetchData = async url => {
+  let response
   try {
-    const response = await fetch(url.href, {
+    response = await fetch(url.href, {
       headers: { 'Content-Type': 'application/json' },
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
-    return response.json()
   } catch (err) {
-    console.error('Unable to fetch to the sales API service', err)
+    console.error('Unable to fetch data from the sales API service', err)
     throw err
+  }
+
+  if (response.ok) {
+    return response.json()
+  } else {
+    const mes = await response.json()
+    throw new Error(JSON.stringify(mes, null, 4))
   }
 }
 
@@ -26,14 +34,16 @@ const postData = async (url, payload) => {
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
-    console.error('Error on post to the sales API service', err)
+    console.error('Error posting data to the sales API service', err)
     throw err
   }
 
   if (response.ok) {
     return response.json()
   } else {
-    throw new Error(`${response.statusText}\n Sale API post error - payload: \n${JSON.stringify(payload)}`)
+    const mes = await response.json()
+    mes.payload = payload
+    throw new Error(JSON.stringify(mes, null, 4))
   }
 }
 
@@ -47,4 +57,16 @@ const permissionsOperations = {
   postApiTransactionPayload: async payload => postData(new URL('/transactions', urlBase), payload)
 }
 
-export { permitsOperations, permissionsOperations }
+const localReferenceData = {}
+const referenceDataOperations = {
+  // Cache the countries list locally
+  fetchCountriesList: async () => {
+    if (!localReferenceData.countriesList) {
+      const optionSet = await fetchData(new URL('/option-sets/defra_country', urlBase))
+      localReferenceData.countriesList = countryCodeProcessor(optionSet.options)
+    }
+    return localReferenceData.countriesList
+  }
+}
+
+export { permitsOperations, permissionsOperations, referenceDataOperations }

@@ -63,6 +63,5 @@ export default {
   [ADDRESS_ENTRY.page]: addressEntry,
   [CONTACT.page]: contact,
   [NEWSLETTER.page]: newsletter,
-  [TERMS_AND_CONDITIONS.page]: termsAndConditions,
-  TransactionError: class TransactionError extends Error {}
+  [TERMS_AND_CONDITIONS.page]: termsAndConditions
 }
