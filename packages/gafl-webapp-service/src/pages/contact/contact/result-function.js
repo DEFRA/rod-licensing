@@ -9,7 +9,7 @@ export default async request => {
   const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
   let result = 'yes'
 
-  if (status.fromSummary) {
+  if (status.fromSummary && status.fromSummary === 'contact-summary') {
     result = 'summary'
   } else if ([HOW_CONTACTED.letter, HOW_CONTACTED.none].includes(licensee.preferredMethodOfConfirmation)) {
     result = 'no'

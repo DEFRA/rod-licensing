@@ -17,7 +17,8 @@ import {
   LICENCE_START_DATE,
   LICENCE_START_TIME,
   DATE_OF_BIRTH,
-  NAME
+  NAME,
+  TEST_TRANSACTION
 } from '../../../../constants.js'
 import moment from 'moment'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
@@ -174,8 +175,8 @@ describe('The licence summary page', () => {
     await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
 
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload).permissions[0].licensee.concessions.length).toBe(0)
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].concessions.length).toBe(0)
   })
 
   it('number of rod amendments cause a redirect to the summary page', async () => {

@@ -1,4 +1,4 @@
-import { LICENCE_LENGTH, CONTROLLER } from '../../../../constants.js'
+import { LICENCE_LENGTH, CONTROLLER, TEST_TRANSACTION } from '../../../../constants.js'
 import each from 'jest-each'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 
@@ -39,7 +39,7 @@ describe('The licence length page', () => {
     await injectWithCookie('GET', CONTROLLER.uri)
 
     // Get the transaction
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
 
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe(lenCode)
   })

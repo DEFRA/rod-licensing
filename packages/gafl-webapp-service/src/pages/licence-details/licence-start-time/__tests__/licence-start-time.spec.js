@@ -1,4 +1,4 @@
-import { LICENCE_START_TIME, CONTROLLER } from '../../../../constants.js'
+import { LICENCE_START_TIME, CONTROLLER, TEST_TRANSACTION } from '../../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
 
@@ -58,7 +58,7 @@ describe('The licence start time page', () => {
     // Hit the controller
     await injectWithCookie('GET', CONTROLLER.uri)
 
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
 
     expect(JSON.parse(payload).permissions[0].licenceStartTime).toBe(code)
   })

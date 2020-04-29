@@ -8,9 +8,9 @@ import * as concessionHelper from '../../../processors/concession-helper.js'
  */
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(BLUE_BADGE_CHECK.page)
-  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   if (payload['blue-badge-check'] === 'no') {
-    concessionHelper.removeDisabled(licensee)
-    await request.cache().helpers.transaction.setCurrentPermission({ licensee })
+    concessionHelper.removeDisabled(permission)
+    await request.cache().helpers.transaction.setCurrentPermission(permission)
   }
 }

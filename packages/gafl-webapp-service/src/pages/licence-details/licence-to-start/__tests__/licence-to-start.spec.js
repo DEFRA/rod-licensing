@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
-import { LICENCE_TO_START, CONTROLLER } from '../../../../constants.js'
+import { LICENCE_TO_START, CONTROLLER, TEST_TRANSACTION } from '../../../../constants.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -28,7 +28,7 @@ describe("The 'when would you like you licence to start?' page", () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTROLLER.uri)
     await injectWithCookie('GET', CONTROLLER.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceToStart).toBe('after-payment')
   })
 
@@ -37,7 +37,7 @@ describe("The 'when would you like you licence to start?' page", () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTROLLER.uri)
     await injectWithCookie('GET', CONTROLLER.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceToStart).toBe('another-date-or-time')
   })
 })

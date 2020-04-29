@@ -25,7 +25,7 @@ const getData = async request => {
 
   return {
     licenceLength: permission.licenceLength,
-    junior: concessionHelper.hasJunior(permission.licensee)
+    junior: concessionHelper.hasJunior(permission)
   }
 }
 

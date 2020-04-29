@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { BENEFIT_NI_NUMBER, LICENCE_SUMMARY, BENEFIT_CHECK } from '../../../../constants.js'
+import { BENEFIT_NI_NUMBER, LICENCE_SUMMARY, BENEFIT_CHECK, TEST_TRANSACTION } from '../../../../constants.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 
@@ -30,9 +30,9 @@ describe('The NI page', () => {
     const data = await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
-    expect(JSON.parse(payload).permissions[0].licensee.concessions[0].proof).toEqual({
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
+    expect(JSON.parse(payload).permissions[0].concessions[0].proof).toEqual({
       type: CONCESSION_PROOF.NI,
       referenceNumber: '1234'
     })

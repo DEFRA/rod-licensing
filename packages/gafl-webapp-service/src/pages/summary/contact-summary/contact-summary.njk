@@ -25,7 +25,8 @@
           {
             href: data.uri.name,
             text: "Change",
-            visuallyHiddenText: "name"
+            visuallyHiddenText: "name",
+            attributes: { id: 'change-name' }
           }
         ]
       }
@@ -42,7 +43,8 @@
           {
             href: data.uri.dateOfBirth,
             text: "Change",
-            visuallyHiddenText: "date of birth"
+            visuallyHiddenText: "date of birth",
+            attributes: { id: 'change-birth-date' }
           }
         ]
       }
@@ -64,7 +66,8 @@
           {
             href: data.uri.address,
             text: "Change",
-            visuallyHiddenText: "address"
+            visuallyHiddenText: "address",
+            attributes: { id: 'change-address' }
           }
         ]
       }
@@ -85,7 +88,8 @@
           {
             href: data.uri.contact,
             text: "Add",
-            visuallyHiddenText: "contact"
+            visuallyHiddenText: "contact",
+            attributes: { id: 'add-contact' }
           }
         ]
       }
@@ -103,7 +107,8 @@
           {
             href: data.uri.contact,
             text: "Change",
-            visuallyHiddenText: "letter"
+            visuallyHiddenText: "letter",
+            attributes: { id: 'change-how-contacted' }
           }
         ]
       }
@@ -121,7 +126,8 @@
           {
             href: data.uri.contact,
             text: "Change",
-            visuallyHiddenText: "email"
+            visuallyHiddenText: "email",
+            attributes: { id: 'change-how-contacted' }
           }
         ]
       }
@@ -139,7 +145,8 @@
             {
               href: data.uri.contact,
               text: "Change" if data.permission.licensee.mobilePhone else "Add",
-              visuallyHiddenText: "mobile"
+              visuallyHiddenText: "mobile",
+              attributes: { id: 'change-how-contacted' }
             }
           ]
         }
@@ -158,7 +165,8 @@
         {
           href: data.uri.newsletter,
           text: "Change",
-          visuallyHiddenText: "newsletter"
+          visuallyHiddenText: "newsletter",
+          attributes: { id: 'change-newsletter' }
         }
       ]
     }

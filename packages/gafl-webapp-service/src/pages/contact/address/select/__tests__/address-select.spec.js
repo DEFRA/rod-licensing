@@ -1,4 +1,4 @@
-import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP } from '../../../../../constants.js'
+import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP, TEST_TRANSACTION } from '../../../../../constants.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 
@@ -41,7 +41,7 @@ describe('The address select page', () => {
   })
 
   it('The contact information has been set in the transaction', async () => {
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 HOWECROFT COURT',
       street: 'EASTMEAD LANE',
@@ -53,7 +53,7 @@ describe('The address select page', () => {
 
   it('Select and address with no street', async () => {
     await postRedirectGet(ADDRESS_SELECT.uri, { address: '6' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '15 HOWECROFT COURT',
       town: 'BRISTOL',
@@ -64,7 +64,7 @@ describe('The address select page', () => {
 
   it('Select and address with a locality', async () => {
     await postRedirectGet(ADDRESS_SELECT.uri, { address: '7' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '16 HOWECROFT COURT',
       street: 'EASTMEAD LANE',

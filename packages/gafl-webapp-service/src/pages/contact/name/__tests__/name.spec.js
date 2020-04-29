@@ -1,4 +1,4 @@
-import { NAME, CONTROLLER } from '../../../../constants.js'
+import { NAME, CONTROLLER, TEST_TRANSACTION } from '../../../../constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
@@ -79,7 +79,7 @@ describe('The name page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTROLLER.uri)
     await injectWithCookie('GET', CONTROLLER.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
 
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'Graham Michael', lastName: 'Willis' })
   })

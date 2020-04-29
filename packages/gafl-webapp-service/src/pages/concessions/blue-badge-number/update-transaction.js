@@ -9,7 +9,7 @@ import { CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
  */
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(BLUE_BADGE_NUMBER.page)
-  const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
-  concessionHelper.addDisabled(licensee, CONCESSION_PROOF.blueBadge, payload['blue-badge-number'])
-  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  concessionHelper.addDisabled(permission, CONCESSION_PROOF.blueBadge, payload['blue-badge-number'])
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

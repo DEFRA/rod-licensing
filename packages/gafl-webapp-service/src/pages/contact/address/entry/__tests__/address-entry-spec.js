@@ -1,4 +1,4 @@
-import { ADDRESS_ENTRY, CONTACT } from '../../../../../constants.js'
+import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../constants.js'
 import mockDefraCountries from '../../../../../services/address-lookup/__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 
@@ -103,7 +103,7 @@ describe('The manual address entry page', () => {
   })
 
   it('The contact information has been set in the transaction', async () => {
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
@@ -123,7 +123,7 @@ describe('The manual address entry page', () => {
   })
 
   it('The contact information has been set in the transaction', async () => {
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',

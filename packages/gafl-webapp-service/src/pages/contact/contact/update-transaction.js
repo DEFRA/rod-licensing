@@ -25,7 +25,7 @@ export default async request => {
       break
 
     default:
-      if (permission.licenceLength === '12M' && !concessionHelper.hasJunior(licensee)) {
+      if (permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission)) {
         licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
         licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
       } else {
@@ -37,5 +37,5 @@ export default async request => {
       delete licensee.email
   }
 
-  await request.cache().helpers.transaction.setCurrentPermission({ licensee })
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

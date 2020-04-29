@@ -1,4 +1,4 @@
-import { LICENCE_TYPE, CONTROLLER } from '../../../../constants.js'
+import { LICENCE_TYPE, CONTROLLER, TEST_TRANSACTION } from '../../../../constants.js'
 import * as mappings from '../../../../processors/mapping-constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
@@ -38,7 +38,7 @@ describe('The licence type page', () => {
     // Hit the controller
     await injectWithCookie('GET', CONTROLLER.uri)
 
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
 
     expect(JSON.parse(payload).permissions[0].licenceType).toBe(mappings.LICENCE_TYPE[code])
   })

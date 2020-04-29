@@ -40,6 +40,12 @@ const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 
 /**
+ * These are inserted at runtime by the test framework but the session manager needs to know about them
+ */
+const TEST_STATUS = { uri: '/buy/status' }
+const TEST_TRANSACTION = { uri: '/buy/transaction' }
+
+/**
  * System constants and defaults
  */
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
@@ -91,5 +97,7 @@ export {
   MAX_PERMISSIONS,
   PAGE_STATE,
   CLIENT_ERROR,
-  SERVER_ERROR
+  SERVER_ERROR,
+  TEST_STATUS,
+  TEST_TRANSACTION
 }

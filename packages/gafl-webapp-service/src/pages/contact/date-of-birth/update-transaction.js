@@ -30,22 +30,22 @@ export default async request => {
 
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
-    concessionHelper.clear(permission.licensee)
+    concessionHelper.clear(permission)
     Object.assign(permission.licensee, { noLicenceRequired: true })
   } else if (isJunior(ageAtLicenceStartDate)) {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M' })
-    concessionHelper.addJunior(permission.licensee)
+    concessionHelper.addJunior(permission)
     // Junior licences are net sent out by post so if the contact details are by letter then reset to none
     if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
   } else if (isSenior(ageAtLicenceStartDate)) {
-    concessionHelper.addSenior(permission.licensee)
+    concessionHelper.addSenior(permission)
   } else {
-    concessionHelper.removeJunior(permission.licensee)
-    concessionHelper.removeSenior(permission.licensee)
+    concessionHelper.removeJunior(permission)
+    concessionHelper.removeSenior(permission)
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

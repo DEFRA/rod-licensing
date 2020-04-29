@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { BENEFIT_CHECK, BLUE_BADGE_CHECK } from '../../../../constants.js'
+import { BENEFIT_CHECK, BLUE_BADGE_CHECK, TEST_TRANSACTION } from '../../../../constants.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -24,14 +24,14 @@ describe('The benefit check page', () => {
     const data = await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(BLUE_BADGE_CHECK.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.concessions).toBeFalsy()
   })
   it('the controller redirects to the ni page when answering yes', async () => {
     const data = await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
     expect(data.statusCode).toBe(302)
     // expect(data.headers.location).toBe(NAME.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.concessions).toBeFalsy()
   })
 })

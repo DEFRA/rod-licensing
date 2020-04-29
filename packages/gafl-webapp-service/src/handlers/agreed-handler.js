@@ -45,6 +45,7 @@ export default async (request, h) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
   debug('Post transaction: %s', JSON.stringify(apiTransactionPayload, null, 4))
   const response = await permissionsOperations.postApiTransactionPayload(apiTransactionPayload)
+  debug('Got response: %s', JSON.stringify(response, null, 4))
 
   /*
    * Write the licence number and end dates into the cache

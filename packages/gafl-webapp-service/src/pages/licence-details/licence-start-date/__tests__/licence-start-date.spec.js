@@ -1,4 +1,11 @@
-import { LICENCE_START_DATE, LICENCE_LENGTH, LICENCE_START_TIME, DATE_OF_BIRTH, CONTROLLER } from '../../../../constants.js'
+import {
+  LICENCE_START_DATE,
+  LICENCE_LENGTH,
+  LICENCE_START_TIME,
+  DATE_OF_BIRTH,
+  CONTROLLER,
+  TEST_TRANSACTION
+} from '../../../../constants.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
@@ -80,13 +87,13 @@ describe('The licence start date page', () => {
     expect(controllerResult.statusCode).toBe(302)
     expect(controllerResult.headers.location).toBe(LICENCE_START_TIME.uri)
 
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceStartDate).toBe(fdate.format('YYYY-MM-DD'))
   })
 
   it('on successful submission of a valid date and continues to date-of-birth where a 12 month licence is selected', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe('12M')
 
     const fdate = moment().add(5, 'days')
@@ -100,15 +107,15 @@ describe('The licence start date page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('/buy')
 
-    const controllerResult = await injectWithCookie('GET', '/buy')
+    const controllerResult = await injectWithCookie('GET', CONTROLLER.uri)
     expect(controllerResult.statusCode).toBe(302)
     expect(controllerResult.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
 
   it('setting licence start date removes any junior concession', async () => {
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    expect(concessionHelper.hasJunior(JSON.parse(payload).permissions[0])).toBeTruthy()
     const fdate = moment().add(5, 'days')
     const body = {
       'licence-start-date-year': fdate.year().toString(),
@@ -118,14 +125,14 @@ describe('The licence start date page', () => {
 
     await postRedirectGet(LICENCE_START_DATE.uri, body)
 
-    const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload2).permissions[0].licensee.concessions.length).toBe(0)
+    const { payload: payload2 } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload2).permissions[0].concessions.length).toBe(0)
   })
 
   it('setting licence start date removes any senior concession', async () => {
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
-    expect(concessionHelper.hasSenior(JSON.parse(payload).permissions[0].licensee)).toBeTruthy()
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    expect(concessionHelper.hasSenior(JSON.parse(payload).permissions[0])).toBeTruthy()
 
     const fdate = moment().add(4, 'days')
     const body = {
@@ -136,7 +143,7 @@ describe('The licence start date page', () => {
 
     await postRedirectGet(LICENCE_START_DATE.uri, body)
 
-    const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
-    expect(JSON.parse(payload2).permissions[0].licensee.concessions.length).toBe(0)
+    const { payload: payload2 } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload2).permissions[0].concessions.length).toBe(0)
   })
 })

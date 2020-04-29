@@ -1,4 +1,13 @@
-import { CONTROLLER, NEWSLETTER, CONTACT, DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, CONTACT_SUMMARY } from '../../../../constants.js'
+import {
+  CONTROLLER,
+  NEWSLETTER,
+  CONTACT,
+  DATE_OF_BIRTH,
+  LICENCE_LENGTH,
+  LICENCE_TO_START,
+  CONTACT_SUMMARY,
+  TEST_TRANSACTION
+} from '../../../../constants.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -41,7 +50,7 @@ describe('The newsletter page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
 
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
   })
@@ -51,19 +60,19 @@ describe('The newsletter page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
 
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
     expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example2@email.com')
   })
 
   it('with an email previously entered and the preferred method of contact is letter, when posting no - delete the email address', async () => {
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none', email: 'example@email.com' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.letter)
 
     await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
 
-    const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload: payload2 } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload2).permissions[0].licensee.email).toBeFalsy()
   })
 })

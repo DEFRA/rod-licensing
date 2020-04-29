@@ -21,7 +21,8 @@ import {
   NO_LICENCE_REQUIRED,
   LICENCE_LENGTH,
   LICENCE_TYPE,
-  JUNIOR_LICENCE
+  JUNIOR_LICENCE,
+  TEST_TRANSACTION
 } from '../../../../constants.js'
 import mockDefraCountries from '../../../../services/address-lookup/__mocks__/data/defra-country'
 
@@ -230,7 +231,7 @@ describe('The contact summary page', () => {
     })
     await injectWithCookie('GET', CONTROLLER.uri)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
     await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
@@ -239,7 +240,7 @@ describe('The contact summary page', () => {
       'date-of-birth-year': '2005'
     })
     await injectWithCookie('GET', CONTROLLER.uri)
-    const { payload: payload2 } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload: payload2 } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload2).permissions[0].licenceLength).toBe('12M')
