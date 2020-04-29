@@ -43,6 +43,12 @@ const startDateHelper = d => ({
 })
 
 describe('The date of birth page', () => {
+  it('redirects to the licence to start page if it is not set', async () => {
+    const data = await injectWithCookie('GET', DATE_OF_BIRTH.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(LICENCE_TO_START.uri)
+  })
+
   it('return success on requesting the page', async () => {
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     const data = await injectWithCookie('GET', DATE_OF_BIRTH.uri)

@@ -50,4 +50,28 @@ describe('The address select page', () => {
       country: 'GB'
     })
   })
+
+  it('Select and address with no street', async () => {
+    await postRedirectGet(ADDRESS_SELECT.uri, { address: '6' })
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee).toEqual({
+      premises: '15 HOWECROFT COURT',
+      town: 'BRISTOL',
+      postcode: 'BS9 1HJ',
+      country: 'GB'
+    })
+  })
+
+  it('Select and address with a locality', async () => {
+    await postRedirectGet(ADDRESS_SELECT.uri, { address: '7' })
+    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    expect(JSON.parse(payload).permissions[0].licensee).toEqual({
+      premises: '16 HOWECROFT COURT',
+      street: 'EASTMEAD LANE',
+      locality: 'Sneyd Park',
+      town: 'BRISTOL',
+      postcode: 'BS9 1HJ',
+      country: 'GB'
+    })
+  })
 })
