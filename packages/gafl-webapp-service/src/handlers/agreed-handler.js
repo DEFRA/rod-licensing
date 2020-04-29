@@ -1,4 +1,4 @@
-import prepareApiTransactionPayload from '../processors/prepare-api-transaction-payload.js'
+import { prepareApiTransactionPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
 import { FINALISED, ORDER_COMPLETE } from '../constants.js'
 import db from 'debug'
@@ -43,6 +43,7 @@ export default async (request, h) => {
    * Post the transaction to the API
    */
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
+  debug('Post transaction: %s', JSON.stringify(apiTransactionPayload, null, 4))
   const response = await permissionsOperations.postApiTransactionPayload(apiTransactionPayload)
 
   /*
@@ -54,6 +55,8 @@ export default async (request, h) => {
     transaction.permissions[i].endDate = response.permissions[i].endDate
   }
   transaction.id = response.id
+  transaction.cost = response.cost
+  debug('Got transaction identifier: %s', transaction.id)
 
   await request.cache().helpers.transaction.set(transaction)
   await request.cache().helpers.status.set({ posted: true })

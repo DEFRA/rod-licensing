@@ -1,7 +1,8 @@
-import prepareApiTransactionPayload from '../processors/prepare-api-transaction-payload.js'
+import { prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
 import { ORDER_COMPLETE } from '../constants.js'
 import db from 'debug'
+
 const debug = db('webapp:finalisation-handler')
 
 /**
@@ -38,6 +39,9 @@ export default async (request, h) => {
   /**
    * Finalise the transaction
    */
+  const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
+  debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
+  await permissionsOperations.patchApiTransactionPayload(apiFinalisationPayload, transaction.id)
 
   await request.cache().helpers.status.set({ finalised: true })
   return h.redirect(ORDER_COMPLETE.uri)

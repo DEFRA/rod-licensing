@@ -47,6 +47,29 @@ const postData = async (url, payload) => {
   }
 }
 
+const patchData = async (url, payload) => {
+  let response
+  try {
+    response = await fetch(url.href, {
+      method: 'patch',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+      timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
+    })
+  } catch (err) {
+    console.error('Error patching data to the sales API service', err)
+    throw err
+  }
+
+  if (response.ok) {
+    return response
+  } else {
+    const mes = response.statusText
+    mes.payload = payload
+    throw new Error(JSON.stringify(mes, null, 4))
+  }
+}
+
 const permitsOperations = {
   fetchPermits: async () => fetchData(new URL('/permits', urlBase)),
   fetchConcessions: async () => fetchData(new URL('/concessions', urlBase)),
@@ -54,7 +77,8 @@ const permitsOperations = {
 }
 
 const permissionsOperations = {
-  postApiTransactionPayload: async payload => postData(new URL('/transactions', urlBase), payload)
+  postApiTransactionPayload: async payload => postData(new URL('/transactions', urlBase), payload),
+  patchApiTransactionPayload: async (payload, id) => patchData(new URL(`/transactions/${id}`, urlBase), payload, true)
 }
 
 const localReferenceData = {}

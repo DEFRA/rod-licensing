@@ -10,7 +10,8 @@ const prepareApiTransactionPayload = async request => {
       permission.licensee = p.licensee
       permission.issueDate = moment().toISOString()
       permission.startDate = moment(p.licenceStartDate, 'YYYY-MM-DD')
-        .add(p.licenceStartTime, 'hours').toISOString()
+        .add(p.licenceStartTime, 'hours')
+        .toISOString()
 
       // TODO - Remove
       permission.licensee.country = 'United Kingdom'
@@ -19,4 +20,16 @@ const prepareApiTransactionPayload = async request => {
   }
 }
 
-export default prepareApiTransactionPayload
+const prepareApiFinalisationPayload = async request => {
+  const transaction = await request.cache().helpers.transaction.get()
+  return {
+    payment: {
+      amount: transaction.cost,
+      timestamp: moment().toISOString(),
+      source: 'Gov Pay',
+      method: 'Other'
+    }
+  }
+}
+
+export { prepareApiTransactionPayload, prepareApiFinalisationPayload }

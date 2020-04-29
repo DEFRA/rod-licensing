@@ -7,6 +7,7 @@ const JoiX = Joi.extend(JoiDate)
 
 const formats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
+// TODO - discuss with Sam moving to business rules
 const schema = Joi.object({
   'licence-start-date': JoiX.date()
     .format(formats)
