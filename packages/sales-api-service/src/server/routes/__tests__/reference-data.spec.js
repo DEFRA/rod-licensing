@@ -1,4 +1,4 @@
-import { MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT } from '../../../../__mocks__/test-data.js'
+import { MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT } from '../../../__mocks__/test-data.js'
 import initialiseServer from '../../index.js'
 let server = null
 

@@ -1,6 +1,6 @@
 import { BaseEntity, EntityDefinition } from '../base.entity'
 import { GlobalOptionSetDefinition } from '../../optionset/global-option-set-definition'
-import TestEntity from '../../../__mocks__/TestEntity.js'
+import TestEntity from '../../__mocks__/TestEntity.js'
 
 describe('BaseEntity', () => {
   const runTestTypeConversion = (propertyName, value, expected = value, expectedSerialized = expected) => {

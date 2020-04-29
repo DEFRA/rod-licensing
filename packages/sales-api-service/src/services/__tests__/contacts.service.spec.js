@@ -1,5 +1,5 @@
 import { resolveContactPayload } from '../contacts.service.js'
-import { mockContactPayload, mockContactWithIdPayload, MOCK_EXISTING_CONTACT_ENTITY } from '../../../__mocks__/test-data.js'
+import { mockContactPayload, mockContactWithIdPayload, MOCK_EXISTING_CONTACT_ENTITY } from '../../__mocks__/test-data.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({

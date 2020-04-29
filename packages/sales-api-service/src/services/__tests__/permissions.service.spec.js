@@ -6,7 +6,7 @@ import {
   MOCK_12MONTH_DISABLED_PERMIT,
   MOCK_1DAY_FULL_PERMIT,
   MOCK_CONCESSION
-} from '../../../__mocks__/test-data.js'
+} from '../../__mocks__/test-data.js'
 import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
 jest.mock('../reference-data.service.js', () => ({
