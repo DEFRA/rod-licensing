@@ -19,7 +19,7 @@ import {
   MOCK_TRANSACTION_CURRENCY,
   mockContactPayload,
   MOCK_EXISTING_CONTACT_ENTITY
-} from '../../../../__mocks__/test-data.js'
+} from '../../../__mocks__/test-data.js'
 const awsMock = require('aws-sdk').default
 
 jest.mock('../../reference-data.service.js', () => ({
@@ -116,7 +116,7 @@ describe('transaction service', () => {
           () => {
             const mockRecord = mockCompletedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-            mockRecord.recurringPayment = {
+            mockRecord.payment.recurring = {
               referenceNumber: 'Test Reference Number',
               mandate: 'Test Mandate',
               contact: Object.assign(mockContactPayload(), { firstName: 'Esther' })

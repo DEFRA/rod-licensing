@@ -81,6 +81,7 @@ export const emailValidator = Joi.string()
   .trim()
   .email()
   .max(100)
+  .lowercase()
   .example('person@example.com')
 
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/

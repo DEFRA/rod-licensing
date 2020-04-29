@@ -40,7 +40,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.8.3",
     "@babel/preset-env": "^7.9.5",
-    "@types/hapi__hapi": "^19.0.2",
+    "@types/hapi__hapi": "^19.0.3",
     "@types/jest": "^25.2.1",
     "adal-node": "^0.2.1",
     "babel-eslint": "^10.0.3",
@@ -52,8 +52,7 @@
     "lerna": "^3.20.2",
     "lerna-update-wizard": "^0.17.8",
     "lint-staged": "^10.1.7",
-    "pm2": "^4.3.1",
-    "prettier-standard": "^16.2.1",
+    "prettier-standard": "^16.3.0",
     "standard": "^14.3.3"
   },
   "eslintConfig": {
@@ -103,7 +102,6 @@
     "projects": [
       "<rootDir>/packages/*"
     ],
-    "moduleDirectories": [],
     "transform": {
       "\\.js$": [
         "babel-jest",

@@ -1,4 +1,4 @@
-import { BaseEntity, EntityDefinition } from '../src/entities/base.entity'
+import { BaseEntity, EntityDefinition } from '../entities/base.entity'
 
 export default class TestEntity extends BaseEntity {
   static _definition = new EntityDefinition({

@@ -1,7 +1,7 @@
-import Project from '../src/project.cjs'
+import Project from '../project.cjs'
 import Path from 'path'
 import { readFileSync } from 'fs'
-const optionSetDataPath = Path.join(Project.root, '__mocks__', 'option-set-data.json')
+const optionSetDataPath = Path.join(Project.root, '..', 'dynamics-lib', 'src', '__mocks__', 'option-set-data.json')
 const DynamicsWebApi = jest.genMockFromModule('dynamics-web-api')
 let expectedResponse = {}
 let callError = {}

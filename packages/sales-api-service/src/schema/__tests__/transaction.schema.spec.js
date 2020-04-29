@@ -1,5 +1,5 @@
 import { createTransactionSchema, createTransactionResponseSchema } from '../transaction.schema.js'
-import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
+import { mockTransactionPayload, mockTransactionRecord } from '../../__mocks__/test-data.js'
 
 jest.mock('../validators/index.js', () => ({
   createOptionSetValidator: () => async () => undefined,

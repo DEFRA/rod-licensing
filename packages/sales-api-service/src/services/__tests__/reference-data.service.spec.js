@@ -11,7 +11,7 @@ import {
   MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE,
   MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE,
   MOCK_CONCESSION_DYNAMICS_RESPONSE
-} from '../../../__mocks__/test-data.js'
+} from '../../__mocks__/test-data.js'
 
 const getOptionSetMappingExpectation = (name, ...keys) => {
   const options = keys.reduce((acc, k) => {

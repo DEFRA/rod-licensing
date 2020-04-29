@@ -1,5 +1,5 @@
 import initialiseServer from '../../index.js'
-import { mockTransactionPayload, mockTransactionRecord } from '../../../../__mocks__/test-data.js'
+import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
 jest.mock('../../../services/transactions/transactions.service.js', () => ({
   createTransaction: jest.fn(async () => mockTransactionRecord()),
   finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),
@@ -55,7 +55,14 @@ describe('transaction handler', () => {
       const result = await server.inject({
         method: 'PATCH',
         url: '/transactions/test',
-        payload: { paymentSource: 'Gov Pay', paymentMethod: 'Debit card', paymentTimestamp: new Date().toISOString() }
+        payload: {
+          payment: {
+            amount: 0,
+            timestamp: new Date().toISOString(),
+            source: 'Gov Pay',
+            method: 'Debit card'
+          }
+        }
       })
       expect(result.statusCode).toBe(200)
       expect(result.payload).toBe('FINALISE_TRANSACTION_RESULT')
