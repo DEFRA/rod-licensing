@@ -20,8 +20,8 @@ export default async request => {
   permission.licenceStartDate = licenceStartDate
 
   // Remove any junior or senior concessions when selecting a licence start date
-  concessionHelper.removeJunior(permission.licensee)
-  concessionHelper.removeSenior(permission.licensee)
+  concessionHelper.removeJunior(permission)
+  concessionHelper.removeSenior(permission)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

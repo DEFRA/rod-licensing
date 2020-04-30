@@ -9,7 +9,7 @@ export default async (permission, request) => {
    * The section of the transaction cache subject to the hashing algorithm excludes
    * name, address, or anything not effecting permit filter
    */
-  const hashOperand = Object.assign((({ hash, permit, licensee, ...p }) => p)(permission), { concessions: permission.licensee.concessions })
+  const hashOperand = (({ hash, permit, licensee, ...p }) => p)(permission)
 
   // To calculate a permit, hash and save
   const addHashAndPermit = async () => {

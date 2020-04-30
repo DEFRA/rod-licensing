@@ -11,7 +11,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400000,
@@ -21,8 +21,8 @@ export default [
     durationMagnitude: 1,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400000,
@@ -49,7 +49,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400000,
@@ -59,8 +59,8 @@ export default [
     durationMagnitude: 1,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400000,
@@ -87,7 +87,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400000,
@@ -97,8 +97,8 @@ export default [
     durationMagnitude: 1,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400003,
@@ -125,7 +125,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400000,
@@ -135,8 +135,8 @@ export default [
     durationMagnitude: 1,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400003,
@@ -163,7 +163,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400001,
@@ -173,8 +173,8 @@ export default [
     durationMagnitude: 8,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400000,
@@ -201,7 +201,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400001,
@@ -211,8 +211,8 @@ export default [
     durationMagnitude: 8,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400000,
@@ -239,7 +239,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400001,
@@ -249,8 +249,8 @@ export default [
     durationMagnitude: 8,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400003,
@@ -277,7 +277,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400001,
@@ -287,8 +287,8 @@ export default [
     durationMagnitude: 8,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400003,
@@ -315,7 +315,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -325,8 +325,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400000,
@@ -353,7 +353,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -363,8 +363,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400000,
@@ -391,7 +391,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -401,8 +401,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400000,
@@ -429,7 +429,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -439,8 +439,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400000,
@@ -467,7 +467,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -477,8 +477,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400000,
@@ -505,7 +505,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -515,8 +515,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400000,
@@ -543,7 +543,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -553,8 +553,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400001,
@@ -581,7 +581,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -591,8 +591,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400001,
@@ -619,7 +619,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -629,8 +629,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400001,
@@ -657,7 +657,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -667,8 +667,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400001,
@@ -695,7 +695,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -705,8 +705,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400001,
@@ -733,7 +733,7 @@ export default [
     permitSubtype: {
       id: 910400001,
       label: 'Trout and coarse',
-      description: ''
+      description: 'C'
     },
     duration: {
       id: 910400003,
@@ -743,8 +743,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400001,
@@ -771,7 +771,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400003,
@@ -781,8 +781,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400003,
@@ -809,7 +809,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400003,
@@ -819,8 +819,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400003,
@@ -847,7 +847,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400003,
@@ -857,8 +857,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400003,
@@ -885,7 +885,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400003,
@@ -895,8 +895,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400003,
@@ -923,7 +923,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400003,
@@ -933,8 +933,8 @@ export default [
     durationMagnitude: 12,
     durationDesignator: {
       id: 910400001,
-      label: 'M',
-      description: 'Month(s)'
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400003,
@@ -961,7 +961,7 @@ export default [
     permitSubtype: {
       id: 910400000,
       label: 'Salmon and sea trout',
-      description: ''
+      description: 'S'
     },
     duration: {
       id: 910400003,
@@ -971,8 +971,8 @@ export default [
     durationMagnitude: 8,
     durationDesignator: {
       id: 910400000,
-      label: 'D',
-      description: 'Day(s)'
+      label: 'Day(s)',
+      description: 'D'
     },
     equipment: {
       id: 910400003,

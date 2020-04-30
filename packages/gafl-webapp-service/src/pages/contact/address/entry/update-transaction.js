@@ -13,10 +13,10 @@ export default async request => {
   // Clean up the postcode if GB
   if (payload['country-code'] === 'GB') {
     payload.postcode = payload.postcode.replace(validation.contact.ukPostcodeRegex, '$1 $2').toUpperCase()
-    await request.cache().helpers.page.setCurrentPermission(ADDRESS_ENTRY.page, payload)
+    await request.cache().helpers.page.setCurrentPermission(ADDRESS_ENTRY.page, { payload })
   }
 
-  const { premises, street, locality, town, postcode, 'country-code': countryCode } = payload
-  Object.assign(licensee, { premises, street, locality, town, postcode, countryCode })
+  const { premises, street, locality, town, postcode, 'country-code': country } = payload
+  Object.assign(licensee, { premises, street, locality, town, postcode, country })
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }

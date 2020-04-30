@@ -25,7 +25,8 @@
           {
             href: data.uri.licenceLength,
             text: "Change",
-            visuallyHiddenText: "licence length"
+            visuallyHiddenText: "licence length",
+            attributes: { id: 'change-licence-length' }
           }
         ] if not data.hasJunior
       }
@@ -42,7 +43,8 @@
           {
             href: data.uri.licenceType,
             text: "Change",
-            visuallyHiddenText: "licence type"
+            visuallyHiddenText: "licence type",
+            attributes: { id: 'change-licence-type' }
           }
         ]
       }
@@ -63,7 +65,8 @@
           {
             href: data.uri.numberOfRods,
             text: "Change",
-            visuallyHiddenText: "number of rods"
+            visuallyHiddenText: "number of rods",
+            attributes: { id: 'change-number-of-rods' }
           }
         ] if data.permission.licenceLength === '12M'
       }
@@ -82,7 +85,8 @@
       {
         href: data.uri.licenceToStart,
         text: "Change",
-        visuallyHiddenText: "valid from"
+        visuallyHiddenText: "valid from",
+        attributes: { id: 'change-licence-to-start' }
       }
     ]
   }
@@ -119,7 +123,8 @@
           {
             href: data.uri.benefitCheck,
             text: "Change",
-            visuallyHiddenText: "benefit check"
+            visuallyHiddenText: "benefit check",
+            attributes: { id: 'change-benefit-check' }
           }
         ]
     }
@@ -134,7 +139,8 @@
           {
             href: data.uri.benefitCheck,
             text: "Add",
-            visuallyHiddenText: "benefit check"
+            visuallyHiddenText: "benefit check",
+            attributes: { id: 'add-benefit-check' }
           }
         ]
       }

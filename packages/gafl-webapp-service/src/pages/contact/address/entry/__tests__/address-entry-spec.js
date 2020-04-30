@@ -1,4 +1,5 @@
-import { ADDRESS_ENTRY, CONTACT } from '../../../../../constants.js'
+import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../constants.js'
+import mockDefraCountries from '../../../../../services/address-lookup/__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
@@ -14,8 +15,12 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
+jest.mock('node-fetch')
+const fetch = require('node-fetch')
+
 describe('The manual address entry page', () => {
   it('returns success on requesting', async () => {
+    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     const data = await injectWithCookie('GET', ADDRESS_ENTRY.uri)
     expect(data.statusCode).toBe(200)
   })
@@ -98,13 +103,13 @@ describe('The manual address entry page', () => {
   })
 
   it('The contact information has been set in the transaction', async () => {
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
       town: 'Bristol',
       postcode: 'BS9 1HJ',
-      countryCode: 'GB'
+      country: 'GB'
     })
   })
 
@@ -118,13 +123,13 @@ describe('The manual address entry page', () => {
   })
 
   it('The contact information has been set in the transaction', async () => {
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
       town: 'Bristol',
       postcode: 'not checked',
-      countryCode: 'FR'
+      country: 'FR'
     })
   })
 })

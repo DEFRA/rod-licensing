@@ -1,7 +1,7 @@
 import uuidv4 from 'uuid/v4.js'
 import db from 'debug'
 import addPermission from './add-permission.js'
-import { AGREED } from '../constants.js'
+import { AGREED, NEW_TRANSACTION, ORDER_COMPLETE, FINALISED, TEST_TRANSACTION, TEST_STATUS } from '../constants.js'
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -27,7 +27,15 @@ const sessionManager = sessionCookieName => async (request, h) => {
     }
 
     const status = await request.cache().helpers.status.get()
-    if (status.agreed && request.path !== AGREED.uri) {
+
+    /*
+     * Once the agreed flag is set then any request to the service is redirected to the agreed handler
+     * except for the set in the array which includes the order-complete and new transaction pages and the agreed handler itself.
+     */
+    if (
+      status.agreed &&
+      ![NEW_TRANSACTION.uri, AGREED.uri, ORDER_COMPLETE.uri, FINALISED.uri, TEST_TRANSACTION.uri, TEST_STATUS.uri].includes(request.path)
+    ) {
       return h.redirect(AGREED.uri).takeover()
     }
 

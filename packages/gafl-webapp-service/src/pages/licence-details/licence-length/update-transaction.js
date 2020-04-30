@@ -12,12 +12,14 @@ export default async request => {
 
   // Setting the licence length to anything other that 12 months removes disabled concessions
   if (payload['licence-length'] !== '12M') {
-    concessionHelper.removeDisabled(permission.licensee)
+    concessionHelper.removeDisabled(permission)
     if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
       permission.numberOfRods = '2'
     }
-    await request.cache().helpers.transaction.setCurrentPermission(permission)
+  } else {
+    permission.licenceStartTime = null
   }
 
-  await request.cache().helpers.transaction.setCurrentPermission({ licenceLength: payload['licence-length'] })
+  permission.licenceLength = payload['licence-length']
+  await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

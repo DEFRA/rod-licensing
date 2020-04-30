@@ -1,0 +1,37 @@
+{% extends "layout.njk" %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+
+{% block pageTitle %}Error - Your request could not be processed - GOV.UK{% endblock %}
+
+{% set title = 'A problem has occurred' %}
+{% if clientError.statusCode === 400 %}
+    {% set title = 'Bad request' %}
+{% elseif clientError.statusCode === 401 %}
+    {% set title = 'Unauthorized' %}
+{% elseif clientError.statusCode === 403 %}
+    {% set title = 'Forbidden' %}
+{% elseif clientError.statusCode === 404 %}
+    {% set title = 'Page not found' %}
+{% endif %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">
+          A problem has occurred
+        </h1>
+
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+            <p class="govuk-body-m">If the web address is correct or you selected a link or button, contact the Environment Agency helpline on <a href=\"tel:03708506506\">03708 506 506</a></p>
+
+            {% endcall %}
+     </div>
+</div>
+{% endblock %}

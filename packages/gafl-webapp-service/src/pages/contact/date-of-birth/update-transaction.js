@@ -2,7 +2,6 @@ import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../constants.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import updateTransactionFunctions from '../../../handlers/update-transaction-functions.js'
 import { isMinor, isJunior, isSenior } from '@defra-fish/business-rules-lib'
 
 /**
@@ -22,11 +21,6 @@ export default async request => {
   // Work out the junior or senior concession at the point at which the licence starts
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  // We need a licence start date
-  if (!permission.licenceStartDate) {
-    throw new updateTransactionFunctions.TransactionError('No licence start date')
-  }
-
   // Set the data of birth in the licensee object
   permission.licensee.birthDate = dateOfBirth
   delete permission.licensee.noLicenceRequired
@@ -36,22 +30,22 @@ export default async request => {
 
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
-    concessionHelper.clear(permission.licensee)
+    concessionHelper.clear(permission)
     Object.assign(permission.licensee, { noLicenceRequired: true })
   } else if (isJunior(ageAtLicenceStartDate)) {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M' })
-    concessionHelper.addJunior(permission.licensee)
+    concessionHelper.addJunior(permission)
     // Junior licences are net sent out by post so if the contact details are by letter then reset to none
     if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
   } else if (isSenior(ageAtLicenceStartDate)) {
-    concessionHelper.addSenior(permission.licensee)
+    concessionHelper.addSenior(permission)
   } else {
-    concessionHelper.removeJunior(permission.licensee)
-    concessionHelper.removeSenior(permission.licensee)
+    concessionHelper.removeJunior(permission)
+    concessionHelper.removeSenior(permission)
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

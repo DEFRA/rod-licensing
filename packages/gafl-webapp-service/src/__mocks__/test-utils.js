@@ -1,5 +1,5 @@
 import { createServer, init, server } from '../server.js'
-import { SESSION_COOKIE_NAME_DEFAULT, CONTROLLER } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CONTROLLER, TEST_TRANSACTION, TEST_STATUS } from '../constants.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
 
@@ -21,8 +21,14 @@ const start = async done => {
   // Add a helper route to expose the transaction cache
   server.route({
     method: 'GET',
-    path: '/buy/transaction',
+    path: TEST_TRANSACTION.uri,
     handler: async request => request.cache().helpers.transaction.get()
+  })
+
+  server.route({
+    method: 'GET',
+    path: TEST_STATUS.uri,
+    handler: async request => request.cache().helpers.status.get()
   })
 
   // clear cache

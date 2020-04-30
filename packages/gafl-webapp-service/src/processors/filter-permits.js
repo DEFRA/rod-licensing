@@ -5,7 +5,7 @@ const filterPermits = async request => {
   const permits = await permitsOperations.fetchPermits()
   const permitConcessions = await permitsOperations.fetchPermitConcessions()
   const concessions = await permitsOperations.fetchConcessions()
-  const licenseeConcessions = permission.licensee.concessions || []
+  const licenseeConcessions = permission.concessions || []
 
   const permitsJoinPermitConcessions = permits.map(p => ({
     ...p,
@@ -21,7 +21,7 @@ const filterPermits = async request => {
 
   // Filter by the licence length
   const byLicenceLength = filteredPermitsJoinPermitConcessions.filter(
-    p => String(p.durationMagnitude + p.durationDesignator.label) === permission.licenceLength
+    p => String(p.durationMagnitude + p.durationDesignator.description) === permission.licenceLength
   )
 
   // Filter by the licence (sub) type

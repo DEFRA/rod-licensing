@@ -1,4 +1,13 @@
-import { CONTACT, LICENCE_LENGTH, CONTROLLER, DATE_OF_BIRTH, LICENCE_TO_START, CONTACT_SUMMARY, NEWSLETTER } from '../../../../constants.js'
+import {
+  CONTACT,
+  LICENCE_LENGTH,
+  CONTROLLER,
+  DATE_OF_BIRTH,
+  LICENCE_TO_START,
+  CONTACT_SUMMARY,
+  NEWSLETTER,
+  TEST_TRANSACTION
+} from '../../../../constants.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -84,7 +93,7 @@ describe('The contact preferences page', () => {
     })
     await injectWithCookie('GET', CONTROLLER.uri)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
   })
@@ -92,7 +101,7 @@ describe('The contact preferences page', () => {
   it('a 1 day licence sets the contact method to none', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
@@ -100,7 +109,7 @@ describe('The contact preferences page', () => {
   it('an 8 day licence sets the contact method to none', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
@@ -109,7 +118,7 @@ describe('The contact preferences page', () => {
     const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
@@ -118,7 +127,7 @@ describe('The contact preferences page', () => {
     const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NEWSLETTER.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.email)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.email)
   })
@@ -127,7 +136,7 @@ describe('The contact preferences page', () => {
     const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NEWSLETTER.uri)
-    const { payload } = await injectWithCookie('GET', '/buy/transaction')
+    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.text)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.text)
   })

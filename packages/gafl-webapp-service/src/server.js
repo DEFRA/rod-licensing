@@ -11,10 +11,9 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { ERROR, SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
+import { CLIENT_ERROR, SERVER_ERROR, SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
-
 let server
 
 const createServer = options => {
@@ -88,13 +87,19 @@ const init = async () => {
 
   server.ext('onPreHandler', sessionManager(sessionCookieName))
 
-  server.ext('onPreResponse', (request, h) => {
+  // Mop up 400 and 500 errors. Make sure the status code in the header is set accordingly and provide
+  // the error object to the templates for specific messaging e.g. on payment failures
+  server.ext('onPreResponse', async (request, h) => {
     if (!request.response.isBoom) {
       return h.continue
     }
 
-    console.error(request.response)
-    return h.view(ERROR.page).code(request.response.output.statusCode)
+    if (Math.floor(request.response.output.statusCode / 100) === 4) {
+      return h.view(CLIENT_ERROR.page, { clientError: request.response.output.payload }).code(request.response.output.statusCode)
+    } else {
+      console.error(request.response)
+      return h.view(SERVER_ERROR.page, { serverError: request.response.output.payload }).code(request.response.output.statusCode)
+    }
   })
 
   // Point the server plugin cache to an application cache to hold authenticated session data

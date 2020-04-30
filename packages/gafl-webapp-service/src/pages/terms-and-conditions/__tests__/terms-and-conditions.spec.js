@@ -45,9 +45,9 @@ const fetch = require('node-fetch')
 
 const doMockPermits = () =>
   fetch
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
+    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
 
 describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {

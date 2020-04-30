@@ -33,8 +33,17 @@ const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
-const ERROR = { uri: '/error', page: 'error' }
 const AGREED = { uri: '/buy/agreed' }
+const FINALISED = { uri: '/buy/finalised' }
+
+const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
+const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
+
+/**
+ * These are inserted at runtime by the test framework but the session manager needs to know about them
+ */
+const TEST_STATUS = { uri: '/buy/status' }
+const TEST_TRANSACTION = { uri: '/buy/transaction' }
 
 /**
  * System constants and defaults
@@ -48,6 +57,7 @@ const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 const REDIS_PORT_DEFAULT = 6379
 const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 const PAGE_STATE = { completed: true, error: false }
+const COMPLETION_STATUS = { agreed: 'agreed', posted: 'posted', finalised: 'finalised', payed: 'payed', completed: 'completed' }
 
 export {
   SESSION_TTL_MS_DEFAULT,
@@ -73,6 +83,7 @@ export {
   CONTROLLER,
   TERMS_AND_CONDITIONS,
   AGREED,
+  FINALISED,
   ORDER_COMPLETE,
   NEW_TRANSACTION,
   ADD_PERMISSION,
@@ -86,5 +97,9 @@ export {
   SALES_API_TIMEOUT_MS_DEFAULT,
   MAX_PERMISSIONS,
   PAGE_STATE,
-  ERROR
+  COMPLETION_STATUS,
+  CLIENT_ERROR,
+  SERVER_ERROR,
+  TEST_STATUS,
+  TEST_TRANSACTION
 }

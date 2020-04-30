@@ -58,10 +58,10 @@ const getData = async request => {
   return {
     permission,
     startTimeString,
-    disabled: permission.licensee.concessions ? permission.licensee.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
+    disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
     licenceTypes: mappings.LICENCE_TYPE,
-    hasJunior: !!concessionHelper.hasJunior(permission.licensee),
-    hasSenior: !!concessionHelper.hasSenior(permission.licensee),
+    hasJunior: !!concessionHelper.hasJunior(permission),
+    hasSenior: !!concessionHelper.hasSenior(permission),
     cost: permission.permit.cost,
     uri: {
       licenceLength: LICENCE_LENGTH.uri,

@@ -3,22 +3,22 @@ import { CONCESSION, CONCESSION_PROOF } from './mapping-constants.js'
  * I don't normally like this kind of code but this provides a single point at which a change can be made to
  * move to a situation where multiple concessions are enabled
  */
-const clear = licensee => {
-  delete licensee.concessions
+const clear = permission => {
+  delete permission.concessions
 }
 
-const addJunior = licensee => {
-  if (!hasJunior(licensee)) {
-    if (hasSenior(licensee)) {
-      removeSenior(licensee)
+const addJunior = permission => {
+  if (!hasJunior(permission)) {
+    if (hasSenior(permission)) {
+      removeSenior(permission)
     }
-    if (hasDisabled(licensee)) {
-      removeDisabled(licensee)
+    if (hasDisabled(permission)) {
+      removeDisabled(permission)
     }
-    if (!licensee.concessions) {
-      licensee.concessions = []
+    if (!permission.concessions) {
+      permission.concessions = []
     }
-    licensee.concessions.push({
+    permission.concessions.push({
       type: CONCESSION.JUNIOR,
       proof: {
         type: CONCESSION_PROOF.none
@@ -27,26 +27,26 @@ const addJunior = licensee => {
   }
 }
 
-const hasJunior = licensee => licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.JUNIOR)
+const hasJunior = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
 
-const removeJunior = licensee => {
-  if (hasJunior(licensee)) {
-    licensee.concessions = licensee.concessions.filter(c => c.type !== CONCESSION.JUNIOR)
+const removeJunior = permission => {
+  if (hasJunior(permission)) {
+    permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.JUNIOR)
   }
 }
 
-const addSenior = licensee => {
-  if (!hasSenior(licensee)) {
-    if (hasJunior(licensee)) {
-      removeJunior(licensee)
+const addSenior = permission => {
+  if (!hasSenior(permission)) {
+    if (hasJunior(permission)) {
+      removeJunior(permission)
     }
-    if (hasDisabled(licensee)) {
-      removeDisabled(licensee)
+    if (hasDisabled(permission)) {
+      removeDisabled(permission)
     }
-    if (!licensee.concessions) {
-      licensee.concessions = []
+    if (!permission.concessions) {
+      permission.concessions = []
     }
-    licensee.concessions.push({
+    permission.concessions.push({
       type: CONCESSION.SENIOR,
       proof: {
         type: CONCESSION_PROOF.none
@@ -55,28 +55,28 @@ const addSenior = licensee => {
   }
 }
 
-const hasSenior = licensee => licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.SENIOR)
+const hasSenior = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.SENIOR)
 
-const removeSenior = licensee => {
-  if (hasSenior(licensee)) {
-    licensee.concessions = licensee.concessions.filter(c => c.type !== CONCESSION.SENIOR)
+const removeSenior = permission => {
+  if (hasSenior(permission)) {
+    permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.SENIOR)
   }
 }
 
-const addDisabled = (licensee, concessionProof, referenceNumber) => {
-  if (hasDisabled(licensee)) {
-    removeDisabled(licensee)
+const addDisabled = (permission, concessionProof, referenceNumber) => {
+  if (hasDisabled(permission)) {
+    removeDisabled(permission)
   }
-  if (hasJunior(licensee)) {
-    removeJunior(licensee)
+  if (hasJunior(permission)) {
+    removeJunior(permission)
   }
-  if (hasSenior(licensee)) {
-    removeSenior(licensee)
+  if (hasSenior(permission)) {
+    removeSenior(permission)
   }
-  if (!licensee.concessions) {
-    licensee.concessions = []
+  if (!permission.concessions) {
+    permission.concessions = []
   }
-  licensee.concessions.push({
+  permission.concessions.push({
     type: CONCESSION.DISABLED,
     proof: {
       type: concessionProof,
@@ -85,11 +85,11 @@ const addDisabled = (licensee, concessionProof, referenceNumber) => {
   })
 }
 
-const hasDisabled = licensee => licensee.concessions && licensee.concessions.find(c => c.type === CONCESSION.DISABLED)
+const hasDisabled = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED)
 
-const removeDisabled = licensee => {
-  if (hasDisabled(licensee)) {
-    licensee.concessions = licensee.concessions.filter(c => c.type !== CONCESSION.DISABLED)
+const removeDisabled = permission => {
+  if (hasDisabled(permission)) {
+    permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.DISABLED)
   }
 }
 

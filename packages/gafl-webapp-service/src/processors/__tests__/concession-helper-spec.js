@@ -1,7 +1,7 @@
 import * as f from '../concession-helper'
 import { CONCESSION, CONCESSION_PROOF } from '../mapping-constants'
 
-const licensee = {}
+const permission = {}
 
 const junior = {
   type: CONCESSION.JUNIOR,
@@ -35,55 +35,55 @@ const disabledNi = {
 
 describe('The concession helper', () => {
   it('add junior', () => {
-    f.addJunior(licensee)
-    expect(licensee.concessions).toContainEqual(junior)
-    expect(licensee.concessions.length).toBe(1)
+    f.addJunior(permission)
+    expect(permission.concessions).toContainEqual(junior)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add senior', () => {
-    f.addSenior(licensee)
-    expect(licensee.concessions).toContainEqual(senior)
-    expect(licensee.concessions.length).toBe(1)
+    f.addSenior(permission)
+    expect(permission.concessions).toContainEqual(senior)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add blue badge', () => {
-    f.addDisabled(licensee, CONCESSION_PROOF.blueBadge, '123')
-    expect(licensee.concessions).toContainEqual(disabledbb)
-    expect(licensee.concessions.length).toBe(1)
+    f.addDisabled(permission, CONCESSION_PROOF.blueBadge, '123')
+    expect(permission.concessions).toContainEqual(disabledbb)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add NI', () => {
-    f.addDisabled(licensee, CONCESSION_PROOF.NI, '456')
-    expect(licensee.concessions).toContainEqual(disabledNi)
-    expect(licensee.concessions.length).toBe(1)
+    f.addDisabled(permission, CONCESSION_PROOF.NI, '456')
+    expect(permission.concessions).toContainEqual(disabledNi)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add junior to replace disabled', () => {
-    f.addJunior(licensee)
-    expect(licensee.concessions).toContainEqual(junior)
-    expect(licensee.concessions.length).toBe(1)
+    f.addJunior(permission)
+    expect(permission.concessions).toContainEqual(junior)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add NI to replace junior', () => {
-    f.addDisabled(licensee, CONCESSION_PROOF.NI, '456')
-    expect(licensee.concessions).toContainEqual(disabledNi)
-    expect(licensee.concessions.length).toBe(1)
+    f.addDisabled(permission, CONCESSION_PROOF.NI, '456')
+    expect(permission.concessions).toContainEqual(disabledNi)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add senior to replace NI', () => {
-    f.addSenior(licensee)
-    expect(licensee.concessions).toContainEqual(senior)
-    expect(licensee.concessions.length).toBe(1)
+    f.addSenior(permission)
+    expect(permission.concessions).toContainEqual(senior)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add junior to replace senior', () => {
-    f.addJunior(licensee)
-    expect(licensee.concessions).toContainEqual(junior)
-    expect(licensee.concessions.length).toBe(1)
+    f.addJunior(permission)
+    expect(permission.concessions).toContainEqual(junior)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add NI to replace senior', () => {
-    f.clear(licensee)
-    f.addDisabled(licensee, CONCESSION_PROOF.NI, '456')
-    expect(licensee.concessions).toContainEqual(disabledNi)
-    expect(licensee.concessions.length).toBe(1)
+    f.clear(permission)
+    f.addDisabled(permission, CONCESSION_PROOF.NI, '456')
+    expect(permission.concessions).toContainEqual(disabledNi)
+    expect(permission.concessions.length).toBe(1)
   })
   it('add senior to replace NI', () => {
-    f.clear(licensee)
-    f.addSenior(licensee)
-    expect(licensee.concessions).toContainEqual(senior)
-    expect(licensee.concessions.length).toBe(1)
+    f.clear(permission)
+    f.addSenior(permission)
+    expect(permission.concessions).toContainEqual(senior)
+    expect(permission.concessions.length).toBe(1)
   })
 })
