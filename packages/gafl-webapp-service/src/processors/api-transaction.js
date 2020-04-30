@@ -10,13 +10,14 @@ const prepareApiTransactionPayload = async request => {
   return {
     dataSource: 'Web Sales',
     permissions: transactionCache.permissions.map(p => {
-      const permission = {}
-      permission.permitId = p.permit.id
-      permission.licensee = p.licensee
-      permission.issueDate = moment().toISOString()
-      permission.startDate = moment(p.licenceStartDate, 'YYYY-MM-DD')
-        .add(p.licenceStartTime, 'hours')
-        .toISOString()
+      const permission = {
+        permitId: p.permit.id,
+        licensee: p.licensee,
+        issueDate: moment().toISOString(),
+        startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
+          .add(p.licenceStartTime, 'hours')
+          .toISOString()
+      }
 
       // Calculate the concession (proof entry) - disabl;ed takes precedence
       if (concessionHelper.hasDisabled(p)) {

@@ -4,11 +4,13 @@ import countryCodeProcessor from '../../processors/countries-helper.js'
 
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
 
+const headers = { 'Content-Type': 'application/json' }
+
 const fetchData = async url => {
   let response
   try {
     response = await fetch(url.href, {
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
@@ -30,7 +32,7 @@ const postData = async (url, payload) => {
     response = await fetch(url.href, {
       method: 'post',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
@@ -53,7 +55,7 @@ const patchData = async (url, payload) => {
     response = await fetch(url.href, {
       method: 'patch',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
