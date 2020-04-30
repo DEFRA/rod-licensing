@@ -30,9 +30,9 @@ const postData = async (url, payload) => {
   let response
   try {
     response = await fetch(url.href, {
+      headers,
       method: 'post',
       body: JSON.stringify(payload),
-      headers,
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
@@ -53,9 +53,9 @@ const patchData = async (url, payload) => {
   let response
   try {
     response = await fetch(url.href, {
+      headers,
       method: 'patch',
       body: JSON.stringify(payload),
-      headers,
       timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
@@ -66,9 +66,10 @@ const patchData = async (url, payload) => {
   if (response.ok) {
     return response
   } else {
-    const mes = {}
-    mes.statusText = response
-    mes.payload = payload
+    const mes = {
+      statusText: response,
+      payload: payload
+    }
     throw new Error(JSON.stringify(mes, null, 4))
   }
 }
