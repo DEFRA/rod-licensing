@@ -79,7 +79,7 @@ const permitsOperations = {
 
 const permissionsOperations = {
   postApiTransactionPayload: async payload => postData(new URL('/transactions', urlBase), payload),
-  patchApiTransactionPayload: async (payload, id) => patchData(new URL(`/transactions/${id}`, urlBase), payload, true)
+  patchApiTransactionPayload: async (payload, id) => patchData(new URL(`/transactions/${id}`, urlBase), payload)
 }
 
 const localReferenceData = {}
