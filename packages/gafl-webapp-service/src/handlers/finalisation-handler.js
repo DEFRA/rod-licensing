@@ -1,7 +1,8 @@
 import { prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
-import { ORDER_COMPLETE } from '../constants.js'
+import { ORDER_COMPLETE, COMPLETION_STATUS } from '../constants.js'
 import db from 'debug'
+import Boom from '@hapi/boom'
 
 const debug = db('webapp:finalisation-handler')
 
@@ -21,17 +22,17 @@ export default async (request, h) => {
   const transaction = await request.cache().helpers.transaction.get()
 
   // If the agreed flag is not set to true then throw an exception
-  if (!status.agreed) {
-    throw new Error('Attempt to access the finalise handler with no agreed flag set')
+  if (!status[COMPLETION_STATUS.agreed]) {
+    throw Boom.forbidden(`Attempt to access the finalise handler with no agreed flag set: ${JSON.stringify(transaction)}`)
   }
 
-  // If the agreed flag is not set to true then throw an exception
-  if (!status.posted) {
-    throw new Error('Attempt to access the finalise handler with no posted flag set')
+  // If the posted flag is not set to true then throw an exception
+  if (!status[COMPLETION_STATUS.posted]) {
+    throw Boom.forbidden(`Attempt to access the finalise handler with no posted flag set: ${JSON.stringify(transaction)}`)
   }
 
   // If the transaction has already been finalised then redirect to the order completed page
-  if (status.finalised) {
+  if (status[COMPLETION_STATUS.finalised]) {
     debug('Transaction %s already finalised, redirect to order complete', transaction.id)
     return h.redirect(ORDER_COMPLETE.uri)
   }
@@ -43,6 +44,6 @@ export default async (request, h) => {
   debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
   await permissionsOperations.patchApiTransactionPayload(apiFinalisationPayload, transaction.id)
 
-  await request.cache().helpers.status.set({ finalised: true })
+  await request.cache().helpers.status.set({ [COMPLETION_STATUS.finalised]: true })
   return h.redirect(ORDER_COMPLETE.uri)
 }

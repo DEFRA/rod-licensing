@@ -28,14 +28,14 @@ const prepareApiTransactionPayload = async request => {
         permission.concession = {
           concessionId: concessions.find(c => c.name === mappings.CONCESSION.SENIOR).id,
           proof: {
-            type: 'No proof'
+            type: mappings.CONCESSION_PROOF.none
           }
         }
       } else if (concessionHelper.hasJunior(p)) {
         permission.concession = {
           concessionId: concessions.find(c => c.name === mappings.CONCESSION.JUNIOR).id,
           proof: {
-            type: 'No proof'
+            type: mappings.CONCESSION_PROOF.none
           }
         }
       }

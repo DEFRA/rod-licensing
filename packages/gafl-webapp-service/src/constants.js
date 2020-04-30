@@ -57,6 +57,7 @@ const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 const REDIS_PORT_DEFAULT = 6379
 const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 const PAGE_STATE = { completed: true, error: false }
+const COMPLETION_STATUS = { agreed: 'agreed', posted: 'posted', finalised: 'finalised', payed: 'payed', completed: 'completed' }
 
 export {
   SESSION_TTL_MS_DEFAULT,
@@ -96,6 +97,7 @@ export {
   SALES_API_TIMEOUT_MS_DEFAULT,
   MAX_PERMISSIONS,
   PAGE_STATE,
+  COMPLETION_STATUS,
   CLIENT_ERROR,
   SERVER_ERROR,
   TEST_STATUS,

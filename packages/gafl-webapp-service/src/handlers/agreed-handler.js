@@ -1,6 +1,6 @@
 import { prepareApiTransactionPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
-import { FINALISED, ORDER_COMPLETE } from '../constants.js'
+import { FINALISED, ORDER_COMPLETE, COMPLETION_STATUS } from '../constants.js'
 import db from 'debug'
 import Boom from '@hapi/boom'
 const debug = db('webapp:agreed-handler')
@@ -23,18 +23,18 @@ export default async (request, h) => {
   const transaction = await request.cache().helpers.transaction.get()
 
   // If the agreed flag is not set to true then throw an exception
-  if (!status.agreed) {
+  if (!status[COMPLETION_STATUS.agreed]) {
     throw Boom.forbidden(`Attempt to access the agreed handler with no agreed flag set: ${JSON.stringify(transaction)}`)
   }
 
   // If the transaction has already been finalised then redirect to the order completed page
-  if (status.finalised) {
+  if (status[COMPLETION_STATUS.finalised]) {
     debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
     return h.redirect(ORDER_COMPLETE.uri)
   }
 
   // If the transaction has already been posted to the API then redirect directly to the finalization
-  if (status.posted) {
+  if (status[COMPLETION_STATUS.posted]) {
     debug('Transaction %s already posted, redirect to finalisation', transaction.id)
     return h.redirect(FINALISED.uri)
   }
@@ -60,7 +60,7 @@ export default async (request, h) => {
   debug('Got transaction identifier: %s', transaction.id)
 
   await request.cache().helpers.transaction.set(transaction)
-  await request.cache().helpers.status.set({ posted: true })
+  await request.cache().helpers.status.set({ [COMPLETION_STATUS.posted]: true })
 
   /*
    * Redirect to the finalization

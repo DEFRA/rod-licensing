@@ -64,7 +64,8 @@ const patchData = async (url, payload) => {
   if (response.ok) {
     return response
   } else {
-    const mes = response.statusText
+    const mes = {}
+    mes.statusText = response
     mes.payload = payload
     throw new Error(JSON.stringify(mes, null, 4))
   }

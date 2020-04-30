@@ -10,6 +10,11 @@ export default {
       id: 910400184,
       label: 'United Kingdom',
       description: 'GB'
+    },
+    910400175: {
+      id: 910400175,
+      label: 'Tonga',
+      description: 'TO'
     }
   }
 }
