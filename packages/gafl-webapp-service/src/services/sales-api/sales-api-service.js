@@ -21,8 +21,12 @@ const fetchData = async url => {
   if (response.ok) {
     return response.json()
   } else {
-    const mes = await response.json()
-    throw new Error(JSON.stringify(mes, null, 4))
+    const mes = {
+      method: 'GET',
+      request: url,
+      response: await response.json()
+    }
+    throw new Error(`Unexpected response from Sales API\n${JSON.stringify(mes, null, 4)}`)
   }
 }
 
@@ -43,9 +47,13 @@ const postData = async (url, payload) => {
   if (response.ok) {
     return response.json()
   } else {
-    const mes = await response.json()
-    mes.payload = payload
-    throw new Error(JSON.stringify(mes, null, 4))
+    const mes = {
+      method: 'POST',
+      request: url,
+      payload: payload,
+      response: await response.json()
+    }
+    throw new Error(`Unexpected response from Sales API\n${JSON.stringify(mes, null, 4)}`)
   }
 }
 
@@ -67,10 +75,12 @@ const patchData = async (url, payload) => {
     return response
   } else {
     const mes = {
-      statusText: response,
-      payload: payload
+      method: 'PATCH',
+      request: url,
+      payload: payload,
+      statusText: response
     }
-    throw new Error(JSON.stringify(mes, null, 4))
+    throw new Error(`Unexpected response from Sales API\n${JSON.stringify(mes, null, 4)}`)
   }
 }
 

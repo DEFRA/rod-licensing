@@ -11,18 +11,18 @@ jest.mock('node-fetch')
 const fetch = require('node-fetch')
 
 describe('The finalisation handler', () => {
-  it('throw a status 403 (forbidden) exception is the agreed flag is not set', async () => {
+  it('throws a status 403 (forbidden) exception if the agreed flag is not set', async () => {
     const data = await injectWithCookie('GET', FINALISED.uri)
     expect(data.statusCode).toBe(403)
   })
 
-  it('throw a status 403 (forbidden) exception is the posted flag is not set', async () => {
+  it('throws a status 403 (forbidden) exception if the posted flag is not set', async () => {
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     const data = await injectWithCookie('GET', FINALISED.uri)
     expect(data.statusCode).toBe(403)
   })
 
-  it(' - if the API call for finalisation throws an error the finalised flag is unset', async () => {
+  it('throws an error and the finalised flag is unset where the API call for finalisation throws an error', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
     fetch
       .mockImplementationOnce(
@@ -53,7 +53,7 @@ describe('The finalisation handler', () => {
     expect(JSON.parse(status).finalised).not.toBeTruthy()
   })
 
-  it('- if the API call for finalisation returns an error finalised flag is unset', async () => {
+  it('throws an error and the finalised flag is unset  where the API call for finalisation returns an error', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
     fetch
       .mockImplementationOnce(
