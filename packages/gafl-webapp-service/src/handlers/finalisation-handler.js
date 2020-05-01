@@ -13,6 +13,7 @@ const debug = db('webapp:finalisation-handler')
  *
  * (1) Agree -> post -> finalise -> complete
  * (2) Agree -> post -> payment -> finalise -> complete
+ * (3) Payment: Required -> dispatched -> [completed|cancelled\failed\apiError]
  * @param request
  * @param h
  * @returns {Promise<ResponseObject|*|Response>}

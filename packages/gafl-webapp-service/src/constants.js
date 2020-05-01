@@ -34,8 +34,9 @@ const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
 const AGREED = { uri: '/buy/agreed' }
-const FINALISED = { uri: '/buy/finalised' }
+const PAYMENT_COMPLETION = { uri: '/buy/payment-complete' }
 
+const FINALISED = { uri: '/buy/finalised' }
 const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 
@@ -83,6 +84,7 @@ export {
   TERMS_AND_CONDITIONS,
   AGREED,
   FINALISED,
+  PAYMENT_COMPLETION,
   ORDER_COMPLETE,
   NEW_TRANSACTION,
   ADD_PERMISSION,

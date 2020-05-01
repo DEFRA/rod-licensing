@@ -16,6 +16,14 @@ import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
 let server
 
+/**
+ * Don't start the service if it is production and there are is no GOV.UK pay details
+ */
+if (process.env.NODE_ENV === 'production' && !process.env.GOV_PAY_API_URL) {
+  console.error('Attempting to run in production mode without GOV_PAY_API_URL set')
+  process.exit()
+}
+
 const createServer = options => {
   server = Hapi.server(
     Object.assign(

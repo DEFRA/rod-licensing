@@ -1,12 +1,15 @@
 import fetch from 'node-fetch'
 import { SALES_API_URL_DEFAULT, SALES_API_TIMEOUT_MS_DEFAULT } from '../../constants.js'
 import countryCodeProcessor from '../../processors/countries-helper.js'
+import db from 'debug'
+const debug = db('webapp:sales-api-service')
 
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
 
 const headers = { 'Content-Type': 'application/json' }
 
 const fetchData = async url => {
+  debug(`Fetch ${url}`)
   let response
   try {
     response = await fetch(url.href, {
@@ -31,6 +34,7 @@ const fetchData = async url => {
 }
 
 const postData = async (url, payload) => {
+  debug(`Post ${url}\n${JSON.stringify(payload, null, 4)}`)
   let response
   try {
     response = await fetch(url.href, {
@@ -58,6 +62,7 @@ const postData = async (url, payload) => {
 }
 
 const patchData = async (url, payload) => {
+  debug(`Patch ${url}\n${JSON.stringify(payload, null, 4)}`)
   let response
   try {
     response = await fetch(url.href, {

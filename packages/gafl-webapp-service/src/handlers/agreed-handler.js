@@ -1,6 +1,7 @@
 import { prepareApiTransactionPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
 import { FINALISED, ORDER_COMPLETE, COMPLETION_STATUS } from '../constants.js'
+import { preparePayment } from '../services/payment/govuk-pay-service.js'
 import db from 'debug'
 import Boom from '@hapi/boom'
 const debug = db('webapp:agreed-handler')
@@ -13,6 +14,7 @@ const debug = db('webapp:agreed-handler')
  *
  * (1) Agree -> post -> finalise -> complete
  * (2) Agree -> post -> payment -> finalise -> complete
+ * (3) Payment: Required -> dispatched -> [completed|cancelled\failed\apiError]
  *
  * @param request
  * @param h
@@ -43,9 +45,7 @@ export default async (request, h) => {
    * Post the transaction to the API
    */
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
-  debug('Post transaction: %s', JSON.stringify(apiTransactionPayload, null, 4))
   const response = await permissionsOperations.postApiTransactionPayload(apiTransactionPayload)
-  debug('Got response: %s', JSON.stringify(response, null, 4))
 
   /*
    * Write the licence number and end dates into the cache
@@ -62,6 +62,26 @@ export default async (request, h) => {
   await request.cache().helpers.transaction.set(transaction)
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.posted]: true })
 
+  /*
+   * If the value of the permissions is non-zero go through the payment journey
+   */
+  if (response.cost > 0) {
+    /*
+     * In production if GOV_PAY_API_URL is not set throw a 500 error
+     */
+    if (process.env.NODE_ENV === 'production' && !process.env.GOV_PAY_API_URL) {
+      throw new Error('Cannot run in production mode without GOV_PAY_API_URL set')
+    }
+
+    if (process.env.GOV_PAY_API_URL) {
+      const preparedPayment = await preparePayment(request, transaction)
+      console.log({ preparedPayment })
+    } else {
+      debug('GOV_PAY_API_URL is not set, skipping the payment journey', transaction.id)
+    }
+  } else {
+    debug('Zero cost transaction, skip payment journey', transaction.id)
+  }
   /*
    * Redirect to the finalization
    */
