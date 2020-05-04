@@ -1,6 +1,6 @@
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getReferenceDataForEntityAndId } from '../reference-data.service.js'
-import uuid from 'uuid/v4.js'
+import { v4 as uuidv4 } from 'uuid'
 import AWS from '../aws.js'
 import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
@@ -9,7 +9,7 @@ const debug = db('sales:transactions')
 const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 48
 
 export async function createTransaction (payload) {
-  const transactionId = uuid()
+  const transactionId = uuidv4()
   debug('Creating new transaction %s', transactionId)
   const record = { id: transactionId, expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA, ...payload }
 

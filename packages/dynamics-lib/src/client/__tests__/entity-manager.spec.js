@@ -10,12 +10,12 @@ import {
   retrieveGlobalOptionSets
 } from '../../index.js'
 import TestEntity from '../../__mocks__/TestEntity.js'
-import uuid from 'uuid/v4.js'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('entity manager', () => {
   describe('persist', () => {
     it('persists a new entity using the create operation', async () => {
-      const resultUuid = uuid()
+      const resultUuid = uuidv4()
       const api = require('dynamics-web-api').default
       api.__reset()
       api.__setResponse('executeBatch', [resultUuid])
@@ -33,7 +33,7 @@ describe('entity manager', () => {
     })
 
     it('persists an existing entity using the update operation', async () => {
-      const resultUuid = uuid()
+      const resultUuid = uuidv4()
       const api = require('dynamics-web-api').default
       api.__reset()
       api.__setResponse('executeBatch', [resultUuid])
