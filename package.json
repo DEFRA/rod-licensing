@@ -47,7 +47,7 @@
     "babel-jest": "^25.4.0",
     "dynamics-web-api": "^1.6.3",
     "husky": "^4.2.5",
-    "jest": "^25.4.0",
+    "jest": "^25.5.4",
     "jest-each": "^25.4.0",
     "lerna": "^3.20.2",
     "lerna-update-wizard": "^0.17.8",
