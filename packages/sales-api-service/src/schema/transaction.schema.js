@@ -2,7 +2,7 @@ import Joi from '@hapi/joi'
 import { createPermissionSchema, createPermissionResponseSchema } from './permission.schema.js'
 import { contactSchema } from './contact.schema.js'
 import { createOptionSetValidator } from './validators/index.js'
-import uuid from 'uuid/v4.js'
+import { v4 as uuidv4 } from 'uuid'
 
 export const createTransactionSchema = Joi.object({
   permissions: Joi.array()
@@ -54,11 +54,11 @@ export const finaliseTransactionSchema = Joi.object({
       referenceNumber: Joi.string()
         .required()
         .description('The reference number associated with the recurring payment')
-        .example(uuid()),
+        .example(uuidv4()),
       mandate: Joi.string()
         .required()
         .description('The mandate identifier associated with the recurring payment')
-        .example(uuid())
+        .example(uuidv4())
     })
       .description('Used to establish a recurring payment (e.g. via Direct Debit)')
       .optional()

@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid/v4.js'
+import { v4 as uuidv4 } from 'uuid'
 import util from 'util'
 import Joi from '@hapi/joi'
 import { GlobalOptionSetDefinition } from '../optionset/global-option-set-definition.js'
