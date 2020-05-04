@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/sales-api-service",
-  "version": "0.0.1-beta.26",
+  "version": "0.0.1-beta.28",
   "description": "Rod Licensing Sales API",
   "type": "module",
   "engines": {
@@ -35,8 +35,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "^0.0.1-beta.26",
-    "@defra-fish/dynamics-lib": "^0.0.1-beta.26",
+    "@defra-fish/business-rules-lib": "^0.0.1-beta.28",
+    "@defra-fish/dynamics-lib": "^0.0.1-beta.28",
     "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.1",
