@@ -34,7 +34,6 @@ const CONTROLLER = { uri: '/buy' }
 const NEW_TRANSACTION = { uri: '/buy/new' }
 const ADD_PERMISSION = { uri: '/buy/add' }
 const AGREED = { uri: '/buy/agreed' }
-const PAYMENT_COMPLETION = { uri: '/buy/payment-complete' }
 
 const FINALISED = { uri: '/buy/finalised' }
 const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
@@ -53,11 +52,26 @@ const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 10000
 const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
+const GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT = 10000
 const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 const REDIS_PORT_DEFAULT = 6379
 const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 const PAGE_STATE = { completed: true, error: false }
-const COMPLETION_STATUS = { agreed: 'agreed', posted: 'posted', finalised: 'finalised', payed: 'payed', completed: 'completed' }
+
+const COMPLETION_STATUS = {
+  agreed: 'agreed',
+  posted: 'posted',
+  paymentCreated: 'payment-created',
+  paymentCompleted: 'payment-completed',
+  finalised: 'finalised',
+  payed: 'payed',
+  completed: 'completed'
+}
+
+const GOVPAYFAIL = {
+  prePaymentRetry: { step: 'pre-payment' },
+  postPaymentRetry: { step: 'post-payment' }
+}
 
 export {
   SESSION_TTL_MS_DEFAULT,
@@ -84,7 +98,6 @@ export {
   TERMS_AND_CONDITIONS,
   AGREED,
   FINALISED,
-  PAYMENT_COMPLETION,
   ORDER_COMPLETE,
   NEW_TRANSACTION,
   ADD_PERMISSION,
@@ -96,10 +109,12 @@ export {
   ADDRESS_LOOKUP_SERVICE,
   ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT,
   SALES_API_TIMEOUT_MS_DEFAULT,
+  GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT,
   PAGE_STATE,
   COMPLETION_STATUS,
   CLIENT_ERROR,
   SERVER_ERROR,
   TEST_STATUS,
-  TEST_TRANSACTION
+  TEST_TRANSACTION,
+  GOVPAYFAIL
 }

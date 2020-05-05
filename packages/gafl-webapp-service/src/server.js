@@ -11,7 +11,15 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { CLIENT_ERROR, SERVER_ERROR, SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
+import {
+  CLIENT_ERROR,
+  SERVER_ERROR,
+  SESSION_TTL_MS_DEFAULT,
+  REDIS_PORT_DEFAULT,
+  SESSION_COOKIE_NAME_DEFAULT,
+  NEW_TRANSACTION,
+  AGREED
+} from './constants.js'
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
 let server
@@ -82,11 +90,14 @@ const init = async () => {
   const sessionCookieName = process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
 
   const sessionCookieOptions = {
+    ttl: process.env.SESSION_TTL_MS || SESSION_TTL_MS_DEFAULT, // Will be kept alive on each request
     isSecure: process.env.NODE_ENV !== 'development',
     isHttpOnly: process.env.NODE_ENV !== 'development',
+    isSameSite: 'Lax', // Needed for the GOV pay redirect back into the service
     encoding: 'base64json',
     clearInvalid: true,
-    strictHeader: true
+    strictHeader: true,
+    path: '/buy'
   }
 
   console.debug({ sessionCookieOptions })
@@ -105,8 +116,13 @@ const init = async () => {
     if (Math.floor(request.response.output.statusCode / 100) === 4) {
       return h.view(CLIENT_ERROR.page, { clientError: request.response.output.payload }).code(request.response.output.statusCode)
     } else {
-      console.error(request.response)
-      return h.view(SERVER_ERROR.page, { serverError: request.response.output.payload }).code(request.response.output.statusCode)
+      console.error(JSON.stringify(request.response, null, 4))
+      return h
+        .view(SERVER_ERROR.page, {
+          serverError: request.response.output.payload,
+          uri: { new: NEW_TRANSACTION.uri, agreed: AGREED.uri }
+        })
+        .code(request.response.output.statusCode)
     }
   })
 

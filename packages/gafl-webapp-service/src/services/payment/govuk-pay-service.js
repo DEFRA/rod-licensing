@@ -1,18 +1,25 @@
+import db from 'debug'
+import Boom from '@hapi/boom'
+
+import { AGREED, GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT, GOVPAYFAIL } from '../../constants.js'
+import fetch from 'node-fetch'
+
 /**
  * Interface to the GOV.UK Pay API
  */
+const debug = db('webapp:govuk-pay-service')
 
-import { PAYMENT_COMPLETION } from '../../constants.js'
-
-const preparePayment = async (request, transaction) => {
-  console.log(JSON.stringify(transaction, null, 4))
+const headers = {
+  accept: 'application/json',
+  authorization: `Bearer ${process.env.GOV_PAY_APIKEY}`,
+  'content-type': 'application/json'
 }
 
-const createPaymentRequest = (request, transaction) => {
+const preparePayment = transaction => {
   const result = {
     return_url: new URL(
-      PAYMENT_COMPLETION.uri,
-      `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:\\${request.info.host}`
+      AGREED.uri, // The cookie is lost if we redirect from another domain so use this intermediate handler
+      `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:\\${process.env.HOST_URL || '0.0.0.0:3000'}`
     ).href,
     amount: transaction.cost * 100,
     reference: transaction.id,
@@ -32,55 +39,65 @@ const createPaymentRequest = (request, transaction) => {
     }
   }
 
+  debug('Creating prepared payment %O', result)
   return result
 }
 
-/*
-result.language = 'en'
-  result.delayed_capture = false
-  result.email = holder.contact.email
+const postData = async preparedPayment => {
+  const url = process.env.GOV_PAY_API_URL
+  debug(`Post ${url}`)
+  let response
+  try {
+    response = await fetch(url, {
+      headers,
+      method: 'post',
+      body: JSON.stringify(preparedPayment),
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+    })
+  } catch (err) {
+    /*
+     * Potentially errors caught here (unreachable, timeouts) may be retried - set step on the error to indicate
+     * a prepayment error in the POST request
+     */
+    console.error('Error creating payment in the GOV.UK API service', err)
+    const badImplementationError = Boom.boomify(err, { statusCode: 500 })
+    badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
+    throw badImplementationError
+  }
 
-  result.prefilled_cardholder_details = {
-    cardholder_name: holder.name.firstName + ' ' + holder.name.lastName,
-    billing_address: {
-      line1: holder.address.premises + ' ' + holder.address.street,
-      line2: holder.address.locality,
-      postcode: holder.address.postcode,
-      city: holder.address.town,
-      country: holder.address.country
+  if (response.ok) {
+    // Anything other than the 201 (payment created) is an error
+    if (response.status !== 201) {
+      console.error(`Unexpected response from GOV.UK pay API${JSON.stringify(await response.json(), null, 4)}`)
+      throw Boom.badImplementation('Unexpected response from GOV.UK pay API')
+    }
+
+    // The 201 response indicates the creation of a successful payment
+    const res = await response.json()
+    debug('Successful payment creation response: %O', res)
+    return res
+  } else {
+    const mes = {
+      method: 'POST',
+      payload: preparedPayment,
+      status: response.status,
+      response: await response.json()
+    }
+    console.error('Failure creating payment in the GOV.UK API service', mes)
+
+    /*
+     * Detect the rate limit error and present the retry content. Otherwise throw the general server error
+     */
+    if (response.status === 429) {
+      const msg = 'GOV.UK Pay API rate limit breach'
+      console.info(msg)
+      const badImplementationError = Boom.badImplementation(msg)
+      badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
+      throw badImplementationError
+    } else {
+      throw Boom.badImplementation('Unexpected response from GOV.UK pay API')
     }
   }
- */
-//   const result = {}
-//   const session = request.sessionCache
-//   const permit = session.transaction.permit
-//   const holder = session.buy.holder
-//
-//   result.return_url = url.format({
-//     protocol: govPayConfig.httpsRedirect ? 'https' : 'http',
-//     host: request.info.host,
-//     pathname: 'govpay/complete'
-//   })
-//
-//   result.amount = permit.cost * 100
-//   result.reference = Uuid()
-//   result.description = permit.description
-//   result.language = 'en'
-//   result.delayed_capture = false
-//   result.email = holder.contact.email
-//
-//   result.prefilled_cardholder_details = {
-//     cardholder_name: holder.name.firstName + ' ' + holder.name.lastName,
-//     billing_address: {
-//       line1: holder.address.premises + ' ' + holder.address.street,
-//       line2: holder.address.locality,
-//       postcode: holder.address.postcode,
-//       city: holder.address.town,
-//       country: holder.address.country
-//     }
-//   }
-//
-//   return result
-// }
+}
 
-export { preparePayment, createPaymentRequest }
+export { preparePayment, postData }

@@ -24,14 +24,16 @@ const sessionManager = sessionCookieName => async (request, h) => {
     } else if (!(await request.cache().helpers.status.get())) {
       // A. The redis cache has expired - or been removed. Reinitialize a new cache
       await request.cache().initialize()
+    } else {
+      // This keeps the cookie alive
+      const { id } = request.state[sessionCookieName]
+      h.state(sessionCookieName, { id })
     }
-
-    const status = await request.cache().helpers.status.get()
-
     /*
      * Once the agreed flag is set then any request to the service is redirected to the agreed handler
      * except for the set in the array which includes the order-complete and new transaction pages and the agreed handler itself.
      */
+    const status = await request.cache().helpers.status.get()
     if (
       status.agreed &&
       ![NEW_TRANSACTION.uri, AGREED.uri, ORDER_COMPLETE.uri, FINALISED.uri, TEST_TRANSACTION.uri, TEST_STATUS.uri].includes(request.path)
