@@ -25,7 +25,7 @@ describe('transaction journal entity', () => {
       referenceNumber: 'Test Reference Number',
       description: 'Test Description',
       timestamp: '2020-12-13T23:59:59Z',
-      type: expect.objectContaining({ id: 910400000, label: 'Payment', description: '' }),
+      type: expect.objectContaining({ id: 910400000, label: 'Payment', description: 'Payment' }),
       total: 123.45
     }
 

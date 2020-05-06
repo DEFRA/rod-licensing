@@ -36,7 +36,8 @@ export const createTransactionResponseSchema = Joi.object({
     .required()
     .label('create-transaction-response-permissions'),
   dataSource: createOptionSetValidator('defra_datasource', 'Web Sales'),
-  cost: Joi.number().required()
+  cost: Joi.number().required(),
+  isRecurringPaymentSupported: Joi.boolean().required()
 }).label('create-transaction-response')
 
 export const finaliseTransactionSchema = Joi.object({

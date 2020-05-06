@@ -57,7 +57,7 @@ describe('transaction service', () => {
       }
     })
 
-    it('throws 409 conflict error if the payment amount does not match the cost', async () => {
+    it('throws 402 Payment Required error if the payment amount does not match the cost', async () => {
       const mockRecord = mockTransactionRecord()
       awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       try {
@@ -72,6 +72,45 @@ describe('transaction service', () => {
         await finaliseTransaction({ id: mockRecord.id, ...payload })
       } catch (e) {
         expect(e.message).toEqual('The payment amount did not match the cost of the transaction')
+        expect(e.output.statusCode).toEqual(402)
+      }
+    })
+
+    it('throws 409 Conflict error if a recurring payment instruction was supplied but the transaciton does not support this', async () => {
+      const mockRecord = mockTransactionRecord({ isRecurringPaymentSupported: false })
+      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      try {
+        const payload = {
+          payment: {
+            amount: 30,
+            timestamp: new Date().toISOString(),
+            type: 'Gov Pay',
+            method: 'Debit card',
+            recurring: {
+              payer: {
+                firstName: 'Fester',
+                lastName: 'Tester',
+                birthDate: '2000-01-01',
+                email: 'person@example.com',
+                mobilePhone: '+44 7700 900088',
+                premises: 'Example House',
+                street: 'Example Street',
+                locality: 'Near Sample',
+                town: 'Exampleton',
+                postcode: 'AB12 3CD',
+                country: 'GB',
+                preferredMethodOfConfirmation: 'Text',
+                preferredMethodOfNewsletter: 'Email',
+                preferredMethodOfReminder: 'Letter'
+              },
+              referenceNumber: '1a0921f3-5c54-41ab-9ccd-097511c854f1',
+              mandate: 'cb74dd42-6e95-46c5-9531-aa3e510e574f'
+            }
+          }
+        }
+        await finaliseTransaction({ id: mockRecord.id, ...payload })
+      } catch (e) {
+        expect(e.message).toEqual('The transaction does not support recurring payments but an instruction was supplied')
         expect(e.output.statusCode).toEqual(409)
       }
     })

@@ -35,8 +35,8 @@ describe('pocl file entity', () => {
       notes: 'Test notes',
       salesDate: '2019-12-30T14:58:00Z',
       receiptTimestamp: '2019-12-31T15:28:41Z',
-      dataSource: expect.objectContaining({ id: 910400000, label: 'Post Office Sales', description: '' }),
-      status: expect.objectContaining({ id: 910400002, label: 'Processed', description: '' })
+      dataSource: expect.objectContaining({ id: 910400000, label: 'Post Office Sales', description: 'Post Office Sales' }),
+      status: expect.objectContaining({ id: 910400002, label: 'Processed', description: 'Processed' })
     }
 
     expect(poclFile).toBeInstanceOf(PoclFile)

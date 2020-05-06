@@ -9,7 +9,10 @@ export async function finaliseTransaction ({ id, ...payload }) {
   debug('Received request to complete transaction %s with payload %O', id, payload)
   const transactionRecord = await retrieveStagedTransaction(id)
   if (transactionRecord.cost !== payload.payment.amount) {
-    throw Boom.conflict('The payment amount did not match the cost of the transaction')
+    throw Boom.paymentRequired('The payment amount did not match the cost of the transaction')
+  }
+  if (!transactionRecord.isRecurringPaymentSupported && payload.payment.recurring) {
+    throw Boom.conflict('The transaction does not support recurring payments but an instruction was supplied')
   }
 
   const setFieldExpression = Object.keys(payload)

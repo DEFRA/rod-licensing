@@ -112,11 +112,11 @@ export function retrieveGlobalOptionSets (...names) {
         const data = await dynamicsClient.retrieveGlobalOptionSets('Microsoft.Dynamics.CRM.OptionSetMetadata', ['Name', 'Options'])
         return data.value.map(({ Name: name, Options: options }) => ({
           name,
-          options: options.map(o => ({
-            id: o.Value,
-            label: dotProp.get(o, 'Label.UserLocalizedLabel.Label', ''),
-            description: dotProp.get(o, 'Description.UserLocalizedLabel.Label', '')
-          }))
+          options: options.map(o => {
+            const label = dotProp.get(o, 'Label.UserLocalizedLabel.Label', '')
+            const description = dotProp.get(o, 'Description.UserLocalizedLabel.Label', '')
+            return { id: o.Value, label: label, description: description || label }
+          })
         }))
       } catch (e) {
         console.error('Error attempting to retrieveGlobalOptionSets', e)

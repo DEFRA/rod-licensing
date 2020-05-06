@@ -14,6 +14,7 @@ import {
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
+import moment from 'moment'
 import AWS from '../aws.js'
 import db from 'debug'
 const { docClient } = AWS()
@@ -60,7 +61,7 @@ export async function processQueue ({ id }) {
 
     entities.push(contact, permission)
 
-    if (recurringPayment) {
+    if (recurringPayment && permit.isRecurringPaymentSupported) {
       const paymentInstruction = new RecurringPaymentInstruction()
       paymentInstruction.bindToContact(contact)
       paymentInstruction.bindToPermit(permit)
@@ -89,20 +90,33 @@ export async function processQueue ({ id }) {
     .promise()
 }
 
+/**
+ * Process a recurring payment instruction
+ * @param transactionRecord
+ * @returns {Promise<{recurringPayment: null, payer: null}>}
+ */
 const processRecurringPayment = async transactionRecord => {
   let recurringPayment = null
   let payer = null
   if (transactionRecord.payment.recurring) {
+    const inceptionMoment = moment(transactionRecord.payment.timestamp, true).utc()
     recurringPayment = new RecurringPayment()
     recurringPayment.referenceNumber = transactionRecord.payment.recurring.referenceNumber
     recurringPayment.mandate = transactionRecord.payment.recurring.mandate
-    recurringPayment.inceptionDate = transactionRecord.payment.timestamp
+    recurringPayment.inceptionDay = inceptionMoment.date()
+    recurringPayment.inceptionMonth = inceptionMoment.month()
     payer = await resolveContactPayload(transactionRecord.payment.recurring.payer)
     recurringPayment.bindToContact(payer)
   }
   return { recurringPayment, payer }
 }
 
+/**
+ * Create transaction entities required to represent this transaction payload
+ *
+ * @param transactionRecord the transaction payload
+ * @returns {Promise<{paymentJournal: TransactionJournal, chargeJournal: TransactionJournal, transaction: Transaction}>}
+ */
 const createTransactionEntities = async transactionRecord => {
   // Currently only a single currency (GBP) is supported
   const currency = (await getReferenceDataForEntity(TransactionCurrency))[0]
@@ -121,6 +135,15 @@ const createTransactionEntities = async transactionRecord => {
   return { transaction, chargeJournal, paymentJournal }
 }
 
+/**
+ * Create a TransactionJournal entity for the given parameters
+ *
+ * @param {*} transactionRecord the transaction payload
+ * @param {Transaction} transactionEntity the parent Transaction entity
+ * @param {string} type the type of TransactionJournal to be created
+ * @param {TransactionCurrency} currency the currency to be used
+ * @returns {Promise<TransactionJournal>}
+ */
 const createTransactionJournal = async (transactionRecord, transactionEntity, type, currency) => {
   const journal = new TransactionJournal()
   journal.referenceNumber = transactionRecord.id
@@ -132,6 +155,12 @@ const createTransactionJournal = async (transactionRecord, transactionEntity, ty
   return journal
 }
 
+/**
+ * Create a fulfilment request
+ *
+ * @param permission
+ * @returns {Promise<FulfilmentRequest>}
+ */
 const createFulfilmentRequest = async permission => {
   const today = new Date()
   const refNumberExt = permission.referenceNumber.substring(permission.referenceNumber.lastIndexOf('-'))
@@ -143,6 +172,13 @@ const createFulfilmentRequest = async permission => {
   return fulfilmentRequest
 }
 
+/**
+ * Create the necessary ConcessionProof entity for the given parameters
+ *
+ * @param concession
+ * @param permission
+ * @returns {Promise<ConcessionProof>}
+ */
 const createConcessionProof = async (concession, permission) => {
   const proof = new ConcessionProof()
   const concessionEntity = await getReferenceDataForEntityAndId(Concession, concession.concessionId)

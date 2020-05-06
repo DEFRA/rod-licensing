@@ -42,9 +42,9 @@ describe('contact entity', () => {
       town: 'Tersterton',
       postcode: 'AB12 3CD',
       country: expect.objectContaining({ id: 910400184, label: 'United Kingdom', description: 'GB' }),
-      preferredMethodOfConfirmation: expect.objectContaining({ id: 910400002, label: 'Text', description: '' }),
-      preferredMethodOfNewsletter: expect.objectContaining({ id: 910400000, label: 'Email', description: '' }),
-      preferredMethodOfReminder: expect.objectContaining({ id: 910400001, label: 'Letter', description: '' })
+      preferredMethodOfConfirmation: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
+      preferredMethodOfNewsletter: expect.objectContaining({ id: 910400000, label: 'Email', description: 'Email' }),
+      preferredMethodOfReminder: expect.objectContaining({ id: 910400001, label: 'Letter', description: 'Letter' })
     }
 
     expect(contact).toBeInstanceOf(Contact)

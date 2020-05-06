@@ -39,7 +39,8 @@ describe('transaction service', () => {
       const expectedRecord = Object.assign(mockTransactionRecord(), {
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
-        cost: 30
+        cost: 30,
+        isRecurringPaymentSupported: true
       })
 
       process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'

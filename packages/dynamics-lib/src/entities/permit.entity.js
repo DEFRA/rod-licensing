@@ -16,15 +16,14 @@ export class Permit extends BaseEntity {
       permitId: { field: 'defra_permitid', type: 'string' },
       permitType: { field: 'defra_permittype', type: 'optionset', ref: 'defra_permittype' },
       permitSubtype: { field: 'defra_permitsubtype', type: 'optionset', ref: 'defra_permitsubtype' },
-      duration: { field: 'defra_duration', type: 'optionset', ref: 'defra_duration' },
       durationMagnitude: { field: 'defra_durationnumericpart', type: 'integer' },
       durationDesignator: { field: 'defra_durationdaymonthyearpart', type: 'optionset', ref: 'defra_daymonthyear' },
-      equipment: { field: 'defra_equipment', type: 'optionset', ref: 'defra_equipment' },
       numberOfRods: { field: 'defra_numberofrods', type: 'integer' },
       availableFrom: { field: 'defra_availablefrom', type: 'datetime' },
       availableTo: { field: 'defra_availableto', type: 'datetime' },
       isForFulfilment: { field: 'defra_isforfulfilment', type: 'boolean' },
       isCounterSales: { field: 'defra_iscountersales', type: 'boolean' },
+      isRecurringPaymentSupported: { field: 'defra_recurringsupported', type: 'boolean' },
       cost: { field: 'defra_advertisedprice', type: 'decimal' },
       itemId: { field: 'defra_itemid', type: 'string' }
     }
@@ -75,15 +74,6 @@ export class Permit extends BaseEntity {
   }
 
   /**
-   * The duration of the permit
-   * @type {GlobalOptionSetDefinition}
-   * @readonly
-   */
-  get duration () {
-    return super._getState('duration')
-  }
-
-  /**
    * The duration magnitude of the permit
    * @type {number}
    * @readonly
@@ -99,15 +89,6 @@ export class Permit extends BaseEntity {
    */
   get durationDesignator () {
     return super._getState('durationDesignator')
-  }
-
-  /**
-   * The equipment type of the permit
-   * @type {GlobalOptionSetDefinition}
-   * @readonly
-   */
-  get equipment () {
-    return super._getState('equipment')
   }
 
   /**
@@ -153,6 +134,15 @@ export class Permit extends BaseEntity {
    */
   get isCounterSales () {
     return super._getState('isCounterSales')
+  }
+
+  /**
+   * Whether this type of permit supports recurring payments
+   * @type {boolean}
+   * @readonly
+   */
+  get isRecurringPaymentSupported () {
+    return super._getState('isRecurringPaymentSupported')
   }
 
   /**

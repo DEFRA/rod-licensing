@@ -18,7 +18,6 @@ export class Transaction extends BaseEntity {
       timestamp: { field: 'defra_timestamp', type: 'datetime' },
       paymentType: { field: 'defra_paymenttype', type: 'optionset', ref: 'defra_paymenttype' },
       source: { field: 'defra_transactionsource', type: 'optionset', ref: 'defra_financialtransactionsource' },
-      isReconciled: { field: 'defra_isreconciled', type: 'boolean' },
       total: { field: 'defra_total', type: 'decimal' }
     }
   })
@@ -113,18 +112,6 @@ export class Transaction extends BaseEntity {
 
   set total (total) {
     super._setState('total', total)
-  }
-
-  /**
-   * The reconciliation state of the transaction
-   * @type {string}
-   */
-  get isReconciled () {
-    return super._getState('isReconciled')
-  }
-
-  set isReconciled (reconciled) {
-    super._setState('isReconciled', reconciled)
   }
 
   /**
