@@ -72,10 +72,14 @@ packages/
 
 docker/
 
-- infrastructure.yml
+- [infrastructure.yml](docker/README.md#Infrastructure)
   > Local development infrastructure docker compose file
-- service.yml
-  > Service definitions docker compose file
+- [services.build.yml](docker/README.md#Services)
+  > This contains the necessary definitions to allow docker images to be built both in development and production mode
+- [services.dev.yml](docker/README.md#Services)
+  > This contains the necessary definitions to allow the services to be run in development mode.
+- [services.yml](docker/README.md#Services)
+  > This contains the necessary definitions to allow the services to be run in production mode.
 
 ## Contributing to this project
 

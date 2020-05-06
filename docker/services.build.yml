@@ -12,7 +12,7 @@ services:
   # This is not designed to be deployed but to serve as the base image for rod-licensing services.
   ##############################################################################################################
   rod-licensing-base:
-    image: rod-licensing/base:${TAG:-latest}
+    image: rod-licensing/base
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.base
@@ -24,7 +24,7 @@ services:
   # Provides additional libraries for the build process not required at runtime.
   ##############################################################################################################
   rod-licensing-builder:
-    image: rod-licensing/builder:${TAG:-latest}
+    image: rod-licensing/builder
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.build
