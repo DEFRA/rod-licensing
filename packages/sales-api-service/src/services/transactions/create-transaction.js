@@ -11,18 +11,23 @@ const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 *
 export async function createTransaction (payload) {
   const transactionId = uuidv4()
   debug('Creating new transaction %s', transactionId)
-  const record = { id: transactionId, expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA, ...payload }
+  const record = {
+    id: transactionId,
+    expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA,
+    cost: 0.0,
+    isRecurringPaymentSupported: true,
+    ...payload
+  }
 
   // Generate derived fields
-  let cost = 0.0
   for (const permission of record.permissions) {
     permission.referenceNumber = await generatePermissionNumber(permission, payload.dataSource)
     permission.endDate = await calculateEndDate(permission)
 
     const permit = await getReferenceDataForEntityAndId(Permit, permission.permitId)
-    cost += permit.cost
+    record.isRecurringPaymentSupported = record.isRecurringPaymentSupported && permit.isRecurringPaymentSupported
+    record.cost += permit.cost
   }
-  record.cost = cost
 
   await docClient
     .put({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Item: record, ConditionExpression: 'attribute_not_exists(id)' })

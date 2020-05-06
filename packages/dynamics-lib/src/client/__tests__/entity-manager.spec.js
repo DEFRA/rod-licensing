@@ -19,7 +19,6 @@ describe('entity manager', () => {
       const api = require('dynamics-web-api').default
       api.__reset()
       api.__setResponse('executeBatch', [resultUuid])
-      const createRequestSpy = jest.spyOn(api.prototype, 'createRequest')
 
       const t = new TestEntity()
       t.strVal = 'Fester'
@@ -27,7 +26,7 @@ describe('entity manager', () => {
       t.boolVal = true
 
       const result = await persist(t)
-      expect(createRequestSpy).toHaveBeenCalled()
+      expect(api.prototype.createRequest).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
@@ -37,7 +36,6 @@ describe('entity manager', () => {
       const api = require('dynamics-web-api').default
       api.__reset()
       api.__setResponse('executeBatch', [resultUuid])
-      const updateRequestSpy = jest.spyOn(api.prototype, 'updateRequest')
 
       const t = TestEntity.fromResponse(
         {
@@ -51,7 +49,7 @@ describe('entity manager', () => {
       )
 
       const result = await persist(t)
-      expect(updateRequestSpy).toHaveBeenCalled()
+      expect(api.prototype.updateRequest).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
@@ -317,9 +315,8 @@ describe('entity manager', () => {
         strval: 'example'
       })
 
-      const spy = jest.spyOn(api.prototype, 'retrieveRequest')
       const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
-      expect(spy).toBeCalledWith({
+      expect(api.prototype.retrieveRequest).toBeCalledWith({
         key: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -335,10 +332,9 @@ describe('entity manager', () => {
         idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         strval: 'example'
       })
-      const spy = jest.spyOn(api.prototype, 'retrieveRequest')
       const alternateKeyLookup = `${TestEntity.definition.mappings.strVal.field}='example'`
       const result = await findById(TestEntity, alternateKeyLookup)
-      expect(spy).toBeCalledWith({
+      expect(api.prototype.retrieveRequest).toBeCalledWith({
         key: alternateKeyLookup,
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -382,9 +378,8 @@ describe('entity manager', () => {
       lookup.optionSetVal = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
       const expectedLookupSelect =
         "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
-      const spy = jest.spyOn(api.prototype, 'retrieveMultipleRequest')
       const result = await findByExample(lookup)
-      expect(spy).toBeCalledWith({
+      expect(api.prototype.retrieveMultipleRequest).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select,
         filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
@@ -401,9 +396,8 @@ describe('entity manager', () => {
       const lookup = new TestEntity()
       lookup.strVal = 'StringData'
       const expectedLookupSelect = "strval eq 'StringData'"
-      const spy = jest.spyOn(api.prototype, 'retrieveMultipleRequest')
       const result = await findByExample(lookup)
-      expect(spy).toBeCalledWith({
+      expect(api.prototype.retrieveMultipleRequest).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select,
         filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)

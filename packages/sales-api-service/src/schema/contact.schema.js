@@ -20,13 +20,13 @@ export const contactSchema = Joi.object({
   locality: validation.contact.localityValidator,
   town: validation.contact.townValidator,
   postcode: Joi.alternatives().conditional('country', {
-    is: 'United Kingdom',
+    is: Joi.string().valid('GB', 'United Kingdom'),
     then: validation.contact.ukPostcodeValidator,
     otherwise: Joi.string()
       .trim()
       .required()
   }),
-  country: createOptionSetValidator('defra_country', 'United Kingdom'),
+  country: createOptionSetValidator('defra_country', 'GB'),
   preferredMethodOfConfirmation: createOptionSetValidator('defra_preferredcontactmethod', 'Text'),
   preferredMethodOfNewsletter: createOptionSetValidator('defra_preferredcontactmethod', 'Email'),
   preferredMethodOfReminder: createOptionSetValidator('defra_preferredcontactmethod', 'Letter')

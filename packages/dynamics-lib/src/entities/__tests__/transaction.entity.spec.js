@@ -17,8 +17,7 @@ describe('transaction entity', () => {
         defra_timestamp: '2020-12-13T23:59:59Z',
         defra_paymenttype: 910400000,
         defra_transactionsource: 910400000,
-        defra_total: 123.45,
-        defra_isreconciled: true
+        defra_total: 123.45
       },
       optionSetData
     )
@@ -29,10 +28,9 @@ describe('transaction entity', () => {
       description: 'Test Description',
       channelId: 'Test ChannelId',
       timestamp: '2020-12-13T23:59:59Z',
-      paymentType: expect.objectContaining({ id: 910400000, label: 'Other', description: '' }),
-      source: expect.objectContaining({ id: 910400000, label: 'Gov Pay', description: '' }),
-      total: 123.45,
-      isReconciled: true
+      paymentType: expect.objectContaining({ id: 910400000, label: 'Other', description: 'Other' }),
+      source: expect.objectContaining({ id: 910400000, label: 'Gov Pay', description: 'Gov Pay' }),
+      total: 123.45
     }
 
     expect(transaction).toBeInstanceOf(Transaction)
@@ -62,7 +60,6 @@ describe('transaction entity', () => {
     transaction.paymentType = optionSetData.defra_paymenttype.options['910400000']
     transaction.source = optionSetData.defra_financialtransactionsource.options['910400000']
     transaction.total = 123.45
-    transaction.isReconciled = true
     transaction.bindToTransactionCurrency(currency)
     transaction.bindToPoclFile(poclFile)
 
@@ -76,7 +73,6 @@ describe('transaction entity', () => {
         defra_paymenttype: 910400000,
         defra_transactionsource: 910400000,
         defra_total: 123.45,
-        defra_isreconciled: true,
         'transactioncurrencyid@odata.bind': `/${TransactionCurrency.definition.dynamicsCollection}(${currency.id})`,
         'defra_POCLFileId@odata.bind': `$${poclFile.uniqueContentId}`
       })

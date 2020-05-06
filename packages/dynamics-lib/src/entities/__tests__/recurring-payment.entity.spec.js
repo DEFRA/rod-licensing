@@ -13,7 +13,8 @@ describe('recurring payment entity', () => {
         defra_recurringpaymentid: 'b5b24adf-2e83-ea11-a811-000d3a649213',
         defra_name: '18569ba8-094e-4e8c-9911-bfedd5ccc17a',
         defra_mandate: 'c9267c6e-573d-488b-99ab-ea18431fc472',
-        defra_executiondate: '2020-04-20T17:20:37Z'
+        defra_inceptionday: 2,
+        defra_inceptionmonth: 1
       },
       optionSetData
     )
@@ -22,7 +23,8 @@ describe('recurring payment entity', () => {
       id: 'b5b24adf-2e83-ea11-a811-000d3a649213',
       referenceNumber: '18569ba8-094e-4e8c-9911-bfedd5ccc17a',
       mandate: 'c9267c6e-573d-488b-99ab-ea18431fc472',
-      inceptionDate: '2020-04-20T17:20:37Z'
+      inceptionDay: 2,
+      inceptionMonth: 1
     }
 
     expect(recurringPayment).toBeInstanceOf(RecurringPayment)
@@ -37,7 +39,8 @@ describe('recurring payment entity', () => {
     const recurringPayment = new RecurringPayment()
     recurringPayment.referenceNumber = 'Test Reference Number'
     recurringPayment.mandate = 'Test mandate'
-    recurringPayment.inceptionDate = '2020-04-20T17:20:37Z'
+    recurringPayment.inceptionDay = 28
+    recurringPayment.inceptionMonth = 2
     recurringPayment.bindToContact(contact)
 
     const dynamicsEntity = recurringPayment.toRequestBody()
@@ -45,7 +48,8 @@ describe('recurring payment entity', () => {
       expect.objectContaining({
         defra_name: 'Test Reference Number',
         defra_mandate: 'Test mandate',
-        defra_executiondate: '2020-04-20T17:20:37Z',
+        defra_inceptionday: 28,
+        defra_inceptionmonth: 2,
         'defra_Contact@odata.bind': `$${contact.uniqueContentId}`
       })
     )

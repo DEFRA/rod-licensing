@@ -47,9 +47,17 @@ export async function getGlobalOptionSet (name) {
   return definition[name]
 }
 
-export async function getGlobalOptionSetValue (name, label) {
+/**
+ * Retrieve a global option set value by the given lookup.  The label and description fields are examined to find a match.
+ *
+ * @param {string} name The name of the global option set to examine
+ * @param {string} lookup The value used to find a match
+ * @returns {Promise<GlobalOptionSetDefinition|undefined>}
+ */
+export async function getGlobalOptionSetValue (name, lookup) {
+  const llookup = lookup && lookup.toLowerCase()
   const definition = await retrieveGlobalOptionSets(name).cached()
-  const options =
-    definition[name] && label ? Object.values(definition[name].options).filter(o => o.label.toLowerCase() === label.toLowerCase()) : []
-  return (options.length && options[0]) || undefined
+  return definition[name] && lookup
+    ? Object.values(definition[name].options).find(o => o.label.toLowerCase() === llookup || o.description.toLowerCase() === llookup)
+    : undefined
 }
