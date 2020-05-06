@@ -14,7 +14,8 @@ export class RecurringPayment extends BaseEntity {
       id: { field: 'defra_recurringpaymentid', type: 'string' },
       referenceNumber: { field: 'defra_name', type: 'string' },
       mandate: { field: 'defra_mandate', type: 'string' },
-      inceptionDate: { field: 'defra_executiondate', type: 'datetime' }
+      inceptionDay: { field: 'defra_inceptionday', type: 'integer' },
+      inceptionMonth: { field: 'defra_inceptionmonth', type: 'integer' }
     }
   })
 
@@ -51,15 +52,29 @@ export class RecurringPayment extends BaseEntity {
   }
 
   /**
-   * The inception date associated with the recurring payment
-   * @type {string}
+   * The inception day associated with the recurring payment
+   * @type {integer}
    */
-  get inceptionDate () {
-    return super._getState('inceptionDate')
+  get inceptionDay () {
+    return super._getState('inceptionDay')
   }
 
-  set inceptionDate (inceptionDate) {
-    super._setState('inceptionDate', inceptionDate)
+  set inceptionDay (inceptionDay) {
+    super._setState('inceptionDay', inceptionDay)
+  }
+
+  /**
+   * The inception month associated with the recurring payment
+   * Note: Months are zero indexed, so January is month 0.
+   *
+   * @type {integer}
+   */
+  get inceptionMonth () {
+    return super._getState('inceptionMonth')
+  }
+
+  set inceptionMonth (inceptionMonth) {
+    super._setState('inceptionMonth', inceptionMonth)
   }
 
   /**

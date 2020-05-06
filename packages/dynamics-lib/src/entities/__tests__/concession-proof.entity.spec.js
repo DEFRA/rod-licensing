@@ -20,7 +20,7 @@ describe('concession proof entity', () => {
     const expectedFields = {
       id: 'ee336a19-417e-ea11-a811-000d3a64905b',
       referenceNumber: 'AB 01 02 03 CD',
-      proofType: expect.objectContaining({ id: 910400001, label: 'National Insurance Number', description: '' })
+      proofType: expect.objectContaining({ id: 910400001, label: 'National Insurance Number', description: 'National Insurance Number' })
     }
 
     expect(permission).toBeInstanceOf(ConcessionProof)

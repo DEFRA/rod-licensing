@@ -28,7 +28,7 @@ describe('fulfilment request file entity', () => {
       notes: 'Test notes',
       date: '2020-01-27T00:00:00Z',
       deliveryTimestamp: '2020-01-27T14:27:08Z',
-      status: expect.objectContaining({ id: 910400001, label: 'Delivered', description: '' })
+      status: expect.objectContaining({ id: 910400001, label: 'Delivered', description: 'Delivered' })
     }
 
     expect(fulfilmentRequestFile).toBeInstanceOf(FulfilmentRequestFile)

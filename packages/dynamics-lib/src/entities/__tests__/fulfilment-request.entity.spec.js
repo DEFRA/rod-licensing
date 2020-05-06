@@ -24,7 +24,7 @@ describe('fulfilment request entity', () => {
       referenceNumber: '2020-04-14T11:14:27.626Z-TKDJ2A',
       requestTimestamp: '2020-04-14T11:14:27Z',
       notes: 'Test notes',
-      status: expect.objectContaining({ id: 910400000, label: 'Pending', description: '' })
+      status: expect.objectContaining({ id: 910400000, label: 'Pending', description: 'Pending' })
     }
 
     expect(fulfilmentRequest).toBeInstanceOf(FulfilmentRequest)

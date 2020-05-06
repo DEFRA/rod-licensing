@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "0.0.1-beta.27",
+  "version": "0.0.1-beta.28",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -36,7 +36,7 @@
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "^0.0.1-beta.26",
+    "@defra-fish/business-rules-lib": "^0.0.1-beta.28",
     "@hapi/boom": "^9.1.0",
     "@hapi/catbox-redis": "^5.0.5",
     "@hapi/hapi": "^19.1.1",
@@ -47,10 +47,10 @@
     "debug": "^4.1.1",
     "find": "^0.3.0",
     "govuk-frontend": "^3.6.0",
-    "moment": "^2.24.0",
+    "moment": "^2.25.1",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.1",
-    "uuid": "^7.0.3"
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",

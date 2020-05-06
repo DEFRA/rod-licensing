@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/sqs-receiver-service",
-  "version": "0.0.1-beta.26",
+  "version": "0.0.1-beta.28",
   "description": "SQS Receiver service",
   "type": "module",
   "engines": {
@@ -36,10 +36,10 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "aws-sdk": "^2.664.0",
+    "aws-sdk": "^2.668.0",
     "debug": "^4.1.1",
     "node-fetch": "^2.6.0",
-    "uuid": "^7.0.3"
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "pm2": "^4.4.0"
