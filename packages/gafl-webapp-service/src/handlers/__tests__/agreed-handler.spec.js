@@ -62,6 +62,10 @@ describe('The agreed handler', () => {
                   next_url: {
                     href: 'https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0',
                     method: 'GET'
+                  },
+                  self: {
+                    href: 'https://publicapi.payments.service.gov.uk/v1/payments/qdq15eu98cpk8bc14qs9ht0t3v',
+                    method: 'GET'
                   }
                 }
               }),

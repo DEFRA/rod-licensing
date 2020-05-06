@@ -92,19 +92,19 @@ export default async (request, h) => {
       return h.redirect(transaction.payment.href)
     }
 
-    // if (!status[COMPLETION_STATUS.paymentCompleted]) {
-    //   const { amount, state, created_date } = await getGovUkPaymentStatus(transaction.payment.self_href, transaction.id)
-    //
-    //   // The user user cancelled the payment
-    //   if (state.code === GOVPAY_STATUS_CODES.USER_CANCELLED) {
-    //     status[COMPLETION_STATUS.paymentCancelled] = true
-    //     await request.cache().helpers.status.set(status)
-    //     return h.redirect(PAYMENT_CANCELLED.uri)
-    //   }
+    if (!status[COMPLETION_STATUS.paymentCompleted]) {
+      const { amount, state, created_date } = await getGovUkPaymentStatus(transaction.payment.self_href, transaction.id)
 
-      // return h.redirect(transaction.payment.href)
-      // { console.log(JSON.stringify(result, null, 4)) }
-    //}
+      // The user user cancelled the payment
+      if (state.code === GOVPAY_STATUS_CODES.USER_CANCELLED) {
+        status[COMPLETION_STATUS.paymentCancelled] = true
+        await request.cache().helpers.status.set(status)
+        return h.redirect(PAYMENT_CANCELLED.uri)
+      }
+
+      //return h.redirect(transaction.payment.href)
+      //{ console.log(JSON.stringify(result, null, 4)) }
+    }
   }
 
   /*
