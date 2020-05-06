@@ -1,4 +1,4 @@
-import { LICENCE_TO_START, CONTROLLER } from '../../../constants.js'
+import { LICENCE_TO_START, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

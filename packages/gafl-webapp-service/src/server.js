@@ -11,15 +11,9 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import {
-  CLIENT_ERROR,
-  SERVER_ERROR,
-  SESSION_TTL_MS_DEFAULT,
-  REDIS_PORT_DEFAULT,
-  SESSION_COOKIE_NAME_DEFAULT,
-  NEW_TRANSACTION,
-  AGREED
-} from './constants.js'
+import { SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
+import { CLIENT_ERROR, SERVER_ERROR, NEW_TRANSACTION, AGREED } from './uri.js'
+
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
 let server

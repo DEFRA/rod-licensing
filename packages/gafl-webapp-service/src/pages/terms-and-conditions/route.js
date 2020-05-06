@@ -1,7 +1,7 @@
 import pageRoute from '../../routes/page-route.js'
 import * as mappings from '../../processors/mapping-constants.js'
 import Joi from '@hapi/joi'
-import { TERMS_AND_CONDITIONS, CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../constants.js'
+import { TERMS_AND_CONDITIONS, CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
 
 import GetDataRedirect from '../../handlers/get-data-redirect.js'
 

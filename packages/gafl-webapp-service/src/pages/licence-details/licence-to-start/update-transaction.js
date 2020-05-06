@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { LICENCE_TO_START } from '../../../constants.js'
+import { LICENCE_TO_START } from '../../../uri.js'
 /**
  * Transfer the validate page object
  * @param request

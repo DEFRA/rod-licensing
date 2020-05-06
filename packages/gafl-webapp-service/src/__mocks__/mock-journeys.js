@@ -21,7 +21,7 @@ import {
   TERMS_AND_CONDITIONS,
   BENEFIT_CHECK,
   BENEFIT_NI_NUMBER
-} from '../constants.js'
+} from '../uri.js'
 
 import { JUNIOR_MAX_AGE, MINOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 

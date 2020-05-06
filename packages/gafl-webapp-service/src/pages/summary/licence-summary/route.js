@@ -13,7 +13,7 @@ import {
   NUMBER_OF_RODS,
   BENEFIT_CHECK,
   DATE_OF_BIRTH
-} from '../../../constants.js'
+} from '../../../uri.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()

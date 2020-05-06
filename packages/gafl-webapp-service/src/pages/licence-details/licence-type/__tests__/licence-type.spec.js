@@ -1,4 +1,4 @@
-import { LICENCE_TYPE, CONTROLLER, TEST_TRANSACTION } from '../../../../constants.js'
+import { LICENCE_TYPE, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
 import * as mappings from '../../../../processors/mapping-constants.js'
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'

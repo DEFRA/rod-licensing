@@ -1,4 +1,4 @@
-import { BLUE_BADGE_CHECK } from '../../../constants.js'
+import { BLUE_BADGE_CHECK } from '../../../uri.js'
 
 export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()

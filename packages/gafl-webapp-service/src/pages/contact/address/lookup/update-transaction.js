@@ -1,4 +1,4 @@
-import { ADDRESS_LOOKUP } from '../../../../constants.js'
+import { ADDRESS_LOOKUP } from '../../../../uri.js'
 import addressLookupService from '../../../../services/address-lookup/address-lookup-service.js'
 import db from 'debug'
 import { validation } from '@defra-fish/business-rules-lib'

@@ -1,4 +1,4 @@
-import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../constants.js'
+import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../uri.js'
 import mockDefraCountries from '../../../../../services/address-lookup/__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 

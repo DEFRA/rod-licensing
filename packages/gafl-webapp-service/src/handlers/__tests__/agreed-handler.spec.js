@@ -8,7 +8,8 @@ import {
   JUNIOR_12_MONTH_LICENCE
 } from '../../__mocks__/mock-journeys.js'
 
-import { AGREED, FINALISED, TEST_TRANSACTION, TEST_STATUS, COMPLETION_STATUS } from '../../constants.js'
+import { COMPLETION_STATUS } from '../../constants.js'
+import { AGREED, FINALISED, TEST_TRANSACTION, TEST_STATUS } from '../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie } from '../../../../__mocks__/test-utils.js'
-import { NO_LICENCE_REQUIRED } from '../../../../constants.js'
+import { NO_LICENCE_REQUIRED } from '../../../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

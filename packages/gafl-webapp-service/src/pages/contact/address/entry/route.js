@@ -1,4 +1,4 @@
-import { ADDRESS_ENTRY, CONTROLLER, ADDRESS_LOOKUP } from '../../../../constants.js'
+import { ADDRESS_ENTRY, CONTROLLER, ADDRESS_LOOKUP } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'

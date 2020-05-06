@@ -1,4 +1,4 @@
-import { BLUE_BADGE_NUMBER } from '../../../constants.js'
+import { BLUE_BADGE_NUMBER } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 

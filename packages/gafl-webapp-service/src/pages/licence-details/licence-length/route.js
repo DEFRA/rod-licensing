@@ -1,4 +1,4 @@
-import { LICENCE_LENGTH, CONTROLLER } from '../../../constants.js'
+import { LICENCE_LENGTH, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

@@ -5,7 +5,7 @@ import {
   DATE_OF_BIRTH,
   CONTROLLER,
   TEST_TRANSACTION
-} from '../../../../constants.js'
+} from '../../../../uri.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'

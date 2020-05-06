@@ -1,4 +1,4 @@
-import { LICENCE_TO_START } from '../../../constants.js'
+import { LICENCE_TO_START } from '../../../uri.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TO_START.page)

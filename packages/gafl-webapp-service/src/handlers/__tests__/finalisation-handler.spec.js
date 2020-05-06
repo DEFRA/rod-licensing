@@ -1,7 +1,6 @@
 import { initialize, injectWithCookie, postRedirectGet, start, stop } from '../../__mocks__/test-utils'
 import { MOCK_CONCESSIONS, JUNIOR_12_MONTH_LICENCE } from '../../__mocks__/mock-journeys.js'
-
-import { AGREED, FINALISED, ORDER_COMPLETE, TEST_STATUS, TERMS_AND_CONDITIONS } from '../../constants.js'
+import { AGREED, FINALISED, ORDER_COMPLETE, TEST_STATUS, TERMS_AND_CONDITIONS } from '../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

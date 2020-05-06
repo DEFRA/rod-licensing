@@ -25,6 +25,8 @@ import newsletter from '../pages/contact/newsletter/route.js'
 
 import termsAndConditions from '../pages/terms-and-conditions/route.js'
 import orderComplete from '../pages/order-complete/route.js'
+import paymentCancelled from '../pages/payment/cancelled/route.js'
+import paymentFailed from '../pages/payment/failed/route.js'
 
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
@@ -54,6 +56,8 @@ const routes = [
   ...contactSummary,
   ...licenceSummary,
   ...termsAndConditions,
+  ...paymentCancelled,
+  ...paymentFailed,
   ...orderComplete
 ]
 

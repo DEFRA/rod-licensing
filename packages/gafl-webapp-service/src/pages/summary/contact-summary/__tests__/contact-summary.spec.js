@@ -23,7 +23,7 @@ import {
   LICENCE_TYPE,
   JUNIOR_LICENCE,
   TEST_TRANSACTION
-} from '../../../../constants.js'
+} from '../../../../uri.js'
 import mockDefraCountries from '../../../../services/address-lookup/__mocks__/data/defra-country'
 
 jest.mock('node-fetch')

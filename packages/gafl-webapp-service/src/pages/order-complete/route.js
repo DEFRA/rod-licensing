@@ -1,6 +1,7 @@
 import pageRoute from '../../routes/page-route.js'
 
-import { ORDER_COMPLETE, CONTROLLER, COMPLETION_STATUS } from '../../constants.js'
+import { COMPLETION_STATUS } from '../../constants.js'
+import { ORDER_COMPLETE, CONTROLLER } from '../../uri.js'
 import Boom from '@hapi/boom'
 
 const getData = async request => {

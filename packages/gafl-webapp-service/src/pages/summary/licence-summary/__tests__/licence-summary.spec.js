@@ -19,7 +19,7 @@ import {
   DATE_OF_BIRTH,
   NAME,
   TEST_TRANSACTION
-} from '../../../../constants.js'
+} from '../../../../uri.js'
 import moment from 'moment'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 

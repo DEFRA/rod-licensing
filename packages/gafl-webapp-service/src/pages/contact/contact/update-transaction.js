@@ -1,4 +1,4 @@
-import { CONTACT } from '../../../constants.js'
+import { CONTACT } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 

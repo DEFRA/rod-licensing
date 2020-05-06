@@ -15,7 +15,7 @@ import {
   CONTACT,
   NEWSLETTER,
   DATE_OF_BIRTH
-} from '../../../constants.js'
+} from '../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 

@@ -1,6 +1,8 @@
 import { prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
-import { ORDER_COMPLETE, COMPLETION_STATUS } from '../constants.js'
+import { COMPLETION_STATUS } from '../constants.js'
+import { ORDER_COMPLETE } from '../uri.js'
+
 import db from 'debug'
 import Boom from '@hapi/boom'
 

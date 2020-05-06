@@ -1,4 +1,4 @@
-import { ADDRESS_SELECT } from '../../../../constants.js'
+import { ADDRESS_SELECT } from '../../../../uri.js'
 
 /**
  * In this case the result of the address search is placed into the page data of the select address page

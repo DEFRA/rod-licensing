@@ -1,4 +1,4 @@
-import { CONTROLLER, FINALISED, NEW_TRANSACTION, ADD_PERMISSION, AGREED } from '../constants.js'
+import { CONTROLLER, FINALISED, NEW_TRANSACTION, ADD_PERMISSION, AGREED } from '../uri.js'
 import finalisationHandler from '../handlers/finalisation-handler.js'
 import addPermission from '../lib/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'

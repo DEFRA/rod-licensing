@@ -1,4 +1,4 @@
-import { ADDRESS_ENTRY } from '../../../../constants.js'
+import { ADDRESS_ENTRY } from '../../../../uri.js'
 import { validation } from '@defra-fish/business-rules-lib'
 
 /**

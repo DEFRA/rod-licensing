@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie } from '../../__mocks__/test-utils.js'
-import { ADD_PERMISSION, NEW_TRANSACTION, TEST_TRANSACTION } from '../../constants.js'
+import { ADD_PERMISSION, NEW_TRANSACTION, TEST_TRANSACTION } from '../../uri.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib/src/constants.js'
 
 beforeAll(d => start(d))

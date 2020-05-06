@@ -1,4 +1,4 @@
-import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP, TEST_TRANSACTION } from '../../../../../constants.js'
+import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP, TEST_TRANSACTION } from '../../../../../uri.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 

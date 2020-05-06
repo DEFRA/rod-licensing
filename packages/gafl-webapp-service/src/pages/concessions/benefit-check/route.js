@@ -1,4 +1,4 @@
-import { BENEFIT_CHECK, CONTROLLER } from '../../../constants.js'
+import { BENEFIT_CHECK, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

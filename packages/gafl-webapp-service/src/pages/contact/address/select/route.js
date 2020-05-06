@@ -1,4 +1,4 @@
-import { ADDRESS_SELECT, CONTROLLER, ADDRESS_LOOKUP, ADDRESS_ENTRY } from '../../../../constants.js'
+import { ADDRESS_SELECT, CONTROLLER, ADDRESS_LOOKUP, ADDRESS_ENTRY } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

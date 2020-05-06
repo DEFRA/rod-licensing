@@ -1,4 +1,4 @@
-import { LICENCE_TYPE } from '../../../constants.js'
+import { LICENCE_TYPE } from '../../../uri.js'
 import * as constants from '../../../processors/mapping-constants.js'
 
 /**

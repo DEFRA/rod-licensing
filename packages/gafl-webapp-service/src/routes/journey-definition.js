@@ -21,8 +21,10 @@ import {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
   TERMS_AND_CONDITIONS,
-  AGREED
-} from '../constants.js'
+  AGREED,
+  PAYMENT_CANCELLED,
+  PAYMENT_FAILED
+} from '../uri.js'
 
 export default [
   {
@@ -314,6 +316,24 @@ export default [
   // and the transaction is locked
   {
     currentPage: TERMS_AND_CONDITIONS.page,
+    nextPage: {
+      ok: {
+        page: AGREED.uri
+      }
+    }
+  },
+
+  {
+    currentPage: PAYMENT_CANCELLED.page,
+    nextPage: {
+      ok: {
+        page: AGREED.uri
+      }
+    }
+  },
+
+  {
+    currentPage: PAYMENT_FAILED.page,
     nextPage: {
       ok: {
         page: AGREED.uri

@@ -11,7 +11,7 @@ import {
   NEWSLETTER,
   NAME,
   AGREED
-} from '../../../constants.js'
+} from '../../../uri.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../__mocks__/test-utils.js'
 
 import moment from 'moment'

@@ -1,6 +1,6 @@
 import mockTransaction from './data/mock-transaction.js'
 import { preparePayment } from '../govuk-pay-service.js'
-import { AGREED } from '../../../constants.js'
+import { AGREED } from '../../../uri.js'
 
 describe('The govuk-pay-service', () => {
   it('prepares a correct payment response endpoint for http', async () => {

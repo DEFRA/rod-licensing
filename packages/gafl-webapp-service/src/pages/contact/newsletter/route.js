@@ -1,4 +1,4 @@
-import { NEWSLETTER, CONTROLLER } from '../../../constants.js'
+import { NEWSLETTER, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

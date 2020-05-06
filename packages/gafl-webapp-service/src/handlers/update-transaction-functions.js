@@ -22,6 +22,10 @@ import addressEntry from '../pages/contact/address/entry/update-transaction.js'
 import contact from '../pages/contact/contact/update-transaction.js'
 import newsletter from '../pages/contact/newsletter/update-transaction.js'
 
+import paymentCancelled from '../pages/payment/cancelled/update-transaction.js'
+import paymentFailed from '../pages/payment/failed/update-transaction.js'
+
+
 import termsAndConditions from '../pages/terms-and-conditions/update-transaction.js'
 
 import {
@@ -42,8 +46,10 @@ import {
   ADDRESS_ENTRY,
   CONTACT,
   NEWSLETTER,
-  TERMS_AND_CONDITIONS
-} from '../constants.js'
+  TERMS_AND_CONDITIONS,
+  PAYMENT_CANCELLED,
+  PAYMENT_FAILED
+} from '../uri.js'
 
 export default {
   [NAME.page]: name,
@@ -63,5 +69,7 @@ export default {
   [ADDRESS_ENTRY.page]: addressEntry,
   [CONTACT.page]: contact,
   [NEWSLETTER.page]: newsletter,
-  [TERMS_AND_CONDITIONS.page]: termsAndConditions
+  [TERMS_AND_CONDITIONS.page]: termsAndConditions,
+  [PAYMENT_FAILED.page]: paymentFailed,
+  [PAYMENT_CANCELLED.page]: paymentCancelled
 }

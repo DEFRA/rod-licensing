@@ -7,7 +7,7 @@ import {
   LICENCE_TO_START,
   CONTACT_SUMMARY,
   TEST_TRANSACTION
-} from '../../../../constants.js'
+} from '../../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 

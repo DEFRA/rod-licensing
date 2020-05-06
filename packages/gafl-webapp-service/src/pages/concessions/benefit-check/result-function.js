@@ -1,4 +1,4 @@
-import { BENEFIT_CHECK } from '../../../constants.js'
+import { BENEFIT_CHECK } from '../../../uri.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(BENEFIT_CHECK.page)

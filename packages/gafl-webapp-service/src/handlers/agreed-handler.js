@@ -1,7 +1,8 @@
 import { prepareApiTransactionPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
-import { FINALISED, ORDER_COMPLETE, COMPLETION_STATUS } from '../constants.js'
-import { postData, preparePayment } from '../services/payment/govuk-pay-service.js'
+import { COMPLETION_STATUS } from '../constants.js'
+import { FINALISED, ORDER_COMPLETE, PAYMENT_CANCELLED } from '../uri.js'
+import { postData, preparePayment, getGovUkPaymentStatus, GOVPAY_STATUS_CODES } from '../services/payment/govuk-pay-service.js'
 import db from 'debug'
 import Boom from '@hapi/boom'
 const debug = db('webapp:agreed-handler')
@@ -49,13 +50,14 @@ const sendToSalesApi = async (request, transaction, status) => {
 
 const postToGovUkPayApi = async (request, transaction, status) => {
   const preparedPayment = preparePayment(transaction)
-  const payment = await postData(preparedPayment)
+  const payment = await postData(preparedPayment, transaction.id)
   transaction.payment = {
     state: payment.state,
     payment_id: payment.payment_id,
     payment_provider: payment.payment_provider,
     created_date: payment.created_date,
-    href: payment._links.next_url.href
+    href: payment._links.next_url.href,
+    self_href: payment._links.self.href
   }
   status[COMPLETION_STATUS.paymentCreated] = true
   await request.cache().helpers.status.set(status)
@@ -90,9 +92,19 @@ export default async (request, h) => {
       return h.redirect(transaction.payment.href)
     }
 
-    if (!status[COMPLETION_STATUS.paymentCompleted]) {
-      return h.redirect(transaction.payment.href)
-    }
+    // if (!status[COMPLETION_STATUS.paymentCompleted]) {
+    //   const { amount, state, created_date } = await getGovUkPaymentStatus(transaction.payment.self_href, transaction.id)
+    //
+    //   // The user user cancelled the payment
+    //   if (state.code === GOVPAY_STATUS_CODES.USER_CANCELLED) {
+    //     status[COMPLETION_STATUS.paymentCancelled] = true
+    //     await request.cache().helpers.status.set(status)
+    //     return h.redirect(PAYMENT_CANCELLED.uri)
+    //   }
+
+      // return h.redirect(transaction.payment.href)
+      // { console.log(JSON.stringify(result, null, 4)) }
+    //}
   }
 
   /*

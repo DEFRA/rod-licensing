@@ -1,7 +1,17 @@
 import uuidv4 from 'uuid/v4.js'
 import db from 'debug'
 import addPermission from './add-permission.js'
-import { AGREED, NEW_TRANSACTION, ORDER_COMPLETE, FINALISED, TEST_TRANSACTION, TEST_STATUS } from '../constants.js'
+import {
+  CONTROLLER,
+  AGREED,
+  NEW_TRANSACTION,
+  ORDER_COMPLETE,
+  FINALISED,
+  PAYMENT_FAILED,
+  PAYMENT_CANCELLED,
+  TEST_TRANSACTION,
+  TEST_STATUS
+} from '../uri.js'
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -36,7 +46,15 @@ const sessionManager = sessionCookieName => async (request, h) => {
     const status = await request.cache().helpers.status.get()
     if (
       status.agreed &&
-      ![NEW_TRANSACTION.uri, AGREED.uri, ORDER_COMPLETE.uri, FINALISED.uri, TEST_TRANSACTION.uri, TEST_STATUS.uri].includes(request.path)
+      ![NEW_TRANSACTION.uri,
+        CONTROLLER.uri,
+        AGREED.uri,
+        ORDER_COMPLETE.uri,
+        FINALISED.uri,
+        PAYMENT_FAILED.uri,
+        PAYMENT_CANCELLED.uri,
+        TEST_TRANSACTION.uri,
+        TEST_STATUS.uri].includes(request.path)
     ) {
       return h.redirect(AGREED.uri).takeover()
     }

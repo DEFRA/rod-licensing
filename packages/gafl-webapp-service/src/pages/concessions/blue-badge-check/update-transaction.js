@@ -1,4 +1,4 @@
-import { BLUE_BADGE_CHECK } from '../../../constants.js'
+import { BLUE_BADGE_CHECK } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
 /**

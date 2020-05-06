@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { LICENCE_START_DATE } from '../../../constants.js'
+import { LICENCE_START_DATE } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
 /**
