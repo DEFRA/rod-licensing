@@ -1,7 +1,7 @@
-import { prepareApiTransactionPayload } from '../processors/api-transaction.js'
+import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
 import { COMPLETION_STATUS } from '../constants.js'
-import { FINALISED, ORDER_COMPLETE, PAYMENT_CANCELLED } from '../uri.js'
+import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { postData, preparePayment, getGovUkPaymentStatus, GOVPAY_STATUS_CODES } from '../services/payment/govuk-pay-service.js'
 import db from 'debug'
 import Boom from '@hapi/boom'
@@ -48,7 +48,7 @@ const sendToSalesApi = async (request, transaction, status) => {
   return transaction
 }
 
-const postToGovUkPayApi = async (request, transaction, status) => {
+const createPayment = async (request, transaction, status) => {
   const preparedPayment = preparePayment(transaction)
   const payment = await postData(preparedPayment, transaction.id)
   transaction.payment = {
@@ -62,6 +62,59 @@ const postToGovUkPayApi = async (request, transaction, status) => {
   status[COMPLETION_STATUS.paymentCreated] = true
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.transaction.set(transaction)
+}
+
+const completePayment = async (request, transaction, status) => {
+  const { state } = await getGovUkPaymentStatus(transaction.payment.self_href, transaction.id)
+
+  if (!state.finished) {
+    throw Boom.forbidden('Attempt to access the agreed handler during payment journey')
+  }
+
+  let next = null
+
+  if (state.status === 'error') {
+    // The payment expired
+    if (state.code === GOVPAY_STATUS_CODES.ERROR) {
+      status[COMPLETION_STATUS.paymentFailed] = true
+      status.payment = { code: state.code }
+      await request.cache().helpers.status.set(status)
+      next = PAYMENT_FAILED.uri
+    } else {
+      throw Boom.badImplementation('Unknown GOV.UK pay or payment provider error')
+    }
+  }
+
+  if (state.status === 'success') {
+    status[COMPLETION_STATUS.paymentCompleted] = true
+    await request.cache().helpers.status.set(status)
+  } else {
+    // The payment expired
+    if (state.code === GOVPAY_STATUS_CODES.EXPIRED) {
+      status[COMPLETION_STATUS.paymentFailed] = true
+      status.payment = { code: state.code }
+      await request.cache().helpers.status.set(status)
+      next = PAYMENT_FAILED.uri
+    }
+
+    // The user cancelled the payment
+    if (state.code === GOVPAY_STATUS_CODES.USER_CANCELLED) {
+      status[COMPLETION_STATUS.paymentCancelled] = true
+      status.pay = { code: state.code }
+      await request.cache().helpers.status.set(status)
+      next = PAYMENT_CANCELLED.uri
+    }
+
+    // The payment was rejected
+    if (state.code === GOVPAY_STATUS_CODES.REJECTED) {
+      status[COMPLETION_STATUS.paymentFailed] = true
+      status.payment = { code: state.code }
+      await request.cache().helpers.status.set(status)
+      next = PAYMENT_FAILED.uri
+    }
+  }
+
+  return next
 }
 
 export default async (request, h) => {
@@ -88,27 +141,26 @@ export default async (request, h) => {
   if (transaction.cost > 0) {
     // Send the transaction to the GOV.UK payment API and process the response
     if (!status[COMPLETION_STATUS.paymentCreated]) {
-      await postToGovUkPayApi(request, transaction, status)
+      await createPayment(request, transaction, status)
       return h.redirect(transaction.payment.href)
     }
 
     if (!status[COMPLETION_STATUS.paymentCompleted]) {
-      const { amount, state, created_date } = await getGovUkPaymentStatus(transaction.payment.self_href, transaction.id)
-
-      // The user user cancelled the payment
-      if (state.code === GOVPAY_STATUS_CODES.USER_CANCELLED) {
-        status[COMPLETION_STATUS.paymentCancelled] = true
-        await request.cache().helpers.status.set(status)
-        return h.redirect(PAYMENT_CANCELLED.uri)
+      const next = await completePayment(request, transaction, status)
+      if (next) {
+        return h.redirect(next)
       }
-
-      //return h.redirect(transaction.payment.href)
-      //{ console.log(JSON.stringify(result, null, 4)) }
     }
   }
 
-  /*
-   * Redirect to the finalization
-   */
-  return h.redirect(FINALISED.uri)
+  if (!status[COMPLETION_STATUS.finalised]) {
+    const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
+    debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
+    await permissionsOperations.patchApiTransactionPayload(apiFinalisationPayload, transaction.id)
+    status[COMPLETION_STATUS.finalised] = true
+    await request.cache().helpers.status.set(status)
+  }
+
+  // If we are here we have completed
+  return h.redirect(ORDER_COMPLETE.uri)
 }

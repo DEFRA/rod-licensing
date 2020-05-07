@@ -9,7 +9,7 @@ export default {
         premises: '11 HOWECROFT COURT',
         town: 'BRISTOL',
         postcode: 'BS9 1HJ',
-        country: 'GB',
+        countryCode: 'GB',
         street: 'EASTMEAD LANE',
         preferredMethodOfNewsletter: 'Email',
         preferredMethodOfConfirmation: 'Text',

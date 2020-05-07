@@ -1,7 +1,8 @@
+import Boom from '@hapi/boom'
 import pageRoute from '../../../routes/page-route.js'
 import { COMPLETION_STATUS } from '../../../constants.js'
 import { PAYMENT_FAILED, CONTROLLER, NEW_TRANSACTION } from '../../../uri.js'
-import Boom from '@hapi/boom'
+import { GOVPAY_STATUS_CODES } from '../../../services/payment/govuk-pay-service.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -12,6 +13,8 @@ const getData = async request => {
   }
 
   return {
+    codes: GOVPAY_STATUS_CODES,
+    'failure-code': status.payment.code,
     uri: {
       new: NEW_TRANSACTION.uri
     }

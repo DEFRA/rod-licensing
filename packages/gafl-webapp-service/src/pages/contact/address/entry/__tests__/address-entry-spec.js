@@ -109,7 +109,7 @@ describe('The manual address entry page', () => {
       street: 'Eastmead Lane',
       town: 'Bristol',
       postcode: 'BS9 1HJ',
-      country: 'GB'
+      countryCode: 'GB'
     })
   })
 
@@ -129,7 +129,7 @@ describe('The manual address entry page', () => {
       street: 'Eastmead Lane',
       town: 'Bristol',
       postcode: 'not checked',
-      country: 'FR'
+      countryCode: 'FR'
     })
   })
 })

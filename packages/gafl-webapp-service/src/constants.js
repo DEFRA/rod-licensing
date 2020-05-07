@@ -16,9 +16,9 @@ const COMPLETION_STATUS = {
   posted: 'posted',
   paymentCreated: 'payment-created',
   paymentCancelled: 'payment-cancelled',
+  paymentFailed: 'payment-failed',
   paymentCompleted: 'payment-completed',
   finalised: 'finalised',
-  payed: 'payed',
   completed: 'completed'
 }
 

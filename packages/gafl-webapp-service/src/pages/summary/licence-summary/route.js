@@ -50,14 +50,22 @@ const getData = async request => {
 
   await findPermit(permission, request)
 
-  // Is this date format ok?
-  const startTimeString = moment(permission.licenceStartDate, 'YYYY-MM-DD')
-    .add(permission.licenceStartTime, 'hours')
-    .format('LLLL')
+  const startDateString = moment(permission.licenceStartDate, 'YYYY-MM-DD').format('dddd, MMMM Do, YYYY')
+  const timeComponent = (() => {
+    if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
+      return 'Midnight'
+    } else if (permission.licenceStartTime === '12') {
+      return 'Midday'
+    } else {
+      return moment(permission.licenceStartDate, 'YYYY-MM-DD')
+        .add(permission.licenceStartTime, 'hours')
+        .format('h:mma')
+    }
+  })()
 
   return {
     permission,
-    startTimeString,
+    startTimeString: `${timeComponent}, ${startDateString}`,
     disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
     licenceTypes: mappings.LICENCE_TYPE,
     hasJunior: !!concessionHelper.hasJunior(permission),

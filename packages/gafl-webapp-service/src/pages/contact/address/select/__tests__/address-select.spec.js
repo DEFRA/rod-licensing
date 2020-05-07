@@ -47,7 +47,7 @@ describe('The address select page', () => {
       street: 'EASTMEAD LANE',
       town: 'BRISTOL',
       postcode: 'BS9 1HJ',
-      country: 'GB'
+      countryCode: 'GB'
     })
   })
 
@@ -58,7 +58,7 @@ describe('The address select page', () => {
       premises: '15 HOWECROFT COURT',
       town: 'BRISTOL',
       postcode: 'BS9 1HJ',
-      country: 'GB'
+      countryCode: 'GB'
     })
   })
 
@@ -71,7 +71,7 @@ describe('The address select page', () => {
       locality: 'Sneyd Park',
       town: 'BRISTOL',
       postcode: 'BS9 1HJ',
-      country: 'GB'
+      countryCode: 'GB'
     })
   })
 })

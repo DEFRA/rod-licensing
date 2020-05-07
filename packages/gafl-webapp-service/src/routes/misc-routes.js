@@ -1,5 +1,4 @@
-import { CONTROLLER, FINALISED, NEW_TRANSACTION, ADD_PERMISSION, AGREED } from '../uri.js'
-import finalisationHandler from '../handlers/finalisation-handler.js'
+import { CONTROLLER, NEW_TRANSACTION, ADD_PERMISSION, AGREED } from '../uri.js'
 import addPermission from '../lib/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
@@ -19,11 +18,6 @@ export default [
     method: 'GET',
     path: AGREED.uri,
     handler: agreedHandler
-  },
-  {
-    method: 'GET',
-    path: FINALISED.uri,
-    handler: finalisationHandler
   },
   {
     method: 'GET',

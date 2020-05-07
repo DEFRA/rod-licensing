@@ -12,7 +12,7 @@ import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
 import { SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
-import { CLIENT_ERROR, SERVER_ERROR, NEW_TRANSACTION, AGREED } from './uri.js'
+import { CLIENT_ERROR, SERVER_ERROR, NEW_TRANSACTION, AGREED, CONTROLLER } from './uri.js'
 
 import sessionManager from './lib/session-manager.js'
 import { cacheDecorator } from './lib/cache-decorator.js'
@@ -108,7 +108,7 @@ const init = async () => {
     }
 
     if (Math.floor(request.response.output.statusCode / 100) === 4) {
-      return h.view(CLIENT_ERROR.page, { clientError: request.response.output.payload }).code(request.response.output.statusCode)
+      return h.view(CLIENT_ERROR.page, { clientError: request.response.output.payload, uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri } }).code(request.response.output.statusCode)
     } else {
       console.error(JSON.stringify(request.response, null, 4))
       return h

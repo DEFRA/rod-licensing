@@ -1,11 +1,12 @@
-import * as concessionHelper from '../../../processors/concession-helper.js'
-import * as mappings from '../../../processors/mapping-constants.js'
+import { COMPLETION_STATUS } from '../../../constants.js'
 /**
  * Transfer the validate page object
  * @param request
  * @returns {Promise<void>}
  */
 export default async request => {
-  // const permission = await request.cache().helpers.status.get()
-  //
+  const status = await request.cache().helpers.status.get()
+  status[COMPLETION_STATUS.paymentCreated] = false
+  status[COMPLETION_STATUS.paymentFailed] = false
+  await request.cache().helpers.status.set(status)
 }

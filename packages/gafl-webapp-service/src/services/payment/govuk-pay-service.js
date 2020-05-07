@@ -17,7 +17,10 @@ const headers = {
 }
 
 const GOVPAY_STATUS_CODES = {
-  USER_CANCELLED: 'P0030'
+  REJECTED: 'P0010',
+  EXPIRED: 'P0020',
+  USER_CANCELLED: 'P0030',
+  ERROR: 'P0050'
 }
 
 const preparePayment = transaction => {
@@ -40,7 +43,7 @@ const preparePayment = transaction => {
       line2: transaction.permissions[0].licensee.locality,
       postcode: transaction.permissions[0].licensee.postcode,
       city: transaction.permissions[0].licensee.town,
-      country: transaction.permissions[0].licensee.country
+      country: transaction.permissions[0].licensee.countryCode
     }
   }
 

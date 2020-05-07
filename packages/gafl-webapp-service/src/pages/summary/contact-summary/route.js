@@ -49,14 +49,14 @@ const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
 
-  const country = await referenceDataOperations.fetchCountriesList()
-  const { name: countryName } = country.find(c => c.code === permission.licensee.country)
+  const countryList = await referenceDataOperations.fetchCountriesList()
+  const { name: countryName } = countryList.find(c => c.code === permission.licensee.countryCode)
 
   return {
     permission,
     countryName,
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
-    newsLetter: !!permission.licensee.preferredMethodOfNewsletter,
+    newsLetter: permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none,
     howContacted: HOW_CONTACTED,
     birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {

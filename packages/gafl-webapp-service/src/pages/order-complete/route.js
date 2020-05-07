@@ -1,7 +1,7 @@
 import pageRoute from '../../routes/page-route.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
-import { ORDER_COMPLETE, CONTROLLER } from '../../uri.js'
+import { ORDER_COMPLETE, CONTROLLER, NEW_TRANSACTION } from '../../uri.js'
 import Boom from '@hapi/boom'
 
 const getData = async request => {
@@ -26,6 +26,9 @@ const getData = async request => {
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
 
   return {
+    uri: {
+      new: NEW_TRANSACTION.uri
+    },
     referenceNumber: permission.referenceNumber
   }
 }
