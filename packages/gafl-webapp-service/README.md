@@ -40,6 +40,4 @@ An address lookup key will also need to be set.
 
 ## GOV.UK pay setup
 
-If the GOV_PAY_API_URL is not set the service will skip the payment phase if NODE_ENV != 'production' otherwise it will throw an error at the payment phase
-
 The details of the GOV.UK payment API can be found here; https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation
