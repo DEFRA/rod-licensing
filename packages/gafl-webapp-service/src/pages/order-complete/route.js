@@ -18,7 +18,7 @@ const getData = async request => {
     throw Boom.forbidden('Attempt to access the completion page handler with no posted flag set')
   }
 
-  // If the transaction has already been finalised then redirect to the order completed page
+  // If the finalised flag has not been set throw an exception
   if (!status[COMPLETION_STATUS.finalised]) {
     throw Boom.forbidden('Attempt to access the completion page handler with no finalised flag set')
   }

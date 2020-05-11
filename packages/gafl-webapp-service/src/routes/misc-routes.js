@@ -1,5 +1,5 @@
 import { CONTROLLER, NEW_TRANSACTION, ADD_PERMISSION, AGREED } from '../uri.js'
-import addPermission from '../lib/add-permission.js'
+import addPermission from '../session-cache/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 

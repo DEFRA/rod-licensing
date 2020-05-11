@@ -45,14 +45,16 @@ const sessionManager = sessionCookieName => async (request, h) => {
     const status = await request.cache().helpers.status.get()
     if (
       status.agreed &&
-      ![NEW_TRANSACTION.uri,
+      ![
+        NEW_TRANSACTION.uri,
         CONTROLLER.uri,
         AGREED.uri,
         ORDER_COMPLETE.uri,
         PAYMENT_FAILED.uri,
         PAYMENT_CANCELLED.uri,
         TEST_TRANSACTION.uri,
-        TEST_STATUS.uri].includes(request.path)
+        TEST_STATUS.uri
+      ].includes(request.path)
     ) {
       return h.redirect(AGREED.uri).takeover()
     }

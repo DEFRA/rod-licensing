@@ -74,21 +74,21 @@ const completePayment = async (request, transaction, status) => {
   let next = null
 
   if (state.status === 'error') {
-    // The payment expired
-    if (state.code === GOVPAY_STATUS_CODES.ERROR) {
-      status[COMPLETION_STATUS.paymentFailed] = true
-      status.payment = { code: state.code }
-      await request.cache().helpers.status.set(status)
-      next = PAYMENT_FAILED.uri
-    } else {
-      throw Boom.badImplementation('Unknown GOV.UK pay or payment provider error')
-    }
+    // The payment failed
+    status[COMPLETION_STATUS.paymentFailed] = true
+    status.payment = { code: state.code }
+    await request.cache().helpers.status.set(status)
+    next = PAYMENT_FAILED.uri
   }
 
   if (state.status === 'success') {
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
   } else {
+    /*
+     * This block deals with failed or cancelled payments
+     */
+
     // The payment expired
     if (state.code === GOVPAY_STATUS_CODES.EXPIRED) {
       status[COMPLETION_STATUS.paymentFailed] = true

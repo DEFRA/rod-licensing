@@ -14,17 +14,9 @@ import routes from './routes/routes.js'
 import { SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
 import { CLIENT_ERROR, SERVER_ERROR, NEW_TRANSACTION, AGREED, CONTROLLER } from './uri.js'
 
-import sessionManager from './lib/session-manager.js'
-import { cacheDecorator } from './lib/cache-decorator.js'
+import sessionManager from './session-cache/session-manager.js'
+import { cacheDecorator } from './session-cache/cache-decorator.js'
 let server
-
-/**
- * Don't start the service if it is production and there are is no GOV.UK pay details
- */
-if (process.env.NODE_ENV === 'production' && !process.env.GOV_PAY_API_URL) {
-  console.error('Attempting to run in production mode without GOV_PAY_API_URL set')
-  process.exit()
-}
 
 const createServer = options => {
   server = Hapi.server(
@@ -108,7 +100,12 @@ const init = async () => {
     }
 
     if (Math.floor(request.response.output.statusCode / 100) === 4) {
-      return h.view(CLIENT_ERROR.page, { clientError: request.response.output.payload, uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri } }).code(request.response.output.statusCode)
+      return h
+        .view(CLIENT_ERROR.page, {
+          clientError: request.response.output.payload,
+          uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri }
+        })
+        .code(request.response.output.statusCode)
     } else {
       console.error(JSON.stringify(request.response, null, 4))
       return h
