@@ -126,12 +126,6 @@ export default async (request, h) => {
     throw Boom.forbidden(`Attempt to access the agreed handler with no agreed flag set: ${JSON.stringify(transaction)}`)
   }
 
-  // If the transaction has already been finalised then redirect to the order completed page
-  if (status[COMPLETION_STATUS.finalised]) {
-    debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
-    return h.redirect(ORDER_COMPLETE.uri)
-  }
-
   // Send the transaction to the sales API and process the response
   if (!status[COMPLETION_STATUS.posted]) {
     await sendToSalesApi(request, transaction, status)
@@ -153,12 +147,15 @@ export default async (request, h) => {
     }
   }
 
+  // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
     const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
     debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
     await permissionsOperations.patchApiTransactionPayload(apiFinalisationPayload, transaction.id)
     status[COMPLETION_STATUS.finalised] = true
     await request.cache().helpers.status.set(status)
+  } else {
+    debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
   }
 
   // If we are here we have completed
