@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "aws-sdk": "^2.668.0",
+    "aws-sdk": "^2.673.0",
     "debug": "^4.1.1",
     "node-fetch": "^2.6.0",
     "uuid": "^8.0.0"
