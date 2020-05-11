@@ -39,7 +39,7 @@ const preparePayment = transaction => {
     result.email = transaction.permissions[0].licensee.email
     result.cardholder_name = `${transaction.permissions[0].licensee.firstName} ${transaction.permissions[0].licensee.lastName}`
     result.billing_address = {
-      line1: transaction.permissions[0].licensee.premises + ' ' + transaction.permissions[0].licensee.street,
+      line1: `${transaction.permissions[0].licensee.premises} ${transaction.permissions[0].licensee.street}`,
       line2: transaction.permissions[0].licensee.locality,
       postcode: transaction.permissions[0].licensee.postcode,
       city: transaction.permissions[0].licensee.town,
