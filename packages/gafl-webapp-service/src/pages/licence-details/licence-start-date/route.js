@@ -1,5 +1,5 @@
+import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import { LICENCE_START_DATE, CONTROLLER } from '../../../uri.js'
-import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib/src/constants.js'
 
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'

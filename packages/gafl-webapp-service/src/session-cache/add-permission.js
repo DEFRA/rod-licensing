@@ -1,4 +1,4 @@
-import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib/src/constants.js'
+import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 import boom from '@hapi/boom'
 import db from 'debug'
 
