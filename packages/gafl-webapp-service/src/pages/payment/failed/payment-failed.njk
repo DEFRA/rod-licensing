@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "button/macro.njk" import govukButton %}
+
+{% set title = 'Your payment has failed' %}
+
+{% if data['failure-code'] === data.codes.EXPIRED %}
+    {% set title = 'Your payment has expired' %}
+{% elseif data['failure-code'] === data.codes.REJECTED %}
+    {% set title = 'Your payment was rejected' %}
+{% else %}
+    {% set title = 'Your payment has failed' %}
+{% endif %}
+
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-third">
+        <form method="post">
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+                {% if data['failure-code'] === data.codes.EXPIRED %}
+                    <p class="govuk-body-m">The payment was not completed within 90 minutes of being created</p>
+                {% elseif data['failure-code'] === data.codes.REJECTED %}
+                    <p class="govuk-body-m">The payment was rejected by the payment provider. Please ensure that you entered your card details correctly and that you have sufficient funds in your account.</p>
+                {% endif %}
+                <p class="govuk-body-m">No money has been taken from your account.</p>
+
+                {{ govukButton({
+                    attributes: { id: 'continue' },
+                    preventDoubleClick: true,
+                    name: "continue",
+                    text: "Try payment again",
+                    classes: "govuk-!-margin-top-5"
+                }) }}
+            {% endcall %}
+
+        </form>
+        <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
+    </div>
+</div>
+{% endblock %}

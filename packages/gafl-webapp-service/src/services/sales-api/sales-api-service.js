@@ -1,12 +1,15 @@
 import fetch from 'node-fetch'
 import { SALES_API_URL_DEFAULT, SALES_API_TIMEOUT_MS_DEFAULT } from '../../constants.js'
 import countryCodeProcessor from '../../processors/countries-helper.js'
+import db from 'debug'
+const debug = db('webapp:sales-api-service')
 
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
 
 const headers = { 'Content-Type': 'application/json' }
 
 const fetchData = async url => {
+  debug(`Fetch ${url}`)
   let response
   try {
     response = await fetch(url.href, {
@@ -21,12 +24,17 @@ const fetchData = async url => {
   if (response.ok) {
     return response.json()
   } else {
-    const mes = await response.json()
-    throw new Error(JSON.stringify(mes, null, 4))
+    const mes = {
+      method: 'GET',
+      request: url,
+      response: await response.json()
+    }
+    throw new Error(`Unexpected response from Sales API\n${JSON.stringify(mes, null, 4)}`)
   }
 }
 
 const postData = async (url, payload) => {
+  debug(`Post ${url}\n${JSON.stringify(payload, null, 4)}`)
   let response
   try {
     response = await fetch(url.href, {
@@ -43,13 +51,18 @@ const postData = async (url, payload) => {
   if (response.ok) {
     return response.json()
   } else {
-    const mes = await response.json()
-    mes.payload = payload
-    throw new Error(JSON.stringify(mes, null, 4))
+    const mes = {
+      method: 'POST',
+      request: url,
+      payload: payload,
+      response: await response.json()
+    }
+    throw new Error(`Unexpected response from Sales API\n${JSON.stringify(mes, null, 4)}`)
   }
 }
 
 const patchData = async (url, payload) => {
+  debug(`Patch ${url}\n${JSON.stringify(payload, null, 4)}`)
   let response
   try {
     response = await fetch(url.href, {
@@ -67,10 +80,12 @@ const patchData = async (url, payload) => {
     return response
   } else {
     const mes = {
-      statusText: response,
-      payload: payload
+      method: 'PATCH',
+      request: url,
+      payload: payload,
+      statusText: response
     }
-    throw new Error(JSON.stringify(mes, null, 4))
+    throw new Error(`Unexpected response from Sales API\n${JSON.stringify(mes, null, 4)}`)
   }
 }
 

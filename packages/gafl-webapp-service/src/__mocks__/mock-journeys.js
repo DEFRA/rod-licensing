@@ -21,7 +21,7 @@ import {
   TERMS_AND_CONDITIONS,
   BENEFIT_CHECK,
   BENEFIT_NI_NUMBER
-} from '../constants.js'
+} from '../uri.js'
 
 import { JUNIOR_MAX_AGE, MINOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
@@ -92,14 +92,6 @@ const ADULT_FULL_1_DAY_LICENCE = {
     ],
     cost: 12
   },
-  finalisationResponse: {
-    payment: {
-      amount: 12,
-      timestamp: '2020-04-29T14:11:48.604Z',
-      source: 'Gov Pay',
-      method: 'Other'
-    }
-  },
   setup: async () => {
     await injectWithCookie('GET', NEW_TRANSACTION.uri)
     await injectWithCookie('GET', CONTROLLER.uri)
@@ -164,14 +156,6 @@ const ADULT_DISABLED_12_MONTH_LICENCE = {
       }
     ],
     cost: 82
-  },
-  finalisationResponse: {
-    payment: {
-      amount: 82,
-      timestamp: '2020-04-30T08:36:12.916Z',
-      source: 'Gov Pay',
-      method: 'Other'
-    }
   },
   setup: async () => {
     await injectWithCookie('GET', NEW_TRANSACTION.uri)
@@ -238,14 +222,6 @@ const SENIOR_12_MONTH_LICENCE = {
     ],
     cost: 54
   },
-  finalisationResponse: {
-    payment: {
-      amount: 54,
-      timestamp: '2020-04-30T09:16:59.357Z',
-      source: 'Gov Pay',
-      method: 'Other'
-    }
-  },
   setup: async () => {
     await injectWithCookie('GET', NEW_TRANSACTION.uri)
     await injectWithCookie('GET', CONTROLLER.uri)
@@ -308,12 +284,6 @@ const JUNIOR_12_MONTH_LICENCE = {
       }
     ],
     cost: 0
-  },
-  finalisationResponse: {
-    amount: 0,
-    timestamp: '2020-04-30T09:35:28.763Z',
-    source: 'Gov Pay',
-    method: 'Other'
   },
   setup: async () => {
     await injectWithCookie('GET', NEW_TRANSACTION.uri)

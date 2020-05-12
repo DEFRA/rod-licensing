@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { BENEFIT_NI_NUMBER, LICENCE_SUMMARY, BENEFIT_CHECK, TEST_TRANSACTION } from '../../../../constants.js'
+import { BENEFIT_NI_NUMBER, LICENCE_SUMMARY, BENEFIT_CHECK, TEST_TRANSACTION } from '../../../../uri.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 

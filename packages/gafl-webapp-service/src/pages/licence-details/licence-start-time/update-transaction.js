@@ -1,4 +1,4 @@
-import { LICENCE_START_TIME } from '../../../constants.js'
+import { LICENCE_START_TIME } from '../../../uri.js'
 
 /**
  * Transfer the validate page object

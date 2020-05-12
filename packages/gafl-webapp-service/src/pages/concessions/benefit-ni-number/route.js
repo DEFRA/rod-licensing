@@ -1,4 +1,4 @@
-import { BENEFIT_NI_NUMBER, CONTROLLER } from '../../../constants.js'
+import { BENEFIT_NI_NUMBER, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

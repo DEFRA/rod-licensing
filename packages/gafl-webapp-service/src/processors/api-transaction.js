@@ -1,18 +1,20 @@
 import moment from 'moment'
-import { permitsOperations } from '../services/sales-api/sales-api-service.js'
+import { permitsOperations, referenceDataOperations } from '../services/sales-api/sales-api-service.js'
 import * as mappings from './mapping-constants.js'
 import * as concessionHelper from '../processors/concession-helper.js'
 
 const prepareApiTransactionPayload = async request => {
   const transactionCache = await request.cache().helpers.transaction.get()
   const concessions = await permitsOperations.fetchConcessions()
+  const countriesList = await referenceDataOperations.fetchCountriesList()
 
   return {
-    dataSource: 'Web Sales',
+    dataSource: mappings.DATA_SOURCE.web,
     permissions: transactionCache.permissions.map(p => {
       const permission = {
         permitId: p.permit.id,
-        licensee: p.licensee,
+        licensee: Object.assign((({ countryCode, ...l }) => l)(p.licensee),
+          { country: countriesList.find(c => c.code === p.licensee.countryCode).name }),
         issueDate: moment().toISOString(),
         startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
           .add(p.licenceStartTime, 'hours')
@@ -41,8 +43,6 @@ const prepareApiTransactionPayload = async request => {
         }
       }
 
-      // TODO - Remove/fix when dynamics schema changes are done
-      permission.licensee.country = 'United Kingdom'
       return permission
     })
   }
@@ -54,8 +54,8 @@ const prepareApiFinalisationPayload = async request => {
     payment: {
       amount: transaction.cost,
       timestamp: moment().toISOString(),
-      source: 'Gov Pay',
-      method: 'Other'
+      source: mappings.TRANSACTION_SOURCE.govPay,
+      method: mappings.PAYMENT_TYPE.debit
     }
   }
 }

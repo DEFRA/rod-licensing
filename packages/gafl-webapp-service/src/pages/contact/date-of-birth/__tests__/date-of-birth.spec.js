@@ -11,7 +11,7 @@ import {
   LICENCE_SUMMARY,
   BENEFIT_CHECK,
   TEST_TRANSACTION
-} from '../../../../constants.js'
+} from '../../../../uri.js'
 import { MINOR_MAX_AGE, JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
 beforeAll(d => start(d))

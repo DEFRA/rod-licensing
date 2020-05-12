@@ -19,7 +19,7 @@ import {
   DATE_OF_BIRTH,
   NAME,
   TEST_TRANSACTION
-} from '../../../../constants.js'
+} from '../../../../uri.js'
 import moment from 'moment'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 
@@ -228,6 +228,27 @@ describe('The licence summary page', () => {
     }
     await postRedirectGet(LICENCE_START_DATE.uri, body)
     await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '14' })
+
+    doMockPermits()
+
+    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('changing the start time to midday causes an eventual redirect back to the summary page', async () => {
+    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
+    await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+
+    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
+    const fdate = moment().add(5, 'days')
+    const body = {
+      'licence-start-date-year': fdate.year().toString(),
+      'licence-start-date-month': (fdate.month() + 1).toString(),
+      'licence-start-date-day': fdate.date().toString()
+    }
+    await postRedirectGet(LICENCE_START_DATE.uri, body)
+    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '12' })
 
     doMockPermits()
 

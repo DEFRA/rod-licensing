@@ -1,4 +1,4 @@
-import { LICENCE_LENGTH } from '../../../constants.js'
+import { LICENCE_LENGTH } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 /**

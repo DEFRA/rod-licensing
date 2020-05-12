@@ -1,4 +1,4 @@
-import { NUMBER_OF_RODS, CONTROLLER } from '../../../constants.js'
+import { NUMBER_OF_RODS, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 

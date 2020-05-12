@@ -1,6 +1,7 @@
-import { MAX_PERMISSIONS } from '../constants.js'
+import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 import boom from '@hapi/boom'
 import db from 'debug'
+
 const debug = db('webapp:add-permission')
 
 /**
@@ -14,7 +15,7 @@ export default async request => {
   const status = await request.cache().helpers.status.get()
   const addressLookup = await request.cache().helpers.addressLookup.get()
 
-  if (transaction.permissions.length >= MAX_PERMISSIONS) {
+  if (transaction.permissions.length >= MAX_PERMISSIONS_PER_TRANSACTION) {
     throw boom.badRequest('Too many permissions')
   }
 

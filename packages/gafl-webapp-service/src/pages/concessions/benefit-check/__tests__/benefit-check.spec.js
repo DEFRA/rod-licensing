@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { BENEFIT_CHECK, BLUE_BADGE_CHECK, TEST_TRANSACTION } from '../../../../constants.js'
+import { BENEFIT_CHECK, BLUE_BADGE_CHECK, TEST_TRANSACTION } from '../../../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

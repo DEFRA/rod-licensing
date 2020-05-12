@@ -20,7 +20,7 @@ import {
   CONTACT,
   LICENCE_SUMMARY,
   NAME
-} from '../constants.js'
+} from '../uri.js'
 
 import dateOfBirth from '../pages/contact/date-of-birth/result-function.js'
 import junior from '../pages/concessions/junior-licence/result-function.js'

@@ -1,5 +1,6 @@
 import { start, stop, initialize, injectWithCookie } from '../../__mocks__/test-utils.js'
-import { ADD_PERMISSION, NEW_TRANSACTION, MAX_PERMISSIONS, TEST_TRANSACTION } from '../../constants.js'
+import { ADD_PERMISSION, NEW_TRANSACTION, TEST_TRANSACTION } from '../../uri.js'
+import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -20,11 +21,11 @@ describe('The new permission handler', () => {
 
   it('Ensure that we cannot overload the redis cache by doing this continually', async () => {
     await injectWithCookie('GET', NEW_TRANSACTION.uri)
-    for (let i = 0; i < MAX_PERMISSIONS; i++) {
+    for (let i = 0; i < MAX_PERMISSIONS_PER_TRANSACTION; i++) {
       await injectWithCookie('GET', ADD_PERMISSION.uri)
     }
     let res = await injectWithCookie('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(res.payload).permissions.length).toBe(MAX_PERMISSIONS)
+    expect(JSON.parse(res.payload).permissions.length).toBe(MAX_PERMISSIONS_PER_TRANSACTION)
     res = await injectWithCookie('GET', ADD_PERMISSION.uri)
     expect(res.statusCode).toBe(400)
   })

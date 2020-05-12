@@ -1,4 +1,4 @@
-import { BENEFIT_CHECK } from '../../../constants.js'
+import { BENEFIT_CHECK } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
 /**

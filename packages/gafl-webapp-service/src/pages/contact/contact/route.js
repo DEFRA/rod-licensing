@@ -1,4 +1,4 @@
-import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../constants.js'
+import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
 
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'

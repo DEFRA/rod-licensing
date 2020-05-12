@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookie, injectWithoutCookie } from '../../__mocks__/test-utils.js'
-import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE } from '../../constants.js'
+import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE } from '../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

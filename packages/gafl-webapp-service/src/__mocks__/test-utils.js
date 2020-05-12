@@ -1,5 +1,6 @@
 import { createServer, init, server } from '../server.js'
-import { SESSION_COOKIE_NAME_DEFAULT, CONTROLLER, TEST_TRANSACTION, TEST_STATUS } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT } from '../constants.js'
+import { TEST_TRANSACTION, TEST_STATUS, CONTROLLER } from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
 

@@ -1,4 +1,4 @@
-import { NUMBER_OF_RODS } from '../../../constants.js'
+import { NUMBER_OF_RODS } from '../../../uri.js'
 /**
  * Transfer the validate page object
  * @param request

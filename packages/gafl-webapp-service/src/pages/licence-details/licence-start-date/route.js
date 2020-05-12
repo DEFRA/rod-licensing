@@ -1,4 +1,6 @@
-import { LICENCE_START_DATE, CONTROLLER } from '../../../constants.js'
+import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { LICENCE_START_DATE, CONTROLLER } from '../../../uri.js'
+
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import JoiDate from '@hapi/joi-date'
@@ -7,12 +9,11 @@ const JoiX = Joi.extend(JoiDate)
 
 const formats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
-// TODO - discuss with Sam moving to business rules
 const schema = Joi.object({
   'licence-start-date': JoiX.date()
     .format(formats)
     .min('now')
-    .max(moment().add(60, 'days'))
+    .max(moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
     .required()
 })
 
@@ -26,7 +27,7 @@ const getData = () => ({
     .add(1, 'days')
     .format('DD MM YYYY'),
   maxStartDate: moment()
-    .add(60, 'days')
+    .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
     .format('DD MM YYYY')
 })
 

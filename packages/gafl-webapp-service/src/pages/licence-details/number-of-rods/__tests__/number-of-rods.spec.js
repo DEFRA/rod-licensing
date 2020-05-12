@@ -1,4 +1,4 @@
-import { NUMBER_OF_RODS, TEST_TRANSACTION } from '../../../../constants.js'
+import { NUMBER_OF_RODS, TEST_TRANSACTION } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
 

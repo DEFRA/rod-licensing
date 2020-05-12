@@ -1,4 +1,4 @@
-import { NAME } from '../../../constants.js'
+import { NAME } from '../../../uri.js'
 /**
  * Transfer the validate page object
  * @param request

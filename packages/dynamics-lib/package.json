@@ -39,7 +39,7 @@
     "cache-manager-ioredis": "^2.0.0",
     "dot-prop": "^5.2.0",
     "dynamics-web-api": "^1.6.3",
-    "moment": "^2.25.1",
+    "moment": "^2.25.3",
     "uuid": "^8.0.0"
   }
 }

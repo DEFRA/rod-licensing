@@ -1,4 +1,4 @@
-import { LICENCE_START_TIME, CONTROLLER } from '../../../constants.js'
+import { LICENCE_START_TIME, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import moment from 'moment'

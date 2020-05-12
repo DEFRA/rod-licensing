@@ -1,5 +1,6 @@
-import { CacheError } from '../lib/cache-manager.js'
-import { CONTROLLER, PAGE_STATE } from '../constants.js'
+import { CacheError } from '../session-cache/cache-manager.js'
+import { PAGE_STATE } from '../constants.js'
+import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 

@@ -1,6 +1,6 @@
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
-import { NAME, CONTROLLER } from '../../../constants.js'
+import { NAME, CONTROLLER } from '../../../uri.js'
 import { validation } from '@defra-fish/business-rules-lib'
 
 const validator = Joi.object({

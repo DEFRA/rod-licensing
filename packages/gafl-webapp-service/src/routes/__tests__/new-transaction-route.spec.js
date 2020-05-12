@@ -1,5 +1,5 @@
 import { start, stop, server } from '../../__mocks__/test-utils.js'
-import * as sessionManager from '../../lib/session-manager'
+import * as sessionManager from '../../session-cache/session-manager'
 const spy = jest.spyOn(sessionManager, 'default')
 
 // Start application before running the test case

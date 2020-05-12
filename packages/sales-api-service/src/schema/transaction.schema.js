@@ -2,12 +2,14 @@ import Joi from '@hapi/joi'
 import { createPermissionSchema, createPermissionResponseSchema } from './permission.schema.js'
 import { contactSchema } from './contact.schema.js'
 import { createOptionSetValidator } from './validators/index.js'
+import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
+
 import { v4 as uuidv4 } from 'uuid'
 
 export const createTransactionSchema = Joi.object({
   permissions: Joi.array()
     .min(1)
-    .max(50)
+    .max(MAX_PERMISSIONS_PER_TRANSACTION)
     .items(createPermissionSchema)
     .required()
     .label('create-transaction-request-permissions'),

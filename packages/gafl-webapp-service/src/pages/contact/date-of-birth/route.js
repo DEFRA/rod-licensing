@@ -1,4 +1,4 @@
-import { DATE_OF_BIRTH, CONTROLLER, LICENCE_TO_START } from '../../../constants.js'
+import { DATE_OF_BIRTH, CONTROLLER, LICENCE_TO_START } from '../../../uri.js'
 import Joi from '@hapi/joi'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'

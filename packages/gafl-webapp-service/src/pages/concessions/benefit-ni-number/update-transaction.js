@@ -1,4 +1,4 @@
-import { BENEFIT_NI_NUMBER } from '../../../constants.js'
+import { BENEFIT_NI_NUMBER } from '../../../uri.js'
 import { CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 

@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { DATE_OF_BIRTH } from '../../../constants.js'
+import { DATE_OF_BIRTH } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { isMinor, isJunior, isSenior } from '@defra-fish/business-rules-lib'
