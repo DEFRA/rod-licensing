@@ -42,6 +42,7 @@
     "uuid": "^8.0.0"
   },
   "devDependencies": {
+    "@defra-fish/business-rules-lib": "0.0.1-beta.28",
     "pm2": "^4.4.0"
   }
 }
