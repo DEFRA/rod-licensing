@@ -33,7 +33,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "0.0.1-beta.28",
     "@hapi/joi": "^17.1.1",
     "adal-node": "^0.2.1",
     "cache-manager": "^3.3.0",
