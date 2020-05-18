@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /buy
+Disallow: /buy/new
+Disallow: /buy/agree
+Disallow: /buy/add

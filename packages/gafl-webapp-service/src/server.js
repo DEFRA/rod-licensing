@@ -56,7 +56,7 @@ const init = async () => {
          * This defines the content security policy - which is as restrictive as possible
          * It must allow webfonts from 'fonts.gstatic.com'
          * Unfortunately unsafe-inline rather than script nonces must be used to prevent a console error from line
-         * 31 of the GDS template. This will probably come up as an advisory in the PEN test
+         * 31 of the GDS template. This will probably come up as an advisory in the PEN test.
          */
         fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
         scriptSrc: ['self', 'unsafe-inline'],
