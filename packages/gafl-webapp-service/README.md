@@ -28,9 +28,9 @@ To run from this directory:
 
 The address lookup can be port-forwarded locally to test the find-address page with a command similar to the following;
 
-`ssh -L 9002:fsh-dev-bes.aws-int.defra.cloud:9002 DEVFSHFESSRV001`
+`ssh -L 9002:fsh-dev-bes.aws-int.defra.cloud:9002 DVFSWS01`
 
-Where `DEVFSHFESSRV001` is a development instance with access to the facade. Details can be found here https://rattic-ops.aws-int.defra.cloud/cred/detail/2287/ . Don't forget to start the environment!
+Where `DVFSWS01` is a development instance with access to the facade. Details can be found here https://rattic-ops.aws-int.defra.cloud/cred/detail/2287/ . Don't forget to start the environment!
 
 Then set the URL as follows
 

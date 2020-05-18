@@ -5,8 +5,7 @@
 
         {% set errList = [] %}
 
-        {# TODO Find better way to suppress output or hide using css #}
-        <div style="display:none">
+        <div class="hidden-area">
             {% for field, type in error %}
                 {{ errList.push({
                     text: errorMap[field][type].text,

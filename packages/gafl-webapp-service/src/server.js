@@ -6,6 +6,8 @@ import Hapi from '@hapi/hapi'
 import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
 import Inert from '@hapi/inert'
+import Scooter from '@hapi/scooter'
+import Blankie from 'blankie'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
@@ -43,7 +45,25 @@ const createServer = options => {
 }
 
 const init = async () => {
-  await server.register([Inert, Vision])
+  await server.register([
+    Inert,
+    Vision,
+    Scooter,
+    {
+      plugin: Blankie,
+      options: {
+        /*
+         * This defines the content security policy - which is as restrictive as possible
+         * It must allow webfonts from 'fonts.gstatic.com'
+         * Unfortunately unsafe-inline rather than script nonces must be used to prevent a console error from line
+         * 31 of the GDS template. This will probably come up as an advisory in the PEN test
+         */
+        fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
+        scriptSrc: ['self', 'unsafe-inline'],
+        generateNonces: false
+      }
+    }
+  ])
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
