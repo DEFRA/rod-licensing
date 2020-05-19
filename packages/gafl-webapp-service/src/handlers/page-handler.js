@@ -69,7 +69,7 @@ export default (path, view, completion, getData) => ({
     }
 
     // Calculate the back reference and add to page
-    pageData.backRef = await getBackReference(request, path, pageData)
+    pageData.backRef = await getBackReference(request, path)
     return h.view(view, pageData)
   },
   /**
