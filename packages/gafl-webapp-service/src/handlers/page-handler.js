@@ -20,7 +20,7 @@ const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type 
  * @param pageData
  * @returns {Promise<void>}
  */
-const getBackReference = async (request, path, pageData) => {
+const getBackReference = async (request, path) => {
   let result = null
   const status = await request.cache().helpers.status.getCurrentPermission()
   if (status.pageStack) {
@@ -100,8 +100,7 @@ export default (path, view, completion, getData) => ({
   error: async (request, h, err) => {
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
-      await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error }) // TODO
-      await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
+      await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
       return h.redirect(path).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
