@@ -14,11 +14,12 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME } from './constants.js'
-import { CLIENT_ERROR, SERVER_ERROR, NEW_TRANSACTION, AGREED, CONTROLLER } from './uri.js'
+import { CSRF_TOKEN_COOKIE_NAME, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, SESSION_TTL_MS_DEFAULT } from './constants.js'
 
 import sessionManager from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
+import { errorHandler } from './handlers/error-handler.js'
+
 let server
 
 const createServer = options => {
@@ -45,37 +46,42 @@ const createServer = options => {
   )
 }
 
-const init = async () => {
-  await server.register([
-    Inert,
-    Vision,
-    Scooter,
-    {
-      plugin: Blankie,
-      options: {
-        /*
-         * This defines the content security policy - which is as restrictive as possible
-         * It must allow webfonts from 'fonts.gstatic.com'
-         * Unfortunately unsafe-inline rather than script nonces must be used to prevent a console error from line
-         * 31 of the GDS template. This will probably come up as an advisory in the PEN test.
-         */
-        fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-        scriptSrc: ['self', 'unsafe-inline'],
-        generateNonces: false
-      }
-    },
-    {
-      plugin: Crumb,
-      options: {
-        key: CSRF_TOKEN_COOKIE_NAME,
-        cookieOptions: {
-          isSecure: process.env.NODE_ENV !== 'development',
-          isHttpOnly: process.env.NODE_ENV !== 'development'
-        },
-        logUnauthorized: true
-      }
+/*
+ * The hapi plugins and their options which will be registered on initialization
+ */
+const plugIns = [
+  Inert,
+  Vision,
+  Scooter,
+  {
+    plugin: Blankie,
+    options: {
+      /*
+       * This defines the content security policy - which is as restrictive as possible
+       * It must allow web-fonts from 'fonts.gstatic.com'
+       * Unfortunately unsafe-inline rather than script nonces must be used to prevent a console error from line
+       * 31 of the GDS template. This will probably come up as an advisory in the PEN test.
+       */
+      fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
+      scriptSrc: ['self', 'unsafe-inline'],
+      generateNonces: false
     }
-  ])
+  },
+  {
+    plugin: Crumb,
+    options: {
+      key: CSRF_TOKEN_COOKIE_NAME,
+      cookieOptions: {
+        isSecure: process.env.NODE_ENV !== 'development',
+        isHttpOnly: process.env.NODE_ENV !== 'development'
+      },
+      logUnauthorized: true
+    }
+  }
+]
+
+const init = async () => {
+  await server.register(plugIns)
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
@@ -126,28 +132,7 @@ const init = async () => {
 
   // Mop up 400 and 500 errors. Make sure the status code in the header is set accordingly and provide
   // the error object to the templates for specific messaging e.g. on payment failures
-  server.ext('onPreResponse', async (request, h) => {
-    if (!request.response.isBoom) {
-      return h.continue
-    }
-
-    if (Math.floor(request.response.output.statusCode / 100) === 4) {
-      return h
-        .view(CLIENT_ERROR.page, {
-          clientError: request.response.output.payload,
-          uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri }
-        })
-        .code(request.response.output.statusCode)
-    } else {
-      console.error(JSON.stringify(request.response, null, 4))
-      return h
-        .view(SERVER_ERROR.page, {
-          serverError: request.response.output.payload,
-          uri: { new: NEW_TRANSACTION.uri, agreed: AGREED.uri }
-        })
-        .code(request.response.output.statusCode)
-    }
-  })
+  server.ext('onPreResponse', errorHandler)
 
   // Point the server plugin cache to an application cache to hold authenticated session data
   server.app.cache = server.cache({
