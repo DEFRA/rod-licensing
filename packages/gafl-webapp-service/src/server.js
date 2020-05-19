@@ -7,13 +7,14 @@ import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
 import Inert from '@hapi/inert'
 import Scooter from '@hapi/scooter'
+import Crumb from '@hapi/crumb'
 import Blankie from 'blankie'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT } from './constants.js'
+import { SESSION_TTL_MS_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME } from './constants.js'
 import { CLIENT_ERROR, SERVER_ERROR, NEW_TRANSACTION, AGREED, CONTROLLER } from './uri.js'
 
 import sessionManager from './session-cache/session-manager.js'
@@ -61,6 +62,17 @@ const init = async () => {
         fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
         scriptSrc: ['self', 'unsafe-inline'],
         generateNonces: false
+      }
+    },
+    {
+      plugin: Crumb,
+      options: {
+        key: CSRF_TOKEN_COOKIE_NAME,
+        cookieOptions: {
+          isSecure: process.env.NODE_ENV !== 'development',
+          isHttpOnly: process.env.NODE_ENV !== 'development'
+        },
+        logUnauthorized: true
       }
     }
   ])

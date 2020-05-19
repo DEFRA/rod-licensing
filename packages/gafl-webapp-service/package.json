@@ -39,6 +39,7 @@
     "@defra-fish/business-rules-lib": "^0.0.1-beta.30",
     "@hapi/boom": "^9.1.0",
     "@hapi/catbox-redis": "^5.0.5",
+    "@hapi/crumb": "^8.0.0",
     "@hapi/hapi": "^19.1.1",
     "@hapi/inert": "^6.0.1",
     "@hapi/joi": "^17.1.1",

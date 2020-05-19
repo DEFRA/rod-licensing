@@ -1,4 +1,4 @@
-import { initialize, injectWithCookie, start, stop } from '../../__mocks__/test-utils'
+import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils'
 import { ADULT_FULL_1_DAY_LICENCE, MOCK_CONCESSIONS } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
@@ -23,11 +23,11 @@ describe('The agreed handler', () => {
           })
         )
     )
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(500)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).not.toBeTruthy()
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
@@ -56,11 +56,11 @@ describe('The agreed handler', () => {
             })
           )
       )
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(500)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).not.toBeTruthy()
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
@@ -80,11 +80,11 @@ describe('The agreed handler', () => {
           )
       )
       .mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error())))
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(500)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).not.toBeTruthy()
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
@@ -140,7 +140,7 @@ describe('The agreed handler', () => {
           )
       )
 
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0')
 
@@ -165,7 +165,7 @@ describe('The agreed handler', () => {
       // Mock response from SALES API (patch-transaction)
       .mockImplementationOnce(async () => new Promise((resolve, reject) => reject(new Error('timeout'))))
 
-    const data2 = await injectWithCookie('GET', AGREED.uri)
+    const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(500)
   })
 
@@ -218,7 +218,7 @@ describe('The agreed handler', () => {
           )
       )
 
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0')
 
@@ -243,19 +243,19 @@ describe('The agreed handler', () => {
       // Mock response from SALES API (patch-transaction)
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: false })))
 
-    const data2 = await injectWithCookie('GET', AGREED.uri)
+    const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(500)
 
     // Resume correctly
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
 
-    const data3 = await injectWithCookie('GET', AGREED.uri)
+    const data3 = await injectWithCookies('GET', AGREED.uri)
     expect(data3.statusCode).toBe(302)
 
     expect(data3.headers.location).toBe(ORDER_COMPLETE.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).toBeTruthy()
@@ -263,7 +263,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.finalised]).toBeTruthy()
 
-    const data4 = await injectWithCookie('GET', AGREED.uri)
+    const data4 = await injectWithCookies('GET', AGREED.uri)
     expect(data4.statusCode).toBe(302)
     expect(data4.headers.location).toBe(ORDER_COMPLETE.uri)
   })

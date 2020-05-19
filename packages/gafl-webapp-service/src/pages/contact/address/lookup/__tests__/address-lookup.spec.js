@@ -1,5 +1,5 @@
 import { ADDRESS_LOOKUP, ADDRESS_SELECT, ADDRESS_ENTRY } from '../../../../../uri.js'
-import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 import searchResultsOne from '../../../../../services/address-lookup/__mocks__/data/search-results-one'
 import searchResultsNone from '../../../../../services/address-lookup/__mocks__/data/search-results-none'
@@ -13,36 +13,36 @@ const fetch = require('node-fetch')
 
 describe('The address lookup page', () => {
   it('returns success on requesting', async () => {
-    const data = await injectWithCookie('GET', ADDRESS_LOOKUP.uri)
+    const data = await injectWithCookies('GET', ADDRESS_LOOKUP.uri)
     expect(data.statusCode).toBe(200)
   })
 
   it('redirects back to itself on posting an empty payload', async () => {
-    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, {})
+    const data = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, {})
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })
 
   it('redirects back to itself on posting an empty premises', async () => {
-    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: '', postcode: 'BS9 1HJ' })
+    const data = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '', postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })
 
   it('redirects back to itself on posting an empty postcode', async () => {
-    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: '5', postcode: '' })
+    const data = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '5', postcode: '' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })
 
   it('redirects back to itself on posting a bad postcode', async () => {
-    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: '5', postcode: 'foo' })
+    const data = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '5', postcode: 'foo' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })
 
   it('redirects back to itself on posting a too long premises', async () => {
-    const data = await injectWithCookie('POST', ADDRESS_LOOKUP.uri, { premises: 'a'.repeat(101), postcode: 'BS9 1HJ' })
+    const data = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'a'.repeat(101), postcode: 'BS9 1HJ' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ADDRESS_LOOKUP.uri)
   })

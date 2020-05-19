@@ -10,6 +10,7 @@ export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const REDIS_PORT_DEFAULT = 6379
 export const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 export const PAGE_STATE = { completed: true, error: false }
+export const CSRF_TOKEN_COOKIE_NAME = 'rlsctkn'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',

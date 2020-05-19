@@ -42,8 +42,9 @@
                 }) }}
             {% endcall %}
 
+            {{ csrf() }}
         </form>
-        <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
+        <a class="govuk-link" href="{{ data.uri.new }}">Buy another licence</a>
     </div>
 </div>
 {% endblock %}

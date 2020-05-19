@@ -11,7 +11,7 @@ import {
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
-import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -19,81 +19,81 @@ afterAll(d => stop(d))
 
 describe('The contact preferences page', () => {
   it('redirects to the licence length page if the licence length is not set', async () => {
-    const data = await injectWithCookie('GET', CONTACT.uri)
+    const data = await injectWithCookies('GET', CONTACT.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 
   it('redirects to the licence-to-start page if the licence-start-date is not set', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    const data = await injectWithCookie('GET', CONTACT.uri)
+    const data = await injectWithCookies('GET', CONTACT.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
   it('redirects to the date-of-birth page if the date-of-birth is not set', async () => {
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    const data = await injectWithCookie('GET', CONTACT.uri)
+    const data = await injectWithCookies('GET', CONTACT.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
 
   it('return the page on request', async () => {
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
       'date-of-birth-year': '1951'
     })
-    await injectWithCookie('GET', CONTROLLER.uri)
-    const data = await injectWithCookie('GET', CONTACT.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
+    const data = await injectWithCookies('GET', CONTACT.uri)
     expect(data.statusCode).toBe(200)
   })
 
   it('redirects to itself on an empty response', async () => {
-    const data = await injectWithCookie('POST', CONTACT.uri, {})
+    const data = await injectWithCookies('POST', CONTACT.uri, {})
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('redirects to itself on an invalid contact method', async () => {
-    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'skype' })
+    const data = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'skype' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('redirects to itself on an empty email', async () => {
-    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: '' })
+    const data = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: '' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('redirects to itself on an invalid email', async () => {
-    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'foo' })
+    const data = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'foo' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('redirects to itself on an empty mobile number', async () => {
-    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'text', text: '' })
+    const data = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('redirects to itself on an invalid mobile number', async () => {
-    const data = await injectWithCookie('POST', CONTACT.uri, { 'how-contacted': 'text', text: 'foo' })
+    const data = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: 'foo' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('an adult licence sets the contact method to letter', async () => {
-    await injectWithCookie('POST', DATE_OF_BIRTH.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
       'date-of-birth-day': '11',
       'date-of-birth-month': '11',
       'date-of-birth-year': '1951'
     })
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
   })
@@ -101,7 +101,7 @@ describe('The contact preferences page', () => {
   it('a 1 day licence sets the contact method to none', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
@@ -109,7 +109,7 @@ describe('The contact preferences page', () => {
   it('an 8 day licence sets the contact method to none', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
@@ -118,7 +118,7 @@ describe('The contact preferences page', () => {
     const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
   })
@@ -127,7 +127,7 @@ describe('The contact preferences page', () => {
     const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NEWSLETTER.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.email)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.email)
   })
@@ -136,7 +136,7 @@ describe('The contact preferences page', () => {
     const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NEWSLETTER.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.text)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.text)
   })

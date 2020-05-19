@@ -5,6 +5,10 @@
 {% from "footer/macro.njk" import govukFooter %}
 {% from "header/macro.njk" import govukHeader %}
 
+{% macro csrf() %}
+<div><input type="hidden" name="rlsctkn" value="{{rlsctkn}}"></div>
+{% endmacro %}
+
 {% block head %}
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 <link href="/public/stylesheets/main.css" rel="stylesheet" type="text/css" />

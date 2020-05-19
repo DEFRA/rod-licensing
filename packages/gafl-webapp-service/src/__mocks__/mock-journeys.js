@@ -1,4 +1,4 @@
-import { injectWithCookie, postRedirectGet } from './test-utils'
+import { injectWithCookies, postRedirectGet } from './test-utils'
 import moment from 'moment'
 import mockPermits from '../services/sales-api/__mocks__/data/permits'
 import mockPermitsConcessions from '../services/sales-api/__mocks__/data/permit-concessions'
@@ -93,8 +93,8 @@ const ADULT_FULL_1_DAY_LICENCE = {
     cost: 12
   },
   setup: async () => {
-    await injectWithCookie('GET', NEW_TRANSACTION.uri)
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
@@ -105,7 +105,7 @@ const ADULT_FULL_1_DAY_LICENCE = {
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
 
-    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
@@ -113,7 +113,7 @@ const ADULT_FULL_1_DAY_LICENCE = {
     await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
-    await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
 
@@ -158,8 +158,8 @@ const ADULT_DISABLED_12_MONTH_LICENCE = {
     cost: 82
   },
   setup: async () => {
-    await injectWithCookie('GET', NEW_TRANSACTION.uri)
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
@@ -172,14 +172,14 @@ const ADULT_DISABLED_12_MONTH_LICENCE = {
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
 
-    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
-    await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
 
@@ -223,8 +223,8 @@ const SENIOR_12_MONTH_LICENCE = {
     cost: 54
   },
   setup: async () => {
-    await injectWithCookie('GET', NEW_TRANSACTION.uri)
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
@@ -235,14 +235,14 @@ const SENIOR_12_MONTH_LICENCE = {
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
 
-    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
-    await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
 
@@ -286,8 +286,8 @@ const JUNIOR_12_MONTH_LICENCE = {
     cost: 0
   },
   setup: async () => {
-    await injectWithCookie('GET', NEW_TRANSACTION.uri)
-    await injectWithCookie('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
@@ -298,14 +298,14 @@ const JUNIOR_12_MONTH_LICENCE = {
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
 
-    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
 
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
-    await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
 

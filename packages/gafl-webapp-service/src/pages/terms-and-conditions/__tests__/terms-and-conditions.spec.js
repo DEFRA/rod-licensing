@@ -12,7 +12,7 @@ import {
   NAME,
   AGREED
 } from '../../../uri.js'
-import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils.js'
 
 import moment from 'moment'
 import mockPermits from '../../../services/sales-api/__mocks__/data/permits'
@@ -51,7 +51,7 @@ const doMockPermits = () =>
 
 describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
-    const data = await injectWithCookie('GET', TERMS_AND_CONDITIONS.uri)
+    const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
@@ -62,9 +62,9 @@ describe('The terms and conditions page', () => {
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
     doMockPermits()
-    await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
-    const data = await injectWithCookie('GET', TERMS_AND_CONDITIONS.uri)
+    const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
@@ -74,14 +74,14 @@ describe('The terms and conditions page', () => {
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
-    await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
-    const data = await injectWithCookie('GET', TERMS_AND_CONDITIONS.uri)
+    const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(200)
   })
 
   it('redirects back to itself on invalid response', async () => {
-    const data = await injectWithCookie('POST', TERMS_AND_CONDITIONS.uri, { agree: 'no way' })
+    const data = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'no way' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(TERMS_AND_CONDITIONS.uri)
   })
@@ -90,8 +90,8 @@ describe('The terms and conditions page', () => {
     const data1 = await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     expect(data1.statusCode).toBe(302)
     expect(data1.headers.location).toBe(AGREED.uri)
-    await injectWithCookie('GET', AGREED.uri)
-    const data2 = await injectWithCookie('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('GET', AGREED.uri)
+    const data2 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(AGREED.uri)
   })

@@ -2,7 +2,38 @@ import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
+
+/**
+ * Flattens the error structure from joi for use in the templates
+ * @param e
+ * @returns {{}}
+ */
 const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
+
+/**
+ * Calculate the back reference. It is
+ * (1) Null if no page has completed
+ * (2) The page before the current page if this page has been completed before
+ * (3) The last page completed if this page has not been completed
+ * @param request
+ * @param path
+ * @param pageData
+ * @returns {Promise<void>}
+ */
+const getBackReference = async (request, path, pageData) => {
+  let result = null
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  if (status.pageStack) {
+    const psIdx = status.pageStack.findIndex(s => path === s)
+    if (psIdx === -1) {
+      result = status.pageStack[status.pageStack.length - 1]
+    } else {
+      result = status.pageStack[psIdx - 1]
+    }
+  }
+
+  return result
+}
 
 /**
  * @param path - the path attached to the handler
@@ -21,6 +52,8 @@ export default (path, view, completion, getData) => ({
   get: async (request, h) => {
     const page = await request.cache().helpers.page.getCurrentPermission(view)
     const pageData = page || {}
+
+    // The page data payload may be enriched by the data fetched by getData
     if (getData && typeof getData === 'function') {
       try {
         const data = await getData(request)
@@ -34,6 +67,9 @@ export default (path, view, completion, getData) => ({
         throw err
       }
     }
+
+    // Calculate the back reference and add to page
+    pageData.backRef = await getBackReference(request, path, pageData)
     return h.view(view, pageData)
   },
   /**
@@ -44,8 +80,14 @@ export default (path, view, completion, getData) => ({
    */
   post: async (request, h) => {
     await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload })
-    await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.completed })
-    await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
+    const status = await request.cache().helpers.status.getCurrentPermission()
+    status.pageStack = status.pageStack || []
+    if (!status.pageStack.find(s => path === s)) {
+      status.pageStack.push(path)
+    }
+    status.currentPage = view
+    status[view] = PAGE_STATE.completed
+    await request.cache().helpers.status.setCurrentPermission(status)
     return h.redirect(completion)
   },
   /**
@@ -58,7 +100,7 @@ export default (path, view, completion, getData) => ({
   error: async (request, h, err) => {
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
-      await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error })
+      await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error }) // TODO
       await request.cache().helpers.status.setCurrentPermission({ currentPage: view })
       return h.redirect(path).takeover()
     } catch (err2) {
