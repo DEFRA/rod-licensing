@@ -77,16 +77,18 @@ export const Transaction = new Binding({
     ).toISOString()
     const email = children[contactBindings.NotifyEmail.element] || children[contactBindings.CommsEmail.element]
     const mobilePhone = children[contactBindings.NotifyMobilePhone.element] || children[contactBindings.CommsMobilePhone.element]
-    const preferredNotifyMethod =
-      children[contactBindings.NotifyByEmail.element] ||
-      children[contactBindings.NotifyBySms.element] ||
-      children[contactBindings.NotifyByPost.element] ||
-      'Prefer not to be contacted'
-    const preferredCommsMethod =
-      children[contactBindings.CommsByEmail.element] ||
-      children[contactBindings.CommsBySms.element] ||
-      children[contactBindings.CommsByPost.element] ||
-      'Prefer not to be contacted'
+    const preferredNotifyMethod = getPreferredContactMethod(
+      children,
+      contactBindings.NotifyByEmail.element,
+      contactBindings.NotifyBySms.element,
+      contactBindings.NotifyByPost.element
+    )
+    const preferredCommsMethod = getPreferredContactMethod(
+      children,
+      contactBindings.CommsByEmail.element,
+      contactBindings.CommsBySms.element,
+      contactBindings.CommsByPost.element
+    )
 
     return {
       id: children[SerialNumber.element],
@@ -130,3 +132,6 @@ export const Transaction = new Binding({
     }
   }
 })
+
+const getPreferredContactMethod = (data, emailElement, smsElement, postElement) =>
+  data[emailElement] || data[smsElement] || data[postElement] || 'Prefer not to be contacted'

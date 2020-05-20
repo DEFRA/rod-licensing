@@ -5,5 +5,4 @@ import { Binding } from '../../../binding.js'
  *
  * @type {Binding}
  */
-// TODO: Validation of country code?
 export const Country = new Binding({ element: 'Country', transform: context => Binding.TransformTextOnly(context) || 'GB' })
