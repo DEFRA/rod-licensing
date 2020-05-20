@@ -1,0 +1,17 @@
+{% extends "layout.njk" %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% block pageTitle %}Accessibility statement - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ govukBackLink({
+          text: "Back",
+          href: "/buy",
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
+        <h1 class="govuk-heading-l">Accessibility statement</h1>
+    </div>
+</div>
+{% endblock %}

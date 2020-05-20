@@ -35,6 +35,7 @@ const sendToSalesApi = async (request, transaction, status) => {
   for (let i = 0; i < response.permissions.length; i++) {
     debug(`Setting permission reference number: ${response.permissions[i].referenceNumber}`)
     transaction.permissions[i].referenceNumber = response.permissions[i].referenceNumber
+    debug(`Setting permission end date: ${response.permissions[i].endDate}`)
     transaction.permissions[i].endDate = response.permissions[i].endDate
   }
   transaction.id = response.id

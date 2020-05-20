@@ -1,0 +1,62 @@
+{% extends "layout.njk" %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% block pageTitle %}Privacy policy - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {{ govukBackLink({
+          text: "Back",
+          href: "/buy",
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
+
+        <h1 class="govuk-heading-l">Get A Fishing Licence Privacy Policy</h1>
+
+        <p class="govuk-body">We are the Environment Agency and we run the Get A Fishing Licence service. We are the data controller for this service. A data controller determines how and why personal data (personal information) is processed.</p>
+        <p class="govuk-body">Our <a target="_blank" href="https://www.gov.uk/government/organisations/environment-agency/about/personal-information-charter/">personal information charter</a> explains your rights and how we deal with your personal information. You can access the charter using the link or go to GOV.UK and search 'Environment Agency personal information charter’.</p>
+
+        <h1 class="govuk-heading-m">The data we need</h1>
+        <p class="govuk-body">The personal data we collect about you includes:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>the name and address</li>
+            <li>date of birth</li>
+            <li>contact details</li>
+            <li>NI/Blue badge number (if relevant)</li>
+        </ul>
+
+        <p class="govuk-body">We use your personal data in order process your transaction and issue a suitable permit. We do not store payment details. Processing is necessary for the performance of a task carried out in the public interest or in the exercise of official authority vested in the data controller to issue a rod licence to fish for salmon, trout, freshwater fish, smelt or eel with a rod and line in England (except the River Tweed), Wales and the Border Esk region of Scotland.</p>
+        <p class="govuk-body">Failure to provide this information will mean that we are unable to process your rod licence application.</p>
+
+        <h1 class="govuk-heading-m">What we do with your personal data</h1>
+        <p class="govuk-body">Your personal data will be shared by us with organisations who work on our behalf to automate delivery of your rod licence and eNewsletter or for you to provide feedback. No other data will be shared or disclosed to any other party outside the Environment Agency without your explicit consent, unless we are lawfully able to do so.</p>
+        <p class="govuk-body">The information you provide is not connected with individual decision making (making a decision solely by automated means without any human involvement) or profiling (automated processing of personal data to evaluate certain things about an individual). </p>
+        <p class="govuk-body">The data you provide will not be transferred outside the European Economic Area.</p>
+
+        <h1 class="govuk-heading-m">How long we keep your personal data</h1>
+        <p class="govuk-body">Your personal data will be kept by us for 7 years in line with our standard information retention policy.</p>
+
+        <h1 class="govuk-heading-m">Contact details</h1>
+        <p class="govuk-body">Our Data Protection Officer (DPO) is responsible for independent advice and monitoring of the Environment Agency’s use of personal information.</p>
+
+        <p class="govuk-body">If you have any concerns or queries about how we process personal data, or if you would like to make a complaint or request relating to data protection, please contact:</p>
+        <p class="govuk-body">
+            Data Protection team</br>
+            Environment Agency</br>
+            Horizon House</br>
+            Deanery Road</br>
+            Bristol BS1 5AH
+        </p>
+
+        <p class="govuk-body">Email: <a href="mailto:dataprotection@environment-agency.gov.uk">dataprotection@environment-agency.gov.uk</a></p>
+
+        <p class="govuk-body">The Information Commissioner's Office (ICO) is the supervisory authority for data protection legislation. The <a target="_blank" href="https://ico.org.uk/your-data-matters">ICO website</a> has a full list of your rights under data protection legislation.</p>
+        <p class="govuk-body">You have the right to <a target="_blank" href="https://ico.org.uk/make-a-complaint">lodge a complaint</a> with the ICO at any time.</p>
+
+        <p class="govuk-body-s">This notice was last updated on the 4th April 2019.</p>
+    </div>
+</div>
+{% endblock %}

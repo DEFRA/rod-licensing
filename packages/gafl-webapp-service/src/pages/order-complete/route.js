@@ -1,8 +1,11 @@
 import pageRoute from '../../routes/page-route.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
-import { ORDER_COMPLETE, CONTROLLER, NEW_TRANSACTION } from '../../uri.js'
+import { ORDER_COMPLETE, CONTROLLER, NEW_TRANSACTION, REFUND_POLICY } from '../../uri.js'
 import Boom from '@hapi/boom'
+import { displayStartTime, displayEndTime } from '../../processors/date-and-time-display.js'
+import * as mappings from '../../processors/mapping-constants.js'
+import * as concessionHelper from '../../processors/concession-helper.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -25,11 +28,21 @@ const getData = async request => {
 
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
 
+  const startTimeString = displayStartTime(permission)
+  const endTimeString = displayEndTime(permission)
+
   return {
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: NEW_TRANSACTION.uri,
+      refund: REFUND_POLICY.uri
     },
-    referenceNumber: permission.referenceNumber
+    disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
+    licenceTypes: mappings.LICENCE_TYPE,
+    hasJunior: !!concessionHelper.hasJunior(permission),
+    hasSenior: !!concessionHelper.hasSenior(permission),
+    permission,
+    startTimeString,
+    endTimeString
   }
 }
 
