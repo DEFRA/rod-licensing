@@ -22,7 +22,6 @@ To run from this directory:
 | GOV_PAY_HTTPS_REDIRECT     | Protcol for the post payment redirect           |    no    |                     |                               |
 | GOV_PAY_APIKEY             | GOV pay access identifier                       |    no    |                     |                               |
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    |                     |                               |
-| HOST_URL                   | Submitted to GOV.UK Pay - the redirect URL      |    no    | http://0.0.0.0:3000 |                               |
 
 ## OS Places address lookup
 

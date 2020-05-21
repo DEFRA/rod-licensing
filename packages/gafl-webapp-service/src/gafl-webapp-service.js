@@ -1,8 +1,10 @@
-'use strict'
+import { createServer, init } from './server.js'
 
 /**
- * Start the hapi
+ * Create and start the web-server (once)
  */
-import { createServer, init } from './server.js'
-createServer({ port: 3000, debug: { request: ['error'], log: ['error'] } })
-init()
+createServer({ port: 3000 })
+init().catch(e => {
+  console.error(e)
+  process.exit()
+})

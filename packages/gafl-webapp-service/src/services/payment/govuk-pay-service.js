@@ -23,12 +23,11 @@ const GOVPAY_STATUS_CODES = {
   ERROR: 'P0050'
 }
 
-const preparePayment = transaction => {
+const preparePayment = (transaction, request) => {
+  const url = new URL(AGREED.uri, `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:${request.info.host}`)
+
   const result = {
-    return_url: new URL(
-      AGREED.uri, // The cookie is lost if we redirect from another domain so use this intermediate handler
-      `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:\\${process.env.HOST_URL || '0.0.0.0:3000'}`
-    ).href,
+    return_url: url.href,
     amount: transaction.cost * 100,
     reference: transaction.id,
     description: transaction.permissions.length === 1 ? transaction.permissions[0].permit.description : 'Multiple permits',

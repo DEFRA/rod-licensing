@@ -32,6 +32,7 @@ export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-faile
 
 export const TERMS_AND_CONDITIONS = { uri: '/buy/terms-conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
+export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
 
 export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }

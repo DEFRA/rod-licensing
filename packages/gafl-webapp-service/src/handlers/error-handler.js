@@ -13,6 +13,9 @@ export const errorHandler = async (request, h) => {
   }
 
   if (Math.floor(request.response.output.statusCode / 100) === 4) {
+    /*
+     * 4xx client errors and are not logged
+     */
     return h
       .view(CLIENT_ERROR.page, {
         clientError: request.response.output.payload,
@@ -20,7 +23,11 @@ export const errorHandler = async (request, h) => {
       })
       .code(request.response.output.statusCode)
   } else {
+    /*
+     * 5xx server errors and are logged
+     */
     console.error(JSON.stringify(request.response, null, 4))
+
     return h
       .view(SERVER_ERROR.page, {
         serverError: request.response.output.payload,

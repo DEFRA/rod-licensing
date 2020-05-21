@@ -11,6 +11,7 @@ export const REDIS_PORT_DEFAULT = 6379
 export const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 export const PAGE_STATE = { completed: true, error: false }
 export const CSRF_TOKEN_COOKIE_NAME = 'rlsctkn'
+export const PDF_FILENAME = 'fishing-licence-confirmation.pdf'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',

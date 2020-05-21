@@ -50,7 +50,7 @@ const sendToSalesApi = async (request, transaction, status) => {
 }
 
 const createPayment = async (request, transaction, status) => {
-  const preparedPayment = preparePayment(transaction)
+  const preparedPayment = preparePayment(transaction, request)
   const payment = await postData(preparedPayment, transaction.id)
   transaction.payment = {
     state: payment.state,

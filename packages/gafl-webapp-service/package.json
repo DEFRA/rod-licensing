@@ -53,6 +53,7 @@
     "moment": "^2.25.3",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.1",
+    "pdfmake": "^0.1.65",
     "uuid": "^8.0.0"
   },
   "devDependencies": {

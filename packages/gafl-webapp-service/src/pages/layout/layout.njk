@@ -33,41 +33,44 @@
             tag: {
             text: "beta"
         },
-        html: 'This is a new service – your <a class="govuk-link" href="" target="_blank">feedback</a> will help us to improve it.'
+        html: 'This is a new service – your <a class="govuk-link" href="" target="_blank">feedback</a> will help us to improve it.',
+        classes: 'no-print'
     }) }}
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}
 
 {% set footerHtml %}
-    <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">Environment Agency Helpline: <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
-    <p class="govuk-!-margin-top-0">Monday to Friday, 8am to 6pm</p>
-    <p class="govuk-!-margin-top-0"><a href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a> (opens in a new window or tab)</p>
-    <ul class="govuk-footer__inline-list">
-        <li class="govuk-footer__inline-list-item">
-            <a class="govuk-link" href="/refund-policy">
-                Refund Policy
-            </a>
-        </li>
+    <div class="no-print">
+        <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">Environment Agency Helpline: <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
+        <p class="govuk-!-margin-top-0">Monday to Friday, 8am to 6pm</p>
+        <p class="govuk-!-margin-top-0"><a href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a> (opens in a new window or tab)</p>
+        <ul class="govuk-footer__inline-list">
+            <li class="govuk-footer__inline-list-item">
+                <a class="govuk-link" href="/refund-policy">
+                    Refund Policy
+                </a>
+            </li>
 
-        <li class="govuk-footer__inline-list-item">
-            <a class="govuk-link" href="/privacy-policy">
-                Privacy Policy
-            </a>
-        </li>
+            <li class="govuk-footer__inline-list-item">
+                <a class="govuk-link" href="/privacy-policy">
+                    Privacy Policy
+                </a>
+            </li>
 
-        <li class="govuk-footer__inline-list-item">
-            <a class="govuk-link" href="/accessibility-statement">
-                Accessibility Statement
-            </a>
-        </li>
+            <li class="govuk-footer__inline-list-item">
+                <a class="govuk-link" href="/accessibility-statement">
+                    Accessibility Statement
+                </a>
+            </li>
 
-        <li class="govuk-footer__inline-list-item">
-            <a class="govuk-link" href="/cookies">
-                Cookies
-            </a>
-        </li>
-    </ul>
+            <li class="govuk-footer__inline-list-item">
+                <a class="govuk-link" href="/cookies">
+                    Cookies
+                </a>
+            </li>
+        </ul>
+    </div>
 {% endset -%}
 
 {% block footer %}
