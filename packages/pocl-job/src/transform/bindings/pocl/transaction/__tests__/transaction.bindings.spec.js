@@ -8,7 +8,7 @@ jest.mock('@defra-fish/connectors-lib', () => ({
 }))
 
 describe('transaction transforms', () => {
-  it('transforms a POCL record - no concession, email contact', async () => {
+  it('transforms a POCL record - gmt time, no concession, email contact', async () => {
     const result = await Transaction.transform({
       children: {
         LICENSEE_FORENAME: { value: 'Fester' },
@@ -37,9 +37,9 @@ describe('transaction transforms', () => {
           }
         },
         ITEM_ID: { value: '123456' },
-        START_DATE: { value: '20/05/2020' },
+        START_DATE: { value: '01/01/2020' },
         START_TIME: { value: '00:01' },
-        SYSTEM_DATE: { value: '19/05/2020' },
+        SYSTEM_DATE: { value: '01/01/2020' },
         SYSTEM_TIME: { value: '15:03:17' },
         AMOUNT: { value: '3.75' },
         MOPEX: { value: '1' },
@@ -55,8 +55,8 @@ describe('transaction transforms', () => {
         permissions: [
           {
             permitId: 'permits-id',
-            issueDate: '2020-05-19T14:03:17.000Z',
-            startDate: '2020-05-19T23:01:00.000Z',
+            issueDate: '2020-01-01T15:03:17.000Z',
+            startDate: '2020-01-01T00:01:00.000Z',
             licensee: {
               firstName: 'Fester',
               lastName: 'Tester',
@@ -81,13 +81,13 @@ describe('transaction transforms', () => {
           method: 'Cash',
           source: 'Post Office Sales',
           channelId: '123456',
-          timestamp: '2020-05-19T14:03:17.000Z'
+          timestamp: '2020-01-01T15:03:17.000Z'
         }
       }
     })
   })
 
-  it('transforms a POCL record - senior concession, sms contact', async () => {
+  it('transforms a POCL record - bst time, senior concession, sms contact', async () => {
     const result = await Transaction.transform({
       children: {
         LICENSEE_FORENAME: { value: 'Fester' },
@@ -119,10 +119,10 @@ describe('transaction transforms', () => {
           }
         },
         ITEM_ID: { value: '123456' },
-        START_DATE: { value: '20/05/2020' },
+        START_DATE: { value: '01/06/2020' },
         START_TIME: { value: '00:01' },
-        SYSTEM_DATE: { value: '19/05/2020' },
-        SYSTEM_TIME: { value: '15:03:17' },
+        SYSTEM_DATE: { value: '01/06/2020' },
+        SYSTEM_TIME: { value: '09:00:00' },
         AMOUNT: { value: '3.75' },
         MOPEX: { value: 'UNKNOWN' },
         SERIAL_NO: { value: '559136-2-27950' },
@@ -144,8 +144,8 @@ describe('transaction transforms', () => {
                 type: 'Uncancelled Passport'
               }
             },
-            issueDate: '2020-05-19T14:03:17.000Z',
-            startDate: '2020-05-19T23:01:00.000Z',
+            issueDate: '2020-06-01T08:00:00.000Z',
+            startDate: '2020-05-31T23:01:00.000Z',
             licensee: {
               firstName: 'Fester',
               lastName: 'Tester',
@@ -170,7 +170,7 @@ describe('transaction transforms', () => {
           method: 'Other',
           source: 'Post Office Sales',
           channelId: '123456',
-          timestamp: '2020-05-19T14:03:17.000Z'
+          timestamp: '2020-06-01T08:00:00.000Z'
         }
       }
     })
@@ -210,9 +210,9 @@ describe('transaction transforms', () => {
           }
         },
         ITEM_ID: { value: '123456' },
-        START_DATE: { value: '20/05/2020' },
+        START_DATE: { value: '01/01/2020' },
         START_TIME: { value: '00:01' },
-        SYSTEM_DATE: { value: '19/05/2020' },
+        SYSTEM_DATE: { value: '01/01/2020' },
         SYSTEM_TIME: { value: '15:03:17' },
         AMOUNT: { value: '3.75' },
         MOPEX: { value: '1' },
@@ -235,8 +235,8 @@ describe('transaction transforms', () => {
                 type: 'Blue Badge'
               }
             },
-            issueDate: '2020-05-19T14:03:17.000Z',
-            startDate: '2020-05-19T23:01:00.000Z',
+            issueDate: '2020-01-01T15:03:17.000Z',
+            startDate: '2020-01-01T00:01:00.000Z',
             licensee: {
               firstName: 'Fester',
               lastName: 'Tester',
@@ -260,7 +260,7 @@ describe('transaction transforms', () => {
           method: 'Cash',
           source: 'Post Office Sales',
           channelId: '123456',
-          timestamp: '2020-05-19T14:03:17.000Z'
+          timestamp: '2020-01-01T15:03:17.000Z'
         }
       }
     })
@@ -300,9 +300,9 @@ describe('transaction transforms', () => {
           }
         },
         ITEM_ID: { value: '123456' },
-        START_DATE: { value: '20/05/2020' },
+        START_DATE: { value: '01/01/2020' },
         START_TIME: { value: '00:01' },
-        SYSTEM_DATE: { value: '19/05/2020' },
+        SYSTEM_DATE: { value: '01/01/2020' },
         SYSTEM_TIME: { value: '15:03:17' },
         AMOUNT: { value: '3.75' },
         MOPEX: { value: '1' },
@@ -325,8 +325,8 @@ describe('transaction transforms', () => {
                 type: 'Blue Badge'
               }
             },
-            issueDate: '2020-05-19T14:03:17.000Z',
-            startDate: '2020-05-19T23:01:00.000Z',
+            issueDate: '2020-01-01T15:03:17.000Z',
+            startDate: '2020-01-01T00:01:00.000Z',
             licensee: {
               firstName: 'Fester',
               lastName: 'Tester',
@@ -350,7 +350,7 @@ describe('transaction transforms', () => {
           method: 'Cash',
           source: 'Post Office Sales',
           channelId: '123456',
-          timestamp: '2020-05-19T14:03:17.000Z'
+          timestamp: '2020-01-01T15:03:17.000Z'
         }
       }
     })
@@ -388,9 +388,9 @@ describe('transaction transforms', () => {
           }
         },
         ITEM_ID: { value: '123456' },
-        START_DATE: { value: '20/05/2020' },
+        START_DATE: { value: '01/01/2020' },
         START_TIME: { value: '00:01' },
-        SYSTEM_DATE: { value: '19/05/2020' },
+        SYSTEM_DATE: { value: '01/01/2020' },
         SYSTEM_TIME: { value: '15:03:17' },
         AMOUNT: { value: '3.75' },
         MOPEX: { value: '1' },
@@ -413,8 +413,8 @@ describe('transaction transforms', () => {
                 type: 'National Insurance Number'
               }
             },
-            issueDate: '2020-05-19T14:03:17.000Z',
-            startDate: '2020-05-19T23:01:00.000Z',
+            issueDate: '2020-01-01T15:03:17.000Z',
+            startDate: '2020-01-01T00:01:00.000Z',
             licensee: {
               firstName: 'Fester',
               lastName: 'Tester',
@@ -440,7 +440,7 @@ describe('transaction transforms', () => {
           method: 'Cash',
           source: 'Post Office Sales',
           channelId: '123456',
-          timestamp: '2020-05-19T14:03:17.000Z'
+          timestamp: '2020-01-01T15:03:17.000Z'
         }
       }
     })

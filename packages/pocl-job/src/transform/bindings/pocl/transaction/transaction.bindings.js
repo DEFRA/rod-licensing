@@ -70,9 +70,11 @@ export const Transaction = new Binding({
   ],
   element: 'REC',
   transform: ({ children }) => {
-    const transactionDate = moment(children[TransactionDate.element] + children[TransactionTime.element], 'DD/MM/YYYYHH:mm:ss', true)
-      .utc()
-      .toISOString()
+    const transactionDate = moment(
+      children[TransactionDate.element] + children[TransactionTime.element],
+      'DD/MM/YYYYHH:mm:ss',
+      true
+    ).toISOString()
     const email = children[contactBindings.NotifyEmail.element] || children[contactBindings.CommsEmail.element]
     const mobilePhone = children[contactBindings.NotifyMobilePhone.element] || children[contactBindings.CommsMobilePhone.element]
     const preferredNotifyMethod = getPreferredContactMethod(
@@ -110,9 +112,7 @@ export const Transaction = new Binding({
               children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element],
               'DD/MM/YYYYHH:mm',
               true
-            )
-              .utc()
-              .toISOString(),
+            ).toISOString(),
             permitId: children[licenceBindings.ItemId.element],
             ...children[concessionBindings.SeniorConcession.element],
             ...children[concessionBindings.PipConcession.element],
