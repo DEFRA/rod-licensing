@@ -1,7 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import Path from 'path'
 import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
-import { getProcessedRecords, updateRecordStagingTable } from './db.js'
+import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
 
 /**
  * Finalise transactions in the Sales API for the provided post-office file

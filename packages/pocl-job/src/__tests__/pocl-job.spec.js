@@ -1,3 +1,8 @@
+import { transform } from '../transform/pocl-transform-stream.js'
+import { stage } from '../staging/pocl-data-staging.js'
+import { execute } from '../pocl-processor.js'
+import commander from 'commander'
+
 jest.mock('commander', () => {
   const commander = jest.requireActual('commander')
   commander.args = ['test']
@@ -9,10 +14,7 @@ jest.mock('commander', () => {
 jest.mock('fs')
 jest.mock('../transform/pocl-transform-stream.js')
 jest.mock('../staging/pocl-data-staging.js')
-
-const commander = require('commander')
-const transform = require('../transform/pocl-transform-stream.js').transform
-const stage = require('../staging/pocl-data-staging.js').stage
+jest.mock('../pocl-processor.js')
 
 describe('pocl-job', () => {
   beforeEach(() => {
@@ -37,11 +39,20 @@ describe('pocl-job', () => {
     })
   })
 
+  it('exposes an execute command to the cli', async () => {
+    jest.isolateModules(() => {
+      require('../pocl-job.js')
+      expect(commander.commands[2].name()).toBe('execute')
+      commander.commands[2]._actionHandler([])
+      expect(execute).toHaveBeenCalled()
+    })
+  })
+
   it('uses a wildcard match to output help when command not found', async () => {
     jest.isolateModules(() => {
       require('../pocl-job.js')
-      expect(commander.commands[2].name()).toBe('*')
-      commander.commands[2]._actionHandler(['testxmlfile.xml'])
+      expect(commander.commands[3].name()).toBe('*')
+      commander.commands[3]._actionHandler(['testxmlfile.xml'])
       expect(commander.help).toHaveBeenCalled()
     })
   })

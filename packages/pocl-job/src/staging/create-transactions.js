@@ -3,7 +3,7 @@ import Path from 'path'
 import through2 from 'through2'
 import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
 import { transform } from '../transform/pocl-transform-stream.js'
-import { getProcessedRecords, updateRecordStagingTable } from './db.js'
+import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
 import db from 'debug'
 const debug = db('pocl:staging')
 
