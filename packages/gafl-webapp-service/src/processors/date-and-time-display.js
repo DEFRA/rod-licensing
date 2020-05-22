@@ -1,12 +1,14 @@
 import moment from 'moment'
 
+const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
+
 /**
  * Function to convert licence start and end times to standard strings for display in the service
  * @param permission
  * @returns {string}
  */
 export const displayStartTime = permission => {
-  const startDateString = moment(permission.licenceStartDate, 'YYYY-MM-DD').format('dddd, MMMM Do, YYYY')
+  const startDateString = moment(permission.licenceStartDate, 'YYYY-MM-DD').format(dateDisplayFormat)
   const timeComponent = (() => {
     if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
       return 'Midnight'
@@ -24,14 +26,14 @@ export const displayStartTime = permission => {
 
 export const displayEndTime = permission => {
   const endDateTime = moment(permission.endDate)
-  let endDateString = endDateTime.format('dddd, MMMM Do, YYYY')
+  let endDateString = endDateTime.format(dateDisplayFormat)
   const endTimeHours = endDateTime.hour()
   let result
 
   if (endTimeHours === 12) {
     result = `Midday ${endDateString}`
   } else if (endTimeHours === 0) {
-    endDateString = endDateTime.add(-1, 'days').format('dddd, MMMM Do, YYYY')
+    endDateString = endDateTime.add(-1, 'days').format(dateDisplayFormat)
     result = `11:59pm ${endDateString}`
   } else {
     result = `${endDateTime.hours(endTimeHours).format('h:mma')} ${endDateString}`

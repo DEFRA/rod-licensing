@@ -28,12 +28,7 @@ const protectionExemptSet = [
   TEST_STATUS.uri
 ]
 
-const forbiddenUnlessAgreedSet = [
-  ORDER_COMPLETE.uri,
-  ORDER_COMPLETE_PDF.uri,
-  PAYMENT_FAILED.uri,
-  PAYMENT_CANCELLED.uri
-]
+const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -61,7 +56,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
        * The redis cache has expired - or been removed. Reinitialize a new cache
        */
       await request.cache().initialize()
-      initialized = false
+      initialized = true
     } else {
       /*
        * Keep the cookie alive so that is persists as long as the cache -
