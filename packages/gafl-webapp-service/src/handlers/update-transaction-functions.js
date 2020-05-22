@@ -25,7 +25,6 @@ import newsletter from '../pages/contact/newsletter/update-transaction.js'
 import paymentCancelled from '../pages/payment/cancelled/update-transaction.js'
 import paymentFailed from '../pages/payment/failed/update-transaction.js'
 
-
 import termsAndConditions from '../pages/terms-and-conditions/update-transaction.js'
 
 import {

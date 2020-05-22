@@ -1,6 +1,6 @@
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import Boom from '@hapi/boom'
-import AWS from '../aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
@@ -15,9 +15,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
     throw Boom.conflict('The transaction does not support recurring payments but an instruction was supplied')
   }
 
-  const setFieldExpression = Object.keys(payload)
-    .map(k => `${k} = :${k}`)
-    .join(', ')
+  const setFieldExpression = Object.keys(payload).map(k => `${k} = :${k}`)
   const expressionAttributeValues = Object.entries(payload).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
   await docClient
     .update({
@@ -39,5 +37,5 @@ export async function finaliseTransaction ({ id, ...payload }) {
     .promise()
 
   debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
-  return receipt.MessageId
+  return { status: 'queued', messageId: receipt.MessageId }
 }

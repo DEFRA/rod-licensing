@@ -5,7 +5,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { validation } from '@defra-fish/business-rules-lib'
 
 const schema = Joi.object({
-  'date-of-birth': validation.contact.birthDateValidator
+  'date-of-birth': validation.contact.createBirthDateValidator(Joi)
 })
 
 const validator = payload => {
