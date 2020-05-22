@@ -15,7 +15,7 @@ import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDa
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import moment from 'moment'
-import AWS from '../aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
@@ -127,6 +127,7 @@ const createTransactionEntities = async transactionRecord => {
   transaction.timestamp = transactionRecord.payment.timestamp
   transaction.source = await getGlobalOptionSetValue('defra_financialtransactionsource', transactionRecord.payment.source)
   transaction.paymentType = await getGlobalOptionSetValue('defra_paymenttype', transactionRecord.payment.method)
+  transaction.channelId = transactionRecord.channelId
   transaction.bindToTransactionCurrency(currency)
 
   const chargeJournal = await createTransactionJournal(transactionRecord, transaction, 'Charge', currency)

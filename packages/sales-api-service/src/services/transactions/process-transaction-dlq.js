@@ -1,7 +1,7 @@
 import { persist, StagingException } from '@defra-fish/dynamics-lib'
 import { processQueue } from './process-transaction-queue.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
-import AWS from '../aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')

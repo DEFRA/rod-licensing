@@ -1,7 +1,11 @@
 import Joi from '@hapi/joi'
 import { contactSchema } from './contact.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
-import { createReferenceDataEntityValidator, createAlternateKeyValidator, createPermitConcessionValidator } from './validators/index.js'
+import {
+  createReferenceDataEntityValidator,
+  createAlternateKeyValidator,
+  createPermitConcessionValidator
+} from './validators/validators.js'
 import { Permit, Permission } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 
@@ -12,7 +16,7 @@ export const createPermissionSchema = Joi.object({
     .required()
     .description('The ID of the permit associated with this permission')
     .example('cb1b34a0-0c66-e611-80dc-c4346bad0190'),
-  licensee: contactSchema.required().description('The contact associated with the permission'),
+  licensee: contactSchema,
   concession: concessionProofSchema.optional(),
   issueDate: Joi.string()
     .isoDate()
@@ -26,17 +30,17 @@ export const createPermissionSchema = Joi.object({
     .example(new Date().toISOString())
 })
   .external(createPermitConcessionValidator())
-  .label('create-permission-request')
+  .label('create-transaction-request-permission')
 
 export const createPermissionResponseSchema = createPermissionSchema
   .append({
-    referenceNumber: validation.permission.permissionNumberValidator.external(
-      createAlternateKeyValidator(Permission, Permission.definition.mappings.referenceNumber.field, true)
-    ),
+    referenceNumber: validation.permission
+      .createPermissionNumberValidator(Joi)
+      .external(createAlternateKeyValidator(Permission, Permission.definition.mappings.referenceNumber.field, true)),
     endDate: Joi.string()
       .isoDate()
       .required()
       .description('An ISO8601 compatible date string defining when the permission expires')
       .example(new Date().toISOString())
   })
-  .label('create-permission-response')
+  .label('create-transaction-response-permission')

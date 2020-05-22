@@ -1,5 +1,5 @@
 import Boom from '@hapi/boom'
-import AWS from '../aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')

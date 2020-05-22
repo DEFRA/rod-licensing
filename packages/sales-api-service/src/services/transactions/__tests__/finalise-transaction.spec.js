@@ -22,13 +22,10 @@ describe('transaction service', () => {
           method: 'Debit card'
         }
       }
-      const setFieldExpression = Object.keys(completionFields)
-        .map(k => `${k} = :${k}`)
-        .join(', ')
+      const setFieldExpression = Object.keys(completionFields).map(k => `${k} = :${k}`)
       const expressionAttributeValues = Object.entries(completionFields).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
-
       const result = await finaliseTransaction({ id: mockRecord.id, ...completionFields })
-      expect(result).toBe('Test_Message')
+      expect(result).toEqual({ messageId: 'Test_Message', status: 'queued' })
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
         expect.objectContaining({
           TableName: process.env.TRANSACTIONS_STAGING_TABLE,
