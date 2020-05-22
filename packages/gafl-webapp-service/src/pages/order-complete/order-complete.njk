@@ -42,12 +42,12 @@
 {% endif %}
 
 {% set licenseDetailsSummaryRows = [] %}
+{{ licenseDetailsSummaryRows.push([ { text: 'Name' }, { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.permission.licenceType } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: lengthText } ]) }}
 {% if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] %}
     {{ licenseDetailsSummaryRows.push([{ text: 'Number of rods' }, { text: data.permission.numberOfRods }]) }}
 {% endif %}
-{{ licenseDetailsSummaryRows.push([ { text: 'From' }, { text: data.startTimeString } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Expires' }, { text: data.endTimeString } ]) }}
 
 {% if data.hasJunior and data.disabled %}
     {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Junior, Disabled' } ]) }}
@@ -60,6 +60,8 @@
 {% elseif data.disabled %}
    {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Disabled' } ]) }}
 {% endif %}
+{{ licenseDetailsSummaryRows.push([ { text: 'Valid from' }, { text: data.startTimeString } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Expires' }, { text: data.endTimeString } ]) }}
 
 {% block content %}
 <div class="govuk-grid-row">

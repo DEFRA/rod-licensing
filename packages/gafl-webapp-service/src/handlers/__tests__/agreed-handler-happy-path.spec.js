@@ -112,6 +112,8 @@ describe('The agreed handler', () => {
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    const data3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
@@ -150,6 +152,8 @@ describe('The agreed handler', () => {
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    const data3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('processes the series of steps necessary to complete a successful no-payment journey', async () => {

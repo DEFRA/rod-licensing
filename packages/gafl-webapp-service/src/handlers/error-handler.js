@@ -24,9 +24,11 @@ export const errorHandler = async (request, h) => {
       .code(request.response.output.statusCode)
   } else {
     /*
-     * 5xx server errors and are logged
+     * 5xx server errors and are logged.
+     * The response stacktrace and message are hidden from the console so copy the objects
      */
-    console.error(JSON.stringify(request.response, null, 4))
+    const { stack, message, output } = request.response
+    console.error(JSON.stringify(Object.assign({}, { stack, message, output }), null, 4))
 
     return h
       .view(SERVER_ERROR.page, {
