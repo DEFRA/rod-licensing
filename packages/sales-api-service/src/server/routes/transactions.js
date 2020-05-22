@@ -1,14 +1,32 @@
 import Joi from '@hapi/joi'
-import { createTransaction, finaliseTransaction, processQueue, processDlq } from '../../services/transactions/transactions.service.js'
-import { createTransactionSchema, createTransactionResponseSchema, finaliseTransactionSchema } from '../../schema/transaction.schema.js'
+import Boom from '@hapi/boom'
+import {
+  createTransaction,
+  createTransactions,
+  finaliseTransaction,
+  processQueue,
+  processDlq
+} from '../../services/transactions/transactions.service.js'
+import {
+  createTransactionSchema,
+  createTransactionResponseSchema,
+  createTransactionBatchSchema,
+  createTransactionBatchResponseSchema,
+  finaliseTransactionRequestSchema,
+  finaliseTransactionResponseSchema,
+  BATCH_CREATE_MAX_COUNT
+} from '../../schema/transaction.schema.js'
+import db from 'debug'
+const debug = db('sales:routes')
 
 const stagingIdSchema = Joi.object({
   id: Joi.string()
     .trim()
+    .guid()
     .min(1)
     .required()
     .description('the staging identifier')
-})
+}).label('finalise-transaction-request-parameters')
 
 export default [
   {
@@ -25,16 +43,59 @@ export default [
       validate: {
         payload: createTransactionSchema
       },
-      response: {
-        status: {
-          201: createTransactionResponseSchema
-        }
-      },
       plugins: {
         'hapi-swagger': {
           responses: {
             201: { description: 'Transaction created', schema: createTransactionResponseSchema },
             422: { description: 'The new transaction payload was invalid' }
+          },
+          order: 1
+        }
+      }
+    }
+  },
+  {
+    method: 'POST',
+    path: '/transactions/$batch',
+    options: {
+      handler: async (request, h) => {
+        debug('[%s] Received request to create %s transactions', request.info.id, request.payload.length)
+        const responsesByIndex = {}
+        const validPayloadsByIndex = {}
+        for (let i = 0; i < request.payload.length; i++) {
+          try {
+            validPayloadsByIndex[i] = await createTransactionSchema.validateAsync(request.payload[i])
+          } catch (e) {
+            responsesByIndex[i] = Boom.badData(e).output.payload
+          }
+        }
+        debug('[%s] Finished validating %s transaction payloads', request.info.id, request.payload.length)
+        const validEntries = Object.entries(validPayloadsByIndex)
+        if (validEntries.length) {
+          const createTransactionResults = await createTransactions(validEntries.map(([, v]) => v))
+          createTransactionResults.forEach((response, i) => {
+            responsesByIndex[validEntries[i][0]] = { statusCode: 201, response }
+          })
+        }
+        const responses = request.payload.map((p, i) => responsesByIndex[i])
+        return h.response(responses).code(200)
+      },
+      description: 'Create a batch of new transactions',
+      notes: `
+      Creates new transactions in batch mode.  Can accept up to ${BATCH_CREATE_MAX_COUNT} instructions at one time.
+      The payload should be an array of transactions, each entry in the array should conform to the standard endpoint to POST a single transaction.
+      The response shall also be an array where each entry shall correspond by index to the request payload.  Each entry shall either contain a
+      response object with a payload as per the POST to a create a single transaction or be an error structure.
+      `,
+      tags: ['api', 'transactions'],
+      validate: {
+        payload: createTransactionBatchSchema
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'Batch accepted', schema: createTransactionBatchResponseSchema },
+            422: { description: 'The batch structure was invalid' }
           },
           order: 1
         }
@@ -53,12 +114,12 @@ export default [
       tags: ['api', 'transactions'],
       validate: {
         params: stagingIdSchema,
-        payload: finaliseTransactionSchema
+        payload: finaliseTransactionRequestSchema
       },
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { description: 'Transaction accepted' },
+            200: { description: 'Transaction accepted', schema: finaliseTransactionResponseSchema },
             400: { description: 'Invalid request params' },
             404: { description: 'A transaction for the specified identifier was not found' },
             402: { description: 'The payment amount did not match the cost of the transaction' },

@@ -1,6 +1,6 @@
 'use strict'
 import db from 'debug'
-import AWS from './aws.js'
+import { AWS } from '@defra-fish/connectors-lib'
 const { sqs } = AWS()
 
 /**

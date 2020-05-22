@@ -6,6 +6,8 @@ node_js:
 cache: npm
 git:
   depth: false
+env:
+  - TZ=Europe/London
 
 # Only run build for chores if building from a tag.
 if: commit_message !~ /^chore\(release\)/ OR tag IS NOT blank
@@ -25,8 +27,11 @@ jobs:
   include:
     - stage: test
       script:
+        - echo "Starting tests at $(date)"
         - npm test
+        - echo "Tests completed at $(date)"
         - sonar-scanner
+        - echo "Sonar analysis completed at $(date)"
     - stage: deploy
       script:
         - git config --global user.email ${GITHUB_EMAIL}

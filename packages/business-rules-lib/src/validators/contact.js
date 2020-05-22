@@ -1,4 +1,3 @@
-import Joi from '@hapi/joi'
 import moment from 'moment'
 
 /**
@@ -8,8 +7,9 @@ import moment from 'moment'
  * @returns {function(*=): *|string}
  */
 const toTitleCase = (exclusions = []) => {
-  const capitalisationExclusionLookahead = exclusions.length ? `(?!${exclusions.join('|')})` : ''
-  const regex = new RegExp(`(?:^|[^\\p{L}])${capitalisationExclusionLookahead}\\p{L}`, 'gu')
+  const exclusionsRegex = exclusions.map(e => `${e}\\P{L}`).join('|')
+  const capitalisationExclusionLookahead = exclusions.length ? `(?!${exclusionsRegex})` : ''
+  const regex = new RegExp(`(?:^|\\P{L})${capitalisationExclusionLookahead}\\p{L}`, 'gu')
   return value => value && value.toLowerCase().replace(regex, match => match.toUpperCase())
 }
 
@@ -27,111 +27,182 @@ const capitaliseNamePrefixes = prefixes => {
 
 const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
-const dateString = Joi.string().extend({
-  type: 'birthDate',
-  messages: {
-    'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
-    'date.min': '{{#label}} date before minimum allowed',
-    'date.max': '{{#label}} must be less than or equal to "now"'
-  },
-  validate (value, helpers) {
-    const dateValue = moment(value, dateStringFormats, true)
-    if (!dateValue.isValid()) {
-      return { value, errors: helpers.error('date.format') }
-    }
+/**
+ * Create a validator to check a contact's birth date
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+const createDateStringValidator = joi =>
+  joi.string().extend({
+    type: 'birthDate',
+    messages: {
+      'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
+      'date.min': '{{#label}} date before minimum allowed',
+      'date.max': '{{#label}} must be less than or equal to "now"'
+    },
+    validate (value, helpers) {
+      const dateValue = moment(value, dateStringFormats, true)
+      if (!dateValue.isValid()) {
+        return { value, errors: helpers.error('date.format') }
+      }
 
-    return { value }
-  },
-  rules: {
-    birthDate: {
-      args: [
-        {
-          name: 'maxAge',
-          ref: false,
-          assert: value => typeof value === 'number' && !isNaN(value),
-          message: 'maxAge must be a number'
-        }
-      ],
-      method (maxAge) {
-        return this.$_addRule({ name: 'birthDate', args: { maxAge } })
-      },
-      validate (value, helpers, args) {
-        const birthDate = moment(value, dateStringFormats, true)
-        if (!birthDate.isBefore(moment().startOf('day'))) {
-          return helpers.error('date.max')
-        }
+      return { value }
+    },
+    rules: {
+      birthDate: {
+        args: [
+          {
+            name: 'maxAge',
+            ref: false,
+            assert: value => typeof value === 'number' && !isNaN(value),
+            message: 'maxAge must be a number'
+          }
+        ],
+        method (maxAge) {
+          return this.$_addRule({ name: 'birthDate', args: { maxAge } })
+        },
+        validate (value, helpers, args) {
+          const birthDate = moment(value, dateStringFormats, true)
+          if (!birthDate.isBefore(moment().startOf('day'))) {
+            return helpers.error('date.max')
+          }
 
-        if (birthDate.isBefore(moment().subtract(args.maxAge, 'years'))) {
-          return helpers.error('date.min')
-        }
+          if (birthDate.isBefore(moment().subtract(args.maxAge, 'years'))) {
+            return helpers.error('date.min')
+          }
 
-        return birthDate.format('YYYY-MM-DD')
+          return birthDate.format('YYYY-MM-DD')
+        }
       }
     }
-  }
-})
+  })
 
-export const birthDateValidator = dateString
-  .trim()
-  .birthDate(120)
-  .required()
-  .example('2000-01-01')
-
-export const emailValidator = Joi.string()
-  .trim()
-  .email()
-  .max(100)
-  .lowercase()
-  .example('person@example.com')
-
-export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
-export const mobilePhoneValidator = Joi.string()
-  .trim()
-  .pattern(mobilePhoneRegex)
-  .example('+44 7700 900088')
-
-/*
- * The standard DEFRA address components
+/**
+ * Create a validator to check a contact's birth date
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
  */
-export const premisesValidator = Joi.string()
-  .trim()
-  .min(1)
-  .max(100)
-  .external(toTitleCase())
-  .required()
-  .example('Example House')
+export const createBirthDateValidator = joi =>
+  createDateStringValidator(joi)
+    .trim()
+    .birthDate(120)
+    .required()
+    .example('2000-01-01')
 
-export const streetValidator = Joi.string()
-  .trim()
-  .max(100)
-  .external(toTitleCase())
-  .empty('')
-  .example('Example Street')
+/**
+ * Create a validator to check a contact's mobile phone number
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createEmailValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .email()
+    .max(100)
+    .lowercase()
+    .example('person@example.com')
 
-export const localityValidator = Joi.string()
-  .trim()
-  .max(100)
-  .external(toTitleCase())
-  .empty('')
-  .example('Near Sample')
+// TODO: Investigate/improve regular expression
+export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
+/**
+ * Create a validator to check a contact's mobile phone number
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createMobilePhoneValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .pattern(mobilePhoneRegex)
+    .example('+44 7700 900088')
 
-export const townValidator = Joi.string()
-  .trim()
-  .max(100)
-  .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le', 'super']))
-  .required()
-  .example('Exampleton')
+/**
+ * Create a validator to check a contact's address premises
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createPremisesValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .external(toTitleCase())
+    .required()
+    .example('Example House')
+
+/**
+ * Create a validator to check a contact's address street
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createStreetValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .max(100)
+    .external(toTitleCase())
+    .empty('')
+    .example('Example Street')
+
+/**
+ * Create a validator to check a contact's address locality
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createLocalityValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .max(100)
+    .external(toTitleCase())
+    .empty('')
+    .example('Near Sample')
+
+/**
+ * Create a validator to check a contact's address town
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createTownValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .max(100)
+    .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le', 'super']))
+    .required()
+    .example('Exampleton')
 
 export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s{0,6}([0-9][A-Z]{2})$/i
-export const ukPostcodeValidator = Joi.string()
-  .trim()
-  .min(1)
-  .max(12)
-  .required()
-  .pattern(ukPostcodeRegex)
-  .replace(ukPostcodeRegex, '$1 $2')
-  .uppercase()
-  .example('AB12 3CD')
+
+/**
+ * Create a validator to check a contact's postcode
+ *
+ * Will automatically correct spacing for UK postcodes
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createUKPostcodeValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .min(1)
+    .max(12)
+    .required()
+    .pattern(ukPostcodeRegex)
+    .replace(ukPostcodeRegex, '$1 $2')
+    .uppercase()
+    .example('AB12 3CD')
 
 const regexApostrophe = /\u2019/g
 const regexHyphen = /\u2014/g
@@ -143,41 +214,62 @@ const substitutes = txt =>
     .replace(regexHyphen, '\u2010')
     .replace(regexMultiSpace, '\u0020')
 
-const nameString = Joi.string().extend({
-  type: 'name',
-  coerce (value) {
-    return { value: substitutes(value) }
-  },
-  rules: {
-    allowable: {
-      validate (value, helpers) {
-        if (!/\p{L}/gu.test(value)) {
-          return helpers.error('string.forbidden')
+/**
+ * Create a custom validator extension to check names
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+const createNameStringValidator = joi =>
+  joi.string().extend({
+    type: 'name',
+    coerce (value) {
+      return { value: substitutes(value) }
+    },
+    rules: {
+      allowable: {
+        validate (value, helpers) {
+          if (!/\p{L}/gu.test(value)) {
+            return helpers.error('string.forbidden')
+          }
+          return value
         }
-        return value
       }
+    },
+    messages: {
+      'string.forbidden': '{{#label}} contains forbidden characters'
     }
-  },
-  messages: {
-    'string.forbidden': '{{#label}} contains forbidden characters'
-  }
-})
+  })
 
-export const firstNameValidator = nameString
-  .allowable()
-  .min(2)
-  .max(100)
-  .trim()
-  .external(toTitleCase())
-  .required()
-  .example('Fester')
+/**
+ * Create a validator to check a contact's first name
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+export const createFirstNameValidator = joi =>
+  createNameStringValidator(joi)
+    .allowable()
+    .min(2)
+    .max(100)
+    .trim()
+    .external(toTitleCase())
+    .required()
+    .example('Fester')
 
-export const lastNameValidator = nameString
-  .allowable()
-  .min(2)
-  .max(100)
-  .trim()
-  .external(toTitleCase(['van', 'de', 'der', 'den']))
-  .external(capitaliseNamePrefixes(['Mc', "O'"]))
-  .required()
-  .example('Tester')
+/**
+ * Create a validator to check a contact's last name
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+export const createLastNameValidator = joi =>
+  createNameStringValidator(joi)
+    .allowable()
+    .min(2)
+    .max(100)
+    .trim()
+    .external(toTitleCase(['van', 'de', 'der', 'den']))
+    .external(capitaliseNamePrefixes(['Mc', "O'"]))
+    .required()
+    .example('Tester')

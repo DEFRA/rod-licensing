@@ -29,6 +29,38 @@ Resources:
         AttributeName: 'expires'
         Enabled: true
 
+  PoclFileStaging:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PoclFileStaging
+      AttributeDefinitions:
+        - AttributeName: 'filename'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'filename'
+          KeyType: 'HASH'
+      TimeToLiveSpecification:
+        AttributeName: 'expires'
+        Enabled: true
+
+  PoclRecordStaging:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PoclRecordStaging
+      AttributeDefinitions:
+        - AttributeName: 'filename'
+          AttributeType: 'S'
+        - AttributeName: 'id'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'filename'
+          KeyType: 'HASH'
+        - AttributeName: 'id'
+          KeyType: 'RANGE'
+      TimeToLiveSpecification:
+        AttributeName: 'expires'
+        Enabled: true
+
   PoclAuditBucket:
     Type: AWS::S3::Bucket
     Properties:

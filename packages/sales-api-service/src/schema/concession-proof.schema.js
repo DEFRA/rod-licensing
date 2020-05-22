@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi'
-import { createOptionSetValidator, createReferenceDataEntityValidator } from './validators/index.js'
+import { createOptionSetValidator, createReferenceDataEntityValidator } from './validators/validators.js'
 import { Concession } from '@defra-fish/dynamics-lib'
 
 export const concessionProofSchema = Joi.object({
@@ -12,5 +12,7 @@ export const concessionProofSchema = Joi.object({
     referenceNumber: Joi.string()
       .optional()
       .example('QQ 12 34 56 C')
-  }).required()
+  })
+    .label('concession-proof-details')
+    .required()
 }).label('concession-proof')

@@ -35,12 +35,12 @@ const validator = Joi.object({
     .required(),
   email: Joi.alternatives().conditional('how-contacted', {
     is: 'email',
-    then: validation.contact.emailValidator,
+    then: validation.contact.createEmailValidator(Joi),
     otherwise: Joi.string().empty('')
   }),
   text: Joi.alternatives().conditional('how-contacted', {
     is: 'text',
-    then: validation.contact.mobilePhoneValidator,
+    then: validation.contact.createMobilePhoneValidator(Joi),
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })
