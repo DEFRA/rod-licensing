@@ -8,13 +8,13 @@ div.hidden-area {
 
 @media print {
   .no-print {
-    display: none!important;
+    display: none !important;
   }
 }
 
 @media screen {
-  .print-area, .print-area * {
+  .print-area,
+  .print-area * {
     display: none;
   }
 }
-

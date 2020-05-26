@@ -14,5 +14,4 @@ describe('gafl-web-service', () => {
     require('../gafl-webapp-service')
     expect(global.initialised).toBeTruthy()
   })
-
 })
