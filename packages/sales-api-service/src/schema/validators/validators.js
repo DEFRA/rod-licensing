@@ -6,19 +6,25 @@ import {
 import { findById, PermitConcession } from '@defra-fish/dynamics-lib'
 import Joi from '@hapi/joi'
 
-export function createOptionSetValidator (optionSetName, exampleValue) {
+export function buildJoiOptionSetValidator (optionSetName, exampleValue) {
   return Joi.string()
     .trim()
     .required()
-    .external(async value => {
+    .external(createOptionSetValidator(optionSetName, exampleValue))
+    .description(`See ${optionSetName} option-set for available options`)
+    .example(exampleValue)
+}
+
+export function createOptionSetValidator (optionSetName, exampleValue) {
+  return async value => {
+    if (value) {
       const option = await getGlobalOptionSetValue(optionSetName, value)
       if (!option) {
         throw new Error(`Value provided is not a recognised ${optionSetName}`)
       }
-      return undefined
-    })
-    .description(`See ${optionSetName} option-set for available options`)
-    .example(exampleValue)
+    }
+    return undefined
+  }
 }
 
 export function createReferenceDataEntityValidator (entityType) {

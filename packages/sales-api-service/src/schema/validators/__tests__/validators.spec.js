@@ -6,25 +6,48 @@ const entityManager = jest.requireActual('@defra-fish/dynamics-lib/src/client/en
 describe('validators', () => {
   beforeEach(jest.resetAllMocks)
 
-  describe('createOptionSetValidator', () => {
-    it('returns a validation function returning undefined when an optionset is successfully resolved', async () => {
+  describe('buildJoiOptionSetValidator', () => {
+    it('returns a Joi validator returning undefined when an optionset is successfully resolved', async () => {
       const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => 'success')
-      const schema = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
+      const schema = require('../validators.js').buildJoiOptionSetValidator('testOptionSet', 'Test Example')
       await expect(schema.validateAsync('testValue')).resolves.toEqual('testValue')
       expect(spy).toHaveBeenCalledWith('testOptionSet', 'testValue')
     })
 
-    it('returns a validation function that requires a value to be present', async () => {
+    it('returns a Joi validator that requires a value to be present', async () => {
       const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue')
-      const schema = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
+      const schema = require('../validators.js').buildJoiOptionSetValidator('testOptionSet', 'Test Example')
       await expect(schema.validateAsync(undefined)).rejects.toThrow('"value" is required')
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('returns a Joi validator throwing an error when no optionset found', async () => {
+      const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => null)
+      const schema = require('../validators.js').buildJoiOptionSetValidator('testOptionSet', 'Test Example')
+      await expect(schema.validateAsync('testValue')).rejects.toThrow('Value provided is not a recognised testOptionSet')
+      expect(spy).toHaveBeenCalledWith('testOptionSet', 'testValue')
+    })
+  })
+
+  describe('createOptionSetValidator', () => {
+    it('returns a validation function returning undefined when an optionset is successfully resolved', async () => {
+      const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => 'success')
+      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
+      await expect(validationFunction('testValue')).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith('testOptionSet', 'testValue')
+    })
+
+    it('returns a validation function which skips validation if the input value is undefined', async () => {
+      const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => 'success')
+      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet', undefined)
+      await expect(validationFunction(undefined)).resolves.toEqual(undefined)
       expect(spy).not.toHaveBeenCalled()
     })
 
     it('returns a validation function throwing an error when no optionset found', async () => {
       const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => null)
-      const schema = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
-      await expect(schema.validateAsync('testValue')).rejects.toThrow('Value provided is not a recognised testOptionSet')
+      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
+      await expect(validationFunction('testValue')).rejects.toThrow('Value provided is not a recognised testOptionSet')
       expect(spy).toHaveBeenCalledWith('testOptionSet', 'testValue')
     })
   })

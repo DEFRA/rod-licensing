@@ -98,8 +98,8 @@ services:
       - '2222:22'
     volumes:
       - ./resources/infrastructure/sftp/sshd_config:/etc/ssh/sshd_config
-      - ./resources/infrastructure/sftp/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
-      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./resources/infrastructure/sftp/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
+      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
       - ./resources/infrastructure/sftp/ssh_host_rsa_key.pub:/home/test_sftp_user/.ssh/keys/id_rsa.pub:ro
       - ./volumes/sftp:/home/test_sftp_user/share
     command: test_sftp_user::1001

@@ -124,4 +124,12 @@ export class Permission extends BaseEntity {
   bindToTransaction (transaction) {
     super._bind('defra_Transaction@odata.bind', transaction)
   }
+
+  /**
+   * Associate the permission with a {@link PoclFile}
+   * @param {PoclFile} poclFile the {@link PoclFile} with which to create an association
+   */
+  bindToPoclFile (poclFile) {
+    super._bind('defra_POCLFileId@odata.bind', poclFile)
+  }
 }

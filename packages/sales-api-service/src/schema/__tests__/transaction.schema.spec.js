@@ -2,6 +2,7 @@ import { createTransactionSchema, createTransactionResponseSchema } from '../tra
 import { mockTransactionPayload, mockTransactionRecord } from '../../__mocks__/test-data.js'
 
 jest.mock('../validators/validators.js', () => ({
+  ...jest.requireActual('../validators/validators.js'),
   createOptionSetValidator: () => async () => undefined,
   createEntityIdValidator: () => async () => undefined,
   createAlternateKeyValidator: () => async () => undefined,

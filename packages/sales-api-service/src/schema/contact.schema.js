@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi'
-import { createOptionSetValidator, createEntityIdValidator } from './validators/validators.js'
+import { buildJoiOptionSetValidator, createEntityIdValidator } from './validators/validators.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 
@@ -26,10 +26,10 @@ export const contactSchema = Joi.object({
       .trim()
       .required()
   }),
-  country: createOptionSetValidator('defra_country', 'GB'),
-  preferredMethodOfConfirmation: createOptionSetValidator('defra_preferredcontactmethod', 'Text'),
-  preferredMethodOfNewsletter: createOptionSetValidator('defra_preferredcontactmethod', 'Email'),
-  preferredMethodOfReminder: createOptionSetValidator('defra_preferredcontactmethod', 'Letter')
+  country: buildJoiOptionSetValidator('defra_country', 'GB'),
+  preferredMethodOfConfirmation: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Text'),
+  preferredMethodOfNewsletter: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Email'),
+  preferredMethodOfReminder: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Letter')
 })
   .required()
   .description('Details of the associated contact')

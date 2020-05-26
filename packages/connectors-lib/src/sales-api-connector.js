@@ -5,6 +5,14 @@ const SALES_API_TIMEOUT_MS_DEFAULT = 20000
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
 const headers = { 'Content-Type': 'application/json' }
 
+/**
+ * Make a request to the sales API
+ *
+ * @param url the URL of the endpoint to make a request to
+ * @param method the HTTP method (defaults to get)
+ * @param payload the payload to include with a put/post/patch request
+ * @returns {Promise<{statusText: *, ok: *, body: *, status: *}>}
+ */
 export const call = async (url, method = 'get', payload = null) => {
   const response = await fetch(url.href, {
     headers,
@@ -13,22 +21,76 @@ export const call = async (url, method = 'get', payload = null) => {
     timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
   })
 
-  const result = {
+  return {
+    ok: response.ok,
     status: response.status,
     statusText: response.statusText,
     body: await response.json()
   }
-
-  if (response.ok) {
-    return result
-  }
-  throw new Error(`Unexpected response from the Sales API: ${JSON.stringify(result, null, 2)}`)
 }
 
+const exec2xxOrThrow = async requestPromise => {
+  const response = await requestPromise
+  if (response.ok) {
+    return response.body
+  }
+  throw new Error(`Unexpected response from the Sales API: ${JSON.stringify(response, null, 2)}`)
+}
+const exec2xxOrNull = async requestPromise => {
+  const response = await requestPromise
+  if (response.ok) {
+    return response.body
+  }
+  return null
+}
+
+/**
+ * Create a new transaction in the sales API
+ *
+ * @param transaction the payload for the request
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const createTransaction = async transaction => exec2xxOrThrow(call(new URL('/transactions', urlBase), 'post', transaction))
+
+/**
+ * Create new transactions in the sales API in batch mode
+ *
+ * @param transactionArr the array containing multiple transaction payloads
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
 export const createTransactions = async transactionArr =>
-  (await call(new URL('/transactions/$batch', urlBase), 'post', transactionArr)).body
-export const finaliseTransaction = async (id, transaction) =>
-  (await call(new URL(`/transactions/${id}`, urlBase), 'patch', transaction)).body
+  exec2xxOrThrow(call(new URL('/transactions/$batch', urlBase), 'post', transactionArr))
+
+/**
+ * Finalise a transaction in the sales API
+ *
+ * @param id the transaction id to finalise
+ * @param payload the finalise-transaction payload to supply on the request
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const finaliseTransaction = async (id, payload) => exec2xxOrThrow(call(new URL(`/transactions/${id}`, urlBase), 'patch', payload))
+
+/**
+ * Retrieve the details of a transaction file.  Returns null if not found.
+ *
+ * @param filename the name of the transaction file record to retrieve
+ * @returns {Promise<*|null>}
+ */
+export const getTransactionFile = async filename => exec2xxOrNull(call(new URL(`/transaction-files/${filename}`, urlBase), 'get'))
+
+/**
+ * Create/update a transaction file
+ *
+ * @param filename the name of the transaction file record to upsert
+ * @param data the payload with which to update the transaction file record
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const upsertTransactionFile = async (filename, data) =>
+  exec2xxOrThrow(call(new URL(`/transaction-files/${filename}`, urlBase), 'put', data))
 
 /**
  * Supports querying of reference data from the Sales API
@@ -45,7 +107,7 @@ class QueryBuilder {
    * @returns {Promise<*>}
    */
   async getAll (criteria) {
-    return (await call(new URL(`?${querystring.stringify(criteria)}`, this._baseUrl))).body
+    return exec2xxOrThrow(call(new URL(`?${querystring.stringify(criteria)}`, this._baseUrl)))
   }
 
   /**
@@ -60,7 +122,26 @@ class QueryBuilder {
   }
 }
 
+/**
+ * Query support for permits
+ * @type {QueryBuilder}
+ */
 export const permits = new QueryBuilder(new URL('permits', urlBase))
+
+/**
+ * Query support for concessions
+ * @type {QueryBuilder}
+ */
 export const concessions = new QueryBuilder(new URL('concessions', urlBase))
+
+/**
+ * Query support for permit-concession mappings
+ * @type {QueryBuilder}
+ */
 export const permitConcessions = new QueryBuilder(new URL('permitConcessions', urlBase))
+
+/**
+ * Query support for transaction currencies
+ * @type {QueryBuilder}
+ */
 export const transactionCurrencies = new QueryBuilder(new URL('transactionCurrencies', urlBase))
