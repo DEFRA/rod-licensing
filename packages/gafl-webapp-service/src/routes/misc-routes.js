@@ -6,10 +6,12 @@ import {
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
-  REFUND_POLICY
+  REFUND_POLICY,
+  FEEDBACK
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
+
 import addPermission from '../session-cache/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
@@ -71,5 +73,18 @@ export default [
     method: 'GET',
     path: REFUND_POLICY.uri,
     handler: async (request, h) => h.view(REFUND_POLICY.page)
+  },
+  {
+    method: 'GET',
+    path: FEEDBACK.uri,
+    handler: async (request, h) => {
+      const ref = (request.info.referrer && request.info.referrer.indexOf(FEEDBACK.uri) === -1)
+        ? request.info.referrer
+        : request.server.info.protocol + '://' + request.info.host
+
+      return h.view(FEEDBACK.page, {
+        ref: encodeURIComponent(ref)
+      })
+    }
   }
 ]
