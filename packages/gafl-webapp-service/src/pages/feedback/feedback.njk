@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script>window.GOVUKFrontend.initAll()</script>
-    <script id="ss-embed-280094">(function(d,w){var s,ss;ss=d.createElement('script');ss.type='text/javascript';ss.async=true;ss.src=('https:'==d.location.protocol?'https://':'http://')+'www.smartsurvey.co.uk/s/r/embed.aspx?i=262845&c=280094&ref={{ref}}';s=d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ss, s);})(document,window);</script>
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}} id="ss-embed-280094">(function(d,w){var s,ss;ss=d.createElement('script');ss.type='text/javascript';ss.async=true;ss.src=('https:'==d.location.protocol?'https://':'http://')+'www.smartsurvey.co.uk/s/r/embed.aspx?i=262845&c=280094&ref={{ref}}';s=d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ss, s);})(document,window);</script>
 {% endblock %}

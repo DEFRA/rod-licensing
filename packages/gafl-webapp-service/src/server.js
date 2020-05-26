@@ -63,10 +63,10 @@ const plugIns = [
        * 31 of the GDS template. This will probably come up as an advisory in the PEN test.
        */
       fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-      scriptSrc: ['self', 'unsafe-inline', 'www.smartsurvey.co.uk'],
+      scriptSrc: ["'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='", 'www.smartsurvey.co.uk'],
       frameSrc: ['www.smartsurvey.co.uk'],
-      styleSrc: ['self', 'unsafe-inline', 'www.smartsurvey.co.uk'],
-      generateNonces: false
+      styleSrc: ['self', 'www.smartsurvey.co.uk'],
+      generateNonces: true
     }
   },
   {

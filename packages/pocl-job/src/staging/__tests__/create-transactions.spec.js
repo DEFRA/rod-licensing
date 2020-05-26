@@ -1,8 +1,9 @@
 import Project from '../../project.cjs'
 import { createTransactions } from '../create-transactions.js'
 import { RECORD_STAGE, MAX_BATCH_SIZE } from '../constants.js'
-import * as db from '../db.js'
+import * as db from '../../io/db.js'
 import { v4 as uuidv4 } from 'uuid'
+import { salesApi } from '@defra-fish/connectors-lib'
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
@@ -10,20 +11,17 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     ...['permits', 'concessions'].reduce((acc, m) => ({ ...acc, [m]: { find: jest.fn(() => ({ id: 'test' })) } }), {})
   }
 }))
-jest.mock('../db.js', () => ({
+jest.mock('../../io/db.js', () => ({
   updateRecordStagingTable: jest.fn(),
   getProcessedRecords: jest.fn(() => [])
 }))
-const salesApi = require('@defra-fish/connectors-lib').salesApi
 
 describe('create-transactions', () => {
   beforeAll(() => {
     process.env.POCL_FILE_STAGING_TABLE = 'TestFileTable'
     process.env.POCL_RECORD_STAGING_TABLE = 'TestRecordTable'
   })
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  beforeEach(jest.clearAllMocks)
 
   it('stages the 2 record test file (under batch-size boundary)', async () => {
     salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(2))

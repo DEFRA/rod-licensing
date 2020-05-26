@@ -27,4 +27,19 @@ describe('aws connectors', () => {
     const { sqs } = require('../aws.js').default()
     expect(sqs.config.endpoint).toEqual('sqs.eu-west-2.amazonaws.com')
   })
+
+  it('configures s3 with a custom endpoint if one is defined in configuration', async () => {
+    Config.aws.s3.endpoint = TEST_ENDPOINT
+    const { s3 } = require('../aws.js').default()
+    expect(s3.config.endpoint).toEqual(TEST_ENDPOINT)
+    expect(s3.config.s3ForcePathStyle).toBeTruthy()
+  })
+
+  it('uses default s3 settings if a custom endpoint is not defined', async () => {
+    process.env.AWS_REGION = 'eu-west-2'
+    delete Config.aws.s3.endpoint
+    const { s3 } = require('../aws.js').default()
+    expect(s3.config.endpoint).toEqual('s3.eu-west-2.amazonaws.com')
+    expect(s3.config.s3ForcePathStyle).toBeFalsy()
+  })
 })

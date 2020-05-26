@@ -24,8 +24,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./volumes/localstack:/tmp/localstack
-      - ./resources/infrastructure/localstack-init.sh:/docker-entrypoint-initaws.d/init.sh
-      - ./resources/infrastructure/localstack-cfn.yml:/docker-entrypoint-initaws.d/localstack-cfn.yml
+      - ./resources/infrastructure/localstack/localstack-init.sh:/docker-entrypoint-initaws.d/init.sh
+      - ./resources/infrastructure/localstack/localstack-cfn.yml:/docker-entrypoint-initaws.d/localstack-cfn.yml
     deploy:
       restart_policy:
         condition: on-failure
@@ -53,7 +53,7 @@ services:
       restart_policy:
         condition: on-failure
 
-  redisinsight:
+  redis_insight:
     image: redislabs/redisinsight
     ports:
       - '8001:8001'
@@ -63,7 +63,7 @@ services:
       restart_policy:
         condition: on-failure
 
-  redis-commander:
+  redis_commander:
     image: rediscommander/redis-commander
     ports:
       - '8003:8081'
@@ -83,8 +83,26 @@ services:
     volumes:
       - type: bind
         read_only: true
-        source: resources/infrastructure/elasticmq.conf
+        source: resources/infrastructure/elasticmq/elasticmq.conf
         target: /etc/elasticmq/elasticmq.conf
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  #######################################################
+  # Test SFTP server
+  #######################################################
+  test_sftp:
+    image: atmoz/sftp:alpine
+    ports:
+      - '2222:22'
+    volumes:
+      - ./resources/infrastructure/sftp/sshd_config:/etc/ssh/sshd_config
+      - ./resources/infrastructure/sftp/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./resources/infrastructure/sftp/ssh_host_rsa_key.pub:/home/test_sftp_user/.ssh/keys/id_rsa.pub:ro
+      - ./volumes/sftp:/home/test_sftp_user/share
+    command: test_sftp_user::1001
     deploy:
       restart_policy:
         condition: on-failure

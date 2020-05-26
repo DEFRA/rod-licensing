@@ -1,17 +1,17 @@
 import { finaliseTransactions } from '../finalise-transactions.js'
 import { RECORD_STAGE, MAX_BATCH_SIZE } from '../constants.js'
-import * as db from '../db.js'
+import * as db from '../../io/db.js'
+import { salesApi } from '@defra-fish/connectors-lib'
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     ...Object.keys(jest.requireActual('@defra-fish/connectors-lib').salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn() }), {})
   }
 }))
-jest.mock('../db.js', () => ({
+jest.mock('../../io/db.js', () => ({
   updateRecordStagingTable: jest.fn(),
   getProcessedRecords: jest.fn(() => [])
 }))
-const salesApi = require('@defra-fish/connectors-lib').salesApi
 
 describe('finalise-transactions', () => {
   const TEST_FILENAME = 'testfile.xml'
@@ -19,9 +19,7 @@ describe('finalise-transactions', () => {
     process.env.POCL_FILE_STAGING_TABLE = 'TestFileTable'
     process.env.POCL_RECORD_STAGING_TABLE = 'TestRecordTable'
   })
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  beforeEach(jest.clearAllMocks)
 
   it('updates records appropriately if a finalisation error occurs', async () => {
     const fakeError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }

@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "0.0.1-beta.31",
+  "version": "0.0.1-beta.32",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {

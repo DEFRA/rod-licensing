@@ -82,6 +82,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
 {% endblock %}
