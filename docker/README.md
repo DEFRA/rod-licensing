@@ -39,7 +39,7 @@ able to explore the content of each table and modify/delete records as necessary
 
 ### SQS
 
-A local instance of ElasticMQ is used to emulate S3. It is exposed on port 9324 and will be configured with the necessary FIFO SQS queues
+A local instance of ElasticMQ is used to emulate SQS. It is exposed on port 9324 and will be configured with the necessary FIFO SQS queues
 to run the digital services locally.
 
 Tips:
@@ -64,7 +64,7 @@ The redis-insights tool can be used to explore the content of the redis store, i
 
 #### Redis Commander
 
-Alternatively you can also used redis-commander which can be accessed via [http://localhost:8003/](http://localhost:8003/)
+Alternatively you can also use redis-commander which can be accessed via [http://localhost:8003/](http://localhost:8003/)
 
 ## Services
 
@@ -92,6 +92,9 @@ NODE_ENV=development
 # Global Redis
 REDIS_HOST=host.docker.internal
 REDIS_PORT=6379
+
+# Global URLs
+SALES_API_URL=http://host.docker.internal:4000
 
 # Global AWS
 AWS_REGION=eu-west-2

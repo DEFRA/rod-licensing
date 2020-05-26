@@ -24,6 +24,33 @@ export const updateFileStagingTable = async ({ filename, ...entries }) => {
 }
 
 /**
+ * Retrieve all file records for the specified stages.  If stages are not provided then all records are returned
+ *
+ * @param {string} stages the stage names to filter the result-set on. Omit to retrieve all records regardless of the stage.
+ * @returns {Promise<[DocumentClient.AttributeMap]>}
+ */
+export const getFileRecords = async (...stages) => {
+  const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
+  return executePagedOperation(docClient.scan, {
+    TableName: process.env.POCL_FILE_STAGING_TABLE,
+    ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
+    ExpressionAttributeValues: stageValues,
+    ConsistentRead: true
+  })
+}
+
+/**
+ * Retrieve an individual file record by the specified filename
+ *
+ * @param filename the name of the POCL file to retrieve a record for
+ * @returns {DocumentClient.AttributeMap}
+ */
+export const getFileRecord = async filename => {
+  const result = await docClient.get({ TableName: process.env.POCL_FILE_STAGING_TABLE, Key: { filename }, ConsistentRead: true }).promise()
+  return result.Item
+}
+
+/**
  * Update the POCL record staging table to add entries for each of the provided records
  *
  * @param {string} filename the filename of a POCL file to which the records relate
@@ -48,23 +75,31 @@ export const updateRecordStagingTable = async (filename, records) => {
  *
  * @param {string} filename the filename of a POCL file for which the records should be retrieved
  * @param {string} stages the stage names to filter the result-set on. Omit to retrieve all records regardless of the stage.
- * @returns {Promise<[]>}
+ * @returns {Promise<[DocumentClient.AttributeMap]>}
  */
 export const getProcessedRecords = async (filename, ...stages) => {
-  const items = []
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
+  return executePagedOperation(docClient.query, {
+    TableName: process.env.POCL_RECORD_STAGING_TABLE,
+    KeyConditionExpression: 'filename = :filename',
+    ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
+    ExpressionAttributeValues: { ':filename': filename, ...stageValues },
+    ConsistentRead: true
+  })
+}
+
+/***
+ * Support DynamoDB query/scan operations which may paginate results
+ *
+ * @param operation reference to the function to call on the DynamoDB DocumentClient
+ * @param params the parameters to pass to the DynamoDB operation
+ * @returns {Promise<[DocumentClient.AttributeMap]>}
+ */
+const executePagedOperation = async (operation, params) => {
+  const items = []
   let lastEvaluatedKey = null
   do {
-    const response = await docClient
-      .query({
-        TableName: process.env.POCL_RECORD_STAGING_TABLE,
-        KeyConditionExpression: 'filename = :filename',
-        ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
-        ExpressionAttributeValues: { ':filename': filename, ...stageValues },
-        ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }),
-        ConsistentRead: true
-      })
-      .promise()
+    const response = await operation({ ...params, ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }) }).promise()
     lastEvaluatedKey = response.LastEvaluatedKey
     response.Items && items.push(...response.Items)
   } while (lastEvaluatedKey)

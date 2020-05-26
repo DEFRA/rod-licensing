@@ -1,13 +1,11 @@
 import { FILE_STAGE } from './constants.js'
-import { updateFileStagingTable } from './db.js'
+import { getFileRecord, updateFileStagingTable } from '../io/db.js'
 import { createTransactions } from './create-transactions.js'
 import { finaliseTransactions } from './finalise-transactions.js'
 import Path from 'path'
 import md5File from 'md5-file'
-import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('pocl:staging')
-const { docClient } = AWS()
 
 /**
  * Process the POCL file at the given path, staging all data into Dynamics via the Sales API
@@ -17,17 +15,17 @@ const { docClient } = AWS()
  */
 export const stage = async xmlFilePath => {
   const filename = Path.basename(xmlFilePath)
+  let fileRecord = await getFileRecord(filename)
 
-  const result = await docClient.get({ TableName: process.env.POCL_FILE_STAGING_TABLE, Key: { filename }, ConsistentRead: true }).promise()
-  let fileRecord = result.Item
-
-  if (!fileRecord) {
-    debug('Import file %s not previously processed, processing now', filename)
-    const hash = await md5File(xmlFilePath)
-    fileRecord = { filename, hash, stage: FILE_STAGE.Staging }
-    await docClient.put({ TableName: process.env.POCL_FILE_STAGING_TABLE, Item: fileRecord }).promise()
+  if (!fileRecord || fileRecord.stage === FILE_STAGE.Pending) {
+    console.log('Import file %s not previously processed, processing now', filename)
+    const md5 = await md5File(xmlFilePath)
+    fileRecord = { ...fileRecord, ...{ filename, md5, stage: FILE_STAGE.Staging } }
+    await updateFileStagingTable({ filename, md5, stage: FILE_STAGE.Staging })
   } else if (fileRecord.stage === FILE_STAGE.Completed) {
     console.log('Import file %s has already been staged, skipping', filename)
+  } else {
+    console.log('Resuming staging process for file %s', filename)
   }
 
   if (fileRecord.stage === FILE_STAGE.Staging) {

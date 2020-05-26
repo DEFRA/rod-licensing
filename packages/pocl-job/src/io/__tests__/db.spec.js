@@ -12,6 +12,76 @@ describe('database operations', () => {
     jest.clearAllMocks()
     awsMock.__resetAll()
   })
+  describe('getFileRecord', () => {
+    it('calls a get operation on dynamodb', async () => {
+      await db.getFileRecord(TEST_FILENAME)
+      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.get).toHaveBeenCalledWith({
+        TableName: process.env.POCL_FILE_STAGING_TABLE,
+        Key: { filename: TEST_FILENAME },
+        ConsistentRead: true
+      })
+    })
+  })
+
+  describe('getFileRecords', () => {
+    it('retrieves all records for the given file if no stages are provided', async () => {
+      await db.getFileRecords()
+      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
+        expect.objectContaining({
+          TableName: process.env.POCL_FILE_STAGING_TABLE,
+          ConsistentRead: true
+        })
+      )
+    })
+
+    it('retrieves all records a given set of stages', async () => {
+      await db.getFileRecords('STAGE 1', 'STAGE 2')
+      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
+        expect.objectContaining({
+          TableName: process.env.POCL_FILE_STAGING_TABLE,
+          FilterExpression: 'stage IN (:stage0,:stage1)',
+          ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
+          ConsistentRead: true
+        })
+      )
+    })
+
+    it('deals with pagination where DynamoDB returns a LastEvaluatedKey', async () => {
+      const testLastEvaluatedKey = { filename: TEST_FILENAME, id: '16324258-85-92746491' }
+      awsMock.DynamoDB.DocumentClient.__setNextResponses(
+        'scan',
+        {
+          Items: [],
+          LastEvaluatedKey: testLastEvaluatedKey
+        },
+        {
+          Items: []
+        }
+      )
+
+      await db.getFileRecords('STAGE 1', 'STAGE 2')
+      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          TableName: process.env.POCL_FILE_STAGING_TABLE,
+          FilterExpression: 'stage IN (:stage0,:stage1)',
+          ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
+          ConsistentRead: true
+        })
+      )
+      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          TableName: process.env.POCL_FILE_STAGING_TABLE,
+          FilterExpression: 'stage IN (:stage0,:stage1)',
+          ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
+          ExclusiveStartKey: testLastEvaluatedKey,
+          ConsistentRead: true
+        })
+      )
+    })
+  })
+
   describe('updateFileStagingTable', () => {
     it('calls update on dynamodb including all necessary parameters', async () => {
       await db.updateFileStagingTable({ filename: TEST_FILENAME, param1: 'test1', param2: 'test2' })
@@ -40,12 +110,12 @@ describe('database operations', () => {
             TestRecordTable: [
               {
                 PutRequest: {
-                  Item: { filename: 'testfile.xml', id: 'test1', expires: expect.any(Number) }
+                  Item: { filename: TEST_FILENAME, id: 'test1', expires: expect.any(Number) }
                 }
               },
               {
                 PutRequest: {
-                  Item: { filename: 'testfile.xml', id: 'test2', expires: expect.any(Number) }
+                  Item: { filename: TEST_FILENAME, id: 'test2', expires: expect.any(Number) }
                 }
               }
             ]
@@ -62,7 +132,7 @@ describe('database operations', () => {
 
   describe('getProcessedRecords', () => {
     it('retrieves all records for the given file if no stages are provided', async () => {
-      await db.getProcessedRecords('testfile.xml')
+      await db.getProcessedRecords(TEST_FILENAME)
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: process.env.POCL_RECORD_STAGING_TABLE,
@@ -74,7 +144,7 @@ describe('database operations', () => {
     })
 
     it('retrieves all records a given set of stages', async () => {
-      await db.getProcessedRecords('testfile.xml', 'STAGE 1', 'STAGE 2')
+      await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: process.env.POCL_RECORD_STAGING_TABLE,
@@ -87,7 +157,7 @@ describe('database operations', () => {
     })
 
     it('deals with pagination where DynamoDB returns a LastEvaluatedKey', async () => {
-      const testLastEvaluatedKey = { filename: 'testfile.xml', id: '16324258-85-92746491' }
+      const testLastEvaluatedKey = { filename: TEST_FILENAME, id: '16324258-85-92746491' }
       awsMock.DynamoDB.DocumentClient.__setNextResponses(
         'query',
         {
@@ -99,7 +169,7 @@ describe('database operations', () => {
         }
       )
 
-      await db.getProcessedRecords('testfile.xml', 'STAGE 1', 'STAGE 2')
+      await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenNthCalledWith(
         1,
         expect.objectContaining({
