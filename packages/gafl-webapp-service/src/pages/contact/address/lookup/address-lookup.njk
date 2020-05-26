@@ -4,6 +4,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "input/macro.njk" import govukInput %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% block pageTitle %}Find your address - GOV.UK{% endblock %}
 
@@ -22,6 +23,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
         {{ errorSummary(error, errorMap) }}
         <form method="post">
             {% call govukFieldset({
@@ -72,6 +80,7 @@
             <p class="govuk-body-m">
                 <a href="{{ data.entryPage }}">Enter my address manually / I live outside the UK</a>
             </p>
+            {{ csrf() }}
         </form>
       <p class="govuk-body-s">© Crown copyright and database rights 2016 <a href="http://www.ordnancesurvey.co.uk" target="_blank">OS</a> 100024198.
       <br>Use of this addressing  data is subject to&nbsp;the <a href="">terms and conditions</a>.</p>

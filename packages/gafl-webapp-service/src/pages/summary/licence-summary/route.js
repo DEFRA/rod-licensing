@@ -1,7 +1,7 @@
-import moment from 'moment'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
+import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import {
@@ -50,22 +50,11 @@ const getData = async request => {
 
   await findPermit(permission, request)
 
-  const startDateString = moment(permission.licenceStartDate, 'YYYY-MM-DD').format('dddd, MMMM Do, YYYY')
-  const timeComponent = (() => {
-    if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
-      return 'Midnight'
-    } else if (permission.licenceStartTime === '12') {
-      return 'Midday'
-    } else {
-      return moment(permission.licenceStartDate, 'YYYY-MM-DD')
-        .add(permission.licenceStartTime, 'hours')
-        .format('h:mma')
-    }
-  })()
+  const startTimeString = displayStartTime(permission)
 
   return {
     permission,
-    startTimeString: `${timeComponent}, ${startDateString}`,
+    startTimeString,
     disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
     licenceTypes: mappings.LICENCE_TYPE,
     hasJunior: !!concessionHelper.hasJunior(permission),

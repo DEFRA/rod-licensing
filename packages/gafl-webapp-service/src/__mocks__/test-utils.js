@@ -1,5 +1,5 @@
 import { createServer, init, server } from '../server.js'
-import { SESSION_COOKIE_NAME_DEFAULT } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
 import { TEST_TRANSACTION, TEST_STATUS, CONTROLLER } from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
@@ -73,26 +73,33 @@ const initialize = async done => {
   done()
 }
 
-const injectWithCookie = async (method, url, payload) => {
+const injectWithCookies = async (method, url, payload = {}) => {
+  if (method === 'POST') {
+    Object.assign(payload, { [CSRF_TOKEN_COOKIE_NAME_DEFAULT]: global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT] })
+  }
   return server.inject({
     method,
     url,
     payload,
-    headers: { cookie: `${SESSION_COOKIE_NAME_DEFAULT}=${global.cookies.sid}` }
+    headers: {
+      cookie: `${SESSION_COOKIE_NAME_DEFAULT}=${global.cookies.sid}; ${CSRF_TOKEN_COOKIE_NAME_DEFAULT}=${global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT]}`
+    }
   })
 }
 
-const injectWithoutCookie = async (method, url, payload) => {
+const injectWithoutSessionCookie = async (method, url, payload = {}) => {
+  Object.assign(payload, { [CSRF_TOKEN_COOKIE_NAME_DEFAULT]: global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT] })
   return server.inject({
     method,
     url,
-    payload
+    payload,
+    headers: { cookie: `${CSRF_TOKEN_COOKIE_NAME_DEFAULT}=${global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT]}` }
   })
 }
 
 const postRedirectGet = async (uri, payload) => {
-  await injectWithCookie('POST', uri, payload)
-  return injectWithCookie('GET', CONTROLLER.uri)
+  await injectWithCookies('POST', uri, payload)
+  return injectWithCookies('GET', CONTROLLER.uri)
 }
 
-export { start, stop, server, getCookies, initialize, injectWithCookie, injectWithoutCookie, postRedirectGet }
+export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, postRedirectGet }

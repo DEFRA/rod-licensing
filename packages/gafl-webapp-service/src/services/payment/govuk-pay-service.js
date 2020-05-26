@@ -23,12 +23,11 @@ const GOVPAY_STATUS_CODES = {
   ERROR: 'P0050'
 }
 
-const preparePayment = transaction => {
+const preparePayment = (transaction, request) => {
+  const url = new URL(AGREED.uri, `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:${request.info.host}`)
+
   const result = {
-    return_url: new URL(
-      AGREED.uri, // The cookie is lost if we redirect from another domain so use this intermediate handler
-      `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:\\${process.env.HOST_URL || '0.0.0.0:3000'}`
-    ).href,
+    return_url: url.href,
     amount: transaction.cost * 100,
     reference: transaction.id,
     description: transaction.permissions.length === 1 ? transaction.permissions[0].permit.description : 'Multiple permits',
@@ -37,13 +36,17 @@ const preparePayment = transaction => {
 
   if (transaction.permissions.length === 1) {
     result.email = transaction.permissions[0].licensee.email
-    result.cardholder_name = `${transaction.permissions[0].licensee.firstName} ${transaction.permissions[0].licensee.lastName}`
-    result.billing_address = {
-      line1: `${transaction.permissions[0].licensee.premises} ${transaction.permissions[0].licensee.street}`,
-      line2: transaction.permissions[0].licensee.locality,
-      postcode: transaction.permissions[0].licensee.postcode,
-      city: transaction.permissions[0].licensee.town,
-      country: transaction.permissions[0].licensee.countryCode
+    result.prefilled_cardholder_details = {
+      cardholder_name: `${transaction.permissions[0].licensee.firstName} ${transaction.permissions[0].licensee.lastName}`,
+      billing_address: {
+        line1: `${transaction.permissions[0].licensee.premises} ${transaction.permissions[0].licensee.street}`,
+        postcode: transaction.permissions[0].licensee.postcode,
+        city: transaction.permissions[0].licensee.town,
+        country: transaction.permissions[0].licensee.countryCode
+      }
+    }
+    if (transaction.permissions[0].licensee.locality) {
+      result.prefilled_cardholder_details.billing_address.line2 = transaction.permissions[0].licensee.locality
     }
   }
 

@@ -35,6 +35,11 @@ const copyAssets = () => {
     .pipe(gulp.dest(paths.public))
 }
 
+const copyRobots = () => {
+  return gulp.src(`${paths.assets}robots.txt`)
+    .pipe(gulp.dest(paths.public))
+}
+
 const copyJs = () => {
   return merge(
     gulp.src(`${paths.govUk}all.js`),
@@ -59,5 +64,6 @@ gulp.task('default', gulp.series(
   clean,
   copyAssets,
   copyJs,
+  copyRobots,
   buildSass
 ))

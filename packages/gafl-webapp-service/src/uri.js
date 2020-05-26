@@ -32,6 +32,7 @@ export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-faile
 
 export const TERMS_AND_CONDITIONS = { uri: '/buy/terms-conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
+export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
 
 export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }
@@ -40,6 +41,14 @@ export const AGREED = { uri: '/buy/agreed' }
 
 export const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
+
+/**
+ * These are informational static pages
+ */
+export const COOKIES = { uri: '/cookies', page: 'cookies' }
+export const ACCESSIBILITY_STATEMENT = { uri: '/accessibility-statement', page: 'accessibility-statement' }
+export const PRIVACY_POLICY = { uri: '/privacy-policy', page: 'privacy-policy' }
+export const REFUND_POLICY = { uri: '/refund-policy', page: 'refund-policy' }
 
 /**
  * These are inserted at runtime by the test framework but the session manager needs to know about them

@@ -2,7 +2,7 @@ import mockPermits from '../../../../services/sales-api/__mocks__/data/permits.j
 import mockPermitsConcessions from '../../../../services/sales-api/__mocks__/data/permit-concessions.js'
 import mockConcessions from '../../../../services/sales-api/__mocks__/data/concessions.js'
 
-import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 import {
   LICENCE_SUMMARY,
@@ -45,7 +45,7 @@ afterAll(d => stop(d))
 
 describe('The licence summary page', () => {
   it('redirects to the licence length page if length is set', async () => {
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
   })
@@ -53,28 +53,28 @@ describe('The licence summary page', () => {
   it('redirects to the licence type page if no licence type is set', async () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     // // await postRedirectGet(LICENCE_LENGTH.uri,  { 'licence-length': '12M' })
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_TYPE.uri)
   })
 
   it('redirects to the licence type page if the number of rods is not set', async () => {
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_TYPE.uri)
   })
 
   it('redirects to the licence start date if it is not set', async () => {
     await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
   it('redirects to the date of birth page if it is not set', async () => {
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
@@ -85,7 +85,7 @@ describe('The licence summary page', () => {
     // Mock the response from the API
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -100,13 +100,13 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
 
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
     doMockPermits()
-    const data2 = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data2 = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data2.statusCode).toBe(200)
   })
 
@@ -115,7 +115,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -125,7 +125,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
 
     const data2 = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
@@ -145,7 +145,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -156,7 +156,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -166,7 +166,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -175,7 +175,7 @@ describe('The licence summary page', () => {
     await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
 
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].concessions.length).toBe(0)
   })
 
@@ -185,7 +185,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -194,12 +194,12 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
   it('changing the start date causes a redirect back to the summary page', async () => {
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
     const fdate = moment().add(5, 'days')
     const body = {
       'licence-start-date-year': fdate.year().toString(),
@@ -210,7 +210,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -219,7 +219,7 @@ describe('The licence summary page', () => {
     await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
 
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
     const fdate = moment().add(5, 'days')
     const body = {
       'licence-start-date-year': fdate.year().toString(),
@@ -231,7 +231,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 
@@ -240,7 +240,7 @@ describe('The licence summary page', () => {
     await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
 
-    await injectWithCookie('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
     const fdate = moment().add(5, 'days')
     const body = {
       'licence-start-date-year': fdate.year().toString(),
@@ -252,7 +252,7 @@ describe('The licence summary page', () => {
 
     doMockPermits()
 
-    const data = await injectWithCookie('GET', LICENCE_SUMMARY.uri)
+    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
 })

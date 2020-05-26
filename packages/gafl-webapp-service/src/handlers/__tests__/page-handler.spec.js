@@ -7,6 +7,10 @@ describe('The page handler function', () => {
         helpers: {
           page: {
             getCurrentPermission: () => ({})
+          },
+          status: {
+            getCurrentPermission: () => ({}),
+            setCurrentPermission: () => {}
           }
         }
       })
@@ -31,6 +35,10 @@ describe('The page handler function', () => {
             setCurrentPermission: () => {
               throw new Error('Random exception')
             }
+          },
+          status: {
+            getCurrentPermission: () => ({}),
+            setCurrentPermission: () => {}
           }
         }
       })

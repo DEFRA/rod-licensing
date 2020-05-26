@@ -34,7 +34,7 @@ export default async request => {
     Object.assign(permission.licensee, { noLicenceRequired: true })
   } else if (isJunior(ageAtLicenceStartDate)) {
     // Juniors always get a 12 months licence
-    Object.assign(permission, { licenceLength: '12M' })
+    Object.assign(permission, { licenceLength: '12M', licenceStartTime: '0' })
     concessionHelper.addJunior(permission)
     // Junior licences are net sent out by post so if the contact details are by letter then reset to none
     if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {

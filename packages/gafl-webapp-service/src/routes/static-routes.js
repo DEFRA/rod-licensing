@@ -19,5 +19,14 @@ export default [
         path: '/public/images/favicon.ico'
       }
     }
+  },
+  {
+    method: 'GET',
+    path: '/robots.txt',
+    handler: {
+      file: {
+        path: 'public/robots.txt'
+      }
+    }
   }
 ]

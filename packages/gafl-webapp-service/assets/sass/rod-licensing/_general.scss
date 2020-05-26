@@ -1,0 +1,20 @@
+div.hidden-area {
+  display: none;
+}
+
+.panel-white-text {
+  color: govuk-colour('white');
+}
+
+@media print {
+  .no-print {
+    display: none!important;
+  }
+}
+
+@media screen {
+  .print-area, .print-area * {
+    display: none;
+  }
+}
+

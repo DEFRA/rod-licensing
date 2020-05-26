@@ -35,6 +35,7 @@ const sendToSalesApi = async (request, transaction, status) => {
   for (let i = 0; i < response.permissions.length; i++) {
     debug(`Setting permission reference number: ${response.permissions[i].referenceNumber}`)
     transaction.permissions[i].referenceNumber = response.permissions[i].referenceNumber
+    debug(`Setting permission end date: ${response.permissions[i].endDate}`)
     transaction.permissions[i].endDate = response.permissions[i].endDate
   }
   transaction.id = response.id
@@ -49,7 +50,7 @@ const sendToSalesApi = async (request, transaction, status) => {
 }
 
 const createPayment = async (request, transaction, status) => {
-  const preparedPayment = preparePayment(transaction)
+  const preparedPayment = preparePayment(transaction, request)
   const payment = await postData(preparedPayment, transaction.id)
   transaction.payment = {
     state: payment.state,

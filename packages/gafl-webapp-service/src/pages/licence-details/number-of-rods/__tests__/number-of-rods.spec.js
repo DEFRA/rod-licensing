@@ -1,5 +1,5 @@
 import { NUMBER_OF_RODS, TEST_TRANSACTION } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookie, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import each from 'jest-each'
 
 beforeAll(d => start(d))
@@ -8,18 +8,18 @@ afterAll(d => stop(d))
 
 describe('The number of rods page', () => {
   it('Return success on requesting', async () => {
-    const data = await injectWithCookie('GET', NUMBER_OF_RODS.uri)
+    const data = await injectWithCookies('GET', NUMBER_OF_RODS.uri)
     expect(data.statusCode).toBe(200)
   })
 
   it('Redirects back to itself on posting no response', async () => {
-    const data = await injectWithCookie('POST', NUMBER_OF_RODS.uri, {})
+    const data = await injectWithCookies('POST', NUMBER_OF_RODS.uri, {})
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NUMBER_OF_RODS.uri)
   })
 
   it('Redirects back to itself on posting an invalid response', async () => {
-    const data = await injectWithCookie('POST', NUMBER_OF_RODS.uri, { 'number-of-rods': '9' })
+    const data = await injectWithCookies('POST', NUMBER_OF_RODS.uri, { 'number-of-rods': '9' })
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NUMBER_OF_RODS.uri)
   })
@@ -29,7 +29,7 @@ describe('The number of rods page', () => {
     ['three rod licence', '3']
   ]).it('stores the transaction on successful submission of %s', async (desc, code) => {
     await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': code })
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].numberOfRods).toBe(code)
   })
 })

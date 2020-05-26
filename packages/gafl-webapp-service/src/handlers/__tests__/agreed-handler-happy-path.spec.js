@@ -1,5 +1,5 @@
 import each from 'jest-each'
-import { initialize, injectWithCookie, start, stop } from '../../__mocks__/test-utils'
+import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils'
 import {
   ADULT_FULL_1_DAY_LICENCE,
   ADULT_DISABLED_12_MONTH_LICENCE,
@@ -20,7 +20,7 @@ const fetch = require('node-fetch')
 
 describe('The agreed handler', () => {
   it('throws a status 403 (forbidden) exception is the agreed flag is not set', async () => {
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(403)
   })
 
@@ -77,7 +77,7 @@ describe('The agreed handler', () => {
           )
       )
 
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe('https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0')
 
@@ -101,17 +101,19 @@ describe('The agreed handler', () => {
       // Mock response from SALES API (patch-transaction)
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
 
-    const data2 = await injectWithCookie('GET', AGREED.uri)
+    const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(ORDER_COMPLETE.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(journey.transActionResponse.id)
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    const data3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
@@ -139,17 +141,19 @@ describe('The agreed handler', () => {
       // Mock response from SALES API (patch-transaction)
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
 
-    const data1 = await injectWithCookie('GET', AGREED.uri)
+    const data1 = await injectWithCookies('GET', AGREED.uri)
     expect(data1.statusCode).toBe(302)
     expect(data1.headers.location).toBe(ORDER_COMPLETE.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(JUNIOR_12_MONTH_LICENCE.transActionResponse.id)
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    const data3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
@@ -177,12 +181,12 @@ describe('The agreed handler', () => {
       // Mock response from SALES API (patch-transaction)
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
 
-    const data1 = await injectWithCookie('GET', AGREED.uri)
+    const data1 = await injectWithCookies('GET', AGREED.uri)
     expect(data1.statusCode).toBe(302)
     expect(data1.headers.location).toBe(ORDER_COMPLETE.uri)
-    const { payload } = await injectWithCookie('GET', TEST_TRANSACTION.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(JUNIOR_12_MONTH_LICENCE.transActionResponse.id)
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
@@ -215,10 +219,10 @@ describe('The agreed handler', () => {
       // Mock response from SALES API (patch-transaction)
       .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
 
-    await injectWithCookie('GET', AGREED.uri)
-    const { payload: status } = await injectWithCookie('GET', TEST_STATUS.uri)
+    await injectWithCookies('GET', AGREED.uri)
+    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
-    const data = await injectWithCookie('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ORDER_COMPLETE.uri)
   })
