@@ -41,27 +41,22 @@ export async function ftpToS3 () {
       debug('No XML files were waiting to be processed on the SFTP server.')
     } else {
       for (const fileEntry of xmlFiles) {
-        const remoteFilePath = Path.resolve(process.env.POCL_FTP_PATH, fileEntry.name)
-        const localFilePath = Path.resolve(tempDir, fileEntry.name)
+        const filename = fileEntry.name
+        const remoteFilePath = Path.resolve(process.env.POCL_FTP_PATH, filename)
+        const localFilePath = Path.resolve(tempDir, filename)
 
         // Retrieve from FTP server to local temporary directory
         debug('Transferring %s to %s', remoteFilePath, localFilePath)
         await sftp.fastGet(remoteFilePath, localFilePath, {})
 
         // Transfer to S3
-        const s3Key = Path.join(moment().format('YYYY-MM-DD'), fileEntry.name)
+        const s3Key = Path.join(moment().format('YYYY-MM-DD'), filename)
         debug('Transferring file to S3 bucket %s with key %s', process.env.POCL_S3_BUCKET, s3Key)
-        await s3
-          .putObject({
-            Bucket: process.env.POCL_S3_BUCKET,
-            Key: s3Key,
-            Body: fs.createReadStream(localFilePath)
-          })
-          .promise()
+        await s3.putObject({ Bucket: process.env.POCL_S3_BUCKET, Key: s3Key, Body: fs.createReadStream(localFilePath) }).promise()
 
         // Record as pending to be processed
         const md5 = await md5File(localFilePath)
-        await updateFileStagingTable({ filename: fileEntry.name, md5, stage: FILE_STAGE.Pending, s3Key: s3Key })
+        await updateFileStagingTable({ filename, md5, stage: FILE_STAGE.Pending, s3Key: s3Key })
 
         // Remove from FTP server and local tmp
         debug('Removing remote file %s', remoteFilePath)

@@ -27,7 +27,6 @@ export default function () {
       apiVersion: '2006-03-01',
       ...(Config.aws.s3.endpoint && {
         endpoint: Config.aws.s3.endpoint,
-        s3BucketEndpoint: false,
         s3ForcePathStyle: true
       })
     })
