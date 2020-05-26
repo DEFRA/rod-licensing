@@ -48,7 +48,7 @@
     "dynamics-web-api": "^1.6.3",
     "husky": "^4.2.5",
     "jest": "^25.5.4",
-    "jest-each": "^25.5.0",
+    "jest-each": "^26.0.1",
     "lerna": "^3.22.0",
     "lerna-update-wizard": "^0.17.8",
     "lint-staged": "^10.2.2",
