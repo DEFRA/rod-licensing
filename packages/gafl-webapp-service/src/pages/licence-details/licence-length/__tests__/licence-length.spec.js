@@ -25,7 +25,7 @@ describe('The licence length page', () => {
   })
 
   each([
-    ['12 Months', '12M'],
+    ['12 months', '12M'],
     ['8 day', '8D'],
     ['1 day', '1D']
   ]).it('stores the transaction on a successful submission of %s', async (desc, lenCode) => {

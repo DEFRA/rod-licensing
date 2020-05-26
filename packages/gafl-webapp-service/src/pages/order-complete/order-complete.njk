@@ -17,19 +17,19 @@
 {% endset -%}
 
 {% if data.permission.licenceLength === '1D' %}
-    {% set lengthText = '1 Day' %}
+    {% set lengthText = '1 day' %}
     {% set licenceLengthMessage %}
         <h2 class="govuk-heading-m">We don't send 1-day licences in the post</h2>
         {{ bailiffMessage | trim | safe }}
     {% endset -%}
 {% elseif data.permission.licenceLength === '8D' %}
-    {% set lengthText = '8 Days' %}
+    {% set lengthText = '8 days' %}
     {% set licenceLengthMessage %}
         <h2 class="govuk-heading-m">We don't send 8-day licences in the post</h2>
         {{ bailiffMessage | trim | safe }}
     {% endset -%}
 {% else %}
-    {% set lengthText = '12 Months' %}
+    {% set lengthText = '12 months' %}
     {% set licenceLengthMessage %}
         {% if data.hasJunior  %}
             <h2 class="govuk-heading-m">We don't send junior licences in the post</h2>

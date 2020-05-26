@@ -34,8 +34,8 @@
           firstCellIsHeader: true,
           head: [ { text: "Name" }, { text: "Purpose" }, { text: "Expires" } ],
           rows: [
-            [ { text: "sid" }, { text: "Used for session management" }, { text: "3 hours after you stop using the service" } ],
-            [ { text: "rlsctkn" }, { text: "Used to protect the service against malicious activity" }, { text: "Until you close your browser" } ]
+            [ { text: cookie.sess }, { text: "Used for session management" }, { text: "3 hours after you stop using the service" } ],
+            [ { text: cookie.csrf }, { text: "Used to protect the service against malicious activity" }, { text: "Until you close your browser" } ]
           ]
         }) }}
 

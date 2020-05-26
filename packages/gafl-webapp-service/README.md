@@ -12,6 +12,7 @@ To run from this directory:
 | -------------------------- | ----------------------------------------------- | :------: | ------------------- | ----------------------------- |
 | NODE_ENV                   | Node environment                                |    no    |                     | development, test, production |
 | SESSION_COOKIE_NAME        | Name of the session cookie                      |    no    | sid                 |                               |
+| CSRF_TOKEN_COOKIE_NAME     | Name of the CSRF token cookie                   |    no    | rlsctkn             |                               |
 | SESSION_TTL_MS             | Time to live for the session cookie and cache   |    no    | 10800000            |                               |
 | ADDRESS_LOOKUP_URL         | Location of address lookup facade               |    no    |                     |                               |
 | ADDRESS_LOOKUP_KEY         | The API key required by OS places               |    no    |                     |                               |

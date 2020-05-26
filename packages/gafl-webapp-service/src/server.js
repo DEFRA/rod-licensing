@@ -14,7 +14,7 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { CSRF_TOKEN_COOKIE_NAME, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, SESSION_TTL_MS_DEFAULT } from './constants.js'
+import { CSRF_TOKEN_COOKIE_NAME_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, SESSION_TTL_MS_DEFAULT } from './constants.js'
 
 import sessionManager from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
@@ -70,7 +70,7 @@ const plugIns = [
   {
     plugin: Crumb,
     options: {
-      key: CSRF_TOKEN_COOKIE_NAME,
+      key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
       cookieOptions: {
         isSecure: process.env.NODE_ENV !== 'development',
         isHttpOnly: process.env.NODE_ENV !== 'development'

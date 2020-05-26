@@ -15,7 +15,6 @@ const createPdfBinary = async pdfDoc => {
         bolditalics: path.join(Dirname, 'src/pages/fonts/Roboto-MediumItalic.ttf')
       }
     })
-
     const doc = printer.createPdfKitDocument(pdfDoc)
     const chunks = []
 

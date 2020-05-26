@@ -26,11 +26,11 @@ const alignment = {
 const licenceLength = permission => {
   switch (permission.licenceLength) {
     case '1D':
-      return '1 Day'
+      return '1 day'
     case '8D':
-      return '8 Days'
+      return '8 days'
     default:
-      return '12 Months'
+      return '12 months'
   }
 }
 

@@ -84,7 +84,7 @@ describe('The PDF generator', () => {
     permission.numberOfRods = '2'
     permission.concessions = []
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[2][1].text).toBe('1 Day')
+    expect(result.content[5].table.body[2][1].text).toBe('1 day')
   })
 
   it('completes for an 8 Day licence', () => {
@@ -93,7 +93,7 @@ describe('The PDF generator', () => {
     permission.numberOfRods = '2'
     permission.concessions = []
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[2][1].text).toBe('8 Days')
+    expect(result.content[5].table.body[2][1].text).toBe('8 days')
   })
 
   it('completes for a salmon and sea trout licence', () => {

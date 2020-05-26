@@ -1,5 +1,5 @@
 import { createServer, init, server } from '../server.js'
-import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
 import { TEST_TRANSACTION, TEST_STATUS, CONTROLLER } from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
@@ -75,25 +75,25 @@ const initialize = async done => {
 
 const injectWithCookies = async (method, url, payload = {}) => {
   if (method === 'POST') {
-    Object.assign(payload, { [CSRF_TOKEN_COOKIE_NAME]: global.cookies[CSRF_TOKEN_COOKIE_NAME] })
+    Object.assign(payload, { [CSRF_TOKEN_COOKIE_NAME_DEFAULT]: global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT] })
   }
   return server.inject({
     method,
     url,
     payload,
     headers: {
-      cookie: `${SESSION_COOKIE_NAME_DEFAULT}=${global.cookies.sid}; ${CSRF_TOKEN_COOKIE_NAME}=${global.cookies[CSRF_TOKEN_COOKIE_NAME]}`
+      cookie: `${SESSION_COOKIE_NAME_DEFAULT}=${global.cookies.sid}; ${CSRF_TOKEN_COOKIE_NAME_DEFAULT}=${global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT]}`
     }
   })
 }
 
 const injectWithoutSessionCookie = async (method, url, payload = {}) => {
-  Object.assign(payload, { [CSRF_TOKEN_COOKIE_NAME]: global.cookies[CSRF_TOKEN_COOKIE_NAME] })
+  Object.assign(payload, { [CSRF_TOKEN_COOKIE_NAME_DEFAULT]: global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT] })
   return server.inject({
     method,
     url,
     payload,
-    headers: { cookie: `${CSRF_TOKEN_COOKIE_NAME}=${global.cookies[CSRF_TOKEN_COOKIE_NAME]}` }
+    headers: { cookie: `${CSRF_TOKEN_COOKIE_NAME_DEFAULT}=${global.cookies[CSRF_TOKEN_COOKIE_NAME_DEFAULT]}` }
   })
 }
 
