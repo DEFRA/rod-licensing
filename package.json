@@ -49,7 +49,7 @@
     "husky": "^4.2.5",
     "jest": "^25.5.4",
     "jest-each": "^25.5.0",
-    "lerna": "^3.20.2",
+    "lerna": "^3.22.0",
     "lerna-update-wizard": "^0.17.8",
     "lint-staged": "^10.2.2",
     "prettier-standard": "^16.3.0",
