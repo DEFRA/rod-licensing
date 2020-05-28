@@ -10,7 +10,7 @@ export function buildJoiOptionSetValidator (optionSetName, exampleValue) {
   return Joi.string()
     .trim()
     .required()
-    .external(createOptionSetValidator(optionSetName, exampleValue))
+    .external(createOptionSetValidator(optionSetName))
     .description(`See ${optionSetName} option-set for available options`)
     .example(exampleValue)
 }
