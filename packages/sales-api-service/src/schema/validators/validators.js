@@ -15,7 +15,7 @@ export function buildJoiOptionSetValidator (optionSetName, exampleValue) {
     .example(exampleValue)
 }
 
-export function createOptionSetValidator (optionSetName, exampleValue) {
+export function createOptionSetValidator (optionSetName) {
   return async value => {
     if (value) {
       const option = await getGlobalOptionSetValue(optionSetName, value)

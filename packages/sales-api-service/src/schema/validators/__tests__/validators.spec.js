@@ -32,21 +32,21 @@ describe('validators', () => {
   describe('createOptionSetValidator', () => {
     it('returns a validation function returning undefined when an optionset is successfully resolved', async () => {
       const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => 'success')
-      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
+      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet')
       await expect(validationFunction('testValue')).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith('testOptionSet', 'testValue')
     })
 
     it('returns a validation function which skips validation if the input value is undefined', async () => {
       const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => 'success')
-      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet', undefined)
+      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet')
       await expect(validationFunction(undefined)).resolves.toEqual(undefined)
       expect(spy).not.toHaveBeenCalled()
     })
 
     it('returns a validation function throwing an error when no optionset found', async () => {
       const spy = jest.spyOn(referenceData, 'getGlobalOptionSetValue').mockImplementation(async () => null)
-      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet', 'Test Example')
+      const validationFunction = require('../validators.js').createOptionSetValidator('testOptionSet')
       await expect(validationFunction('testValue')).rejects.toThrow('Value provided is not a recognised testOptionSet')
       expect(spy).toHaveBeenCalledWith('testOptionSet', 'testValue')
     })

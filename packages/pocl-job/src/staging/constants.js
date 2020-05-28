@@ -17,9 +17,7 @@ export const DYNAMICS_IMPORT_STAGE = {
   Failed: 'Failed',
   UnderReview: 'Under Review',
   Closed: 'Closed',
-  isAlreadyProcessed: status => {
-    return status !== DYNAMICS_IMPORT_STAGE.Pending && status !== DYNAMICS_IMPORT_STAGE.InProgress
-  }
+  isAlreadyProcessed: status => status !== DYNAMICS_IMPORT_STAGE.Pending && status !== DYNAMICS_IMPORT_STAGE.InProgress
 }
 
 export const RECORD_STAGE = {
