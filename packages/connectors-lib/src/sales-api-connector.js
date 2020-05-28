@@ -25,7 +25,7 @@ export const call = async (url, method = 'get', payload = null) => {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: await response.json()
+    body: response.status !== 204 ? await response.json() : undefined
   }
 }
 
@@ -34,14 +34,12 @@ const exec2xxOrThrow = async requestPromise => {
   if (response.ok) {
     return response.body
   }
-  throw new Error(`Unexpected response from the Sales API: ${JSON.stringify(response, null, 2)}`)
+  throw Object.assign(new Error(`Unexpected response from the Sales API: ${JSON.stringify(response, null, 2)}`), { ...response })
 }
+
 const exec2xxOrNull = async requestPromise => {
   const response = await requestPromise
-  if (response.ok) {
-    return response.body
-  }
-  return null
+  return (response.ok && response.body) || null
 }
 
 /**
@@ -91,6 +89,43 @@ export const getTransactionFile = async filename => exec2xxOrNull(call(new URL(`
  */
 export const upsertTransactionFile = async (filename, data) =>
   exec2xxOrThrow(call(new URL(`/transaction-files/${filename}`, urlBase), 'put', data))
+
+/**
+ * Create a payment journal
+ *
+ * @param data the payload with which to create the payment journal
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const createPaymentJournal = async (id, data) => exec2xxOrThrow(call(new URL(`/paymentJournals/${id}`, urlBase), 'put', data))
+
+/**
+ * Retrieve an existing payment journal
+ *
+ * @param {string} id the identifier of the payment journal to retrieve
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const getPaymentJournal = async id => exec2xxOrNull(call(new URL(`/paymentJournals/${id}`, urlBase), 'get'))
+
+/**
+ * Update an existing payment journal
+ *
+ * @param {string} id the identifier of the payment journal to update
+ * @param data the payload with which to update the payment journal
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const updatePaymentJournal = async (id, data) => exec2xxOrThrow(call(new URL(`/paymentJournals/${id}`, urlBase), 'patch', data))
+
+/**
+ * Delete an existing payment journal
+ *
+ * @param {string} id the identifier of the payment journal to update
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const deletePaymentJournal = async id => exec2xxOrThrow(call(new URL(`/paymentJournals/${id}`, urlBase), 'delete'))
 
 /**
  * Supports querying of reference data from the Sales API
@@ -145,3 +180,9 @@ export const permitConcessions = new QueryBuilder(new URL('permitConcessions', u
  * @type {QueryBuilder}
  */
 export const transactionCurrencies = new QueryBuilder(new URL('transactionCurrencies', urlBase))
+
+/**
+ * Query support for payment journals
+ * @type {QueryBuilder}
+ */
+export const paymentJournals = new QueryBuilder(new URL('paymentJournals', urlBase))

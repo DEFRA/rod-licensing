@@ -1,8 +1,13 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
 import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
+import { TRANSACTIONS_STAGING_TABLE, TRANSACTIONS_QUEUE } from '../../../config.js'
 const awsMock = require('aws-sdk').default
 
 describe('transaction service', () => {
+  beforeAll(() => {
+    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+    TRANSACTIONS_QUEUE.Url = 'TestQueueUrl'
+  })
   beforeEach(awsMock.__resetAll)
 
   describe('finaliseTransaction', () => {
@@ -11,8 +16,6 @@ describe('transaction service', () => {
       awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       awsMock.DynamoDB.DocumentClient.__setResponse('update', { Attributes: {} })
       awsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
-
-      process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
 
       const completionFields = {
         payment: {
@@ -28,7 +31,7 @@ describe('transaction service', () => {
       expect(result).toEqual({ messageId: 'Test_Message', status: 'queued' })
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
         expect.objectContaining({
-          TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+          TableName: TRANSACTIONS_STAGING_TABLE.TableName,
           Key: { id: mockRecord.id },
           UpdateExpression: `SET ${setFieldExpression}`,
           ExpressionAttributeValues: expect.objectContaining(expressionAttributeValues)
@@ -36,7 +39,7 @@ describe('transaction service', () => {
       )
       expect(awsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
         expect.objectContaining({
-          QueueUrl: process.env.TRANSACTIONS_QUEUE_URL,
+          QueueUrl: TRANSACTIONS_QUEUE.Url,
           MessageGroupId: 'transactions',
           MessageDeduplicationId: mockRecord.id,
           MessageBody: JSON.stringify({ id: mockRecord.id })

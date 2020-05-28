@@ -1,4 +1,5 @@
 import Config from './config.js'
+import { createDocumentClient } from './documentclient-decorator.js'
 import AWS from 'aws-sdk'
 const { DynamoDB, SQS, S3 } = AWS
 
@@ -10,7 +11,7 @@ export default function () {
         endpoint: Config.aws.dynamodb.endpoint
       })
     }),
-    docClient: new DynamoDB.DocumentClient({
+    docClient: createDocumentClient({
       convertEmptyValues: true,
       apiVersion: '2012-08-10',
       ...(Config.aws.dynamodb.endpoint && {

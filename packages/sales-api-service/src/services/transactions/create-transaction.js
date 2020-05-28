@@ -1,12 +1,12 @@
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getReferenceDataForEntityAndId } from '../reference-data.service.js'
+import { TRANSACTIONS_STAGING_TABLE } from '../../config.js'
 import { v4 as uuidv4 } from 'uuid'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 * 168
 
 /**
  * Create a single new transaction
@@ -16,7 +16,7 @@ const STAGING_TTL_DELTA = process.env.TRANSACTION_STAGING_TABLE_TTL || 60 * 60 *
 export async function createTransaction (payload) {
   const record = await createTransactionRecord(payload)
   await docClient
-    .put({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
+    .put({ TableName: TRANSACTIONS_STAGING_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
     .promise()
   debug('Transaction %s stored with payload %O', record.id, record)
   return record
@@ -32,7 +32,7 @@ export async function createTransactions (payload) {
   const records = await Promise.all(payload.map(i => createTransactionRecord(i)))
   const params = {
     RequestItems: {
-      [process.env.TRANSACTIONS_STAGING_TABLE]: records.map(record => ({ PutRequest: { Item: record } }))
+      [TRANSACTIONS_STAGING_TABLE.TableName]: records.map(record => ({ PutRequest: { Item: record } }))
     }
   }
   await docClient.batchWrite(params).promise()
@@ -51,7 +51,7 @@ async function createTransactionRecord (payload) {
   debug('Creating new transaction %s', transactionId)
   const record = {
     id: transactionId,
-    expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA,
+    expires: Math.floor(Date.now() / 1000) + TRANSACTIONS_STAGING_TABLE.Ttl,
     cost: 0.0,
     isRecurringPaymentSupported: true,
     ...payload

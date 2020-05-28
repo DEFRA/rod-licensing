@@ -31,7 +31,7 @@ export const updateFileStagingTable = async ({ filename, ...entries }) => {
  */
 export const getFileRecords = async (...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
-  return executePagedOperation('scan', {
+  return docClient.scanAllPromise({
     TableName: process.env.POCL_FILE_STAGING_TABLE,
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: stageValues,
@@ -79,32 +79,11 @@ export const updateRecordStagingTable = async (filename, records) => {
  */
 export const getProcessedRecords = async (filename, ...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
-  return executePagedOperation('query', {
+  return docClient.queryAllPromise({
     TableName: process.env.POCL_RECORD_STAGING_TABLE,
     KeyConditionExpression: 'filename = :filename',
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: { ':filename': filename, ...stageValues },
     ConsistentRead: true
   })
-}
-
-/***
- * Support DynamoDB query/scan operations which may paginate results
- *
- * @param operationName name of the function to call on the DynamoDB DocumentClient
- * @param params the parameters to pass to the DynamoDB operation
- * @returns {Promise<[DocumentClient.AttributeMap]>}
- */
-const executePagedOperation = async (operationName, params) => {
-  const items = []
-  let lastEvaluatedKey = null
-  do {
-    const response = await docClient[operationName]({
-      ...params,
-      ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
-    }).promise()
-    lastEvaluatedKey = response.LastEvaluatedKey
-    response.Items && items.push(...response.Items)
-  } while (lastEvaluatedKey)
-  return items
 }

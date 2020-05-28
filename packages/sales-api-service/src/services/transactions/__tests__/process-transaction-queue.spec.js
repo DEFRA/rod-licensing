@@ -21,6 +21,7 @@ import {
   mockContactPayload,
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../__mocks__/test-data.js'
+import { TRANSACTIONS_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 const awsMock = require('aws-sdk').default
 
 jest.mock('../../reference-data.service.js', () => ({
@@ -58,6 +59,9 @@ jest.mock('../../contacts.service.js', () => ({
 }))
 
 describe('transaction service', () => {
+  beforeAll(() => {
+    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+  })
   beforeEach(awsMock.__resetAll)
 
   describe('processQueue', () => {
@@ -143,20 +147,19 @@ describe('transaction service', () => {
         const dynamicsLib = require('@defra-fish/dynamics-lib')
 
         awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-        process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
         expect(dynamicsLib.persist).toBeCalledWith(...entityExpectations)
         expect(awsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
           expect.objectContaining({
-            TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+            TableName: TRANSACTIONS_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id },
             ConsistentRead: true
           })
         )
         expect(awsMock.DynamoDB.DocumentClient.mockedMethods.delete).toBeCalledWith(
           expect.objectContaining({
-            TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+            TableName: TRANSACTIONS_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id }
           })
         )
@@ -167,7 +170,7 @@ describe('transaction service', () => {
 
         expect(awsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
           expect.objectContaining({
-            TableName: `${process.env.TRANSACTIONS_STAGING_TABLE}History`,
+            TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
             Item: expectedRecord,
             ConditionExpression: 'attribute_not_exists(id)'
           })
@@ -179,7 +182,6 @@ describe('transaction service', () => {
       const mockRecord = mockCompletedTransactionRecord()
       mockRecord.transactionFile = 'test-file.xml'
       awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
       const dynamicsLib = require('@defra-fish/dynamics-lib')
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToPoclFile')
       const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToPoclFile')

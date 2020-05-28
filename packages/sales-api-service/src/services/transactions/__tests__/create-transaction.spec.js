@@ -7,6 +7,8 @@ import {
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_1DAY_SENIOR_PERMIT
 } from '../../../__mocks__/test-data.js'
+import { TRANSACTIONS_STAGING_TABLE } from '../../../config.js'
+
 const awsMock = require('aws-sdk').default
 
 jest.mock('../../permissions.service.js', () => ({
@@ -30,6 +32,9 @@ jest.mock('../../reference-data.service.js', () => ({
 }))
 
 describe('transaction service', () => {
+  beforeAll(() => {
+    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+  })
   beforeEach(awsMock.__resetAll)
 
   describe('createTransaction', () => {
@@ -41,12 +46,11 @@ describe('transaction service', () => {
         isRecurringPaymentSupported: true
       })
 
-      process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
       const result = await createTransaction(mockTransactionPayload())
       expect(result).toMatchObject(expectedRecord)
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
         expect.objectContaining({
-          TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+          TableName: TRANSACTIONS_STAGING_TABLE.TableName,
           Item: expectedRecord
         })
       )
@@ -67,13 +71,12 @@ describe('transaction service', () => {
         isRecurringPaymentSupported: true
       })
 
-      process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
       const result = await createTransactions([mockTransactionPayload(), mockTransactionPayload()])
       expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
       expect(awsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
         expect.objectContaining({
           RequestItems: {
-            [process.env.TRANSACTIONS_STAGING_TABLE]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
+            [TRANSACTIONS_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
           }
         })
       )

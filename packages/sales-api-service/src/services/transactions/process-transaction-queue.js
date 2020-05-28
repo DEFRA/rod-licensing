@@ -16,12 +16,12 @@ import {
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
+import { TRANSACTIONS_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-const STAGING_HISTORY_TTL_DELTA = process.env.TRANSACTION_STAGING_HISTORY_TABLE_TTL || 60 * 60 * 24 * 90
 
 /**
  * Process messages from the transactions queue
@@ -85,11 +85,11 @@ export async function processQueue ({ id }) {
   debug('Persisting entities for staging id %s: %O', id, entities)
   await persist(...entities)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.delete({ TableName: process.env.TRANSACTIONS_STAGING_TABLE, Key: { id } }).promise()
+  await docClient.delete({ TableName: TRANSACTIONS_STAGING_TABLE.TableName, Key: { id } }).promise()
   await docClient
     .put({
-      TableName: `${process.env.TRANSACTIONS_STAGING_TABLE}History`,
-      Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + STAGING_HISTORY_TTL_DELTA }),
+      TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+      Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
       ConditionExpression: 'attribute_not_exists(id)'
     })
     .promise()
