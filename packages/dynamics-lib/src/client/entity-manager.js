@@ -146,12 +146,12 @@ export function retrieveGlobalOptionSets (...names) {
  * @template T<typeof BaseEntity>
  *
  * @param {T} entityType the example entity to construct a query from
- * @param {string} id the ID of the record to retrieve, can be a guid or an alternate key in the format Name='Value'
+ * @param {string} key the ID of the record to retrieve, can be a guid or an alternate key in the format Name='Value'
  * @returns {Promise<T>} the record matching the given id or null if not found
  */
-export async function findById (entityType, id) {
+export async function findById (entityType, key) {
   try {
-    const record = await dynamicsClient.retrieveRequest({ key: id, ...entityType.definition.toRetrieveRequest(null) })
+    const record = await dynamicsClient.retrieveRequest({ key: key, ...entityType.definition.toRetrieveRequest(null) })
     const optionSetData = await retrieveGlobalOptionSets().cached()
     return entityType.fromResponse(record, optionSetData)
   } catch (e) {

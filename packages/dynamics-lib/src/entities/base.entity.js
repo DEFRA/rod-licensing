@@ -303,6 +303,7 @@ export class BaseEntity {
  * @property {!string} localCollection the local collection name
  * @property {!string} dynamicsCollection the dynamics collection name
  * @property {string} [defaultFilter] the default filter to use when retrieving records
+ * @property {string} [alternateKey] the name of the field to use with alternateKey syntax
  * @property {Object} mappings the mappings between the local collection fields and the dynamics fields
  */
 const metadataSchema = Joi.object({
@@ -334,7 +335,10 @@ const metadataSchema = Joi.object({
         otherwise: Joi.forbidden()
       })
     })
-  )
+  ),
+  alternateKey: Joi.string()
+    .min(1)
+    .optional()
 })
 
 /**
@@ -389,6 +393,13 @@ export class EntityDefinition {
   }
 
   /**
+   * @returns {Object} the alternate key for the entity (if supported)
+   */
+  get alternateKey () {
+    return this._metadata.alternateKey
+  }
+
+  /**
    * @returns {Array<String>} the fields used to populate the select statement in any retrieve request to dynamics
    */
   get select () {
@@ -400,7 +411,7 @@ export class EntityDefinition {
    * as per {@link https://www.npmjs.com/package/dynamics-web-api#advanced-using-request-object-4}
    *
    * @param filterString an optional filter string to use, otherwise defaults to the defaultFilter configured for the entity
-   * @returns {{filter: string, select: Array<String>, collection: !string}}
+   * @returns {{filter: string?, select: Array<String>, collection: !string}}
    */
   toRetrieveRequest (filterString = this.defaultFilter) {
     return {

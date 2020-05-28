@@ -31,7 +31,7 @@ export const updateFileStagingTable = async ({ filename, ...entries }) => {
  */
 export const getFileRecords = async (...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
-  return executePagedOperation(docClient.scan, {
+  return executePagedOperation('scan', {
     TableName: process.env.POCL_FILE_STAGING_TABLE,
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: stageValues,
@@ -79,7 +79,7 @@ export const updateRecordStagingTable = async (filename, records) => {
  */
 export const getProcessedRecords = async (filename, ...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
-  return executePagedOperation(docClient.query, {
+  return executePagedOperation('query', {
     TableName: process.env.POCL_RECORD_STAGING_TABLE,
     KeyConditionExpression: 'filename = :filename',
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
@@ -91,15 +91,18 @@ export const getProcessedRecords = async (filename, ...stages) => {
 /***
  * Support DynamoDB query/scan operations which may paginate results
  *
- * @param operation reference to the function to call on the DynamoDB DocumentClient
+ * @param operationName name of the function to call on the DynamoDB DocumentClient
  * @param params the parameters to pass to the DynamoDB operation
  * @returns {Promise<[DocumentClient.AttributeMap]>}
  */
-const executePagedOperation = async (operation, params) => {
+const executePagedOperation = async (operationName, params) => {
   const items = []
   let lastEvaluatedKey = null
   do {
-    const response = await operation({ ...params, ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }) }).promise()
+    const response = await docClient[operationName]({
+      ...params,
+      ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
+    }).promise()
     lastEvaluatedKey = response.LastEvaluatedKey
     response.Items && items.push(...response.Items)
   } while (lastEvaluatedKey)

@@ -9,7 +9,9 @@ import {
   TransactionCurrency,
   TransactionJournal,
   RecurringPayment,
-  RecurringPaymentInstruction
+  RecurringPaymentInstruction,
+  findById,
+  PoclFile
 } from '@defra-fish/dynamics-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
@@ -33,7 +35,9 @@ export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
-  const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
+  const transactionFile = await resolveTransactionFile(transactionRecord)
+
+  const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord, transactionFile)
   entities.push(transaction, chargeJournal, paymentJournal)
 
   const { recurringPayment, payer } = await processRecurringPayment(transactionRecord)
@@ -58,6 +62,7 @@ export async function processQueue ({ id }) {
     permission.bindToContact(contact)
     permission.bindToPermit(permit)
     permission.bindToTransaction(transaction)
+    transactionFile && permission.bindToPoclFile(transactionFile)
 
     entities.push(contact, permission)
 
@@ -117,7 +122,7 @@ const processRecurringPayment = async transactionRecord => {
  * @param transactionRecord the transaction payload
  * @returns {Promise<{paymentJournal: TransactionJournal, chargeJournal: TransactionJournal, transaction: Transaction}>}
  */
-const createTransactionEntities = async transactionRecord => {
+const createTransactionEntities = async (transactionRecord, transactionFile) => {
   // Currently only a single currency (GBP) is supported
   const currency = (await getReferenceDataForEntity(TransactionCurrency))[0]
 
@@ -129,6 +134,7 @@ const createTransactionEntities = async transactionRecord => {
   transaction.paymentType = await getGlobalOptionSetValue('defra_paymenttype', transactionRecord.payment.method)
   transaction.channelId = transactionRecord.channelId
   transaction.bindToTransactionCurrency(currency)
+  transactionFile && transaction.bindToPoclFile(transactionFile)
 
   const chargeJournal = await createTransactionJournal(transactionRecord, transaction, 'Charge', currency)
   const paymentJournal = await createTransactionJournal(transactionRecord, transaction, 'Payment', currency)
@@ -188,4 +194,18 @@ const createConcessionProof = async (concession, permission) => {
   proof.bindToPermission(permission)
   proof.bindToConcession(concessionEntity)
   return proof
+}
+
+/**
+ * If a transaction references an transaction file then resolves the entity, else returns null
+ *
+ * @param {*} transactionRecord the transaction payload
+ * @returns {Promise<*|null>}
+ */
+const resolveTransactionFile = async transactionRecord => {
+  let transactionFile = null
+  if (transactionRecord.transactionFile) {
+    transactionFile = await findById(PoclFile, `${PoclFile.definition.alternateKey}='${transactionRecord.transactionFile}'`)
+  }
+  return transactionFile
 }

@@ -127,6 +127,6 @@ export class Transaction extends BaseEntity {
    * @param {PoclFile} poclFile the {@link PoclFile} with which to create an association
    */
   bindToPoclFile (poclFile) {
-    super._bind('defra_POCLFileId@odata.bind', poclFile)
+    super._bind('defra_POCLFile@odata.bind', poclFile)
   }
 }

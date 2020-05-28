@@ -2,6 +2,7 @@ import { Binding } from '../../binding.js'
 import * as contactBindings from '../contact/contact.bindings.js'
 import * as licenceBindings from '../licence/licence.bindings.js'
 import * as concessionBindings from '../licence/concession.bindings.js'
+import { POST_OFFICE_DATASOURCE } from '../../../../staging/constants.js'
 import moment from 'moment'
 
 /**
@@ -93,7 +94,7 @@ export const Transaction = new Binding({
     return {
       id: children[SerialNumber.element],
       createTransactionPayload: {
-        dataSource: 'Post Office Sales',
+        dataSource: POST_OFFICE_DATASOURCE,
         permissions: [
           {
             licensee: {
@@ -124,7 +125,7 @@ export const Transaction = new Binding({
         payment: {
           timestamp: transactionDate,
           amount: children[AmountPaid.element],
-          source: 'Post Office Sales',
+          source: POST_OFFICE_DATASOURCE,
           channelId: children[ChannelId.element],
           method: children[MethodOfPayment.element]
         }

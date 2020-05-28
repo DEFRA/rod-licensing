@@ -8,7 +8,7 @@ export class PoclFile extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
     localCollection: 'poclFiles',
-    dynamicsCollection: 'defra_poclfile',
+    dynamicsCollection: 'defra_poclfiles',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_poclfileid', type: 'string' },
@@ -22,7 +22,8 @@ export class PoclFile extends BaseEntity {
       receiptTimestamp: { field: 'defra_receipttimestamp', type: 'datetime' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclfilestatus' }
-    }
+    },
+    alternateKey: 'defra_name'
   })
 
   /**

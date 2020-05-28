@@ -1,7 +1,8 @@
 import Joi from '@hapi/joi'
+import { PoclFile } from '@defra-fish/dynamics-lib'
 import { createPermissionSchema, createPermissionResponseSchema } from './permission.schema.js'
 import { contactSchema } from './contact.schema.js'
-import { createOptionSetValidator } from './validators/validators.js'
+import { createAlternateKeyValidator, buildJoiOptionSetValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -23,7 +24,7 @@ export const createTransactionSchema = Joi.object({
     .items(createPermissionSchema)
     .required()
     .label('create-transaction-request-permissions'),
-  dataSource: createOptionSetValidator('defra_datasource', 'Web Sales')
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales')
 }).label('create-transaction-request')
 
 /**
@@ -58,11 +59,7 @@ export const createTransactionResponseSchema = Joi.object({
     .items(createPermissionResponseSchema)
     .required()
     .label('create-transaction-response-permissions'),
-  dataSource: createOptionSetValidator('defra_datasource', 'Web Sales'),
-  channelId: Joi.string()
-    .trim()
-    .optional()
-    .description('Channel specific identifier'),
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
   cost: Joi.number().required(),
   isRecurringPaymentSupported: Joi.boolean().required()
 }).label('create-transaction-response')
@@ -87,6 +84,9 @@ export const createTransactionBatchResponseSchema = Joi.array()
  * @type {Joi.AnySchema}
  */
 export const finaliseTransactionRequestSchema = Joi.object({
+  transactionFile: Joi.string()
+    .optional()
+    .external(createAlternateKeyValidator(PoclFile, PoclFile.definition.alternateKey)),
   payment: Joi.object({
     amount: Joi.number().required(),
     timestamp: Joi.string()
@@ -94,12 +94,12 @@ export const finaliseTransactionRequestSchema = Joi.object({
       .required()
       .description('An ISO8601 compatible date string defining when the transaction was completed')
       .example(new Date().toISOString()),
-    source: createOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
+    source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
     channelId: Joi.string()
       .trim()
       .optional()
       .description('Channel specific identifier'),
-    method: createOptionSetValidator('defra_paymenttype', 'Debit card'),
+    method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
     recurring: Joi.object({
       payer: contactSchema,
       referenceNumber: Joi.string()

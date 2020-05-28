@@ -130,7 +130,32 @@ describe('BaseEntity', () => {
 })
 
 describe('EntityDefinition', () => {
-  it('to requires a valid entity definition', () => {
+  it('exposes properties used by the entity manager', () => {
+    const definition = new EntityDefinition({
+      localCollection: 'test-local',
+      dynamicsCollection: 'test-remote',
+      defaultFilter: 'statecode eq 0',
+      mappings: {
+        id: {
+          field: 'idval',
+          type: 'string'
+        },
+        strVal: {
+          field: 'strval',
+          type: 'string'
+        }
+      },
+      alternateKey: 'strval'
+    })
+    expect(definition.select).toStrictEqual(['idval', 'strval'])
+    expect(definition.localCollection).toStrictEqual('test-local')
+    expect(definition.dynamicsCollection).toStrictEqual('test-remote')
+    expect(definition.defaultFilter).toStrictEqual('statecode eq 0')
+    expect(definition.mappings).toBeInstanceOf(Object)
+    expect(definition.alternateKey).toStrictEqual('strval')
+  })
+
+  it('requires a valid entity definition', () => {
     expect(() => new EntityDefinition({})).toThrow('"localCollection" is required')
   })
 })

@@ -10,6 +10,7 @@ jest.mock('../../../services/transactions/transactions.service.js', () => ({
 }))
 
 jest.mock('../../../schema/validators/validators.js', () => ({
+  ...jest.requireActual('../../../schema/validators/validators.js'),
   createOptionSetValidator: () => async () => undefined,
   createEntityIdValidator: () => async () => undefined,
   createAlternateKeyValidator: () => async () => undefined,

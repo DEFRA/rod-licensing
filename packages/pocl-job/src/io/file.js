@@ -1,12 +1,20 @@
 import Path from 'path'
 import fs from 'fs'
-
-export function getTempDir (...additionalPaths) {
-  const tempDir = Path.resolve(process.env.POCL_TEMP_PATH, ...additionalPaths)
-  fs.mkdirSync(tempDir, { recursive: true })
-  return tempDir
+import os from 'os'
+let processTemp = null
+export function getTempDir (...subfolders) {
+  if (!processTemp) {
+    processTemp = fs.mkdtempSync(`${os.tmpdir()}${Path.sep}pocl-`)
+  }
+  let tmpDir = processTemp
+  if (subfolders.length) {
+    tmpDir = fs.mkdirSync(Path.resolve(processTemp, ...subfolders), { recursive: true })
+  }
+  return tmpDir
 }
 
-export function mkdirp (path) {
-  fs.mkdirSync(path, { recursive: true })
+export function removeTemp () {
+  if (processTemp) {
+    fs.rmdirSync(processTemp, { recursive: true })
+  }
 }

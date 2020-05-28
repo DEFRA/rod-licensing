@@ -74,7 +74,7 @@ describe('transaction entity', () => {
         defra_transactionsource: 910400000,
         defra_total: 123.45,
         'transactioncurrencyid@odata.bind': `/${TransactionCurrency.definition.dynamicsCollection}(${currency.id})`,
-        'defra_POCLFileId@odata.bind': `$${poclFile.uniqueContentId}`
+        'defra_POCLFile@odata.bind': `$${poclFile.uniqueContentId}`
       })
     )
   })

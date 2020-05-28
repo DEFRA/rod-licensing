@@ -1,12 +1,8 @@
 import Joi from '@hapi/joi'
 import { contactSchema } from './contact.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
-import {
-  createReferenceDataEntityValidator,
-  createAlternateKeyValidator,
-  createPermitConcessionValidator
-} from './validators/validators.js'
-import { Permit, Permission } from '@defra-fish/dynamics-lib'
+import { createReferenceDataEntityValidator, createPermitConcessionValidator } from './validators/validators.js'
+import { Permit } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 
 export const createPermissionSchema = Joi.object({
@@ -34,9 +30,7 @@ export const createPermissionSchema = Joi.object({
 
 export const createPermissionResponseSchema = createPermissionSchema
   .append({
-    referenceNumber: validation.permission
-      .createPermissionNumberValidator(Joi)
-      .external(createAlternateKeyValidator(Permission, Permission.definition.mappings.referenceNumber.field, true)),
+    referenceNumber: validation.permission.createPermissionNumberValidator(Joi),
     endDate: Joi.string()
       .isoDate()
       .required()

@@ -1,28 +1,57 @@
-import * as file from '../file.js'
-import { mkdirSync } from 'fs'
+import { mkdtempSync, mkdirSync, rmdirSync } from 'fs'
+import mockPath from 'path'
+import os from 'os'
 
-jest.mock('fs')
+jest.mock('fs', () => ({
+  mkdtempSync: jest.fn(prefix => mockPath.join(`${prefix}${String(Math.random()).slice(-6)}`)),
+  mkdirSync: jest.fn(val => val),
+  rmdirSync: jest.fn()
+}))
 
 describe('file operations', () => {
-  beforeAll(() => {
-    process.env.POCL_TEMP_PATH = '/tmp'
-  })
   beforeEach(jest.clearAllMocks)
+
   describe('getTempDir', () => {
     it('ensures a temp dir exists at the configured path', async () => {
-      file.getTempDir()
-      expect(mkdirSync).toHaveBeenCalledWith('/tmp', { recursive: true })
+      jest.isolateModules(() => {
+        const file = require('../file.js')
+        const result = file.getTempDir()
+        expect(mkdtempSync).toHaveBeenCalledWith(`${os.tmpdir()}${mockPath.sep}pocl-`)
+        expect(result).toMatch(/\/(?:\w+\/)+pocl-\w{6}/)
+        expect(mkdirSync).not.toHaveBeenCalled()
+      })
     })
+
+    it('returns the same temp dir for successive invocations', async () => {
+      jest.isolateModules(() => {
+        const file = require('../file.js')
+        const actualTmp1 = file.getTempDir()
+        const actualTmp2 = file.getTempDir()
+        expect(actualTmp1).toStrictEqual(actualTmp2)
+        expect(mkdtempSync).toHaveBeenCalledTimes(1)
+        expect(mkdirSync).not.toHaveBeenCalled()
+      })
+    })
+
     it('ensures a temp dir exists at the configured path with additional path options', async () => {
-      file.getTempDir('path', 'to', 'subfolder')
-      expect(mkdirSync).toHaveBeenCalledWith('/tmp/path/to/subfolder', { recursive: true })
+      jest.isolateModules(() => {
+        const file = require('../file.js')
+        const result = file.getTempDir('path', 'to', 'subfolder')
+        const expectedPathRegex = /(?:\w+\/)+pocl-\w{6}\/path\/to\/subfolder/
+        expect(result).toMatch(expectedPathRegex)
+        expect(mkdirSync).toHaveBeenCalledWith(expect.stringMatching(expectedPathRegex), { recursive: true })
+      })
     })
   })
 
-  describe('mkdirp', () => {
-    it('ensures a dir exists at the specified path', async () => {
-      file.mkdirp('/path/to/whatever')
-      expect(mkdirSync).toHaveBeenCalledWith('/path/to/whatever', { recursive: true })
+  describe('removeTemp', () => {
+    it('removes the temporary directory recursively', async () => {
+      jest.isolateModules(() => {
+        const file = require('../file.js')
+        const tmpDir = file.getTempDir()
+        file.removeTemp()
+        expect(rmdirSync).toHaveBeenCalledWith(tmpDir, { recursive: true })
+      })
     })
   })
 })

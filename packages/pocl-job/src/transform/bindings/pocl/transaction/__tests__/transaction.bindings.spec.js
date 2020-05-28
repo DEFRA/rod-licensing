@@ -1,4 +1,5 @@
 import { Transaction } from '../transaction.bindings.js'
+import { POST_OFFICE_DATASOURCE } from '../../../../../staging/constants.js'
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
@@ -51,7 +52,7 @@ describe('transaction transforms', () => {
     expect(result).toStrictEqual({
       id: '559136-2-27950',
       createTransactionPayload: {
-        dataSource: 'Post Office Sales',
+        dataSource: POST_OFFICE_DATASOURCE,
         permissions: [
           {
             permitId: 'permits-id',
@@ -79,7 +80,7 @@ describe('transaction transforms', () => {
         payment: {
           amount: 3.75,
           method: 'Cash',
-          source: 'Post Office Sales',
+          source: POST_OFFICE_DATASOURCE,
           channelId: '123456',
           timestamp: '2020-01-01T15:03:17.000Z'
         }
@@ -133,7 +134,7 @@ describe('transaction transforms', () => {
     expect(result).toStrictEqual({
       id: '559136-2-27950',
       createTransactionPayload: {
-        dataSource: 'Post Office Sales',
+        dataSource: POST_OFFICE_DATASOURCE,
         permissions: [
           {
             permitId: 'permits-id',
@@ -168,7 +169,7 @@ describe('transaction transforms', () => {
         payment: {
           amount: 3.75,
           method: 'Other',
-          source: 'Post Office Sales',
+          source: POST_OFFICE_DATASOURCE,
           channelId: '123456',
           timestamp: '2020-06-01T08:00:00.000Z'
         }
@@ -224,7 +225,7 @@ describe('transaction transforms', () => {
     expect(result).toStrictEqual({
       id: '559136-2-27950',
       createTransactionPayload: {
-        dataSource: 'Post Office Sales',
+        dataSource: POST_OFFICE_DATASOURCE,
         permissions: [
           {
             permitId: 'permits-id',
@@ -258,7 +259,7 @@ describe('transaction transforms', () => {
         payment: {
           amount: 3.75,
           method: 'Cash',
-          source: 'Post Office Sales',
+          source: POST_OFFICE_DATASOURCE,
           channelId: '123456',
           timestamp: '2020-01-01T15:03:17.000Z'
         }
@@ -314,7 +315,7 @@ describe('transaction transforms', () => {
     expect(result).toStrictEqual({
       id: '559136-2-27950',
       createTransactionPayload: {
-        dataSource: 'Post Office Sales',
+        dataSource: POST_OFFICE_DATASOURCE,
         permissions: [
           {
             permitId: 'permits-id',
@@ -348,7 +349,7 @@ describe('transaction transforms', () => {
         payment: {
           amount: 3.75,
           method: 'Cash',
-          source: 'Post Office Sales',
+          source: POST_OFFICE_DATASOURCE,
           channelId: '123456',
           timestamp: '2020-01-01T15:03:17.000Z'
         }
@@ -402,7 +403,7 @@ describe('transaction transforms', () => {
     expect(result).toStrictEqual({
       id: '559136-2-27950',
       createTransactionPayload: {
-        dataSource: 'Post Office Sales',
+        dataSource: POST_OFFICE_DATASOURCE,
         permissions: [
           {
             permitId: 'permits-id',
@@ -438,7 +439,7 @@ describe('transaction transforms', () => {
         payment: {
           amount: 3.75,
           method: 'Cash',
-          source: 'Post Office Sales',
+          source: POST_OFFICE_DATASOURCE,
           channelId: '123456',
           timestamp: '2020-01-01T15:03:17.000Z'
         }
