@@ -2,9 +2,11 @@ import { ftpToS3 } from '../ftp-to-s3.js'
 import moment from 'moment'
 import { updateFileStagingTable } from '../../io/db.js'
 import { getTempDir } from '../../io/file.js'
-import { FILE_STAGE } from '../../staging/constants.js'
+import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../../staging/constants.js'
+import { salesApi } from '@defra-fish/connectors-lib'
 import fs from 'fs'
 import md5File from 'md5-file'
+
 const ftpMock = require('ssh2-sftp-client')
 const awsMock = require('aws-sdk').default
 
@@ -12,6 +14,16 @@ jest.mock('fs')
 jest.mock('md5-file')
 jest.mock('../../io/db.js')
 jest.mock('../../io/file.js')
+
+jest.mock('@defra-fish/connectors-lib', () => {
+  const actual = jest.requireActual('@defra-fish/connectors-lib')
+  return {
+    AWS: actual.AWS,
+    salesApi: {
+      ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => {}) }), {})
+    }
+  }
+})
 
 describe('ftp-to-s3', () => {
   beforeAll(() => {
@@ -29,6 +41,8 @@ describe('ftp-to-s3', () => {
     ftpMock.mockedMethods.list.mockResolvedValue([{ name: 'test1.xml' }, { name: 'test2.xml' }])
     fs.createReadStream.mockReturnValueOnce('test1stream')
     fs.createReadStream.mockReturnValueOnce('test2stream')
+    fs.statSync.mockReturnValueOnce({ size: 1024 })
+    fs.statSync.mockReturnValueOnce({ size: 2048 })
     await ftpToS3()
 
     const localPath1 = '/local/tmp/test1.xml'
@@ -52,14 +66,32 @@ describe('ftp-to-s3', () => {
     expect(updateFileStagingTable).toHaveBeenNthCalledWith(1, {
       filename: 'test1.xml',
       md5: 'example-md5',
+      fileSize: '1 KB',
       stage: FILE_STAGE.Pending,
       s3Key: s3Key1
     })
     expect(updateFileStagingTable).toHaveBeenNthCalledWith(2, {
       filename: 'test2.xml',
       md5: 'example-md5',
+      fileSize: '2 KB',
       stage: FILE_STAGE.Pending,
       s3Key: s3Key2
+    })
+    expect(salesApi.upsertTransactionFile).toHaveBeenNthCalledWith(1, 'test1.xml', {
+      status: DYNAMICS_IMPORT_STAGE.Pending,
+      dataSource: POST_OFFICE_DATASOURCE,
+      fileSize: '1 KB',
+      receiptTimestamp: expect.any(String),
+      salesDate: expect.any(String),
+      notes: 'Retrieved from the remote server and awaiting processing'
+    })
+    expect(salesApi.upsertTransactionFile).toHaveBeenNthCalledWith(2, 'test2.xml', {
+      status: DYNAMICS_IMPORT_STAGE.Pending,
+      dataSource: POST_OFFICE_DATASOURCE,
+      fileSize: '2 KB',
+      receiptTimestamp: expect.any(String),
+      salesDate: expect.any(String),
+      notes: 'Retrieved from the remote server and awaiting processing'
     })
     expect(fs.unlinkSync).toHaveBeenNthCalledWith(1, localPath1)
     expect(fs.unlinkSync).toHaveBeenNthCalledWith(2, localPath2)

@@ -12,7 +12,7 @@ describe('sales-api-connector', () => {
     it('handles get requests', async () => {
       const expectedResponse = { some: 'data' }
       fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
-      await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({ status: 200, statusText: 'OK', body: expectedResponse })
+      await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({ ok: true, status: 200, statusText: 'OK', body: expectedResponse })
       expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
     })
     it('handles post requests', async () => {
@@ -20,6 +20,7 @@ describe('sales-api-connector', () => {
       const expectedResponse = { some: 'data' }
       fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
       await expect(salesApi.call(new URL(TEST_HREF), 'post', payload)).resolves.toEqual({
+        ok: true,
         status: 200,
         statusText: 'OK',
         body: expectedResponse
@@ -36,6 +37,7 @@ describe('sales-api-connector', () => {
       const expectedResponse = { some: 'data' }
       fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
       await expect(salesApi.call(new URL(TEST_HREF), 'patch', payload)).resolves.toEqual({
+        ok: true,
         status: 200,
         statusText: 'OK',
         body: expectedResponse
@@ -47,11 +49,16 @@ describe('sales-api-connector', () => {
         timeout: 20000
       })
     })
-    it('throws on non-ok response', async () => {
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => {} })
-      await expect(salesApi.call(new URL(TEST_HREF))).rejects.toThrow(
-        /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
-      )
+    it('returns necessary information on a non-ok response', async () => {
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        body: {
+          error: 'Description'
+        }
+      })
       expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
     })
     it('throws exceptions from fetch up the stack', async () => {
@@ -61,12 +68,56 @@ describe('sales-api-connector', () => {
     })
   })
 
+  describe('createTransaction', () => {
+    it('creates a single transaction', async () => {
+      const transaction = { some: 'data' }
+      const expectedResponse = { a: 'response' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.createTransaction(transaction)).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transactions',
+        expect.objectContaining({
+          method: 'post',
+          body: JSON.stringify(transaction)
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      const transaction = { some: 'data' }
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.createTransaction(transaction)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transactions',
+        expect.objectContaining({
+          method: 'post',
+          body: JSON.stringify(transaction)
+        })
+      )
+    })
+  })
+
   describe('createTransactions', () => {
     it('creates multiple transactions in batch', async () => {
       const transactions = ['a', 'b']
       const expectedResponse = [{}, {}]
       fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
       await expect(salesApi.createTransactions(transactions)).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transactions/$batch',
+        expect.objectContaining({
+          method: 'post',
+          body: JSON.stringify(transactions)
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      const transactions = ['a', 'b']
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.createTransactions(transactions)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
+      )
       expect(fetch).toHaveBeenCalledWith(
         'http://0.0.0.0:4000/transactions/$batch',
         expect.objectContaining({
@@ -96,6 +147,79 @@ describe('sales-api-connector', () => {
         expect.objectContaining({
           method: 'patch',
           body: JSON.stringify(payload)
+        })
+      )
+    })
+
+    it('throws on a non-ok response', async () => {
+      const transactionId = 'test_id'
+      const payload = {
+        payment: {
+          amount: 30,
+          timestamp: new Date().toISOString(),
+          type: 'Gov Pay',
+          method: 'Debit card'
+        }
+      }
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.finaliseTransaction(transactionId, payload)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `http://0.0.0.0:4000/transactions/${transactionId}`,
+        expect.objectContaining({
+          method: 'patch',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+  })
+
+  describe('getTransactionFile', () => {
+    it('retrieves details of an existing transaction file', async () => {
+      const expectedResponse = { some: 'data' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.getTransactionFile('test.xml')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transaction-files/test.xml',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+    it('returns null if none found', async () => {
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.getTransactionFile('test.xml')).resolves.toBeNull()
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transaction-files/test.xml',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+  })
+
+  describe('upsertTransactionFile', () => {
+    it('updates the details of a given transaction file', async () => {
+      const expectedResponse = { some: 'data' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.upsertTransactionFile('test.xml')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transaction-files/test.xml',
+        expect.objectContaining({
+          method: 'put'
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      fetch.mockReturnValue({ ok: false, status: 422, statusText: 'Unprocessable Entity', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.upsertTransactionFile('test.xml', { some: 'data' })).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/transaction-files/test.xml',
+        expect.objectContaining({
+          method: 'put'
         })
       )
     })
@@ -138,6 +262,30 @@ describe('sales-api-connector', () => {
           const expectedResponse = { id: 'test-1', set: '1' }
           fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => apiResponse })
           await expect(salesApi[endpoint].find({ set: '1' })).resolves.toEqual(expectedResponse)
+          expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?set=1`, {
+            method: 'get',
+            headers: expect.any(Object),
+            timeout: 20000
+          })
+        })
+
+        it('throws if given a non-ok response code when calling .getAll()', async () => {
+          fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+          await expect(salesApi[endpoint].getAll()).rejects.toThrow(
+            /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
+          )
+          expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?`, {
+            method: 'get',
+            headers: expect.any(Object),
+            timeout: 20000
+          })
+        })
+
+        it('throws if given a non-ok response code when calling .find(criteria)', async () => {
+          fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+          await expect(salesApi[endpoint].find({ set: '1' })).rejects.toThrow(
+            /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
+          )
           expect(fetch).toHaveBeenCalledWith(`http://0.0.0.0:4000/${endpoint}?set=1`, {
             method: 'get',
             headers: expect.any(Object),

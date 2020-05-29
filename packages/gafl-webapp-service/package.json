@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "0.0.1-beta.32",
+  "version": "0.0.1-beta.35",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -54,6 +54,7 @@
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.1",
     "pdfmake": "^0.1.65",
+    "semver": "^7.3.2",
     "uuid": "^8.0.0"
   },
   "devDependencies": {

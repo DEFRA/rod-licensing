@@ -1,4 +1,4 @@
-import { Permission, Contact, Permit, Transaction, retrieveGlobalOptionSets } from '../../index.js'
+import { Permission, Contact, Permit, PoclFile, Transaction, retrieveGlobalOptionSets } from '../../index.js'
 
 let optionSetData
 describe('permission entity', () => {
@@ -62,6 +62,7 @@ describe('permission entity', () => {
     const contact = new Contact()
     // Mimic a new transaction to test binding
     const transaction = new Transaction()
+    const poclFile = new PoclFile()
 
     const permission = new Permission()
     permission.referenceNumber = '00000000-2WC3FDR-CD379B'
@@ -74,6 +75,7 @@ describe('permission entity', () => {
     permission.bindToContact(contact)
     permission.bindToPermit(permit)
     permission.bindToTransaction(transaction)
+    permission.bindToPoclFile(poclFile)
 
     const dynamicsEntity = permission.toRequestBody()
     expect(dynamicsEntity).toMatchObject(
@@ -86,7 +88,8 @@ describe('permission entity', () => {
         defra_datasource: 910400003,
         'defra_PermitId@odata.bind': `/${Permit.definition.dynamicsCollection}(${permit.id})`,
         'defra_ContactId@odata.bind': `$${contact.uniqueContentId}`,
-        'defra_Transaction@odata.bind': `$${transaction.uniqueContentId}`
+        'defra_Transaction@odata.bind': `$${transaction.uniqueContentId}`,
+        'defra_POCLFileId@odata.bind': `$${poclFile.uniqueContentId}`
       })
     )
   })

@@ -5,6 +5,7 @@ import {
   Contact,
   FulfilmentRequest,
   Permission,
+  PoclFile,
   RecurringPayment,
   RecurringPaymentInstruction,
   Transaction,
@@ -47,7 +48,8 @@ jest.mock('../../reference-data.service.js', () => ({
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
-  persist: jest.fn()
+  persist: jest.fn(),
+  findById: jest.fn()
 }))
 
 jest.mock('../../contacts.service.js', () => ({
@@ -171,6 +173,21 @@ describe('transaction service', () => {
           })
         )
       })
+    })
+
+    it('handles requests which relate to an transaction file', async () => {
+      const mockRecord = mockCompletedTransactionRecord()
+      mockRecord.transactionFile = 'test-file.xml'
+      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      process.env.TRANSACTIONS_STAGING_TABLE = 'TestTable'
+      const dynamicsLib = require('@defra-fish/dynamics-lib')
+      const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToPoclFile')
+      const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToPoclFile')
+      const testPoclFileEntity = new PoclFile()
+      dynamicsLib.findById.mockResolvedValueOnce(testPoclFileEntity)
+      await processQueue({ id: mockRecord.id })
+      expect(transactionToFileBindingSpy).toHaveBeenCalledWith(testPoclFileEntity)
+      expect(permissionToFileBindingSpy).toHaveBeenCalledWith(testPoclFileEntity)
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
