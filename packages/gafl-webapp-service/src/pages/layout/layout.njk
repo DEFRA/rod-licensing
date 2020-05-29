@@ -33,7 +33,7 @@
             tag: {
             text: "beta"
         },
-        html: 'This is a new service – your <a class="govuk-link" href="" target="_blank">feedback</a> will help us to improve it.',
+        html: 'Your <a class="govuk-link" href="' + _uri.feedback + '" target="_blank">feedback</a> will help us improve the service (opens in another page)',
         classes: 'no-print'
     }) }}
 {% endblock %}
@@ -47,25 +47,25 @@
         <p class="govuk-!-margin-top-0"><a href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a> (opens in a new window or tab)</p>
         <ul class="govuk-footer__inline-list">
             <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="/refund-policy">
+                <a class="govuk-link" href="{{ _uri.refunds }}">
                     Refund Policy
                 </a>
             </li>
 
             <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="/privacy-policy">
+                <a class="govuk-link" href="{{ _uri.privacy }}">
                     Privacy Policy
                 </a>
             </li>
 
             <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="/accessibility-statement">
+                <a class="govuk-link" href="{{ _uri.accessibility }}">
                     Accessibility Statement
                 </a>
             </li>
 
             <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="/cookies">
+                <a class="govuk-link" href="{{ _uri.cookies }}">
                     Cookies
                 </a>
             </li>
@@ -82,6 +82,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
 {% endblock %}

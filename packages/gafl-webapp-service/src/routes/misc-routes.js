@@ -10,6 +10,7 @@ import {
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
+
 import addPermission from '../session-cache/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'

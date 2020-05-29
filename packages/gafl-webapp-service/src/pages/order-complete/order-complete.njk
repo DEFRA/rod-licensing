@@ -124,7 +124,7 @@
 
         <div class="govuk-!-margin-top-8 no-print">
             <h2 class="govuk-heading-m">Your feedback</h2>
-            <p class="govuk-body"><a href="/feedback">Tell us what you think about buying your licence</a> (takes 30 seconds)</p>
+            <p class="govuk-body"><a target="_blank" href="{{ data.uri.feedback }}">Tell us what you think about buying your licence</a> (takes 30 seconds, opens in another page)</p>
         </div>
 
         {{ govukButton({
@@ -138,7 +138,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script>window.GOVUKFrontend.initAll()</script>
-    <script>function printDocument() {window.print();}</script>
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>function printDocument() {window.print();}</script>
 {% endblock %}

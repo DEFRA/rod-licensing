@@ -23,6 +23,7 @@ To run from this directory:
 | GOV_PAY_HTTPS_REDIRECT     | Protcol for the post payment redirect           |    no    |                     |                               |
 | GOV_PAY_APIKEY             | GOV pay access identifier                       |    no    |                     |                               |
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    |                     |                               |
+| FEEDBACK_URI               | Location of feedback survey                     |    no    | #                   |                               |
 
 ## OS Places address lookup
 
