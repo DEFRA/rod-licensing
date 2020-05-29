@@ -29,4 +29,3 @@ export const GOVPAYFAIL = {
   prePaymentRetry: { step: 'pre-payment' },
   postPaymentRetry: { step: 'post-payment' }
 }
-
