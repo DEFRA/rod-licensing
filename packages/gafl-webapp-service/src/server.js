@@ -56,6 +56,10 @@ const createServer = options => {
 /*
  * The hapi plugins and their options which will be registered on initialization
  */
+
+// This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP. It needs the quotes.
+const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
+
 const plugIns = [
   Inert,
   Vision,
@@ -66,11 +70,9 @@ const plugIns = [
       /*
        * This defines the content security policy - which is as restrictive as possible
        * It must allow web-fonts from 'fonts.gstatic.com'
-       * Unfortunately unsafe-inline rather than script nonces must be used to prevent a console error from line
-       * 31 of the GDS template. This will probably come up as an advisory in the PEN test.
        */
       fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-      scriptSrc: ["'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"],
+      scriptSrc: [scriptHash],
       generateNonces: true
     }
   },
