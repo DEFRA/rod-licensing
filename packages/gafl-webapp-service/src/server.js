@@ -14,7 +14,8 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { CSRF_TOKEN_COOKIE_NAME_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, SESSION_TTL_MS_DEFAULT } from './constants.js'
+import { CSRF_TOKEN_COOKIE_NAME_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, SESSION_TTL_MS_DEFAULT, FEEDBACK_URI_DEFAULT } from './constants.js'
+import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
 
 import sessionManager from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
@@ -82,6 +83,26 @@ const plugIns = [
   }
 ]
 
+/**
+ * Adds the uri's used by the layout page to each relevant response
+ */
+const layoutContextAmalgamation = (request, h) => {
+  const response = request.response
+  if (request.method === 'get' && response.variety === 'view') {
+    response.source.context = response.source.context || {}
+    Object.assign(response.source.context, {
+      _uri: {
+        cookies: COOKIES.uri,
+        refunds: REFUND_POLICY.uri,
+        accessibility: ACCESSIBILITY_STATEMENT.uri,
+        privacy: PRIVACY_POLICY.uri,
+        feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
+      }
+    })
+  }
+  return h.continue
+}
+
 const init = async () => {
   await server.register(plugIns)
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
@@ -135,6 +156,9 @@ const init = async () => {
   // Mop up 400 and 500 errors. Make sure the status code in the header is set accordingly and provide
   // the error object to the templates for specific messaging e.g. on payment failures
   server.ext('onPreResponse', errorHandler)
+
+  // Add the uri's required by the template to every view response
+  server.ext('onPreResponse', layoutContextAmalgamation)
 
   // Point the server plugin cache to an application cache to hold authenticated session data
   server.app.cache = server.cache({

@@ -50,11 +50,6 @@ export const ACCESSIBILITY_STATEMENT = { uri: '/accessibility-statement', page: 
 export const PRIVACY_POLICY = { uri: '/privacy-policy', page: 'privacy-policy' }
 export const REFUND_POLICY = { uri: '/refund-policy', page: 'refund-policy' }
 
-/*
- * The smart survey page - is hosted in-service
- */
-export const FEEDBACK = { uri: '/feedback', page: 'feedback' }
-
 /**
  * These are inserted at runtime by the test framework but the session manager needs to know about them
  */

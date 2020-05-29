@@ -12,6 +12,7 @@ export const PAGE_STATE = { completed: true, error: false }
 export const PDF_FILENAME = 'fishing-licence-confirmation.pdf'
 export const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 export const CSRF_TOKEN_COOKIE_NAME_DEFAULT = 'rlsctkn'
+export const FEEDBACK_URI_DEFAULT = '#'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
@@ -28,3 +29,4 @@ export const GOVPAYFAIL = {
   prePaymentRetry: { step: 'pre-payment' },
   postPaymentRetry: { step: 'post-payment' }
 }
+
