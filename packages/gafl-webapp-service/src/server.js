@@ -93,7 +93,6 @@ const plugIns = [
 const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
-    response.source.context = response.source.context || {}
     Object.assign(response.source.context, {
       _uri: {
         cookies: COOKIES.uri,
