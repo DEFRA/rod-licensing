@@ -119,15 +119,6 @@ export const getPaymentJournal = async id => exec2xxOrNull(call(new URL(`/paymen
 export const updatePaymentJournal = async (id, data) => exec2xxOrThrow(call(new URL(`/paymentJournals/${id}`, urlBase), 'patch', data))
 
 /**
- * Delete an existing payment journal
- *
- * @param {string} id the identifier of the payment journal to update
- * @returns {Promise<*>}
- * @throws on a non-2xx response
- */
-export const deletePaymentJournal = async id => exec2xxOrThrow(call(new URL(`/paymentJournals/${id}`, urlBase), 'delete'))
-
-/**
  * Supports querying of reference data from the Sales API
  */
 class QueryBuilder {

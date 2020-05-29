@@ -305,31 +305,6 @@ describe('sales-api-connector', () => {
     })
   })
 
-  describe('deletePaymentJournal', () => {
-    it('deletes a payment journal', async () => {
-      fetch.mockReturnValue({ ok: true, status: 204, statusText: 'No Content', json: async () => {} })
-      await expect(salesApi.deletePaymentJournal('test-id')).resolves.toBeUndefined()
-      expect(fetch).toHaveBeenCalledWith(
-        'http://0.0.0.0:4000/paymentJournals/test-id',
-        expect.objectContaining({
-          method: 'delete'
-        })
-      )
-    })
-    it('throws on a non-ok response', async () => {
-      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
-      await expect(salesApi.deletePaymentJournal('test-id', { some: 'data' })).rejects.toThrow(
-        /Unexpected response from the Sales API:.*"status": 404.*"statusText": "Not Found"/s
-      )
-      expect(fetch).toHaveBeenCalledWith(
-        'http://0.0.0.0:4000/paymentJournals/test-id',
-        expect.objectContaining({
-          method: 'delete'
-        })
-      )
-    })
-  })
-
   describe('query endpoints', () => {
     each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals']).describe(
       'allows %s to be queried with different methods',
