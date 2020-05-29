@@ -1,6 +1,7 @@
 import { persist, StagingException } from '@defra-fish/dynamics-lib'
 import { processQueue } from './process-transaction-queue.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
+import { TRANSACTIONS_STAGING_TABLE } from '../../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
@@ -31,7 +32,7 @@ export async function processDlq ({ id }) {
       try {
         await docClient
           .update({
-            TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+            TableName: TRANSACTIONS_STAGING_TABLE.TableName,
             Key: { id },
             ConditionExpression: 'attribute_exists(id)',
             UpdateExpression: 'SET expires = :expires',

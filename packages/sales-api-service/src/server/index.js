@@ -5,8 +5,9 @@ import Swagger from './plugins/swagger.js'
 import HealthCheck from './plugins/health.js'
 import Routes from './routes/index.js'
 import Boom from '@hapi/boom'
+import { SERVER } from '../config.js'
 
-export default async (opts = { port: process.env.PORT || 4000 }) => {
+export default async (opts = { port: SERVER.Port }) => {
   const server = new Hapi.Server(
     Object.assign(
       {

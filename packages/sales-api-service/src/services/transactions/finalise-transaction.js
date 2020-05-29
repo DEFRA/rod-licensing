@@ -1,4 +1,5 @@
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
+import { TRANSACTIONS_STAGING_TABLE, TRANSACTIONS_QUEUE } from '../../config.js'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -19,7 +20,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
   const expressionAttributeValues = Object.entries(payload).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
   await docClient
     .update({
-      TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+      TableName: TRANSACTIONS_STAGING_TABLE.TableName,
       Key: { id },
       UpdateExpression: `SET ${setFieldExpression}`,
       ExpressionAttributeValues: expressionAttributeValues
@@ -29,7 +30,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
 
   const receipt = await sqs
     .sendMessage({
-      QueueUrl: process.env.TRANSACTIONS_QUEUE_URL,
+      QueueUrl: TRANSACTIONS_QUEUE.Url,
       MessageGroupId: 'transactions',
       MessageDeduplicationId: id,
       MessageBody: JSON.stringify({ id })

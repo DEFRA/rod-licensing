@@ -1,4 +1,5 @@
 import { processDlq } from '../process-transaction-dlq.js'
+import { TRANSACTIONS_STAGING_TABLE } from '../../../config.js'
 
 const awsMock = require('aws-sdk').default
 
@@ -47,7 +48,7 @@ expect.extend({
 const expectDynamoDbTtlUpdate = () => {
   expect(awsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
     expect.objectContaining({
-      TableName: process.env.TRANSACTIONS_STAGING_TABLE,
+      TableName: TRANSACTIONS_STAGING_TABLE.TableName,
       Key: { id: 'test' },
       ConditionExpression: 'attribute_exists(id)',
       UpdateExpression: 'SET expires = :expires',
@@ -59,6 +60,9 @@ const expectDynamoDbTtlUpdate = () => {
 }
 
 describe('transaction service', () => {
+  beforeAll(() => {
+    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+  })
   beforeEach(() => {
     mockProcessingException = new Error('Test error')
     awsMock.__resetAll()

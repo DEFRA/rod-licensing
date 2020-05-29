@@ -225,8 +225,88 @@ describe('sales-api-connector', () => {
     })
   })
 
-  describe('reference data endpoints', () => {
-    each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies']).describe(
+  describe('getPaymentJournal', () => {
+    it('retrieves details of an existing payment journal', async () => {
+      const expectedResponse = { some: 'data' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.getPaymentJournal('test-id')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/paymentJournals/test-id',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+    it('returns null if none found', async () => {
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.getPaymentJournal('test-id')).resolves.toBeNull()
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/paymentJournals/test-id',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+  })
+
+  describe('createPaymentJournal', () => {
+    it('creates a new payment journal', async () => {
+      const payload = { some: 'data' }
+      const expectedResponse = { a: 'response' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.createPaymentJournal('test-id', payload)).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/paymentJournals/test-id',
+        expect.objectContaining({
+          method: 'put',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      const payload = { some: 'data' }
+      fetch.mockReturnValue({ ok: false, status: 422, statusText: 'Unprocessable Entity', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.createPaymentJournal('test-id', payload)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/paymentJournals/test-id',
+        expect.objectContaining({
+          method: 'put',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+  })
+
+  describe('updatePaymentJournal', () => {
+    it('updates the details of a given transaction file', async () => {
+      const expectedResponse = { some: 'data' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.updatePaymentJournal('test-id')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/paymentJournals/test-id',
+        expect.objectContaining({
+          method: 'patch'
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      fetch.mockReturnValue({ ok: false, status: 422, statusText: 'Unprocessable Entity', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.updatePaymentJournal('test-id', { some: 'data' })).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/paymentJournals/test-id',
+        expect.objectContaining({
+          method: 'patch'
+        })
+      )
+    })
+  })
+
+  describe('query endpoints', () => {
+    each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals']).describe(
       'allows %s to be queried with different methods',
       endpoint => {
         it('retrieves all items using .getAll()', async () => {

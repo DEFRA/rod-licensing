@@ -45,41 +45,6 @@ describe('database operations', () => {
         })
       )
     })
-
-    it('deals with pagination where DynamoDB returns a LastEvaluatedKey', async () => {
-      const testLastEvaluatedKey = { filename: TEST_FILENAME, id: '16324258-85-92746491' }
-      awsMock.DynamoDB.DocumentClient.__setNextResponses(
-        'scan',
-        {
-          Items: [],
-          LastEvaluatedKey: testLastEvaluatedKey
-        },
-        {
-          Items: []
-        }
-      )
-
-      await db.getFileRecords('STAGE 1', 'STAGE 2')
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          TableName: process.env.POCL_FILE_STAGING_TABLE,
-          FilterExpression: 'stage IN (:stage0,:stage1)',
-          ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-          ConsistentRead: true
-        })
-      )
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({
-          TableName: process.env.POCL_FILE_STAGING_TABLE,
-          FilterExpression: 'stage IN (:stage0,:stage1)',
-          ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-          ExclusiveStartKey: testLastEvaluatedKey,
-          ConsistentRead: true
-        })
-      )
-    })
   })
 
   describe('updateFileStagingTable', () => {
@@ -151,43 +116,6 @@ describe('database operations', () => {
           KeyConditionExpression: 'filename = :filename',
           FilterExpression: 'stage IN (:stage0,:stage1)',
           ExpressionAttributeValues: { ':filename': TEST_FILENAME, ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-          ConsistentRead: true
-        })
-      )
-    })
-
-    it('deals with pagination where DynamoDB returns a LastEvaluatedKey', async () => {
-      const testLastEvaluatedKey = { filename: TEST_FILENAME, id: '16324258-85-92746491' }
-      awsMock.DynamoDB.DocumentClient.__setNextResponses(
-        'query',
-        {
-          Items: [],
-          LastEvaluatedKey: testLastEvaluatedKey
-        },
-        {
-          Items: []
-        }
-      )
-
-      await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          TableName: process.env.POCL_RECORD_STAGING_TABLE,
-          KeyConditionExpression: 'filename = :filename',
-          FilterExpression: 'stage IN (:stage0,:stage1)',
-          ExpressionAttributeValues: { ':filename': TEST_FILENAME, ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-          ConsistentRead: true
-        })
-      )
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({
-          TableName: process.env.POCL_RECORD_STAGING_TABLE,
-          KeyConditionExpression: 'filename = :filename',
-          FilterExpression: 'stage IN (:stage0,:stage1)',
-          ExpressionAttributeValues: { ':filename': TEST_FILENAME, ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-          ExclusiveStartKey: testLastEvaluatedKey,
           ConsistentRead: true
         })
       )

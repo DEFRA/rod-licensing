@@ -5,6 +5,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: TransactionStaging
+      BillingMode: 'PAY_PER_REQUEST'
       AttributeDefinitions:
         - AttributeName: 'id'
           AttributeType: 'S'
@@ -19,6 +20,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: TransactionStagingHistory
+      BillingMode: 'PAY_PER_REQUEST'
       AttributeDefinitions:
         - AttributeName: 'id'
           AttributeType: 'S'
@@ -29,10 +31,43 @@ Resources:
         AttributeName: 'expires'
         Enabled: true
 
+  PaymentJournals:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: PaymentJournals
+      BillingMode: 'PAY_PER_REQUEST'
+      AttributeDefinitions:
+        - AttributeName: 'id'
+          AttributeType: 'S'
+        - AttributeName: 'paymentStatus'
+          AttributeType: 'S'
+        - AttributeName: 'paymentTimestamp'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'id'
+          KeyType: 'HASH'
+      TimeToLiveSpecification:
+        AttributeName: 'expires'
+        Enabled: true
+      GlobalSecondaryIndexes:
+        - IndexName: 'PaymentJournalsByStatusAndTimestamp'
+          KeySchema:
+            - AttributeName: 'paymentStatus'
+              KeyType: 'HASH'
+            - AttributeName: 'paymentTimestamp'
+              KeyType: 'RANGE'
+          Projection:
+            ProjectionType: 'ALL'
+          # Shouldn't need to specify this when using BillingMode: 'PAY_PER_REQUEST' but localstack requires it....
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+
   PoclFileStaging:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: PoclFileStaging
+      BillingMode: 'PAY_PER_REQUEST'
       AttributeDefinitions:
         - AttributeName: 'filename'
           AttributeType: 'S'
@@ -47,6 +82,7 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: PoclRecordStaging
+      BillingMode: 'PAY_PER_REQUEST'
       AttributeDefinitions:
         - AttributeName: 'filename'
           AttributeType: 'S'
