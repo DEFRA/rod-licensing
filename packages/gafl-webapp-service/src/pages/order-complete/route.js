@@ -1,6 +1,6 @@
 import pageRoute from '../../routes/page-route.js'
 
-import { COMPLETION_STATUS } from '../../constants.js'
+import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../constants.js'
 import { ORDER_COMPLETE, CONTROLLER, NEW_TRANSACTION, REFUND_POLICY, ORDER_COMPLETE_PDF } from '../../uri.js'
 import Boom from '@hapi/boom'
 import { displayStartTime, displayEndTime } from '../../processors/date-and-time-display.js'
@@ -35,7 +35,8 @@ const getData = async request => {
     uri: {
       new: NEW_TRANSACTION.uri,
       refund: REFUND_POLICY.uri,
-      pdf: ORDER_COMPLETE_PDF.uri
+      pdf: ORDER_COMPLETE_PDF.uri,
+      feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
     },
     disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
     licenceTypes: mappings.LICENCE_TYPE,
