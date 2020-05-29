@@ -14,7 +14,13 @@ import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
-import { CSRF_TOKEN_COOKIE_NAME_DEFAULT, REDIS_PORT_DEFAULT, SESSION_COOKIE_NAME_DEFAULT, SESSION_TTL_MS_DEFAULT, FEEDBACK_URI_DEFAULT } from './constants.js'
+import {
+  CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+  REDIS_PORT_DEFAULT,
+  SESSION_COOKIE_NAME_DEFAULT,
+  SESSION_TTL_MS_DEFAULT,
+  FEEDBACK_URI_DEFAULT
+} from './constants.js'
 import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
 
 import sessionManager from './session-cache/session-manager.js'
@@ -64,9 +70,7 @@ const plugIns = [
        * 31 of the GDS template. This will probably come up as an advisory in the PEN test.
        */
       fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-      scriptSrc: ["'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='", 'www.smartsurvey.co.uk'],
-      frameSrc: ['www.smartsurvey.co.uk'],
-      styleSrc: ['self', 'www.smartsurvey.co.uk'],
+      scriptSrc: ["'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"],
       generateNonces: true
     }
   },
