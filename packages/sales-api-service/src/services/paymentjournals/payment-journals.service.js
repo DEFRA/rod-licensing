@@ -56,7 +56,7 @@ export async function getPaymentJournal (id) {
 export async function queryJournalsByTimestamp ({ paymentStatus, from, to }) {
   return docClient.queryAllPromise({
     TableName: PAYMENTS_TABLE.TableName,
-    IndexName: 'PaymentJournalsByStatusAndId',
+    IndexName: 'PaymentJournalsByStatusAndTimestamp',
     KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
     ExpressionAttributeValues: { ':paymentStatus': paymentStatus, ':from': from, ':to': to }
   })

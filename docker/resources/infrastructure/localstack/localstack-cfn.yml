@@ -50,7 +50,7 @@ Resources:
         AttributeName: 'expires'
         Enabled: true
       GlobalSecondaryIndexes:
-        - IndexName: 'PaymentJournalsByStatusAndId'
+        - IndexName: 'PaymentJournalsByStatusAndTimestamp'
           KeySchema:
             - AttributeName: 'paymentStatus'
               KeyType: 'HASH'

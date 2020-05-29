@@ -51,7 +51,7 @@ describe('payment-journals service', () => {
       await queryJournalsByTimestamp({ paymentStatus: 'In Progress', from: '2020-05-29T11:44:45.875Z', to: '2020-05-29T11:44:45.875Z' })
       expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
-        IndexName: 'PaymentJournalsByStatusAndId',
+        IndexName: 'PaymentJournalsByStatusAndTimestamp',
         KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
         ExpressionAttributeValues: {
           ':from': '2020-05-29T11:44:45.875Z',
