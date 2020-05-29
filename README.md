@@ -65,7 +65,7 @@ packages/
   > Sales API to support all sales channels and encapsulate integration with Dynamics
 - [sqs-receiver-service](packages/sqs-receiver-service/README.md)
   > AWS SQS receiver service handles orchestration of SQS queues
-- [govuk-pay-mopup-job](packages/govuk-pay-mopup-job/README.md)
+- [payment-mop-up-job](packages/payment-mop-up-job/README.md)
   > Handles reconciliation of incomplete sales
 - [pocl-job](packages/pocl-job/README.md)
   > Handles processing of post-office counter sales
