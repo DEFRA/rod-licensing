@@ -86,7 +86,7 @@ export const createTransactionBatchResponseSchema = Joi.array()
 export const finaliseTransactionRequestSchema = Joi.object({
   transactionFile: Joi.string()
     .optional()
-    .external(createAlternateKeyValidator(PoclFile, PoclFile.definition.alternateKey)),
+    .external(createAlternateKeyValidator(PoclFile)),
   payment: Joi.object({
     amount: Joi.number().required(),
     timestamp: Joi.string()

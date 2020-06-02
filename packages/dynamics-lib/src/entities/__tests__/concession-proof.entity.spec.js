@@ -7,7 +7,7 @@ describe('concession proof entity', () => {
   })
 
   it('maps from dynamics', async () => {
-    const permission = ConcessionProof.fromResponse(
+    const proof = ConcessionProof.fromResponse(
       {
         '@odata.etag': 'W/"53050428"',
         defra_concessionproofid: 'ee336a19-417e-ea11-a811-000d3a64905b',
@@ -23,10 +23,10 @@ describe('concession proof entity', () => {
       proofType: expect.objectContaining({ id: 910400001, label: 'National Insurance Number', description: 'National Insurance Number' })
     }
 
-    expect(permission).toBeInstanceOf(ConcessionProof)
-    expect(permission).toMatchObject(expect.objectContaining({ etag: 'W/"53050428"', ...expectedFields }))
-    expect(permission.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
-    expect(JSON.parse(permission.toString())).toMatchObject(expect.objectContaining(expectedFields))
+    expect(proof).toBeInstanceOf(ConcessionProof)
+    expect(proof).toMatchObject(expect.objectContaining({ etag: 'W/"53050428"', ...expectedFields }))
+    expect(proof.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
+    expect(JSON.parse(proof.toString())).toMatchObject(expect.objectContaining(expectedFields))
   })
 
   it('maps to dynamics', async () => {

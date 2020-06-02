@@ -1,6 +1,6 @@
 import { s3ToLocal } from '../s3-to-local.js'
 import stream from 'stream'
-const awsMock = require('aws-sdk').default
+import AwsMock from 'aws-sdk'
 
 const MOCK_TMP = '/tmp/local/mock'
 jest.mock('fs')
@@ -15,12 +15,12 @@ describe('s3-to-local', () => {
   })
   beforeEach(() => {
     jest.clearAllMocks()
-    awsMock.__resetAll()
+    AwsMock.__resetAll()
   })
 
   it('retrieves a file from s3 for a given key', async () => {
     const mockCreateReadStream = jest.fn()
-    awsMock.S3.mockedMethods.getObject.mockImplementationOnce(() => {
+    AwsMock.S3.mockedMethods.getObject.mockImplementationOnce(() => {
       return { createReadStream: mockCreateReadStream }
     })
     stream.pipeline.mockImplementation(
@@ -33,7 +33,7 @@ describe('s3-to-local', () => {
     expect(result).toBe(`${MOCK_TMP}/example/testS3Key.xml`)
     expect(mockCreateReadStream).toHaveBeenCalled()
     expect(stream.pipeline).toHaveBeenCalled()
-    expect(awsMock.S3.mockedMethods.getObject).toHaveBeenCalledWith({
+    expect(AwsMock.S3.mockedMethods.getObject).toHaveBeenCalledWith({
       Bucket: process.env.POCL_S3_BUCKET,
       Key: '/example/testS3Key.xml'
     })

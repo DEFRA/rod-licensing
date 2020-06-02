@@ -66,10 +66,12 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       salesApi.finaliseTransaction(r.createTransactionId, { transactionFile: filename, ...r.finaliseTransactionPayload })
     )
   )
-  state.buffer.forEach((record, idx) => {
+  for (let idx = 0; idx < state.buffer.length; idx++) {
+    const record = state.buffer[idx]
     const result = finalisationResults[idx]
     if (result.status === 'fulfilled') {
       record.stage = RECORD_STAGE.TransactionFinalised
+      delete record.createTransactionPayload
       delete record.finaliseTransactionPayload
       record.finaliseTransactionId = result.value.messageId
       state.succeeded++
@@ -77,8 +79,18 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       record.stage = RECORD_STAGE.TransactionFinalisationFailed
       record.finaliseTransactionError = result.reason
       state.failed++
+      await salesApi.createStagingException({
+        transactionFileException: {
+          name: `${filename}: FAILED-FINALISE-${record.id}`,
+          description: JSON.stringify(result.reason, null, 2),
+          json: JSON.stringify(record, null, 2),
+          notes: 'Failed to finalise the transaction in the Sales API',
+          type: 'Failure',
+          transactionFile: filename
+        }
+      })
     }
-  })
+  }
   await updateRecordStagingTable(filename, state.buffer)
   state.buffer = []
 }

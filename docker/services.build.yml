@@ -30,10 +30,10 @@ services:
       dockerfile: Dockerfile.build
 
   ##############################################################################################################
-  # rod-licensing webapp
+  # rod-licensing gafl_webapp
   ##############################################################################################################
-  webapp:
-    image: rod-licensing/webapp:${TAG:-latest}
+  gafl_webapp:
+    image: rod-licensing/gafl_webapp:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/gafl-webapp-service/${PROJECT_DOCKERFILE:-Dockerfile}
@@ -46,6 +46,15 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/sales-api-service/${PROJECT_DOCKERFILE:-Dockerfile}
+
+  ##############################################################################################################
+  # rod-licensing pocl_job
+  ##############################################################################################################
+  pocl_job:
+    image: rod-licensing/pocl_job:${TAG:-latest}
+    build:
+      <<: *common-build-options
+      dockerfile: packages/pocl-job/${PROJECT_DOCKERFILE:-Dockerfile}
 
   ##############################################################################################################
   # rod-licensing sqs_receiver

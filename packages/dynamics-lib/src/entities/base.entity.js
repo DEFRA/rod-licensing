@@ -193,18 +193,18 @@ export class BaseEntity {
   }
 
   /**
-   * Bind the entity
+   * Bind this entity to the given target
    *
    * @param {string} property the binding to use including the @odata.bind directive
-   * @param {BaseEntity} entity the entity instance to bind to
+   * @param {BaseEntity|string} ref the entity instance, or string identifying the entity to bind this entity to
    * @returns {*}
    * @protected
    */
-  _bind (property, entity) {
-    if (!entity) {
+  _bind (property, ref) {
+    if (!ref) {
       throw new Error(`Unable to bind ${this.constructor.definition.localCollection}.${property}, to an undefined or null entity`)
     }
-    this._bindings[property] = entity
+    this._bindings[property] = ref
   }
 
   /**
@@ -256,7 +256,11 @@ export class BaseEntity {
           return acc
         },
         Object.entries(this._bindings).reduce((acc, [k, v]) => {
-          acc[k] = v.id ? `/${v.constructor.definition.dynamicsCollection}(${v.id})` : `$${v.uniqueContentId}`
+          if (v instanceof BaseEntity) {
+            acc[k] = v.id ? `/${v.constructor.definition.dynamicsCollection}(${v.id})` : `$${v.uniqueContentId}`
+          } else {
+            acc[k] = v
+          }
           return acc
         }, {})
       )

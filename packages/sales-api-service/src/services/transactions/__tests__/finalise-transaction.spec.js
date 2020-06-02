@@ -1,21 +1,21 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
 import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
 import { TRANSACTIONS_STAGING_TABLE, TRANSACTIONS_QUEUE } from '../../../config.js'
-const awsMock = require('aws-sdk').default
+import AwsMock from 'aws-sdk'
 
 describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
     TRANSACTIONS_QUEUE.Url = 'TestQueueUrl'
   })
-  beforeEach(awsMock.__resetAll)
+  beforeEach(AwsMock.__resetAll)
 
   describe('finaliseTransaction', () => {
     it('enqueues a message to sqs', async () => {
       const mockRecord = mockTransactionRecord()
-      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      awsMock.DynamoDB.DocumentClient.__setResponse('update', { Attributes: {} })
-      awsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', { Attributes: {} })
+      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
 
       const completionFields = {
         payment: {
@@ -29,7 +29,7 @@ describe('transaction service', () => {
       const expressionAttributeValues = Object.entries(completionFields).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
       const result = await finaliseTransaction({ id: mockRecord.id, ...completionFields })
       expect(result).toEqual({ messageId: 'Test_Message', status: 'queued' })
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
         expect.objectContaining({
           TableName: TRANSACTIONS_STAGING_TABLE.TableName,
           Key: { id: mockRecord.id },
@@ -37,7 +37,7 @@ describe('transaction service', () => {
           ExpressionAttributeValues: expect.objectContaining(expressionAttributeValues)
         })
       )
-      expect(awsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
+      expect(AwsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
         expect.objectContaining({
           QueueUrl: TRANSACTIONS_QUEUE.Url,
           MessageGroupId: 'transactions',
@@ -48,7 +48,7 @@ describe('transaction service', () => {
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
-      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
       try {
         await finaliseTransaction({ id: 'not_found' })
       } catch (e) {
@@ -59,7 +59,7 @@ describe('transaction service', () => {
 
     it('throws 402 Payment Required error if the payment amount does not match the cost', async () => {
       const mockRecord = mockTransactionRecord()
-      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       try {
         const payload = {
           payment: {
@@ -78,7 +78,7 @@ describe('transaction service', () => {
 
     it('throws 409 Conflict error if a recurring payment instruction was supplied but the transaciton does not support this', async () => {
       const mockRecord = mockTransactionRecord({ isRecurringPaymentSupported: false })
-      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       try {
         const payload = {
           payment: {
@@ -116,7 +116,7 @@ describe('transaction service', () => {
     })
 
     it('throws exceptions back up the stack', async () => {
-      awsMock.DynamoDB.DocumentClient.__throwWithErrorOn('get')
+      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('get')
       await expect(finaliseTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })

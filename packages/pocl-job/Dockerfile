@@ -5,11 +5,11 @@ FROM rod-licensing/builder AS builder
 WORKDIR /app
 
 # Install app dependencies
-COPY packages/sqs-receiver-service/package*.json /app/
+COPY packages/pocl-job/package*.json /app/
 RUN npm install --production && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
-COPY packages/sqs-receiver-service/ /app
+COPY packages/pocl-job/ /app
 
 ####################################################################################################################################
 # Build stage 2 - Using the distribution from stage 1, build the final docker image with a minimal number of layers.
@@ -18,4 +18,8 @@ FROM rod-licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 
-ENTRYPOINT [ "pm2-runtime", "ecosystem.config.yml" ]
+# Volume to mount ssh keys for FTP access
+VOLUME /etc/pocl/keys
+
+# Use node directly rather than pm2 for scheduled tasks
+ENTRYPOINT [ "node", "src/pocl-job.js", "execute" ]

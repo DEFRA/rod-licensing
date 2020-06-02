@@ -131,7 +131,7 @@ export class PoclFile extends BaseEntity {
   }
 
   /**
-   * The data source associated with the permission
+   * The data source associated with the pocl file
    * @type {Object<GlobalOptionSetDefinition>}
    */
   get dataSource () {
