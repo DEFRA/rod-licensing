@@ -1,3 +1,6 @@
+import { salesApi } from '@defra-fish/connectors-lib'
+import moment from 'moment'
+
 import {
   LICENCE_LENGTH,
   TERMS_AND_CONDITIONS,
@@ -12,12 +15,12 @@ import {
   NAME,
   AGREED
 } from '../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils.js'
 
-import moment from 'moment'
-import mockPermits from '../../../services/sales-api/__mocks__/data/permits'
-import mockPermitsConcessions from '../../../services/sales-api/__mocks__/data/permit-concessions'
-import mockConcessions from '../../../services/sales-api/__mocks__/data/concessions'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils.js'
+import mockPermits from '../../../__mocks__/data/permits.js'
+import mockPermitsConcessions from '../../../__mocks__/data/permit-concessions.js'
+import mockConcessions from '../../../__mocks__/data/concessions.js'
+import mockDefraCountries from '../../../__mocks__/data/defra-country.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -40,14 +43,10 @@ const dobHelper = d => ({
 
 const dob16Today = moment().add(-16, 'years')
 
-jest.mock('node-fetch')
-const fetch = require('node-fetch')
-
-const doMockPermits = () =>
-  fetch
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
+salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
+salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
+salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
 describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
@@ -61,7 +60,6 @@ describe('The terms and conditions page', () => {
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
-    doMockPermits()
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)

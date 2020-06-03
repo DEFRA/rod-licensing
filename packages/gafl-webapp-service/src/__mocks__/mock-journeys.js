@@ -1,9 +1,11 @@
+import { salesApi } from '@defra-fish/connectors-lib'
 import { injectWithCookies, postRedirectGet } from './test-utils'
 import moment from 'moment'
-import mockPermits from '../services/sales-api/__mocks__/data/permits'
-import mockPermitsConcessions from '../services/sales-api/__mocks__/data/permit-concessions'
-import mockConcessions from '../services/sales-api/__mocks__/data/concessions'
-import mockDefraCountries from '../services/address-lookup/__mocks__/data/defra-country'
+
+import mockPermits from './data/permits.js'
+import mockPermitsConcessions from './data/permit-concessions.js'
+import mockConcessions from './data/concessions.js'
+import mockDefraCountries from './data/defra-country.js'
 
 import {
   ADDRESS_ENTRY,
@@ -44,25 +46,12 @@ const dobJuniorToday = moment().subtract(MINOR_MAX_AGE + 1, 'years')
 const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
 const dobSeniorToday = moment().add(-SENIOR_MIN_AGE, 'years')
 
-jest.mock('node-fetch')
-const fetch = require('node-fetch')
+salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
+salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
+salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
-const MOCK_CONCESSIONS = [
-  {
-    id: '3230c68f-ef65-e611-80dc-c4346bad4004',
-    name: 'Junior'
-  },
-  {
-    id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
-    name: 'Senior'
-  },
-  {
-    id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
-    name: 'Disabled'
-  }
-]
-
-const ADULT_FULL_1_DAY_LICENCE = {
+export const ADULT_FULL_1_DAY_LICENCE = {
   transActionResponse: {
     id: 'ad28f2b3-2ab3-4d45-abc7-ae62c4da7944',
     expires: 1588342308,
@@ -99,29 +88,19 @@ const ADULT_FULL_1_DAY_LICENCE = {
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
-
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
-
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
-
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-
-    fetch.mockReset()
   }
 }
 
-const ADULT_DISABLED_12_MONTH_LICENCE = {
+export const ADULT_DISABLED_12_MONTH_LICENCE = {
   transActionResponse: {
     id: '50c26295-013f-48c0-b354-f22544254fab',
     expires: 1588408572,
@@ -166,28 +145,18 @@ const ADULT_DISABLED_12_MONTH_LICENCE = {
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
     await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
     await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': 'NH436677A' })
-
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
-
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-
-    fetch.mockReset()
   }
 }
 
-const SENIOR_12_MONTH_LICENCE = {
+export const SENIOR_12_MONTH_LICENCE = {
   transActionResponse: {
     id: 'cb913e36-a3ab-45a7-af6c-40af8befd931',
     expires: 1588411018,
@@ -229,28 +198,18 @@ const SENIOR_12_MONTH_LICENCE = {
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
-
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
-
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-
-    fetch.mockReset()
   }
 }
 
-const JUNIOR_12_MONTH_LICENCE = {
+export const JUNIOR_12_MONTH_LICENCE = {
   transActionResponse: {
     id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
     expires: 1588412128,
@@ -292,25 +251,30 @@ const JUNIOR_12_MONTH_LICENCE = {
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
-
-    fetch
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
-
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-
-    fetch.mockReset()
   }
 }
 
-export { MOCK_CONCESSIONS, ADULT_FULL_1_DAY_LICENCE, ADULT_DISABLED_12_MONTH_LICENCE, SENIOR_12_MONTH_LICENCE, JUNIOR_12_MONTH_LICENCE }
+export const MOCK_PAYMENT_RESPONSE = {
+  state: { status: 'created', finished: false },
+  payment_id: 'qdq15eu98cpk8bc14qs9ht0t3v',
+  payment_provider: 'sandbox',
+  created_date: '2020-05-05T07:30:56.214Z',
+  _links: {
+    next_url: {
+      href: 'https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0',
+      method: 'GET'
+    },
+    self: {
+      href: 'https://publicapi.payments.service.gov.uk/v1/payments/qdq15eu98cpk8bc14qs9ht0t3v',
+      method: 'GET'
+    }
+  }
+}

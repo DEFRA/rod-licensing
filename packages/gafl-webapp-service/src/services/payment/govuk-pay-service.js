@@ -1,70 +1,24 @@
+/***
+ * Interface to the GOV.UK Pay API - uses the service connector salesApi.
+ * It wraps the payment API connector and ensures that exceptions and errors
+ * are handled correctly in respect to retry and user messaging. This module is
+ * not reliant on the hapi request object
+ */
+import { govUkPayApi } from '@defra-fish/connectors-lib'
+import { GOVPAYFAIL } from '../../constants.js'
 import db from 'debug'
 import Boom from '@hapi/boom'
-
-import { GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT, GOVPAYFAIL } from '../../constants.js'
-import { AGREED } from '../../uri.js'
-import fetch from 'node-fetch'
-
-/**
- * Interface to the GOV.UK Pay API
- */
 const debug = db('webapp:govuk-pay-service')
 
-const headers = {
-  accept: 'application/json',
-  authorization: `Bearer ${process.env.GOV_PAY_APIKEY}`,
-  'content-type': 'application/json'
-}
-
-const GOVPAY_STATUS_CODES = {
-  REJECTED: 'P0010',
-  EXPIRED: 'P0020',
-  USER_CANCELLED: 'P0030',
-  ERROR: 'P0050'
-}
-
-const preparePayment = (transaction, request) => {
-  const url = new URL(AGREED.uri, `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:${request.info.host}`)
-
-  const result = {
-    return_url: url.href,
-    amount: transaction.cost * 100,
-    reference: transaction.id,
-    description: transaction.permissions.length === 1 ? transaction.permissions[0].permit.description : 'Multiple permits',
-    delayed_capture: false
-  }
-
-  if (transaction.permissions.length === 1) {
-    result.email = transaction.permissions[0].licensee.email
-    result.prefilled_cardholder_details = {
-      cardholder_name: `${transaction.permissions[0].licensee.firstName} ${transaction.permissions[0].licensee.lastName}`,
-      billing_address: {
-        line1: `${transaction.permissions[0].licensee.premises} ${transaction.permissions[0].licensee.street}`,
-        postcode: transaction.permissions[0].licensee.postcode,
-        city: transaction.permissions[0].licensee.town,
-        country: transaction.permissions[0].licensee.countryCode
-      }
-    }
-    if (transaction.permissions[0].licensee.locality) {
-      result.prefilled_cardholder_details.billing_address.line2 = transaction.permissions[0].licensee.locality
-    }
-  }
-
-  debug('Creating prepared payment %O', result)
-  return result
-}
-
-const postData = async preparedPayment => {
-  const url = process.env.GOV_PAY_API_URL
-  debug(`Post new payment to ${url}`)
+/**
+ * Post prepared payment to the GOV.UK PAY API and handle the exceptions and results
+ * @param preparedPayment - the prepared payload for the payment. See in processors/payment.js
+ * @returns {Promise<*>}
+ */
+export const sendPayment = async preparedPayment => {
   let response
   try {
-    response = await fetch(url, {
-      headers,
-      method: 'post',
-      body: JSON.stringify(preparedPayment),
-      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
-    })
+    response = await govUkPayApi.createPayment(preparedPayment)
   } catch (err) {
     /*
      * Potentially errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
@@ -77,18 +31,18 @@ const postData = async preparedPayment => {
   }
 
   if (response.ok) {
-    const res = await response.json()
-    debug('Successful payment creation response: %O', res)
-    return res
+    const resBody = await response.json()
+    debug('Successful payment creation response: %O', resBody)
+    return resBody
   } else {
-    const mes = {
-      tid: preparedPayment.id,
+    const errMsg = {
+      transactionId: preparedPayment.id,
       method: 'POST',
       payload: preparedPayment,
       status: response.status,
       response: await response.json()
     }
-    console.error('Failure creating payment in the GOV.UK API service', mes)
+    console.error('Failure creating payment in the GOV.UK API service', errMsg)
 
     /*
      * Detect the rate limit error and present the retry content. Otherwise throw the general server error
@@ -105,44 +59,45 @@ const postData = async preparedPayment => {
   }
 }
 
-const getGovUkPaymentStatus = async (url, id) => {
-  debug(`Get payment status: ${url}`)
+/**
+ * Get the payment status from the API for a payment id and handle errors
+ * @param paymentId - the paymentId
+ * @returns {Promise<any>}
+ */
+export const getPaymentStatus = async paymentId => {
+  debug(`Get payment status for paymentId: ${paymentId}`)
   let response
   try {
-    response = await fetch(url, {
-      headers,
-      method: 'get',
-      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
-    })
+    response = await govUkPayApi.fetchPaymentStatus(paymentId)
   } catch (err) {
     /*
      * Errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
      * a post-payment error in the request
      */
-    console.error(`Error retrieving the payment status from the GOV.UK API service - tid: ${id}`, err)
+    console.error(`Error retrieving the payment status from the GOV.UK API service - paymentId: ${paymentId}`, err)
     const badImplementationError = Boom.boomify(err, { statusCode: 500 })
     badImplementationError.output.payload.origin = GOVPAYFAIL.postPaymentRetry
     throw badImplementationError
   }
 
   if (response.ok) {
-    const res = await response.json()
-    debug('Payment status response: %O', res)
-    return res
+    const resBody = await response.json()
+    debug('Payment status response: %O', resBody)
+    return resBody
   } else {
     const mes = {
-      tid: id,
+      paymentId,
       method: 'GET',
       status: response.status,
       response: await response.json()
     }
-    console.error(`Error retrieving the payment status from the GOV.UK API service - tid: ${id}`, mes)
+    console.error(`Error retrieving the payment status from the GOV.UK API service - tid: ${paymentId}`, mes)
 
     /*
      * Detect the rate limit error and present the retry content. Otherwise throw the general server error
      */
     if (response.status === 429) {
-      const msg = `GOV.UK Pay API rate limit breach - tid: ${id}`
+      const msg = `GOV.UK Pay API rate limit breach - paymentId: ${paymentId}`
       console.info(msg)
       const badImplementationError = Boom.badImplementation(msg)
       badImplementationError.output.payload.origin = GOVPAYFAIL.postPaymentRetry
@@ -152,5 +107,3 @@ const getGovUkPaymentStatus = async (url, id) => {
     }
   }
 }
-
-export { preparePayment, postData, getGovUkPaymentStatus, GOVPAY_STATUS_CODES }

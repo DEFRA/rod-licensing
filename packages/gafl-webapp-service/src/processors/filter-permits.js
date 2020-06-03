@@ -1,10 +1,10 @@
-import { permitsOperations } from '../services/sales-api/sales-api-service.js'
+import { salesApi } from '@defra-fish/connectors-lib'
 
 const filterPermits = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const permits = await permitsOperations.fetchPermits()
-  const permitConcessions = await permitsOperations.fetchPermitConcessions()
-  const concessions = await permitsOperations.fetchConcessions()
+  const permits = await salesApi.permits.getAll()
+  const permitConcessions = await salesApi.permitConcessions.getAll()
+  const concessions = await salesApi.concessions.getAll()
   const licenseeConcessions = permission.concessions || []
 
   const permitsJoinPermitConcessions = permits.map(p => ({

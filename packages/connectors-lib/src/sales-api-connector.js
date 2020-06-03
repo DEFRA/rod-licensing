@@ -129,7 +129,7 @@ class QueryBuilder {
   /**
    * Retrieve all entries for the given criteria
    *
-   * @param {Object} criteria an object whose fields are used to filter the results
+   * @param {Object} [criteria] an object whose fields are used to filter the results
    * @returns {Promise<*>}
    */
   async getAll (criteria) {
@@ -139,7 +139,7 @@ class QueryBuilder {
   /**
    * Find the first matching entity for the given criteria
    *
-   * @param criteria
+   * @param [criteria]
    * @returns {Promise<void>}
    */
   async find (criteria) {
@@ -177,3 +177,9 @@ export const transactionCurrencies = new QueryBuilder(new URL('transactionCurren
  * @type {QueryBuilder}
  */
 export const paymentJournals = new QueryBuilder(new URL('paymentJournals', urlBase))
+
+/**
+ * Query support for country codes
+ * @type {QueryBuilder}
+ */
+export const countries = new QueryBuilder(new URL('/option-sets/defra_country', urlBase))

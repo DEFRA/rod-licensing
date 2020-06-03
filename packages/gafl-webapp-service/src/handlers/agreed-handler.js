@@ -1,12 +1,3 @@
-import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
-import { permissionsOperations } from '../services/sales-api/sales-api-service.js'
-import { COMPLETION_STATUS } from '../constants.js'
-import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
-import { postData, preparePayment, getGovUkPaymentStatus, GOVPAY_STATUS_CODES } from '../services/payment/govuk-pay-service.js'
-import db from 'debug'
-import Boom from '@hapi/boom'
-const debug = db('webapp:agreed-handler')
-
 /**
  * This handler is called after the user has agreed the licence purchase.
  * It locks the transaction and posts it the the API. This will create a licence number and end date
@@ -17,18 +8,28 @@ const debug = db('webapp:agreed-handler')
  * (2) Agree -> post -> payment -> finalise -> complete
  * (3) Payment: Required -> dispatched -> [completed|cancelled\failed\apiError]
  *
- * @param request
- * @param h
- * @returns {Promise<ResponseObject|*|Response>}
  */
+import Boom from '@hapi/boom'
+import db from 'debug'
+import { salesApi } from '@defra-fish/connectors-lib'
+import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
+import { sendPayment, getPaymentStatus } from '../services/payment/govuk-pay-service.js'
+import { preparePayment } from '../processors/payment.js'
+import { COMPLETION_STATUS } from '../constants.js'
+import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
+import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+const debug = db('webapp:agreed-handler')
 
-/*
- * Post the transaction to the API
+/**
+ * Send (post) transaction to sales API
+ * @param request
+ * @param transaction
+ * @param status
+ * @returns {Promise<*>}
  */
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
-  const response = await permissionsOperations.postApiTransactionPayload(apiTransactionPayload)
-
+  const response = await salesApi.createTransaction(apiTransactionPayload)
   /*
    * Write the licence number and end dates into the cache
    */
@@ -49,24 +50,78 @@ const sendToSalesApi = async (request, transaction, status) => {
   return transaction
 }
 
+/**
+ * Create a new payment in GOV.UK pay using the API
+ * (1) Prepare payment (payload) for the API (processor)
+ * (2) Send to GOV.UK pay API (connector)
+ * (3) Handle exceptions and error (agreed handler)
+ * (4) Write into the journal tables (agreed handler)
+ * (5) Process the results - write into the cache
+ * @param request
+ * @param transaction
+ * @param status
+ * @returns {Promise<void>}
+ */
 const createPayment = async (request, transaction, status) => {
-  const preparedPayment = preparePayment(transaction, request)
-  const payment = await postData(preparedPayment, transaction.id)
-  transaction.payment = {
-    state: payment.state,
-    payment_id: payment.payment_id,
-    payment_provider: payment.payment_provider,
-    created_date: payment.created_date,
-    href: payment._links.next_url.href,
-    self_href: payment._links.self.href
+  /*
+   * Prepare the payment payload
+   */
+  const preparedPayment = preparePayment(request, transaction)
+
+  /*
+   * Send the prepared payment to the GOV.UK pay API using the connector
+   */
+  const paymentResponse = await sendPayment(preparedPayment)
+
+  /*
+   * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
+   * it maybe updated multiple times with a new payment id and creation date if the payment is cancelled and retried
+   */
+  if (await salesApi.getPaymentJournal(transaction.id)) {
+    await salesApi.updatePaymentJournal(transaction.id, {
+      paymentReference: paymentResponse.payment_id,
+      paymentTimestamp: paymentResponse.created_date,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  } else {
+    await salesApi.createPaymentJournal(transaction.id, {
+      paymentReference: paymentResponse.payment_id,
+      paymentTimestamp: paymentResponse.created_date,
+      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
   }
+
+  /*
+   * Set up the payment details in the transaction and status cache
+   */
+  transaction.payment = {
+    state: paymentResponse.state,
+    payment_id: paymentResponse.payment_id,
+    payment_provider: paymentResponse.payment_provider,
+    created_date: paymentResponse.created_date,
+    href: paymentResponse._links.next_url.href,
+    self_href: paymentResponse._links.self.href
+  }
+
   status[COMPLETION_STATUS.paymentCreated] = true
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.transaction.set(transaction)
 }
 
-const completePayment = async (request, transaction, status) => {
-  const { state } = await getGovUkPaymentStatus(transaction.payment.self_href, transaction.id)
+/**
+ * Called when the user has returned to the service from the payment pages. It queries the
+ * GOV.UK pay API for the payment status. It updates the journal and determines the
+ * next page to display which is either order-complete, or the cancelled or failure pages
+ * @param request
+ * @param transaction
+ * @param status
+ * @returns {Promise<void>}
+ */
+const processPayment = async (request, transaction, status) => {
+  /*
+   * Get the payment status
+   */
+  const { state } = await getPaymentStatus(transaction.payment.payment_id)
 
   if (!state.finished) {
     throw Boom.forbidden('Attempt to access the agreed handler during payment journey')
@@ -76,6 +131,7 @@ const completePayment = async (request, transaction, status) => {
 
   if (state.status === 'error') {
     // The payment failed
+    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
     status[COMPLETION_STATUS.paymentFailed] = true
     status.payment = { code: state.code }
     await request.cache().helpers.status.set(status)
@@ -83,6 +139,7 @@ const completePayment = async (request, transaction, status) => {
   }
 
   if (state.status === 'success') {
+    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
   } else {
@@ -91,7 +148,8 @@ const completePayment = async (request, transaction, status) => {
      */
 
     // The payment expired
-    if (state.code === GOVPAY_STATUS_CODES.EXPIRED) {
+    if (state.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
+      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
       status[COMPLETION_STATUS.paymentFailed] = true
       status.payment = { code: state.code }
       await request.cache().helpers.status.set(status)
@@ -99,7 +157,8 @@ const completePayment = async (request, transaction, status) => {
     }
 
     // The user cancelled the payment
-    if (state.code === GOVPAY_STATUS_CODES.USER_CANCELLED) {
+    if (state.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
+      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled })
       status[COMPLETION_STATUS.paymentCancelled] = true
       status.pay = { code: state.code }
       await request.cache().helpers.status.set(status)
@@ -107,7 +166,8 @@ const completePayment = async (request, transaction, status) => {
     }
 
     // The payment was rejected
-    if (state.code === GOVPAY_STATUS_CODES.REJECTED) {
+    if (state.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
+      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
       status[COMPLETION_STATUS.paymentFailed] = true
       status.payment = { code: state.code }
       await request.cache().helpers.status.set(status)
@@ -118,6 +178,12 @@ const completePayment = async (request, transaction, status) => {
   return next
 }
 
+/**
+ * Agreed route handler
+ * @param request
+ * @param h
+ * @returns {Promise}
+ */
 export default async (request, h) => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
@@ -141,7 +207,7 @@ export default async (request, h) => {
     }
 
     if (!status[COMPLETION_STATUS.paymentCompleted]) {
-      const next = await completePayment(request, transaction, status)
+      const next = await processPayment(request, transaction, status)
       if (next) {
         return h.redirect(next)
       }
@@ -152,7 +218,7 @@ export default async (request, h) => {
   if (!status[COMPLETION_STATUS.finalised]) {
     const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
     debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
-    await permissionsOperations.patchApiTransactionPayload(apiFinalisationPayload, transaction.id)
+    await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
     status[COMPLETION_STATUS.finalised] = true
     await request.cache().helpers.status.set(status)
   } else {

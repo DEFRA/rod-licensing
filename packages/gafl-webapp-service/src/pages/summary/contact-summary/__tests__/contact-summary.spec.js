@@ -1,7 +1,9 @@
+import { salesApi } from '@defra-fish/connectors-lib'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
-import mockPermits from '../../../../services/sales-api/__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../../services/sales-api/__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../../services/sales-api/__mocks__/data/concessions.js'
+import mockPermits from '../../../../__mocks__/data/permits.js'
+import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
+import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
+import mockConcessions from '../../../../__mocks__/data/concessions.js'
 import searchResultsOne from '../../../../services/address-lookup/__mocks__/data/search-results-one'
 
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
@@ -25,16 +27,13 @@ import {
   TEST_TRANSACTION
 } from '../../../../uri.js'
 
-import mockDefraCountries from '../../../../services/address-lookup/__mocks__/data/defra-country'
-
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
 
-const doMockPermits = () =>
-  fetch
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermits, ok: true })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockPermitsConcessions, ok: true })))
-    .mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockConcessions, ok: true })))
+salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
+salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
+salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -99,14 +98,15 @@ describe('The contact summary page', () => {
 
   it('responds with the error page if the sales API fetch fails', async () => {
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new2@example.com' })
-    fetch.mockImplementation(async () => new Promise((resolve, reject) => reject(new Error('fetch error'))))
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
+    salesApi.permits.getAll.mockClear()
+    salesApi.permits.getAll = jest.fn(async () => new Promise((resolve, reject) => reject(new Error('fetch error'))))
     const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(500)
+    salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
   })
 
   it('responds with summary page if all necessary pages have been completed', async () => {
-    doMockPermits()
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(200)
   })
@@ -169,9 +169,6 @@ describe('The contact summary page', () => {
       'date-of-birth-month': '11',
       'date-of-birth-year': '1921'
     })
-
-    doMockPermits()
-
     const data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
@@ -192,9 +189,6 @@ describe('The contact summary page', () => {
     const data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
-
-    doMockPermits()
-
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await injectWithCookies('POST', LICENCE_SUMMARY.uri)
 

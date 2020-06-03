@@ -1,22 +1,40 @@
+import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
 import each from 'jest-each'
 import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils'
+
 import {
   ADULT_FULL_1_DAY_LICENCE,
   ADULT_DISABLED_12_MONTH_LICENCE,
   SENIOR_12_MONTH_LICENCE,
-  MOCK_CONCESSIONS,
+  MOCK_PAYMENT_RESPONSE,
   JUNIOR_12_MONTH_LICENCE
 } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 
+import mockPermits from '../../__mocks__/data/permits.js'
+import mockPermitsConcessions from '../../__mocks__/data/permit-concessions.js'
+import mockConcessions from '../../__mocks__/data/concessions.js'
+import mockDefraCountries from '../../__mocks__/data/defra-country.js'
+
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-jest.mock('node-fetch')
-const fetch = require('node-fetch')
+jest.mock('@defra-fish/connectors-lib')
+salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
+salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
+salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+
+const paymentStatusSuccess = cost => ({
+  amount: cost,
+  state: {
+    status: 'success',
+    finished: true
+  }
+})
 
 describe('The agreed handler', () => {
   it('throws a status 403 (forbidden) exception is the agreed flag is not set', async () => {
@@ -30,77 +48,22 @@ describe('The agreed handler', () => {
     ['senior 12 month licence', SENIOR_12_MONTH_LICENCE]
   ]).it('processes the series of steps necessary to complete a successful payment journey - %s', async (desc, journey) => {
     await journey.setup()
-    fetch
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => MOCK_CONCESSIONS,
-              ok: true
-            })
-          )
-      )
-      // Mock response from sales API - create transaction
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => journey.transActionResponse,
-              ok: true
-            })
-          )
-      )
-      // Mock response from GOV.UK pay API set up payment
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => ({
-                state: { status: 'created', finished: false },
-                payment_id: 'qdq15eu98cpk8bc14qs9ht0t3v',
-                payment_provider: 'sandbox',
-                created_date: '2020-05-05T07:30:56.214Z',
-                _links: {
-                  next_url: {
-                    href: 'https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0',
-                    method: 'GET'
-                  },
-                  self: {
-                    href: 'https://publicapi.payments.service.gov.uk/v1/payments/qdq15eu98cpk8bc14qs9ht0t3v',
-                    method: 'GET'
-                  }
-                }
-              }),
-              ok: true,
-              status: 201
-            })
-          )
-      )
+
+    salesApi.createTransaction = jest.fn(async () =>
+      new Promise(resolve => resolve(journey.transActionResponse)))
+
+    salesApi.finaliseTransaction = jest.fn(async () =>
+      new Promise(resolve => resolve({ ok: true })))
+
+    govUkPayApi.createPayment = jest.fn(async () =>
+      new Promise(resolve => resolve({ json: () => (MOCK_PAYMENT_RESPONSE), ok: true, status: 201 })))
+
+    govUkPayApi.fetchPaymentStatus = jest.fn(async () =>
+      new Promise(resolve => resolve({ json: () => (paymentStatusSuccess(journey.cost)), ok: true, status: 201 })))
 
     const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('https://www.payments.service.gov.uk/secure/017f99a4-977d-40c2-8a2f-fb0f995a88f0')
-
-    // Mock response from GOV.PAY API
-    fetch
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => ({
-                amount: journey.cost,
-                state: {
-                  status: 'success',
-                  finished: true
-                }
-              }),
-              ok: true
-            })
-          )
-      )
-      // Mock response from SALES API (patch-transaction)
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
-
+    expect(data.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(ORDER_COMPLETE.uri)
@@ -118,28 +81,11 @@ describe('The agreed handler', () => {
 
   it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
-    fetch
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => MOCK_CONCESSIONS,
-              ok: true
-            })
-          )
-      )
-      // Mock response from sales API - create transaction
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => JUNIOR_12_MONTH_LICENCE.transActionResponse,
-              ok: true
-            })
-          )
-      )
-      // Mock response from SALES API (patch-transaction)
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
+    salesApi.createTransaction = jest.fn(async () =>
+      new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+
+    salesApi.finaliseTransaction = jest.fn(async () =>
+      new Promise(resolve => resolve({ ok: true })))
 
     const data1 = await injectWithCookies('GET', AGREED.uri)
     expect(data1.statusCode).toBe(302)
@@ -156,68 +102,13 @@ describe('The agreed handler', () => {
     expect(data3.statusCode).toBe(200)
   })
 
-  it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
-    await JUNIOR_12_MONTH_LICENCE.setup()
-    fetch
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => MOCK_CONCESSIONS,
-              ok: true
-            })
-          )
-      )
-      // Mock response from sales API - create transaction
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => JUNIOR_12_MONTH_LICENCE.transActionResponse,
-              ok: true
-            })
-          )
-      )
-      // Mock response from SALES API (patch-transaction)
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
-
-    const data1 = await injectWithCookies('GET', AGREED.uri)
-    expect(data1.statusCode).toBe(302)
-    expect(data1.headers.location).toBe(ORDER_COMPLETE.uri)
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(JUNIOR_12_MONTH_LICENCE.transActionResponse.id)
-    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
-    expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
-  })
-
   it('redirects to order-completed for finalized transactions', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
-    fetch
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => MOCK_CONCESSIONS,
-              ok: true
-            })
-          )
-      )
-      // Mock response from sales API - create transaction
-      .mockImplementationOnce(
-        async () =>
-          new Promise(resolve =>
-            resolve({
-              json: () => JUNIOR_12_MONTH_LICENCE.transActionResponse,
-              ok: true
-            })
-          )
-      )
-      // Mock response from SALES API (patch-transaction)
-      .mockImplementationOnce(async () => new Promise(resolve => resolve({ ok: true })))
+    salesApi.createTransaction = jest.fn(async () =>
+      new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+
+    salesApi.finaliseTransaction = jest.fn(async () =>
+      new Promise(resolve => resolve({ ok: true })))
 
     await injectWithCookies('GET', AGREED.uri)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)

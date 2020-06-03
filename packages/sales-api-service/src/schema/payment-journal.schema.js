@@ -1,5 +1,6 @@
 import Joi from '@hapi/joi'
 import { v4 as uuidv4 } from 'uuid'
+import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 
 export const paymentJournalEntryParamsSchema = Joi.object({
   id: Joi.string()
@@ -19,7 +20,7 @@ const paymentTimestampSchema = Joi.string()
   .description('An ISO8601 compatible date string defining when the payment was created')
   .example(new Date().toISOString())
 const paymentStatusSchema = Joi.string()
-  .valid('In Progress', 'Cancelled', 'Completed')
+  .valid(...Object.values(PAYMENT_JOURNAL_STATUS_CODES))
   .description('Payment status')
 
 /**
