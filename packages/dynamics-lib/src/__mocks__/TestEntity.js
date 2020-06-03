@@ -39,7 +39,8 @@ export default class TestEntity extends BaseEntity {
         type: 'optionset',
         ref: 'test_globaloption'
       }
-    }
+    },
+    alternateKey: 'strval'
   })
 
   /**

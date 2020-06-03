@@ -53,10 +53,21 @@ export function createEntityIdValidator (entityType, negate = false) {
   }
 }
 
-export function createAlternateKeyValidator (entityType, alternateKeyProperty, negate = false) {
+/**
+ * Create a validator which checks if an entity exists using an alternate key lookup
+ *
+ * @param {typeof BaseEntity} entityType the type of entity to check
+ * @param {boolean} negate if true then validates that the entity does not exist, defaults to false
+ * @returns {function(*=): undefined}
+ */
+export function createAlternateKeyValidator (entityType, negate = false) {
+  if (!entityType.definition.alternateKey) {
+    throw new Error(`The entity ${entityType.name} does not support alternate key lookups`)
+  }
+
   return async value => {
     if (value) {
-      const entity = await findById(entityType, `${alternateKeyProperty}='${value}'`)
+      const entity = await findById(entityType, `${entityType.definition.alternateKey}='${value}'`)
       if (!negate && !entity) {
         throw new Error(`Unrecognised ${entityType.definition.localCollection} identifier`)
       } else if (negate && entity) {

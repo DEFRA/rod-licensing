@@ -1,7 +1,7 @@
 import { Contact, RecurringPayment, RecurringPaymentInstruction, Permit, retrieveGlobalOptionSets } from '../../index.js'
 
 let optionSetData
-describe('recurring payment entity', () => {
+describe('recurring payment instruction entity', () => {
   beforeAll(async () => {
     optionSetData = await retrieveGlobalOptionSets().cached()
   })

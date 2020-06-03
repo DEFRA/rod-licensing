@@ -119,6 +119,15 @@ export const getPaymentJournal = async id => exec2xxOrNull(call(new URL(`/paymen
 export const updatePaymentJournal = async (id, data) => exec2xxOrThrow(call(new URL(`/paymentJournals/${id}`, urlBase), 'patch', data))
 
 /**
+ * Create a new staging exception
+ *
+ * @param data the payload with which to create the staging exception
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const createStagingException = async data => exec2xxOrThrow(call(new URL('/stagingExceptions', urlBase), 'post', data))
+
+/**
  * Supports querying of reference data from the Sales API
  */
 class QueryBuilder {

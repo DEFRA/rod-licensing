@@ -1,33 +1,17 @@
-import { persist, StagingException } from '@defra-fish/dynamics-lib'
 import { processQueue } from './process-transaction-queue.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
+import { createStagingExceptionFromError } from '../exceptions/exceptions.service.js'
 import { TRANSACTIONS_STAGING_TABLE } from '../../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-const STAGING_ERRORS_TTL_DELTA = 60 * 60 * 24 * 365
 
 export async function processDlq ({ id }) {
   debug('Processed message from dlq with payload', id)
   const { exception, transaction } = await getProcessingException(id)
   if (exception) {
-    const stagingException = new StagingException()
-    stagingException.stagingId = id
-    stagingException.description = (exception.error && exception.error.message) || String(exception)
-    stagingException.exceptionJson = JSON.stringify(
-      {
-        transaction: transaction,
-        exception: {
-          ...exception,
-          stack: exception.stack.split('\n')
-        }
-      },
-      null,
-      4
-    )
-    await persist(stagingException)
-
+    await createStagingExceptionFromError(id, exception, transaction)
     if (transaction) {
       try {
         await docClient
@@ -37,7 +21,7 @@ export async function processDlq ({ id }) {
             ConditionExpression: 'attribute_exists(id)',
             UpdateExpression: 'SET expires = :expires',
             ExpressionAttributeValues: {
-              ':expires': Math.floor(Date.now() / 1000) + STAGING_ERRORS_TTL_DELTA
+              ':expires': Math.floor(Date.now() / 1000) + TRANSACTIONS_STAGING_TABLE.StagingErrorsTtl
             }
           })
           .promise()
@@ -48,6 +32,12 @@ export async function processDlq ({ id }) {
   }
 }
 
+/**
+ * Determine the reason for the processing exception
+ *
+ * @param id
+ * @returns {Promise<{exception: Error|null, transaction: Object|null}>}
+ */
 const getProcessingException = async id => {
   let exception = null
   let transaction = null

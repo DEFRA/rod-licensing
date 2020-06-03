@@ -1,3 +1,6 @@
+import { mockAuthenticationContext, mockAcquireTokenWithClientCredentials } from 'adal-node'
+import { config } from '../dynamics-client.js'
+
 describe('dynamics-client', () => {
   it('is configured via environment variables', async () => {
     process.env.DYNAMICS_API_PATH = 'https://test-server/api/data/v9.1/'
@@ -8,22 +11,18 @@ describe('dynamics-client', () => {
     process.env.OAUTH_CLIENT_ID = 'clientId'
     process.env.OAUTH_CLIENT_SECRET = 'clientSecret'
     process.env.OAUTH_RESOURCE = 'https://resource/'
+    const dynamicsApiConfig = config()
 
-    const {
-      default: { AuthenticationContext },
-      mockAcquireTokenWithClientCredentials
-    } = require('adal-node')
-    const config = require('../dynamics-client.js').config()
-    expect(config).toMatchObject({
+    expect(dynamicsApiConfig).toMatchObject({
       webApiUrl: process.env.DYNAMICS_API_PATH,
       webApiVersion: process.env.DYNAMICS_API_VERSION,
       timeout: `${process.env.DYNAMICS_API_TIMEOUT}`,
       onTokenRefresh: expect.any(Function)
     })
     const testCallback = jest.fn()
-    await config.onTokenRefresh(testCallback)
+    await dynamicsApiConfig.onTokenRefresh(testCallback)
     expect(testCallback).toHaveBeenCalled()
-    expect(AuthenticationContext).toHaveBeenCalledWith(`${process.env.OAUTH_AUTHORITY_HOST_URL}${process.env.OAUTH_TENANT}`)
+    expect(mockAuthenticationContext).toHaveBeenCalledWith(`${process.env.OAUTH_AUTHORITY_HOST_URL}${process.env.OAUTH_TENANT}`)
     expect(mockAcquireTokenWithClientCredentials).toHaveBeenCalledWith(
       process.env.OAUTH_RESOURCE,
       process.env.OAUTH_CLIENT_ID,

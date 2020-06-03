@@ -8,8 +8,7 @@ import {
   MOCK_1DAY_SENIOR_PERMIT
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTIONS_STAGING_TABLE } from '../../../config.js'
-
-const awsMock = require('aws-sdk').default
+import AwsMock from 'aws-sdk'
 
 jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
@@ -35,7 +34,7 @@ describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
   })
-  beforeEach(awsMock.__resetAll)
+  beforeEach(AwsMock.__resetAll)
 
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
@@ -48,7 +47,7 @@ describe('transaction service', () => {
 
       const result = await createTransaction(mockTransactionPayload())
       expect(result).toMatchObject(expectedRecord)
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
         expect.objectContaining({
           TableName: TRANSACTIONS_STAGING_TABLE.TableName,
           Item: expectedRecord
@@ -57,7 +56,7 @@ describe('transaction service', () => {
     })
 
     it('throws exceptions back up the stack', async () => {
-      awsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
+      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
       await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })
@@ -73,7 +72,7 @@ describe('transaction service', () => {
 
       const result = await createTransactions([mockTransactionPayload(), mockTransactionPayload()])
       expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
         expect.objectContaining({
           RequestItems: {
             [TRANSACTIONS_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
@@ -83,7 +82,7 @@ describe('transaction service', () => {
     })
 
     it('throws exceptions back up the stack', async () => {
-      awsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
+      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
       await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })

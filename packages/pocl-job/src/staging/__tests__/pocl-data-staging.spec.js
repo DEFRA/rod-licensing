@@ -81,7 +81,7 @@ describe('pocl data staging', () => {
         totalCount: 6,
         successCount: 3,
         errorCount: 3,
-        status: DYNAMICS_IMPORT_STAGE.ProcessedWithWarnings,
+        status: DYNAMICS_IMPORT_STAGE.Failed,
         notes: expect.stringMatching(/Completed processing at .*/)
       })
     })
@@ -118,7 +118,7 @@ describe('pocl data staging', () => {
 
   it('is a no-op if the file is marked as processed in Dynamics', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
-    salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: DYNAMICS_IMPORT_STAGE.ProcessedWithWarnings } })
+    salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: DYNAMICS_IMPORT_STAGE.Failed } })
     getFileRecord.mockResolvedValue({ stage: FILE_STAGE.Completed })
     fs.statSync.mockReturnValueOnce({ size: 1024 })
     await stage(TEST_FILE_PATH)

@@ -1,6 +1,8 @@
 import each from 'jest-each'
 import { processQueue } from '../process-transaction-queue.js'
 import {
+  persist,
+  findById,
   ConcessionProof,
   Contact,
   FulfilmentRequest,
@@ -22,7 +24,7 @@ import {
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTIONS_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
-const awsMock = require('aws-sdk').default
+import AwsMock from 'aws-sdk'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -62,7 +64,7 @@ describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
   })
-  beforeEach(awsMock.__resetAll)
+  beforeEach(AwsMock.__resetAll)
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
@@ -144,20 +146,18 @@ describe('transaction service', () => {
         ]
       ]).it('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
         const mockRecord = initialiseMockTransactionRecord()
-        const dynamicsLib = require('@defra-fish/dynamics-lib')
-
-        awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
-        expect(dynamicsLib.persist).toBeCalledWith(...entityExpectations)
-        expect(awsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
+        expect(persist).toBeCalledWith(...entityExpectations)
+        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
           expect.objectContaining({
             TableName: TRANSACTIONS_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id },
             ConsistentRead: true
           })
         )
-        expect(awsMock.DynamoDB.DocumentClient.mockedMethods.delete).toBeCalledWith(
+        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.delete).toBeCalledWith(
           expect.objectContaining({
             TableName: TRANSACTIONS_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id }
@@ -168,7 +168,7 @@ describe('transaction service', () => {
           expires: expect.any(Number)
         })
 
-        expect(awsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
+        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
           expect.objectContaining({
             TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
             Item: expectedRecord,
@@ -181,12 +181,11 @@ describe('transaction service', () => {
     it('handles requests which relate to an transaction file', async () => {
       const mockRecord = mockCompletedTransactionRecord()
       mockRecord.transactionFile = 'test-file.xml'
-      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      const dynamicsLib = require('@defra-fish/dynamics-lib')
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToPoclFile')
       const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToPoclFile')
       const testPoclFileEntity = new PoclFile()
-      dynamicsLib.findById.mockResolvedValueOnce(testPoclFileEntity)
+      findById.mockResolvedValueOnce(testPoclFileEntity)
       await processQueue({ id: mockRecord.id })
       expect(transactionToFileBindingSpy).toHaveBeenCalledWith(testPoclFileEntity)
       expect(permissionToFileBindingSpy).toHaveBeenCalledWith(testPoclFileEntity)
@@ -194,7 +193,7 @@ describe('transaction service', () => {
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
       const mockRecord = mockTransactionRecord()
-      awsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
       try {
         await processQueue({ id: mockRecord.id })
       } catch (e) {

@@ -1,5 +1,5 @@
 import * as db from '../db.js'
-const awsMock = require('aws-sdk').default
+import AwsMock from 'aws-sdk'
 
 describe('database operations', () => {
   const TEST_FILENAME = 'testfile.xml'
@@ -10,12 +10,12 @@ describe('database operations', () => {
   })
   beforeEach(() => {
     jest.clearAllMocks()
-    awsMock.__resetAll()
+    AwsMock.__resetAll()
   })
   describe('getFileRecord', () => {
     it('calls a get operation on dynamodb', async () => {
       await db.getFileRecord(TEST_FILENAME)
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.get).toHaveBeenCalledWith({
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toHaveBeenCalledWith({
         TableName: process.env.POCL_FILE_STAGING_TABLE,
         Key: { filename: TEST_FILENAME },
         ConsistentRead: true
@@ -26,7 +26,7 @@ describe('database operations', () => {
   describe('getFileRecords', () => {
     it('retrieves all records for the given file if no stages are provided', async () => {
       await db.getFileRecords()
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: process.env.POCL_FILE_STAGING_TABLE,
           ConsistentRead: true
@@ -36,7 +36,7 @@ describe('database operations', () => {
 
     it('retrieves all records a given set of stages', async () => {
       await db.getFileRecords('STAGE 1', 'STAGE 2')
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: process.env.POCL_FILE_STAGING_TABLE,
           FilterExpression: 'stage IN (:stage0,:stage1)',
@@ -50,7 +50,7 @@ describe('database operations', () => {
   describe('updateFileStagingTable', () => {
     it('calls update on dynamodb including all necessary parameters', async () => {
       await db.updateFileStagingTable({ filename: TEST_FILENAME, param1: 'test1', param2: 'test2' })
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: 'TestFileTable',
           Key: { filename: TEST_FILENAME },
@@ -69,7 +69,7 @@ describe('database operations', () => {
     it('calls batchWrite on dynamodb including all necessary parameters', async () => {
       const records = [{ id: 'test1' }, { id: 'test2' }]
       await db.updateRecordStagingTable(TEST_FILENAME, records)
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenCalledWith(
         expect.objectContaining({
           RequestItems: {
             TestRecordTable: [
@@ -91,14 +91,14 @@ describe('database operations', () => {
 
     it('is a no-op if records is empty', async () => {
       await db.updateRecordStagingTable(TEST_FILENAME, [])
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).not.toHaveBeenCalled()
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).not.toHaveBeenCalled()
     })
   })
 
   describe('getProcessedRecords', () => {
     it('retrieves all records for the given file if no stages are provided', async () => {
       await db.getProcessedRecords(TEST_FILENAME)
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: process.env.POCL_RECORD_STAGING_TABLE,
           KeyConditionExpression: 'filename = :filename',
@@ -110,7 +110,7 @@ describe('database operations', () => {
 
     it('retrieves all records a given set of stages', async () => {
       await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
-      expect(awsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: process.env.POCL_RECORD_STAGING_TABLE,
           KeyConditionExpression: 'filename = :filename',

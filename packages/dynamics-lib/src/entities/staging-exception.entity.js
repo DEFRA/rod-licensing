@@ -14,7 +14,8 @@ export class StagingException extends BaseEntity {
       id: { field: 'defra_crmstagingexceptionid', type: 'string' },
       stagingId: { field: 'defra_name', type: 'string' },
       description: { field: 'defra_description', type: 'string' },
-      exceptionJson: { field: 'defra_jsonobject', type: 'string' }
+      transactionJson: { field: 'defra_jsonobject', type: 'string' },
+      exceptionJson: { field: 'defra_errorjsonobject', type: 'string' }
     }
   })
 
@@ -51,7 +52,19 @@ export class StagingException extends BaseEntity {
   }
 
   /**
-   * The json data associated with the staging exception
+   * The transaction json data associated with the staging exception
+   * @type {string}
+   */
+  get transactionJson () {
+    return super._getState('transactionJson')
+  }
+
+  set transactionJson (transactionJson) {
+    super._setState('transactionJson', transactionJson)
+  }
+
+  /**
+   * The exception json data associated with the staging exception
    * @type {string}
    */
   get exceptionJson () {
