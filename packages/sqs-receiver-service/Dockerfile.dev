@@ -2,5 +2,5 @@
 # Used for local development debugging
 ####################################################################################################################################
 FROM rod-licensing/base
-WORKDIR /app/packages/sales-api-service
+WORKDIR /app/packages/sqs-receiver-service
 ENTRYPOINT [ "pm2-dev", "ecosystem.config.yml" ]
