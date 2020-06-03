@@ -21,21 +21,19 @@ if (
   paymentMopUpJob.ageMinutes < 0
 ) {
   console.error(`--age-minutes: must be an integer between 0 and ${MAX_INCOMPLETE_PURCHASE_AGE_MINUTES}`)
-  process.exit(1)
+} else {
+  if (
+    isNaN(paymentMopUpJob.scanDurationHours) ||
+    !Number.isInteger(paymentMopUpJob.scanDurationHours) ||
+    paymentMopUpJob.scanDurationHours < 1
+  ) {
+    console.error('--scan-duration-hours: must be an integer above 1')
+  } else {
+    execute(paymentMopUpJob.ageMinutes, paymentMopUpJob.scanDurationHours).catch(err => {
+      console.error(err)
+      process.exit(1)
+    })
+  }
 }
-
-if (
-  isNaN(paymentMopUpJob.scanDurationHours) ||
-  !Number.isInteger(paymentMopUpJob.scanDurationHours) ||
-  paymentMopUpJob.scanDurationHours < 1
-) {
-  console.error('--scan-duration-hours: must be an integer above 1')
-  process.exit(1)
-}
-
-execute(paymentMopUpJob.ageMinutes, paymentMopUpJob.scanDurationHours).catch(err => {
-  console.error(err)
-  process.exit(1)
-})
 
 export default paymentMopUpJob
