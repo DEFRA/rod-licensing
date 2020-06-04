@@ -15,53 +15,64 @@ describe('payment-mop-up-job', () => {
   })
 
   it('starts the mop up job with --age-minutes=3 and --scan-duration=67', async () => {
-    jest.isolateModules(() => {
+    jest.isolateModules(async () => {
       processor.execute = jest.fn(async () => Promise.resolve())
       commander.parse = jest.fn(() => {
         commander.ageMinutes = 3
         commander.scanDurationHours = 67
       })
-      require('../payment-mop-up-job.js')
+      await (async () => {
+        require('../payment-mop-up-job.js')
+      })()
       expect(processor.execute).toHaveBeenCalledWith(3, 67)
     })
   })
 
   it('starts the mop up job with default age of 180 minutes and scan duration of 24 hours', async () => {
-    jest.isolateModules(() => {
+    jest.isolateModules(async () => {
       processor.execute = jest.fn(async () => Promise.resolve())
       commander.parse = jest.fn()
-      require('../payment-mop-up-job.js')
+      await (async () => {
+        require('../payment-mop-up-job.js')
+      })()
       expect(processor.execute).toHaveBeenCalledWith(180, 24)
     })
   })
 
   it('will exit with an exit with an incorrect --age-minutes argument', async () => {
-    jest.isolateModules(() => {
+    jest.isolateModules(async () => {
       processor.execute = jest.fn(async () => Promise.resolve())
       commander.parse = jest.fn(() => {
         commander.ageMinutes = -1
       })
-      require('../payment-mop-up-job.js')
+      await (async () => {
+        require('../payment-mop-up-job.js')
+      })()
       expect(processor.execute).not.toHaveBeenCalled()
     })
   })
 
-  it('will exit with an exit code of 1 with an incorrect --scanDurationHours argument', async () => {
-    jest.isolateModules(() => {
-      processor.execute = jest.fn()
+  it('will not call the process with an incorrect --scanDurationHours argument', async () => {
+    jest.isolateModules(async () => {
+      processor.execute = jest.fn(async () => Promise.resolve())
       commander.parse = jest.fn(() => {
         commander.scanDurationHours = 0
       })
-      require('../payment-mop-up-job.js')
+      await (async () => {
+        require('../payment-mop-up-job.js')
+      })()
       expect(processor.execute).not.toHaveBeenCalled()
     })
   })
 
-  it('will exit with an exit code of 1 if the mop up job throws an error', async () => {
-    jest.isolateModules(() => {
-      processor.execute = jest.fn(async () => Promise.reject(new Error()))
-      require('../payment-mop-up-job.js')
-      expect(processor.execute).not.toHaveBeenCalled()
+  it('will exit if the mop up job throws an error', async () => {
+    jest.isolateModules(async () => {
+      processor.execute = jest.fn().mockImplementationOnce(async () => {
+        throw new Error()
+      })
+      await (async () => {
+        require('../payment-mop-up-job.js')
+      })()
     })
   })
 })

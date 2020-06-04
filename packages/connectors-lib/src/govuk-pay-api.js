@@ -4,11 +4,11 @@
 import fetch from 'node-fetch'
 const GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT = 10000
 
-const headers = {
+const headers = () => ({
   accept: 'application/json',
   authorization: `Bearer ${process.env.GOV_PAY_APIKEY}`,
   'content-type': 'application/json'
-}
+})
 
 /**
  * Create a new payment
@@ -18,7 +18,7 @@ const headers = {
 export const createPayment = async preparedPayment => {
   try {
     return fetch(process.env.GOV_PAY_API_URL, {
-      headers,
+      headers: headers(),
       method: 'post',
       body: JSON.stringify(preparedPayment),
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
@@ -37,7 +37,7 @@ export const createPayment = async preparedPayment => {
 export const fetchPaymentStatus = async paymentId => {
   try {
     return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
-      headers,
+      headers: headers(),
       method: 'get',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })

@@ -385,4 +385,17 @@ describe('sales-api-connector', () => {
       }
     )
   })
+
+  describe('country endpoint', () => {
+    it('retrieves all items using .getAll()', async () => {
+      const expectedResponse = [{ id: 'test-1' }, { id: 'test-2' }]
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.countries.getAll()).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/option-sets/defra_country?', {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      })
+    })
+  })
 })

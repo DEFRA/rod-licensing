@@ -55,34 +55,41 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
+
+    salesApi.getPaymentJournal = jest.fn()
+    expect(salesApi.getPaymentJournal).not.toHaveBeenCalled()
   })
 
   it('throws a status 500 (server) exception and if there is an exception thrown finalizing the transaction', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     jest.setTimeout(30000)
 
-    salesApi.createTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
 
-    salesApi.finaliseTransaction = jest.fn(async () =>
-      new Promise((resolve, reject) => reject(new Error())))
+    salesApi.finaliseTransaction = jest.fn(async () => new Promise((resolve, reject) => reject(new Error())))
 
-    govUkPayApi.createPayment = jest.fn(async () =>
-      new Promise(resolve => resolve({ json: () => (MOCK_PAYMENT_RESPONSE), ok: true, status: 201 })))
+    govUkPayApi.createPayment = jest.fn(
+      async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
+    )
 
-    govUkPayApi.fetchPaymentStatus = jest.fn(async () =>
-      new Promise(resolve => resolve({ json: () => (paymentStatusSuccess(ADULT_FULL_1_DAY_LICENCE.cost)), ok: true, status: 201 })))
+    govUkPayApi.fetchPaymentStatus = jest.fn(
+      async () =>
+        new Promise(resolve => resolve({ json: () => paymentStatusSuccess(ADULT_FULL_1_DAY_LICENCE.cost), ok: true, status: 201 }))
+    )
 
     const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
 
+    salesApi.updatePaymentJournal = jest.fn()
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(500)
 
+    // Despite the error in finalization the payment journal should be updated
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalled()
+
     // Resume correctly
-    salesApi.finaliseTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve({ ok: true })))
+    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
 
     const data3 = await injectWithCookies('GET', AGREED.uri)
     expect(data3.statusCode).toBe(302)
