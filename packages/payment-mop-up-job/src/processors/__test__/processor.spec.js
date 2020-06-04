@@ -91,6 +91,7 @@ describe('processor', () => {
   it('completes normally where there are journal records retrieved', async () => {
     salesApi.paymentJournals.getAll = jest.fn(async () => journalEntries)
     salesApi.updatePaymentJournal = jest.fn()
+    salesApi.finaliseTransaction = jest.fn()
     govUkPayApi.fetchPaymentStatus = jest
       .fn()
       .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[0] }))
@@ -100,6 +101,7 @@ describe('processor', () => {
       .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[4] }))
     await execute(1, 1)
     expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalled()
+    expect(salesApi.finaliseTransaction).toHaveBeenCalled()
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('4fa393ab-07f4-407e-b233-89be2a6f5f77', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
     })
