@@ -94,21 +94,32 @@ export function createPermitConcessionValidator () {
       } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {
         throw new Error(`The permit '${permission.permitId}' does not allow concessions but concession proofs were supplied`)
       } else {
-        // Check list for duplicates
-        const counts = permission.concessions.reduce((acc, c) => ({ ...acc, [c.id]: (acc[c.id] || 0) + 1 }), {})
-        const duplicates = Object.keys(counts).filter(k => counts[k] > 1)
-        if (duplicates.length) {
-          throw new Error(`The concession ids '${duplicates}' appear more than once, duplicates are not permitted`)
-        }
-
-        // Check concession allowed for permit
-        permission.concessions.forEach(concession => {
-          if (!concessionsRequiredForPermit.find(pc => concession.id === pc.concessionId)) {
-            throw new Error(`The concession '${concession.id}' is not valid with respect to the permit '${permission.permitId}'`)
-          }
-        })
+        validateConcessionList(permission, concessionsRequiredForPermit)
       }
     }
     return undefined
   }
+}
+
+/**
+ * Validate that the supplied concessions list does not contain duplicates and are valid for the respective permit
+ *
+ * @param permission the permission containing the concessions to be validated
+ * @param concessionsRequiredForPermit the concessions allowed for the target permit
+ * @throws on validation error
+ */
+const validateConcessionList = (permission, concessionsRequiredForPermit) => {
+  // Check list for duplicates
+  const counts = permission.concessions.reduce((acc, c) => ({ ...acc, [c.id]: (acc[c.id] || 0) + 1 }), {})
+  const duplicates = Object.keys(counts).filter(k => counts[k] > 1)
+  if (duplicates.length) {
+    throw new Error(`The concession ids '${duplicates}' appear more than once, duplicates are not permitted`)
+  }
+
+  // Check concession allowed for permit
+  permission.concessions.forEach(concession => {
+    if (!concessionsRequiredForPermit.find(pc => concession.id === pc.concessionId)) {
+      throw new Error(`The concession '${concession.id}' is not valid with respect to the permit '${permission.permitId}'`)
+    }
+  })
 }
