@@ -24,5 +24,7 @@ Since the job will not process the same transaction twice.
 | GOV_PAY_API_URL            | The GOV.UK Pay API base url                     |    no    | Yes                 |                               |
 | GOV_PAY_APIKEY             | GOV pay access identifier                       |    no    | Yes                 |                               |
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    | Yes                 |                               |
+| RATE_LIMIT_MS              | Rate limit for the process                      |    no    | 250                 |                               |
+| CONCURRENCY                | Concurrency for the process                     |    no    | 4                   |                               |
 
 The details of the GOV.UK payment API can be found here; https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation

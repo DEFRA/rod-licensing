@@ -6,9 +6,16 @@ import {
   PAYMENT_TYPE
 } from '@defra-fish/business-rules-lib'
 
+import Bottleneck from 'bottleneck'
 import moment from 'moment'
 import db from 'debug'
+import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
 const debug = db('payment-mop-up-job:execute')
+
+const limiter = new Bottleneck({
+  minTime: process.env.RATE_LIMIT_MS || RATE_LIMIT_MS_DEFAULT,
+  maxConcurrent: process.env.CONCURRENCY || CONCURRENCY_DEFAULT
+})
 
 const processPaymentResults = async transaction => {
   if (transaction.paymentStatus.state.status === 'error') {
@@ -49,6 +56,8 @@ const getStatus = async paymentReference => {
   return response.json()
 }
 
+const getStatusWrapped = limiter.wrap(getStatus)
+
 export const execute = async (ageMinutes, scanDurationHours) => {
   debug(
     `Running payment mop up processor with a payment age of ${ageMinutes} minutes ` + `and a scan duration of ${scanDurationHours} hours`
@@ -69,7 +78,7 @@ export const execute = async (ageMinutes, scanDurationHours) => {
   const transactions = await Promise.all(
     paymentJournals.map(async p => ({
       ...p,
-      paymentStatus: await getStatus(p.paymentReference)
+      paymentStatus: await getStatusWrapped(p.paymentReference)
     }))
   )
 
