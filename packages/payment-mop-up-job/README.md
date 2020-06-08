@@ -1,17 +1,17 @@
 # payment-mop-up-job
 
 Where a user does not complete the web-sales user journey after a successful payment this process will
-query the GOV.UK API for the status of those payments. If a payment has been completed the mop-up job will 
+query the GOV.UK API for the status of those payments. If a payment has been completed the mop-up job will
 complete the payment automatically
-  
+
 `node src/payment-mop-up-job.js [--age-minutes <number>] [--scan-duration-hours <number>]`
 
-The age is the time elapsed since the payment was created when the transaction becomes eligible for the mop up process. 
-It defaults to 180 minutes - 3 hours.
+The age is the time elapsed since the payment was created when the transaction becomes eligible for the mop up process.
+It defaults to 180 minutes.
 
 The scan duration is the interval over which the transaction will be queried. For example if with a max age of 180 minutes
-and a scan duration of 24 hours then candidate transactions are those started between 27 and 24 hours ago. 
-The scan duration should be larger than the periodicity of the job to provide continuous coverage of all transactions. 
+and a scan duration of 24 hours then candidate transactions are those started between 27 and 24 hours ago.
+The scan duration should be larger than the periodicity of the job to provide continuous coverage of all transactions.
 Since the job will not process the same transaction twice.
 
 ## Environment variables
