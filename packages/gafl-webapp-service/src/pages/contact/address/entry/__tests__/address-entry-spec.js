@@ -1,5 +1,6 @@
+import { salesApi } from '@defra-fish/connectors-lib'
 import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../uri.js'
-import mockDefraCountries from '../../../../../services/address-lookup/__mocks__/data/defra-country.js'
+import mockDefraCountries from '../../../../../__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
@@ -15,12 +16,10 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
-jest.mock('node-fetch')
-const fetch = require('node-fetch')
+salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
 describe('The manual address entry page', () => {
   it('returns success on requesting', async () => {
-    fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => mockDefraCountries, ok: true })))
     const data = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
     expect(data.statusCode).toBe(200)
   })

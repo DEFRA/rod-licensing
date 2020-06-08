@@ -1,12 +1,14 @@
 import moment from 'moment'
-import { permitsOperations, referenceDataOperations } from '../services/sales-api/sales-api-service.js'
 import * as mappings from './mapping-constants.js'
+import { TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../processors/concession-helper.js'
+import { countries } from './refdata-helper.js'
+import { salesApi } from '@defra-fish/connectors-lib'
 
 const prepareApiTransactionPayload = async request => {
   const transactionCache = await request.cache().helpers.transaction.get()
-  const concessions = await permitsOperations.fetchConcessions()
-  const countriesList = await referenceDataOperations.fetchCountriesList()
+  const concessions = await salesApi.concessions.getAll()
+  const countryList = await countries.getAll()
 
   return {
     dataSource: mappings.DATA_SOURCE.web,
@@ -14,7 +16,7 @@ const prepareApiTransactionPayload = async request => {
       const permission = {
         permitId: p.permit.id,
         licensee: Object.assign((({ countryCode, ...l }) => l)(p.licensee), {
-          country: countriesList.find(c => c.code === p.licensee.countryCode).name
+          country: countryList.find(c => c.code === p.licensee.countryCode).name
         }),
         issueDate: moment().toISOString(),
         startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
@@ -55,8 +57,8 @@ const prepareApiFinalisationPayload = async request => {
     payment: {
       amount: transaction.cost,
       timestamp: moment().toISOString(),
-      source: mappings.TRANSACTION_SOURCE.govPay,
-      method: mappings.PAYMENT_TYPE.debit
+      source: TRANSACTION_SOURCE.govPay,
+      method: PAYMENT_TYPE.debit
     }
   }
 }
