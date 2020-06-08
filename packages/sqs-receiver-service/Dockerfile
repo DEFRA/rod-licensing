@@ -18,5 +18,4 @@ FROM rod-licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 
-EXPOSE ${PORT}
 ENTRYPOINT [ "pm2-runtime", "ecosystem.config.yml" ]

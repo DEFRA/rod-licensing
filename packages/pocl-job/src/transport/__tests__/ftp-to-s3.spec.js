@@ -6,9 +6,8 @@ import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../..
 import { salesApi } from '@defra-fish/connectors-lib'
 import fs from 'fs'
 import md5File from 'md5-file'
-
-const ftpMock = require('ssh2-sftp-client')
-const awsMock = require('aws-sdk').default
+import AwsMock from 'aws-sdk'
+import { mockedFtpMethods } from 'ssh2-sftp-client'
 
 jest.mock('fs')
 jest.mock('md5-file')
@@ -34,11 +33,11 @@ describe('ftp-to-s3', () => {
   })
   beforeEach(() => {
     jest.clearAllMocks()
-    awsMock.__resetAll()
+    AwsMock.__resetAll()
   })
 
   it('retrieves files from SFTP and stores in S3', async () => {
-    ftpMock.mockedMethods.list.mockResolvedValue([{ name: 'test1.xml' }, { name: 'test2.xml' }])
+    mockedFtpMethods.list.mockResolvedValue([{ name: 'test1.xml' }, { name: 'test2.xml' }])
     fs.createReadStream.mockReturnValueOnce('test1stream')
     fs.createReadStream.mockReturnValueOnce('test2stream')
     fs.statSync.mockReturnValueOnce({ size: 1024 })
@@ -51,14 +50,14 @@ describe('ftp-to-s3', () => {
     const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
     const s3Key2 = `${moment().format('YYYY-MM-DD')}/test2.xml`
 
-    expect(ftpMock.mockedMethods.fastGet).toHaveBeenNthCalledWith(1, '/ftpservershare/test1.xml', localPath1, {})
-    expect(ftpMock.mockedMethods.fastGet).toHaveBeenNthCalledWith(2, '/ftpservershare/test2.xml', localPath2, {})
-    expect(awsMock.S3.mockedMethods.putObject).toHaveBeenNthCalledWith(1, {
+    expect(mockedFtpMethods.fastGet).toHaveBeenNthCalledWith(1, '/ftpservershare/test1.xml', localPath1, {})
+    expect(mockedFtpMethods.fastGet).toHaveBeenNthCalledWith(2, '/ftpservershare/test2.xml', localPath2, {})
+    expect(AwsMock.S3.mockedMethods.putObject).toHaveBeenNthCalledWith(1, {
       Bucket: process.env.POCL_S3_BUCKET,
       Key: s3Key1,
       Body: 'test1stream'
     })
-    expect(awsMock.S3.mockedMethods.putObject).toHaveBeenNthCalledWith(2, {
+    expect(AwsMock.S3.mockedMethods.putObject).toHaveBeenNthCalledWith(2, {
       Bucket: process.env.POCL_S3_BUCKET,
       Key: s3Key2,
       Body: 'test2stream'
@@ -95,23 +94,45 @@ describe('ftp-to-s3', () => {
     })
     expect(fs.unlinkSync).toHaveBeenNthCalledWith(1, localPath1)
     expect(fs.unlinkSync).toHaveBeenNthCalledWith(2, localPath2)
-    expect(ftpMock.mockedMethods.end).toHaveBeenCalledTimes(1)
+    expect(mockedFtpMethods.end).toHaveBeenCalledTimes(1)
+  })
+
+  it('moves the file to s3 but skips file processing if a file has already been marked as processed in Dynamics', async () => {
+    mockedFtpMethods.list.mockResolvedValue([{ name: 'test-already-processed.xml' }])
+    fs.createReadStream.mockReturnValueOnce('teststream')
+    fs.statSync.mockReturnValueOnce({ size: 1024 })
+    salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: 'Processed' } })
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+    await ftpToS3()
+    const localPath = '/local/tmp/test-already-processed.xml'
+    const s3Key = `${moment().format('YYYY-MM-DD')}/test-already-processed.xml`
+    expect(mockedFtpMethods.fastGet).toHaveBeenCalledWith('/ftpservershare/test-already-processed.xml', localPath, {})
+    expect(AwsMock.S3.mockedMethods.putObject).toHaveBeenCalledWith({
+      Bucket: process.env.POCL_S3_BUCKET,
+      Key: s3Key,
+      Body: 'teststream'
+    })
+    expect(updateFileStagingTable).not.toHaveBeenCalled()
+    expect(salesApi.upsertTransactionFile).not.toHaveBeenCalled()
+    expect(consoleErrorSpy).toHaveBeenCalled()
+    expect(fs.unlinkSync).toHaveBeenCalledWith(localPath)
+    expect(mockedFtpMethods.end).toHaveBeenCalledTimes(1)
   })
 
   it('logs and propogates errors back up the stack', async () => {
     const testError = new Error('Test error')
-    ftpMock.mockedMethods.list.mockRejectedValue(testError)
+    mockedFtpMethods.list.mockRejectedValue(testError)
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     await expect(ftpToS3).rejects.toThrow(testError)
     expect(consoleErrorSpy).toHaveBeenCalled()
   })
 
   it('ignores non-xml files', async () => {
-    ftpMock.mockedMethods.list.mockResolvedValue([{ name: 'test1.pdf' }, { name: 'test2.md' }])
+    mockedFtpMethods.list.mockResolvedValue([{ name: 'test1.pdf' }, { name: 'test2.md' }])
     await ftpToS3()
-    expect(ftpMock.mockedMethods.fastGet).not.toHaveBeenCalled()
-    expect(awsMock.S3.mockedMethods.putObject).not.toHaveBeenCalled()
+    expect(mockedFtpMethods.fastGet).not.toHaveBeenCalled()
+    expect(AwsMock.S3.mockedMethods.putObject).not.toHaveBeenCalled()
     expect(fs.unlinkSync).not.toHaveBeenCalled()
-    expect(ftpMock.mockedMethods.end).toHaveBeenCalledTimes(1)
+    expect(mockedFtpMethods.end).toHaveBeenCalledTimes(1)
   })
 })

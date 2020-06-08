@@ -82,60 +82,18 @@ To support running the services locally using docker, there are three different 
   > Building the containers in production mode takes longer as all node modules need to be installed and additional build
   > steps such as compiling SASS need to be performed.
 
-In order to run the services locally, you'll need to place an environment file under `docker/.env` within the repository.
-
-This file contains all of the necessary environment variables to run the services locally:
-
-```dotenv
-NODE_ENV=development
-
-# Global Redis
-REDIS_HOST=host.docker.internal
-REDIS_PORT=6379
-
-# Global URLs
-SALES_API_URL=http://host.docker.internal:4000
-
-# Global AWS
-AWS_REGION=eu-west-2
-AWS_ACCESS_KEY_ID=local
-AWS_SECRET_ACCESS_KEY=local
-AWS_SQS_ENDPOINT=http://host.docker.internal:9324
-AWS_DYNAMODB_ENDPOINT=http://host.docker.internal:4569
-
-# Dynamics API
-OAUTH_AUTHORITY_HOST_URL=https://login.microsoftonline.com/
-OAUTH_TENANT=<<redacted>>
-
-# Dynamics API settings specific to each host
-OAUTH_CLIENT_ID=<<redacted>>
-OAUTH_CLIENT_SECRET=<<redacted>>
-DYNAMICS_API_PATH=https://<<redacted>>/api/data/v9.1/
-DYNAMICS_API_VERSION=9.1
-OAUTH_RESOURCE=https://<<redacted>>/
-
-# Sales API
-# Note: shares the TRANSACTIONS_QUEUE_URL environment variable defined below under SQS Receiver
-TRANSACTIONS_STAGING_TABLE=TransactionStaging
-DEBUG=sales:*
-
-# SQS Receiver
-TRANSACTIONS_QUEUE_URL=http://host.docker.internal:9324/queue/TransactionsQueue.fifo
-TRANSACTIONS_QUEUE_MAX_POLLING_INTERVAL_MS=30000
-TRANSACTIONS_QUEUE_VISIBILITY_TIMEOUT_MS=120000
-TRANSACTIONS_QUEUE_SUBSCRIBER=http://host.docker.internal:4000/process-queue
-
-TRANSACTIONS_DLQ_URL=http://host.docker.internal:9324/queue/TransactionsDlq.fifo
-TRANSACTIONS_DLQ_MAX_POLLING_INTERVAL_MS=180000
-TRANSACTIONS_DLQ_VISIBILITY_TIMEOUT_MS=120000
-TRANSACTIONS_DLQ_SUBSCRIBER=http://host.docker.internal:4000/process-dlq
-```
+In order to run the services locally, you'll need to insert the appropriate values into the environment files ending with .secrets.env
+in the [env](env) folder.
 
 ### How to run
 
 There are a number of convenience scripts setup in the root `package.json`
 
 #### Production mode
+
+Building and running the images in production mode runs a full build of all services using the [rod-licensing/builder](../Dockerfile.build) image
+to execute any build steps before copying resources into an image based on the [rod-licensing/base](../Dockerfile.base). The base image only includes
+binaries that are essential to run the services and does not include any build-time dependencies.
 
 To build the images:
 
@@ -157,7 +115,11 @@ docker stack rm rls
 
 #### Development mode
 
-Ensure that you have the packages properly setup on your host system by running `npm install` in the root of the repository.
+Building and running the images in development mode does not run any of the build steps and requires that the services are correctly built on the host
+system. In development mode, the host filesystem is mounted directly into the container for each service and the services are executed using pm2-dev
+which watches the source files for changes, automatically restarting the process when changes are detected.
+
+> Ensure that you have the packages properly setup on your host system by running `npm install` in the root of the repository.
 
 To build the images:
 

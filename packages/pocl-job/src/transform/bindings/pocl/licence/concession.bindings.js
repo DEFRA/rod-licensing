@@ -1,6 +1,14 @@
 import { Binding } from '../../binding.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
+const concessionIds = {}
+const getConcessionId = async concessionName => {
+  if (!concessionIds[concessionName]) {
+    concessionIds[concessionName] = (await salesApi.concessions.find({ name: concessionName })).id
+  }
+  return concessionIds[concessionName]
+}
+
 /**
  * Type of identification shown for Senior Concession
  * (Uncancelled Passport, Birth Certificate, NHS Medical Card, Driving Licence, Previous Senior Licence)
@@ -14,7 +22,7 @@ export const SeniorConcession = new Binding({
     return (
       value && {
         concession: {
-          concessionId: (await salesApi.concessions.find({ name: 'Senior' })).id,
+          concessionId: await getConcessionId('Senior'),
           proof: {
             type: context.value,
             referenceNumber: 'N/A'
@@ -36,7 +44,7 @@ export const BlueBadgeConcession = new Binding({
     return (
       value && {
         concession: {
-          concessionId: (await salesApi.concessions.find({ name: 'Disabled' })).id,
+          concessionId: await getConcessionId('Disabled'),
           proof: {
             type: 'Blue Badge',
             referenceNumber: context.value
@@ -58,7 +66,7 @@ export const PipConcession = new Binding({
     return (
       value && {
         concession: {
-          concessionId: (await salesApi.concessions.find({ name: 'Disabled' })).id,
+          concessionId: await getConcessionId('Disabled'),
           proof: {
             type: 'National Insurance Number',
             referenceNumber: context.value

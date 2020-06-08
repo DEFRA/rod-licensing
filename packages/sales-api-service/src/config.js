@@ -11,7 +11,8 @@ export const PAYMENTS_TABLE = {
 
 export const TRANSACTIONS_STAGING_TABLE = {
   TableName: process.env.TRANSACTIONS_STAGING_TABLE,
-  Ttl: process.env.TRANSACTION_STAGING_TABLE_TTL || defaultStagingTtl
+  Ttl: process.env.TRANSACTION_STAGING_TABLE_TTL || defaultStagingTtl,
+  StagingErrorsTtl: 60 * 60 * 24 * 365
 }
 
 export const TRANSACTION_STAGING_HISTORY_TABLE = {

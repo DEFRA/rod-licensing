@@ -1,4 +1,6 @@
 import initialiseServer from '../../index.js'
+import { dynamicsClient } from '@defra-fish/dynamics-lib'
+import AwsMock from 'aws-sdk'
 let server = null
 
 describe('hapi healthcheck', () => {
@@ -19,13 +21,12 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
-    const aws = require('aws-sdk').default
-    aws.SQS.__init({
+    AwsMock.SQS.__init({
       expectedResponses: {
         listQueues: { QueueUrls: ['TestQueue'] }
       }
     })
-    aws.DynamoDB.__init({
+    AwsMock.DynamoDB.__init({
       expectedResponses: {
         listTables: { TableNames: ['TestTable'] }
       }
@@ -72,7 +73,6 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status page returning a 500 error when unhealthy', async () => {
-    const { dynamicsClient } = require('@defra-fish/dynamics-lib')
     jest.spyOn(dynamicsClient, 'executeUnboundFunction').mockImplementation(async () => {
       throw new Error('Simulated')
     })

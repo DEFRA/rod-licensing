@@ -1,8 +1,8 @@
 import * as salesApi from '../sales-api-connector.js'
 import each from 'jest-each'
+import fetch from 'node-fetch'
 
 jest.mock('node-fetch')
-const fetch = require('node-fetch')
 const TEST_HREF = 'http://example.com/'
 
 describe('sales-api-connector', () => {

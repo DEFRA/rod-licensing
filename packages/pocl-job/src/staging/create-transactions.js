@@ -74,19 +74,29 @@ const getInitialState = async filename => {
 const createTransactionsInSalesApi = async (filename, state) => {
   if (state.buffer.length) {
     const createResults = await salesApi.createTransactions(state.buffer.map(item => item.createTransactionPayload))
-    state.buffer.forEach((record, idx) => {
+    for (let idx = 0; idx < state.buffer.length; idx++) {
+      const record = state.buffer[idx]
       const apiResponse = createResults[idx]
       if (apiResponse.statusCode === 201) {
         record.stage = RECORD_STAGE.TransactionCreated
-        delete record.createTransactionPayload
         record.createTransactionId = apiResponse.response.id
         state.succeeded++
       } else {
         record.stage = RECORD_STAGE.TransactionCreationFailed
         record.createTransactionError = apiResponse
         state.failed++
+        await salesApi.createStagingException({
+          transactionFileException: {
+            name: `${filename}: FAILED-CREATE-${record.id}`,
+            description: JSON.stringify(apiResponse, null, 2),
+            json: JSON.stringify(record, null, 2),
+            notes: 'Failed to create the transaction in the Sales API',
+            type: 'Failure',
+            transactionFile: filename
+          }
+        })
       }
-    })
+    }
     await updateRecordStagingTable(filename, state.buffer)
     state.buffer = []
   }

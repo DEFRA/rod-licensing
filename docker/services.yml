@@ -1,14 +1,15 @@
 version: '3.7'
 services:
   ##############################################################################################################
-  # rod-licensing webapp
+  # rod-licensing gafl_webapp
   ##############################################################################################################
-  webapp:
-    image: rod-licensing/webapp:${TAG:-latest}
+  gafl_webapp:
+    image: rod-licensing/gafl_webapp:${TAG:-latest}
     ports:
       - 3000:3000
     env_file:
-      - .env
+      - ./env/gafl_webapp.env
+      - ./env/gafl_webapp.secrets.env
     deploy:
       mode: replicated
       replicas: 1
@@ -23,7 +24,8 @@ services:
     ports:
       - 4000:4000
     env_file:
-      - .env
+      - ./env/sales_api.env
+      - ./env/sales_api.secrets.env
     deploy:
       mode: replicated
       replicas: 1
@@ -31,12 +33,29 @@ services:
         condition: on-failure
 
   ##############################################################################################################
+  # rod-licensing pocl_job
+  ##############################################################################################################
+  pocl_job:
+    image: rod-licensing/pocl_job:${TAG:-latest}
+    volumes:
+      - ../:/app
+      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/pocl/keys
+    env_file:
+      - ./env/pocl_job.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5m
+
+  ##############################################################################################################
   # rod-licensing sqs_receiver
   ##############################################################################################################
   sqs_receiver:
     image: rod-licensing/sqs_receiver:${TAG:-latest}
     env_file:
-      - .env
+      - ./env/sqs_receiver.env
     deploy:
       mode: replicated
       replicas: 1

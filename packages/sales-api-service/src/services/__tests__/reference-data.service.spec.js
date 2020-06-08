@@ -12,6 +12,7 @@ import {
   MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE,
   MOCK_CONCESSION_DYNAMICS_RESPONSE
 } from '../../__mocks__/test-data.js'
+import dynamicsWebApi from 'dynamics-web-api'
 
 const getOptionSetMappingExpectation = (name, ...keys) => {
   const options = keys.reduce((acc, k) => {
@@ -25,14 +26,10 @@ const getOptionSetMappingExpectation = (name, ...keys) => {
   })
 }
 
-let apiExecuteBatchSpy, apiRetrieveGlobalOptionSetsSpy
 describe('reference-data service', () => {
   beforeAll(async () => {
-    const api = require('dynamics-web-api').default
-    apiExecuteBatchSpy = jest.spyOn(api.prototype, 'executeBatch')
-    apiRetrieveGlobalOptionSetsSpy = jest.spyOn(api.prototype, 'retrieveGlobalOptionSets')
-    api.__reset()
-    api.__setResponse('executeBatch', [
+    dynamicsWebApi.__reset()
+    dynamicsWebApi.__setResponse('executeBatch', [
       {
         value: [MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE, MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE]
       },
@@ -49,12 +46,12 @@ describe('reference-data service', () => {
         permits: expect.arrayContaining([expect.any(Permit)]),
         concessions: expect.arrayContaining([expect.any(Concession)])
       })
-      expect(apiExecuteBatchSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.executeBatch).toHaveBeenCalledTimes(1)
     })
     it('uses a cache', async () => {
       await getReferenceData()
       await getReferenceData()
-      expect(apiExecuteBatchSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.executeBatch).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -62,7 +59,7 @@ describe('reference-data service', () => {
     it('retrieves an entries for the given type', async () => {
       const result = await getReferenceDataForEntity(Permit)
       expect(result).toEqual(expect.arrayContaining([expect.any(Permit)]))
-      expect(apiExecuteBatchSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.executeBatch).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -70,12 +67,12 @@ describe('reference-data service', () => {
     it('retrieves an entry for a given id', async () => {
       const result = await getReferenceDataForEntityAndId(Permit, MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE.defra_permitid)
       expect(result).toBeInstanceOf(Permit)
-      expect(apiExecuteBatchSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.executeBatch).toHaveBeenCalledTimes(1)
     })
     it('returns undefined if not found', async () => {
       const result = await getReferenceDataForEntityAndId(Permit, 'not-found')
       expect(result).toBe(undefined)
-      expect(apiExecuteBatchSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.executeBatch).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -88,12 +85,12 @@ describe('reference-data service', () => {
           defra_concessionproof: getOptionSetMappingExpectation('defra_concessionproof', 910400000, 910400001, 910400002, 910400003)
         })
       )
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
     it('returns an empty object if not found', async () => {
       const result = await getGlobalOptionSets('not-found1', 'not-found2')
       expect(result).toMatchObject({})
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -101,12 +98,12 @@ describe('reference-data service', () => {
     it('retrieves all option-sets for a single name', async () => {
       const result = await getGlobalOptionSet('defra_duration')
       expect(result).toMatchObject(getOptionSetMappingExpectation('defra_duration', 910400000, 910400001, 910400002, 910400003))
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
     it('returns undefined if not found', async () => {
       const result = await getGlobalOptionSet('not-found')
       expect(result).toBe(undefined)
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -114,17 +111,17 @@ describe('reference-data service', () => {
     it('retrieves a single option-set for a single name and label', async () => {
       const result = await getGlobalOptionSetValue('defra_duration', '1 day')
       expect(result).toBeInstanceOf(GlobalOptionSetDefinition)
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
     it('returns undefined if the option-set label is not found', async () => {
       const result = await getGlobalOptionSetValue('defra_duration', 'not-found')
       expect(result).toBe(undefined)
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
     it('returns undefined if the option-set name is not found', async () => {
       const result = await getGlobalOptionSetValue('not-found', 'not-found')
       expect(result).toBe(undefined)
-      expect(apiRetrieveGlobalOptionSetsSpy).toHaveBeenCalledTimes(1)
+      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
   })
 })

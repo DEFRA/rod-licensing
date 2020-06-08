@@ -22,19 +22,29 @@ describe('finalise-transactions', () => {
   beforeEach(jest.clearAllMocks)
 
   it('updates records appropriately if a finalisation error occurs', async () => {
-    const fakeError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }
+    const fakeApiError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }
     db.getProcessedRecords.mockReturnValueOnce([
       { id: 'test1', stage: RECORD_STAGE.TransactionCreated },
       { id: 'test2', stage: RECORD_STAGE.TransactionCreated }
     ])
     salesApi.finaliseTransaction.mockResolvedValueOnce({ messageId: 'message1' })
-    salesApi.finaliseTransaction.mockRejectedValueOnce(fakeError)
+    salesApi.finaliseTransaction.mockRejectedValueOnce(fakeApiError)
     await finaliseTransactions(TEST_FILENAME)
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(2)
     expect(db.updateRecordStagingTable).toHaveBeenCalledWith(TEST_FILENAME, [
       { id: 'test1', stage: RECORD_STAGE.TransactionFinalised, finaliseTransactionId: 'message1' },
-      { id: 'test2', stage: RECORD_STAGE.TransactionFinalisationFailed, finaliseTransactionError: fakeError }
+      { id: 'test2', stage: RECORD_STAGE.TransactionFinalisationFailed, finaliseTransactionError: fakeApiError }
     ])
+    expect(salesApi.createStagingException).toHaveBeenCalledWith({
+      transactionFileException: {
+        name: 'testfile.xml: FAILED-FINALISE-test2',
+        description: JSON.stringify(fakeApiError, null, 2),
+        json: expect.any(String),
+        transactionFile: 'testfile.xml',
+        type: 'Failure',
+        notes: 'Failed to finalise the transaction in the Sales API'
+      }
+    })
   })
 
   it('will resume finalising records if the process was previously interrupted', async () => {

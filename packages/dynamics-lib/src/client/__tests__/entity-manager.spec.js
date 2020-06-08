@@ -11,14 +11,17 @@ import {
 } from '../../index.js'
 import TestEntity from '../../__mocks__/TestEntity.js'
 import { v4 as uuidv4 } from 'uuid'
+import MockDynamicsWebApi from 'dynamics-web-api'
 
 describe('entity manager', () => {
+  beforeEach(async () => {
+    MockDynamicsWebApi.__reset()
+  })
+
   describe('persist', () => {
     it('persists a new entity using the create operation', async () => {
       const resultUuid = uuidv4()
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('executeBatch', [resultUuid])
+      MockDynamicsWebApi.__setResponse('executeBatch', [resultUuid])
 
       const t = new TestEntity()
       t.strVal = 'Fester'
@@ -26,16 +29,14 @@ describe('entity manager', () => {
       t.boolVal = true
 
       const result = await persist(t)
-      expect(api.prototype.createRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.createRequest).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
 
     it('persists an existing entity using the update operation', async () => {
       const resultUuid = uuidv4()
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('executeBatch', [resultUuid])
+      MockDynamicsWebApi.__setResponse('executeBatch', [resultUuid])
 
       const t = TestEntity.fromResponse(
         {
@@ -49,16 +50,16 @@ describe('entity manager', () => {
       )
 
       const result = await persist(t)
-      expect(api.prototype.updateRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.updateRequest).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
 
     it('throws an error object on failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorsOnBatchExecute()
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
       await expect(persist(new TestEntity())).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
 
     it('throws an error on implementation failure', async () => {
@@ -68,9 +69,7 @@ describe('entity manager', () => {
 
   describe('retrieveMultiple', () => {
     it('retrieves a single entity type', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('executeBatch', [
+      MockDynamicsWebApi.__setResponse('executeBatch', [
         {
           value: [
             {
@@ -102,9 +101,7 @@ describe('entity manager', () => {
     })
 
     it('retrieves a multiple entity types', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('executeBatch', [
+      MockDynamicsWebApi.__setResponse('executeBatch', [
         {
           value: [
             {
@@ -163,25 +160,19 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorsOnBatchExecute()
+      MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
       await expect(retrieveMultiple(TestEntity).execute()).rejects.toThrow('Test error')
     })
 
     it('throws an error on implementation failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorOn('executeBatch')
+      MockDynamicsWebApi.__throwWithErrorOn('executeBatch')
       await expect(retrieveMultiple(TestEntity).execute()).rejects.toThrow('Test error')
     })
   })
 
   describe('retrieveMultipleAsMap', () => {
     it('retrieves a multiple entity types as a map', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('executeBatch', [
+      MockDynamicsWebApi.__setResponse('executeBatch', [
         {
           value: [
             {
@@ -236,16 +227,12 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorsOnBatchExecute()
+      MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
       await expect(retrieveMultipleAsMap(TestEntity).execute()).rejects.toThrow('Test error')
     })
 
     it('throws an error on implementation failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorOn('executeBatch')
+      MockDynamicsWebApi.__throwWithErrorOn('executeBatch')
       await expect(retrieveMultipleAsMap(TestEntity).execute()).rejects.toThrow('Test error')
     })
   })
@@ -298,25 +285,21 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorOn('retrieveGlobalOptionSets')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveGlobalOptionSets')
       await expect(retrieveGlobalOptionSets().execute()).rejects.toThrow('Test error')
     })
   })
 
   describe('findById', () => {
     it('finds by a primary key guid', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('retrieveRequest', {
+      MockDynamicsWebApi.__setResponse('retrieveRequest', {
         '@odata.etag': 'W/"202465000"',
         idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         strval: 'example'
       })
 
       const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
-      expect(api.prototype.retrieveRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
         key: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -325,16 +308,14 @@ describe('entity manager', () => {
     })
 
     it('finds by an alternate key', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('retrieveRequest', {
+      MockDynamicsWebApi.__setResponse('retrieveRequest', {
         '@odata.etag': 'W/"202465000"',
         idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
         strval: 'example'
       })
       const alternateKeyLookup = `${TestEntity.definition.mappings.strVal.field}='example'`
       const result = await findById(TestEntity, alternateKeyLookup)
-      expect(api.prototype.retrieveRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
         key: alternateKeyLookup,
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select
@@ -344,29 +325,22 @@ describe('entity manager', () => {
     })
 
     it('returns null if not found', async () => {
-      const api = require('dynamics-web-api').default
       const notFoundError = new Error('Not found')
       notFoundError.status = 404
-
-      api.__reset()
-      api.__throwWithErrorOn('retrieveRequest', notFoundError)
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveRequest', notFoundError)
       const result = await findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')
       expect(result).toEqual(null)
     })
 
     it('throws an exception on general errors', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorOn('retrieveRequest')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveRequest')
       await expect(findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')).rejects.toThrow('Test error')
     })
   })
 
   describe('findByExample', () => {
     it('builds a select statement appropriate to the type definition for each field', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('retrieveMultipleRequest', { value: [{}] })
+      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
 
       const lookup = new TestEntity()
       lookup.strVal = 'StringData'
@@ -379,7 +353,7 @@ describe('entity manager', () => {
       const expectedLookupSelect =
         "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
       const result = await findByExample(lookup)
-      expect(api.prototype.retrieveMultipleRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select,
         filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
@@ -389,15 +363,13 @@ describe('entity manager', () => {
     })
 
     it('only serializes fields into the select statement if they are set', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__setResponse('retrieveMultipleRequest', { value: [{}] })
+      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
 
       const lookup = new TestEntity()
       lookup.strVal = 'StringData'
       const expectedLookupSelect = "strval eq 'StringData'"
       const result = await findByExample(lookup)
-      expect(api.prototype.retrieveMultipleRequest).toBeCalledWith({
+      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
         collection: TestEntity.definition.dynamicsCollection,
         select: TestEntity.definition.select,
         filter: expect.stringMatching(`${TestEntity.definition.defaultFilter} and ${expectedLookupSelect}`)
@@ -407,9 +379,7 @@ describe('entity manager', () => {
     })
 
     it('throws an error object on failure', async () => {
-      const api = require('dynamics-web-api').default
-      api.__reset()
-      api.__throwWithErrorOn('retrieveMultipleRequest')
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
       await expect(findByExample(new TestEntity())).rejects.toThrow('Test error')
     })
   })

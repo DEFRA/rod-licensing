@@ -26,7 +26,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
       ExpressionAttributeValues: expressionAttributeValues
     })
     .promise()
-  debug('Updated transaction record for identifier %s')
+  debug('Updated transaction record for identifier %s', id)
 
   const receipt = await sqs
     .sendMessage({
