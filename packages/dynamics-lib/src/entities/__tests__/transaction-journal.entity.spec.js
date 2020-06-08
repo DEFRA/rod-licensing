@@ -54,8 +54,8 @@ describe('transaction journal entity', () => {
     journal.timestamp = '2020-12-13T23:59:59Z'
     journal.type = optionSetData.defra_financialtransactiontype.options['910400000']
     journal.total = 123.45
-    journal.bindToTransactionCurrency(currency)
-    journal.bindToTransaction(transaction)
+    journal.bindToEntity(TransactionJournal.definition.relationships.transaction, transaction)
+    journal.bindToEntity(TransactionJournal.definition.relationships.transactionCurrency, currency)
 
     const dynamicsEntity = journal.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

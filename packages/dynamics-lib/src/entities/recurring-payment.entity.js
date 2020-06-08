@@ -1,4 +1,5 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { Contact } from './contact.entity.js'
 
 /**
  * Recurring payment entity
@@ -7,7 +8,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class RecurringPayment extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'recurringPayments',
+    localName: 'recurringPayment',
     dynamicsCollection: 'defra_recurringpayments',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -16,6 +17,9 @@ export class RecurringPayment extends BaseEntity {
       mandate: { field: 'defra_mandate', type: 'string' },
       inceptionDay: { field: 'defra_inceptionday', type: 'integer' },
       inceptionMonth: { field: 'defra_inceptionmonth', type: 'integer' }
+    },
+    relationships: {
+      payer: { property: 'defra_Contact', entity: Contact, parent: true }
     }
   })
 
@@ -75,14 +79,5 @@ export class RecurringPayment extends BaseEntity {
 
   set inceptionMonth (inceptionMonth) {
     super._setState('inceptionMonth', inceptionMonth)
-  }
-
-  /**
-   * Associate the recurring payment with a {@link Contact}.  This is the contact details relating to the person paying (not necessarily the angler)
-   *
-   * @param {Contact} contact the {@link Contact} with which to create an association
-   */
-  bindToContact (contact) {
-    super._bind('defra_Contact@odata.bind', contact)
   }
 }

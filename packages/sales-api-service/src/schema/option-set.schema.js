@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi'
 
-export const optionSetOptionExample = { id: 910400000, label: '1 day', description: '' }
+export const optionSetOptionExample = { id: 910400000, label: 'Example Label', description: 'Example Description' }
 
 export const optionSetOption = Joi.object({
   id: Joi.number().required(),

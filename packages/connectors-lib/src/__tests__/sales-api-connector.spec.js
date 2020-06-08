@@ -9,12 +9,25 @@ describe('sales-api-connector', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('call', () => {
-    it('handles get requests', async () => {
+    it('handles get requests with a 200 response', async () => {
       const expectedResponse = { some: 'data' }
       fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
       await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({ ok: true, status: 200, statusText: 'OK', body: expectedResponse })
       expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
     })
+
+    it('handles get requests with a 204 response', async () => {
+      const expectedResponse = undefined
+      fetch.mockReturnValue({ ok: true, status: 204, statusText: 'No Content', json: async () => expectedResponse })
+      await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({
+        ok: true,
+        status: 204,
+        statusText: 'No Content',
+        body: expectedResponse
+      })
+      expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
+    })
+
     it('handles post requests', async () => {
       const payload = { example: 'payload' }
       const expectedResponse = { some: 'data' }
@@ -300,6 +313,36 @@ describe('sales-api-connector', () => {
         'http://0.0.0.0:4000/paymentJournals/test-id',
         expect.objectContaining({
           method: 'patch'
+        })
+      )
+    })
+  })
+
+  describe('createStagingException', () => {
+    it('creates a new staging exception', async () => {
+      const payload = { some: 'data' }
+      const expectedResponse = { a: 'response' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.createStagingException(payload)).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/stagingExceptions',
+        expect.objectContaining({
+          method: 'post',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      const payload = { some: 'data' }
+      fetch.mockReturnValue({ ok: false, status: 422, statusText: 'Unprocessable Entity', json: async () => ({ error: 'Description' }) })
+      await expect(salesApi.createStagingException(payload)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/stagingExceptions',
+        expect.objectContaining({
+          method: 'post',
+          body: JSON.stringify(payload)
         })
       )
     })

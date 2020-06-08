@@ -138,13 +138,15 @@ describe('transaction transforms', () => {
         permissions: [
           {
             permitId: 'permits-id',
-            concession: {
-              concessionId: 'concessions-id',
-              proof: {
-                referenceNumber: 'N/A',
-                type: 'Uncancelled Passport'
+            concessions: [
+              {
+                id: 'concessions-id',
+                proof: {
+                  referenceNumber: 'N/A',
+                  type: 'Uncancelled Passport'
+                }
               }
-            },
+            ],
             issueDate: '2020-06-01T08:00:00.000Z',
             startDate: '2020-05-31T23:01:00.000Z',
             licensee: {
@@ -229,13 +231,15 @@ describe('transaction transforms', () => {
         permissions: [
           {
             permitId: 'permits-id',
-            concession: {
-              concessionId: 'concessions-id',
-              proof: {
-                referenceNumber: '12ABCD01234X5678',
-                type: 'Blue Badge'
+            concessions: [
+              {
+                id: 'concessions-id',
+                proof: {
+                  referenceNumber: '12ABCD01234X5678',
+                  type: 'Blue Badge'
+                }
               }
-            },
+            ],
             issueDate: '2020-01-01T15:03:17.000Z',
             startDate: '2020-01-01T00:01:00.000Z',
             licensee: {
@@ -319,13 +323,15 @@ describe('transaction transforms', () => {
         permissions: [
           {
             permitId: 'permits-id',
-            concession: {
-              concessionId: 'concessions-id',
-              proof: {
-                referenceNumber: '12ABCD01234X5678',
-                type: 'Blue Badge'
+            concessions: [
+              {
+                id: 'concessions-id',
+                proof: {
+                  referenceNumber: '12ABCD01234X5678',
+                  type: 'Blue Badge'
+                }
               }
-            },
+            ],
             issueDate: '2020-01-01T15:03:17.000Z',
             startDate: '2020-01-01T00:01:00.000Z',
             licensee: {
@@ -407,13 +413,15 @@ describe('transaction transforms', () => {
         permissions: [
           {
             permitId: 'permits-id',
-            concession: {
-              concessionId: 'concessions-id',
-              proof: {
-                referenceNumber: 'QQ123456C',
-                type: 'National Insurance Number'
+            concessions: [
+              {
+                id: 'concessions-id',
+                proof: {
+                  referenceNumber: 'QQ123456C',
+                  type: 'National Insurance Number'
+                }
               }
-            },
+            ],
             issueDate: '2020-01-01T15:03:17.000Z',
             startDate: '2020-01-01T00:01:00.000Z',
             licensee: {

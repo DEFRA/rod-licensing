@@ -9,7 +9,7 @@ const filterPermits = async request => {
 
   const permitsJoinPermitConcessions = permits.map(p => ({
     ...p,
-    concessions: permitConcessions.filter(pc => pc.permitId === p.permitId).map(pc => concessions.find(c => c.id === pc.concessionId))
+    concessions: permitConcessions.filter(pc => pc.permitId === p.id).map(pc => concessions.find(c => c.id === pc.concessionId))
   }))
 
   // Filter the joined list to include every and only those concessions in licenseeConcessions

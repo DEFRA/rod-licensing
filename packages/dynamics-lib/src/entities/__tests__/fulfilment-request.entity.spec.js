@@ -42,8 +42,8 @@ describe('fulfilment request entity', () => {
     fulfilmentRequest.requestTimestamp = '2020-04-14T11:14:27Z'
     fulfilmentRequest.notes = 'Some notes'
     fulfilmentRequest.status = optionSetData.defra_fulfilmentrequeststatus.options['910400001']
-    fulfilmentRequest.bindToPermission(permission)
-    fulfilmentRequest.bindToFulfilmentRequestFile(fulfilmentRequestFile)
+    fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.permission, permission)
+    fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.fulfilmentRequestFile, fulfilmentRequestFile)
 
     const dynamicsEntity = fulfilmentRequest.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

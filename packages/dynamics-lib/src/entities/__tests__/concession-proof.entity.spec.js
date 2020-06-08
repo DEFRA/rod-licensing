@@ -44,8 +44,8 @@ describe('concession proof entity', () => {
     const concessionProof = new ConcessionProof()
     concessionProof.referenceNumber = 'TEST'
     concessionProof.proofType = optionSetData.defra_concessionproof.options['910400000']
-    concessionProof.bindToPermission(permission)
-    concessionProof.bindToConcession(concession)
+    concessionProof.bindToEntity(ConcessionProof.definition.relationships.permission, permission)
+    concessionProof.bindToEntity(ConcessionProof.definition.relationships.concession, concession)
 
     const dynamicsEntity = concessionProof.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

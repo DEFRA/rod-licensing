@@ -21,13 +21,15 @@ export const SeniorConcession = new Binding({
     const value = Binding.TransformTextOnly(context)
     return (
       value && {
-        concession: {
-          concessionId: await getConcessionId('Senior'),
-          proof: {
-            type: context.value,
-            referenceNumber: 'N/A'
+        concessions: [
+          {
+            id: await getConcessionId('Senior'),
+            proof: {
+              type: context.value,
+              referenceNumber: 'N/A'
+            }
           }
-        }
+        ]
       }
     )
   }
@@ -43,13 +45,15 @@ export const BlueBadgeConcession = new Binding({
     const value = Binding.TransformTextOnly(context)
     return (
       value && {
-        concession: {
-          concessionId: await getConcessionId('Disabled'),
-          proof: {
-            type: 'Blue Badge',
-            referenceNumber: context.value
+        concessions: [
+          {
+            id: await getConcessionId('Disabled'),
+            proof: {
+              type: 'Blue Badge',
+              referenceNumber: context.value
+            }
           }
-        }
+        ]
       }
     )
   }
@@ -65,13 +69,15 @@ export const PipConcession = new Binding({
     const value = Binding.TransformTextOnly(context)
     return (
       value && {
-        concession: {
-          concessionId: await getConcessionId('Disabled'),
-          proof: {
-            type: 'National Insurance Number',
-            referenceNumber: context.value
+        concessions: [
+          {
+            id: await getConcessionId('Disabled'),
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: context.value
+            }
           }
-        }
+        ]
       }
     )
   }

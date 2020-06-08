@@ -72,10 +72,10 @@ describe('permission entity', () => {
     permission.stagingId = '71ad9a25-2a03-406b-a0e3-f4ff37799374'
     permission.dataSource = optionSetData.defra_datasource.options['910400003']
 
-    permission.bindToContact(contact)
-    permission.bindToPermit(permit)
-    permission.bindToTransaction(transaction)
-    permission.bindToPoclFile(poclFile)
+    permission.bindToEntity(Permission.definition.relationships.licensee, contact)
+    permission.bindToEntity(Permission.definition.relationships.permit, permit)
+    permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
+    permission.bindToEntity(Permission.definition.relationships.poclFile, poclFile)
 
     const dynamicsEntity = permission.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

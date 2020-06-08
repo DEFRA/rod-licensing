@@ -80,7 +80,7 @@ describe('validators', () => {
     it('returns a validation function throwing an error when no reference data entity found', async () => {
       const spy = jest.spyOn(referenceData, 'getReferenceDataForEntityAndId').mockImplementation(async () => null)
       const validationFunction = createReferenceDataEntityValidator(TestEntity)
-      await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised test identifier')
+      await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised entityTest identifier')
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
   })
@@ -110,59 +110,59 @@ describe('validators', () => {
     it('returns a validation function throwing an error when no entity is found', async () => {
       const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => null)
       const validationFunction = createEntityIdValidator(TestEntity)
-      await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised test identifier')
+      await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised entityTest identifier')
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
     it('returns a validation function throwing an error when an entity is found and negate is set', async () => {
       const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => 'success')
       const validationFunction = createEntityIdValidator(TestEntity, true)
-      await expect(validationFunction('testValue')).rejects.toThrow('Entity for test identifier already exists')
+      await expect(validationFunction('testValue')).rejects.toThrow('Entity for entityTest identifier already exists')
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
   })
 
   describe('createAlternateKeyValidator', () => {
     it('returns a validation function returning undefined when an entity is successfully resolved', async () => {
-      const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => 'success')
+      const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => 'success')
       const validationFunction = createAlternateKeyValidator(TestEntity)
       await expect(validationFunction('testValue')).resolves.toEqual(undefined)
-      expect(spy).toHaveBeenCalledWith(TestEntity, "strval='testValue'")
+      expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
     it('returns a validation function which skips validation if the input value is undefined', async () => {
-      const spy = jest.spyOn(entityManager, 'findById')
+      const spy = jest.spyOn(entityManager, 'findByAlternateKey')
       const validationFunction = createAlternateKeyValidator(TestEntity, true)
       await expect(validationFunction(undefined)).resolves.toEqual(undefined)
       expect(spy).not.toHaveBeenCalled()
     })
 
     it('returns a validation function returning undefined when an entity is not resolved and negate is set', async () => {
-      const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => null)
+      const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => null)
       const validationFunction = createAlternateKeyValidator(TestEntity, true)
       await expect(validationFunction('testValue')).resolves.toEqual(undefined)
-      expect(spy).toHaveBeenCalledWith(TestEntity, "strval='testValue'")
+      expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
     it('returns a validation function throwing an error when no entity is found', async () => {
-      const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => null)
+      const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => null)
       const validationFunction = createAlternateKeyValidator(TestEntity)
-      await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised test identifier')
-      expect(spy).toHaveBeenCalledWith(TestEntity, "strval='testValue'")
+      await expect(validationFunction('testValue')).rejects.toThrow('Unrecognised entityTest identifier')
+      expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
     it('returns a validation function throwing an error when an entity is found and negate is set', async () => {
-      const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => 'success')
+      const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => 'success')
       const validationFunction = createAlternateKeyValidator(TestEntity, true)
-      await expect(validationFunction('testValue')).rejects.toThrow('Entity for test identifier already exists')
-      expect(spy).toHaveBeenCalledWith(TestEntity, "strval='testValue'")
+      await expect(validationFunction('testValue')).rejects.toThrow('Entity for entityTest identifier already exists')
+      expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
     it('throws if attempting to create an alternate key validator using an object which does not support it', async () => {
       class TestNonAlternateKeyEntity extends BaseEntity {
         static get definition () {
           return new EntityDefinition({
-            localCollection: 'TestNonAlternateKeyEntity',
+            localName: 'TestNonAlternateKeyEntity',
             dynamicsCollection: 'TestNonAlternateKeyEntity',
             mappings: { id: { field: 'idval', type: 'string' } }
           })
@@ -176,57 +176,104 @@ describe('validators', () => {
 
   describe('createPermitConcessionValidator', () => {
     it('returns a validation function returning undefined when the permit and concession are successfully resolved', async () => {
-      const spy = jest
-        .spyOn(referenceData, 'getReferenceDataForEntity')
-        .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
+        }
+      ])
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
           permitId: 'test-1',
-          concession: {
-            concessionId: 'test-1'
-          }
+          concessions: [
+            {
+              id: 'test-1'
+            }
+          ]
         })
       ).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith(PermitConcession)
     })
-  })
 
-  it('returns a validation function throwing an error if the permit and concession are not successfully resolved', async () => {
-    const spy = jest
-      .spyOn(referenceData, 'getReferenceDataForEntity')
-      .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
-    const validationFunction = createPermitConcessionValidator()
-    await expect(
-      validationFunction({
-        permitId: 'test-1',
-        concession: {
-          concessionId: 'test-2'
+    it('returns a validation function throwing an error if the permit and concession are not successfully resolved', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
         }
-      })
-    ).rejects.toThrow("The concession 'test-2' is not valid with respect to the permit 'test-1'")
-    expect(spy).toHaveBeenCalledWith(PermitConcession)
-  })
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          permitId: 'test-1',
+          concessions: [
+            {
+              id: 'test-2'
+            }
+          ]
+        })
+      ).rejects.toThrow("The concession 'test-2' is not valid with respect to the permit 'test-1'")
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
 
-  it('returns a validation function which skips validation if the input value is undefined', async () => {
-    const spy = jest
-      .spyOn(referenceData, 'getReferenceDataForEntity')
-      .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
-    const validationFunction = createPermitConcessionValidator()
-    await expect(validationFunction()).resolves.toEqual(undefined)
-    expect(spy).not.toHaveBeenCalled()
-  })
+    it('returns a validation function throwing an error if the permit does not allow concessions but they are supplied', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [{}])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          permitId: 'test-1',
+          concessions: [
+            {
+              id: 'test-2'
+            }
+          ]
+        })
+      ).rejects.toThrow("The permit 'test-1' does not allow concessions but concession proofs were supplied")
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
 
-  it('returns a validation function throwing an error if the permit requires a concession and none is supplied', async () => {
-    const spy = jest
-      .spyOn(referenceData, 'getReferenceDataForEntity')
-      .mockImplementation(async () => [{ permitId: 'test-1', concessionId: 'test-1' }])
-    const validationFunction = createPermitConcessionValidator()
-    await expect(
-      validationFunction({
-        permitId: 'test-1'
-      })
-    ).rejects.toThrow("The concession 'undefined' is not valid with respect to the permit 'test-1'")
-    expect(spy).toHaveBeenCalledWith(PermitConcession)
+    it('returns a validation function throwing an error if the permission contains duplicate concession proofs', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        { permitId: 'test-1', concessionId: 'test-1' },
+        { permitId: 'test-1', concessionId: 'test-2' }
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          permitId: 'test-1',
+          concessions: [{ id: 'test-1' }, { id: 'test-1' }, { id: 'test-2' }, { id: 'test-2' }]
+        })
+      ).rejects.toThrow("The concession ids 'test-1,test-2' appear more than once, duplicates are not permitted")
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
+
+    it('returns a validation function which skips validation if the input value is undefined', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
+        }
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(validationFunction(undefined)).resolves.toEqual(undefined)
+      expect(spy).not.toHaveBeenCalled()
+    })
+
+    it('returns a validation function throwing an error if the permit requires a concession and none is supplied', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
+        }
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          permitId: 'test-1'
+        })
+      ).rejects.toThrow("The permit 'test-1' requires proof of concession however none were supplied")
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
   })
 })

@@ -60,8 +60,8 @@ describe('transaction entity', () => {
     transaction.paymentType = optionSetData.defra_paymenttype.options['910400000']
     transaction.source = optionSetData.defra_financialtransactionsource.options['910400000']
     transaction.total = 123.45
-    transaction.bindToTransactionCurrency(currency)
-    transaction.bindToPoclFile(poclFile)
+    transaction.bindToEntity(Transaction.definition.relationships.transactionCurrency, currency)
+    transaction.bindToEntity(Transaction.definition.relationships.poclFile, poclFile)
 
     const dynamicsEntity = transaction.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

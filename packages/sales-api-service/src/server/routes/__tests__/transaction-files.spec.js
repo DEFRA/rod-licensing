@@ -1,11 +1,11 @@
-import { findById, persist, PoclFile } from '@defra-fish/dynamics-lib'
+import { findByAlternateKey, persist, PoclFile } from '@defra-fish/dynamics-lib'
 import initialiseServer from '../../index.js'
 import { getGlobalOptionSetValue } from '../../../services/reference-data.service.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   persist: jest.fn(),
-  findById: jest.fn()
+  findByAlternateKey: jest.fn()
 }))
 
 let server = null
@@ -24,8 +24,8 @@ describe('transaction files handler', () => {
       const testPoclFile = new PoclFile()
       testPoclFile.fileName = 'test.xml'
       testPoclFile.fileSize = '5 KB'
-      testPoclFile.status = await getGlobalOptionSetValue('defra_poclfilestatus', 'Received and Pending')
-      findById.mockResolvedValueOnce(testPoclFile)
+      testPoclFile.status = await getGlobalOptionSetValue(PoclFile.definition.mappings.status.ref, 'Received and Pending')
+      findByAlternateKey.mockResolvedValueOnce(testPoclFile)
       const result = await server.inject({ method: 'GET', url: '/transaction-files/test.xml' })
       expect(result.statusCode).toBe(200)
       expect(JSON.parse(result.payload)).toMatchObject({
@@ -40,7 +40,7 @@ describe('transaction files handler', () => {
     })
 
     it('throws 404 errors if the specified transaction file could not be found', async () => {
-      findById.mockResolvedValueOnce(null)
+      findByAlternateKey.mockResolvedValueOnce(null)
       const result = await server.inject({ method: 'GET', url: '/transaction-files/test.xml' })
       expect(result.statusCode).toBe(404)
       expect(JSON.parse(result.payload)).toMatchObject({
@@ -53,7 +53,7 @@ describe('transaction files handler', () => {
 
   describe('putTransactionFile', () => {
     it('inserts an transaction file for a given filename', async () => {
-      findById.mockResolvedValueOnce(null)
+      findByAlternateKey.mockResolvedValueOnce(null)
       const result = await server.inject({
         method: 'PUT',
         url: '/transaction-files/testnew.xml',
@@ -68,7 +68,7 @@ describe('transaction files handler', () => {
         expect.objectContaining({
           fileName: 'testnew.xml',
           fileSize: '5 KB',
-          status: expect.objectContaining(await getGlobalOptionSetValue('defra_poclfilestatus', 'Received and Pending'))
+          status: expect.objectContaining(await getGlobalOptionSetValue(PoclFile.definition.mappings.status.ref, 'Received and Pending'))
         })
       )
     })
@@ -77,7 +77,7 @@ describe('transaction files handler', () => {
       const testPoclFile = new PoclFile()
       testPoclFile.fileName = 'test.xml'
       testPoclFile.fileSize = '5 KB'
-      findById.mockResolvedValueOnce(testPoclFile)
+      findByAlternateKey.mockResolvedValueOnce(testPoclFile)
       const result = await server.inject({ method: 'PUT', url: '/transaction-files/test.xml', payload: { status: 'Received and Pending' } })
       // expect(result.statusCode).toBe(200)
       expect(JSON.parse(result.payload)).toMatchObject({
@@ -88,7 +88,7 @@ describe('transaction files handler', () => {
     })
 
     it('throws 422 errors if the payload was invalid', async () => {
-      findById.mockResolvedValueOnce(null)
+      findByAlternateKey.mockResolvedValueOnce(null)
       const result = await server.inject({ method: 'PUT', url: '/transaction-files/test.xml', payload: {} })
       expect(result.statusCode).toBe(422)
       expect(JSON.parse(result.payload)).toMatchObject({

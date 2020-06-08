@@ -1,5 +1,5 @@
 import { PoclStagingException } from '../pocl-staging-exception.entity.js'
-import { Permission, PoclFile, retrieveGlobalOptionSets } from '../..'
+import { Permission, retrieveGlobalOptionSets } from '../..'
 
 let optionSetData
 describe('pocl staging exception entity', () => {
@@ -48,9 +48,9 @@ describe('pocl staging exception entity', () => {
 
     // Test permission binding
     const permission = new Permission()
-    exception.bindToPermission(permission)
-    // Bind via alternate key
-    exception.bindToPoclFile(`/${PoclFile.definition.dynamicsCollection}(${PoclFile.definition.alternateKey}='filename.xml')`)
+    exception.bindToEntity(PoclStagingException.definition.relationships.permission, permission)
+    // Bind to the POCL file via alternate key
+    exception.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, 'filename.xml')
 
     const dynamicsEntity = exception.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

@@ -1,3 +1,4 @@
+// Entities
 export * from './entities/contact.entity.js'
 export * from './entities/permission.entity.js'
 export * from './entities/permit.entity.js'
@@ -14,6 +15,14 @@ export * from './entities/pocl-staging-exception.entity.js'
 export * from './entities/recurring-payment.entity.js'
 export * from './entities/recurring-payment-instruction.entity.js'
 export * from './entities/staging-exception.entity.js'
-export { dynamicsClient } from './client/dynamics-client.js'
+
+// Option sets
 export * from './optionset/global-option-set-definition.js'
+
+// Queries
+export * from './queries/permission.queries.js'
+
+// Framework functionality
+export * from './client/util.js'
+export { dynamicsClient } from './client/dynamics-client.js'
 export * from './client/entity-manager.js'

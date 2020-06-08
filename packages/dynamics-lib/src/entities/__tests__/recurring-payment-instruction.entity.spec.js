@@ -31,9 +31,9 @@ describe('recurring payment instruction entity', () => {
     const recurringPayment = new RecurringPayment()
 
     const instruction = new RecurringPaymentInstruction()
-    instruction.bindToContact(contact)
-    instruction.bindToPermit(permit)
-    instruction.bindToRecurringPayment(recurringPayment)
+    instruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
+    instruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)
+    instruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.recurringPayment, recurringPayment)
 
     const dynamicsEntity = instruction.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

@@ -1,4 +1,4 @@
-import { persist, StagingException, PoclStagingException, PoclFile } from '@defra-fish/dynamics-lib'
+import { persist, StagingException, PoclStagingException } from '@defra-fish/dynamics-lib'
 import db from 'debug'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 const debug = db('sales:exceptions')
@@ -58,9 +58,7 @@ export const createTransactionFileException = async transactionFileError => {
     type: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.type.ref, transactionFileError.type),
     status: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.status.ref, 'Open')
   })
-  stagingException.bindToPoclFile(
-    `/${PoclFile.definition.dynamicsCollection}(${PoclFile.definition.alternateKey}='${transactionFileError.transactionFile}')`
-  )
+  stagingException.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, transactionFileError.transactionFile)
   await persist(stagingException)
   return stagingException
 }

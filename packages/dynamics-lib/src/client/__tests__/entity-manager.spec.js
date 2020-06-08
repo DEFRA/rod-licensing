@@ -6,12 +6,15 @@ import {
   retrieveMultiple,
   findById,
   findByExample,
+  executeQuery,
   retrieveMultipleAsMap,
-  retrieveGlobalOptionSets
+  retrieveGlobalOptionSets,
+  findByAlternateKey
 } from '../../index.js'
 import TestEntity from '../../__mocks__/TestEntity.js'
 import { v4 as uuidv4 } from 'uuid'
 import MockDynamicsWebApi from 'dynamics-web-api'
+import { PredefinedQuery } from '../../queries/predefined-query.js'
 
 describe('entity manager', () => {
   beforeEach(async () => {
@@ -63,7 +66,9 @@ describe('entity manager', () => {
     })
 
     it('throws an error on implementation failure', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(persist(null)).rejects.toThrow("Cannot read property 'toRequestBody' of null")
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
 
@@ -161,12 +166,16 @@ describe('entity manager', () => {
 
     it('throws an error object on failure', async () => {
       MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(retrieveMultiple(TestEntity).execute()).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
 
     it('throws an error on implementation failure', async () => {
       MockDynamicsWebApi.__throwWithErrorOn('executeBatch')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(retrieveMultiple(TestEntity).execute()).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
 
@@ -228,12 +237,16 @@ describe('entity manager', () => {
 
     it('throws an error object on failure', async () => {
       MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(retrieveMultipleAsMap(TestEntity).execute()).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
 
     it('throws an error on implementation failure', async () => {
       MockDynamicsWebApi.__throwWithErrorOn('executeBatch')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(retrieveMultipleAsMap(TestEntity).execute()).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
 
@@ -286,7 +299,9 @@ describe('entity manager', () => {
 
     it('throws an error object on failure', async () => {
       MockDynamicsWebApi.__throwWithErrorOn('retrieveGlobalOptionSets')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(retrieveGlobalOptionSets().execute()).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
 
@@ -307,23 +322,6 @@ describe('entity manager', () => {
       expect(result).toBeInstanceOf(TestEntity)
     })
 
-    it('finds by an alternate key', async () => {
-      MockDynamicsWebApi.__setResponse('retrieveRequest', {
-        '@odata.etag': 'W/"202465000"',
-        idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
-        strval: 'example'
-      })
-      const alternateKeyLookup = `${TestEntity.definition.mappings.strVal.field}='example'`
-      const result = await findById(TestEntity, alternateKeyLookup)
-      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
-        key: alternateKeyLookup,
-        collection: TestEntity.definition.dynamicsCollection,
-        select: TestEntity.definition.select
-      })
-
-      expect(result).toBeInstanceOf(TestEntity)
-    })
-
     it('returns null if not found', async () => {
       const notFoundError = new Error('Not found')
       notFoundError.status = 404
@@ -334,7 +332,43 @@ describe('entity manager', () => {
 
     it('throws an exception on general errors', async () => {
       MockDynamicsWebApi.__throwWithErrorOn('retrieveRequest')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(findById(TestEntity, '9f1b34a0-0c66-e611-80dc-c4346bad0190')).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('findByAlternateKey', () => {
+    it('finds by an alternate key', async () => {
+      MockDynamicsWebApi.__setResponse('retrieveRequest', {
+        '@odata.etag': 'W/"202465000"',
+        idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+        strval: 'example'
+      })
+      const result = await findByAlternateKey(TestEntity, 'example')
+      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
+        key: "strval='example'",
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select
+      })
+
+      expect(result).toBeInstanceOf(TestEntity)
+    })
+
+    it('escapes special characters in the key', async () => {
+      MockDynamicsWebApi.__setResponse('retrieveRequest', {
+        '@odata.etag': 'W/"202465000"',
+        idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+        strval: 'example'
+      })
+      const result = await findByAlternateKey(TestEntity, "test & example'")
+      expect(MockDynamicsWebApi.prototype.retrieveRequest).toBeCalledWith({
+        key: "strval='test %26 example'''",
+        collection: TestEntity.definition.dynamicsCollection,
+        select: TestEntity.definition.select
+      })
+
+      expect(result).toBeInstanceOf(TestEntity)
     })
   })
 
@@ -380,7 +414,38 @@ describe('entity manager', () => {
 
     it('throws an error object on failure', async () => {
       MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(findByExample(new TestEntity())).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('executeQuery', () => {
+    it('calls retrieveMultipleRequest on the Dynamics API with the request data', async () => {
+      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', {
+        value: [
+          {
+            '@odata.etag': 'W/"202465000"',
+            idval: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+            strval: 'example'
+          }
+        ]
+      })
+
+      const result = await executeQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }))
+      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+        collection: TestEntity.definition.dynamicsCollection,
+        filter: "strval eq 'example'",
+        select: TestEntity.definition.select
+      })
+      expect(result).toContainEqual({ entityTest: expect.any(TestEntity) })
+    })
+
+    it('throws an error object on failure', async () => {
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      await expect(executeQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }))).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
 })

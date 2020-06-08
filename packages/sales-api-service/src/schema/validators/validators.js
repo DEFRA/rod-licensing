@@ -3,7 +3,7 @@ import {
   getReferenceDataForEntity,
   getReferenceDataForEntityAndId
 } from '../../services/reference-data.service.js'
-import { findById, PermitConcession } from '@defra-fish/dynamics-lib'
+import { findById, findByAlternateKey, PermitConcession } from '@defra-fish/dynamics-lib'
 import Joi from '@hapi/joi'
 
 export function buildJoiOptionSetValidator (optionSetName, exampleValue) {
@@ -32,7 +32,7 @@ export function createReferenceDataEntityValidator (entityType) {
     if (value) {
       const entity = await getReferenceDataForEntityAndId(entityType, value)
       if (!entity) {
-        throw new Error(`Unrecognised ${entityType.definition.localCollection} identifier`)
+        throw new Error(`Unrecognised ${entityType.definition.localName} identifier`)
       }
     }
     return undefined
@@ -44,9 +44,9 @@ export function createEntityIdValidator (entityType, negate = false) {
     if (value) {
       const entity = await findById(entityType, value)
       if (!negate && !entity) {
-        throw new Error(`Unrecognised ${entityType.definition.localCollection} identifier`)
+        throw new Error(`Unrecognised ${entityType.definition.localName} identifier`)
       } else if (negate && entity) {
-        throw new Error(`Entity for ${entityType.definition.localCollection} identifier already exists`)
+        throw new Error(`Entity for ${entityType.definition.localName} identifier already exists`)
       }
     }
     return undefined
@@ -67,11 +67,11 @@ export function createAlternateKeyValidator (entityType, negate = false) {
 
   return async value => {
     if (value) {
-      const entity = await findById(entityType, `${entityType.definition.alternateKey}='${value}'`)
+      const entity = await findByAlternateKey(entityType, value)
       if (!negate && !entity) {
-        throw new Error(`Unrecognised ${entityType.definition.localCollection} identifier`)
+        throw new Error(`Unrecognised ${entityType.definition.localName} identifier`)
       } else if (negate && entity) {
-        throw new Error(`Entity for ${entityType.definition.localCollection} identifier already exists`)
+        throw new Error(`Entity for ${entityType.definition.localName} identifier already exists`)
       }
     }
     return undefined
@@ -85,13 +85,28 @@ export function createAlternateKeyValidator (entityType, negate = false) {
 export function createPermitConcessionValidator () {
   return async permission => {
     if (permission) {
-      const concessionId = (permission.concession && permission.concession.concessionId) || undefined
       const permitConcessions = await getReferenceDataForEntity(PermitConcession)
-      const entriesForPermit = permitConcessions.filter(pc => pc.permitId === permission.permitId)
+      const concessionsRequiredForPermit = permitConcessions.filter(pc => pc.permitId === permission.permitId)
+      const hasConcessionProofs = permission.concessions && permission.concessions.length
+      // Check that the concession is valid for the given permitId and that if a permit requires a concession reference that one is defined
+      if (concessionsRequiredForPermit.length && !hasConcessionProofs) {
+        throw new Error(`The permit '${permission.permitId}' requires proof of concession however none were supplied`)
+      } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {
+        throw new Error(`The permit '${permission.permitId}' does not allow concessions but concession proofs were supplied`)
+      } else {
+        // Check list for duplicates
+        const counts = permission.concessions.reduce((acc, c) => ({ ...acc, [c.id]: (acc[c.id] || 0) + 1 }), {})
+        const duplicates = Object.keys(counts).filter(k => counts[k] > 1)
+        if (duplicates.length) {
+          throw new Error(`The concession ids '${duplicates}' appear more than once, duplicates are not permitted`)
+        }
 
-      // Check that concessions is valid for the given permitId and that if a permit requires a concession reference that one is defined
-      if (entriesForPermit.length && !entriesForPermit.find(pc => concessionId === pc.concessionId)) {
-        throw new Error(`The concession '${concessionId}' is not valid with respect to the permit '${permission.permitId}'`)
+        // Check concession allowed for permit
+        permission.concessions.forEach(concession => {
+          if (!concessionsRequiredForPermit.find(pc => concession.id === pc.concessionId)) {
+            throw new Error(`The concession '${concession.id}' is not valid with respect to the permit '${permission.permitId}'`)
+          }
+        })
       }
     }
     return undefined

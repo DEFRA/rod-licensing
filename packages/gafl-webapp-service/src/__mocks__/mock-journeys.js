@@ -123,13 +123,15 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
         },
         issueDate: '2020-04-30T08:36:12.195Z',
         startDate: '2020-04-29T23:00:00.000Z',
-        concession: {
-          concessionId: 'd1ece997-ef65-e611-80dc-c4346bad4004',
-          proof: {
-            type: 'National Insurance Number',
-            referenceNumber: 'QQ 12 34 56 C'
+        concessions: [
+          {
+            id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: 'QQ 12 34 56 C'
+            }
           }
-        },
+        ],
         referenceNumber: '01300421-1WS3FGW-YK1TTK',
         endDate: '2021-04-29T23:00:00.000Z'
       }
@@ -179,12 +181,14 @@ export const SENIOR_12_MONTH_LICENCE = {
         },
         issueDate: '2020-04-30T09:16:58.635Z',
         startDate: '2020-04-29T23:00:00.000Z',
-        concession: {
-          concessionId: 'd0ece997-ef65-e611-80dc-c4346bad4004',
-          proof: {
-            type: 'No proof'
+        concessions: [
+          {
+            id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+            proof: {
+              type: 'No proof'
+            }
           }
-        },
+        ],
         referenceNumber: '01300420-1WS0SGW-78CGFU',
         endDate: '2020-04-29T23:00:00.000Z'
       }
@@ -232,12 +236,14 @@ export const JUNIOR_12_MONTH_LICENCE = {
         },
         issueDate: '2020-04-30T09:35:28.014Z',
         startDate: '2020-04-29T23:00:00.000Z',
-        concession: {
-          concessionId: '3230c68f-ef65-e611-80dc-c4346bad4004',
-          proof: {
-            type: 'No proof'
+        concessions: [
+          {
+            id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+            proof: {
+              type: 'No proof'
+            }
           }
-        },
+        ],
         referenceNumber: '01300420-1WS0JGW-FLNA84',
         endDate: '2020-04-29T23:00:00.000Z'
       }

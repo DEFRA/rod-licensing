@@ -12,9 +12,7 @@ const validator = Joi.object({
   postcode: Joi.alternatives().conditional('country-code', {
     is: 'GB',
     then: validation.contact.createUKPostcodeValidator(Joi),
-    otherwise: Joi.string()
-      .trim()
-      .required()
+    otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
   }),
   'country-code': Joi.string().required()
 }).options({ abortEarly: false, allowUnknown: true })

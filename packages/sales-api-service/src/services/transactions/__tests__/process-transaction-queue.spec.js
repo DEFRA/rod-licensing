@@ -16,7 +16,7 @@ import {
 import {
   mockTransactionRecord,
   mockCompletedTransactionRecord,
-  MOCK_1DAY_SENIOR_PERMIT,
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_CONCESSION,
   MOCK_TRANSACTION_CURRENCY,
@@ -39,8 +39,8 @@ jest.mock('../../reference-data.service.js', () => ({
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
       if (id === MOCK_12MONTH_SENIOR_PERMIT.id) {
         item = MOCK_12MONTH_SENIOR_PERMIT
-      } else if (id === MOCK_1DAY_SENIOR_PERMIT.id) {
-        item = MOCK_1DAY_SENIOR_PERMIT
+      } else if (id === MOCK_1DAY_SENIOR_PERMIT_ENTITY.id) {
+        item = MOCK_1DAY_SENIOR_PERMIT_ENTITY
       }
     } else if (entityType === MOCK_CONCESSION.constructor) {
       item = MOCK_CONCESSION
@@ -73,7 +73,7 @@ describe('transaction service', () => {
           'short term licences',
           () => {
             const mockRecord = mockCompletedTransactionRecord()
-            mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT.id
+            mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
             return mockRecord
           },
           [
@@ -107,7 +107,7 @@ describe('transaction service', () => {
           () => {
             const mockRecord = mockCompletedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-            delete mockRecord.permissions[0].concession
+            delete mockRecord.permissions[0].concessions
             return mockRecord
           },
           [
@@ -179,16 +179,17 @@ describe('transaction service', () => {
     })
 
     it('handles requests which relate to an transaction file', async () => {
+      const transactionFilename = 'test-file.xml'
       const mockRecord = mockCompletedTransactionRecord()
-      mockRecord.transactionFile = 'test-file.xml'
+      mockRecord.transactionFile = transactionFilename
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToPoclFile')
-      const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToPoclFile')
+      const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToAlternateKey')
+      const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToAlternateKey')
       const testPoclFileEntity = new PoclFile()
       findById.mockResolvedValueOnce(testPoclFileEntity)
       await processQueue({ id: mockRecord.id })
-      expect(transactionToFileBindingSpy).toHaveBeenCalledWith(testPoclFileEntity)
-      expect(permissionToFileBindingSpy).toHaveBeenCalledWith(testPoclFileEntity)
+      expect(transactionToFileBindingSpy).toHaveBeenCalledWith(Transaction.definition.relationships.poclFile, transactionFilename)
+      expect(permissionToFileBindingSpy).toHaveBeenCalledWith(Permission.definition.relationships.poclFile, transactionFilename)
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {

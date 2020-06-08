@@ -2,9 +2,9 @@ import { generatePermissionNumber, calculateEndDate } from '../permissions.servi
 import moment from 'moment'
 import {
   MOCK_12MONTH_SENIOR_PERMIT,
-  MOCK_1DAY_SENIOR_PERMIT,
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
   MOCK_12MONTH_DISABLED_PERMIT,
-  MOCK_1DAY_FULL_PERMIT,
+  MOCK_1DAY_FULL_PERMIT_ENTITY,
   MOCK_CONCESSION
 } from '../../__mocks__/test-data.js'
 import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
@@ -14,7 +14,12 @@ jest.mock('../reference-data.service.js', () => ({
   getReferenceDataForEntityAndId: async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
-      for (const permit of [MOCK_12MONTH_DISABLED_PERMIT, MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT, MOCK_1DAY_FULL_PERMIT]) {
+      for (const permit of [
+        MOCK_12MONTH_DISABLED_PERMIT,
+        MOCK_12MONTH_SENIOR_PERMIT,
+        MOCK_1DAY_SENIOR_PERMIT_ENTITY,
+        MOCK_1DAY_FULL_PERMIT_ENTITY
+      ]) {
         if (permit.id === id) {
           return permit
         }
@@ -59,7 +64,7 @@ describe('permissions service', () => {
       const now = moment()
       const number = await generatePermissionNumber(
         {
-          permitId: MOCK_1DAY_FULL_PERMIT.id,
+          permitId: MOCK_1DAY_FULL_PERMIT_ENTITY.id,
           issueDate: now.toISOString(),
           startDate: now.toISOString(),
           licensee: {
@@ -85,7 +90,7 @@ describe('permissions service', () => {
       const now = moment()
       const number = await generatePermissionNumber(
         {
-          permitId: MOCK_1DAY_FULL_PERMIT.id,
+          permitId: MOCK_1DAY_FULL_PERMIT_ENTITY.id,
           issueDate: now.toISOString(),
           startDate: now.toISOString(),
           licensee: {

@@ -1,4 +1,12 @@
-import { Concession, Contact, GlobalOptionSetDefinition, Permit, TransactionCurrency } from '@defra-fish/dynamics-lib'
+import {
+  Concession,
+  ConcessionProof,
+  Contact,
+  GlobalOptionSetDefinition,
+  Permission,
+  Permit,
+  TransactionCurrency
+} from '@defra-fish/dynamics-lib'
 import { readFileSync } from 'fs'
 import Project from '../project.cjs'
 import Path from 'path'
@@ -43,20 +51,22 @@ export const mockContactPayload = () => ({
 })
 
 export const mockContactWithIdPayload = () => ({
-  contactId: '1329a866-d175-ea11-a811-000d3a64905b',
+  id: '1329a866-d175-ea11-a811-000d3a64905b',
   ...mockContactPayload()
 })
 
 export const mockPermissionPayload = () => ({
   permitId: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
   licensee: mockContactPayload(),
-  concession: {
-    concessionId: 'd0ece997-ef65-e611-80dc-c4346bad4004',
-    proof: {
-      type: 'National Insurance Number',
-      referenceNumber: 'AB 01 02 03 CD'
+  concessions: [
+    {
+      id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+      proof: {
+        type: 'National Insurance Number',
+        referenceNumber: 'AB 01 02 03 CD'
+      }
     }
-  },
+  ],
   issueDate: '2020-04-09T08:51:26.825Z',
   startDate: '2020-04-09T08:51:26.825Z'
 })
@@ -148,8 +158,8 @@ export const MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE = {
   defra_itemid: '42289'
 }
 
-export const MOCK_1DAY_SENIOR_PERMIT = Permit.fromResponse(MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
-export const MOCK_1DAY_FULL_PERMIT = Permit.fromResponse(MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+export const MOCK_1DAY_SENIOR_PERMIT_ENTITY = Permit.fromResponse(MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+export const MOCK_1DAY_FULL_PERMIT_ENTITY = Permit.fromResponse(MOCK_1DAY_FULL_PERMIT_DYNAMICS_RESPONSE, optionSetData)
 
 export const MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE = {
   '@odata.etag': 'W/"51026180"',
@@ -190,6 +200,30 @@ export const MOCK_12MONTH_DISABLED_PERMIT_DYNAMICS_RESPONSE = {
 
 export const MOCK_12MONTH_SENIOR_PERMIT = Permit.fromResponse(MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE, optionSetData)
 export const MOCK_12MONTH_DISABLED_PERMIT = Permit.fromResponse(MOCK_12MONTH_DISABLED_PERMIT_DYNAMICS_RESPONSE, optionSetData)
+
+export const MOCK_CONCESSION_PROOF_ENTITY = ConcessionProof.fromResponse(
+  {
+    '@odata.etag': 'W/"53050428"',
+    defra_concessionproofid: 'ee336a19-417e-ea11-a811-000d3a64905b',
+    defra_referencenumber: 'AB 01 02 03 CD',
+    defra_concessionprooftype: 910400001
+  },
+  optionSetData
+)
+
+export const MOCK_EXISTING_PERMISSION_ENTITY = Permission.fromResponse(
+  {
+    '@odata.etag': 'W/"186695153"',
+    defra_permissionid: '347a9083-361e-ea11-a810-000d3a25c5d6',
+    defra_name: '00000000-2WC3FDR-CD379B',
+    defra_issuedate: '2019-12-13T09:00:00Z',
+    defra_startdate: '2019-12-14T00:00:00Z',
+    defra_enddate: '2020-12-13T23:59:59Z',
+    defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
+    defra_datasource: 910400003
+  },
+  optionSetData
+)
 
 export const MOCK_NEW_CONTACT_ENTITY = new Contact()
 

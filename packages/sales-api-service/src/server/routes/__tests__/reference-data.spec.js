@@ -1,11 +1,11 @@
-import { MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT } from '../../../__mocks__/test-data.js'
+import { MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY } from '../../../__mocks__/test-data.js'
 import initialiseServer from '../../index.js'
 let server = null
 
 jest.mock('../../../services/reference-data.service.js', () => ({
   ENTITY_TYPES: [MOCK_12MONTH_SENIOR_PERMIT.constructor],
   getReferenceDataForEntity: jest.fn(async entityType => {
-    return [MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT]
+    return [MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY]
   })
 }))
 
@@ -34,7 +34,7 @@ describe('reference-data endpoint', () => {
           id: MOCK_12MONTH_SENIOR_PERMIT.id
         }),
         expect.objectContaining({
-          id: MOCK_1DAY_SENIOR_PERMIT.id
+          id: MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
         })
       ])
     )

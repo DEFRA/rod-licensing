@@ -41,7 +41,7 @@ describe('recurring payment entity', () => {
     recurringPayment.mandate = 'Test mandate'
     recurringPayment.inceptionDay = 28
     recurringPayment.inceptionMonth = 2
-    recurringPayment.bindToContact(contact)
+    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.payer, contact)
 
     const dynamicsEntity = recurringPayment.toRequestBody()
     expect(dynamicsEntity).toMatchObject(

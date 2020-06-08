@@ -130,32 +130,49 @@ describe('BaseEntity', () => {
 })
 
 describe('EntityDefinition', () => {
-  it('exposes properties used by the entity manager', () => {
-    const definition = new EntityDefinition({
-      localCollection: 'test-local',
-      dynamicsCollection: 'test-remote',
-      defaultFilter: 'statecode eq 0',
-      mappings: {
-        id: {
-          field: 'idval',
-          type: 'string'
-        },
-        strVal: {
-          field: 'strval',
-          type: 'string'
-        }
+  const exampleDefinitionData = {
+    localName: 'example',
+    dynamicsCollection: 'example_remote',
+    defaultFilter: 'statecode eq 0',
+    mappings: {
+      id: {
+        field: 'idval',
+        type: 'string'
       },
-      alternateKey: 'strval'
-    })
+      strVal: {
+        field: 'strval',
+        type: 'string'
+      }
+    },
+    alternateKey: 'strval',
+    relationships: {
+      test: { property: 'relatedEntity', entity: TestEntity }
+    }
+  }
+
+  it('exposes properties used by the entity manager', () => {
+    const definition = new EntityDefinition(exampleDefinitionData)
     expect(definition.select).toStrictEqual(['idval', 'strval'])
-    expect(definition.localCollection).toStrictEqual('test-local')
-    expect(definition.dynamicsCollection).toStrictEqual('test-remote')
+    expect(definition.localName).toStrictEqual('example')
+    expect(definition.localCollection).toStrictEqual('examples')
+    expect(definition.dynamicsCollection).toStrictEqual('example_remote')
     expect(definition.defaultFilter).toStrictEqual('statecode eq 0')
     expect(definition.mappings).toBeInstanceOf(Object)
     expect(definition.alternateKey).toStrictEqual('strval')
+    expect(definition.relationships).toStrictEqual({ test: { property: 'relatedEntity', entity: TestEntity } })
+  })
+
+  it('requires a subclass of BaseEntity to be supplied in a relationship definition', () => {
+    class NotASubclassOfBaseEntity {}
+    expect(
+      () =>
+        new EntityDefinition(
+          Object.assign({}, exampleDefinitionData, { relationships: { test: { property: 'example', entity: NotASubclassOfBaseEntity } } })
+        )
+    ).toThrow('"relationships.test.entity" failed custom validation because Relationship entity must be a subclass of BaseEntity')
   })
 
   it('requires a valid entity definition', () => {
-    expect(() => new EntityDefinition({})).toThrow('"localCollection" is required')
+    expect(() => new EntityDefinition({})).toThrow('"localName" is required')
   })
 })

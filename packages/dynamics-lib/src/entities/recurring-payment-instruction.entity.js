@@ -1,4 +1,7 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { Contact } from './contact.entity.js'
+import { Permit } from './permit.entity.js'
+import { RecurringPayment } from './recurring-payment.entity.js'
 
 /**
  * Recurring payment instruction entity
@@ -7,11 +10,16 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class RecurringPaymentInstruction extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'recurringPaymentInstructions',
+    localName: 'recurringPaymentInstruction',
     dynamicsCollection: 'defra_recurringpaymentinstructions',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_recurringpaymentinstructionid', type: 'string' }
+    },
+    relationships: {
+      recurringPayment: { property: 'defra_RecurringPayment', entity: RecurringPayment, parent: true },
+      licensee: { property: 'defra_Contact', entity: Contact, parent: true },
+      permit: { property: 'defra_Permit', entity: Permit, parent: true }
     }
   })
 
@@ -21,32 +29,5 @@ export class RecurringPaymentInstruction extends BaseEntity {
    */
   static get definition () {
     return RecurringPaymentInstruction._definition
-  }
-
-  /**
-   * Associate the recurring payment instruction with a {@link RecurringPayment}
-   *
-   * @param {RecurringPayment} recurringPayment the {@link RecurringPayment} with which to create an association
-   */
-  bindToRecurringPayment (recurringPayment) {
-    super._bind('defra_RecurringPayment@odata.bind', recurringPayment)
-  }
-
-  /**
-   * Associate the recurring payment instruction with a {@link Permit}
-   *
-   * @param {Permit} permit the {@link Permit} with which to create an association
-   */
-  bindToPermit (permit) {
-    super._bind('defra_Permit@odata.bind', permit)
-  }
-
-  /**
-   * Associate the recurring payment instruction with a {@link Contact}.  This is the contact details relating angler who will receive a new licence
-   *
-   * @param {Contact} contact the {@link Contact} with which to create an association
-   */
-  bindToContact (contact) {
-    super._bind('defra_Contact@odata.bind', contact)
   }
 }

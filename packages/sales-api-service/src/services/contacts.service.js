@@ -4,11 +4,11 @@ import db from 'debug'
 const debug = db('sales:transformers')
 
 /**
- * Transform a contact payload into a {@link Contact} entity.  Attempts to resolve an existing contact record for either the given contactId
+ * Transform a contact payload into a {@link Contact} entity.  Attempts to resolve an existing contact record for either the given id
  * or based on a lookup against the data in certain fields.
  *
  * @typedef ContactPayload
- * @property {string} [contactId] The id of an existing contact record. If present the existing record for the given id will be retrieved and updated.
+ * @property {string} [id] The id of an existing contact record. If present the existing record for the given id will be retrieved and updated.
  * @property {!string} firstName The first name of the contact
  * @property {!string} lastName The last name of the contact
  * @property {!string} birthDate The date of birth for the contact
@@ -28,18 +28,11 @@ const debug = db('sales:transformers')
  * @returns {Promise<Contact>}
  */
 export const resolveContactPayload = async payload => {
-  const {
-    contactId,
-    country,
-    preferredMethodOfConfirmation,
-    preferredMethodOfNewsletter,
-    preferredMethodOfReminder,
-    ...primitives
-  } = payload
+  const { id, country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...primitives } = payload
   /** @type Contact */ let contact
-  if (contactId) {
+  if (id) {
     // Resolve an existing contact id
-    contact = await findById(Contact, contactId)
+    contact = await findById(Contact, id)
   } else {
     const lookup = new Contact()
     lookup.firstName = payload.firstName
@@ -55,10 +48,19 @@ export const resolveContactPayload = async payload => {
   }
   contact = Object.assign(contact || new Contact(), primitives)
 
-  contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue('defra_preferredcontactmethod', preferredMethodOfConfirmation)
-  contact.preferredMethodOfNewsletter = await getGlobalOptionSetValue('defra_preferredcontactmethod', preferredMethodOfNewsletter)
-  contact.preferredMethodOfReminder = await getGlobalOptionSetValue('defra_preferredcontactmethod', preferredMethodOfReminder)
-  contact.country = await getGlobalOptionSetValue('defra_country', country)
+  contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
+    Contact.definition.mappings.preferredMethodOfConfirmation.ref,
+    preferredMethodOfConfirmation
+  )
+  contact.preferredMethodOfNewsletter = await getGlobalOptionSetValue(
+    Contact.definition.mappings.preferredMethodOfNewsletter.ref,
+    preferredMethodOfNewsletter
+  )
+  contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
+    Contact.definition.mappings.preferredMethodOfReminder.ref,
+    preferredMethodOfReminder
+  )
+  contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
 
   debug('Transformed licensee to contact: %O', contact)
   return contact
