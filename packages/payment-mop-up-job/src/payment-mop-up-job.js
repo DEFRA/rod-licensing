@@ -37,9 +37,7 @@ if (
 }
 
 if (isOk) {
-  execute(paymentMopUpJob.ageMinutes, paymentMopUpJob.scanDurationHours)
-    .then()
-    .catch()
+  execute(paymentMopUpJob.ageMinutes, paymentMopUpJob.scanDurationHours).catch(console.error)
 }
 
 export default paymentMopUpJob

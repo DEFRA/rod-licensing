@@ -85,8 +85,9 @@ describe('The agreed handler', () => {
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(500)
 
-    // Despite the error in finalization the payment journal should be updated
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalled()
+    // Due to the error in finalization the payment journal will not be updated -
+    // This needs to be cleared by the mop up
+    expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
 
     // Resume correctly
     salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))

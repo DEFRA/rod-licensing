@@ -139,7 +139,7 @@ const processPayment = async (request, transaction, status) => {
   }
 
   if (state.status === 'success') {
-    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
+    // Defer setting the completed status in the journal until after finalization
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
   } else {
@@ -206,11 +206,10 @@ export default async (request, h) => {
       return h.redirect(transaction.payment.href)
     }
 
-    if (!status[COMPLETION_STATUS.paymentCompleted]) {
-      const next = await processPayment(request, transaction, status)
-      if (next) {
-        return h.redirect(next)
-      }
+    // Note: At this point payment completed status is never set
+    const next = await processPayment(request, transaction, status)
+    if (next) {
+      return h.redirect(next)
     }
   }
 
@@ -221,6 +220,10 @@ export default async (request, h) => {
     await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
     status[COMPLETION_STATUS.finalised] = true
     await request.cache().helpers.status.set(status)
+    // Set the completed status
+    if (transaction.cost > 0) {
+      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
+    }
   } else {
     debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
   }

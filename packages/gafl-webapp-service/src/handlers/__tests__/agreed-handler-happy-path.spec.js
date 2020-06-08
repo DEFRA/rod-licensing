@@ -128,14 +128,13 @@ describe('The agreed handler', () => {
   it('redirects to order-completed for finalized transactions', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
-
     salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
-
     await injectWithCookies('GET', AGREED.uri)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
     const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(ORDER_COMPLETE.uri)
+    await injectWithCookies('GET', ORDER_COMPLETE.uri)
   })
 })
