@@ -93,7 +93,7 @@ export function createPermitConcessionValidator () {
         throw new Error(`The permit '${permission.permitId}' requires proof of concession however none were supplied`)
       } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {
         throw new Error(`The permit '${permission.permitId}' does not allow concessions but concession proofs were supplied`)
-      } else {
+      } else if (permission.concessions) {
         validateConcessionList(permission, concessionsRequiredForPermit)
       }
     }
