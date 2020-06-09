@@ -146,12 +146,12 @@ describe('EntityDefinition', () => {
     },
     alternateKey: 'strval',
     relationships: {
-      test: { property: 'relatedEntity', entity: TestEntity }
+      test: { property: 'relatedEntity', entity: TestEntity, parent: true }
     }
   }
 
   it('exposes properties used by the entity manager', () => {
-    const definition = new EntityDefinition(exampleDefinitionData)
+    const definition = new EntityDefinition(() => exampleDefinitionData)
     expect(definition.select).toStrictEqual(['idval', 'strval'])
     expect(definition.localName).toStrictEqual('example')
     expect(definition.localCollection).toStrictEqual('examples')
@@ -159,20 +159,30 @@ describe('EntityDefinition', () => {
     expect(definition.defaultFilter).toStrictEqual('statecode eq 0')
     expect(definition.mappings).toBeInstanceOf(Object)
     expect(definition.alternateKey).toStrictEqual('strval')
-    expect(definition.relationships).toStrictEqual({ test: { property: 'relatedEntity', entity: TestEntity } })
+    expect(definition.relationships).toStrictEqual({ test: { property: 'relatedEntity', entity: TestEntity, parent: true } })
   })
 
   it('requires a subclass of BaseEntity to be supplied in a relationship definition', () => {
     class NotASubclassOfBaseEntity {}
-    expect(
-      () =>
-        new EntityDefinition(
-          Object.assign({}, exampleDefinitionData, { relationships: { test: { property: 'example', entity: NotASubclassOfBaseEntity } } })
-        )
-    ).toThrow('"relationships.test.entity" failed custom validation because Relationship entity must be a subclass of BaseEntity')
+    const entityDefinition = new EntityDefinition(() => ({
+      ...exampleDefinitionData,
+      ...{ relationships: { test: { property: 'example', entity: NotASubclassOfBaseEntity } } }
+    }))
+
+    const expectedError =
+      '"relationships.test.entity" failed custom validation because Relationship entity must be a subclass of BaseEntity'
+    expect(() => entityDefinition.select).toThrow(expectedError)
+    expect(() => entityDefinition.localName).toThrow(expectedError)
+    expect(() => entityDefinition.localCollection).toThrow(expectedError)
+    expect(() => entityDefinition.dynamicsCollection).toThrow(expectedError)
+    expect(() => entityDefinition.defaultFilter).toThrow(expectedError)
+    expect(() => entityDefinition.mappings).toThrow(expectedError)
+    expect(() => entityDefinition.alternateKey).toThrow(expectedError)
+    expect(() => entityDefinition.relationships).toThrow(expectedError)
   })
 
   it('requires a valid entity definition', () => {
-    expect(() => new EntityDefinition({})).toThrow('"localName" is required')
+    const entityDefinition = new EntityDefinition(() => ({}))
+    expect(() => entityDefinition.localName).toThrow('"localName" is required')
   })
 })

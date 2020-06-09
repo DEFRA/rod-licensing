@@ -8,7 +8,7 @@ import { Permission } from './permission.entity.js'
  */
 export class PoclStagingException extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'transactionFileError',
     dynamicsCollection: 'defra_poclfiledataerrors',
     defaultFilter: 'statecode eq 0',
@@ -25,7 +25,7 @@ export class PoclStagingException extends BaseEntity {
       permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
       poclFile: { property: 'defra_POCLFileId', entity: PoclFile, parent: true }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

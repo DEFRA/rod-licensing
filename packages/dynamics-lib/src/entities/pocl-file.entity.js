@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class PoclFile extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'poclFile',
     dynamicsCollection: 'defra_poclfiles',
     defaultFilter: 'statecode eq 0',
@@ -24,7 +24,7 @@ export class PoclFile extends BaseEntity {
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclfilestatus' }
     },
     alternateKey: 'defra_name'
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

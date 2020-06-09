@@ -11,7 +11,7 @@ import { Transaction } from './transaction.entity.js'
  */
 export class Permission extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'permission',
     dynamicsCollection: 'defra_permissions',
     defaultFilter: 'statecode eq 0',
@@ -31,7 +31,7 @@ export class Permission extends BaseEntity {
       poclFile: { property: 'defra_POCLFileId', entity: PoclFile, parent: true },
       concessionProofs: { property: 'defra_defra_permission_defra_concessionproof_PermissionId', entity: ConcessionProof }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

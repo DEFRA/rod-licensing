@@ -402,7 +402,7 @@ const metadataSchema = Joi.object({
   alternateKey: Joi.string()
     .min(1)
     .optional()
-})
+}).required()
 
 /**
  * Definition metadata for an entity
@@ -411,77 +411,92 @@ const metadataSchema = Joi.object({
 export class EntityDefinition {
   /** @type {MetadataSchema} */
   _metadata
-  _fields
 
   /***
-   * @param metadata {MetadataSchema} the metadata to be associated with the entity
+   * Create a new entity definition
+   *
+   * @param metadataFactory {function: MetadataSchema} the metadata to be associated with the entity
    */
-  constructor (metadata) {
-    const validation = metadataSchema.validate(metadata)
-    if (validation.error) {
-      throw validation.error
+  constructor (metadataFactory) {
+    this._metadataFactory = metadataFactory
+  }
+
+  /**
+   * Lazy initialiser for metadata to avoid circular dependency problems in relationships which reference the target entity
+   *
+   * @returns {MetadataSchema}
+   */
+  getMetadata () {
+    if (!this._metadata) {
+      const metadata = this._metadataFactory()
+      const validation = metadataSchema.validate(metadata)
+      if (validation.error) {
+        throw validation.error
+      }
+      const localCollection = pluralize(metadata.localName)
+      const fields = Object.values(metadata.mappings)
+        .map(({ field }) => field)
+        .filter(field => !field.includes('@'))
+
+      this._metadata = { ...metadata, localCollection, fields }
     }
-    this._metadata = metadata
-    this._localCollection = pluralize(this._metadata.localName)
-    this._fields = Object.values(metadata.mappings)
-      .map(({ field }) => field)
-      .filter(field => !field.includes('@'))
+    return this._metadata
   }
 
   /**
    * @returns {!string} the entity name used locally
    */
   get localName () {
-    return this._metadata.localName
+    return this.getMetadata().localName
   }
 
   /**
    * @returns {!string} the entity collection name used locally
    */
   get localCollection () {
-    return this._localCollection
+    return this.getMetadata().localCollection
   }
 
   /**
    * @returns {!string} the entity collection name used by dynamics
    */
   get dynamicsCollection () {
-    return this._metadata.dynamicsCollection
+    return this.getMetadata().dynamicsCollection
   }
 
   /**
    * @returns {string} the default filter string used in any request to dynamics
    */
   get defaultFilter () {
-    return this._metadata.defaultFilter
+    return this.getMetadata().defaultFilter
   }
 
   /**
    * @returns {Object.<string, FieldMapping>} the field mappings used to map between the dynamics entity and the local entity
    */
   get mappings () {
-    return this._metadata.mappings
+    return this.getMetadata().mappings
   }
 
   /**
    * @returns {Object.<string, Relationship>} the relationships to other entities
    */
   get relationships () {
-    return this._metadata.relationships
+    return this.getMetadata().relationships
   }
 
   /**
    * @returns {Object} the alternate key for the entity (if supported)
    */
   get alternateKey () {
-    return this._metadata.alternateKey
+    return this.getMetadata().alternateKey
   }
 
   /**
    * @returns {Array<String>} the fields used to populate the select statement in any retrieve request to dynamics
    */
   get select () {
-    return this._fields
+    return this.getMetadata().fields
   }
 
   /**

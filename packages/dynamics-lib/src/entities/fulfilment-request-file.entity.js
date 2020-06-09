@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class FulfilmentRequestFile extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'fulfilmentRequestFile',
     dynamicsCollection: 'defra_fulfilmentrequestfiles',
     defaultFilter: 'statecode eq 0',
@@ -19,7 +19,7 @@ export class FulfilmentRequestFile extends BaseEntity {
       deliveryTimestamp: { field: 'defra_deliverytimestamp', type: 'datetime' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_fulfilmentrequestfilestatus' }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

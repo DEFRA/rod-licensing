@@ -9,7 +9,7 @@ import { RecurringPayment } from './recurring-payment.entity.js'
  */
 export class RecurringPaymentInstruction extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'recurringPaymentInstruction',
     dynamicsCollection: 'defra_recurringpaymentinstructions',
     defaultFilter: 'statecode eq 0',
@@ -21,7 +21,7 @@ export class RecurringPaymentInstruction extends BaseEntity {
       licensee: { property: 'defra_Contact', entity: Contact, parent: true },
       permit: { property: 'defra_Permit', entity: Permit, parent: true }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

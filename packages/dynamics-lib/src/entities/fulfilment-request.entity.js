@@ -8,7 +8,7 @@ import { FulfilmentRequestFile } from './fulfilment-request-file.entity.js'
  */
 export class FulfilmentRequest extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'fulfilmentRequest',
     dynamicsCollection: 'defra_fulfilmentrequests',
     defaultFilter: 'statecode eq 0',
@@ -23,7 +23,7 @@ export class FulfilmentRequest extends BaseEntity {
       permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
       fulfilmentRequestFile: { property: 'defra_FulfilmentRequestFileId', entity: FulfilmentRequestFile, parent: true }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

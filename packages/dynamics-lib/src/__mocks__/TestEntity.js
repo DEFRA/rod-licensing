@@ -1,7 +1,7 @@
 import { BaseEntity, EntityDefinition } from '../entities/base.entity'
 
 export default class TestEntity extends BaseEntity {
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'entityTest',
     dynamicsCollection: 'test',
     defaultFilter: 'statecode eq 0',
@@ -45,7 +45,7 @@ export default class TestEntity extends BaseEntity {
       parentTestEntity: { property: 'parent_test_entity', entity: TestEntity, parent: true },
       childTestEntity: { property: 'child_test_entity', entity: TestEntity }
     }
-  })
+  }))
 
   /**
    * @returns {EntityDefinition} the definition providing mappings between Dynamics entity and the local entity
