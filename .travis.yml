@@ -10,46 +10,32 @@ env:
   - TZ=Europe/London
 
 # Only run build for chores if building from a tag.
-if: commit_message !~ /^chore\(release\)/ OR tag IS NOT blank
+if: commit_message !~ /^chore\(release\)/
 
 branches:
   only:
     - master
-    - /^v\d+\.\d+\.\d+(-\w+\.\d+)?$/
 
-stages:
-  - name: test
-    if: tag IS blank
-  - name: deploy
-    if: type != pull_request
+script:
+  - echo "Starting tests at $(date)"
+  - npm test
+  - echo "Tests completed at $(date)"
+  - sonar-scanner
+  - echo "Sonar analysis completed at $(date)"
 
-jobs:
-  include:
-    - stage: test
-      script:
-        - echo "Starting tests at $(date)"
-        - npm test
-        - echo "Tests completed at $(date)"
-        - sonar-scanner
-        - echo "Sonar analysis completed at $(date)"
-    - stage: deploy
-      script:
-        - git config --global user.email ${GITHUB_EMAIL}
-        - git config --global user.name ${GITHUB_USER}
-        - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licensing.git" > /dev/null 2>&1
-        - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
-        - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
-      deploy:
-        - provider: script
-          script: 'npm run lerna:prerelease'
-          skip_cleanup: true
-          on:
-            branch: master
-        - provider: script
-          script: 'npm run lerna:publish'
-          skip_cleanup: true
-          on:
-            tags: true
+before_deploy:
+  - git config --global user.email ${GITHUB_EMAIL}
+  - git config --global user.name ${GITHUB_USER}
+  - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licensing.git" > /dev/null 2>&1
+  - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
+  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+
+deploy:
+  - provider: script
+    script: 'npm run lerna:prerelease && npm run lerna:publish'
+    skip_cleanup: true
+    on:
+      branch: master
 
 addons:
   sonarcloud:
