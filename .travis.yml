@@ -9,7 +9,7 @@ git:
 env:
   - TZ=Europe/London
 
-# Only run build for chores if building from a tag.
+# Don't execute when the commit was a release chore
 if: commit_message !~ /^chore\(release\)/
 
 branches:
@@ -26,13 +26,13 @@ script:
 before_deploy:
   - git config --global user.email ${GITHUB_EMAIL}
   - git config --global user.name ${GITHUB_USER}
-  - git remote set-url origin "https://${GITHUB_TOKEN}@github.com/DEFRA/rod-licensing.git" > /dev/null 2>&1
+  - git remote set-url origin "https://${GITHUB_AUTH}@github.com/DEFRA/rod-licensing.git" > /dev/null 2>&1
   - if [ "$TRAVIS_TAG" = "" ]; then git checkout master ; fi
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 
 deploy:
   - provider: script
-    script: 'npm run lerna:prerelease && npm run lerna:publish'
+    script: 'scripts/travis_deploy.sh'
     skip_cleanup: true
     on:
       branch: master
