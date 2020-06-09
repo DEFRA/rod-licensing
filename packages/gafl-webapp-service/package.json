@@ -56,7 +56,7 @@
     "nunjucks": "^3.2.1",
     "pdfmake": "^0.1.65",
     "semver": "^7.3.2",
-    "uuid": "^8.0.0"
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",

@@ -40,7 +40,7 @@
     "aws-sdk": "^2.680.0",
     "debug": "^4.1.1",
     "node-fetch": "^2.6.0",
-    "uuid": "^8.0.0"
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "pm2": "^4.4.0"
