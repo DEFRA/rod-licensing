@@ -15,6 +15,8 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 5. Make sure your code lints.
 6. Issue that pull request!
 
+> When raising a pull request, ensure that you apply the appropriate label as this is used when generating changelogs!
+
 ## Any contributions you make will be under the Open Government Licence
 
 In short, when you submit code changes, your submissions are understood to be under the same
