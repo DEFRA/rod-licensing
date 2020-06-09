@@ -1,6 +1,5 @@
 import {
   persist,
-  findById,
   Permission,
   Permit,
   Concession,
@@ -10,8 +9,7 @@ import {
   TransactionCurrency,
   TransactionJournal,
   RecurringPayment,
-  RecurringPaymentInstruction,
-  PoclFile
+  RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
@@ -35,17 +33,16 @@ export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
-  const transactionFile = await resolveTransactionFile(transactionRecord)
 
-  const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord, transactionFile)
+  const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
 
   const { recurringPayment, payer } = await processRecurringPayment(transactionRecord)
   recurringPayment && entities.push(recurringPayment, payer)
 
   let totalTransactionValue = 0.0
-  const dataSource = await getGlobalOptionSetValue('defra_datasource', transactionRecord.dataSource)
-  for (const { licensee, concession, permitId, referenceNumber, issueDate, startDate, endDate } of transactionRecord.permissions) {
+  const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
+  for (const { licensee, concessions, permitId, referenceNumber, issueDate, startDate, endDate } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
@@ -59,22 +56,25 @@ export async function processQueue ({ id }) {
     permission.endDate = endDate
     permission.dataSource = dataSource
 
-    permission.bindToContact(contact)
-    permission.bindToPermit(permit)
-    permission.bindToTransaction(transaction)
-    transactionFile && permission.bindToPoclFile(transactionFile)
+    permission.bindToEntity(Permission.definition.relationships.licensee, contact)
+    permission.bindToEntity(Permission.definition.relationships.permit, permit)
+    permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
+    transactionRecord.transactionFile &&
+      permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
 
     entities.push(contact, permission)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       const paymentInstruction = new RecurringPaymentInstruction()
-      paymentInstruction.bindToContact(contact)
-      paymentInstruction.bindToPermit(permit)
-      paymentInstruction.bindToRecurringPayment(recurringPayment)
+      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
+      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)
+      paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.recurringPayment, recurringPayment)
       entities.push(paymentInstruction)
     }
 
-    concession && entities.push(await createConcessionProof(concession, permission))
+    for (const concession of concessions || []) {
+      entities.push(await createConcessionProof(concession, permission))
+    }
     permit.isForFulfilment && entities.push(await createFulfilmentRequest(permission))
   }
 
@@ -111,7 +111,7 @@ const processRecurringPayment = async transactionRecord => {
     recurringPayment.inceptionDay = inceptionMoment.date()
     recurringPayment.inceptionMonth = inceptionMoment.month()
     payer = await resolveContactPayload(transactionRecord.payment.recurring.payer)
-    recurringPayment.bindToContact(payer)
+    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.payer, payer)
   }
   return { recurringPayment, payer }
 }
@@ -122,7 +122,7 @@ const processRecurringPayment = async transactionRecord => {
  * @param transactionRecord the transaction payload
  * @returns {Promise<{paymentJournal: TransactionJournal, chargeJournal: TransactionJournal, transaction: Transaction}>}
  */
-const createTransactionEntities = async (transactionRecord, transactionFile) => {
+const createTransactionEntities = async transactionRecord => {
   // Currently only a single currency (GBP) is supported
   const currency = (await getReferenceDataForEntity(TransactionCurrency))[0]
 
@@ -130,11 +130,13 @@ const createTransactionEntities = async (transactionRecord, transactionFile) => 
   transaction.referenceNumber = transactionRecord.id
   transaction.description = `Transaction for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
   transaction.timestamp = transactionRecord.payment.timestamp
-  transaction.source = await getGlobalOptionSetValue('defra_financialtransactionsource', transactionRecord.payment.source)
-  transaction.paymentType = await getGlobalOptionSetValue('defra_paymenttype', transactionRecord.payment.method)
+  transaction.source = await getGlobalOptionSetValue(Transaction.definition.mappings.source.ref, transactionRecord.payment.source)
+  transaction.paymentType = await getGlobalOptionSetValue(Transaction.definition.mappings.paymentType.ref, transactionRecord.payment.method)
   transaction.channelId = transactionRecord.channelId
-  transaction.bindToTransactionCurrency(currency)
-  transactionFile && transaction.bindToPoclFile(transactionFile)
+
+  transaction.bindToEntity(Transaction.definition.relationships.transactionCurrency, currency)
+  transactionRecord.transactionFile &&
+    transaction.bindToAlternateKey(Transaction.definition.relationships.poclFile, transactionRecord.transactionFile)
 
   const chargeJournal = await createTransactionJournal(transactionRecord, transaction, 'Charge', currency)
   const paymentJournal = await createTransactionJournal(transactionRecord, transaction, 'Payment', currency)
@@ -156,9 +158,9 @@ const createTransactionJournal = async (transactionRecord, transactionEntity, ty
   journal.referenceNumber = transactionRecord.id
   journal.description = `${type} for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
   journal.timestamp = transactionRecord.payment.timestamp
-  journal.type = await getGlobalOptionSetValue('defra_financialtransactiontype', type)
-  journal.bindToTransactionCurrency(currency)
-  journal.bindToTransaction(transactionEntity)
+  journal.type = await getGlobalOptionSetValue(TransactionJournal.definition.mappings.type.ref, type)
+  journal.bindToEntity(TransactionJournal.definition.relationships.transaction, transactionEntity)
+  journal.bindToEntity(TransactionJournal.definition.relationships.transactionCurrency, currency)
   return journal
 }
 
@@ -174,8 +176,8 @@ const createFulfilmentRequest = async permission => {
   const fulfilmentRequest = new FulfilmentRequest()
   fulfilmentRequest.referenceNumber = today.toISOString() + refNumberExt
   fulfilmentRequest.requestTimestamp = today
-  fulfilmentRequest.status = await getGlobalOptionSetValue('defra_fulfilmentrequeststatus', 'Pending')
-  fulfilmentRequest.bindToPermission(permission)
+  fulfilmentRequest.status = await getGlobalOptionSetValue(FulfilmentRequest.definition.mappings.status.ref, 'Pending')
+  fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.permission, permission)
   return fulfilmentRequest
 }
 
@@ -188,24 +190,10 @@ const createFulfilmentRequest = async permission => {
  */
 const createConcessionProof = async (concession, permission) => {
   const proof = new ConcessionProof()
-  const concessionEntity = await getReferenceDataForEntityAndId(Concession, concession.concessionId)
-  proof.proofType = await getGlobalOptionSetValue('defra_concessionproof', concession.proof.type)
+  const concessionEntity = await getReferenceDataForEntityAndId(Concession, concession.id)
+  proof.proofType = await getGlobalOptionSetValue(ConcessionProof.definition.mappings.proofType.ref, concession.proof.type)
   proof.referenceNumber = concession.proof.referenceNumber
-  proof.bindToPermission(permission)
-  proof.bindToConcession(concessionEntity)
+  proof.bindToEntity(ConcessionProof.definition.relationships.permission, permission)
+  proof.bindToEntity(ConcessionProof.definition.relationships.concession, concessionEntity)
   return proof
-}
-
-/**
- * If a transaction references an transaction file then resolves the entity, else returns null
- *
- * @param {*} transactionRecord the transaction payload
- * @returns {Promise<*|null>}
- */
-const resolveTransactionFile = async transactionRecord => {
-  let transactionFile = null
-  if (transactionRecord.transactionFile) {
-    transactionFile = await findById(PoclFile, `${PoclFile.definition.alternateKey}='${transactionRecord.transactionFile}'`)
-  }
-  return transactionFile
 }

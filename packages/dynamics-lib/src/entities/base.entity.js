@@ -3,6 +3,8 @@ import util from 'util'
 import Joi from '@hapi/joi'
 import { GlobalOptionSetDefinition } from '../optionset/global-option-set-definition.js'
 import moment from 'moment'
+import pluralize from 'pluralize'
+import { escapeODataStringValue } from '../client/util.js'
 
 /**
  * Base class for Dynamics entities
@@ -208,6 +210,31 @@ export class BaseEntity {
   }
 
   /**
+   * Bind this entity to the given target using the specified relationship
+   *
+   * @param {Relationship} relationship the relationship to which the entity should be bound
+   * @param {BaseEntity} entity the entity which is the target for the relationship
+   */
+  bindToEntity (relationship, entity) {
+    this._bind(`${relationship.property}@odata.bind`, entity)
+  }
+
+  /**
+   * Bind this entity to the given target using an alternate key property
+   *
+   * @param {Relationship} relationship the relationship to which the entity should be bound
+   * @param {String} key the value of the alternate key field to use to lookup the appropriate entity to bind with
+   */
+  bindToAlternateKey (relationship, key) {
+    this._bind(
+      `${relationship.property}@odata.bind`,
+      `/${relationship.entity.definition.dynamicsCollection}(${relationship.entity.definition.alternateKey}='${escapeODataStringValue(
+        key
+      )}')`
+    )
+  }
+
+  /**
    * a unique (uuid) identifier for this object instance (useful for batch creation requests)
    * @type {string}
    * @readonly
@@ -301,6 +328,20 @@ export class BaseEntity {
 }
 
 /**
+ * @typedef {Object} FieldMapping
+ * @property {!string} field the name of the field in Dynamics
+ * @property {!string} type the data type of the field
+ * @property {string} [ref] for the optionset type, defines the referenced optionset name
+ */
+
+/**
+ * @typedef {Object} Relationship
+ * @property {!string} property the property defining the relationship, may be used for binding and for expands
+ * @property {typeof BaseEntity} entity the subclass of BaseEntity which is the target of the relationship
+ * @property {boolean} parent if true, the target of the relationship is the parent object (and binding to it is allowed)
+ */
+
+/**
  * Schema for entity definitions
  *
  * @typedef {Object} MetadataSchema
@@ -308,11 +349,12 @@ export class BaseEntity {
  * @property {!string} dynamicsCollection the dynamics collection name
  * @property {string} [defaultFilter] the default filter to use when retrieving records
  * @property {string} [alternateKey] the name of the field to use with alternateKey syntax
- * @property {Object} mappings the mappings between the local collection fields and the dynamics fields
+ * @property {Object.<string, FieldMapping>} mappings the mappings between the local collection fields and the dynamics fields
+ * @property {Object.<string, Relationship>} relationships the relationships to other entities
  */
 const metadataSchema = Joi.object({
-  // Local entity collection name
-  localCollection: Joi.string()
+  // Local entity name
+  localName: Joi.string()
     .min(1)
     .required(),
   // Dynamics entity collection name
@@ -340,6 +382,23 @@ const metadataSchema = Joi.object({
       })
     })
   ),
+  relationships: Joi.object().pattern(
+    Joi.string(),
+    Joi.object({
+      property: Joi.string()
+        .min(1)
+        .required(),
+      entity: Joi.function()
+        .class()
+        .custom(value => {
+          if (!(value.prototype instanceof BaseEntity)) {
+            throw new Error('Relationship entity must be a subclass of BaseEntity')
+          }
+          return value
+        }),
+      parent: Joi.boolean()
+    })
+  ),
   alternateKey: Joi.string()
     .min(1)
     .optional()
@@ -363,16 +422,24 @@ export class EntityDefinition {
       throw validation.error
     }
     this._metadata = metadata
+    this._localCollection = pluralize(this._metadata.localName)
     this._fields = Object.values(metadata.mappings)
       .map(({ field }) => field)
       .filter(field => !field.includes('@'))
   }
 
   /**
+   * @returns {!string} the entity name used locally
+   */
+  get localName () {
+    return this._metadata.localName
+  }
+
+  /**
    * @returns {!string} the entity collection name used locally
    */
   get localCollection () {
-    return this._metadata.localCollection
+    return this._localCollection
   }
 
   /**
@@ -390,10 +457,17 @@ export class EntityDefinition {
   }
 
   /**
-   * @returns {Object} the field mappings used to map between the dynamics entity and the local entity
+   * @returns {Object.<string, FieldMapping>} the field mappings used to map between the dynamics entity and the local entity
    */
   get mappings () {
     return this._metadata.mappings
+  }
+
+  /**
+   * @returns {Object.<string, Relationship>} the relationships to other entities
+   */
+  get relationships () {
+    return this._metadata.relationships
   }
 
   /**

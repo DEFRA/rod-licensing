@@ -30,7 +30,6 @@ describe('permit entity', () => {
     const expectedFields = {
       id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
       description: '2017-20 Coarse 1 day 2 Rod Licence (Full)',
-      permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
       permitType: expect.objectContaining({ id: 910400000, label: 'Rod Fishing Licence', description: 'Rod Fishing Licence' }),
       permitSubtype: expect.objectContaining({ id: 910400000, label: 'Salmon and sea trout', description: 'S' }),
       durationMagnitude: 1,

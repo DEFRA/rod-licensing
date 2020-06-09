@@ -1,4 +1,6 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { Permission } from './permission.entity.js'
+import { FulfilmentRequestFile } from './fulfilment-request-file.entity.js'
 
 /**
  * Fulfilment requests entity
@@ -7,7 +9,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class FulfilmentRequest extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'fulfilmentRequests',
+    localName: 'fulfilmentRequest',
     dynamicsCollection: 'defra_fulfilmentrequests',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -16,6 +18,10 @@ export class FulfilmentRequest extends BaseEntity {
       requestTimestamp: { field: 'defra_requesttimestamp', type: 'datetime' },
       notes: { field: 'defra_notes', type: 'string' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_fulfilmentrequeststatus' }
+    },
+    relationships: {
+      permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
+      fulfilmentRequestFile: { property: 'defra_FulfilmentRequestFileId', entity: FulfilmentRequestFile, parent: true }
     }
   })
 
@@ -73,21 +79,5 @@ export class FulfilmentRequest extends BaseEntity {
 
   set status (status) {
     super._setState('status', status)
-  }
-
-  /**
-   * Associate the fulfilment request with a {@link FulfilmentRequestFile}
-   * @param {FulfilmentRequestFile} fulfilmentRequestFile the {@link FulfilmentRequestFile} with which to create an association
-   */
-  bindToFulfilmentRequestFile (fulfilmentRequestFile) {
-    super._bind('defra_FulfilmentRequestFileId@odata.bind', fulfilmentRequestFile)
-  }
-
-  /**
-   * Associate the fulfilment request with a {@link Permission}
-   * @param {Permission} permission the {@link Permission} with which to create an association
-   */
-  bindToPermission (permission) {
-    super._bind('defra_PermissionId@odata.bind', permission)
   }
 }

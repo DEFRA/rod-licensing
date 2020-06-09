@@ -1,5 +1,5 @@
 import Boom from '@hapi/boom'
-import { persist, findById, PoclFile } from '@defra-fish/dynamics-lib'
+import { persist, findByAlternateKey, PoclFile } from '@defra-fish/dynamics-lib'
 import {
   createTransactionFileResponseSchema,
   createTransactionFileSchema,
@@ -13,7 +13,7 @@ export default [
     path: '/transaction-files/{fileName}',
     options: {
       handler: async (request, h) => {
-        const file = await findById(PoclFile, `${PoclFile.definition.alternateKey}='${request.params.fileName}'`)
+        const file = await findByAlternateKey(PoclFile, request.params.fileName)
         if (!file) {
           throw Boom.notFound('An transaction file with the given identifier could not be found')
         }
@@ -44,14 +44,14 @@ export default [
     path: '/transaction-files/{fileName}',
     options: {
       handler: async (request, h) => {
-        let file = await findById(PoclFile, `${PoclFile.definition.alternateKey}='${request.params.fileName}'`)
+        let file = await findByAlternateKey(PoclFile, request.params.fileName)
         if (!file) {
           file = new PoclFile()
         }
 
         const payload = request.payload
-        payload.dataSource = await getGlobalOptionSetValue('defra_datasource', payload.dataSource)
-        payload.status = await getGlobalOptionSetValue('defra_poclfilestatus', payload.status)
+        payload.dataSource = await getGlobalOptionSetValue(PoclFile.definition.mappings.dataSource.ref, payload.dataSource)
+        payload.status = await getGlobalOptionSetValue(PoclFile.definition.mappings.status.ref, payload.status)
 
         const transactionFile = Object.assign(file, payload, { fileName: request.params.fileName })
         await persist(transactionFile)

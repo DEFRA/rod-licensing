@@ -2,7 +2,7 @@ import { BaseEntity, EntityDefinition } from '../entities/base.entity'
 
 export default class TestEntity extends BaseEntity {
   static _definition = new EntityDefinition({
-    localCollection: 'test',
+    localName: 'entityTest',
     dynamicsCollection: 'test',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -40,7 +40,11 @@ export default class TestEntity extends BaseEntity {
         ref: 'test_globaloption'
       }
     },
-    alternateKey: 'strval'
+    alternateKey: 'strval',
+    relationships: {
+      parentTestEntity: { property: 'parent_test_entity', entity: TestEntity, parent: true },
+      childTestEntity: { property: 'child_test_entity', entity: TestEntity }
+    }
   })
 
   /**

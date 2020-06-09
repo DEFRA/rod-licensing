@@ -7,7 +7,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class StagingException extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'stagingExceptions',
+    localName: 'stagingException',
     dynamicsCollection: 'defra_crmstagingexceptions',
     defaultFilter: 'statecode eq 0',
     mappings: {

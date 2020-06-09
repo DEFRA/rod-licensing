@@ -1,5 +1,6 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
 import { GlobalOptionSetDefinition } from '../optionset/global-option-set-definition.js'
+import { escapeODataStringValue } from './util.js'
 // Note: When node14 is released we can replace dotProp with optional chaining!
 import dotProp from 'dot-prop'
 import { CacheableOperation } from './cache.js'
@@ -141,12 +142,12 @@ export function retrieveGlobalOptionSets (...names) {
 }
 
 /**
- * Retrieve a record from Dynamics by it's ID
+ * Retrieve a record from Dynamics by its ID
  *
  * @template T<typeof BaseEntity>
  *
  * @param {T} entityType the example entity to construct a query from
- * @param {string} key the ID of the record to retrieve, can be a guid or an alternate key in the format Name='Value'
+ * @param {string} key the ID of the record to retrieve
  * @returns {Promise<T>} the record matching the given id or null if not found
  */
 export async function findById (entityType, key) {
@@ -161,6 +162,19 @@ export async function findById (entityType, key) {
     console.error('Unable to findById:', e)
     throw e
   }
+}
+
+/**
+ * Retrieve a record from Dynamics by its alternate key
+ *
+ * @template T<typeof BaseEntity>
+ *
+ * @param {T} entityType the example entity to construct a query from
+ * @param {string} alternateKey the alternate key value to use to retrieve the corresponding entity
+ * @returns {Promise<T>} the record matching the given id or null if not found
+ */
+export async function findByAlternateKey (entityType, alternateKey) {
+  return findById(entityType, `${entityType.definition.alternateKey}='${escapeODataStringValue(alternateKey)}'`)
 }
 
 /**
@@ -179,7 +193,7 @@ export async function findByExample (entity) {
         let serialized = entity._toSerialized(property)
         if (serialized !== undefined) {
           if (type === 'string') {
-            serialized = `'${serialized}'`
+            serialized = `'${escapeODataStringValue(serialized)}'`
           }
           acc[acc.length] = `${field} eq ${serialized}`
         }
@@ -191,6 +205,23 @@ export async function findByExample (entity) {
     return results.value.map(result => entity.constructor.fromResponse(result, optionSetData))
   } catch (e) {
     console.error('Unable to findByExample:', e)
+    throw e
+  }
+}
+
+/**
+ * Execute a predefined query
+ *
+ * @param {!PredefinedQuery} query the query to execute
+ * @returns {Promise<Array<*>>} an array of matching records
+ */
+export async function executeQuery (query) {
+  try {
+    const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
+    const optionSetData = await retrieveGlobalOptionSets().cached()
+    return query.fromResponse(response.value, optionSetData)
+  } catch (e) {
+    console.error('Failed to execute query: ', e)
     throw e
   }
 }

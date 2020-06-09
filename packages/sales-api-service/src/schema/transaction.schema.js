@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi'
 import { PoclFile } from '@defra-fish/dynamics-lib'
 import { createPermissionSchema, createPermissionResponseSchema } from './permission.schema.js'
-import { contactSchema } from './contact.schema.js'
+import { contactRequestSchema } from './contact.schema.js'
 import { createAlternateKeyValidator, buildJoiOptionSetValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
@@ -101,7 +101,7 @@ export const finaliseTransactionRequestSchema = Joi.object({
       .description('Channel specific identifier'),
     method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
     recurring: Joi.object({
-      payer: contactSchema,
+      payer: contactRequestSchema,
       referenceNumber: Joi.string()
         .required()
         .description('The reference number associated with the recurring payment')

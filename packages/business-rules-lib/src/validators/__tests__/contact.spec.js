@@ -180,9 +180,34 @@ describe('contact validators', () => {
     each([
       ['ba21nw', 'BA2 1NW'],
       [' AB12    3CD ', 'AB12 3CD'],
-      ['AB123CD', 'AB12 3CD']
+      ['AB123CD ', 'AB12 3CD']
     ]).it('formats the UK postcode %s successfully as %s', async (postcode, replacedValue) => {
       await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync(postcode)).resolves.toEqual(replacedValue)
+    })
+
+    it('expects a minimum of 1 character', async () => {
+      await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
+    })
+    it('expects a maximum of 12 characters', async () => {
+      await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync('0123456789ABC')).rejects.toThrow(
+        '"value" length must be less than or equal to 12 characters long'
+      )
+    })
+    it('expects postcodes to conform to the pattern used in the UK', async () => {
+      await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync('0123456789')).rejects.toThrow(
+        /fails to match the required pattern/
+      )
+    })
+  })
+
+  describe('overseasPostcodeValidator', () => {
+    it('converts to uppercase and trims', async () => {
+      await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('a ')).resolves.toEqual('A')
+    })
+    it('expects a minimum of 1 character', async () => {
+      await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('')).rejects.toThrow(
+        '"value" is not allowed to be empty'
+      )
     })
   })
 

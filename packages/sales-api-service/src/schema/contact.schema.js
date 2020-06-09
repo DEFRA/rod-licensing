@@ -2,9 +2,10 @@ import Joi from '@hapi/joi'
 import { buildJoiOptionSetValidator, createEntityIdValidator } from './validators/validators.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
+import { optionSetOption } from './option-set.schema.js'
 
-export const contactSchema = Joi.object({
-  contactId: Joi.string()
+const commonContactSchema = {
+  id: Joi.string()
     .guid()
     .optional()
     .external(createEntityIdValidator(Contact))
@@ -22,10 +23,12 @@ export const contactSchema = Joi.object({
   postcode: Joi.alternatives().conditional('country', {
     is: Joi.string().valid('GB', 'United Kingdom'),
     then: validation.contact.createUKPostcodeValidator(Joi),
-    otherwise: Joi.string()
-      .trim()
-      .required()
-  }),
+    otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
+  })
+}
+
+export const contactRequestSchema = Joi.object({
+  ...commonContactSchema,
   country: buildJoiOptionSetValidator('defra_country', 'GB'),
   preferredMethodOfConfirmation: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Text'),
   preferredMethodOfNewsletter: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Email'),
@@ -34,3 +37,13 @@ export const contactSchema = Joi.object({
   .required()
   .description('Details of the associated contact')
   .label('contact')
+
+export const contactResponseSchema = Joi.object({
+  ...commonContactSchema,
+  country: optionSetOption,
+  preferredMethodOfConfirmation: optionSetOption,
+  preferredMethodOfNewsletter: optionSetOption,
+  preferredMethodOfReminder: optionSetOption
+})
+  .required()
+  .label('contact-response')

@@ -1,4 +1,9 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { Contact } from './contact.entity.js'
+import { Permit } from './permit.entity.js'
+import { ConcessionProof } from './concession-proof.entity.js'
+import { PoclFile } from './pocl-file.entity.js'
+import { Transaction } from './transaction.entity.js'
 
 /**
  * Permission entity
@@ -7,7 +12,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class Permission extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'permissions',
+    localName: 'permission',
     dynamicsCollection: 'defra_permissions',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -18,6 +23,13 @@ export class Permission extends BaseEntity {
       endDate: { field: 'defra_enddate', type: 'datetime' },
       stagingId: { field: 'defra_stagingid', type: 'string' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' }
+    },
+    relationships: {
+      licensee: { property: 'defra_ContactId', entity: Contact, parent: true },
+      permit: { property: 'defra_PermitId', entity: Permit, parent: true },
+      transaction: { property: 'defra_Transaction', entity: Transaction, parent: true },
+      poclFile: { property: 'defra_POCLFileId', entity: PoclFile, parent: true },
+      concessionProofs: { property: 'defra_defra_permission_defra_concessionproof_PermissionId', entity: ConcessionProof }
     }
   })
 
@@ -99,37 +111,5 @@ export class Permission extends BaseEntity {
 
   set stagingId (stagingId) {
     super._setState('stagingId', stagingId)
-  }
-
-  /**
-   * Associate the permission with a {@link Permit}
-   * @param {Permit} permit the {@link Permit} with which to create an association
-   */
-  bindToPermit (permit) {
-    super._bind('defra_PermitId@odata.bind', permit)
-  }
-
-  /**
-   * Associate the permission with a {@link Contact}
-   * @param {Contact} contact the {@link Contact} with which to create an association
-   */
-  bindToContact (contact) {
-    super._bind('defra_ContactId@odata.bind', contact)
-  }
-
-  /**
-   * Associate the permission with a {@link Transaction}
-   * @param {Transaction} transaction the {@link Transaction} with which to create an association
-   */
-  bindToTransaction (transaction) {
-    super._bind('defra_Transaction@odata.bind', transaction)
-  }
-
-  /**
-   * Associate the permission with a {@link PoclFile}
-   * @param {PoclFile} poclFile the {@link PoclFile} with which to create an association
-   */
-  bindToPoclFile (poclFile) {
-    super._bind('defra_POCLFileId@odata.bind', poclFile)
   }
 }

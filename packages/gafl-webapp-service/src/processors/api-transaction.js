@@ -26,24 +26,30 @@ const prepareApiTransactionPayload = async request => {
 
       // Calculate the concession (proof entry) - disabl;ed takes precedence
       if (concessionHelper.hasDisabled(p)) {
-        permission.concession = {
-          concessionId: concessions.find(c => c.name === mappings.CONCESSION.DISABLED).id,
-          proof: p.concessions.find(c => c.type === mappings.CONCESSION.DISABLED).proof
-        }
+        permission.concessions = [
+          {
+            id: concessions.find(c => c.name === mappings.CONCESSION.DISABLED).id,
+            proof: p.concessions.find(c => c.type === mappings.CONCESSION.DISABLED).proof
+          }
+        ]
       } else if (concessionHelper.hasSenior(p)) {
-        permission.concession = {
-          concessionId: concessions.find(c => c.name === mappings.CONCESSION.SENIOR).id,
-          proof: {
-            type: mappings.CONCESSION_PROOF.none
+        permission.concessions = [
+          {
+            id: concessions.find(c => c.name === mappings.CONCESSION.SENIOR).id,
+            proof: {
+              type: mappings.CONCESSION_PROOF.none
+            }
           }
-        }
+        ]
       } else if (concessionHelper.hasJunior(p)) {
-        permission.concession = {
-          concessionId: concessions.find(c => c.name === mappings.CONCESSION.JUNIOR).id,
-          proof: {
-            type: mappings.CONCESSION_PROOF.none
+        permission.concessions = [
+          {
+            id: concessions.find(c => c.name === mappings.CONCESSION.JUNIOR).id,
+            proof: {
+              type: mappings.CONCESSION_PROOF.none
+            }
           }
-        }
+        ]
       }
 
       return permission

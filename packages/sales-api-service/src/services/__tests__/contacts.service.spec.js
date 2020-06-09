@@ -24,7 +24,7 @@ describe('contacts service', () => {
       const mockPayload = mockContactWithIdPayload()
       const contact = await resolveContactPayload(mockPayload)
       expect(contact.isNew()).toBeFalsy()
-      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.contactId)
+      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
     })
 
     it('creates a new contact entity if no contact found for an id', async () => {
@@ -32,7 +32,7 @@ describe('contacts service', () => {
       dynamicsLib.findById.mockImplementationOnce(() => undefined)
       const contact = await resolveContactPayload(mockPayload)
       expect(contact.isNew()).toBeTruthy()
-      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.contactId)
+      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
     })
 
     it('resolves an existing contact by key fields', async () => {

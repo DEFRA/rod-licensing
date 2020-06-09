@@ -5,7 +5,7 @@ import {
   MOCK_PERMISSION_NUMBER,
   MOCK_END_DATE,
   MOCK_12MONTH_SENIOR_PERMIT,
-  MOCK_1DAY_SENIOR_PERMIT
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTIONS_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
@@ -22,8 +22,8 @@ jest.mock('../../reference-data.service.js', () => ({
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
       if (id === MOCK_12MONTH_SENIOR_PERMIT.id) {
         item = MOCK_12MONTH_SENIOR_PERMIT
-      } else if (id === MOCK_1DAY_SENIOR_PERMIT.id) {
-        item = MOCK_1DAY_SENIOR_PERMIT
+      } else if (id === MOCK_1DAY_SENIOR_PERMIT_ENTITY.id) {
+        item = MOCK_1DAY_SENIOR_PERMIT_ENTITY
       }
     }
     return item

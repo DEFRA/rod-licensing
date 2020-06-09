@@ -1,4 +1,6 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { Concession } from './concession.entity.js'
+import { Permission } from './permission.entity.js'
 
 /**
  * Concession proofs entity
@@ -7,13 +9,17 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class ConcessionProof extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'concessionProofs',
+    localName: 'concessionProof',
     dynamicsCollection: 'defra_concessionproofs',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_concessionproofid', type: 'string' },
       referenceNumber: { field: 'defra_referencenumber', type: 'string' },
       proofType: { field: 'defra_concessionprooftype', type: 'optionset', ref: 'defra_concessionproof' }
+    },
+    relationships: {
+      permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
+      concession: { property: 'defra_ConcessionNameId', entity: Concession, parent: true }
     }
   })
 
@@ -47,21 +53,5 @@ export class ConcessionProof extends BaseEntity {
 
   set proofType (proofType) {
     super._setState('proofType', proofType)
-  }
-
-  /**
-   * Associate the concession proof with a {@link Concession}
-   * @param {Concession} concession the {@link Concession} with which to create an association
-   */
-  bindToConcession (concession) {
-    super._bind('defra_ConcessionNameId@odata.bind', concession)
-  }
-
-  /**
-   * Associate the concession proof with a {@link Permission}
-   * @param {Permission} permission the {@link Permission} with which to create an association
-   */
-  bindToPermission (permission) {
-    super._bind('defra_PermissionId@odata.bind', permission)
   }
 }

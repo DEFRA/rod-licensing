@@ -204,6 +204,19 @@ export const createUKPostcodeValidator = joi =>
     .uppercase()
     .example('AB12 3CD')
 
+/**
+ * Create a validator to check/format overseas postcodes
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.StringSchema}
+ */
+export const createOverseasPostcodeValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .min(1)
+    .uppercase()
+    .required()
+
 const regexApostrophe = /\u2019/g
 const regexHyphen = /\u2014/g
 const regexMultiSpace = /\u0020{2,}/g

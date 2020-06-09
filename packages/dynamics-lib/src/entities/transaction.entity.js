@@ -1,4 +1,6 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { PoclFile } from './pocl-file.entity.js'
+import { TransactionCurrency } from './transaction-currency.entity.js'
 
 /**
  * Transaction entity
@@ -7,7 +9,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class Transaction extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'transactions',
+    localName: 'transaction',
     dynamicsCollection: 'defra_transactions',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -19,6 +21,10 @@ export class Transaction extends BaseEntity {
       paymentType: { field: 'defra_paymenttype', type: 'optionset', ref: 'defra_paymenttype' },
       source: { field: 'defra_transactionsource', type: 'optionset', ref: 'defra_financialtransactionsource' },
       total: { field: 'defra_total', type: 'decimal' }
+    },
+    relationships: {
+      poclFile: { property: 'defra_POCLFile', entity: PoclFile, parent: true },
+      transactionCurrency: { property: 'transactioncurrencyid', entity: TransactionCurrency, parent: true }
     }
   })
 
@@ -112,21 +118,5 @@ export class Transaction extends BaseEntity {
 
   set total (total) {
     super._setState('total', total)
-  }
-
-  /**
-   * Associate the transaction with a {@link TransactionCurrency}
-   * @param {TransactionCurrency} currency the {@link TransactionCurrency} with which to create an association
-   */
-  bindToTransactionCurrency (currency) {
-    super._bind('transactioncurrencyid@odata.bind', currency)
-  }
-
-  /**
-   * Associate the transaction with a {@link PoclFile}
-   * @param {PoclFile} poclFile the {@link PoclFile} with which to create an association
-   */
-  bindToPoclFile (poclFile) {
-    super._bind('defra_POCLFile@odata.bind', poclFile)
   }
 }

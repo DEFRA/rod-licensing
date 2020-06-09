@@ -1,4 +1,6 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { PoclFile } from './pocl-file.entity.js'
+import { Permission } from './permission.entity.js'
 
 /**
  * pocl staging exception entity
@@ -7,7 +9,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class PoclStagingException extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'transactionFileErrors',
+    localName: 'transactionFileError',
     dynamicsCollection: 'defra_poclfiledataerrors',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -18,6 +20,10 @@ export class PoclStagingException extends BaseEntity {
       notes: { field: 'defra_notes', type: 'string' },
       type: { field: 'defra_errortype', type: 'optionset', ref: 'defra_poclfiledataerrortype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclfiledataerrorstatus' }
+    },
+    relationships: {
+      permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
+      poclFile: { property: 'defra_POCLFileId', entity: PoclFile, parent: true }
     }
   })
 
@@ -99,21 +105,5 @@ export class PoclStagingException extends BaseEntity {
 
   set status (status) {
     super._setState('status', status)
-  }
-
-  /**
-   * Associate the pocl staging exception with a {@link Permission}
-   * @param {Permission} permission the {@link Permission} with which to create an association
-   */
-  bindToPermission (permission) {
-    super._bind('defra_PermissionId@odata.bind', permission)
-  }
-
-  /**
-   * Associate the pocl staging exception with a {@link PoclFile}
-   * @param {PoclFile|string} poclFile the {@link PoclFile} with which to create an association
-   */
-  bindToPoclFile (poclFile) {
-    super._bind('defra_POCLFileId@odata.bind', poclFile)
   }
 }

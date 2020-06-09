@@ -94,14 +94,12 @@ describe('The manual address entry page', () => {
     expect(data.headers.location).toBe(ADDRESS_ENTRY.uri)
   })
 
-  it('controller redirects to contact page on posting a valid UK address', async () => {
+  it('redirects to contact page on posting a valid UK address', async () => {
     const addr = Object.assign({}, goodAddress)
     const data = await postRedirectGet(ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
-  })
 
-  it('The contact information has been set in the transaction', async () => {
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 Howecroft Court',
@@ -112,22 +110,20 @@ describe('The manual address entry page', () => {
     })
   })
 
-  it('controller redirects to contact page on posting a valid non-UK address', async () => {
+  it('redirects to contact page on posting a valid non-UK address', async () => {
     const addr = Object.assign({}, goodAddress)
     addr['country-code'] = 'FR'
     addr.postcode = 'not checked'
     const data = await postRedirectGet(ADDRESS_ENTRY.uri, addr)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT.uri)
-  })
 
-  it('The contact information has been set in the transaction', async () => {
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
       town: 'Bristol',
-      postcode: 'not checked',
+      postcode: 'NOT CHECKED',
       countryCode: 'FR'
     })
   })

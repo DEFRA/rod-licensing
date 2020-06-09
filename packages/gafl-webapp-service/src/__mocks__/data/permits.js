@@ -2,7 +2,6 @@ export default [
   {
     id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 1 day 2 Rod Licence (Full)',
-    permitId: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -40,7 +39,6 @@ export default [
   {
     id: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 1 day 2 Rod Licence (Senior)',
-    permitId: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -78,7 +76,6 @@ export default [
   {
     id: 'a51b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 1 day 1 Rod Licence (Full)',
-    permitId: 'a51b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -116,7 +113,6 @@ export default [
   {
     id: 'a71b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 1 day 1 Rod Licence (Senior)',
-    permitId: 'a71b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -154,7 +150,6 @@ export default [
   {
     id: 'a91b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 8 day 2 Rod Licence (Full)',
-    permitId: 'a91b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -192,7 +187,6 @@ export default [
   {
     id: 'ab1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 8 day 2 Rod Licence (Senior)',
-    permitId: 'ab1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -230,7 +224,6 @@ export default [
   {
     id: 'b11b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 8 day 1 Rod Licence (Full) ',
-    permitId: 'b11b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -268,7 +261,6 @@ export default [
   {
     id: 'b31b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 8 day 1 Rod Licence (Senior) ',
-    permitId: 'b31b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -306,7 +298,6 @@ export default [
   {
     id: 'b51b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 2 Rod Licence (Junior)',
-    permitId: 'b51b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -344,7 +335,6 @@ export default [
   {
     id: 'b71b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 2 Rod Licence (Full)',
-    permitId: 'b71b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -382,7 +372,6 @@ export default [
   {
     id: 'b91b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 2 Rod Licence (Senior)',
-    permitId: 'b91b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -420,7 +409,6 @@ export default [
   {
     id: 'bb1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 2 Rod Licence (Junior, Disabled)',
-    permitId: 'bb1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -458,7 +446,6 @@ export default [
   {
     id: 'bd1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 2 Rod Licence (Full, Disabled)',
-    permitId: 'bd1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -496,7 +483,6 @@ export default [
   {
     id: 'bf1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 2 Rod Licence (Senior, Disabled)',
-    permitId: 'bf1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -534,7 +520,6 @@ export default [
   {
     id: 'c11b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 3 Rod Licence (Junior)',
-    permitId: 'c11b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -572,7 +557,6 @@ export default [
   {
     id: 'c31b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 3 Rod Licence (Full)',
-    permitId: 'c31b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -610,7 +594,6 @@ export default [
   {
     id: 'c51b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 3 Rod Licence (Senior)',
-    permitId: 'c51b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -648,7 +631,6 @@ export default [
   {
     id: 'c71b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 3 Rod Licence (Junior, Disabled)',
-    permitId: 'c71b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -686,7 +668,6 @@ export default [
   {
     id: 'c91b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 3 Rod Licence (Full, Disabled)',
-    permitId: 'c91b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -724,7 +705,6 @@ export default [
   {
     id: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
-    permitId: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -762,7 +742,6 @@ export default [
   {
     id: 'd91b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 12 month 1 Rod Licence (Junior)',
-    permitId: 'd91b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -800,7 +779,6 @@ export default [
   {
     id: 'db1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 12 month 1 Rod Licence (Full)',
-    permitId: 'db1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -838,7 +816,6 @@ export default [
   {
     id: 'dd1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 12 month 1 Rod Licence (Senior)',
-    permitId: 'dd1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -876,7 +853,6 @@ export default [
   {
     id: 'df1b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 12 month 1 Rod Licence (Junior, Disabled)',
-    permitId: 'df1b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -914,7 +890,6 @@ export default [
   {
     id: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 12 month 1 Rod Licence (Full, Disabled)',
-    permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',
@@ -952,7 +927,6 @@ export default [
   {
     id: 'e31b34a0-0c66-e611-80dc-c4346bad0190',
     description: 'Salmon 12 month 1 Rod Licence (Senior, Disabled)',
-    permitId: 'e31b34a0-0c66-e611-80dc-c4346bad0190',
     permitType: {
       id: 910400000,
       label: 'Rod Fishing Licence',

@@ -1,4 +1,4 @@
-import { Permit } from '@defra-fish/dynamics-lib'
+import { Permission, Permit } from '@defra-fish/dynamics-lib'
 import { isJunior, isSenior } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import moment from 'moment'
@@ -28,7 +28,7 @@ export const generatePermissionNumber = async (
     .startOf('hour')
   const block1 = endTime.format('HH') + endDate.format('DDMMYY')
 
-  const dataSourceOptionSetValue = await getGlobalOptionSetValue('defra_datasource', dataSource)
+  const dataSourceOptionSetValue = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, dataSource)
   const channel = dataSourceOptionSetValue.description.charAt(0)
   const type = permit.permitSubtype.description
 

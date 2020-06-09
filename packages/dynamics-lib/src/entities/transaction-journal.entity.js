@@ -1,4 +1,6 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { TransactionCurrency } from './transaction-currency.entity.js'
+import { Transaction } from './transaction.entity.js'
 
 /**
  * Transaction Journal entity
@@ -7,7 +9,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class TransactionJournal extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'transactionJournals',
+    localName: 'transactionJournal',
     dynamicsCollection: 'defra_transactionjournals',
     defaultFilter: 'statecode eq 0',
     mappings: {
@@ -17,6 +19,10 @@ export class TransactionJournal extends BaseEntity {
       timestamp: { field: 'defra_timestamp', type: 'datetime' },
       type: { field: 'defra_transactiontype', type: 'optionset', ref: 'defra_financialtransactiontype' },
       total: { field: 'defra_total', type: 'decimal' }
+    },
+    relationships: {
+      transaction: { property: 'defra_Transaction', entity: Transaction, parent: true },
+      transactionCurrency: { property: 'transactioncurrencyid', entity: TransactionCurrency, parent: true }
     }
   })
 
@@ -86,21 +92,5 @@ export class TransactionJournal extends BaseEntity {
 
   set total (total) {
     super._setState('total', total)
-  }
-
-  /**
-   * Associate the transaction journal with a {@link TransactionCurrency}
-   * @param {TransactionCurrency} currency the {@link TransactionCurrency} with which to create an association
-   */
-  bindToTransactionCurrency (currency) {
-    super._bind('transactioncurrencyid@odata.bind', currency)
-  }
-
-  /**
-   * Associate the transaction journal with a {@link Transaction}
-   * @param {Transaction} transaction the {@link Transaction} with which to create an association
-   */
-  bindToTransaction (transaction) {
-    super._bind('defra_Transaction@odata.bind', transaction)
   }
 }

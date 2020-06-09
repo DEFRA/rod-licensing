@@ -7,13 +7,12 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
 export class Permit extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition({
-    localCollection: 'permits',
+    localName: 'permit',
     dynamicsCollection: 'defra_permits',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_permitid', type: 'string' },
       description: { field: 'defra_name', type: 'string' },
-      permitId: { field: 'defra_permitid', type: 'string' },
       permitType: { field: 'defra_permittype', type: 'optionset', ref: 'defra_permittype' },
       permitSubtype: { field: 'defra_permitsubtype', type: 'optionset', ref: 'defra_permitsubtype' },
       durationMagnitude: { field: 'defra_durationnumericpart', type: 'integer' },
@@ -44,15 +43,6 @@ export class Permit extends BaseEntity {
    */
   get description () {
     return super._getState('description')
-  }
-
-  /**
-   * The id of the permit
-   * @type {string}
-   * @readonly
-   */
-  get permitId () {
-    return super._getState('permitId')
   }
 
   /**
