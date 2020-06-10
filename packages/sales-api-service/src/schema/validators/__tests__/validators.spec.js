@@ -248,6 +248,17 @@ describe('validators', () => {
       expect(spy).toHaveBeenCalledWith(PermitConcession)
     })
 
+    it('returns a validation function which skips concession list validation if no concessions are supplied and none are required', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          permitId: 'test-1'
+        })
+      ).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
+
     it('returns a validation function which skips validation if the input value is undefined', async () => {
       const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
         {
