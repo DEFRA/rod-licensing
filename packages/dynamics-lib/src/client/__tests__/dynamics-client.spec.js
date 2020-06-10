@@ -1,5 +1,6 @@
 import { mockAuthenticationContext, mockAcquireTokenWithClientCredentials } from 'adal-node'
-import { config } from '../dynamics-client.js'
+import { config, dynamicsClient } from '../dynamics-client.js'
+import MockDynamicsWebApi from 'dynamics-web-api'
 
 describe('dynamics-client', () => {
   it('is configured via environment variables', async () => {
@@ -29,5 +30,23 @@ describe('dynamics-client', () => {
       process.env.OAUTH_CLIENT_SECRET,
       expect.any(Function)
     )
+  })
+
+  it('exposes a custom method to retrieveAllPages with a callback', async () => {
+    dynamicsClient.retrieveAllPages()
+    MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', [
+      {
+        value: [
+          {
+            '@odata.etag': 'EXAMPLE_CONTACT',
+            contactid: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
+            firstname: 'Fester',
+            lastname: 'Tester',
+            birthdate: '1946-01-01',
+            emailaddress1: 'fester@tester.com'
+          }
+        ]
+      }
+    ])
   })
 })
