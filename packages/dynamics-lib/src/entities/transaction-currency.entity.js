@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class TransactionCurrency extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'transactionCurrency',
     dynamicsCollection: 'transactioncurrencies',
     defaultFilter: 'statecode eq 0',
@@ -16,7 +16,7 @@ export class TransactionCurrency extends BaseEntity {
       code: { field: 'isocurrencycode', type: 'string' },
       symbol: { field: 'currencysymbol', type: 'string' }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

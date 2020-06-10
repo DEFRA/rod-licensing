@@ -7,7 +7,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class Contact extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'contact',
     dynamicsCollection: 'contacts',
     defaultFilter: 'statecode eq 0',
@@ -32,7 +32,7 @@ export class Contact extends BaseEntity {
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

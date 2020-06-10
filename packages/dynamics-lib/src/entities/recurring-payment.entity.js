@@ -7,7 +7,7 @@ import { Contact } from './contact.entity.js'
  */
 export class RecurringPayment extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'recurringPayment',
     dynamicsCollection: 'defra_recurringpayments',
     defaultFilter: 'statecode eq 0',
@@ -21,7 +21,7 @@ export class RecurringPayment extends BaseEntity {
     relationships: {
       payer: { property: 'defra_Contact', entity: Contact, parent: true }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

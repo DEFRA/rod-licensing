@@ -8,7 +8,7 @@ import { Permission } from './permission.entity.js'
  */
 export class ConcessionProof extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'concessionProof',
     dynamicsCollection: 'defra_concessionproofs',
     defaultFilter: 'statecode eq 0',
@@ -21,7 +21,7 @@ export class ConcessionProof extends BaseEntity {
       permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
       concession: { property: 'defra_ConcessionNameId', entity: Concession, parent: true }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

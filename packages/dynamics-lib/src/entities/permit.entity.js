@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class Permit extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'permit',
     dynamicsCollection: 'defra_permits',
     defaultFilter: 'statecode eq 0',
@@ -26,7 +26,7 @@ export class Permit extends BaseEntity {
       cost: { field: 'defra_advertisedprice', type: 'decimal' },
       itemId: { field: 'defra_itemid', type: 'string' }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity

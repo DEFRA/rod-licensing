@@ -6,7 +6,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  */
 export class StagingException extends BaseEntity {
   /** @type {EntityDefinition} */
-  static _definition = new EntityDefinition({
+  static _definition = new EntityDefinition(() => ({
     localName: 'stagingException',
     dynamicsCollection: 'defra_crmstagingexceptions',
     defaultFilter: 'statecode eq 0',
@@ -17,7 +17,7 @@ export class StagingException extends BaseEntity {
       transactionJson: { field: 'defra_jsonobject', type: 'string' },
       exceptionJson: { field: 'defra_errorjsonobject', type: 'string' }
     }
-  })
+  }))
 
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
