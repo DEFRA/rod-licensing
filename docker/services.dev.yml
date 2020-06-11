@@ -54,6 +54,24 @@ services:
         delay: 5m
 
   ##############################################################################################################
+  # rod-licensing payment_mop_up_job
+  ##############################################################################################################
+  payment_mop_up_job:
+    image: rod-licensing/payment_mop_up_job:${TAG:-latest}
+    volumes:
+      - ../:/app
+      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/mop-up/keys
+    env_file:
+      - ./env/payment_mop_up_job.env
+      - ./env/gafl_webapp.secrets.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5m
+
+  ##############################################################################################################
   # rod-licensing sqs_receiver
   ##############################################################################################################
   sqs_receiver:
