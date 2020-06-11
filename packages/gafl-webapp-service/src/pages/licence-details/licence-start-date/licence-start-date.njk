@@ -37,7 +37,7 @@
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: 'Enter a valid date that is within 60 days' } if error,
+      errorMessage: { text: 'Enter a valid date that is within ' + data.advancedPurchaseMaxDays + ' days' } if error,
       hint: {
         text: "Enter a date up to and including " + data.maxStartDate
       }

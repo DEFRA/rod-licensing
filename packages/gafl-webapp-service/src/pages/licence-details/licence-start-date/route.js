@@ -28,7 +28,8 @@ const getData = () => ({
     .format('DD MM YYYY'),
   maxStartDate: moment()
     .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-    .format('DD MM YYYY')
+    .format('DD MM YYYY'),
+  advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS
 })
 
 export default pageRoute(LICENCE_START_DATE.page, LICENCE_START_DATE.uri, validator, CONTROLLER.uri, getData)

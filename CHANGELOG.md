@@ -1,4 +1,13 @@
 
+## Unreleased (2020-06-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#180](https://github.com/DEFRA/rod-licensing/pull/180) Various display changes documented in IWTF-1104 ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
 
 
 
