@@ -55,7 +55,6 @@ services:
   pocl_job:
     image: rod-licensing/pocl_job:${TAG:-latest}
     volumes:
-      - ../:/app
       - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/pocl/keys
     env_file:
       - ./env/pocl_job.env
