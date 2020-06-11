@@ -1,6 +1,14 @@
 
 ## Unreleased (2020-06-11)
 
+#### :bug: Bug Fix
+* [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-11)
+
 #### :rocket: Enhancement
 * `gafl-webapp-service`
   * [#180](https://github.com/DEFRA/rod-licensing/pull/180) Various display changes documented in IWTF-1104 ([@graham-willis-druid](https://github.com/graham-willis-druid))
