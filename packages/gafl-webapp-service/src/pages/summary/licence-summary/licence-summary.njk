@@ -4,6 +4,7 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = 'Check your new licence details' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
@@ -191,6 +192,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
         <form method="post">
             {{ govukWarningText({
               text: "Your licence is not valid until payment is complete",

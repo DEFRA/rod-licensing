@@ -2,20 +2,20 @@
 
 {% from "summary-list/macro.njk" import govukSummaryList %}
 {% from "fieldset/macro.njk" import govukFieldset %}
-{% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
-{% set title = 'Check your details' %}
+{% set title = 'Check your contact details' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
-{% macro addressLine(line) %}
-    {% if line %}{{ line }}</br>{% endif %}
+{% macro addressLine(line, term) %}
+    {% if line %}{{ line }}{% if not term %},{% endif %} {% endif %}
 {% endmacro %}
 
 {% set licenseeDetailsSummaryRows = [
     {
       key: {
-        text: "Name on licence"
+        text: "Name"
       },
       value: {
         text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName
@@ -41,7 +41,7 @@
         + addressLine(data.permission.licensee.locality)
         + addressLine(data.permission.licensee.town)
         + addressLine(data.permission.licensee.postcode)
-        + addressLine(data.countryName)
+        + addressLine(data.countryName | upper, true)
       },
       actions: {
         items: [
@@ -57,40 +57,22 @@
   ]
 %}
 
-{% if data.contactMethod === data.howContacted['none'] %}
+{% if data.contactMethod === data.howContacted['none'] or data.contactMethod === data.howContacted['letter'] %}
     {{ licenseeDetailsSummaryRows.push({
       key: {
-        text: "Contact details"
+        text: "Instant licence number"
       },
       value: {
-        text: 'None'
+        text: 'Note it down after payment'
       },
+      classes: 'no-border' if data.permission.licenceLength === '12M',
       actions: {
         items: [
           {
             href: data.uri.contact,
-            text: "Add",
+            text: "Add email or text",
             visuallyHiddenText: "contact",
             attributes: { id: 'add-contact' }
-          }
-        ]
-      }
-    }) }}
-{% elif data.contactMethod === data.howContacted['letter'] %}
-    {{ licenseeDetailsSummaryRows.push({
-      key: {
-        text: "Contact details"
-      },
-      value: {
-        text: 'Letter'
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.contact,
-            text: "Change",
-            visuallyHiddenText: "letter",
-            attributes: { id: 'change-how-contacted' }
           }
         ]
       }
@@ -98,11 +80,12 @@
 {% elif data.contactMethod === data.howContacted['email'] %}
     {{ licenseeDetailsSummaryRows.push({
       key: {
-        text: "Email address"
+        text: "Instant licence number"
       },
       value: {
-        text: data.permission.licensee.email
+        text: 'By email: ' + data.permission.licensee.email
       },
+      classes: 'no-border' if data.permission.licenceLength === '12M',
       actions: {
         items: [
           {
@@ -117,11 +100,12 @@
 {% elif data.contactMethod === data.howContacted['text'] %}
     {{ licenseeDetailsSummaryRows.push({
         key: {
-          text: "Mobile number"
+          text: "Instant licence number"
         },
         value: {
-          text: data.permission.licensee.mobilePhone
+          text: 'By text: ' + data.permission.licensee.mobilePhone
         },
+        classes: 'no-border' if data.permission.licenceLength === '12M',
         actions: {
           items: [
             {
@@ -131,6 +115,25 @@
               attributes: { id: 'change-how-contacted' }
             }
           ]
+        }
+    }) }}
+{% endif %}
+
+{% if data.permission.licenceLength === '12M' %}
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "12 month reminder"
+        },
+        value: {
+          text: 'By post' if data.contactMethod === data.howContacted['letter'] else ('By email' if data.contactMethod === data.howContacted['email'] else 'By text')
+        }
+    }) }}
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Licence card"
+        },
+        value: {
+          text: 'By post in 4 to 10 days'
         }
     }) }}
 {% endif %}
@@ -169,12 +172,14 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+            {% if backRef %}
+                {{ govukBackLink({
+                  text: "Back",
+                  href: backRef,
+                  classes: "govuk-!-margin-bottom-7"
+                }) }}
+            {% endif %}
         <form method="post">
-
-            {{ govukWarningText({
-              text: "Your licence is not valid until payment is complete",
-              iconFallbackText: "Warning"
-            }) }}
 
             {{ licenseeDetailsSummary | trim | safe }}
 

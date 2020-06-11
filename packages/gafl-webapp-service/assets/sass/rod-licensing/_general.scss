@@ -18,3 +18,10 @@ div.hidden-area {
     display: none;
   }
 }
+
+div.no-border {
+  dt,
+  dd {
+    border-bottom-style: none;
+  }
+}
