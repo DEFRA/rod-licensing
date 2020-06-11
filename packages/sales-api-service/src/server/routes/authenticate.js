@@ -15,14 +15,13 @@ export default [
         const { licenseeBirthDate, licenseePostcode } = request.query
         const results = await executeQuery(permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode))
         if (results.length === 1) {
-          const { permission, licensee, permit, concessionProofs } = results[0]
           return h
             .response({
               permission: {
-                ...permission.toJSON(),
-                licensee: licensee.toJSON(),
-                concessions: concessionProofs.map(c => c.toJSON()),
-                permit: permit.toJSON()
+                ...results[0].entity.toJSON(),
+                licensee: results[0].expanded.licensee.entity.toJSON(),
+                concessions: results[0].expanded.concessionProofs.map(c => c.entity.toJSON()),
+                permit: results[0].expanded.permit.entity.toJSON()
               }
             })
             .code(200)

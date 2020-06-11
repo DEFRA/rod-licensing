@@ -16,6 +16,7 @@ describe('contact entity', () => {
         birthdate: '1946-01-01',
         emailaddress1: 'fester@tester.com',
         mobilephone: '01234 567890',
+        defra_organisation: 'Test Organisation',
         defra_premises: '1',
         defra_street: 'Tester Avenue',
         defra_locality: 'Testville',
@@ -36,6 +37,7 @@ describe('contact entity', () => {
       birthDate: '1946-01-01',
       email: 'fester@tester.com',
       mobilePhone: '01234 567890',
+      organisation: 'Test Organisation',
       premises: '1',
       street: 'Tester Avenue',
       locality: 'Testville',
@@ -60,6 +62,7 @@ describe('contact entity', () => {
     contact.birthDate = '1946-01-01'
     contact.email = 'fester@tester.com'
     contact.mobilePhone = '01234 567890'
+    contact.organisation = 'Test Organisation'
     contact.premises = '1'
     contact.street = 'Tester Avenue'
     contact.locality = 'Testville'
@@ -78,6 +81,7 @@ describe('contact entity', () => {
         birthdate: '1946-01-01',
         emailaddress1: 'fester@tester.com',
         mobilephone: '01234 567890',
+        defra_organisation: 'Test Organisation',
         defra_premises: '1',
         defra_street: 'Tester Avenue',
         defra_locality: 'Testville',

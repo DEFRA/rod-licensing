@@ -18,6 +18,7 @@ export class Contact extends BaseEntity {
       birthDate: { field: 'birthdate', type: 'date' },
       email: { field: 'emailaddress1', type: 'string' },
       mobilePhone: { field: 'mobilephone', type: 'string' },
+      organisation: { field: 'defra_organisation', type: 'string' },
       premises: { field: 'defra_premises', type: 'string' },
       street: { field: 'defra_street', type: 'string' },
       locality: { field: 'defra_locality', type: 'string' },
@@ -104,6 +105,18 @@ export class Contact extends BaseEntity {
   }
 
   /**
+   * The organisation field of the address for the contact
+   * @type {string}
+   */
+  get organisation () {
+    return super._getState('organisation')
+  }
+
+  set organisation (organisation) {
+    super._setState('organisation', organisation)
+  }
+
+  /**
    * The premises field of the address for the contact
    * @type {string}
    */
@@ -165,7 +178,7 @@ export class Contact extends BaseEntity {
 
   /**
    * The country field of the address for the contact
-   * @type {string}
+   * @type {GlobalOptionSetDefinition}
    */
   get country () {
     return super._getState('country')

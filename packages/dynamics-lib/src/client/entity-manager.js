@@ -212,8 +212,10 @@ export async function findByExample (entity) {
 /**
  * Execute a predefined query
  *
- * @param {!PredefinedQuery} query the query to execute
- * @returns {Promise<Array<*>>} an array of matching records
+ * @param {!PredefinedQuery<T>} query the query to execute
+ * @returns {Promise<Array<PredefinedQueryResult<T>>>} an array of matching records
+ *
+ * @template {!BaseEntity} T
  */
 export async function executeQuery (query) {
   try {
@@ -224,4 +226,37 @@ export async function executeQuery (query) {
     console.error('Failed to execute query: ', e)
     throw e
   }
+}
+
+/**
+ * Execute a predefined query with pagination support
+ *
+ * NOTE: This method will make repeated requests to Dynamics and could take several minutes to execute depending on the nature of the query
+ *
+ * @template T<BaseEntity>
+ * @param {!PredefinedQuery<T>} query the query to execute
+ * @param {function(Array<PredefinedQueryResult<T>>): Promise<any>} onPageReceived
+ *    Asynchronous callback function invoked with an array of objects containing the response to the predefined query
+ * @param {number} [maxPages} limit the number of pages that will be retrieved
+ * @returns {Promise<number>} the count of records that were processed
+ */
+export async function executePagedQuery (query, onPageReceived, maxPages) {
+  let processed = 0
+  try {
+    const optionSetData = await retrieveGlobalOptionSets().cached()
+    let nextLink = null
+    do {
+      const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest(), nextLink)
+      nextLink = response.oDataNextLink
+      await onPageReceived(query.fromResponse(response.value, optionSetData))
+      processed += response.value.length
+      if (maxPages) {
+        maxPages--
+      }
+    } while (nextLink && maxPages !== 0)
+  } catch (e) {
+    console.error('Failed to execute query: ', e)
+    throw e
+  }
+  return processed
 }

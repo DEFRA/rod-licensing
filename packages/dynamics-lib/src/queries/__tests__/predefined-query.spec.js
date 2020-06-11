@@ -51,14 +51,14 @@ describe('PredefinedQuery', () => {
     })
 
     const queryResult = query.fromResponse([mockTestEntityResponseData], optionSetData)
-    expect(queryResult).toMatchObject([{ entityTest: expectedTestEntityFields }])
+    expect(queryResult).toMatchObject([{ entity: expectedTestEntityFields }])
   })
 
   it('builds a query using both a filter and expands', async () => {
     const query = new PredefinedQuery({
       root: TestEntity,
       filter: `${TestEntity.definition.mappings.strVal.field} eq 'Test Value'`,
-      expands: [TestEntity.definition.relationships.parentTestEntity, TestEntity.definition.relationships.childTestEntity]
+      expand: [TestEntity.definition.relationships.parentTestEntity, TestEntity.definition.relationships.childTestEntity]
     })
 
     expect(query.toRetrieveRequest()).toStrictEqual({
@@ -83,7 +83,19 @@ describe('PredefinedQuery', () => {
     )
 
     expect(queryResult).toMatchObject([
-      { entityTest: expectedTestEntityFields, parentTestEntity: expectedTestEntityFields, childTestEntity: [expectedTestEntityFields] }
+      {
+        entity: expectedTestEntityFields,
+        expanded: {
+          parentTestEntity: {
+            entity: expectedTestEntityFields
+          },
+          childTestEntity: [
+            {
+              entity: expectedTestEntityFields
+            }
+          ]
+        }
+      }
     ])
   })
 })
