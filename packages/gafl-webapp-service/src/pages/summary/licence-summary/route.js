@@ -1,3 +1,4 @@
+import moment from 'moment'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
@@ -60,11 +61,13 @@ const getData = async request => {
     hasJunior: !!concessionHelper.hasJunior(permission),
     hasSenior: !!concessionHelper.hasSenior(permission),
     cost: permission.permit.cost,
+    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,
       numberOfRods: NUMBER_OF_RODS.uri,
       licenceToStart: LICENCE_TO_START.uri,
+      dateOfBirth: DATE_OF_BIRTH.uri,
       benefitCheck: BENEFIT_CHECK.uri
     }
   }
