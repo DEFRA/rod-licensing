@@ -21,8 +21,6 @@ services:
   ##############################################################################################################
   payment_mop_up_job:
     image: rod-licensing/payment_mop_up_job:${TAG:-latest}
-    volumes:
-      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/mop-up/keys
     env_file:
       - ./env/payment_mop_up_job.env
       - ./env/gafl_webapp.secrets.env

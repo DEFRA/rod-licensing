@@ -2,7 +2,7 @@
 # Used for local development debugging
 ####################################################################################################################################
 FROM rod-licensing/base
-WORKDIR /app/packages/payment-mop-up-job.js
+WORKDIR /app/packages/payment-mop-up-job
 # Volume to mount ssh keys for FTP access
 VOLUME /etc/mop-up/keys
 # Use node directly rather than pm2 for scheduled tasks
