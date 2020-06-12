@@ -18,8 +18,5 @@ FROM rod-licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 
-# Volume to mount ssh keys for FTP access
-VOLUME /etc/mop-up/keys
-
 # Use node directly rather than pm2 for scheduled tasks
 ENTRYPOINT [ "node", "src/payment-mop-up-job.js", "execute" ]
