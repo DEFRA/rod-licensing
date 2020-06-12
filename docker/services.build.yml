@@ -57,6 +57,15 @@ services:
       dockerfile: packages/pocl-job/${PROJECT_DOCKERFILE:-Dockerfile}
 
   ##############################################################################################################
+  # rod-licensing payment_mop_up_job
+  ##############################################################################################################
+  payment_mop_up_job:
+    image: rod-licensing/payment_mop_up_job:${TAG:-latest}
+    build:
+      <<: *common-build-options
+      dockerfile: packages/payment-mop-up-job/${PROJECT_DOCKERFILE:-Dockerfile}
+
+  ##############################################################################################################
   # rod-licensing sqs_receiver
   ##############################################################################################################
   sqs_receiver:
