@@ -1,4 +1,17 @@
 
+## Unreleased (2020-06-12)
+
+#### :rocket: Enhancement
+* `payment-mop-up-job`
+  * [#182](https://github.com/DEFRA/rod-licensing/pull/182) Add docker support to the payment mopup service ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### :bug: Bug Fix
+* [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 2
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## Unreleased (2020-06-11)
 
 #### :bug: Bug Fix
