@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/payment-mop-up-job",
-  "version": "0.0.1-beta.42",
+  "version": "0.0.1-beta.45",
   "description": "Process incomplete web-sales",
   "type": "module",
   "engines": {
