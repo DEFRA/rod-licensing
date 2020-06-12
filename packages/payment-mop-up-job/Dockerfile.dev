@@ -4,4 +4,4 @@
 FROM rod-licensing/base
 WORKDIR /app/packages/payment-mop-up-job
 # Use node directly rather than pm2 for scheduled tasks
-ENTRYPOINT [ "node", "src/payment-mop-up-job.js", "execute" ]
+ENTRYPOINT [ "node", "src/payment-mop-up-job.js" ]
