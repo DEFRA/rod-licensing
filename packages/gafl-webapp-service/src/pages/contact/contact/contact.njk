@@ -65,8 +65,14 @@
         spellcheck: "false",
         maxlength: "50"
       },
-      value: payload.email if payload.how-contacted === 'email' else ''
+      value: payload.email if payload['how-contacted'] === 'email' else ''
     }) }}
+    <div id="email-ro" class="govuk-body-m">
+        Email address</br>
+        <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
+            &nbsp;&nbsp;<a href="javascript:void(0);" onclick="changeEmail();" class="govuk-link" nonce={{nonce}}>Change</a>
+        </span>
+    </div>
 {% endset -%}
 
 {% set textMessageHtml %}
@@ -96,6 +102,8 @@
 
 {% block pageContent %}
 
+{{payload|dump}}
+{{data.licensee|dump}}
     {{ govukInsetText({
         text: insetText
     }) }}
@@ -139,4 +147,10 @@
       ]
     }) }}
 
+{% endblock %}
+
+{% block bodyEnd %}
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>function changeEmail() { alert("I am an alert box!");}</script>
 {% endblock %}
