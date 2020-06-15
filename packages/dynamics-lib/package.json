@@ -38,7 +38,7 @@
     "cache-manager": "^3.3.0",
     "cache-manager-ioredis": "^2.0.0",
     "dot-prop": "^5.2.0",
-    "dynamics-web-api": "^1.6.3",
+    "dynamics-web-api": "^1.6.4",
     "moment": "^2.26.0",
     "pluralize": "^8.0.0",
     "uuid": "^8.1.0"
