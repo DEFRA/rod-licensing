@@ -4,6 +4,7 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = 'Check your new licence details' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
@@ -74,23 +75,43 @@
 {% endif %}
 
 {{ licenseDetailsSummaryRows.push({
-  key: {
-    text: "Valid from"
-  },
-  value: {
-    text: '30 minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString
-  },
-  actions: {
+      key: {
+        text: "Valid from"
+      },
+      value: {
+        text: '30 minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.licenceToStart,
+            text: "Change",
+            visuallyHiddenText: "valid from",
+            attributes: { id: 'change-licence-to-start' }
+          }
+        ]
+      }
+}) }}
+
+{{ licenseDetailsSummaryRows.push({
+    key: {
+    text: "Date of birth"
+    },
+    value: {
+    text: data.birthDateStr
+    },
+    actions: {
     items: [
       {
-        href: data.uri.licenceToStart,
+        href: data.uri.dateOfBirth,
         text: "Change",
-        visuallyHiddenText: "valid from",
-        attributes: { id: 'change-licence-to-start' }
+        visuallyHiddenText: "date of birth",
+        attributes: { id: 'change-birth-date' }
       }
     ]
-  }
+    }
 }) }}
+
 
 {% if data.hasJunior %}
     {{ licenseDetailsSummaryRows.push({
@@ -171,6 +192,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
         <form method="post">
             {{ govukWarningText({
               text: "Your licence is not valid until payment is complete",

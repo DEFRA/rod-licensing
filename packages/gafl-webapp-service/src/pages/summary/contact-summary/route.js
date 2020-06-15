@@ -3,7 +3,6 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { countries } from '../../../processors/refdata-helper.js'
 
 import findPermit from '../find-permit.js'
-import moment from 'moment'
 
 import {
   CONTACT_SUMMARY,
@@ -14,8 +13,7 @@ import {
   ADDRESS_SELECT,
   ADDRESS_LOOKUP,
   CONTACT,
-  NEWSLETTER,
-  DATE_OF_BIRTH
+  NEWSLETTER
 } from '../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
@@ -58,13 +56,11 @@ const getData = async request => {
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     newsLetter: permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none,
     howContacted: HOW_CONTACTED,
-    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {
       name: NAME.uri,
       address: ADDRESS_LOOKUP.uri, // Encourage the address lookup on an amendment
       contact: CONTACT.uri,
       newsletter: NEWSLETTER.uri,
-      dateOfBirth: DATE_OF_BIRTH.uri,
       licenceSummary: LICENCE_SUMMARY.uri
     }
   }

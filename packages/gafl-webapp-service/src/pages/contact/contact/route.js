@@ -1,5 +1,5 @@
 import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
-
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
@@ -24,8 +24,10 @@ const getData = async request => {
   }
 
   return {
+    licensee: permission.licensee,
     licenceLength: permission.licenceLength,
-    junior: concessionHelper.hasJunior(permission)
+    junior: concessionHelper.hasJunior(permission),
+    howContacted: HOW_CONTACTED
   }
 }
 

@@ -7,22 +7,22 @@
 {% set title = 'How can we send you your licence details?' %}
 
 {% if data.junior %}
-    {% set insetText = "We don’t send junior licences in the post, but you must be able to produce your licence number when you go fishing" %}
+    {% set insetText = "We don’t send junior licences in the post. If you want to fish you must enter an email, phone number, or copy your licence number down after payment. Please consider choosing a less paper option." %}
     {% set selectText = "Select how we send you your licence details" %}
     {% set noContactMessage = "We'll show you your licence number on your confirmation and you can write it down. Your licence expiry reminders will be sent by post" %}
     {% set errorMsg = "You have not told us how you would like to receive your licence details" %}
 {% elif data.licenceLength === '1D' %}
-    {% set insetText = "We don’t send 1-day licences in the post, but you must be able to produce your licence number when you go fishing" %}
+    {% set insetText = "We don’t send 1-day licences in the post. If you want to fish you must enter an email, phone number or copy your licence number down after payment. Please consider choosing a less paper option." %}
     {% set selectText = "Select how we send you your licence details" %}
     {% set noContactMessage = "We'll show you your licence number on your confirmation after payment and you can write it down" %}
     {% set errorMsg = "You have not told us how you would like to receive your licence details" %}
 {% elif data.licenceLength === '8D' %}
-    {% set insetText = "We don’t send 8-day licences in the post, but you must be able to produce your licence number when you go fishing" %}
+    {% set insetText = "We don’t send 8-day licences in the post. If you want to fish you must enter an email, phone number or copy your licence number down after payment. Please consider choosing a less paper option." %}
     {% set selectText = "Select how we send you your licence details" %}
     {% set noContactMessage = "We'll show you your licence number on your confirmation after payment and you can write it down" %}
     {% set errorMsg = "You have not told us how you would like to receive your licence details" %}
 {% else %}
-    {% set insetText = "Your licence will arrive in the post within 10 working days. You can go fishing before you receive it, but you must be able to produce your licence number" %}
+    {% set insetText = "You should get a licence card in the <span class='govuk-!-font-weight-bold'>post</span> in the next <span class='govuk-!-font-weight-bold'>4 to 10 days</span>. If you want to fish before this you must enter an email, phone number or copy your licence number down after payment. Please consider choosing a less paper option." %}
     {% set selectText = "Select how we send you your licence details and expiry reminders" %}
     {% set noContactMessage = "We'll show you your licence number on your confirmation after payment and you can write it down. Your licence expiry reminders will be sent by post" %}
     {% set errorMsg = "You have not told us how you would like to receive your licence details and expiry reminders" %}
@@ -48,46 +48,62 @@
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% set emailHtml %}
-    {{ govukInput({
-      id: "email",
-      name: "email",
-      type: "text",
-      classes: "govuk-!-width-two-thirds",
-      autocomplete: "email",
-      errorMessage: { text: 'Enter your email address' } if error['email'],
-      label: {
-        text: "Email address"
-      },
-      hint: {
-          text: "For example angling@email.com"
-      },
-      attributes: {
-        spellcheck: "false",
-        maxlength: "50"
-      },
-      value: payload.email if payload.how-contacted === 'email' else ''
-    }) }}
+    <div id="email-rw" class="govuk-body-m">
+        {{ govukInput({
+          id: "email",
+          name: "email",
+          type: "text",
+          classes: "govuk-!-width-two-thirds",
+          autocomplete: "email",
+          errorMessage: { text: 'Enter your email address' } if error['email'],
+          label: {
+            text: "Email address"
+          },
+          hint: {
+              text: "For example angling@email.com"
+          },
+          attributes: {
+            spellcheck: "false",
+            maxlength: "50"
+          },
+          value: payload.email if payload['how-contacted'] === 'email' else ''
+        }) }}
+    </div>
+    <div id="email-ro" class="govuk-body-m initially-hidden">
+        Email address</br>
+        <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
+            &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+        </span>
+    </div>
 {% endset -%}
 
 {% set textMessageHtml %}
-    {{ govukInput({
-      id: "text",
-      name: "text",
-      type: "tel",
-      autocomplete: "tel",
-      classes: "govuk-!-width-two-thirds",
-      errorMessage: { text: "Enter your mobile phone number. For overseas numbers include '+' followed by your country code" } if error['text'],
-      label: {
-        text: "Mobile phone number"
-      },
-      hint: {
-          text: "For example 07700 900 900"
-      },
-      attributes: {
-        maxlength: "30"
-      },
-      value: payload.text if payload.how-contacted === 'text' else ''
-    }) }}
+    <div id="text-rw" class="govuk-body-m">
+        {{ govukInput({
+          id: "text",
+          name: "text",
+          type: "tel",
+          autocomplete: "tel",
+          classes: "govuk-!-width-two-thirds",
+          errorMessage: { text: "Enter your mobile phone number. For overseas numbers include '+' followed by your country code" } if error['text'],
+          label: {
+            text: "Mobile phone number"
+          },
+          hint: {
+              text: "For example 07700 900 900"
+          },
+          attributes: {
+            maxlength: "30"
+          },
+          value: payload.text if payload['how-contacted'] === 'text' else ''
+        }) }}
+     </div>
+     <div id="text-ro" class="govuk-body-m initially-hidden">
+         Mobile phone number</br>
+         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
+             &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+         </span>
+     </div>
 {% endset -%}
 
 {% set noneHtml %}
@@ -95,10 +111,7 @@
 {% endset -%}
 
 {% block pageContent %}
-
-    {{ govukInsetText({
-        text: insetText
-    }) }}
+    <p class="govuk-body-m">{{ insetText | safe }}</p>
 
     {{ govukRadios({
       idPrefix: "how-contacted",
@@ -139,4 +152,35 @@
       ]
     }) }}
 
+{% endblock %}
+
+{% block bodyEnd %}
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}') {
+            document.getElementById("email-ro").style.display = "block"
+            document.getElementById("email-rw").style.display = "none"
+        } else {
+            document.getElementById("email-ro").style.display = "none"
+            document.getElementById("email-rw").style.display = "block"
+        }
+        document.getElementById("change").addEventListener("click", function () {
+            document.getElementById("email-ro").style.display = "none"
+            document.getElementById("email-rw").style.display = "block"
+        })
+    })()</script>
+        <script nonce={{nonce}}>(function () {
+            if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}') {
+                document.getElementById("text-ro").style.display = "block"
+                document.getElementById("text-rw").style.display = "none"
+            } else {
+                document.getElementById("text-ro").style.display = "none"
+                document.getElementById("text-rw").style.display = "block"
+            }
+            document.getElementById("change").addEventListener("click", function () {
+                document.getElementById("text-ro").style.display = "none"
+                document.getElementById("text-rw").style.display = "block"
+            })
+        })()</script>
 {% endblock %}

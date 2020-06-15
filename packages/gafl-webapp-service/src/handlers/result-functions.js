@@ -22,7 +22,7 @@ import {
   NAME
 } from '../uri.js'
 
-import dateOfBirth from '../pages/contact/date-of-birth/result-function.js'
+import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
 import junior from '../pages/concessions/junior-licence/result-function.js'
 import licenceType from '../pages/licence-details/licence-type/result-function.js'
 import licenceLength from '../pages/licence-details/licence-length/result-function.js'
