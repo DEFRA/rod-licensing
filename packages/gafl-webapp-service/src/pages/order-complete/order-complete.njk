@@ -11,7 +11,7 @@
 {% set bailiffMessage %}
 <p class="govuk-body">If our bailiffs ask to see your licence, you must show them:</p>
     <ol class="class="govuk-list govuk-list--number">
-        <li class="govuk-body"><span class="govuk-!-font-weight-bold">Proof of your licence: </span><a class="no-print" href="javascript:void(0);" onclick="printDocument();">print out this page</a><span class="print-area">take this printout with you</span> or make a note of your licence number</li>
+        <li class="govuk-body"><span class="govuk-!-font-weight-bold">Proof of your licence: </span><a id= "prt" class="no-print" href="#">Print out this page</a><span class="print-area">take this printout with you</span> or make a note of your licence number</li>
         <li class="govuk-body"><span class="govuk-!-font-weight-bold">Proof of your identity: </span>such as your driver's licence or other photo ID</li>
     </ol>
 {% endset -%}
@@ -33,7 +33,7 @@
     {% set licenceLengthMessage %}
         {% if data.hasJunior  %}
             <h2 class="govuk-heading-m">We don't send junior licences in the post</h2>
-            <p class="govuk-body">If our bailiffs ask to see your licence, you must show them proof of your licence. <a class="no-print" href="javascript:void(0);" onclick="printDocument();">Print out this page</a><span class="print-area">take this printout with you</span> or make a note of your licence number.</p>
+            <p class="govuk-body">If our bailiffs ask to see your licence, you must show them proof of your licence. <a id= "prt" class="no-print" href="#">Print out this page</a><span class="print-area">take this printout with you</span> or make a note of your licence number.</p>
         {% else %}
             <h2 class="govuk-heading-m">Want to go fishing before your licence arrives?</h2>
             {{ bailiffMessage | trim | safe }}
@@ -140,5 +140,9 @@
 {% block bodyEnd %}
     <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
-    <script nonce={{nonce}}>function printDocument() {window.print();}</script>
+    <script nonce={{nonce}}>(function () {
+        document.getElementById("prt").addEventListener("click", function () {
+            window.print();
+        })
+    })()</script>
 {% endblock %}
