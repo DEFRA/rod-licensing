@@ -1,4 +1,13 @@
 
+## Unreleased (2020-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#188](https://github.com/DEFRA/rod-licensing/pull/188) Moved dob to licence summary and update contact preferences to reflect latest design ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
 ## Unreleased (2020-06-12)
 
 #### :rocket: Enhancement
