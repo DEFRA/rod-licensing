@@ -1,4 +1,13 @@
 
+## Unreleased (2020-06-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#189](https://github.com/DEFRA/rod-licensing/pull/189) Static files failing to serve ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## Unreleased (2020-06-15)
 
 #### :rocket: Enhancement
