@@ -1,3 +1,5 @@
+import Dirname from '../../dirname.cjs'
+
 /**
  * Handlers to server static assets
  */
@@ -7,7 +9,7 @@ export default [
     path: '/public/{param*}',
     handler: {
       directory: {
-        path: 'public'
+        path: `${Dirname}/public/`
       }
     }
   },
@@ -16,7 +18,7 @@ export default [
     path: '/favicon.ico',
     handler: {
       file: {
-        path: '/public/images/favicon.ico'
+        path: `${Dirname}/public/images/favicon.ico`
       }
     }
   },
@@ -25,7 +27,7 @@ export default [
     path: '/robots.txt',
     handler: {
       file: {
-        path: 'public/robots.txt'
+        path: `${Dirname}/public/robots.txt`
       }
     }
   }
