@@ -34,6 +34,12 @@ export const TERMS_AND_CONDITIONS = { uri: '/buy/terms-conditions', page: 'terms
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
 
+/**
+ * Renewals pages
+ * @type {{uri: string}}
+ */
+export const AUTHENTICATE = { uri: '/buy/renew/authenticate', page: 'authenticate' }
+
 export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }
 export const ADD_PERMISSION = { uri: '/buy/add' }

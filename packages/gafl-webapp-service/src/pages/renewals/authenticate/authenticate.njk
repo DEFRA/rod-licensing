@@ -1,0 +1,125 @@
+{% extends "standard-form.njk" %}
+{% from "date-input/macro.njk" import govukDateInput %}
+{% from "input/macro.njk" import govukInput %}
+
+{% set title = 'Renew an existing licence?' %}
+
+{%
+    set errorMap = {
+        'date-of-birth': {
+            'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
+            'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
+            'date.min': { ref: '#date-of-birth-day', text: 'Your date of birth is too long ago' }
+        },
+        'postcode': {
+            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
+            'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
+        },
+        'referenceNumber' : {
+            'string.empty': { ref: '#referenceNumber', text: 'You did not enter the last six characters of your licence number' },
+            'string.pattern.base': { ref: '#referenceNumber', text: 'The last six characters of your licence number are not recognised' }
+        }
+    }
+%}
+
+{% set dateInputItems = [
+    {
+      name: "day",
+      classes: "govuk-input--width-2",
+      value: payload['date-of-birth-day']
+    },
+    {
+      name: "month",
+      classes: "govuk-input--width-2",
+      value: payload['date-of-birth-month']
+    },
+    {
+      name: "year",
+      classes: "govuk-input--width-4",
+      value: payload['date-of-birth-year']
+    }
+  ]
+%}
+
+{% block pageContent %}
+    <p class="govuk-body-l">To find your licence details we first need to identify you. This helps us protect you personal information.</p>
+    <div id="ref-rw" class="govuk-body-m initially-hidden">
+        {{ govukInput({
+          id: "ref",
+          name: "referenceNumber",
+          type: "text",
+          classes: "govuk-!-width-one-third",
+          errorMessage: { text: 'Enter the last 6 characters of your licence number' } if error['referenceNumber'],
+          label: {
+            text: "The last six characters of your licence number",
+            classes: "govuk-!-font-weight-bold"
+          },
+          hint: {
+              text: "For example F4A315"
+          },
+          attributes: {
+            spellcheck: "false",
+            maxlength: "6"
+          },
+          value: payload.referenceNumber
+        }) }}
+    </div>
+
+    <div id="ref-ro" class="govuk-body-m">
+        <span class="govuk-!-font-weight-bold">The licence number ending</span>
+        <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.referenceNumber if data.referenceNumber else payload.referenceNumber }}
+            &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+        </span>
+    </div>
+
+    {{ govukDateInput({
+      id: "date-of-birth",
+      namePrefix: "date-of-birth",
+      items: dateInputItems,
+      fieldset: {
+          legend: {
+                text: "Date of birth",
+                isPageHeading: false,
+                classes: "govuk-!-font-weight-bold govuk-label"
+          }
+      },
+      errorMessage: { text: 'Enter your date of birth' } if error,
+      hint: {
+        text: "For example, 22 11 1970"
+      }
+    }) }}
+
+    {{ govukInput({
+      label: {
+        text: "Postcode",
+        classes: "govuk-!-font-weight-bold"
+      },
+      id: "postcode",
+      name: "postcode",
+      hint: { text: "For example, WA4 1AB" },
+      value: payload['postcode'],
+      autocomplete: 'postal-code',
+      classes: "govuk-input--width-10",
+      attributes: { maxlength: 10 },
+      errorMessage: { text: 'Enter your postcode' } if error['postcode']
+    }) }}
+
+{% endblock %}
+
+{% block bodyEnd %}
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        if ({{ true if data.referenceNumber else false }}) {
+            document.getElementById("ref-ro").style.display = "block"
+            document.getElementById("ref-rw").style.display = "none"
+         } else {
+            document.getElementById("ref-ro").style.display = "none"
+            document.getElementById("ref-rw").style.display = "block"
+        }
+        document.getElementById("change").addEventListener("click", function () {
+            document.getElementById("ref-ro").style.display = "none"
+            document.getElementById("ref-rw").style.display = "block"
+        })
+    })()</script>
+{% endblock %}

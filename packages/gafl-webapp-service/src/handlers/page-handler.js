@@ -101,7 +101,7 @@ export default (path, view, completion, getData) => ({
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
-      return h.redirect(path).takeover()
+      return h.redirect(request.path).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {

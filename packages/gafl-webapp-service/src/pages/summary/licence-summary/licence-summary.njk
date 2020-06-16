@@ -181,7 +181,7 @@
     {% call govukFieldset({
       legend: {
         text: title,
-        classes: "govuk-fieldset__legend--m govuk-!-margin-bottom-3",
+        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
         isPageHeading: true
       }
     }) %}
@@ -200,11 +200,6 @@
             }) }}
         {% endif %}
         <form method="post">
-            {{ govukWarningText({
-              text: "Your licence is not valid until payment is complete",
-              iconFallbackText: "Warning"
-            }) }}
-
             {{ licenseDetailsSummary | trim | safe }}
 
             {{ govukButton({
