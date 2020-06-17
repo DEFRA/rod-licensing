@@ -23,7 +23,8 @@ import {
   TERMS_AND_CONDITIONS,
   AGREED,
   PAYMENT_CANCELLED,
-  PAYMENT_FAILED
+  PAYMENT_FAILED,
+  IDENTIFY
 } from '../uri.js'
 
 export default [
@@ -337,6 +338,16 @@ export default [
     nextPage: {
       ok: {
         page: AGREED.uri
+      }
+    }
+  },
+
+  // This is the authentication journey
+  {
+    currentPage: IDENTIFY.page,
+    nextPage: {
+      ok: {
+        page: LICENCE_LENGTH.uri
       }
     }
   }

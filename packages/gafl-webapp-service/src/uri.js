@@ -38,7 +38,8 @@ export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
  * Renewals pages
  * @type {{uri: string}}
  */
-export const AUTHENTICATE = { uri: '/buy/renew/authenticate', page: 'authenticate' }
+export const IDENTIFY = { uri: '/buy/renew/identify/{referenceNumber}', page: 'identify' }
+export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 
 export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }

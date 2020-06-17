@@ -1,0 +1,122 @@
+{% extends "layout.njk" %}
+
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "button/macro.njk" import govukButton %}
+{% from "date-input/macro.njk" import govukDateInput %}
+{% from "input/macro.njk" import govukInput %}
+{% from "error-summary.njk" import errorSummary %}
+
+{% set title = 'Renew an existing licence?' %}
+
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{%
+    set errorMap = {
+        'date-of-birth': {
+            'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
+            'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
+            'date.min': { ref: '#date-of-birth-day', text: 'Your date of birth is too long ago' }
+        },
+        'postcode': {
+            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
+            'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
+        },
+        'referenceNumber' : {
+            'string.invalid': {
+                text: "The details you entered do not match those we have on record for licence number " + data.referenceNumber + " Please check you have entered the correct date of birth and postcode",
+                href: "#date-of-birth"
+            }
+        }
+    }
+%}
+
+{% set dateInputItems = [
+    {
+      name: "day",
+      classes: "govuk-input--width-2",
+      value: payload['date-of-birth-day']
+    },
+    {
+      name: "month",
+      classes: "govuk-input--width-2",
+      value: payload['date-of-birth-month']
+    },
+    {
+      name: "year",
+      classes: "govuk-input--width-4",
+      value: payload['date-of-birth-year']
+    }
+  ]
+%}
+
+{% set resultError = error if error else (data.error if data.error else []) %}
+
+{% block content %}
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(resultError, errorMap) }}
+        <form method="post">
+
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+                <p class="govuk-body-l">To find your licence details we first need to identify you. This helps us protect you personal information.</p>
+
+                <div id="ref-ro" class="govuk-body-m">
+                    <span class="govuk-!-font-weight-bold">The licence number ending</span>
+                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.referenceNumber }}</span>
+                </div>
+
+                {{ govukDateInput({
+                  id: "date-of-birth",
+                  namePrefix: "date-of-birth",
+                  items: dateInputItems,
+                  fieldset: {
+                      legend: {
+                            text: "Date of birth",
+                            isPageHeading: false,
+                            classes: "govuk-!-font-weight-bold govuk-label"
+                      }
+                  },
+                  errorMessage: { text: 'Enter your date of birth' } if error or data.error,
+                  hint: {
+                    text: "For example, 22 11 1970"
+                  }
+                }) }}
+
+                {{ govukInput({
+                  label: {
+                    text: "Postcode",
+                    classes: "govuk-!-font-weight-bold"
+                  },
+                  id: "postcode",
+                  name: "postcode",
+                  hint: { text: "For example, WA4 1AB" },
+                  value: payload['postcode'],
+                  autocomplete: 'postal-code',
+                  classes: "govuk-input--width-10",
+                  attributes: { maxlength: 10 },
+                  errorMessage: { text: 'Enter your postcode' } if error['postcode'] or data.error
+                }) }}
+
+                {{ govukButton({
+                    attributes: { id: 'continue' },
+                    preventDoubleClick: true,
+                    name: "continue",
+                    text: "Continue",
+                    classes: "govuk-!-margin-top-5"
+                }) }}
+
+            {% endcall %}
+            {{ csrf() }}
+        </form>
+    </div>
+</div>
+{% endblock %}
+

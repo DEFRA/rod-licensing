@@ -441,4 +441,20 @@ describe('sales-api-connector', () => {
       })
     })
   })
+
+  describe('authentication', () => {
+    it('retrieves all items using .getAll()', async () => {
+      const expectedResponse = { foo: 'bar' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.authenticate('AAAAAA', '1980-03-02', 'BS9 4PT')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/authenticate/renewal/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+        {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        }
+      )
+    })
+  })
 })

@@ -8,4 +8,9 @@ describe('permission validators', () => {
       await expect(permissionValidation.createPermissionNumberValidator(Joi).validateAsync(number)).resolves.toEqual(number.trim())
     })
   })
+  describe('permissionNumberUniqueComponentValidator', () => {
+    each(['F4A315', ' F4Z315 ']).it('validates the permission number "%s"', async number => {
+      await expect(permissionValidation.permissionNumberUniqueComponentValidator(Joi).validateAsync(number)).resolves.toEqual(number.trim())
+    })
+  })
 })

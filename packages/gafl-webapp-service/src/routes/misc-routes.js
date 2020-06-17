@@ -6,7 +6,8 @@ import {
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
-  REFUND_POLICY
+  REFUND_POLICY,
+  AUTHENTICATE
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
@@ -14,6 +15,7 @@ import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../
 import addPermission from '../session-cache/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
+import authenticationHandler from '../handlers/authentication-handler.js'
 
 export default [
   {
@@ -25,6 +27,11 @@ export default [
     method: 'GET',
     path: CONTROLLER.uri,
     handler: controllerHandler
+  },
+  {
+    method: 'GET',
+    path: AUTHENTICATE.uri,
+    handler: authenticationHandler
   },
   {
     method: 'GET',
