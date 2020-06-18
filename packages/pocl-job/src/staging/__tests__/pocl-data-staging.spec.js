@@ -1,4 +1,3 @@
-import each from 'jest-each'
 import { salesApi } from '@defra-fish/connectors-lib'
 import Project from '../../project.cjs'
 import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../constants.js'
@@ -34,10 +33,10 @@ describe('pocl data staging', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('it runs all stages if...', () => {
-    each([
+    it.each([
       ['the file has not previously been processed', undefined],
       ['the file has pending state', { stage: FILE_STAGE.Pending }]
-    ]).it('%s', async (desc, val) => {
+    ])('%s', async (desc, val) => {
       getFileRecord.mockResolvedValueOnce(val)
       getFileRecord.mockResolvedValueOnce({
         stagingSucceeded: 5,

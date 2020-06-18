@@ -1,4 +1,3 @@
-import each from 'jest-each'
 import { processQueue } from '../process-transaction-queue.js'
 import {
   persist,
@@ -68,7 +67,7 @@ describe('transaction service', () => {
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
-      each([
+      it.each([
         [
           'short term licences',
           () => {
@@ -144,7 +143,7 @@ describe('transaction service', () => {
             expect.any(FulfilmentRequest)
           ]
         ]
-      ]).it('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
+      ])('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
         const mockRecord = initialiseMockTransactionRecord()
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
         const result = await processQueue({ id: mockRecord.id })

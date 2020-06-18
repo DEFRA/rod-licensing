@@ -1,5 +1,4 @@
 import Joi from '@hapi/joi'
-import each from 'jest-each'
 import * as contactValidation from '../contact.js'
 import moment from 'moment'
 
@@ -54,22 +53,22 @@ describe('contact validators', () => {
 
   describe('firstNameValidator', () => {
     describe('converts to title case', () => {
-      each([
+      it.each([
         [' mIchael-hArrY ', 'Michael-Harry'],
         [' érmintrùdé ', 'Érmintrùdé']
-      ]).it('converts %s to %s', async (name, expected) => {
+      ])('converts %s to %s', async (name, expected) => {
         await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(name)).resolves.toEqual(expected)
       })
     })
 
     describe('allows specific punctuation characters', () => {
-      each("'-".split('')).it('allows the %s character', async c => {
+      it.each("'-".split(''))('allows the %s character', async c => {
         await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(`Test${c}`)).resolves.toEqual(`Test${c}`)
       })
     })
 
     describe('does not allow banned characters', () => {
-      each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split('')).it('does not allow the %s character', async c => {
+      it.each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split(''))('does not allow the %s character', async c => {
         await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(c)).rejects.toThrow('contains forbidden characters')
       })
     })
@@ -102,7 +101,7 @@ describe('contact validators', () => {
 
   describe('lastNameValidator', () => {
     describe('converts to title case', () => {
-      each([
+      it.each([
         [' SMITH-JONES ', 'Smith-Jones'],
         ['smith-jones', 'Smith-Jones'],
         ['denver', 'Denver'],
@@ -115,19 +114,19 @@ describe('contact validators', () => {
         ['de vries', 'de Vries'],
         ['van der waals', 'van der Waals'],
         ['van den heuvel', 'van den Heuvel']
-      ]).it('converts %s to %s', async (name, expected) => {
+      ])('converts %s to %s', async (name, expected) => {
         await expect(contactValidation.createLastNameValidator(Joi).validateAsync(name)).resolves.toEqual(expected)
       })
     })
 
     describe('allows specific punctuation characters', () => {
-      each("'-".split('')).it('allows the %s character', async c => {
+      it.each("'-".split(''))('allows the %s character', async c => {
         await expect(contactValidation.createLastNameValidator(Joi).validateAsync(`Test${c}`)).resolves.toEqual(`Test${c}`)
       })
     })
 
     describe('does not allow banned characters', () => {
-      each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split('')).it('does not allow the %s character', async c => {
+      it.each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split(''))('does not allow the %s character', async c => {
         await expect(contactValidation.createLastNameValidator(Joi).validateAsync(c)).rejects.toThrow('contains forbidden characters')
       })
     })
@@ -167,21 +166,21 @@ describe('contact validators', () => {
   })
 
   describe('mobilePhoneValidator', () => {
-    each(['+44 7700 900088', '07700 900088']).it('validates %s successfully', async number => {
+    it.each(['+44 7700 900088', '07700 900088'])('validates %s successfully', async number => {
       await expect(contactValidation.createMobilePhoneValidator(Joi).validateAsync(number)).resolves.toEqual(number)
     })
 
-    each(['test', '07700 test']).it('rejects the invalid number %s', async number => {
+    it.each(['test', '07700 test'])('rejects the invalid number %s', async number => {
       await expect(contactValidation.createMobilePhoneValidator(Joi).validateAsync(number)).rejects.toThrow()
     })
   })
 
   describe('ukPostcodeValidator', () => {
-    each([
+    it.each([
       ['ba21nw', 'BA2 1NW'],
       [' AB12    3CD ', 'AB12 3CD'],
       ['AB123CD ', 'AB12 3CD']
-    ]).it('formats the UK postcode %s successfully as %s', async (postcode, replacedValue) => {
+    ])('formats the UK postcode %s successfully as %s', async (postcode, replacedValue) => {
       await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync(postcode)).resolves.toEqual(replacedValue)
     })
 
@@ -261,7 +260,7 @@ describe('contact validators', () => {
 
   describe('townValidator', () => {
     describe('converts to title case', () => {
-      each([
+      it.each([
         ['lOndon', 'London'],
         ['newcastle upon tyne', 'Newcastle upon Tyne'],
         ['wotton-under-edge', 'Wotton-under-Edge'],
@@ -272,7 +271,7 @@ describe('contact validators', () => {
         ['chapel-en-le-frith', 'Chapel-en-le-Frith'],
         ['puddleby-on-the-marsh', 'Puddleby-on-the-Marsh'],
         ['weston-super-mare', 'Weston-super-Mare']
-      ]).it('converts %s to %s', async (name, expected) => {
+      ])('converts %s to %s', async (name, expected) => {
         await expect(contactValidation.createTownValidator(Joi).validateAsync(name)).resolves.toEqual(expected)
       })
     })

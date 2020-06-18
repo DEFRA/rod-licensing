@@ -1,5 +1,4 @@
 import { LICENCE_LENGTH, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
-import each from 'jest-each'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
@@ -24,11 +23,11 @@ describe('The licence length page', () => {
     expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 
-  each([
+  it.each([
     ['12 months', '12M'],
     ['8 day', '8D'],
     ['1 day', '1D']
-  ]).it('stores the transaction on a successful submission of %s', async (desc, lenCode) => {
+  ])('stores the transaction on a successful submission of %s', async (desc, lenCode) => {
     await injectWithCookies('GET', LICENCE_LENGTH.uri)
     const data = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
 
