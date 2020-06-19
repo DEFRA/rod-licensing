@@ -7,6 +7,7 @@ import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
 import Inert from '@hapi/inert'
 import Scooter from '@hapi/scooter'
+import HapiGapi from 'hapi-gapi'
 import Crumb from '@hapi/crumb'
 import Blankie from 'blankie'
 import Nunjucks from 'nunjucks'
@@ -85,6 +86,24 @@ const plugIns = [
         isHttpOnly: process.env.NODE_ENV !== 'development'
       },
       logUnauthorized: true
+    }
+  },
+  {
+    plugin: HapiGapi,
+    options: {
+      propertySettings: [
+        {
+          id: 'UA-124887477-9',
+          hitTypes: ['pageview', 'event', 'ecommerce']
+        }
+      ],
+      sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
+      attributionProducer: request => ({
+        campaign: request.query.utm_campaign,
+        medium: request.query.utm_medium
+      }),
+      batchSize: 20,
+      batchInterval: 15000
     }
   }
 ]
