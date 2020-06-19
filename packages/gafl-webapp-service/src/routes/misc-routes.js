@@ -7,7 +7,8 @@ import {
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
   REFUND_POLICY,
-  AUTHENTICATE
+  AUTHENTICATE,
+  RENEWAL_START_VALIDATE
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
@@ -16,6 +17,7 @@ import addPermission from '../session-cache/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
+import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 
 export default [
   {
@@ -32,6 +34,11 @@ export default [
     method: 'GET',
     path: AUTHENTICATE.uri,
     handler: authenticationHandler
+  },
+  {
+    method: 'GET',
+    path: RENEWAL_START_VALIDATE.uri,
+    handler: renewalValidationHandler
   },
   {
     method: 'GET',

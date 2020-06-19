@@ -347,7 +347,7 @@ export default [
     currentPage: IDENTIFY.page,
     nextPage: {
       ok: {
-        page: LICENCE_LENGTH.uri
+        page: LICENCE_SUMMARY.uri
       }
     }
   }

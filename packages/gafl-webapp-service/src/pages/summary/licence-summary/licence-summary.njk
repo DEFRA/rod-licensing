@@ -6,7 +6,12 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set title = 'Check your new licence details' %}
+{% if data.isRenewal %}
+    {% set title = 'Check your licence renewal details' %}
+{% else %}
+    {% set title = 'Check your new licence details' %}
+{% endif %}
+
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% macro addressLine(line) %}
@@ -16,29 +21,19 @@
 {% set licenseDetailsSummaryRows = [
     {
       key: {
-        text: "Licence length"
+        text: "Type"
       },
       value: {
-        text: '12 months' if data.permission.licenceLength === '12M' else ('8 days' if data.permission.licenceLength === '8D' else '1 day')
+        text: 'Junior' if data.hasJunior else ('Senior' if data.hasSenior else 'Adult')
       },
-      actions: {
-        items: [
-          {
-            href: data.uri.licenceLength,
-            text: "Change",
-            visuallyHiddenText: "licence length",
-            attributes: { id: 'change-licence-length' }
-          }
-        ] if not data.hasJunior
-      }
+      classes: 'no-border',
+      actions: {items: [{}]}
     },
     {
-      key: {
-        text: "Licence type"
-      },
       value: {
         text: data.permission.licenceType
       },
+      classes: 'no-border' if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] else '',
       actions: {
         items: [
           {
@@ -55,9 +50,6 @@
 
 {% if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] %}
     {{ licenseDetailsSummaryRows.push({
-      key: {
-        text: "Number of rods"
-      },
       value: {
         text: 'Up to 2 rods' if data.permission.numberOfRods === '2' else 'Up to 3 rods'
       },
@@ -75,16 +67,57 @@
 {% endif %}
 
 {{ licenseDetailsSummaryRows.push({
+  key: {
+    text: "Licence length"
+  },
+  value: {
+    text: '12 months' if data.permission.licenceLength === '12M' else ('8 days' if data.permission.licenceLength === '8D' else '1 day')
+  },
+  actions: {
+    items: [
+      {
+        href: data.uri.licenceLength,
+        text: "Change",
+        visuallyHiddenText: "licence length",
+        attributes: { id: 'change-licence-length' }
+      }
+    ] if not data.hasJunior and not data.isRenewal
+  }
+}) }}
+
+{% if not data.isRenewal %}
+    {{ licenseDetailsSummaryRows.push({
+        key: {
+        text: "Date of birth"
+        },
+        value: {
+        text: data.birthDateStr
+        },
+        actions: {
+        items: [
+          {
+            href: data.uri.dateOfBirth,
+            text: "Change",
+            visuallyHiddenText: "date of birth",
+            attributes: { id: 'change-birth-date' }
+          }
+        ]
+        }
+    }) }}
+{% endif %}
+
+{{ licenseDetailsSummaryRows.push({
       key: {
         text: "Valid from"
       },
       value: {
-        text: '30 minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString
+        html: '30 minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString +
+        ('</br><span class="govuk-caption-m">Immediately after the current licence expires</span>' if data.isContinuing and data.isRenewal else '')
       },
       actions: {
         items: [
           {
-            href: data.uri.licenceToStart,
+            href:  data.uri.licenceStartDate if data.isRenewal else data.uri.licenceToStart,
             text: "Change",
             visuallyHiddenText: "valid from",
             attributes: { id: 'change-licence-to-start' }
@@ -93,51 +126,13 @@
       }
 }) }}
 
-{{ licenseDetailsSummaryRows.push({
-    key: {
-    text: "Date of birth"
-    },
-    value: {
-    text: data.birthDateStr
-    },
-    actions: {
-    items: [
-      {
-        href: data.uri.dateOfBirth,
-        text: "Change",
-        visuallyHiddenText: "date of birth",
-        attributes: { id: 'change-birth-date' }
-      }
-    ]
-    }
-}) }}
-
-
-{% if data.hasJunior %}
+{% if data.disabled %}
     {{ licenseDetailsSummaryRows.push({
       key: {
-        text: "Concessions"
+        text: "Disability support"
       },
       value: {
-        text: "Junior"
-      }
-    }) }}
-{% elseif data.hasSenior %}
-    {{ licenseDetailsSummaryRows.push({
-      key: {
-        text: "Concessions"
-      },
-      value: {
-        text: "Senior"
-      }
-    }) }}
-{% elseif data.disabled %}
-    {{ licenseDetailsSummaryRows.push({
-      key: {
-        text: "Concessions"
-      },
-      value: {
-        html: "Disabled</br>" + data.disabled.proof.type + " - " + data.disabled.proof.referenceNumber
+        html: data.disabled.proof.type + ":&nbsp;" + data.disabled.proof.referenceNumber
       },
       actions: {
         items: [
@@ -150,21 +145,24 @@
         ]
     }
     }) }}
-{% elseif data.permission.licenceLength === '12M' %}
+{% else %}
     {{ licenseDetailsSummaryRows.push({
       key: {
-        text: "Concessions"
+        text: "Disability support"
+      },
+      value: {
+        html: '<span class="govuk-caption-m">None</span>'
       },
       actions: {
         items: [
           {
             href: data.uri.benefitCheck,
-            text: "Add",
+            text: "Change",
             visuallyHiddenText: "benefit check",
-            attributes: { id: 'add-benefit-check' }
+            attributes: { id: 'change-benefit-check' }
           }
         ]
-      }
+    }
     }) }}
 {% endif %}
 
@@ -185,6 +183,7 @@
         isPageHeading: true
       }
     }) %}
+        <p class="govuk-body-l">Do you want to make any changes?</p>
         {{ govukSummaryList({ rows: licenseDetailsSummaryRows }) }}
     {% endcall %}
 {% endset -%}

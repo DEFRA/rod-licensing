@@ -8,7 +8,7 @@ import GetDataRedirect from './get-data-redirect.js'
  * @param e
  * @returns {{}}
  */
-const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
+export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 
 /**
  * Calculate the back reference. It is
@@ -83,7 +83,7 @@ export default (path, view, completion, getData) => ({
     const status = await request.cache().helpers.status.getCurrentPermission()
     status.pageStack = status.pageStack || []
     if (!status.pageStack.find(s => path === s)) {
-      status.pageStack.push(path)
+      status.pageStack.push(request.path)
     }
     status.currentPage = view
     status[view] = PAGE_STATE.completed

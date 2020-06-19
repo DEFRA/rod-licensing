@@ -49,11 +49,10 @@
   ]
 %}
 
-{% set resultError = error if error else (data.error if data.error else []) %}
+{% set resultError = error if error else (data.error if data.error else null) %}
 
 {% block content %}
 <div class="govuk-grid-row">
-
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(resultError, errorMap) }}
         <form method="post">
