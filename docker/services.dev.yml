@@ -27,7 +27,7 @@ services:
       - ../:/app
     env_file:
       - ./env/payment_mop_up_job.env
-      - ./env/gafl_webapp.secrets.env
+      - ./env/payment_mop_up_job.secrets.env
     deploy:
       mode: replicated
       replicas: 1
@@ -69,6 +69,24 @@ services:
       restart_policy:
         condition: any
         delay: 5m
+
+  ##############################################################################################################
+  # rod-licensing fulfilment_job
+  ##############################################################################################################
+  fulfilment_job:
+    image: rod-licensing/fulfilment_job:${TAG:-latest}
+    volumes:
+      - ../:/app
+      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/fulfilment/keys
+    env_file:
+      - ./env/fulfilment_job.env
+      - ./env/fulfilment_job.secrets.env
+    deploy:
+      mode: replicated
+      replicas: 0
+      restart_policy:
+        condition: any
+        delay: 24h
 
   ##############################################################################################################
   # rod-licensing sqs_receiver
