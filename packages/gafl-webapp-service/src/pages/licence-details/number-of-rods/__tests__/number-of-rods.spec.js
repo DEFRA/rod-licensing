@@ -1,6 +1,5 @@
 import { NUMBER_OF_RODS, TEST_TRANSACTION } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import each from 'jest-each'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -24,10 +23,10 @@ describe('The number of rods page', () => {
     expect(data.headers.location).toBe(NUMBER_OF_RODS.uri)
   })
 
-  each([
+  it.each([
     ['2 rod licence', '2'],
     ['three rod licence', '3']
-  ]).it('stores the transaction on successful submission of %s', async (desc, code) => {
+  ])('stores the transaction on successful submission of %s', async (desc, code) => {
     await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': code })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].numberOfRods).toBe(code)

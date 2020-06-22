@@ -1,7 +1,6 @@
 import initialiseServer from '../index.js'
 import Boom from '@hapi/boom'
 import dotProp from 'dot-prop'
-import each from 'jest-each'
 
 describe('hapi server', () => {
   describe('initialisation', () => {
@@ -80,7 +79,7 @@ describe('hapi server', () => {
     })
 
     describe('handles process interrupts', () => {
-      each(['SIGINT', 'SIGTERM']).it('implements a shutdown handler to respond to the %s signal', async signal => {
+      it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', async signal => {
         const serverStopSpy = jest.spyOn(server, 'stop').mockImplementation(async () => {})
         const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
         await process.emit(signal)

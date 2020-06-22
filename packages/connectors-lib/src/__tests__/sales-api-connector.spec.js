@@ -1,5 +1,4 @@
 import * as salesApi from '../sales-api-connector.js'
-import each from 'jest-each'
 import fetch from 'node-fetch'
 
 jest.mock('node-fetch')
@@ -349,7 +348,7 @@ describe('sales-api-connector', () => {
   })
 
   describe('query endpoints', () => {
-    each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals']).describe(
+    describe.each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals'])(
       'allows %s to be queried with different methods',
       endpoint => {
         it('retrieves all items using .getAll()', async () => {

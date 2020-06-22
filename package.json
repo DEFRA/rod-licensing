@@ -44,7 +44,6 @@
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "jest-circus": "^26.0.1",
-    "jest-each": "^26.0.1",
     "lerna": "^3.22.0",
     "lerna-changelog": "^1.0.1",
     "lerna-update-wizard": "^0.17.8",

@@ -1,4 +1,3 @@
-import each from 'jest-each'
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { initialize, injectWithCookies, postRedirectGet, start, stop } from '../../__mocks__/test-utils'
@@ -89,11 +88,11 @@ const paymentIncomplete = {
 }
 
 describe('The agreed handler', () => {
-  each([
+  it.each([
     ['rejected', paymentStatusRejected],
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
-  ]).it('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
+  ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
 

@@ -8,7 +8,6 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED
 } from '../../uri.js'
-import each from 'jest-each'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -50,12 +49,12 @@ describe('The user', () => {
   /*
    * With a new cookie, any attempt to access a handler which is protected unless the agreed flag is set will cause a redirect to the controller
    */
-  each([
+  it.each([
     ['order-complete', ORDER_COMPLETE],
     ['order-complete-pdf', ORDER_COMPLETE_PDF],
     ['payment-failed', PAYMENT_FAILED],
     ['payment-failed', PAYMENT_CANCELLED]
-  ]).it('redirects to the controller on attempting to access %s', async (desc, page) => {
+  ])('redirects to the controller on attempting to access %s', async (desc, page) => {
     const data = await injectWithoutSessionCookie('GET', page.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTROLLER.uri)
