@@ -177,6 +177,7 @@ const createFulfilmentRequest = async permission => {
   fulfilmentRequest.referenceNumber = today.toISOString() + refNumberExt
   fulfilmentRequest.requestTimestamp = today
   fulfilmentRequest.status = await getGlobalOptionSetValue(FulfilmentRequest.definition.mappings.status.ref, 'Pending')
+  fulfilmentRequest.notes = 'Initial fulfilment request created at point of sale'
   fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.permission, permission)
   return fulfilmentRequest
 }

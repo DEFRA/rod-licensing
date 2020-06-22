@@ -65,7 +65,7 @@ export const configureAwsSdkMock = (AwsSdk = jest.genMockFromModule('aws-sdk')) 
     ['get', 'put', 'update', 'query', 'scan', 'delete', 'createSet', 'batchGet', 'batchWrite'],
     {}
   )
-  configureMock(AwsSdk.S3, ['getObject', 'putObject', 'headObject', 'deleteObject', 'listBuckets', 'headBucket'])
+  configureMock(AwsSdk.S3, ['listObjectsV2', 'getObject', 'putObject', 'headObject', 'deleteObject', 'upload', 'listBuckets', 'headBucket'])
 
   return AwsSdk
 }

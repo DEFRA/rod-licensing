@@ -1,4 +1,5 @@
 import { Binding } from '../../../binding.js'
+import * as organisationBindings from './organisation.bindings.js'
 import * as premiseBindings from './premises.bindings.js'
 import * as streetBindings from './street.bindings.js'
 import * as localityBindings from './locality.bindings.js'
@@ -6,6 +7,7 @@ import * as townBindings from './town.bindings.js'
 import * as postcodeBindings from './postcode.bindings.js'
 import * as countryBindings from './country.bindings.js'
 
+const organisationFields = [organisationBindings.Org].map(e => e.element)
 const premiseFields = [
   premiseBindings.POBox,
   premiseBindings.SubPrem,
@@ -30,6 +32,7 @@ const extract = (fieldName, children, fields, sep = ' ') => {
 export const Address = new Binding({
   element: 'LICENSEE_ADDRESS',
   children: [
+    ...Object.values(organisationBindings),
     ...Object.values(premiseBindings),
     ...Object.values(streetBindings),
     ...Object.values(localityBindings),
@@ -38,6 +41,7 @@ export const Address = new Binding({
     ...Object.values(countryBindings)
   ],
   transform: ({ children }) => ({
+    ...extract('organisation', children, organisationFields, ', '),
     ...extract('premises', children, premiseFields, ', '),
     ...extract('street', children, streetFields, ', '),
     ...extract('locality', children, localityFields, ', '),

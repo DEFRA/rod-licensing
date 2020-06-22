@@ -1,4 +1,31 @@
 
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`
+  * [#191](https://github.com/DEFRA/rod-licensing/pull/191) Implement fulfilment processor ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#189](https://github.com/DEFRA/rod-licensing/pull/189) Static files failing to serve ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## Unreleased (2020-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#188](https://github.com/DEFRA/rod-licensing/pull/188) Moved dob to licence summary and update contact preferences to reflect latest design ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
 ## Unreleased (2020-06-12)
 
 #### :rocket: Enhancement
