@@ -1,4 +1,12 @@
 
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+* [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 
 ## Unreleased (2020-06-22)
