@@ -211,19 +211,18 @@ export const MOCK_CONCESSION_PROOF_ENTITY = ConcessionProof.fromResponse(
   optionSetData
 )
 
-export const MOCK_EXISTING_PERMISSION_ENTITY = Permission.fromResponse(
-  {
-    '@odata.etag': 'W/"186695153"',
-    defra_permissionid: '347a9083-361e-ea11-a810-000d3a25c5d6',
-    defra_name: '00000000-2WC3FDR-CD379B',
-    defra_issuedate: '2019-12-13T09:00:00Z',
-    defra_startdate: '2019-12-14T00:00:00Z',
-    defra_enddate: '2020-12-13T23:59:59Z',
-    defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
-    defra_datasource: 910400003
-  },
-  optionSetData
-)
+export const MOCK_EXISTING_PERMISSION_DYNAMICS_RESPONSE = {
+  '@odata.etag': 'W/"186695153"',
+  defra_permissionid: '347a9083-361e-ea11-a810-000d3a25c5d6',
+  defra_name: '00000000-2WC3FDR-CD379B',
+  defra_issuedate: '2019-12-13T09:00:00Z',
+  defra_startdate: '2019-12-14T00:00:00Z',
+  defra_enddate: '2020-12-13T23:59:59Z',
+  defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
+  defra_datasource: 910400003
+}
+
+export const MOCK_EXISTING_PERMISSION_ENTITY = Permission.fromResponse(MOCK_EXISTING_PERMISSION_DYNAMICS_RESPONSE, optionSetData)
 
 export const MOCK_NEW_CONTACT_ENTITY = new Contact()
 
@@ -236,11 +235,13 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
     birthdate: '1946-01-01',
     emailaddress1: 'fester@tester.com',
     mobilephone: '01234 567890',
+    defra_organisation: 'Test Organisation',
     defra_premises: '1',
     defra_street: 'Tester Avenue',
     defra_locality: 'Testville',
     defra_town: 'Tersterton',
-    defra_postcode: 'AB12 3CD'
+    defra_postcode: 'AB12 3CD',
+    defra_country: 910400184
   },
   optionSetData
 )

@@ -1,6 +1,5 @@
 import Project from '../../project.cjs'
 import { transform } from '../pocl-transform-stream.js'
-import through2 from 'through2'
 import { Transaction } from '../bindings/pocl/transaction/transaction.bindings.js'
 
 jest.mock('../bindings/pocl/transaction/transaction.bindings.js', () => ({
@@ -13,13 +12,12 @@ jest.mock('../bindings/pocl/transaction/transaction.bindings.js', () => ({
 describe('pocl transform stream', () => {
   it('transforms POCL XML to staging JSON', async () => {
     let numberOfRecords = 0
-    await transform(
-      `${Project.root}/src/__mocks__/test-2-records.xml`,
-      through2.obj(async function (data, enc, cb) {
+    await transform(`${Project.root}/src/__mocks__/test-2-records.xml`, async function * (source) {
+      for await (const chunk of source) {
         numberOfRecords++
-        cb()
-      })
-    )
+        yield chunk
+      }
+    })
     expect(numberOfRecords).toBe(2)
   })
 
@@ -28,12 +26,11 @@ describe('pocl transform stream', () => {
     const testError = new Error('Test transform error')
     Transaction.transform.mockRejectedValue(testError)
     await expect(
-      transform(
-        `${Project.root}/src/__mocks__/test-2-records.xml`,
-        through2.obj(async function (data, enc, cb) {
-          cb()
-        })
-      )
+      transform(`${Project.root}/src/__mocks__/test-2-records.xml`, async function * (source) {
+        for await (const chunk of source) {
+          yield chunk
+        }
+      })
     ).rejects.toThrow(testError)
     expect(consoleErrorSpy).toHaveBeenCalled()
   })

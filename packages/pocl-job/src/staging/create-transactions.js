@@ -1,6 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import Path from 'path'
-import through2 from 'through2'
 import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
 import { transform } from '../transform/pocl-transform-stream.js'
 import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
@@ -17,9 +16,8 @@ export const createTransactions = async xmlFilePath => {
   const filename = Path.basename(xmlFilePath)
   const state = await getInitialState(filename)
 
-  await transform(
-    xmlFilePath,
-    through2.obj(async function (data, enc, cb) {
+  await transform(xmlFilePath, async function * (source) {
+    for await (const data of source) {
       if (!state.processedIds.has(data.id)) {
         state.processedIds.add(data.id)
         state.buffer.push(data)
@@ -27,9 +25,8 @@ export const createTransactions = async xmlFilePath => {
           await createTransactionsInSalesApi(filename, state)
         }
       }
-      cb()
-    })
-  )
+    }
+  })
   // Process any remaining content of the buffer
   await createTransactionsInSalesApi(filename, state)
   return { succeeded: state.succeeded, failed: state.failed }

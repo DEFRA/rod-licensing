@@ -5,11 +5,12 @@ import {
   persist,
   retrieveMultiple,
   findById,
+  findByAlternateKey,
   findByExample,
+  executePagedQuery,
   executeQuery,
   retrieveMultipleAsMap,
-  retrieveGlobalOptionSets,
-  findByAlternateKey
+  retrieveGlobalOptionSets
 } from '../../index.js'
 import TestEntity from '../../__mocks__/TestEntity.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -438,13 +439,94 @@ describe('entity manager', () => {
         filter: "strval eq 'example'",
         select: TestEntity.definition.select
       })
-      expect(result).toContainEqual({ entityTest: expect.any(TestEntity) })
+      expect(result).toContainEqual({
+        entity: expect.any(TestEntity),
+        expanded: {}
+      })
     })
 
     it('throws an error object on failure', async () => {
       MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       await expect(executeQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }))).rejects.toThrow('Test error')
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('executePagedQuery', () => {
+    beforeEach(async () => {
+      MockDynamicsWebApi.__reset()
+      MockDynamicsWebApi.__setNextResponses(
+        'retrieveMultipleRequest',
+        {
+          value: [
+            {
+              '@odata.etag': 'RECORD 1',
+              idval: 'RECORD 1'
+            },
+            {
+              '@odata.etag': 'RECORD 2',
+              idval: 'RECORD 2'
+            }
+          ],
+          oDataNextLink: 'http://example.com/nextlink1'
+        },
+        {
+          value: [
+            {
+              '@odata.etag': 'RECORD 3',
+              idval: 'RECORD 3'
+            }
+          ]
+        }
+      )
+    })
+
+    it('makes successive requests to retrieve all records while oDataNextLink is returned in the response', async () => {
+      const results = []
+      /**
+       * @param {Array<PredefinedQueryResult<TestEntity>>} page
+       * @returns {Promise<void>}
+       */
+      const onPageReceived = async page => {
+        results.push(...page)
+      }
+      await executePagedQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }), onPageReceived)
+      expect(results).toHaveLength(3)
+      expect(results).toStrictEqual(
+        expect.arrayContaining([
+          { entity: expect.objectContaining({ id: 'RECORD 1' }), expanded: {} },
+          { entity: expect.objectContaining({ id: 'RECORD 2' }), expanded: {} },
+          { entity: expect.objectContaining({ id: 'RECORD 3' }), expanded: {} }
+        ])
+      )
+    })
+
+    it('allows the maximum number of pages to be capped', async () => {
+      const results = []
+      /**
+       * @param {Array<PredefinedQueryResult<TestEntity>>} page
+       * @returns {Promise<void>}
+       */
+      const onPageReceived = async page => {
+        results.push(...page)
+      }
+      await executePagedQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }), onPageReceived, 1)
+      expect(results).toHaveLength(2)
+      expect(results).toStrictEqual(
+        expect.arrayContaining([
+          { entity: expect.objectContaining({ id: 'RECORD 1' }), expanded: {} },
+          { entity: expect.objectContaining({ id: 'RECORD 2' }), expanded: {} }
+        ])
+      )
+    })
+
+    it('throws an error object on failure', async () => {
+      MockDynamicsWebApi.__throwWithErrorOn('retrieveMultipleRequest')
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      await expect(
+        executePagedQuery(new PredefinedQuery({ root: TestEntity, filter: "strval eq 'example'" }), () => {}, 1)
+      ).rejects.toThrow('Test error')
       expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })

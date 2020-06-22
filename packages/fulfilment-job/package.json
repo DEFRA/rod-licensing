@@ -1,0 +1,46 @@
+{
+  "name": "@defra-fish/fulfilment-job",
+  "version": "0.0.1-beta.42",
+  "description": "Rod Licensing Sales Fulfilment Job",
+  "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "rod",
+    "licensing",
+    "fulfilment",
+    "job"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/fulfilment-job.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
+    "directory": "packages/fulfilment-job"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "node src/fulfilment-job.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@defra-fish/connectors-lib": "^0.0.1-beta.42",
+    "@defra-fish/dynamics-lib": "^0.0.1-beta.43",
+    "commander": "^5.1.0",
+    "debug": "^4.1.1",
+    "merge2": "^1.4.1",
+    "moment": "^2.26.0",
+    "ssh2-sftp-client": "^5.1.2"
+  }
+}

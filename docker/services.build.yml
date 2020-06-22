@@ -57,6 +57,15 @@ services:
       dockerfile: packages/pocl-job/${PROJECT_DOCKERFILE:-Dockerfile}
 
   ##############################################################################################################
+  # rod-licensing fulfilment_job
+  ##############################################################################################################
+  fulfilment_job:
+    image: rod-licensing/fulfilment_job:${TAG:-latest}
+    build:
+      <<: *common-build-options
+      dockerfile: packages/fulfilment-job/${PROJECT_DOCKERFILE:-Dockerfile}
+
+  ##############################################################################################################
   # rod-licensing payment_mop_up_job
   ##############################################################################################################
   payment_mop_up_job:

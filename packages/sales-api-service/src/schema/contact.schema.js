@@ -16,6 +16,11 @@ const commonContactSchema = {
   birthDate: validation.contact.createBirthDateValidator(Joi),
   email: validation.contact.createEmailValidator(Joi),
   mobilePhone: validation.contact.createMobilePhoneValidator(Joi),
+  organisation: Joi.string()
+    .trim()
+    .min(1)
+    .optional()
+    .example('Example Organisation'),
   premises: validation.contact.createPremisesValidator(Joi),
   street: validation.contact.createStreetValidator(Joi),
   locality: validation.contact.createLocalityValidator(Joi),
