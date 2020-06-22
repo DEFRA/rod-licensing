@@ -51,7 +51,7 @@
     "debug": "^4.1.1",
     "find": "^0.3.0",
     "govuk-frontend": "^3.6.0",
-    "moment": "^2.26.0",
+    "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.1",
     "pdfmake": "^0.1.65",

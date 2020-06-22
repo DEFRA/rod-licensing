@@ -43,13 +43,12 @@
     "@hapi/inert": "^6.0.1",
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.0",
-    "aws-sdk": "^2.692.0",
     "crypto-random-string": "^3.2.0",
     "debug": "^4.1.1",
     "dot-prop": "^5.2.0",
     "hapi-and-healthy": "^7.0.7",
     "hapi-swagger": "^13.0.2",
-    "moment": "^2.26.0",
+    "moment": "^2.27.0",
     "uuid": "^8.1.0"
   }
 }

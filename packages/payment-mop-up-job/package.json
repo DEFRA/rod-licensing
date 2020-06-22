@@ -41,6 +41,6 @@
     "bottleneck": "^2.19.5",
     "commander": "^5.1.0",
     "debug": "^4.1.1",
-    "moment": "^2.26.0"
+    "moment": "^2.27.0"
   }
 }
