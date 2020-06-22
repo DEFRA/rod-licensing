@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@defra-fish/connectors-lib": "^0.0.1-beta.48",
-    "aws-sdk": "^2.692.0",
+    "aws-sdk": "^2.701.0",
     "commander": "^5.1.0",
     "debug": "^4.1.1",
     "dot-prop": "^5.2.0",
