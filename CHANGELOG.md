@@ -1,4 +1,13 @@
 
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`
+  * [#191](https://github.com/DEFRA/rod-licensing/pull/191) Implement fulfilment processor ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## Unreleased (2020-06-16)
 
 #### :bug: Bug Fix
