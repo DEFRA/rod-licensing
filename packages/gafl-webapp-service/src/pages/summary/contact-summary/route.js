@@ -22,26 +22,28 @@ const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  /*
-   * Before we try and filter the permit it is necessary to check that the user has navigated through
-   * the journey in such a way as to have gather all the required data. They have have manipulated the
-   * journey by typing into the address bar in which case they will be redirected back to the
-   * appropriate point in the journey
-   */
-  if (!status[LICENCE_SUMMARY.page]) {
-    throw new GetDataRedirect(LICENCE_SUMMARY.uri)
-  }
+  if (!status.renewal) {
+    /*
+     * Before we try and filter the permit it is necessary to check that the user has navigated through
+     * the journey in such a way as to have gather all the required data. They have have manipulated the
+     * journey by typing into the address bar in which case they will be redirected back to the
+     * appropriate point in the journey
+     */
+    if (!status[LICENCE_SUMMARY.page]) {
+      throw new GetDataRedirect(LICENCE_SUMMARY.uri)
+    }
 
-  if (!status[NAME.page]) {
-    throw new GetDataRedirect(NAME.uri)
-  }
+    if (!status[NAME.page]) {
+      throw new GetDataRedirect(NAME.uri)
+    }
 
-  if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
-    throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
-  }
+    if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
+      throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
+    }
 
-  if (!status[CONTACT.page]) {
-    throw new GetDataRedirect(CONTACT.uri)
+    if (!status[CONTACT.page]) {
+      throw new GetDataRedirect(CONTACT.uri)
+    }
   }
 
   status.fromSummary = 'contact-summary'

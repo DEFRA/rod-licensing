@@ -1,7 +1,7 @@
 import moment from 'moment'
 import * as concessionHelper from './concession-helper.js'
 import db from 'debug'
-import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE } from '../uri.js'
+import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import * as constants from './mapping-constants.js'
 const debug = db('webapp:renewals-write-cache')
 
@@ -43,7 +43,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   })
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
-  await request.cache().helpers.status.setCurrentPermission({ renewal: true })
+  await request.cache().helpers.status.setCurrentPermission({ renewal: true, fromSummary: 'contact-summary' })
 }
 
 export const setUpPayloads = async request => {
@@ -67,5 +67,38 @@ export const setUpPayloads = async request => {
       'licence-start-date-month': (moment(permission.licenceStartDate).month() + 1).toString(),
       'licence-start-date-year': moment(permission.licenceStartDate).year().toString()
     }
+  })
+
+  await request.cache().helpers.page.setCurrentPermission(NAME.page, {
+    payload: {
+      'first-name': permission.licensee.firstName,
+      'last-name': permission.licensee.lastName
+    }
+  })
+
+  await request.cache().helpers.page.setCurrentPermission(ADDRESS_ENTRY.page, {
+    payload: {
+      premises: permission.licensee.premises,
+      street: permission.licensee.street,
+      locality: permission.licensee.locality,
+      town: permission.licensee.town,
+      postcode: permission.licensee.postcode,
+      'country-code': permission.licensee.countryCode
+    }
+  })
+
+  await request.cache().helpers.page.setCurrentPermission(CONTACT.page, {
+    payload: (l => {
+      switch (l.preferredMethodOfConfirmation) {
+        case constants.HOW_CONTACTED.email:
+          return { 'how-contacted': 'email', email: l.email }
+        case constants.HOW_CONTACTED.text:
+          return { 'how-contacted': 'text', text: l.mobilePhone }
+        case constants.HOW_CONTACTED.letter:
+          return { 'how-contacted': 'none' }
+        default:
+          return { 'how-contacted': 'none' }
+      }
+    })(permission.licensee)
   })
 }

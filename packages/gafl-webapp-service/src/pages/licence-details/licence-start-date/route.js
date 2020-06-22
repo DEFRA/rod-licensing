@@ -12,6 +12,7 @@ const schema = Joi.object({
   'licence-start-date': JoiX.date()
     .format(dateFormats)
     .min(moment().add(-1, 'days'))
+    .max(moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
     .required()
 })
 

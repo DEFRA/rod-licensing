@@ -2,8 +2,8 @@ import { IDENTIFY, AUTHENTICATE, CONTROLLER } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
+import { authenticationResult } from '../__mocks__/data/authentication-result.js'
 import moment from 'moment'
-
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
@@ -60,10 +60,13 @@ describe('The easy renewal identification page', () => {
   })
 
   it('redirects to the controller on posting a valid response', async () => {
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve({ foo: 'bar' })))
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(authenticationResult)))
     const data = await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(AUTHENTICATE.uri)
+
+    // TODO mock a correct authentication result ... setUpCacheFromAuthenticationResult
+
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(CONTROLLER.uri)
