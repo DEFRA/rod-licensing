@@ -70,7 +70,7 @@
   },
   "husky": {
     "hooks": {
-      "post-checkout": "chmod 0600 docker/resources/infrastructure/sftp/ssh_host_* && git update-index --assume-unchanged docker/env/*.secrets.env",
+      "post-merge": "chmod 0600 docker/resources/infrastructure/sftp/ssh_host_* && git update-index --skip-worktree docker/env/*.secrets.env",
       "pre-commit": "npm run test:only-changed && lint-staged"
     }
   },
