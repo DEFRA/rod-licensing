@@ -19,7 +19,8 @@ const { s3 } = AWS()
 export const writeS3PartFile = async (fulfilmentRequestFile, partNumber, data) => {
   const key = `${fulfilmentRequestFile.fileName}/part${partNumber}`
   debug('Writing %d items to S3 using key %s', data.length, key)
-  return pipelinePromise([data, fulfilmentDataTransformer, createS3WriteStream(key)])
+  const { s3WriteStream, managedUpload } = createS3WriteStream(key)
+  await Promise.all([pipelinePromise([data, fulfilmentDataTransformer, s3WriteStream]), managedUpload])
 }
 
 /**
@@ -36,17 +37,15 @@ export async function readS3PartFiles (fulfilmentRequestFile) {
 /**
  * Create a stream to write data to S3
  * @param {string} key The object key to write data to, existing data will be overwritten
- * @returns {WritableStream}
+ * @returns {{s3WriteStream: WritableStream, managedUpload: Promise<ManagedUpload.SendData>}}
  */
 export const createS3WriteStream = key => {
   const passThrough = new PassThrough()
-  s3.upload({ Bucket: config.s3.bucket, Key: key, Body: passThrough }).send((err, data) => {
-    if (err) {
-      console.error('Failed to write to S3', err)
-      passThrough.emit('error', err)
-    } else {
-      debug(`File successfully uploaded to S3 at ${data.Location}`)
-    }
-  })
-  return passThrough
+  return {
+    s3WriteStream: passThrough,
+    managedUpload: s3
+      .upload({ Bucket: config.s3.bucket, Key: key, Body: passThrough })
+      .promise()
+      .then(data => debug(`File successfully uploaded to S3 at ${data.Location}`))
+  }
 }

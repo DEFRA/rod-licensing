@@ -22,7 +22,7 @@ describe('s3', () => {
     it('writes a part file to S3', async () => {
       const testFile = Object.assign(new FulfilmentRequestFile(), { fileName: 'example.json' })
       const mockDataArray = []
-      AwsMock.S3.mockedMethods.upload.mockImplementationOnce(() => ({ send: jest.fn() }))
+      AwsMock.S3.mockedMethods.upload.mockImplementationOnce(() => ({ promise: jest.fn(async () => ({ Location: 'example.json/part0' })) }))
       stream.pipeline.mockImplementation(
         jest.fn((streams, callback) => {
           expect(streams[0]).toStrictEqual(mockDataArray)
@@ -61,31 +61,33 @@ describe('s3', () => {
 
   describe('createS3WriteStream', () => {
     it('creates a writable stream to an object in S3', async () => {
-      AwsMock.S3.mockedMethods.upload.mockImplementationOnce(() => ({
-        send: jest.fn(callback => callback(null, { Location: 'example/key' }))
-      }))
+      AwsMock.S3.mockedMethods.upload.mockImplementationOnce(() => ({ promise: jest.fn(async () => ({ Location: 'example/key' })) }))
       const passThroughEmitSpy = jest.spyOn(stream.PassThrough.prototype, 'emit')
-      const writableStream = await createS3WriteStream('example/key')
+      const { s3WriteStream, managedUpload } = createS3WriteStream('example/key')
+      await expect(managedUpload).resolves.toBeUndefined()
+
       expect(AwsMock.S3.mockedMethods.upload).toHaveBeenCalledWith({
         Bucket: 'testbucket',
         Key: 'example/key',
         Body: expect.any(stream.PassThrough)
       })
-      expect(writableStream.write).toBeDefined()
+      expect(s3WriteStream.write).toBeDefined()
       expect(passThroughEmitSpy).not.toHaveBeenCalled()
     })
-    it('emits an error to the stream if an error occurs uploading', async () => {
-      const testError = new Error('Test error')
-      AwsMock.S3.mockedMethods.upload.mockImplementationOnce(() => ({ send: jest.fn(callback => callback(testError)) }))
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      const writableStream = await createS3WriteStream('example/key')
+
+    it('rejects the managed upload promise if an error occurs uploading', async () => {
+      AwsMock.S3.mockedMethods.upload.mockImplementationOnce(() => ({
+        promise: jest.fn(async () => {
+          throw new Error('Test error')
+        })
+      }))
+      const { s3WriteStream, managedUpload } = createS3WriteStream('example/key')
+      await expect(managedUpload).rejects.toThrow('Test error')
       expect(AwsMock.S3.mockedMethods.upload).toHaveBeenCalledWith({
         Bucket: 'testbucket',
         Key: 'example/key',
-        Body: expect.any(stream.PassThrough)
+        Body: s3WriteStream
       })
-      expect(writableStream.emit).toHaveBeenCalledWith('error', testError)
-      expect(consoleErrorSpy).toHaveBeenCalled()
     })
   })
 })
