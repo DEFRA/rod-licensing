@@ -14,9 +14,17 @@ import {
   NUMBER_OF_RODS,
   BENEFIT_CHECK,
   DATE_OF_BIRTH,
-  LICENCE_START_DATE
-  , RENEWAL_START_DATE
+  LICENCE_START_DATE,
+  RENEWAL_START_DATE
 } from '../../../uri.js'
+
+// Yay! The static code analysis must be obeyed. Make this function to lower the cyclic
+// complexity at the expense of readability.
+const checkPage = (p, status) => {
+  if (!status[p.page]) {
+    throw new GetDataRedirect(p.uri)
+  }
+}
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -29,13 +37,8 @@ const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary
      */
-    if (!status[LICENCE_LENGTH.page]) {
-      throw new GetDataRedirect(LICENCE_LENGTH.uri)
-    }
-
-    if (!status[LICENCE_TYPE.page]) {
-      throw new GetDataRedirect(LICENCE_TYPE.uri)
-    }
+    checkPage(LICENCE_LENGTH, status)
+    checkPage(LICENCE_TYPE, status)
 
     if (!permission.numberOfRods) {
       throw new GetDataRedirect(LICENCE_TYPE.uri)
@@ -45,9 +48,7 @@ const getData = async request => {
       throw new GetDataRedirect(LICENCE_TO_START.uri)
     }
 
-    if (!status[DATE_OF_BIRTH.page]) {
-      throw new GetDataRedirect(DATE_OF_BIRTH.uri)
-    }
+    checkPage(DATE_OF_BIRTH, status)
   }
 
   status.fromSummary = status.fromSummary || 'licence-summary'
