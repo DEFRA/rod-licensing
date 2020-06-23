@@ -4,6 +4,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../__mocks__/data/authentication-result.js'
 import moment from 'moment'
+import * as constants from '../../../../processors/mapping-constants.js'
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
@@ -59,14 +60,18 @@ describe('The easy renewal identification page', () => {
     await injectWithCookies('GET', VALID_IDENTIFY)
   })
 
-  it('redirects to the controller on posting a valid response', async () => {
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(authenticationResult)))
+  it.each([
+    ['email', constants.HOW_CONTACTED.email],
+    ['text', constants.HOW_CONTACTED.text],
+    ['none', constants.HOW_CONTACTED.none],
+    ['letter', constants.HOW_CONTACTED.letter]
+  ])('redirects to the controller on posting a valid response - (how contacted=%s)', async (name, fn) => {
+    const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     const data = await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(AUTHENTICATE.uri)
-
-    // TODO mock a correct authentication result ... setUpCacheFromAuthenticationResult
-
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(CONTROLLER.uri)

@@ -1,6 +1,6 @@
 import { LICENCE_SUMMARY, RENEWAL_START_DATE } from '../uri.js'
 import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
-import { dateFormats , PAGE_STATE } from '../constants.js'
+import { dateFormats, PAGE_STATE } from '../constants.js'
 import { errorShimm } from './page-handler.js'
 import Joi from '@hapi/joi'
 import moment from 'moment'
@@ -34,9 +34,17 @@ export default async (request, h) => {
 
   if (result.error) {
     await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, { payload, error: errorShimm(result.error) })
-    await request.cache().helpers.status.setCurrentPermission({ [RENEWAL_START_DATE.page]: PAGE_STATE.error, currentPage: RENEWAL_START_DATE.page })
+    await request
+      .cache()
+      .helpers.status.setCurrentPermission({ [RENEWAL_START_DATE.page]: PAGE_STATE.error, currentPage: RENEWAL_START_DATE.page })
     return h.redirect(RENEWAL_START_DATE.uri)
   } else {
+    permission.licenceStartDate = moment({
+      year: payload['licence-start-date-year'],
+      month: Number.parseInt(payload['licence-start-date-month']) - 1,
+      day: payload['licence-start-date-day']
+    }).format('YYYY-MM-DD')
+    await request.cache().helpers.transaction.setCurrentPermission(permission)
     return h.redirect(LICENCE_SUMMARY.uri)
   }
 }

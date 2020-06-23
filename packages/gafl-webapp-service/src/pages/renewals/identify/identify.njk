@@ -6,7 +6,7 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "error-summary.njk" import errorSummary %}
 
-{% set title = 'Renew an existing licence?' %}
+{% set title = 'Renew your rod fishing licence?' %}
 
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
@@ -66,10 +66,10 @@
             }) %}
 
                 <p class="govuk-body-l">To find your licence details we first need to identify you. This helps us protect you personal information.</p>
+                <h2 class="govuk-heading-m">Confirm your details</h2>
 
-                <div id="ref-ro" class="govuk-body-m">
-                    <span class="govuk-!-font-weight-bold">The licence number ending</span>
-                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.referenceNumber }}</span>
+                <div id="ref-ro" class="govuk-body-m govuk-!-padding-bottom-2">
+                    <span class="govuk-hint">For the licence number ending <span class="govuk-!-font-weight-bold">{{ data.referenceNumber }}</span></span>
                 </div>
 
                 {{ govukDateInput({
