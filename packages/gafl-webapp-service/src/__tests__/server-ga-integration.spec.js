@@ -22,9 +22,6 @@ describe('Server GA integration', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.resetModules() // this is important - it clears the cache
-    process.env = { ...OLD_ENV }
-    delete process.env.NODE_ENV
     createServer()
   })
 

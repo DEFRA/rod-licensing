@@ -29,3 +29,8 @@ export const GOVPAYFAIL = {
   prePaymentRetry: { step: 'pre-payment' },
   postPaymentRetry: { step: 'post-payment' }
 }
+
+export const UTM = {
+  CAMPAIGN: 'utm_campaign',
+  MEDIUM: 'utm_medium'
+}

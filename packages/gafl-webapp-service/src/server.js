@@ -93,7 +93,7 @@ const plugIns = [
     options: {
       propertySettings: [
         {
-          id: 'UA-124887477-9',
+          id: process.env.ANALYTICS_ID,
           hitTypes: ['pageview', 'event', 'ecommerce']
         }
       ],

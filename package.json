@@ -40,7 +40,7 @@
     "adal-node": "^0.2.1",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.1",
-    "dynamics-web-api": "^1.6.3",
+    "dynamics-web-api": "^1.6.4",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
     "jest-circus": "^26.0.1",
@@ -48,7 +48,7 @@
     "lerna": "^3.22.0",
     "lerna-changelog": "^1.0.1",
     "lerna-update-wizard": "^0.17.8",
-    "lint-staged": "^10.2.9",
+    "lint-staged": "^10.2.11",
     "prettier-standard": "^16.3.0",
     "standard": "^14.3.4"
   },
@@ -102,6 +102,7 @@
     ],
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
-    "silent": true
+    "silent": false,
+    "verbose": false
   }
 }
