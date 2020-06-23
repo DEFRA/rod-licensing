@@ -13,37 +13,41 @@ import {
   LICENCE_TO_START,
   NUMBER_OF_RODS,
   BENEFIT_CHECK,
-  DATE_OF_BIRTH
+  DATE_OF_BIRTH,
+  LICENCE_START_DATE,
+  RENEWAL_START_DATE
 } from '../../../uri.js'
+
+// Redirects back to page if incomplete
+const checkPageCompleted = (p, status) => {
+  if (!status[p.page]) {
+    throw new GetDataRedirect(p.uri)
+  }
+}
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  /*
-   * Before we try and filter the permit it is necessary to check that the user has navigated through
-   * the journey in such a way as to have gather all the required data. They have have manipulated the
-   * journey by typing into the address bar in which case they will be redirected back to the
-   * appropriate point in the journey
-   */
-  if (!status[LICENCE_LENGTH.page]) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
-  }
+  if (!status.renewal) {
+    /*
+     * Before we try and filter the permit it is necessary to check that the user has navigated through
+     * the journey in such a way as to have gather all the required data. They have have manipulated the
+     * journey by typing into the address bar in which case they will be redirected back to the
+     * appropriate point in the journey. For a renewal this is not necessary
+     */
+    checkPageCompleted(LICENCE_LENGTH, status)
+    checkPageCompleted(LICENCE_TYPE, status)
 
-  if (!status[LICENCE_TYPE.page]) {
-    throw new GetDataRedirect(LICENCE_TYPE.uri)
-  }
+    if (!permission.numberOfRods) {
+      throw new GetDataRedirect(LICENCE_TYPE.uri)
+    }
 
-  if (!permission.numberOfRods) {
-    throw new GetDataRedirect(LICENCE_TYPE.uri)
-  }
+    if (!permission.licenceStartDate) {
+      throw new GetDataRedirect(LICENCE_TO_START.uri)
+    }
 
-  if (!permission.licenceStartDate) {
-    throw new GetDataRedirect(LICENCE_TO_START.uri)
-  }
-
-  if (!status[DATE_OF_BIRTH.page]) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+    checkPageCompleted(DATE_OF_BIRTH, status)
   }
 
   status.fromSummary = status.fromSummary || 'licence-summary'
@@ -56,6 +60,9 @@ const getData = async request => {
   return {
     permission,
     startTimeString,
+    isRenewal: status.renewal,
+    isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
+    hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
     disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
     licenceTypes: mappings.LICENCE_TYPE,
     hasJunior: !!concessionHelper.hasJunior(permission),
@@ -68,7 +75,8 @@ const getData = async request => {
       numberOfRods: NUMBER_OF_RODS.uri,
       licenceToStart: LICENCE_TO_START.uri,
       dateOfBirth: DATE_OF_BIRTH.uri,
-      benefitCheck: BENEFIT_CHECK.uri
+      benefitCheck: BENEFIT_CHECK.uri,
+      licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_START_DATE.uri // Differing validation
     }
   }
 }
