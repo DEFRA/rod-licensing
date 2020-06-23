@@ -5,6 +5,7 @@ import { errorShimm } from './page-handler.js'
 import Joi from '@hapi/joi'
 import moment from 'moment'
 import JoiDate from '@hapi/joi-date'
+import { ageConcessionHelper } from '../processors/concession-helper.js'
 
 const JoiX = Joi.extend(JoiDate)
 /**
@@ -44,6 +45,7 @@ export default async (request, h) => {
       month: Number.parseInt(payload['licence-start-date-month']) - 1,
       day: payload['licence-start-date-day']
     }).format('YYYY-MM-DD')
+    ageConcessionHelper(permission)
     await request.cache().helpers.transaction.setCurrentPermission(permission)
     return h.redirect(LICENCE_SUMMARY.uri)
   }

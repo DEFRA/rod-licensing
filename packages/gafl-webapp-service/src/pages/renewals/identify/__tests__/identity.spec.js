@@ -1,10 +1,12 @@
-import { IDENTIFY, AUTHENTICATE, CONTROLLER } from '../../../../uri.js'
+import { IDENTIFY, AUTHENTICATE, CONTROLLER, LICENCE_SUMMARY, TEST_TRANSACTION } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../__mocks__/data/authentication-result.js'
 import moment from 'moment'
 import * as constants from '../../../../processors/mapping-constants.js'
+import { hasSenior } from '../../../../processors/concession-helper.js'
+
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
@@ -75,5 +77,19 @@ describe('The easy renewal identification page', () => {
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(CONTROLLER.uri)
+  })
+
+  it('that an adult licence holder who is now over 65 gets a senior concession', async () => {
+    const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.licensee.birthDate = moment()
+      .add(-65, 'years')
+      .add(-1, 'days')
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
+    await injectWithCookies('GET', AUTHENTICATE.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(hasSenior(JSON.parse(payload).permissions[0])).toBeTruthy()
   })
 })

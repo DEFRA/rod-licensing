@@ -14,6 +14,9 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../../identify/__mocks__/data/authentication-result.js'
 import moment from 'moment'
+import mockPermits from '../../../../__mocks__/data/permits.js'
+import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
+import mockConcessions from '../../../../__mocks__/data/concessions.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -29,6 +32,9 @@ const dobHelper = d => ({
 })
 
 jest.mock('@defra-fish/connectors-lib')
+salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
+salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
+salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
 
 describe('The easy renewal, change start date page', () => {
   beforeEach(async () => {

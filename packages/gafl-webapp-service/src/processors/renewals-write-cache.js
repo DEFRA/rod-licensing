@@ -1,8 +1,8 @@
 import moment from 'moment'
-import * as concessionHelper from './concession-helper.js'
 import db from 'debug'
 import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import * as constants from './mapping-constants.js'
+import { ageConcessionHelper, addDisabled } from './concession-helper.js'
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -20,29 +20,26 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceToStart = 'another-date-or-time'
   permission.licenceStartDate = moment(authenticationResult.permission.endDate).format('YYYY-MM-DD')
   permission.renewedEndDate = permission.licenceStartDate
-  permission.licensee = Object.assign((({
-    country,
-    preferredMethodOfConfirmation,
-    preferredMethodOfNewsletter,
-    preferredMethodOfReminder,
-    organisation,
-    ...l
-  }) => l)(authenticationResult.permission.licensee), {
-    countryCode: 'GB'
-  })
+  permission.licensee = Object.assign(
+    (({ country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, organisation, ...l }) => l)(
+      authenticationResult.permission.licensee
+    ),
+    {
+      countryCode: 'GB'
+    }
+  )
 
-  permission.licensee.preferredMethodOfNewsletter = authenticationResult
-    .permission.licensee.preferredMethodOfNewsletter.label
-  permission.licensee.preferredMethodOfConfirmation = authenticationResult
-    .permission.licensee.preferredMethodOfConfirmation.label
-  permission.licensee.preferredMethodOfReminder = authenticationResult
-    .permission.licensee.preferredMethodOfReminder.label
+  permission.licensee.preferredMethodOfNewsletter = authenticationResult.permission.licensee.preferredMethodOfNewsletter.label
+  permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label
+  permission.licensee.preferredMethodOfReminder = authenticationResult.permission.licensee.preferredMethodOfReminder.label
 
   // Add in concession proofs
   authenticationResult.permission.concessions.forEach(c => {
-    concessionHelper.addDisabled(permission, c.proofType.label, c.referenceNumber)
+    addDisabled(permission, c.proofType.label, c.referenceNumber)
   })
 
+  // Add appropriate age concessions
+  ageConcessionHelper(permission)
   await request.cache().helpers.transaction.setCurrentPermission(permission)
   await request.cache().helpers.status.setCurrentPermission({ renewal: true, fromSummary: 'contact-summary' })
 }
@@ -51,8 +48,7 @@ export const setUpPayloads = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   await request.cache().helpers.page.setCurrentPermission(LICENCE_TYPE.page, {
     payload: {
-      'licence-type': Object.entries(constants.LICENCE_TYPE)
-        .find(e => e[1] === permission.licenceType)[0]
+      'licence-type': Object.entries(constants.LICENCE_TYPE).find(e => e[1] === permission.licenceType)[0]
     }
   })
 
@@ -64,9 +60,13 @@ export const setUpPayloads = async request => {
 
   await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, {
     payload: {
-      'licence-start-date-day': moment(permission.licenceStartDate).date().toString(),
+      'licence-start-date-day': moment(permission.licenceStartDate)
+        .date()
+        .toString(),
       'licence-start-date-month': (moment(permission.licenceStartDate).month() + 1).toString(),
-      'licence-start-date-year': moment(permission.licenceStartDate).year().toString()
+      'licence-start-date-year': moment(permission.licenceStartDate)
+        .year()
+        .toString()
     }
   })
 

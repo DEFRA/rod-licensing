@@ -18,9 +18,8 @@ import {
   RENEWAL_START_DATE
 } from '../../../uri.js'
 
-// Yay! The static code analysis must be obeyed. Make this function to lower the cyclic
-// complexity at the expense of readability.
-const checkPage = (p, status) => {
+// Redirects back to page if incomplete
+const checkPageCompleted = (p, status) => {
   if (!status[p.page]) {
     throw new GetDataRedirect(p.uri)
   }
@@ -37,8 +36,8 @@ const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary
      */
-    checkPage(LICENCE_LENGTH, status)
-    checkPage(LICENCE_TYPE, status)
+    checkPageCompleted(LICENCE_LENGTH, status)
+    checkPageCompleted(LICENCE_TYPE, status)
 
     if (!permission.numberOfRods) {
       throw new GetDataRedirect(LICENCE_TYPE.uri)
@@ -48,7 +47,7 @@ const getData = async request => {
       throw new GetDataRedirect(LICENCE_TO_START.uri)
     }
 
-    checkPage(DATE_OF_BIRTH, status)
+    checkPageCompleted(DATE_OF_BIRTH, status)
   }
 
   status.fromSummary = status.fromSummary || 'licence-summary'
