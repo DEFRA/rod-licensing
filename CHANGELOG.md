@@ -1,110 +1,127 @@
-
 ## Unreleased (2020-06-23)
 
 #### :rocket: Enhancement
-* `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`
-  * [#199](https://github.com/DEFRA/rod-licensing/pull/199) Add support for easy renewals to the web journey ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+- `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`
+  - [#199](https://github.com/DEFRA/rod-licensing/pull/199) Add support for easy renewals to the web journey ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### Committers: 1
+
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 
 ## Unreleased (2020-06-23)
 
 #### :rocket: Enhancement
-* `fulfilment-job`
-  * [#200](https://github.com/DEFRA/rod-licensing/pull/200) Ensure errors uploading fulfilment data to S3 and FTP are properly trapped ([@sgardnerdell](https://github.com/sgardnerdell))
-* Other
-  * [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- `fulfilment-job`
+  - [#200](https://github.com/DEFRA/rod-licensing/pull/200) Ensure errors uploading fulfilment data to S3 and FTP are properly trapped ([@sgardnerdell](https://github.com/sgardnerdell))
+- Other
+  - [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
+
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## Unreleased (2020-06-23)
 
 #### :rocket: Enhancement
-* [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
+
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## Unreleased (2020-06-22)
 
 #### :rocket: Enhancement
-* [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
-- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
-
-
-## Unreleased (2020-06-22)
-
-#### :rocket: Enhancement
-* `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
-  * [#196](https://github.com/DEFRA/rod-licensing/pull/196) Remove jest-each as this is natively supported by jest ([@sgardnerdell](https://github.com/sgardnerdell))
-
-#### Committers: 1
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## Unreleased (2020-06-22)
 
 #### :rocket: Enhancement
-* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`
-  * [#191](https://github.com/DEFRA/rod-licensing/pull/191) Implement fulfilment processor ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  - [#196](https://github.com/DEFRA/rod-licensing/pull/196) Remove jest-each as this is natively supported by jest ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
+
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+
+- `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`
+  - [#191](https://github.com/DEFRA/rod-licensing/pull/191) Implement fulfilment processor ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## Unreleased (2020-06-16)
 
 #### :bug: Bug Fix
-* `gafl-webapp-service`
-  * [#189](https://github.com/DEFRA/rod-licensing/pull/189) Static files failing to serve ([@jaucourt](https://github.com/jaucourt))
+
+- `gafl-webapp-service`
+  - [#189](https://github.com/DEFRA/rod-licensing/pull/189) Static files failing to serve ([@jaucourt](https://github.com/jaucourt))
 
 #### Committers: 1
+
 - Phil Benson ([@jaucourt](https://github.com/jaucourt))
 
 ## Unreleased (2020-06-15)
 
 #### :rocket: Enhancement
-* `gafl-webapp-service`
-  * [#188](https://github.com/DEFRA/rod-licensing/pull/188) Moved dob to licence summary and update contact preferences to reflect latest design ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+- `gafl-webapp-service`
+  - [#188](https://github.com/DEFRA/rod-licensing/pull/188) Moved dob to licence summary and update contact preferences to reflect latest design ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### Committers: 1
+
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 
 ## Unreleased (2020-06-12)
 
 #### :rocket: Enhancement
-* `payment-mop-up-job`
-  * [#182](https://github.com/DEFRA/rod-licensing/pull/182) Add docker support to the payment mopup service ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+- `payment-mop-up-job`
+  - [#182](https://github.com/DEFRA/rod-licensing/pull/182) Add docker support to the payment mopup service ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### :bug: Bug Fix
-* [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 2
+
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## Unreleased (2020-06-11)
 
 #### :bug: Bug Fix
-* [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
+
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## Unreleased (2020-06-11)
 
 #### :rocket: Enhancement
-* `gafl-webapp-service`
-  * [#180](https://github.com/DEFRA/rod-licensing/pull/180) Various display changes documented in IWTF-1104 ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+- `gafl-webapp-service`
+  - [#180](https://github.com/DEFRA/rod-licensing/pull/180) Various display changes documented in IWTF-1104 ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### Committers: 1
+
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
-
-
-
 
 ## v0.0.1-beta.40 (2020-06-09)
 
