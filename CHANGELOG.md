@@ -2,6 +2,17 @@
 ## Unreleased (2020-06-23)
 
 #### :rocket: Enhancement
+* `fulfilment-job`
+  * [#200](https://github.com/DEFRA/rod-licensing/pull/200) Ensure errors uploading fulfilment data to S3 and FTP are properly trapped ([@sgardnerdell](https://github.com/sgardnerdell))
+* Other
+  * [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-23)
+
+#### :rocket: Enhancement
 * [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
