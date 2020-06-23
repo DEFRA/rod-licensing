@@ -20,7 +20,8 @@ import {
   REDIS_PORT_DEFAULT,
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT,
-  FEEDBACK_URI_DEFAULT
+  FEEDBACK_URI_DEFAULT,
+  UTM
 } from './constants.js'
 import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
 
@@ -99,8 +100,8 @@ const plugIns = [
       ],
       sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
       attributionProducer: request => ({
-        campaign: request.query.utm_campaign,
-        medium: request.query.utm_medium
+        campaign: request.cache().helpers.status.get()[UTM.CAMPAIGN],
+        medium: request.cache().helpers.status.get()[UTM.MEDIUM]
       }),
       batchSize: 20,
       batchInterval: 15000

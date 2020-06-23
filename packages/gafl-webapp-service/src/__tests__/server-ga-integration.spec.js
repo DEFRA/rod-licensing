@@ -1,6 +1,7 @@
 import HapiGapi from 'hapi-gapi'
 import Hapi from '@hapi/hapi'
 import { createServer, init } from '../server.js'
+import { UTM } from '../constants'
 
 jest.mock('@hapi/hapi', () => ({
   server: jest.fn(() => ({
@@ -15,6 +16,13 @@ jest.mock('@hapi/hapi', () => ({
     state: () => {},
     views: () => {}
   }))
+}))
+
+jest.mock('../constants', () => ({
+  UTM: {
+    CAMPAIGN: 'utmcampaign',
+    MEDIUM: 'utmmedium'
+  }
 }))
 
 describe('Server GA integration', () => {
@@ -51,18 +59,20 @@ describe('Server GA integration', () => {
     expect(hapiGapiPlugin.options.sessionIdProducer()).toBe(cookieName)
   })
 
-  it('gets campaign utm_medium attribute from querystring', async () => {
-    const fakeRequest = { query: { utm_medium: 'banner' } }
+  it('gets campaign utm_medium attribute from session', async () => {
+    const medium = 'banner'
+    const request = generateRequestMock({ [UTM.MEDIUM]: medium })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.attributionProducer(fakeRequest).medium).toBe(fakeRequest.query.utm_medium)
+    expect(hapiGapiPlugin.options.attributionProducer(request).medium).toBe(medium)
   })
 
   it('gets campaign utm_medium attribute from querystring', async () => {
-    const fakeRequest = { query: { utm_campaign: 'campaign-99' } }
+    const campaign = 'campaign-99'
+    const request = generateRequestMock({ [UTM.CAMPAIGN]: campaign })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.attributionProducer(fakeRequest).campaign).toBe(fakeRequest.query.utm_campaign)
+    expect(hapiGapiPlugin.options.attributionProducer(request).campaign).toBe(campaign)
   })
 
   const getHapiGapiPlugin = () => {
@@ -70,4 +80,15 @@ describe('Server GA integration', () => {
     const [plugins] = mockServer.register.mock.calls[0]
     return plugins.find(p => p.plugin === HapiGapi)
   }
+
+  const generateRequestMock = (status = {}) => ({
+    cache: jest.fn(() => ({
+      helpers: {
+        status: {
+          get: jest.fn(() => status),
+          set: jest.fn()
+        }
+      }
+    }))
+  })
 })
