@@ -30,37 +30,37 @@ describe('Server GA integration', () => {
   })
 
   it('registers HapiGapi plugin', async () => {
-    init()
+    await init()
     expect(getHapiGapiPlugin()).not.toBeUndefined()
   })
 
-  it('passes sessionIdProducer that gets session id from process.env', () => {
+  it('passes sessionIdProducer that gets session id from process.env', async () => {
     const cookieName = 'Bourbon-1272'
     process.env.SESSION_COOKIE_NAME = cookieName
-    init()
+    await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(hapiGapiPlugin.options.sessionIdProducer()).toBe(cookieName)
   })
 
-  it('if session cookie hasn\'t been set, use default value for sessionIdProducer', () => {
+  it('if session cookie hasn\'t been set, use default value for sessionIdProducer', async () => {
     const cookieName = 'Garibaldi-1807'
     delete process.env.SESSION_COOKIE_NAME
     process.env.SESSION_COOKIE_NAME_DEFAULT = cookieName
-    init()
+    await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(hapiGapiPlugin.options.sessionIdProducer()).toBe(cookieName)
   })
 
-  it('gets campaign utm_medium attribute from querystring', () => {
+  it('gets campaign utm_medium attribute from querystring', async () => {
     const fakeRequest = { query: { utm_medium: 'banner' } }
-    init()
+    await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(hapiGapiPlugin.options.attributionProducer(fakeRequest).medium).toBe(fakeRequest.query.utm_medium)
   })
 
-  it('gets campaign utm_medium attribute from querystring', () => {
+  it('gets campaign utm_medium attribute from querystring', async () => {
     const fakeRequest = { query: { utm_campaign: 'campaign-99' } }
-    init()
+    await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(hapiGapiPlugin.options.attributionProducer(fakeRequest).campaign).toBe(fakeRequest.query.utm_campaign)
   })
