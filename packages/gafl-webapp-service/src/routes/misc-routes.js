@@ -8,7 +8,9 @@ import {
   PRIVACY_POLICY,
   REFUND_POLICY,
   AUTHENTICATE,
-  RENEWAL_START_VALIDATE
+  RENEWAL_START_VALIDATE,
+  RENEWAL_PUBLIC,
+  IDENTIFY
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
@@ -34,6 +36,11 @@ export default [
     method: 'GET',
     path: AUTHENTICATE.uri,
     handler: authenticationHandler
+  },
+  {
+    method: 'GET',
+    path: RENEWAL_PUBLIC.uri,
+    handler: async (request, h) => h.redirect(IDENTIFY.uri.replace('{referenceNumber}', request.params.referenceNumber))
   },
   {
     method: 'GET',
