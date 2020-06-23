@@ -1,3 +1,12 @@
+
+## Unreleased (2020-06-23)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#201](https://github.com/DEFRA/rod-licensing/pull/201) Add test coverage for easy renewals /renew redirect handler ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
 ## Unreleased (2020-06-23)
 
 #### :rocket: Enhancement
