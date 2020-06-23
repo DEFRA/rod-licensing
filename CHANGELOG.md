@@ -2,6 +2,15 @@
 ## Unreleased (2020-06-23)
 
 #### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`
+  * [#199](https://github.com/DEFRA/rod-licensing/pull/199) Add support for easy renewals to the web journey ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
+## Unreleased (2020-06-23)
+
+#### :rocket: Enhancement
 * `fulfilment-job`
   * [#200](https://github.com/DEFRA/rod-licensing/pull/200) Ensure errors uploading fulfilment data to S3 and FTP are properly trapped ([@sgardnerdell](https://github.com/sgardnerdell))
 * Other
