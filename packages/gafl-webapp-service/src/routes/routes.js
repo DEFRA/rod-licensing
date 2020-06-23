@@ -29,6 +29,9 @@ import orderCompletePdf from '../pages/order-complete/pdf-route.js'
 import paymentCancelled from '../pages/payment/cancelled/route.js'
 import paymentFailed from '../pages/payment/failed/route.js'
 
+import identify from '../pages/renewals/identify/route.js'
+import renewalStartDate from '../pages/renewals/renewal-start-date/route.js'
+
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
 
@@ -60,6 +63,8 @@ const routes = [
   ...paymentCancelled,
   ...paymentFailed,
   ...orderComplete,
+  ...identify,
+  ...renewalStartDate,
   orderCompletePdf
 ]
 

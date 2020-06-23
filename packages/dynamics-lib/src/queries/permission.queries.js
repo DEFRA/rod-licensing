@@ -18,5 +18,5 @@ export const permissionForLicensee = (permissionReferenceNumber, licenseeBirthDa
   )}'`
   filter += ` and ${licensee.property}/${licensee.entity.definition.mappings.birthDate.field} eq ${licenseeBirthDate}`
   filter += ` and ${Permission.definition.defaultFilter}`
-  return new PredefinedQuery({ root: Permission, filter: filter, expands: [licensee, permit, concessionProofs] })
+  return new PredefinedQuery({ root: Permission, filter: filter, expand: [licensee, permit, concessionProofs] })
 }

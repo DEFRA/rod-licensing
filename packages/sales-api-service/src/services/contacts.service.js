@@ -14,6 +14,7 @@ const debug = db('sales:transformers')
  * @property {!string} birthDate The date of birth for the contact
  * @property {string} email The email address of the contact
  * @property {string} mobilePhone The mobile phone number of the contact
+ * @property {string} organisation The organisation for the contact's address
  * @property {!string} premises The premises for the contact's address
  * @property {string} street The street for the contact's address
  * @property {string} locality The locality for the contact's address

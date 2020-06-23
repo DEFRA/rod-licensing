@@ -6,3 +6,12 @@ export const createPermissionNumberValidator = joi =>
     .required()
     .description('The permission reference number')
     .example('17030621-3WC3FFT-U6HLG9')
+
+export const permissionNumberUniqueComponentValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .pattern(/^[A-HJ-NP-Z0-9]{6}$/)
+    .required()
+    .description('The unqiue part of the permission reference number')
+    .example('U6HLG9')

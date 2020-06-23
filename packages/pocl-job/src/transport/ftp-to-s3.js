@@ -56,7 +56,7 @@ const retrieveAllFiles = async xmlFiles => {
 
   for (const fileEntry of xmlFiles) {
     const filename = fileEntry.name
-    const remoteFilePath = Path.resolve(process.env.POCL_FTP_PATH, filename)
+    const remoteFilePath = Path.join(process.env.POCL_FTP_PATH, filename)
     const localFilePath = Path.resolve(tempDir, filename)
 
     // Retrieve from FTP server to local temporary directory

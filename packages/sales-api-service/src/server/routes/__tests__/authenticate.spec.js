@@ -28,10 +28,12 @@ describe('authenticate handler', () => {
     it('authenticates a renewal request', async () => {
       executeQuery.mockResolvedValueOnce([
         {
-          permission: MOCK_EXISTING_PERMISSION_ENTITY,
-          licensee: MOCK_EXISTING_CONTACT_ENTITY,
-          concessionProofs: [MOCK_CONCESSION_PROOF_ENTITY],
-          permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY
+          entity: MOCK_EXISTING_PERMISSION_ENTITY,
+          expanded: {
+            licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+            concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: {} }],
+            permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+          }
         }
       ])
       const result = await server.inject({

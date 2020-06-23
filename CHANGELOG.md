@@ -1,4 +1,60 @@
 
+## Unreleased (2020-06-23)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`
+  * [#199](https://github.com/DEFRA/rod-licensing/pull/199) Add support for easy renewals to the web journey ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
+## Unreleased (2020-06-23)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#200](https://github.com/DEFRA/rod-licensing/pull/200) Ensure errors uploading fulfilment data to S3 and FTP are properly trapped ([@sgardnerdell](https://github.com/sgardnerdell))
+* Other
+  * [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-23)
+
+#### :rocket: Enhancement
+* [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+* [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
+
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  * [#196](https://github.com/DEFRA/rod-licensing/pull/196) Remove jest-each as this is natively supported by jest ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## Unreleased (2020-06-22)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`
+  * [#191](https://github.com/DEFRA/rod-licensing/pull/191) Implement fulfilment processor ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## Unreleased (2020-06-16)
 
 #### :bug: Bug Fix

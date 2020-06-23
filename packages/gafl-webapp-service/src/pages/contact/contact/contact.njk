@@ -72,7 +72,7 @@
     <div id="email-ro" class="govuk-body-m initially-hidden">
         Email address</br>
         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
-            &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">Change</a>
         </span>
     </div>
 {% endset -%}
@@ -101,7 +101,7 @@
      <div id="text-ro" class="govuk-body-m initially-hidden">
          Mobile phone number</br>
          <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
-             &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">Change</a>
          </span>
      </div>
 {% endset -%}
@@ -111,7 +111,7 @@
 {% endset -%}
 
 {% block pageContent %}
-    <p class="govuk-body-m">{{ insetText | safe }}</p>
+    <p class="govuk-body-l">{{ insetText | safe }}</p>
 
     {{ govukRadios({
       idPrefix: "how-contacted",
@@ -165,7 +165,7 @@
             document.getElementById("email-ro").style.display = "none"
             document.getElementById("email-rw").style.display = "block"
         }
-        document.getElementById("change").addEventListener("click", function () {
+        document.getElementById("change-email").addEventListener("click", function () {
             document.getElementById("email-ro").style.display = "none"
             document.getElementById("email-rw").style.display = "block"
         })
@@ -178,7 +178,7 @@
                 document.getElementById("text-ro").style.display = "none"
                 document.getElementById("text-rw").style.display = "block"
             }
-            document.getElementById("change").addEventListener("click", function () {
+            document.getElementById("change-text").addEventListener("click", function () {
                 document.getElementById("text-ro").style.display = "none"
                 document.getElementById("text-rw").style.display = "block"
             })

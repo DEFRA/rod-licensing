@@ -8,31 +8,22 @@ import GetDataRedirect from './get-data-redirect.js'
  * @param e
  * @returns {{}}
  */
-const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
+export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: c.type }), {})
 
 /**
- * Calculate the back reference. It is
- * (1) Null if no page has completed
- * (2) The page before the current page if this page has been completed before
- * (3) The last page completed if this page has not been completed
+ * Keeps a previous and current pages
  * @param request
  * @param path
  * @param pageData
  * @returns {Promise<void>}
  */
-const getBackReference = async (request, path) => {
-  let result = null
+const getBackReference = async (request) => {
   const status = await request.cache().helpers.status.getCurrentPermission()
-  if (status.pageStack) {
-    const psIdx = status.pageStack.findIndex(s => path === s)
-    if (psIdx === -1) {
-      result = status.pageStack[status.pageStack.length - 1]
-    } else {
-      result = status.pageStack[psIdx - 1]
-    }
-  }
-
-  return result
+  status.backRef = status.backRef || { current: null }
+  status.backRef.previous = status.backRef.current
+  status.backRef.current = request.path
+  await request.cache().helpers.status.setCurrentPermission(status)
+  return status.backRef.previous
 }
 
 /**
@@ -69,7 +60,7 @@ export default (path, view, completion, getData) => ({
     }
 
     // Calculate the back reference and add to page
-    pageData.backRef = await getBackReference(request, path)
+    pageData.backRef = await getBackReference(request)
     return h.view(view, pageData)
   },
   /**
@@ -81,10 +72,6 @@ export default (path, view, completion, getData) => ({
   post: async (request, h) => {
     await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload })
     const status = await request.cache().helpers.status.getCurrentPermission()
-    status.pageStack = status.pageStack || []
-    if (!status.pageStack.find(s => path === s)) {
-      status.pageStack.push(path)
-    }
     status.currentPage = view
     status[view] = PAGE_STATE.completed
     await request.cache().helpers.status.setCurrentPermission(status)
@@ -101,7 +88,7 @@ export default (path, view, completion, getData) => ({
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
-      return h.redirect(path).takeover()
+      return h.redirect(request.path).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {

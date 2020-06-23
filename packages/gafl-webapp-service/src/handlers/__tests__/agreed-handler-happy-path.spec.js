@@ -1,5 +1,4 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
-import each from 'jest-each'
 import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils'
 
 import {
@@ -43,11 +42,11 @@ describe('The agreed handler', () => {
     expect(data.statusCode).toBe(403)
   })
 
-  each([
+  it.each([
     ['adult full 1 day licence', ADULT_FULL_1_DAY_LICENCE],
     ['adult disabled 12 month licence', ADULT_DISABLED_12_MONTH_LICENCE],
     ['senior 12 month licence', SENIOR_12_MONTH_LICENCE]
-  ]).it('processes the series of steps necessary to complete a successful payment journey - %s', async (desc, journey) => {
+  ])('processes the series of steps necessary to complete a successful payment journey - %s', async (desc, journey) => {
     await journey.setup()
 
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(journey.transActionResponse)))

@@ -19,20 +19,3 @@ export function config () {
 }
 
 export const dynamicsClient = new DynamicsWebApi(config())
-
-// /**
-//  * Retrieve all pages calling onPageCallback for each response.
-//  *
-//  * @param request as per DynamicsWebApi.retrieveMultipleRequest
-//  * @param onPageCallback - called for each page returned
-//  * @param maxPages optional - limit the number of pages retrieved
-//  * @returns {Promise<void>}
-//  */
-// module.exports.retrieveAllPages = async function (request, onPageCallback, maxPages = null) {
-//   let nextLink = null
-//   do {
-//     const response = await dynamicsWebApi.retrieveMultipleRequest(request, nextLink)
-//     nextLink = response.oDataNextLink
-//     onPageCallback(response)
-//   } while (nextLink && (maxPages === null || --maxPages > 0))
-// }

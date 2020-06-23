@@ -1,6 +1,5 @@
 import { Transaction } from './bindings/pocl/transaction/transaction.bindings.js'
 import SaxStream from 'sax-stream'
-import through2 from 'through2'
 import stream from 'stream'
 import util from 'util'
 import fs from 'fs'
@@ -17,14 +16,16 @@ export const transform = async (xmlFilePath, ...writableStream) => {
   await pipeline([
     fs.createReadStream(xmlFilePath),
     SaxStream({ highWaterMark: 25, strict: true, trim: true, normalize: true, xmlns: false, tag: Transaction.element }),
-    through2.obj(async function (data, enc, cb) {
-      try {
-        cb(null, await Transaction.transform(data))
-      } catch (e) {
-        console.error('Error processing POCL transaction', e, data)
-        cb(e)
+    async function * (source) {
+      for await (const data of source) {
+        try {
+          yield await Transaction.transform(data)
+        } catch (e) {
+          console.error('Error processing POCL transaction', e, data)
+          throw e
+        }
       }
-    }),
+    },
     ...writableStream
   ])
 }

@@ -1,5 +1,4 @@
 import * as salesApi from '../sales-api-connector.js'
-import each from 'jest-each'
 import fetch from 'node-fetch'
 
 jest.mock('node-fetch')
@@ -349,7 +348,7 @@ describe('sales-api-connector', () => {
   })
 
   describe('query endpoints', () => {
-    each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals']).describe(
+    describe.each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals'])(
       'allows %s to be queried with different methods',
       endpoint => {
         it('retrieves all items using .getAll()', async () => {
@@ -439,6 +438,22 @@ describe('sales-api-connector', () => {
         headers: expect.any(Object),
         timeout: 20000
       })
+    })
+  })
+
+  describe('authentication', () => {
+    it('retrieves all items using .getAll()', async () => {
+      const expectedResponse = { foo: 'bar' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', json: async () => expectedResponse })
+      await expect(salesApi.authenticate('AAAAAA', '1980-03-02', 'BS9 4PT')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/authenticate/renewal/AAAAAA?licenseeBirthDate=1980-03-02&licenseePostcode=BS9%204PT',
+        {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        }
+      )
     })
   })
 })

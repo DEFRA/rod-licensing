@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/business-rules-lib",
-  "version": "0.0.1-beta.42",
+  "version": "0.0.1-beta.53",
   "description": "Shared business rules for the rod licensing digital services",
   "type": "module",
   "engines": {
@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "moment": "^2.26.0",
+    "moment": "^2.27.0",
     "uuid": "^8.1.0"
   }
 }
