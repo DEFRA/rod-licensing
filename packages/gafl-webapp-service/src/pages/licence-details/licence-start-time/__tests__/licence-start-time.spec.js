@@ -1,6 +1,5 @@
 import { LICENCE_START_TIME, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
-import each from 'jest-each'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -24,7 +23,7 @@ describe('The licence start time page', () => {
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_START_TIME.uri)
   })
-  each([
+  it.each([
     ['Midnight', '0'],
     ['1am', '1'],
     ['2am', '2'],
@@ -49,7 +48,7 @@ describe('The licence start time page', () => {
     ['9pm', '21'],
     ['10pm', '22'],
     ['11pm', '23']
-  ]).it('stores the transaction on successful submission of %s', async (desc, code) => {
+  ])('stores the transaction on successful submission of %s', async (desc, code) => {
     const data = await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': code })
 
     expect(data.statusCode).toBe(302)
