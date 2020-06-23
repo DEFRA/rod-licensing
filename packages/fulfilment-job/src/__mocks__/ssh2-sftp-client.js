@@ -1,7 +1,7 @@
 const ssh2sftpClient = jest.genMockFromModule('ssh2-sftp-client')
 
 export const mockedFtpMethods = {
-  connect: jest.fn(),
+  connect: jest.fn(async () => {}),
   put: jest.fn(async () => {}),
   end: jest.fn()
 }

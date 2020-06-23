@@ -19,9 +19,10 @@ describe('ftp', () => {
 
   describe('createFtpWriteStream', () => {
     it('creates a stream to write to the configured FTP server', async () => {
-      const ftpWriteStream = await createFtpWriteStream('testfile.json')
+      const { ftpWriteStream, managedUpload } = createFtpWriteStream('testfile.json')
       ftpWriteStream.write('Some data')
       ftpWriteStream.end()
+      await managedUpload
       expect(mockedFtpMethods.connect).toHaveBeenCalledWith(
         expect.objectContaining({
           host: 'testhost',
@@ -35,16 +36,14 @@ describe('ftp', () => {
         encoding: 'UTF-8',
         autoClose: false
       })
-      // Allow some time for the sftp promise to resolve itself
-      await new Promise(resolve => setTimeout(resolve, 100))
       expect(mockedFtpMethods.end).toHaveBeenCalled()
     })
 
-    it('emits an error to the stream if an FTP upload error occurs', async () => {
+    it('rejects the managed upload promise if an FTP upload error occurs', async () => {
       const testError = new Error('Test error')
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       mockedFtpMethods.put.mockImplementationOnce(() => Promise.reject(testError))
-      const ftpWriteStream = await createFtpWriteStream('testfile.json')
+      const { ftpWriteStream, managedUpload } = createFtpWriteStream('testfile.json')
+      await expect(managedUpload).rejects.toThrow('Test error')
       expect(mockedFtpMethods.connect).toHaveBeenCalledWith(
         expect.objectContaining({
           host: 'testhost',
@@ -58,10 +57,6 @@ describe('ftp', () => {
         encoding: 'UTF-8',
         autoClose: false
       })
-      // Allow some time for the sftp promise to resolve itself
-      await new Promise(resolve => setTimeout(resolve, 100))
-      expect(ftpWriteStream.emit).toHaveBeenCalledWith('error', testError)
-      expect(consoleErrorSpy).toHaveBeenCalled()
       expect(mockedFtpMethods.end).toHaveBeenCalled()
     })
   })

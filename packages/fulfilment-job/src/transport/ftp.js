@@ -1,6 +1,6 @@
 import FtpClient from 'ssh2-sftp-client'
 import Path from 'path'
-import stream from 'stream'
+import { PassThrough } from 'stream'
 import db from 'debug'
 import { SFTP_KEY_EXCHANGE_ALGORITHMS, SFTP_CIPHERS } from './constants.js'
 import config from '../config.js'
@@ -17,20 +17,22 @@ const ftpCfg = {
   debug: db('fulfilment:ftp')
 }
 
-export const createFtpWriteStream = async filename => {
+/**
+ * Create a stream to write to the configured FTP server
+ *
+ * @param {string} filename The name of the file to be written to the remote server
+ * @returns {{ftpWriteStream: module:stream.internal.PassThrough, managedUpload: Promise<*>}}
+ */
+export const createFtpWriteStream = filename => {
   const sftp = new FtpClient()
-  const passThrough = new stream.PassThrough()
+  const passThrough = new PassThrough()
   const remoteFilePath = Path.join(config.ftp.path, filename)
-  await sftp.connect(ftpCfg)
-  sftp
-    .put(passThrough, remoteFilePath, { flags: 'w', encoding: 'UTF-8', autoClose: false })
-    .then(() => {
-      debug('File successfully uploaded to provider at sftp://%s:%s%s', ftpCfg.host, ftpCfg.port, remoteFilePath)
-    })
-    .catch(err => {
-      console.error(err)
-      passThrough.emit('error', err)
-    })
-    .finally(async () => sftp.end())
-  return passThrough
+  return {
+    ftpWriteStream: passThrough,
+    managedUpload: sftp
+      .connect(ftpCfg)
+      .then(() => sftp.put(passThrough, remoteFilePath, { flags: 'w', encoding: 'UTF-8', autoClose: false }))
+      .then(() => debug('File successfully uploaded to fulfilment provider at sftp://%s:%s%s', ftpCfg.host, ftpCfg.port, remoteFilePath))
+      .finally(() => sftp.end())
+  }
 }
