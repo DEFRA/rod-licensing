@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/DEFRA/rod-licensing.svg?branch=master)](https://travis-ci.org/DEFRA/rod-licensing)
+[![Build Status](https://api.travis-ci.com/DEFRA/rod-licensing.svg?branch=master)](https://travis-ci.com/DEFRA/rod-licensing)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licensing&metric=alert_status)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licensing)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licensing&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licensing)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_rod-licensing&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=DEFRA_rod-licensing)
