@@ -25,6 +25,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
     preferredMethodOfConfirmation,
     preferredMethodOfNewsletter,
     preferredMethodOfReminder,
+    organisation,
     ...l
   }) => l)(authenticationResult.permission.licensee), {
     countryCode: 'GB'
