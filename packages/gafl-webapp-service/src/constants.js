@@ -28,3 +28,10 @@ export const GOVPAYFAIL = {
 }
 
 export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
+
+export const CommonResults = {
+  SUMMARY: 'summary',
+  OK: 'ok',
+  NO: 'no',
+  YES: 'yes'
+}

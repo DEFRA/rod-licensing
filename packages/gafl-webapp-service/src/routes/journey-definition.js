@@ -27,11 +27,18 @@ import {
   IDENTIFY
 } from '../uri.js'
 
+import { CommonResults } from '../constants.js'
+import { dateOfBirthResults } from '../pages/concessions/date-of-birth/result-function.js'
+import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
+import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
+import { licenceStartDate } from '../pages/licence-details/licence-start-date/result-function.js'
+import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
+
 export default [
   {
     currentPage: 'start',
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_LENGTH.uri
       }
     }
@@ -40,10 +47,10 @@ export default [
   {
     currentPage: LICENCE_LENGTH.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_TYPE.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -52,16 +59,16 @@ export default [
   {
     currentPage: LICENCE_TYPE.page,
     nextPage: {
-      troutAndCoarse: {
+      [licenceTypeResults.TROUT_AND_COARSE]: {
         page: NUMBER_OF_RODS.uri
       },
-      troutAndCoarseTwoRod: {
+      [licenceTypeResults.TROUT_AND_COARSE_2_ROD]: {
         page: LICENCE_TO_START.uri
       },
-      salmonAndSeaTrout: {
+      [licenceTypeResults.SALMON_AND_SEA_TROUT]: {
         page: LICENCE_TO_START.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -70,10 +77,10 @@ export default [
   {
     currentPage: NUMBER_OF_RODS.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_TO_START.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -82,13 +89,13 @@ export default [
   {
     currentPage: LICENCE_TO_START.page,
     nextPage: {
-      afterPayment: {
+      [licenceToStartResults.AFTER_PAYMENT]: {
         page: DATE_OF_BIRTH.uri
       },
-      anotherDateOrTime: {
+      [licenceToStartResults.ANOTHER_DATE_OR_TIME]: {
         page: LICENCE_START_DATE.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -97,13 +104,13 @@ export default [
   {
     currentPage: LICENCE_START_DATE.page,
     nextPage: {
-      andStartTime: {
+      [licenceStartDate.AND_START_TIME]: {
         page: LICENCE_START_TIME.uri
       },
-      andContinue: {
+      [licenceStartDate.AND_CONTINUE]: {
         page: DATE_OF_BIRTH.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -112,10 +119,10 @@ export default [
   {
     currentPage: LICENCE_START_TIME.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: DATE_OF_BIRTH.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -124,22 +131,28 @@ export default [
   {
     currentPage: DATE_OF_BIRTH.page,
     nextPage: {
-      adult: {
+      [dateOfBirthResults.ADULT]: {
         page: BENEFIT_CHECK.uri
       },
-      adultNoBenefitCheck: {
-        page: LICENCE_SUMMARY.uri
+      [dateOfBirthResults.SENIOR]: {
+        page: BENEFIT_CHECK.uri
       },
-      junior: {
+      [dateOfBirthResults.JUNIOR]: {
         page: JUNIOR_LICENCE.uri
       },
-      senior: {
+      [dateOfBirthResults.ADULT_NO_BENEFIT]: {
         page: LICENCE_SUMMARY.uri
       },
-      noLicenceRequired: {
+      [dateOfBirthResults.SENIOR_NO_BENEFIT]: {
+        page: LICENCE_SUMMARY.uri
+      },
+      [dateOfBirthResults.JUNIOR_NO_BENEFIT]: {
+        page: JUNIOR_LICENCE.uri
+      },
+      [dateOfBirthResults.NO_LICENCE_REQUIRED]: {
         page: NO_LICENCE_REQUIRED.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -148,10 +161,10 @@ export default [
   {
     currentPage: JUNIOR_LICENCE.page,
     nextPage: {
-      ok: {
-        page: LICENCE_SUMMARY.uri
+      [CommonResults.OK]: {
+        page: BENEFIT_CHECK.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -160,10 +173,10 @@ export default [
   {
     currentPage: BENEFIT_CHECK.page,
     nextPage: {
-      no: {
+      [CommonResults.NO]: {
         page: BLUE_BADGE_CHECK.uri
       },
-      yes: {
+      [CommonResults.YES]: {
         page: BENEFIT_NI_NUMBER.uri
       }
     }
@@ -172,10 +185,10 @@ export default [
   {
     currentPage: BENEFIT_NI_NUMBER.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_SUMMARY.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -184,13 +197,13 @@ export default [
   {
     currentPage: BLUE_BADGE_CHECK.page,
     nextPage: {
-      no: {
+      [CommonResults.NO]: {
         page: LICENCE_SUMMARY.uri
       },
-      yes: {
+      [CommonResults.YES]: {
         page: BLUE_BADGE_NUMBER.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -199,10 +212,10 @@ export default [
   {
     currentPage: BENEFIT_NI_NUMBER.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_SUMMARY.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -211,10 +224,10 @@ export default [
   {
     currentPage: BLUE_BADGE_NUMBER.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_SUMMARY.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     }
@@ -223,10 +236,10 @@ export default [
   {
     currentPage: LICENCE_SUMMARY.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: NAME.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
     }
@@ -235,10 +248,10 @@ export default [
   {
     currentPage: NAME.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: ADDRESS_LOOKUP.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
     }
@@ -247,10 +260,10 @@ export default [
   {
     currentPage: ADDRESS_LOOKUP.page,
     nextPage: {
-      foundSome: {
+      [addressLookupResults.FOUND_SOME]: {
         page: ADDRESS_SELECT.uri
       },
-      foundNone: {
+      [addressLookupResults.FOUND_NONE]: {
         page: ADDRESS_ENTRY.uri
       }
     }
@@ -259,10 +272,10 @@ export default [
   {
     currentPage: ADDRESS_ENTRY.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: CONTACT.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
     }
@@ -271,10 +284,10 @@ export default [
   {
     currentPage: ADDRESS_SELECT.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: CONTACT.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
     }
@@ -283,13 +296,13 @@ export default [
   {
     currentPage: CONTACT.page,
     nextPage: {
-      yes: {
+      [CommonResults.YES]: {
         page: NEWSLETTER.uri
       },
-      no: {
+      [CommonResults.NO]: {
         page: CONTACT_SUMMARY.uri
       },
-      summary: {
+      [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
     }
@@ -298,7 +311,7 @@ export default [
   {
     currentPage: NEWSLETTER.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: CONTACT_SUMMARY.uri
       }
     }
@@ -307,7 +320,7 @@ export default [
   {
     currentPage: CONTACT_SUMMARY.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: TERMS_AND_CONDITIONS.uri
       }
     }
@@ -318,7 +331,7 @@ export default [
   {
     currentPage: TERMS_AND_CONDITIONS.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: AGREED.uri
       }
     }
@@ -327,7 +340,7 @@ export default [
   {
     currentPage: PAYMENT_CANCELLED.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: AGREED.uri
       }
     }
@@ -336,7 +349,7 @@ export default [
   {
     currentPage: PAYMENT_FAILED.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: AGREED.uri
       }
     }
@@ -346,7 +359,7 @@ export default [
   {
     currentPage: IDENTIFY.page,
     nextPage: {
-      ok: {
+      [CommonResults.OK]: {
         page: LICENCE_SUMMARY.uri
       }
     }
