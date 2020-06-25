@@ -30,9 +30,7 @@ export default async request => {
       result = dateOfBirthResults.ADULT
     }
   } else {
-    if (concessionHelper.hasJunior(permission)) {
-      result = dateOfBirthResults.JUNIOR_NO_BENEFIT
-    } else if (concessionHelper.hasSenior(permission)) {
+    if (concessionHelper.hasSenior(permission)) {
       result = dateOfBirthResults.SENIOR_NO_BENEFIT
     } else {
       result = dateOfBirthResults.ADULT_NO_BENEFIT
