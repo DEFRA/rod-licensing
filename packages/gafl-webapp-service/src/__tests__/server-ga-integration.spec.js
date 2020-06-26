@@ -1,7 +1,7 @@
 import HapiGapi from 'hapi-gapi'
 import Hapi from '@hapi/hapi'
-import { createServer, init } from '../server.js'
-import { UTM } from '../constants'
+import { UTM } from '../constants.js'
+import sessionManager, { useSessionCookie } from '../session-cache/session-manager.js'
 
 jest.mock('@hapi/hapi', () => ({
   server: jest.fn(() => ({
@@ -22,11 +22,22 @@ jest.mock('../constants', () => ({
   UTM: {
     CAMPAIGN: 'utmcampaign',
     MEDIUM: 'utmmedium'
+  },
+  CommonResults: {
+    OK: 'okay'
   }
 }))
 
+jest.mock('../session-cache/session-manager.js', () => ({
+  __esModule: true, // this property makes it work
+  default: () => {},
+  useSessionCookie: jest.fn(() => true)
+}))
+console.log('sessionManger fdsjkladsfjkladsf', sessionManager)
+
 describe('Server GA integration', () => {
   const OLD_ENV = process.env
+  const { createServer, init } = require('../server.js')
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -59,20 +70,38 @@ describe('Server GA integration', () => {
     expect(hapiGapiPlugin.options.sessionIdProducer()).toBe(cookieName)
   })
 
-  it('gets campaign utm_medium attribute from session', async () => {
-    const medium = 'banner'
-    const request = generateRequestMock({ [UTM.MEDIUM]: medium })
+  it.each([
+    [undefined, undefined],
+    ['campaign-22', undefined],
+    [undefined, 'banner']
+  ])('doesn\'t return a value if both utm_medium and utm_campaign aren\'t both set', async (campaign, medium) => {
+    const request = generateRequestMock({ [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: medium })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.attributionProducer(request).medium).toBe(medium)
+    expect(await hapiGapiPlugin.options.attributionProducer(request)).toBe(null)
+  })
+
+  it('gets campaign utm_medium attribute from session', async () => {
+    const medium = 'banner'
+    const request = generateRequestMock({ [UTM.CAMPAIGN]: ' ', [UTM.MEDIUM]: medium })
+    await init()
+    const hapiGapiPlugin = getHapiGapiPlugin()
+    expect((await hapiGapiPlugin.options.attributionProducer(request)).medium).toBe(medium)
   })
 
   it('gets campaign utm_medium attribute from querystring', async () => {
     const campaign = 'campaign-99'
-    const request = generateRequestMock({ [UTM.CAMPAIGN]: campaign })
+    const request = generateRequestMock({ [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: ' ' })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.attributionProducer(request).campaign).toBe(campaign)
+    expect((await hapiGapiPlugin.options.attributionProducer(request)).campaign).toBe(campaign)
+  })
+
+  it('omits attribution values if useSessionCookie flag function returns false', async () => {
+    useSessionCookie.mockReturnValueOnce(false)
+    await init()
+    const hapiGapiPlugin = getHapiGapiPlugin()
+    expect((await hapiGapiPlugin.options.attributionProducer({}))).toBeUndefined()
   })
 
   const getHapiGapiPlugin = () => {

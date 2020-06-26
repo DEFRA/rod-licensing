@@ -25,7 +25,7 @@ import {
 } from './constants.js'
 import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
 
-import sessionManager from './session-cache/session-manager.js'
+import sessionManager, { useSessionCookie } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
 
@@ -100,13 +100,16 @@ const plugIns = [
       ],
       sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
       attributionProducer: async request => {
-        const status = await request.cache().helpers.status.get()
+        if (useSessionCookie(request)) {
+          const status = await request.cache().helpers.status.get()
 
-        if (status[UTM.CAMPAIGN] && status[UTM.MEDIUM]) {
-          return ({
-            campaign: status[UTM.CAMPAIGN],
-            medium: status[UTM.MEDIUM]
-          })
+          if (status[UTM.CAMPAIGN] && status[UTM.MEDIUM]) {
+            return ({
+              campaign: status[UTM.CAMPAIGN],
+              medium: status[UTM.MEDIUM]
+            })
+          }
+          return null
         }
       },
       batchSize: 20,
