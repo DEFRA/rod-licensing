@@ -18,13 +18,27 @@
     {% if line %}{{ line }}</br>{% endif %}
 {% endmacro %}
 
+{% set types = [] %}
+
+{% if data.hasJunior %}
+    {{ types.push('Junior') }}
+{% elseif data.hasSenior %}
+    {{ types.push('Senior') }}
+{% else %}
+    {{ types.push('Adult') }}
+{% endif %}
+
+{% if data.disabled %}
+    {{ types.push('Disabled') }}
+{% endif %}
+
 {% set licenseDetailsSummaryRows = [
     {
       key: {
         text: "Type"
       },
       value: {
-        text: 'Junior' if data.hasJunior else ('Senior' if data.hasSenior else 'Adult')
+        text: types | join(', ')
       },
       classes: 'no-border',
       actions: {items: [{}]}
@@ -126,44 +140,46 @@
       }
 }) }}
 
-{% if data.disabled %}
-    {{ licenseDetailsSummaryRows.push({
-      key: {
-        text: "Disability support"
-      },
-      value: {
-        html: data.disabled.proof.type + ":&nbsp;" + data.disabled.proof.referenceNumber
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.benefitCheck,
-            text: "Change",
-            visuallyHiddenText: "benefit check",
-            attributes: { id: 'change-benefit-check' }
-          }
-        ]
-    }
-    }) }}
-{% else %}
-    {{ licenseDetailsSummaryRows.push({
-      key: {
-        text: "Disability support"
-      },
-      value: {
-        html: '<span class="govuk-caption-m">None</span>'
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.benefitCheck,
-            text: "Change",
-            visuallyHiddenText: "benefit check",
-            attributes: { id: 'change-benefit-check' }
-          }
-        ]
-    }
-    }) }}
+{% if data.permission.licenceLength === '12M' %}
+    {% if data.disabled %}
+        {{ licenseDetailsSummaryRows.push({
+          key: {
+            text: "Disability support"
+          },
+          value: {
+            html: data.disabled.proof.type + ":&nbsp;" + data.disabled.proof.referenceNumber
+          },
+          actions: {
+            items: [
+              {
+                href: data.uri.benefitCheck,
+                text: "Change",
+                visuallyHiddenText: "benefit check",
+                attributes: { id: 'change-benefit-check' }
+              }
+            ]
+        }
+        }) }}
+    {% else %}
+        {{ licenseDetailsSummaryRows.push({
+          key: {
+            text: "Disability support"
+          },
+          value: {
+            html: '<span class="govuk-caption-m">None</span>'
+          },
+          actions: {
+            items: [
+              {
+                href: data.uri.benefitCheck,
+                text: "Change",
+                visuallyHiddenText: "benefit check",
+                attributes: { id: 'change-benefit-check' }
+              }
+            ]
+        }
+        }) }}
+    {% endif %}
 {% endif %}
 
 {{ licenseDetailsSummaryRows.push({
