@@ -286,3 +286,25 @@ export const createLastNameValidator = joi =>
     .external(capitaliseNamePrefixes(['Mc', "O'"]))
     .required()
     .example('Tester')
+
+/**
+ * Create a validator to check a valid national insurance number
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+
+const ukNINORegEx = /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
+const ukNINORegEx2 = /^(?!(BG|GB|KN|NK|NT|TN|ZZ))/
+
+export const createNationalInsuranceNumberValidator = joi =>
+  joi
+    .string()
+    .trim()
+    .uppercase()
+    .pattern(ukNINORegEx)
+    .pattern(ukNINORegEx2)
+    .replace(ukNINORegEx, '$1 $2 $3 $4 $5')
+    .required()
+    .description('A UK national insurance number')
+    .example('NH 12 34 56 A')
