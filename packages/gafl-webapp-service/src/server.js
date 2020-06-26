@@ -99,10 +99,16 @@ const plugIns = [
         }
       ],
       sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
-      attributionProducer: request => ({
-        campaign: request.cache().helpers.status.get()[UTM.CAMPAIGN],
-        medium: request.cache().helpers.status.get()[UTM.MEDIUM]
-      }),
+      attributionProducer: async request => {
+        const status = await request.cache().helpers.status.get()
+
+        if (status[UTM.CAMPAIGN] && status[UTM.MEDIUM]) {
+          return ({
+            campaign: status[UTM.CAMPAIGN],
+            medium: status[UTM.MEDIUM]
+          })
+        }
+      },
       batchSize: 20,
       batchInterval: 15000
     }

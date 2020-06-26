@@ -38,7 +38,7 @@ const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PA
  * @returns {function(*, *)}
  */
 const sessionManager = sessionCookieName => async (request, h) => {
-  if (request.path.startsWith('/buy')) {
+  if (request.path.startsWith('/buy') || request.path === '/attribution') {
     let initialized = false
 
     if (!request.state[sessionCookieName]) {
