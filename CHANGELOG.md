@@ -1,4 +1,13 @@
 
+## Unreleased (2020-06-26)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#202](https://github.com/DEFRA/rod-licensing/pull/202) Allow senior and juniors access to disabled concessions ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
 ## Unreleased (2020-06-23)
 
 #### :bug: Bug Fix
