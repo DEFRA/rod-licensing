@@ -1,5 +1,5 @@
 import { start, stop, server } from '../../__mocks__/test-utils.js'
-import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY } from '../../uri.js'
+import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, RENEWAL_PUBLIC, IDENTIFY } from '../../uri.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -47,5 +47,14 @@ describe('The miscellaneous route handlers', () => {
       url: COOKIES.uri
     })
     expect(data.statusCode).toBe(200)
+  })
+
+  it('The easy renewals shortcut route redirects correctly', async () => {
+    const data = await server.inject({
+      method: 'GET',
+      url: RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'AAAAAA')
+    })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(IDENTIFY.uri.replace('{referenceNumber}', 'AAAAAA'))
   })
 })

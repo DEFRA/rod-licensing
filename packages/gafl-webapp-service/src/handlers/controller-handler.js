@@ -5,7 +5,9 @@
 import resultFunctions from './result-functions.js'
 import updateTransactionFunctions from './update-transaction-functions.js'
 import journeyDefinition from '../routes/journey-definition.js'
-const defaultResultFunction = () => 'ok'
+import { CommonResults } from '../constants.js'
+
+const defaultResultFunction = () => CommonResults.OK
 
 export default async (request, h) => {
   // Determine the current page

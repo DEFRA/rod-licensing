@@ -1,4 +1,6 @@
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { CommonResults } from '../../../constants.js'
+
 /**
  * Returns rod license type troutAndCourse or salmonAndSeaTrout
  * @param request
@@ -7,12 +9,12 @@ import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
-  let result = 'yes'
+  let result = CommonResults.YES
 
   if (status.fromSummary && status.fromSummary === 'contact-summary') {
-    result = 'summary'
+    result = CommonResults.SUMMARY
   } else if ([HOW_CONTACTED.letter, HOW_CONTACTED.none].includes(licensee.preferredMethodOfConfirmation)) {
-    result = 'no'
+    result = CommonResults.NO
   }
 
   return result

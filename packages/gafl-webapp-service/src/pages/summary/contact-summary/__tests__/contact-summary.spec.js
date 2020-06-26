@@ -4,7 +4,7 @@ import mockPermits from '../../../../__mocks__/data/permits.js'
 import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import mockConcessions from '../../../../__mocks__/data/concessions.js'
-import searchResultsOne from '../../../../services/address-lookup/__mocks__/data/search-results-one'
+import searchResultsOne from '../../../../services/address-lookup/__mocks__/data/search-results-one.js'
 
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
@@ -26,6 +26,8 @@ import {
   JUNIOR_LICENCE,
   TEST_TRANSACTION
 } from '../../../../uri.js'
+import moment from 'moment'
+import { JUNIOR_MAX_AGE, MINOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
@@ -47,6 +49,19 @@ const goodAddress = {
   postcode: 'BS9 1HJ',
   'country-code': 'GB'
 }
+
+const dobJuniorToday = moment().subtract(MINOR_MAX_AGE + 1, 'years')
+const dobJuniorTomorrow = moment()
+  .subtract(MINOR_MAX_AGE + 1, 'years')
+  .add(1, 'day')
+const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
+const dobSeniorToday = moment().add(-SENIOR_MIN_AGE, 'years')
+
+const dobHelper = d => ({
+  'date-of-birth-day': d.date().toString(),
+  'date-of-birth-month': (d.month() + 1).toString(),
+  'date-of-birth-year': d.year()
+})
 
 describe('The contact summary page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
@@ -153,22 +168,14 @@ describe('The contact summary page', () => {
   })
 
   it('date of birth amendment causes redirect the licence summary page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1961'
-    })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
     const data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
   it('date of birth (senior) amendment causes redirect the licence summary page and then the contact summary page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1921'
-    })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
     const data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
@@ -181,11 +188,7 @@ describe('The contact summary page', () => {
   })
 
   it('date of birth amendment (no licence required) causes a redirect to the no licence required page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '2018'
-    })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorTomorrow))
     const data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
@@ -198,11 +201,7 @@ describe('The contact summary page', () => {
   })
 
   it('date of birth amendment (junior) causes redirect to the junior licence page and subsequent redirect to the licence summary page and then the contact summary page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '2005'
-    })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
     let data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
@@ -219,21 +218,13 @@ describe('The contact summary page', () => {
   })
 
   it('date of birth amendment (junior) causes a method of contact of letter to be set no none', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1989'
-    })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
     await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '2005'
-    })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
     await injectWithCookies('GET', CONTROLLER.uri)
     const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)

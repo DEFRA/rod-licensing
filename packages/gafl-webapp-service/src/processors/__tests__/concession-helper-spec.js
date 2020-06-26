@@ -47,29 +47,30 @@ describe('The concession helper', () => {
   it('add blue badge', () => {
     f.addDisabled(permission, CONCESSION_PROOF.blueBadge, '123')
     expect(permission.concessions).toContainEqual(disabledbb)
-    expect(permission.concessions.length).toBe(1)
+    expect(permission.concessions.length).toBe(2)
   })
   it('add NI', () => {
     f.addDisabled(permission, CONCESSION_PROOF.NI, '456')
     expect(permission.concessions).toContainEqual(disabledNi)
-    expect(permission.concessions.length).toBe(1)
+    expect(permission.concessions.length).toBe(2)
   })
-  it('add junior to replace disabled', () => {
+  it('add junior to disabled', () => {
     f.addJunior(permission)
     expect(permission.concessions).toContainEqual(junior)
-    expect(permission.concessions.length).toBe(1)
+    expect(permission.concessions.length).toBe(2)
   })
-  it('add NI to replace junior', () => {
+  it('add NI to junior', () => {
     f.addDisabled(permission, CONCESSION_PROOF.NI, '456')
     expect(permission.concessions).toContainEqual(disabledNi)
-    expect(permission.concessions.length).toBe(1)
+    expect(permission.concessions.length).toBe(2)
   })
-  it('add senior to replace NI', () => {
+  it('add senior to NI', () => {
     f.addSenior(permission)
     expect(permission.concessions).toContainEqual(senior)
-    expect(permission.concessions.length).toBe(1)
+    expect(permission.concessions.length).toBe(2)
   })
   it('add junior to replace senior', () => {
+    f.removeDisabled(permission)
     f.addJunior(permission)
     expect(permission.concessions).toContainEqual(junior)
     expect(permission.concessions.length).toBe(1)

@@ -11,9 +11,6 @@ export const addJunior = permission => {
     if (hasSenior(permission)) {
       removeSenior(permission)
     }
-    if (hasDisabled(permission)) {
-      removeDisabled(permission)
-    }
     if (!permission.concessions) {
       permission.concessions = []
     }
@@ -39,9 +36,6 @@ export const addSenior = permission => {
     if (hasJunior(permission)) {
       removeJunior(permission)
     }
-    if (hasDisabled(permission)) {
-      removeDisabled(permission)
-    }
     if (!permission.concessions) {
       permission.concessions = []
     }
@@ -65,12 +59,6 @@ export const removeSenior = permission => {
 export const addDisabled = (permission, concessionProof, referenceNumber) => {
   if (hasDisabled(permission)) {
     removeDisabled(permission)
-  }
-  if (hasJunior(permission)) {
-    removeJunior(permission)
-  }
-  if (hasSenior(permission)) {
-    removeSenior(permission)
   }
   if (!permission.concessions) {
     permission.concessions = []
