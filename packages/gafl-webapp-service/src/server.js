@@ -112,8 +112,8 @@ const getPlugIns = () => {
                 medium: attribution[UTM.MEDIUM]
               })
             }
-            return null
           }
+          return {}
         },
         batchSize: 20,
         batchInterval: 15000

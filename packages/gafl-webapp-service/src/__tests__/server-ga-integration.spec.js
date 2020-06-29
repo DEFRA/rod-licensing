@@ -75,11 +75,11 @@ describe('Server GA integration', () => {
     [undefined, undefined],
     ['campaign-22', undefined],
     [undefined, 'banner']
-  ])('doesn\'t return a value if both utm_medium and utm_campaign aren\'t both set', async (campaign, medium) => {
+  ])('returns an empty object if both utm_medium and utm_campaign aren\'t both set', async (campaign, medium) => {
     const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: medium } })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(await hapiGapiPlugin.options.attributionProducer(request)).toBe(null)
+    expect(await hapiGapiPlugin.options.attributionProducer(request)).toEqual({})
   })
 
   it('gets campaign utm_medium attribute from session', async () => {
@@ -98,11 +98,11 @@ describe('Server GA integration', () => {
     expect((await hapiGapiPlugin.options.attributionProducer(request)).campaign).toBe(campaign)
   })
 
-  it('omits attribution values if useSessionCookie flag function returns false', async () => {
+  it('attribution producer returns empty object if useSessionCookie flag function returns false', async () => {
     useSessionCookie.mockReturnValueOnce(false)
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect((await hapiGapiPlugin.options.attributionProducer({}))).toBeUndefined()
+    expect((await hapiGapiPlugin.options.attributionProducer({}))).toEqual({})
   })
 
   it('doesn\'t initialise plugins with HapiGapi if useSessionCookie flag is false', async () => {
