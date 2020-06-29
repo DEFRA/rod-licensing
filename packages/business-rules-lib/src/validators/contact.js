@@ -294,8 +294,7 @@ export const createLastNameValidator = joi =>
  * @returns {Joi.AnySchema}
  */
 
-const ukNINORegEx = /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
-const ukNINORegEx2 = /^(?!(BG|GB|KN|NK|NT|TN|ZZ))/
+const ukNINORegEx = /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])(?<!(?:BG|GB|KN|NK|NT|TN|ZZ))\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
 
 export const createNationalInsuranceNumberValidator = joi =>
   joi
@@ -303,7 +302,6 @@ export const createNationalInsuranceNumberValidator = joi =>
     .trim()
     .uppercase()
     .pattern(ukNINORegEx)
-    .pattern(ukNINORegEx2)
     .replace(ukNINORegEx, '$1 $2 $3 $4 $5')
     .required()
     .description('A UK national insurance number')
