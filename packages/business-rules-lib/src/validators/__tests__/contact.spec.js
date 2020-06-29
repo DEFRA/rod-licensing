@@ -290,4 +290,18 @@ describe('contact validators', () => {
       )
     })
   })
+
+  describe('nationalInsuranceNumberValidator', () => {
+    it('Allows valid NI number AB123456A', async () => {
+      await expect(contactValidation.createNationalInsuranceNumberValidator(Joi).validateAsync('AB123456A')).resolves.toEqual(
+        'AB 12 34 56 A'
+      )
+    })
+    it('Disallows invalid NI number QQ123456A', async () => {
+      await expect(contactValidation.createNationalInsuranceNumberValidator(Joi).validateAsync('QQ123456A')).rejects.toThrow()
+    })
+    it('Disallows invalid NI number BG123456A', async () => {
+      await expect(contactValidation.createNationalInsuranceNumberValidator(Joi).validateAsync('QQ123456A')).rejects.toThrow()
+    })
+  })
 })
