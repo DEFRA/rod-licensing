@@ -15,8 +15,10 @@ send a server redirect to a configurable endpoint (which in production will be t
 export default async (request, h) => {
   const cache = request.cache()
   await cache.helpers.status.set({
-    [UTM.CAMPAIGN]: request.query[UTM.CAMPAIGN],
-    [UTM.MEDIUM]: request.query[UTM.MEDIUM]
+    attribution: {
+      [UTM.CAMPAIGN]: request.query[UTM.CAMPAIGN],
+      [UTM.MEDIUM]: request.query[UTM.MEDIUM]
+    }
   })
   return h.redirect(LICENCE_LENGTH.uri)
 }

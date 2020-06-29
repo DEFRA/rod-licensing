@@ -75,7 +75,7 @@ describe('Server GA integration', () => {
     ['campaign-22', undefined],
     [undefined, 'banner']
   ])('doesn\'t return a value if both utm_medium and utm_campaign aren\'t both set', async (campaign, medium) => {
-    const request = generateRequestMock({ [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: medium })
+    const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: medium } })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(await hapiGapiPlugin.options.attributionProducer(request)).toBe(null)
@@ -83,7 +83,7 @@ describe('Server GA integration', () => {
 
   it('gets campaign utm_medium attribute from session', async () => {
     const medium = 'banner'
-    const request = generateRequestMock({ [UTM.CAMPAIGN]: ' ', [UTM.MEDIUM]: medium })
+    const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: ' ', [UTM.MEDIUM]: medium } })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect((await hapiGapiPlugin.options.attributionProducer(request)).medium).toBe(medium)
@@ -91,7 +91,7 @@ describe('Server GA integration', () => {
 
   it('gets campaign utm_medium attribute from querystring', async () => {
     const campaign = 'campaign-99'
-    const request = generateRequestMock({ [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: ' ' })
+    const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: ' ' } })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect((await hapiGapiPlugin.options.attributionProducer(request)).campaign).toBe(campaign)

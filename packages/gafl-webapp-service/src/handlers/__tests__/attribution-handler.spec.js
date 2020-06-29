@@ -23,22 +23,18 @@ describe('The attribution handler', () => {
     const sampleUtmCampaign = 'campaign-12'
     const request = generateRequestMock(sampleUtmCampaign)
     await attributionHandler(request, generateResponseToolkitMock())
-    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith(
-      expect.objectContaining({
-        [UTM.CAMPAIGN]: sampleUtmCampaign
-      })
-    )
+    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
+      attribution: expect.objectContaining({ [UTM.CAMPAIGN]: sampleUtmCampaign })
+    })
   })
 
   it('persists utm_medium value to status cache', async () => {
     const sampleUtmMedium = 'click_bait'
     const request = generateRequestMock(undefined, sampleUtmMedium)
     await attributionHandler(request, generateResponseToolkitMock())
-    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith(
-      expect.objectContaining({
-        [UTM.MEDIUM]: sampleUtmMedium
-      })
-    )
+    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
+      attribution: expect.objectContaining({ [UTM.MEDIUM]: sampleUtmMedium })
+    })
   })
 
   it('redirects to licence length endpoint', async () => {

@@ -104,12 +104,12 @@ const getPlugIns = () => {
         sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
         attributionProducer: async request => {
           if (useSessionCookie(request)) {
-            const status = await request.cache().helpers.status.get()
+            const { attribution } = await request.cache().helpers.status.get()
 
-            if (status[UTM.CAMPAIGN] && status[UTM.MEDIUM]) {
+            if (attribution && attribution[UTM.CAMPAIGN] && attribution[UTM.MEDIUM]) {
               return ({
-                campaign: status[UTM.CAMPAIGN],
-                medium: status[UTM.MEDIUM]
+                campaign: attribution[UTM.CAMPAIGN],
+                medium: attribution[UTM.MEDIUM]
               })
             }
             return null
