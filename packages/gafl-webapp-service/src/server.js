@@ -62,6 +62,7 @@ const createServer = options => {
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
+const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
 const getPlugIns = () => {
   const plugins = [
     Inert,
@@ -91,6 +92,8 @@ const getPlugIns = () => {
       }
     }
   ]
+  // TODO: when generating the plugins array, we should probably omit HapiGapi if we're on
+  // a 'non-session-cookie' page
   if (process.env.ANALYTICS_ID) {
     plugins.push({
       plugin: HapiGapi,
@@ -101,7 +104,7 @@ const getPlugIns = () => {
             hitTypes: ['pageview', 'event', 'ecommerce']
           }
         ],
-        sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
+        sessionIdProducer: request => useSessionCookie(request) ? request.state[getSessionCookieName()].id : null,
         attributionProducer: async request => {
           if (useSessionCookie(request)) {
             const { attribution } = await request.cache().helpers.status.get()
@@ -173,7 +176,7 @@ const init = async () => {
     ]
   })
 
-  const sessionCookieName = process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+  const sessionCookieName = getSessionCookieName()
 
   const sessionCookieOptions = {
     ttl: process.env.SESSION_TTL_MS || SESSION_TTL_MS_DEFAULT, // Will be kept alive on each request

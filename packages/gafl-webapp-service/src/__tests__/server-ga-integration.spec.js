@@ -1,6 +1,6 @@
 import HapiGapi from 'hapi-gapi'
 import Hapi from '@hapi/hapi'
-import { UTM } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, UTM } from '../constants.js'
 import sessionManager, { useSessionCookie } from '../session-cache/session-manager.js'
 
 jest.mock('@hapi/hapi', () => ({
@@ -19,6 +19,7 @@ jest.mock('@hapi/hapi', () => ({
 }))
 
 jest.mock('../constants', () => ({
+  SESSION_COOKIE_NAME_DEFAULT: 'session_cookie_name_default',
   UTM: {
     CAMPAIGN: 'utmcampaign',
     MEDIUM: 'utmmedium'
@@ -56,19 +57,29 @@ describe('Server GA integration', () => {
 
   it('passes sessionIdProducer that gets session id from process.env', async () => {
     const cookieName = 'Bourbon-1272'
-    process.env.SESSION_COOKIE_NAME = cookieName
+    process.env.SESSION_COOKIE_NAME = 'session_cookie_name'
+    const request = generateRequestMock(undefined, process.env.SESSION_COOKIE_NAME, cookieName)
+    console.log('request.state', request.state)
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.sessionIdProducer()).toBe(cookieName)
+    expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(cookieName)
   })
 
   it('if session cookie hasn\'t been set, use default value for sessionIdProducer', async () => {
     const cookieName = 'Garibaldi-1807'
     delete process.env.SESSION_COOKIE_NAME
-    process.env.SESSION_COOKIE_NAME_DEFAULT = cookieName
+    const request = generateRequestMock(undefined, SESSION_COOKIE_NAME_DEFAULT, cookieName)
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.sessionIdProducer()).toBe(cookieName)
+    expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(cookieName)
+  })
+
+  it('sessionIdProducer returns null if we\'re not using a session cookie', async () => {
+    useSessionCookie.mockReturnValueOnce(false)
+    const request = generateRequestMock()
+    await init()
+    const hapiGapiPlugin = getHapiGapiPlugin()
+    expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(null)
   })
 
   it.each([
@@ -117,7 +128,10 @@ describe('Server GA integration', () => {
     return plugins.find(p => p.plugin === HapiGapi)
   }
 
-  const generateRequestMock = (status = {}) => ({
+  const generateRequestMock = (status = {}, sessionCookieName = 'sessionCookieName', sessionId = 'sessionId') => ({
+    state: {
+      [sessionCookieName]: { id: sessionId }
+    },
     cache: jest.fn(() => ({
       helpers: {
         status: {
