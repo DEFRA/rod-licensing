@@ -62,61 +62,66 @@ const createServer = options => {
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
-const plugIns = [
-  Inert,
-  Vision,
-  Scooter,
-  {
-    plugin: Blankie,
-    options: {
-      /*
-       * This defines the content security policy - which is as restrictive as possible
-       * It must allow web-fonts from 'fonts.gstatic.com'
-       */
-      fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-      scriptSrc: [scriptHash],
-      generateNonces: true
+const getPlugIns = () => {
+  const plugins = [
+    Inert,
+    Vision,
+    Scooter,
+    {
+      plugin: Blankie,
+      options: {
+        /*
+        * This defines the content security policy - which is as restrictive as possible
+        * It must allow web-fonts from 'fonts.gstatic.com'
+        */
+        fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
+        scriptSrc: [scriptHash],
+        generateNonces: true
+      }
+    },
+    {
+      plugin: Crumb,
+      options: {
+        key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+        cookieOptions: {
+          isSecure: process.env.NODE_ENV !== 'development',
+          isHttpOnly: process.env.NODE_ENV !== 'development'
+        },
+        logUnauthorized: true
+      }
     }
-  },
-  {
-    plugin: Crumb,
-    options: {
-      key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
-      cookieOptions: {
-        isSecure: process.env.NODE_ENV !== 'development',
-        isHttpOnly: process.env.NODE_ENV !== 'development'
-      },
-      logUnauthorized: true
-    }
-  },
-  {
-    plugin: HapiGapi,
-    options: {
-      propertySettings: [
-        {
-          id: process.env.ANALYTICS_ID,
-          hitTypes: ['pageview', 'event', 'ecommerce']
-        }
-      ],
-      sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
-      attributionProducer: async request => {
-        if (useSessionCookie(request)) {
-          const status = await request.cache().helpers.status.get()
-
-          if (status[UTM.CAMPAIGN] && status[UTM.MEDIUM]) {
-            return ({
-              campaign: status[UTM.CAMPAIGN],
-              medium: status[UTM.MEDIUM]
-            })
+  ]
+  if (process.env.ANALYTICS_ID) {
+    plugins.push({
+      plugin: HapiGapi,
+      options: {
+        propertySettings: [
+          {
+            id: process.env.ANALYTICS_ID,
+            hitTypes: ['pageview', 'event', 'ecommerce']
           }
-          return null
-        }
-      },
-      batchSize: 20,
-      batchInterval: 15000
-    }
+        ],
+        sessionIdProducer: request => process.env.SESSION_COOKIE_NAME || process.env.SESSION_COOKIE_NAME_DEFAULT,
+        attributionProducer: async request => {
+          if (useSessionCookie(request)) {
+            const status = await request.cache().helpers.status.get()
+
+            if (status[UTM.CAMPAIGN] && status[UTM.MEDIUM]) {
+              return ({
+                campaign: status[UTM.CAMPAIGN],
+                medium: status[UTM.MEDIUM]
+              })
+            }
+            return null
+          }
+        },
+        batchSize: 20,
+        batchInterval: 15000
+      }
+    })
   }
-]
+  return plugins
+}
 
 /**
  * Adds the uri's used by the layout page to each relevant response
@@ -138,7 +143,7 @@ const layoutContextAmalgamation = (request, h) => {
 }
 
 const init = async () => {
-  await server.register(plugIns)
+  await server.register(getPlugIns())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({

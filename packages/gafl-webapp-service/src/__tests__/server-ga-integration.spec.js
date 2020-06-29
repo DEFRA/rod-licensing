@@ -104,6 +104,12 @@ describe('Server GA integration', () => {
     expect((await hapiGapiPlugin.options.attributionProducer({}))).toBeUndefined()
   })
 
+  it('doesn\'t initialise plugins with HapiGapi if useSessionCookie flag is false', async () => {
+    delete process.env.ANALYTICS_ID
+    await init()
+    expect(getHapiGapiPlugin()).toBeUndefined()
+  })
+
   const getHapiGapiPlugin = () => {
     const mockServer = Hapi.server.mock.results[0].value
     const [plugins] = mockServer.register.mock.calls[0]
