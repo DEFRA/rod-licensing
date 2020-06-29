@@ -6,14 +6,13 @@
     set errorMap = {
         'ni-number': {
             'string.empty': { ref: '#ni-number', text: 'You have not told us your national insurance number' },
-            'string.max': { ref: '#ni-number', text: 'You national insurance number is longer than 15 characters' }
+            'string.pattern.base': { ref: '#ni-number', text: 'This does not look like a valid UK national insurance number, please check you have entered it correctly' }
         }
     }
 %}
 
 {% block pageContent %}
     <p class="govuk-body-m">We use this information to find out if you are eligible for a disabled concession</p>
-
     {{ govukInput({
       label: {
         text: "National Insurance number"
