@@ -29,7 +29,7 @@ jest.mock('../constants', () => ({
 }))
 
 jest.mock('../session-cache/session-manager.js', () => ({
-  __esModule: true, // this property makes it work
+  __esModule: true,
   default: () => {},
   useSessionCookie: jest.fn(() => true)
 }))
@@ -40,6 +40,7 @@ describe('Server GA integration', () => {
   const { createServer, init } = require('../server.js')
 
   beforeEach(() => {
+    process.env.ANALYTICS_ID = 'UA-123456789-0'
     jest.clearAllMocks()
     createServer()
   })
