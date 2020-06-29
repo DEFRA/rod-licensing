@@ -1,4 +1,13 @@
 
+## Unreleased (2020-06-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#203](https://github.com/DEFRA/rod-licensing/pull/203) Add an NI number validator ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
 ## Unreleased (2020-06-26)
 
 #### :rocket: Enhancement
