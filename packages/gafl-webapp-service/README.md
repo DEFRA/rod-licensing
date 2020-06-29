@@ -25,8 +25,6 @@ To run from this directory:
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    | Yes                 |                               |
 | FEEDBACK_URI               | Location of feedback survey                     |    no    | #                   |                               |
 | ANALYTICS_ID               | Analytics ID for tracking                       |   yes    |                     |                               |
-| ATTRIBUTION_ENDPOINT       | Redirect for attribution page                   |   
-yes    |                     |                               |
 ## OS Places address lookup
 
 The address lookup can be port-forwarded locally to test the find-address page with a command similar to the following;
