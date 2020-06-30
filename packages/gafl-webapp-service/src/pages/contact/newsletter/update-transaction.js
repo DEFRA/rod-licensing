@@ -16,7 +16,7 @@ export default async request => {
   } else {
     licensee.preferredMethodOfNewsletter = HOW_CONTACTED.none
     if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {
-      delete licensee.email
+      licensee.email = null
     }
   }
 
