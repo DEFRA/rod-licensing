@@ -1,31 +1,37 @@
-
-## Unreleased (2020-06-29)
-
-#### :rocket: Enhancement
-* `business-rules-lib`, `gafl-webapp-service`
-  * [#203](https://github.com/DEFRA/rod-licensing/pull/203) Add an NI number validator ([@graham-willis-druid](https://github.com/graham-willis-druid))
-
-#### Committers: 1
-- [@graham-willis-druid](https://github.com/graham-willis-druid)
-
-## Unreleased (2020-06-26)
+## v0.0.1-beta.56 (2020-06-29)
 
 #### :rocket: Enhancement
-* `gafl-webapp-service`
-  * [#202](https://github.com/DEFRA/rod-licensing/pull/202) Allow senior and juniors access to disabled concessions ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+- `business-rules-lib`, `gafl-webapp-service`
+  - [#203](https://github.com/DEFRA/rod-licensing/pull/203) Add an NI number validator ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### Committers: 1
+
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 
-## Unreleased (2020-06-23)
+## v0.0.1-beta.55 (2020-06-26)
+
+#### :rocket: Enhancement
+
+- `gafl-webapp-service`
+  - [#202](https://github.com/DEFRA/rod-licensing/pull/202) Allow senior and juniors access to disabled concessions ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
+
+## v0.0.1-beta.54 (2020-06-23)
 
 #### :bug: Bug Fix
-* `gafl-webapp-service`
-  * [#201](https://github.com/DEFRA/rod-licensing/pull/201) Add test coverage for easy renewals /renew redirect handler ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+- `gafl-webapp-service`
+  - [#201](https://github.com/DEFRA/rod-licensing/pull/201) Add test coverage for easy renewals /renew redirect handler ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### Committers: 1
+
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
-## Unreleased (2020-06-23)
+
+## v0.0.1-beta.53 (2020-06-23)
 
 #### :rocket: Enhancement
 
@@ -36,7 +42,7 @@
 
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 
-## Unreleased (2020-06-23)
+## v0.0.1-beta.52 (2020-06-23)
 
 #### :rocket: Enhancement
 
@@ -49,27 +55,7 @@
 
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
-## Unreleased (2020-06-23)
-
-#### :rocket: Enhancement
-
-- [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
-
-#### Committers: 1
-
-- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
-
-## Unreleased (2020-06-22)
-
-#### :rocket: Enhancement
-
-- [#198](https://github.com/DEFRA/rod-licensing/pull/198) Revise git commit hooks to fix issues with sftp keys and secrets.env files ([@sgardnerdell](https://github.com/sgardnerdell))
-
-#### Committers: 1
-
-- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
-
-## Unreleased (2020-06-22)
+## v0.0.1-beta.49 (2020-06-22)
 
 #### :rocket: Enhancement
 
@@ -80,7 +66,7 @@
 
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
-## Unreleased (2020-06-22)
+## v0.0.1-beta.48 (2020-06-22)
 
 #### :rocket: Enhancement
 
@@ -91,7 +77,7 @@
 
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
-## Unreleased (2020-06-16)
+## v0.0.1-beta.47 (2020-06-16)
 
 #### :bug: Bug Fix
 
@@ -102,7 +88,7 @@
 
 - Phil Benson ([@jaucourt](https://github.com/jaucourt))
 
-## Unreleased (2020-06-15)
+## v0.0.1-beta.46 (2020-06-15)
 
 #### :rocket: Enhancement
 
@@ -113,7 +99,7 @@
 
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 
-## Unreleased (2020-06-12)
+## v0.0.1-beta.45 (2020-06-12)
 
 #### :rocket: Enhancement
 
@@ -129,17 +115,7 @@
 - [@graham-willis-druid](https://github.com/graham-willis-druid)
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
-## Unreleased (2020-06-11)
-
-#### :bug: Bug Fix
-
-- [#181](https://github.com/DEFRA/rod-licensing/pull/181) Fix configuration error in POCL docker-compose definition ([@sgardnerdell](https://github.com/sgardnerdell))
-
-#### Committers: 1
-
-- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
-
-## Unreleased (2020-06-11)
+## v0.0.1-beta.44 (2020-06-11)
 
 #### :rocket: Enhancement
 
