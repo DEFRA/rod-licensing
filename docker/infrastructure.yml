@@ -90,6 +90,21 @@ services:
         condition: on-failure
 
   #######################################################
+  # nginx
+  #######################################################
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./resources/infrastructure/nginx/templates:/etc/nginx/templates
+      - ./resources/infrastructure/nginx/ssl:/etc/nginx/ssl
+    ports:
+      - '80:80'
+      - '443:443'
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  #######################################################
   # Test SFTP server
   #######################################################
   test_sftp:
