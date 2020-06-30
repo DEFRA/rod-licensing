@@ -1,3 +1,12 @@
+
+## v0.0.1-beta.57 (2020-06-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`, `sales-api-service`
+  * [#204](https://github.com/DEFRA/rod-licensing/pull/204) Changes to renewals procedure: fixes and changes around non-mandatory fields ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- [@graham-willis-druid](https://github.com/graham-willis-druid)
 ## v0.0.1-beta.56 (2020-06-29)
 
 #### :rocket: Enhancement
