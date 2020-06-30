@@ -40,7 +40,8 @@ describe('Server GA integration', () => {
   const { createServer, init } = require('../server.js')
 
   beforeEach(() => {
-    process.env.ANALYTICS_ID = 'UA-123456789-0'
+    process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
+    process.env.ANALYTICS_EXGOV_PROPERTY = 'UA-987654321-0'
     jest.clearAllMocks()
     createServer()
   })
@@ -122,8 +123,11 @@ describe('Server GA integration', () => {
     expect((await hapiGapiPlugin.options.attributionProducer({}))).toEqual({})
   })
 
-  it('doesn\'t initialise plugins with HapiGapi if useSessionCookie flag is false', async () => {
-    delete process.env.ANALYTICS_ID
+  it.each([
+    'ANALYTICS_PRIMARY_PROPERTY',
+    'ANALYTICS_EXGOV_PROPERTY'
+  ])('doesn\'t initialise plugins with HapiGapi if %s flag isn\'t present', async (flag) => {
+    delete process.env[flag]
     await init()
     expect(getHapiGapiPlugin()).toBeUndefined()
   })

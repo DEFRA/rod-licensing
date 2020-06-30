@@ -94,14 +94,18 @@ const getPlugIns = () => {
   ]
   // TODO: when generating the plugins array, we should probably omit HapiGapi if we're on
   // a 'non-session-cookie' page
-  if (process.env.ANALYTICS_ID) {
+  if (process.env.ANALYTICS_PRIMARY_PROPERTY && process.env.ANALYTICS_EXGOV_PROPERTY) {
     plugins.push({
       plugin: HapiGapi,
       options: {
         propertySettings: [
           {
-            id: process.env.ANALYTICS_ID,
+            id: process.env.ANALYTICS_PRIMARY_PROPERTY,
             hitTypes: ['pageview', 'event', 'ecommerce']
+          },
+          {
+            id: process.env.ANALYTICS_EXGOV_PROPERTY,
+            hitTypes: ['pageview']
           }
         ],
         sessionIdProducer: request => useSessionCookie(request) ? request.state[getSessionCookieName()].id : null,
