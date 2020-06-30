@@ -21,13 +21,19 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceStartDate = moment(authenticationResult.permission.endDate).format('YYYY-MM-DD')
   permission.renewedEndDate = permission.licenceStartDate
   permission.licensee = Object.assign(
-    (({ country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, organisation, ...l }) => l)(
+    (({ country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...l }) => l)(
       authenticationResult.permission.licensee
     ),
     {
       countryCode: 'GB'
     }
   )
+
+  // Delete any licensee objects which are null
+  Object.entries(permission.licensee)
+    .filter(e => !e[1])
+    .map(e => e[0])
+    .forEach(k => delete permission.licensee[k])
 
   permission.licensee.preferredMethodOfNewsletter = authenticationResult.permission.licensee.preferredMethodOfNewsletter.label
   permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label

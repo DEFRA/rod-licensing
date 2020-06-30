@@ -14,16 +14,17 @@ const commonContactSchema = {
   firstName: validation.contact.createFirstNameValidator(Joi),
   lastName: validation.contact.createLastNameValidator(Joi),
   birthDate: validation.contact.createBirthDateValidator(Joi),
-  email: validation.contact.createEmailValidator(Joi),
-  mobilePhone: validation.contact.createMobilePhoneValidator(Joi),
+  email: validation.contact.createEmailValidator(Joi).allow(null),
+  mobilePhone: validation.contact.createMobilePhoneValidator(Joi).allow(null),
   organisation: Joi.string()
     .trim()
     .min(1)
     .optional()
+    .allow(null)
     .example('Example Organisation'),
   premises: validation.contact.createPremisesValidator(Joi),
-  street: validation.contact.createStreetValidator(Joi),
-  locality: validation.contact.createLocalityValidator(Joi),
+  street: validation.contact.createStreetValidator(Joi).allow(null),
+  locality: validation.contact.createLocalityValidator(Joi).allow(null),
   town: validation.contact.createTownValidator(Joi),
   postcode: Joi.alternatives().conditional('country', {
     is: Joi.string().valid('GB', 'United Kingdom'),

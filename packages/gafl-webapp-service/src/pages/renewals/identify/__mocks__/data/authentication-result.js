@@ -18,6 +18,7 @@ export const authenticationResult = {
       birthDate: '1970-01-01',
       email: 'angling@email.com',
       mobilePhone: '07700 900 900',
+      organisation: null,
       premises: 'Howecroft Court',
       street: '2 Eastmead Lane',
       locality: '3',

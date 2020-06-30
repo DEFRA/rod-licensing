@@ -102,6 +102,7 @@ describe('The manual address entry page', () => {
 
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
+      organisation: null,
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
       town: 'Bristol',
@@ -120,6 +121,7 @@ describe('The manual address entry page', () => {
 
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({
+      organisation: null,
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
       town: 'Bristol',
