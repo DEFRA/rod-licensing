@@ -29,7 +29,10 @@ export const GOVPAYFAIL = {
 
 export const UTM = {
   CAMPAIGN: 'utm_campaign',
-  MEDIUM: 'utm_medium'
+  MEDIUM: 'utm_medium',
+  SOURCE: 'utm_source',
+  TERM: 'utm_term',
+  CONTENT: 'utm_content'
 }
 
 export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']

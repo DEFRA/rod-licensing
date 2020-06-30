@@ -109,10 +109,13 @@ const getPlugIns = () => {
           if (useSessionCookie(request)) {
             const { attribution } = await request.cache().helpers.status.get()
 
-            if (attribution && attribution[UTM.CAMPAIGN] && attribution[UTM.MEDIUM]) {
+            if (attribution) {
               return ({
                 campaign: attribution[UTM.CAMPAIGN],
-                medium: attribution[UTM.MEDIUM]
+                content: attribution[UTM.CONTENT],
+                medium: attribution[UTM.MEDIUM],
+                source: attribution[UTM.SOURCE],
+                term: attribution[UTM.TERM]
               })
             }
           }

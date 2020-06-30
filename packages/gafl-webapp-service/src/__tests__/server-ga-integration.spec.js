@@ -34,7 +34,6 @@ jest.mock('../session-cache/session-manager.js', () => ({
   default: () => {},
   useSessionCookie: jest.fn(() => true)
 }))
-console.log('sessionManger fdsjkladsfjkladsf', sessionManager)
 
 describe('Server GA integration', () => {
   const OLD_ENV = process.env
@@ -82,15 +81,22 @@ describe('Server GA integration', () => {
     expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(null)
   })
 
-  it.each([
-    [undefined, undefined],
-    ['campaign-22', undefined],
-    [undefined, 'banner']
-  ])('returns an empty object if both utm_medium and utm_campaign aren\'t both set', async (campaign, medium) => {
-    const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: medium } })
+  it('returns an empty object if attribution is empty', async () => {
+    const request = generateRequestMock()
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(await hapiGapiPlugin.options.attributionProducer(request)).toEqual({})
+  })
+
+  it.each([
+    { [UTM.CAMPAIGN]: 'campaign-123b', [UTM.MEDIUM]: 'footer', [UTM.CONTENT]: 'foo-bar' },
+    { [UTM.CAMPAIGN]: 'campaign-99xx', [UTM.SOURCE]: 'bbq', [UTM.TERM]: 'hilary' },
+    { [UTM.MEDIUM]: 'banner', [UTM.CONTENT]: 'blah-di-blah' }
+  ])('sets correct values in attribution according to session attribution', async (attribution) => {
+    const request = generateRequestMock({ attribution })
+    await init()
+    const hapiGapiPlugin = getHapiGapiPlugin()
+    expect(await hapiGapiPlugin.options.attributionProducer(request)).toEqual(mapAttributionValues(attribution))
   })
 
   it('gets campaign utm_medium attribute from session', async () => {
@@ -121,6 +127,16 @@ describe('Server GA integration', () => {
     await init()
     expect(getHapiGapiPlugin()).toBeUndefined()
   })
+
+  const mapAttributionValues = attribution => {
+    const mapped = {}
+    if (attribution[UTM.CAMPAIGN]) mapped.campaign = attribution[UTM.CAMPAIGN]
+    if (attribution[UTM.CONTENT]) mapped.content = attribution[UTM.CONTENT]
+    if (attribution[UTM.MEDIUM]) mapped.medium = attribution[UTM.MEDIUM]
+    if (attribution[UTM.SOURCE]) mapped.source = attribution[UTM.SOURCE]
+    if (attribution[UTM.TERM]) mapped.term = attribution[UTM.TERM]
+    return mapped
+  }
 
   const getHapiGapiPlugin = () => {
     const mockServer = Hapi.server.mock.results[0].value
