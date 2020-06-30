@@ -101,7 +101,7 @@ const getPlugIns = () => {
         propertySettings: [
           {
             id: process.env.ANALYTICS_ID,
-            hitTypes: ['pageview', 'event', 'ecommerce']
+            hitTypes: ['ecommerce']
           }
         ],
         sessionIdProducer: request => useSessionCookie(request) ? request.state[getSessionCookieName()].id : null,
