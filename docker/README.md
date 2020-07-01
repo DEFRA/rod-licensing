@@ -162,5 +162,3 @@ sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.key
 Alternatively the graphical application `Key Chain access app` may be used. There are analogous processes available for Windows; "Credential Manager" that can be found in "Control Panel" and "update-ca-certificates" for Ubuntu.
 
 This procedure will not work if the user is using Firefox. Firefox uses Mozilla's proprietary root certificate store NSS.
-
-It is also necessary to set `GOV_PAY_HTTPS_REDIRECT=true` in the gafl-webapp-service environment.

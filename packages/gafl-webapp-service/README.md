@@ -20,7 +20,6 @@ To run from this directory:
 | SALES_API_URL              | The address of the sales api                    |    no    | http://0.0.0.0:4000 |                               |
 | SALES_API_TIMEOUT_MS       | The timeout in milliseconds requests to the api |    no    | 10000               |                               |
 | GOV_PAY_API_URL            | The GOV.UK Pay API base url                     |    no    | Yes                 |                               |
-| GOV_PAY_HTTPS_REDIRECT     | Protcol for the post payment redirect           |    no    | Yes                 |                               |
 | GOV_PAY_APIKEY             | GOV pay access identifier                       |    no    | Yes                 |                               |
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    | Yes                 |                               |
 | FEEDBACK_URI               | Location of feedback survey                     |    no    | #                   |                               |
