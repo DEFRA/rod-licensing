@@ -4,6 +4,7 @@ import CatboxMemory from '@hapi/catbox-memory'
 describe('The server', () => {
   it('starts', async done => {
     createServer({
+      port: 1234,
       cache: [
         {
           provider: {
@@ -14,12 +15,11 @@ describe('The server', () => {
     })
 
     server.events.on('start', () => {
-      expect(server.info).toBeTruthy()
+      expect(server.info.port).toBe(1234)
       server.stop()
       done()
     })
 
     await init()
-    expect(server.info).toBeTruthy()
   })
 })
