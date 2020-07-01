@@ -14,14 +14,14 @@ export default async request => {
       licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
       licensee.preferredMethodOfReminder = HOW_CONTACTED.email
       licensee.email = payload.email
-      delete licensee.mobilePhone
+      licensee.mobilePhone = null
       break
 
     case 'text':
       licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
       licensee.preferredMethodOfReminder = HOW_CONTACTED.text
       licensee.mobilePhone = payload.text
-      delete licensee.email
+      licensee.email = null
       break
 
     default:
@@ -33,8 +33,8 @@ export default async request => {
         licensee.preferredMethodOfReminder = HOW_CONTACTED.none
       }
 
-      delete licensee.mobilePhone
-      delete licensee.email
+      licensee.mobilePhone = null
+      licensee.email = null
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
