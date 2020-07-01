@@ -138,3 +138,9 @@ To stop the running services
 ```shell script
 docker stack rm rls
 ```
+
+#### HTTPS
+
+In order for the OAuth 2.0 authentication to work on a users development environment for the telesales version of the service, it is necessary to run the service using HTTPS.
+
+To do this an nginx reverse proxy has been provided which will serve the pages up using on `https://localhost/buy`
