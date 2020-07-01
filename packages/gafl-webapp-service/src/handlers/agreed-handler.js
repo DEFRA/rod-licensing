@@ -20,6 +20,21 @@ import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 const debug = db('webapp:agreed-handler')
 
+const getTrackingProductDetailsFromTransaction = transaction =>
+  transaction.permissions.map(permission => ({
+    id: permission.permit.description,
+    name: `${permission.permit.permitSubtype.label} - ${permission.permit.numberOfRods} rod(s) licence`,
+    brand: permission.permit.permitType.label,
+    category: [
+      permission.permit.permitSubtype.label,
+      `${permission.permit.numberOfRods} rod(s)`,
+      permission.permit.concessions.length ? permission.permit.concessions.join(',') : 'Full'
+    ].join('/'),
+    variant: `${permission.permit.durationMagnitude} ${permission.permit.durationDesignator.label}`,
+    quantity: 1,
+    price: permission.permit.cost
+  }))
+
 /**
  * Send (post) transaction to sales API
  * @param request
@@ -72,6 +87,13 @@ const createPayment = async (request, transaction, status) => {
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
   const paymentResponse = await sendPayment(preparedPayment)
+
+  /*
+   * GA tracking
+   */
+  request.ga.ecommerce().checkout(
+    getTrackingProductDetailsFromTransaction(transaction)
+  )
 
   /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
