@@ -89,7 +89,7 @@ const createPayment = async (request, transaction, status) => {
   const paymentResponse = await sendPayment(preparedPayment)
 
   /*
-   * GA tracking
+   * Google Analytics tracking
    */
   request.ga.ecommerce().checkout(
     getTrackingProductDetailsFromTransaction(transaction)
@@ -164,6 +164,10 @@ const processPayment = async (request, transaction, status) => {
     // Defer setting the completed status in the journal until after finalization
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
+
+    request.ga.ecommerce().purchase(
+      getTrackingProductDetailsFromTransaction(transaction)
+    )
   } else {
     /*
      * This block deals with failed or cancelled payments

@@ -1,11 +1,10 @@
 import agreedHandler from '../agreed-handler.js'
 import { COMPLETION_STATUS } from '../../constants.js'
-import { sendPayment } from '../../services/payment/govuk-pay-service.js'
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
 jest.mock('../../services/payment/govuk-pay-service.js', () => ({
-  sendPayment: jest.fn(() => ({
+  sendPayment: () => Promise.resolve({
     payment_id: 'aaa-111',
     created_date: '2020-08-01T12:51:12.000',
     state: 'what a',
@@ -18,11 +17,20 @@ jest.mock('../../services/payment/govuk-pay-service.js', () => ({
         href: '/its/full/of/stars'
       }
     }
-  })),
-  getPaymentStatus: () => {}
+  }),
+  getPaymentStatus: () => Promise.resolve({
+    state: {
+      finished: true,
+      status: 'success'
+    }
+  })
 }))
 
 describe('Google Analytics for agreed handler', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it.each([
     {
       permitDescription: 'permit description',
@@ -56,7 +64,6 @@ describe('Google Analytics for agreed handler', () => {
     }
   ])('sends checkout event with expected data when payment sent', async (permission) => {
     const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
-    console.log('transaction', transaction.permissions[0])
     const request = getMockRequest(transaction)
 
     await agreedHandler(request, getMockResponseToolkit())
@@ -75,16 +82,68 @@ describe('Google Analytics for agreed handler', () => {
       ])
     )
   })
+
+  it.each([
+    {
+      permitDescription: 'desc A',
+      permitSubtypeLabel: 'st A',
+      numberOfRods: 1,
+      permitTypeLabel: 'l1',
+      durationMagnitude: 12,
+      durationDesignatorLabel: 'Minute(s)',
+      cost: 101.87,
+      concessions: []
+    },
+    {
+      permitDescription: 'desc B',
+      permitSubtypeLabel: 'st X',
+      numberOfRods: 2,
+      permitTypeLabel: 'l2',
+      durationMagnitude: 12000,
+      durationDesignatorLabel: 'Nanosecond(s)',
+      cost: 2,
+      concessions: ['asked really politely']
+    },
+    {
+      permitDescription: 'desc C',
+      permitSubtypeLabel: 'st P',
+      numberOfRods: 12,
+      permitTypeLabel: 'l 4',
+      durationMagnitude: 1000,
+      durationDesignatorLabel: 'Year(s)',
+      cost: 88.888,
+      concessions: ['junior']
+    }
+  ])('sends purchase event with expected data when payment succeeds', async (permission) => {
+    const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
+    const request = getMockRequest(transaction, false)
+
+    await agreedHandler(request, getMockResponseToolkit())
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: permission.permitDescription,
+          name: `${permission.permitSubtypeLabel} - ${permission.numberOfRods} rod(s) licence`,
+          brand: permission.permitTypeLabel,
+          category: `${permission.permitSubtypeLabel}/${permission.numberOfRods} rod(s)/${permission.concessions.length ? permission.concessions.join(',') : 'Full'}`,
+          variant: `${permission.durationMagnitude} ${permission.durationDesignatorLabel}`,
+          quantity: 1,
+          price: permission.cost
+        })
+      ])
+    )
+  })
 })
 
-const getMockRequest = (transaction = getSampleTransaction()) => ({
+const getMockRequest = (transaction = getSampleTransaction(), checkout = true) => ({
   cache: jest.fn(() => ({
     helpers: {
       status: {
         get: jest.fn(() => ({
           [COMPLETION_STATUS.agreed]: true,
           [COMPLETION_STATUS.posted]: true,
-          [COMPLETION_STATUS.paymentCreated]: false
+          [COMPLETION_STATUS.paymentCreated]: !checkout
         })),
         set: () => {}
       },
@@ -96,7 +155,8 @@ const getMockRequest = (transaction = getSampleTransaction()) => ({
   })),
   ga: {
     ecommerce: jest.fn(() => ({
-      checkout: jest.fn()
+      checkout: jest.fn(),
+      purchase: jest.fn()
     }))
   }
 })
@@ -136,9 +196,12 @@ const getSamplePermission = ({
 const getSampleTransaction = ({
   permissions = [getSamplePermission()],
   id = 'fff-111-eee-222',
-  cost = 1
+  cost = 1,
+  payment_id = 'aaa111'
 } = {}) => ({
-  payment: {},
+  payment: {
+    payment_id
+  },
   permissions,
   id,
   cost
