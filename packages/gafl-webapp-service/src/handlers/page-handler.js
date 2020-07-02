@@ -1,7 +1,22 @@
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
-import { CONTROLLER } from '../uri.js'
+import { CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY, TERMS_AND_CONDITIONS } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
+
+const getTrackingProductDetailsFromTransaction = transaction =>
+  transaction.permissions.map(permission => ({
+    id: permission.permit.description,
+    name: `${permission.permit.permitSubtype.label} - ${permission.permit.numberOfRods} rod(s) licence`,
+    brand: permission.permit.permitType.label,
+    category: [
+      permission.permit.permitSubtype.label,
+      `${permission.permit.numberOfRods} rod(s)`,
+      permission.permit.concessions.length ? permission.permit.concessions.join(',') : 'Full'
+    ].join('/'),
+    variant: `${permission.permit.durationMagnitude} ${permission.permit.durationDesignator.label}`,
+    quantity: 1,
+    price: permission.permit.cost
+  }))
 
 /**
  * Flattens the error structure from joi for use in the templates
@@ -24,6 +39,21 @@ const getBackReference = async (request) => {
   status.backRef.current = request.path
   await request.cache().helpers.status.setCurrentPermission(status)
   return status.backRef.previous
+}
+
+const performTracking = async (request, path) => {
+  if ([CONTACT_SUMMARY.uri, LICENCE_SUMMARY.uri].includes(path)) {
+    const transaction = await request.cache().helpers.transaction.get()
+    request.ga.ecommerce().detail(
+      getTrackingProductDetailsFromTransaction(transaction)
+    )
+  }
+  if (path === TERMS_AND_CONDITIONS.uri) {
+    const transaction = await request.cache().helpers.transaction.get()
+    request.ga.ecommerce().addToCart(
+      getTrackingProductDetailsFromTransaction(transaction)
+    )
+  }
 }
 
 /**
@@ -58,6 +88,8 @@ export default (path, view, completion, getData) => ({
         throw err
       }
     }
+
+    performTracking(request, path)
 
     // Calculate the back reference and add to page
     pageData.backRef = await getBackReference(request)
