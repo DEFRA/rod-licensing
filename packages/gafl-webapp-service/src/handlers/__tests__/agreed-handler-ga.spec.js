@@ -1,6 +1,16 @@
 import agreedHandler from '../agreed-handler.js'
 import { COMPLETION_STATUS } from '../../constants.js'
 
+const mockProductDetails = [{
+  id: 'Salmon 1 Year 3 Rod Licence (Full)',
+  name: 'Salmon and sea trout - 3 rod(s) licence',
+  brand: 'Rod Fishing Licence',
+  category: 'Salmon and sea trout/3 rod(s)/Full',
+  variant: '12 Month(s)',
+  quantity: 1,
+  price: 1
+}]
+
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
 jest.mock('../../services/payment/govuk-pay-service.js', () => ({
@@ -25,118 +35,33 @@ jest.mock('../../services/payment/govuk-pay-service.js', () => ({
     }
   })
 }))
+jest.mock('../../services/analytics/analytics.js', () => ({
+  getTrackingProductDetailsFromTransaction: () => mockProductDetails
+}))
 
 describe('Google Analytics for agreed handler', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it.each([
-    {
-      permitDescription: 'permit description',
-      permitSubtypeLabel: 'subtype 1',
-      numberOfRods: 1,
-      permitTypeLabel: 'license 1',
-      durationMagnitude: 12,
-      durationDesignatorLabel: 'Month(s)',
-      cost: 1.87,
-      concessions: []
-    },
-    {
-      permitDescription: 'permit description 2',
-      permitSubtypeLabel: 'subtype 2',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 3',
-      durationMagnitude: 12,
-      durationDesignatorLabel: 'Day(s)',
-      cost: 22.96,
-      concessions: ['threat of physical violence']
-    },
-    {
-      permitDescription: 'permit description 3',
-      permitSubtypeLabel: 'subtype 3',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 4',
-      durationMagnitude: 17,
-      durationDesignatorLabel: 'Second(s)',
-      cost: 122.96,
-      concessions: ['bribery', 'corruption']
-    }
-  ])('sends checkout event with expected data when payment sent', async (permission) => {
-    const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
-    const request = getMockRequest(transaction)
+  it('sends checkout event with expected data when payment sent', async () => {
+    const request = getMockRequest()
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.checkout).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: permission.permitDescription,
-          name: `${permission.permitSubtypeLabel} - ${permission.numberOfRods} rod(s) licence`,
-          brand: permission.permitTypeLabel,
-          category: `${permission.permitSubtypeLabel}/${permission.numberOfRods} rod(s)/${permission.concessions.length ? permission.concessions.join(',') : 'Full'}`,
-          variant: `${permission.durationMagnitude} ${permission.durationDesignatorLabel}`,
-          quantity: 1,
-          price: permission.cost
-        })
-      ])
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.checkout).toHaveBeenCalledWith(mockProductDetails)
   })
 
-  it.each([
-    {
-      permitDescription: 'desc A',
-      permitSubtypeLabel: 'st A',
-      numberOfRods: 1,
-      permitTypeLabel: 'l1',
-      durationMagnitude: 12,
-      durationDesignatorLabel: 'Minute(s)',
-      cost: 101.87,
-      concessions: []
-    },
-    {
-      permitDescription: 'desc B',
-      permitSubtypeLabel: 'st X',
-      numberOfRods: 2,
-      permitTypeLabel: 'l2',
-      durationMagnitude: 12000,
-      durationDesignatorLabel: 'Nanosecond(s)',
-      cost: 2,
-      concessions: ['asked really politely']
-    },
-    {
-      permitDescription: 'desc C',
-      permitSubtypeLabel: 'st P',
-      numberOfRods: 12,
-      permitTypeLabel: 'l 4',
-      durationMagnitude: 1000,
-      durationDesignatorLabel: 'Year(s)',
-      cost: 88.888,
-      concessions: ['junior']
-    }
-  ])('sends purchase event with expected data when payment succeeds', async (permission) => {
-    const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
-    const request = getMockRequest(transaction, false)
+  it('sends purchase event with expected data when payment succeeds', async () => {
+    const request = getMockRequest(false)
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: permission.permitDescription,
-          name: `${permission.permitSubtypeLabel} - ${permission.numberOfRods} rod(s) licence`,
-          brand: permission.permitTypeLabel,
-          category: `${permission.permitSubtypeLabel}/${permission.numberOfRods} rod(s)/${permission.concessions.length ? permission.concessions.join(',') : 'Full'}`,
-          variant: `${permission.durationMagnitude} ${permission.durationDesignatorLabel}`,
-          quantity: 1,
-          price: permission.cost
-        })
-      ])
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(mockProductDetails)
   })
 })
 
-const getMockRequest = (transaction = getSampleTransaction(), checkout = true) => ({
+const getMockRequest = (checkout = true) => ({
   cache: jest.fn(() => ({
     helpers: {
       status: {
@@ -148,7 +73,31 @@ const getMockRequest = (transaction = getSampleTransaction(), checkout = true) =
         set: () => {}
       },
       transaction: {
-        get: jest.fn(() => transaction),
+        get: jest.fn(() => ({
+          payment: {
+            payment_id: 'aaa111'
+          },
+          permissions: {
+            permit: {
+              description: 'description',
+              permitSubtype: {
+                label: 'permitSubtypeLabel'
+              },
+              numberOfRods: 1,
+              permitType: {
+                label: 'permitTypeLabel'
+              },
+              durationMagnitude: 1,
+              durationDesignator: {
+                label: 'durationDesignatorLabel'
+              },
+              cost: 1,
+              concessions: ['a']
+            }
+          },
+          id: 'fff-111-eee-222',
+          cost: 1
+        })),
         set: () => {}
       }
     }
@@ -163,46 +112,4 @@ const getMockRequest = (transaction = getSampleTransaction(), checkout = true) =
 
 const getMockResponseToolkit = () => ({
   redirect: () => {}
-})
-
-const getSamplePermission = ({
-  permitDescription = 'Salmon 1 day 1 Rod Licence (Full)',
-  permitSubtypeLabel = 'Salmon and sea trout',
-  numberOfRods = 1,
-  permitTypeLabel = 'Rod Fishing Licence',
-  durationMagnitude = 12,
-  durationDesignatorLabel = 'Month(s)',
-  cost = 1,
-  concessions = []
-} = {}) => ({
-  permit: {
-    description: permitDescription,
-    permitSubtype: {
-      label: permitSubtypeLabel
-    },
-    numberOfRods,
-    permitType: {
-      label: permitTypeLabel
-    },
-    durationMagnitude,
-    durationDesignator: {
-      label: durationDesignatorLabel
-    },
-    cost,
-    concessions
-  }
-})
-
-const getSampleTransaction = ({
-  permissions = [getSamplePermission()],
-  id = 'fff-111-eee-222',
-  cost = 1,
-  payment_id = 'aaa111'
-} = {}) => ({
-  payment: {
-    payment_id
-  },
-  permissions,
-  id,
-  cost
 })

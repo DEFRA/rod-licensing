@@ -5,168 +5,48 @@ import {
   TERMS_AND_CONDITIONS
 } from '../../uri.js'
 
+const mockProductDetails = [{
+  id: 'Salmon 1 Year 5 Rod Licence (Full)',
+  name: 'Salmon and sea trout - 5 rod(s) licence',
+  brand: 'Rod Fishing Licence',
+  category: 'Salmon and sea trout/5 rod(s)/Full',
+  variant: '12 Month(s)',
+  quantity: 1,
+  price: 1
+}]
 jest.mock('../../uri.js', () => ({
   CONTACT_SUMMARY: { uri: '/path/to/contact/summary' },
   LICENCE_SUMMARY: { uri: '/path/to/licence/summary' },
   TERMS_AND_CONDITIONS: { uri: '/path/to/terms/and/conditions' },
   CONTROLLER: { uri: '/path/to/controller' }
 }))
+jest.mock('../../services/analytics/analytics.js', () => ({
+  getTrackingProductDetailsFromTransaction: () => mockProductDetails
+}))
 
 describe('Google analytics tracking', () => {
-  it.each([
-    {
-      permitDescription: 'permit description',
-      permitSubtypeLabel: 'subtype 1',
-      numberOfRods: 1,
-      permitTypeLabel: 'license 1',
-      durationMagnitude: 12,
-      durationDesignatorLabel: 'Parsecs(sic)',
-      cost: 99.99,
-      concessions: []
-    },
-    {
-      permitDescription: 'permit description 2',
-      permitSubtypeLabel: 'subtype 2',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 3',
-      durationMagnitude: 1,
-      durationDesignatorLabel: 'Fortnight(s)',
-      cost: 22.96,
-      concessions: ['juniorSenior']
-    },
-    {
-      permitDescription: 'permit description 3',
-      permitSubtypeLabel: 'subtype 3',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 4',
-      durationMagnitude: 17,
-      durationDesignatorLabel: 'Second(s)',
-      cost: 122.96,
-      concessions: ['subsidy']
-    }
-  ])(`sends ecommerce detail view on ${CONTACT_SUMMARY.uri}`, async (permission) => {
-    const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
-    const request = getMockRequest(transaction)
+  it(`sends ecommerce detail view on ${CONTACT_SUMMARY.uri}`, async () => {
+    const request = getMockRequest()
 
     await pageHandler(CONTACT_SUMMARY.uri).get(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.detail).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: permission.permitDescription,
-          name: `${permission.permitSubtypeLabel} - ${permission.numberOfRods} rod(s) licence`,
-          brand: permission.permitTypeLabel,
-          category: `${permission.permitSubtypeLabel}/${permission.numberOfRods} rod(s)/${permission.concessions.length ? permission.concessions.join(',') : 'Full'}`,
-          variant: `${permission.durationMagnitude} ${permission.durationDesignatorLabel}`,
-          quantity: 1,
-          price: permission.cost
-        })
-      ])
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.detail).toHaveBeenCalledWith(mockProductDetails)
   })
 
-  it.each([
-    {
-      permitDescription: 'permit description',
-      permitSubtypeLabel: 'subtype 1',
-      numberOfRods: 1,
-      permitTypeLabel: 'license 1',
-      durationMagnitude: 12,
-      durationDesignatorLabel: 'Parsecs(sic)',
-      cost: 99.99,
-      concessions: []
-    },
-    {
-      permitDescription: 'permit description 2',
-      permitSubtypeLabel: 'subtype 2',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 3',
-      durationMagnitude: 1,
-      durationDesignatorLabel: 'Fortnight(s)',
-      cost: 22.96,
-      concessions: ['juniorSenior']
-    },
-    {
-      permitDescription: 'permit description 3',
-      permitSubtypeLabel: 'subtype 3',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 4',
-      durationMagnitude: 17,
-      durationDesignatorLabel: 'Second(s)',
-      cost: 122.96,
-      concessions: ['subsidy']
-    }
-  ])(`sends ecommerce detail view on ${LICENCE_SUMMARY.uri}`, async (permission) => {
-    const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
-    const request = getMockRequest(transaction)
+  it(`sends ecommerce detail view on ${LICENCE_SUMMARY.uri}`, async () => {
+    const request = getMockRequest()
 
     await pageHandler(LICENCE_SUMMARY.uri).get(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.detail).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: permission.permitDescription,
-          name: `${permission.permitSubtypeLabel} - ${permission.numberOfRods} rod(s) licence`,
-          brand: permission.permitTypeLabel,
-          category: `${permission.permitSubtypeLabel}/${permission.numberOfRods} rod(s)/${permission.concessions.length ? permission.concessions.join(',') : 'Full'}`,
-          variant: `${permission.durationMagnitude} ${permission.durationDesignatorLabel}`,
-          quantity: 1,
-          price: permission.cost
-        })
-      ])
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.detail).toHaveBeenCalledWith(mockProductDetails)
   })
 
-  it.each([
-    {
-      permitDescription: 'permit description',
-      permitSubtypeLabel: 'subtype 1',
-      numberOfRods: 1,
-      permitTypeLabel: 'license 1',
-      durationMagnitude: 12,
-      durationDesignatorLabel: 'Parsecs(sic)',
-      cost: 99.99,
-      concessions: []
-    },
-    {
-      permitDescription: 'permit description 2',
-      permitSubtypeLabel: 'subtype 2',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 3',
-      durationMagnitude: 1,
-      durationDesignatorLabel: 'Fortnight(s)',
-      cost: 22.96,
-      concessions: ['juniorSenior']
-    },
-    {
-      permitDescription: 'permit description 3',
-      permitSubtypeLabel: 'subtype 3',
-      numberOfRods: 2,
-      permitTypeLabel: 'license 4',
-      durationMagnitude: 17,
-      durationDesignatorLabel: 'Second(s)',
-      cost: 122.96,
-      concessions: ['subsidy']
-    }
-  ])(`sends ecommerce addToCart on ${TERMS_AND_CONDITIONS.uri}`, async (permission) => {
-    const transaction = getSampleTransaction({ permissions: [getSamplePermission(permission)] })
-    const request = getMockRequest(transaction)
+  it(`sends ecommerce add on ${TERMS_AND_CONDITIONS.uri}`, async () => {
+    const request = getMockRequest()
 
     await pageHandler(TERMS_AND_CONDITIONS.uri).get(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.add).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({
-          id: permission.permitDescription,
-          name: `${permission.permitSubtypeLabel} - ${permission.numberOfRods} rod(s) licence`,
-          brand: permission.permitTypeLabel,
-          category: `${permission.permitSubtypeLabel}/${permission.numberOfRods} rod(s)/${permission.concessions.length ? permission.concessions.join(',') : 'Full'}`,
-          variant: `${permission.durationMagnitude} ${permission.durationDesignatorLabel}`,
-          quantity: 1,
-          price: permission.cost
-        })
-      ])
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.add).toHaveBeenCalledWith(mockProductDetails)
   })
 
   it.each([
@@ -180,7 +60,7 @@ describe('Google analytics tracking', () => {
   })
 })
 
-const getMockRequest = (transaction = getSampleTransaction()) => ({
+const getMockRequest = () => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
@@ -191,7 +71,31 @@ const getMockRequest = (transaction = getSampleTransaction()) => ({
         setCurrentPermission: () => Promise.resolve()
       },
       transaction: {
-        get: jest.fn(() => transaction),
+        get: () => ({
+          payment: {
+            payment_id: 'aaa111'
+          },
+          permissions: {
+            permit: {
+              description: 'permitDescription',
+              permitSubtype: {
+                label: 'permitSubtypeLabel'
+              },
+              numberOfRods: 1,
+              permitType: {
+                label: 'permitTypeLabel'
+              },
+              durationMagnitude: 1,
+              durationDesignator: {
+                label: 'durationDesignatorLabel'
+              },
+              cost: 1,
+              concessions: ['a']
+            }
+          },
+          id: 'fff-111-eee-222',
+          cost: 1
+        }),
         set: () => {}
       }
     }
@@ -207,46 +111,4 @@ const getMockRequest = (transaction = getSampleTransaction()) => ({
 const getMockResponseToolkit = () => ({
   redirect: () => {},
   view: () => {}
-})
-
-const getSamplePermission = ({
-  permitDescription = 'Salmon 1 day 1 Rod Licence (Full)',
-  permitSubtypeLabel = 'Salmon and sea trout',
-  numberOfRods = 1,
-  permitTypeLabel = 'Rod Fishing Licence',
-  durationMagnitude = 12,
-  durationDesignatorLabel = 'Month(s)',
-  cost = 1,
-  concessions = []
-} = {}) => ({
-  permit: {
-    description: permitDescription,
-    permitSubtype: {
-      label: permitSubtypeLabel
-    },
-    numberOfRods,
-    permitType: {
-      label: permitTypeLabel
-    },
-    durationMagnitude,
-    durationDesignator: {
-      label: durationDesignatorLabel
-    },
-    cost,
-    concessions
-  }
-})
-
-const getSampleTransaction = ({
-  permissions = [getSamplePermission()],
-  id = 'fff-111-eee-222',
-  cost = 1,
-  payment_id = 'aaa111'
-} = {}) => ({
-  payment: {
-    payment_id
-  },
-  permissions,
-  id,
-  cost
 })
