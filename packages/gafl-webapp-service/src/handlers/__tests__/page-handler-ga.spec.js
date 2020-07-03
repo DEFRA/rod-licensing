@@ -154,7 +154,7 @@ describe('Google analytics tracking', () => {
 
     await pageHandler(TERMS_AND_CONDITIONS.uri).get(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.addToCart).toHaveBeenCalledWith(
+    expect(request.ga.ecommerce.mock.results[0].value.add).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({
           id: permission.permitDescription,
@@ -199,7 +199,7 @@ const getMockRequest = (transaction = getSampleTransaction()) => ({
   ga: {
     ecommerce: jest.fn(() => ({
       detail: jest.fn(),
-      addToCart: jest.fn()
+      add: jest.fn()
     }))
   }
 })

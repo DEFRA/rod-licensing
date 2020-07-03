@@ -50,7 +50,7 @@ const performTracking = async (request, path) => {
   }
   if (path === TERMS_AND_CONDITIONS.uri) {
     const transaction = await request.cache().helpers.transaction.get()
-    request.ga.ecommerce().addToCart(
+    request.ga.ecommerce().add(
       getTrackingProductDetailsFromTransaction(transaction)
     )
   }

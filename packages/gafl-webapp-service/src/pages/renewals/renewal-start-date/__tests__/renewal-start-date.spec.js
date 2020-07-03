@@ -18,9 +18,15 @@ import mockPermits from '../../../../__mocks__/data/permits.js'
 import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
 import mockConcessions from '../../../../__mocks__/data/concessions.js'
 
+const OLD_ENV = process.env
+beforeAll(() => {
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
+  process.env.ANALYTICS_EXGOV_PROPERTY = 'UA-987654321-0'
+})
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+afterAll(() => { process.env = OLD_ENV })
 
 const VALID_IDENTIFY = IDENTIFY.uri.replace('{referenceNumber}', 'AAAAAA')
 
