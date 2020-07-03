@@ -23,7 +23,7 @@
             homepageUrl: "https://www.gov.uk/",
             serviceUrl: "/",
             containerClasses: "govuk-width-container",
-            serviceName: "Get a rod fishing license"
+            serviceName: "Get a rod fishing license" if not TELESALES else "Get a rod fishing license (TELESALES)"
         })
     }}
 {% endblock %}

@@ -23,8 +23,5 @@ FROM rod-licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 
-# Default service port
-ARG PORT=3000
-
-EXPOSE ${PORT}
+EXPOSE 3000
 ENTRYPOINT [ "pm2-runtime", "ecosystem.config.yml" ]

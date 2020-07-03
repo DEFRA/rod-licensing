@@ -143,7 +143,10 @@ docker stack rm rls
 
 In order for the OAuth 2.0 authentication to work on a users development environment for the telesales version of the service, it is necessary to run the service using HTTPS.
 
-To do this an nginx ssl reverse proxy has been provided which will serve the pages from [https://localhost]()
+To do this an nginx ssl reverse proxy has been provided which will serve the pages from:
+
+1. [https://localhost:3043]() - websales
+2. [https://localhost:3143]() - telesales
 
 The reverse proxy is started as part of the infrastructure stack (rli), however a root certificate will need to be installed on the keychain of the local machine.
 

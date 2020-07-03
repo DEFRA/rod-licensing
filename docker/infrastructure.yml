@@ -94,12 +94,17 @@ services:
   #######################################################
   nginx:
     image: nginx:alpine
+    environment:
+      - WEBSALES_LISTEN=3043
+      - TELESALES_LISTEN=3143
+      - WEBSALES_UPSTREAM_PORT=3000
+      - TELESALES_UPSTREAM_PORT=3100
     volumes:
       - ./resources/infrastructure/nginx/templates:/etc/nginx/templates
       - ./resources/infrastructure/nginx/ssl:/etc/nginx/ssl
     ports:
-      - '80:80'
-      - '443:443'
+      - '3043:3043'
+      - '3143:3143'
     deploy:
       restart_policy:
         condition: on-failure

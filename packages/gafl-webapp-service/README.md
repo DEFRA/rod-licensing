@@ -11,6 +11,8 @@ To run from this directory:
 | name                       | description                                     | required | default             | valid                         |
 | -------------------------- | ----------------------------------------------- | :------: | ------------------- | ----------------------------- |
 | NODE_ENV                   | Node environment                                |    no    |                     | development, test, production |
+| PORT                       | The http port the listens on                    |    no    | 3000                |                               |
+| CHANNEL                    | The sales channel                               |    no    | websales            | websales, telesales           |
 | SESSION_COOKIE_NAME        | Name of the session cookie                      |    no    | sid                 |                               |
 | CSRF_TOKEN_COOKIE_NAME     | Name of the CSRF token cookie                   |    no    | rlsctkn             |                               |
 | SESSION_TTL_MS             | Time to live for the session cookie and cache   |    no    | 10800000            |                               |
