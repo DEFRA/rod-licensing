@@ -92,8 +92,6 @@ const getPlugIns = () => {
       }
     }
   ]
-  // TODO: when generating the plugins array, we should probably omit HapiGapi if we're on
-  // a 'non-session-cookie' page
   if (process.env.ANALYTICS_PRIMARY_PROPERTY && process.env.ANALYTICS_EXGOV_PROPERTY) {
     plugins.push({
       plugin: HapiGapi,
