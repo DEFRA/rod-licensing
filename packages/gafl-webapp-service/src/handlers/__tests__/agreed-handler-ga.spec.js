@@ -73,7 +73,7 @@ const getMockRequest = (checkout = true) => ({
         set: () => {}
       },
       transaction: {
-        get: jest.fn(() => ({
+        get: () => ({
           payment: {
             payment_id: 'aaa111'
           },
@@ -97,7 +97,7 @@ const getMockRequest = (checkout = true) => ({
           },
           id: 'fff-111-eee-222',
           cost: 1
-        })),
+        }),
         set: () => {}
       }
     }
