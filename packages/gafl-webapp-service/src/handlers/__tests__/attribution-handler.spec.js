@@ -14,11 +14,6 @@ jest.mock('../../uri', () => ({
 }))
 
 describe('The attribution handler', () => {
-  /*
-  create a session
-  save the google campaign tracking data (as described under https://support.google.com/analytics/answer/1033863?hl=en) on the session
-  send a server redirect to a configurable endpoint (which in production will be the GOV.UK hosted landing page)
-  */
   it.each([
     [UTM.CAMPAIGN, 'campaign-12'],
     [UTM.MEDIUM, 'click_bait'],
