@@ -41,6 +41,6 @@
     "dynamics-web-api": "^1.6.4",
     "moment": "^2.27.0",
     "pluralize": "^8.0.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   }
 }

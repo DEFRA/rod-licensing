@@ -39,7 +39,7 @@
     "@hapi/joi": "^17.1.1",
     "debug": "^4.1.1",
     "node-fetch": "^2.6.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
     "pm2": "^4.4.0"
