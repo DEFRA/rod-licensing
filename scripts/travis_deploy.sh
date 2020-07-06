@@ -57,7 +57,7 @@ fi
 
 echo "Updating version from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package files versions, project inter-dependencies and lerna.json with new version number
-lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact --no-git-tag-version
+lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact
 
 # Generate changelog information for changes since the last tag
 echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} and ${NEW_VERSION}"
