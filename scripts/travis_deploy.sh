@@ -14,13 +14,27 @@ SOURCE_BRANCH=$2
 echo "Installing semver"
 npm i -g semver
 
+# TEMP: DEBUG
+echo "Workspace"
+ls -lah
+echo "Git status"
+git status
+echo "Git branch"
+git branch -avl
+echo "Git global configuration"
+git config --global --list
+echo "Git repo configuration"
+git config --local --list
+
 # Ensure that git will return tags with pre-releases in the correct order (e.g. 0.1.0-rc.0 occurs before 0.1.0)
-echo "Determining versions for release"
+echo "Removing existing git tag versionsort configuration"
 git config --global --unset-all versionsort.suffix
+echo "Setting required git tag versionsort configuration"
 git config --global --add versionsort.suffix -beta.
 git config --global --add versionsort.suffix -rc.
 
 # Calculate PREVIOUS_VERSION and NEW_VERSION based on the source and target of the merge
+echo "Determining versions for release"
 if [ "${TARGET_BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
     echo "Discovering most recent tag on master"
