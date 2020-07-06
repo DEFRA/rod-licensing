@@ -17,12 +17,13 @@ npm i -g semver
 # Ensure that git will return tags with pre-releases in the correct order (e.g. 0.1.0-rc.0 occurs before 0.1.0)
 echo "Determining versions for release"
 git config --global --unset-all versionsort.suffix
+git config --global --add versionsort.suffix -beta.
 git config --global --add versionsort.suffix -rc.
 
 # Calculate PREVIOUS_VERSION and NEW_VERSION based on the source and target of the merge
 if [ "${TARGET_BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
-    PREVIOUS_VERSION=$(git tag --list --points-at master --sort=version:refname | tail -1)
+    PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     if [ "${SOURCE_BRANCH}" == "develop" ]; then
         # Merge PR from develop, we'll bump the minor version number
