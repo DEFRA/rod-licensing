@@ -37,7 +37,7 @@
     "aws-sdk": "^2.701.0",
     "adal-node": "^0.2.1",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.0.1",
+    "babel-jest": "^26.1.0",
     "dynamics-web-api": "^1.6.4",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
