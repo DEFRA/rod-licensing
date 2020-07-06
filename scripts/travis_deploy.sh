@@ -14,21 +14,13 @@ SOURCE_BRANCH=$2
 echo "Installing semver"
 npm i -g semver
 
-# TEMP: DEBUG
-echo "Workspace"
-ls -lah
-echo "Git status"
-git status
-echo "Git branch"
+echo "Checking out target branch"
+git checkout "${TARGET_BRANCH}"
 git branch -avl
-echo "Git global configuration"
-git config --global --list
-echo "Git repo configuration"
-git config --local --list
 
 # Ensure that git will return tags with pre-releases in the correct order (e.g. 0.1.0-rc.0 occurs before 0.1.0)
 echo "Removing existing git tag versionsort configuration"
-git config --global --unset-all versionsort.suffix
+git config --global --unset-all versionsort.suffix || echo "No existing versionsort.suffix found it git configuration."
 echo "Setting required git tag versionsort configuration"
 git config --global --add versionsort.suffix -beta.
 git config --global --add versionsort.suffix -rc.
@@ -37,7 +29,6 @@ git config --global --add versionsort.suffix -rc.
 echo "Determining versions for release"
 if [ "${TARGET_BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
-    echo "Discovering most recent tag on master"
     PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     if [ "${SOURCE_BRANCH}" == "develop" ]; then
@@ -49,7 +40,6 @@ if [ "${TARGET_BRANCH}" == "master" ]; then
     fi
 elif [ "$TARGET_BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
-    echo "Discovering most recent tag in repository"
     PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
