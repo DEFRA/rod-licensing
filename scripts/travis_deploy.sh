@@ -66,7 +66,6 @@ git commit -a --amend --no-edit --no-verify
 
 # Push new tag, updated changelog and package metadata to the remote
 echo "Pushing new release to the remote"
-git tag "${NEW_VERSION}" -m "${NEW_VERSION}"
 git push origin "${TARGET_BRANCH}:${TARGET_BRANCH}" --no-verify && git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
