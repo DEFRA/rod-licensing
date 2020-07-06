@@ -39,8 +39,15 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: 'scripts/travis_deploy.sh'
+    script: bash scripts/travis_deploy.sh ${TRAVIS_BRANCH} ${TRAVIS_PULL_REQUEST_BRANCH}
     skip_cleanup: true
+    on:
+      branch: develop
+  - provider: script
+    script: bash scripts/travis_deploy.sh ${TRAVIS_BRANCH} ${TRAVIS_PULL_REQUEST_BRANCH}
+    skip_cleanup: true
+    on:
+      branch: master
 
 addons:
   sonarcloud:
