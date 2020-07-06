@@ -35,6 +35,6 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "moment": "^2.27.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   }
 }
