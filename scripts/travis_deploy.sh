@@ -67,7 +67,7 @@ git commit -a --amend --no-edit --no-verify
 # Push new tag, updated changelog and package metadata to the remote
 echo "Pushing new release to the remote"
 git tag "${NEW_VERSION}" -m "${NEW_VERSION}"
-git push --follow-tags --no-verify --atomic origin HEAD
+git push origin "HEAD:${TARGET_BRANCH}" --tags --no-verify --atomic
 
 # Publish packages to npm
 lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
