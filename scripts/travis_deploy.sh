@@ -9,6 +9,7 @@ trap 'exit 1' INT
 TARGET_BRANCH=$1
 # Where we are merging from
 SOURCE_BRANCH=$2
+echo "Executing deployment - TARGET_BRANCH=${TARGET_BRANCH}, SOURCE_BRANCH=${SOURCE_BRANCH}"
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
@@ -65,7 +66,7 @@ git commit -a --amend --no-edit --no-verify
 
 # Push new tag, updated changelog and package metadata to the remote
 echo "Pushing new release to the remote"
-git push origin --tags
+git push --follow-tags --no-verify --atomic origin
 
 # Publish packages to npm
 lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
