@@ -100,7 +100,7 @@ describe('Server GA integration', () => {
     expect(await hapiGapiPlugin.options.attributionProducer(request)).toEqual(mapAttributionValues(attribution))
   })
 
-  it('gets campaign utm_medium attribute from session', async () => {
+  it('gets UTM medium attribute from session', async () => {
     const medium = 'banner'
     const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: ' ', [UTM.MEDIUM]: medium } })
     await init()
@@ -108,7 +108,7 @@ describe('Server GA integration', () => {
     expect((await hapiGapiPlugin.options.attributionProducer(request)).medium).toBe(medium)
   })
 
-  it('gets campaign utm_medium attribute from querystring', async () => {
+  it('gets UTM campaign attribute from session', async () => {
     const campaign = 'campaign-99'
     const request = generateRequestMock({ attribution: { [UTM.CAMPAIGN]: campaign, [UTM.MEDIUM]: ' ' } })
     await init()
