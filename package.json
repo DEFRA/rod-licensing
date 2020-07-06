@@ -31,7 +31,7 @@
     "docker:services": "docker stack deploy -c docker/services.yml rls"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.10.3",
+    "@babel/preset-env": "^7.10.4",
     "@types/hapi__hapi": "^19.0.3",
     "@types/jest": "^26.0.0",
     "aws-sdk": "^2.701.0",
