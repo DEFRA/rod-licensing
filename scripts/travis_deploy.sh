@@ -34,10 +34,10 @@ if [ "${TARGET_BRANCH}" == "master" ]; then
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     if [ "${SOURCE_BRANCH}" == "develop" ]; then
         # Merge PR from develop, we'll bump the minor version number
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i minor)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i minor)"
     else
         # Merge PR from a hotfix branch, we'll bump the patch version
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i patch)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i patch)"
     fi
 elif [ "$TARGET_BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
@@ -45,10 +45,10 @@ elif [ "$TARGET_BRANCH" == "develop" ]; then
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Most recent version is a production release on master, start a new prerelease on develop
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i preminor --preid rc)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i preminor --preid rc)"
     else
         # Most recent version is already a pre-release on the develop branch, just increment the pre-release number
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)"
     fi
 else
     echo "Skipping deployment for branch ${TARGET_BRANCH}"
@@ -57,7 +57,7 @@ fi
 
 echo "Updating version from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package files versions, project inter-dependencies and lerna.json with new version number
-lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact
+lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact --no-git-tag-version
 
 # Generate changelog information for changes since the last tag
 echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} and ${NEW_VERSION}"
@@ -66,6 +66,7 @@ git commit -a --amend --no-edit --no-verify
 
 # Push new tag, updated changelog and package metadata to the remote
 echo "Pushing new release to the remote"
+git tag "${NEW_VERSION}"
 git push --follow-tags --no-verify --atomic origin
 
 # Publish packages to npm
