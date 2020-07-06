@@ -1,3 +1,25 @@
+Error: Command failed: git log --oneline --pretty=hash<%h> ref<%D> message<%s> date<%cd> --date=short v0.0.1-beta.56..0.0.1
+fatal: ambiguous argument 'v0.0.1-beta.56..0.0.1': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+
+
+    at makeError (/home/travis/build/DEFRA/rod-licensing/node_modules/execa/index.js:174:9)
+    at Function.module.exports.sync (/home/travis/build/DEFRA/rod-licensing/node_modules/execa/index.js:338:15)
+    at Object.listCommits (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/git.js:46:10)
+    at Changelog.getListOfCommits (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:74:20)
+    at Changelog.<anonymous> (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:39:34)
+    at Generator.next (<anonymous>)
+    at /home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:4:12)
+    at Changelog.getCommitInfos (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:38:16)
+    at Changelog.<anonymous> (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:49:40)
+    at Generator.next (<anonymous>)
+    at /home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:4:12)
+    at Changelog.listReleases (/home/travis/build/DEFRA/rod-licensing/node_modules/lerna-changelog/lib/changelog.js:48:16)
 
 ## v0.0.1-beta.57 (2020-06-30)
 
