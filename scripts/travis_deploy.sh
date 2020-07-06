@@ -23,6 +23,7 @@ git config --global --add versionsort.suffix -rc.
 # Calculate PREVIOUS_VERSION and NEW_VERSION based on the source and target of the merge
 if [ "${TARGET_BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
+    echo "Discovering most recent tag on master"
     PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     if [ "${SOURCE_BRANCH}" == "develop" ]; then
@@ -34,6 +35,7 @@ if [ "${TARGET_BRANCH}" == "master" ]; then
     fi
 elif [ "$TARGET_BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
+    echo "Discovering most recent tag in repository"
     PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
