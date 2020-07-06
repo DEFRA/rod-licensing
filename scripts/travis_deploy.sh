@@ -63,14 +63,9 @@ echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} a
 lerna-changelog --from "${PREVIOUS_VERSION}" --to "${NEW_VERSION}" | cat - CHANGELOG.md > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
 git commit -a --amend --no-edit --no-verify
 
-echo "Pushing new release to the remote"
-# TEMP: DEBUG
-git status
-git tag --list --sort=version:refname
-git log
-
 # Push new tag, updated changelog and package metadata to the remote
-git push origin "${TARGET_BRANCH}:${TARGET_BRANCH}"
+echo "Pushing new release to the remote"
+git push origin --tags
 
 # Publish packages to npm
 lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
