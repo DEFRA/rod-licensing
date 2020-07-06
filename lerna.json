@@ -7,12 +7,18 @@
   "command": {
     "bootstrap": {},
     "version": {
-      "allowBranch": ["master", "develop"],
+      "allowBranch": [
+        "master",
+        "develop"
+      ],
       "message": "chore(release): publish %s"
     },
     "publish": {
       "message": "chore(release): publish %s",
-      "allowBranch": ["master", "develop"],
+      "allowBranch": [
+        "master",
+        "develop"
+      ],
       "ignoreChanges": [
         ".*",
         "*.md",
