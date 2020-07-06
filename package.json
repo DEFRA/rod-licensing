@@ -40,7 +40,7 @@
     "babel-jest": "^26.0.1",
     "dynamics-web-api": "^1.6.4",
     "husky": "^4.2.5",
-    "jest": "^26.0.1",
+    "jest": "^26.1.0",
     "jest-circus": "^26.0.1",
     "lerna": "^3.22.1",
     "lerna-changelog": "^1.0.1",
