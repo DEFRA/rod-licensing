@@ -24,8 +24,8 @@ services:
     ports:
       - 3100:3100
     env_file:
-      - env/gafl_webapp-telesales.env
-      - env/gafl_webapp-telesales.secrets.env
+      - env/gafl_webapp_telesales.env
+      - env/gafl_webapp_telesales.secrets.env
     deploy:
       mode: replicated
       replicas: 1

@@ -1,9 +1,9 @@
 version: '3.7'
 services:
   ##############################################################################################################
-  # rod-licensing gafl_websales
+  # rod-licensing gafl_webapp
   ##############################################################################################################
-  gafl_websales:
+  gafl_webapp:
     image: rod-licensing/gafl_webapp:${TAG:-latest}
     volumes:
       - ../:/app
@@ -28,8 +28,8 @@ services:
     ports:
       - 3100:3100
     env_file:
-      - env/gafl_webapp-telesales.env
-      - env/gafl_webapp-telesales.secrets.env
+      - env/gafl_webapp_telesales.env
+      - env/gafl_webapp_telesales.secrets.env
     deploy:
       mode: replicated
       replicas: 1
