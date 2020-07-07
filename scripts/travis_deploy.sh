@@ -73,6 +73,12 @@ git tag "${NEW_VERSION}" -m "${NEW_VERSION}" -f
 git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
+echo "Publishing latest packages to npm"
 lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
 
-echo "Finished at $(date)"
+# If we've pushed a new release into master from develop, then we'll merge the updated package metadata back to develop
+if [ "${TARGET_BRANCH}" == "master" ] && [ "${SOURCE_BRANCH}" == "develop" ]; then
+  git checkout develop
+  git merge -X theirs master
+  git push origin develop:develop --no-verify
+fi
