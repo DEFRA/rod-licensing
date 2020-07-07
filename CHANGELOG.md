@@ -1,4 +1,14 @@
 
+## v0.1.0 (2020-07-07)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#227](https://github.com/DEFRA/rod-licensing/pull/227) Test release process ([@sgardnerdell](https://github.com/sgardnerdell))
+  * [#225](https://github.com/DEFRA/rod-licensing/pull/225) Create release ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 
 
