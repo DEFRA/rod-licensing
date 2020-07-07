@@ -7,9 +7,11 @@ trap 'exit 1' INT
 
 # Where we are merging to
 TARGET_BRANCH=$1
-# Where we are merging from
-SOURCE_BRANCH=$2
-echo "Executing deployment - TARGET_BRANCH=${TARGET_BRANCH}, SOURCE_BRANCH=${SOURCE_BRANCH}"
+# The commit message we're building against
+COMMIT_MESSAGE=$2
+
+[[ "${COMMIT_MESSAGE}" =~ ^(patch|hotfix) ]] && PATCH_RELEASE=true || PATCH_RELEASE=false
+echo "Executing deployment - TARGET_BRANCH=${TARGET_BRANCH}, COMMIT_MESSAGE=${COMMIT_MESSAGE}, PATCH_RELEASE=${PATCH_RELEASE}"
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
@@ -32,12 +34,10 @@ if [ "${TARGET_BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
     PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
-    if [ "${SOURCE_BRANCH}" == "develop" ]; then
-        # Merge PR from develop, we'll bump the minor version number
-        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i minor)"
-    else
-        # Merge PR from a hotfix branch, we'll bump the patch version
+    if [ ${PATCH_RELEASE} == true ]; then
         NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i patch)"
+    else
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i minor)"
     fi
 elif [ "$TARGET_BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
@@ -76,8 +76,8 @@ git push origin "${NEW_VERSION}"
 echo "Publishing latest packages to npm"
 lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
 
-# If we've pushed a new release into master from develop, then we'll merge the updated package metadata back to develop
-if [ "${TARGET_BRANCH}" == "master" ] && [ "${SOURCE_BRANCH}" == "develop" ]; then
+# If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
+if [ "${TARGET_BRANCH}" == "master" ] && [ ${PATCH_RELEASE} == false ]; then
   git checkout develop
   git merge -X theirs master
   git push origin develop:develop --no-verify
