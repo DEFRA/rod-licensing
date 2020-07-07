@@ -1,4 +1,4 @@
-import { UTM } from '../../constants'
+import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../../constants'
 import attributionHandler from '../attribution-handler'
 import { LICENCE_LENGTH } from '../../uri'
 
@@ -6,11 +6,8 @@ jest.mock('../../constants', () => ({
   UTM: {
     CAMPAIGN: 'utmcampaign',
     MEDIUM: 'utmmedium'
-  }
-}))
-
-jest.mock('../../uri', () => ({
-  LICENCE_LENGTH: { uri: '/path/to/license/length' }
+  },
+  ATTRIBUTION_REDIRECT_DEFAULT: '/attribution/redirect/default'
 }))
 
 describe('The attribution handler', () => {
@@ -28,11 +25,22 @@ describe('The attribution handler', () => {
     })
   })
 
-  it('redirects to licence length endpoint', async () => {
+  it('redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn\'t set', async () => {
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(LICENCE_LENGTH.uri)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
+  })
+
+  it('redirects to ATTRIBUTION_REDIRECT env var if it\'s set', async () => {
+    const OLD_ENV = process.OLD_ENV
+    const attributionRedirect = '/attribution/redirect'
+    process.env.ATTRIBUTION_REDIRECT = attributionRedirect
+    const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
+    const responseToolkit = generateResponseToolkitMock()
+    await attributionHandler(generateRequestMock(query), responseToolkit)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(attributionRedirect)
+    process.env = OLD_ENV
   })
 
   const generateRequestMock = (query, status = {}) => ({

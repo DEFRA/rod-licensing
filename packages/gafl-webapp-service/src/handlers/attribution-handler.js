@@ -1,5 +1,4 @@
-import { UTM } from '../constants.js'
-import { LICENCE_LENGTH } from '../uri.js'
+import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
 
 /**
  * Agreed route handler
@@ -8,6 +7,7 @@ import { LICENCE_LENGTH } from '../uri.js'
  * @returns {Promise}
  */
 export default async (request, h) => {
+  const redirectTarget = process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT
   const cache = request.cache()
   await cache.helpers.status.set({
     attribution: {
@@ -18,5 +18,5 @@ export default async (request, h) => {
       [UTM.TERM]: request.query[UTM.TERM]
     }
   })
-  return h.redirect(LICENCE_LENGTH.uri)
+  return h.redirect(redirectTarget)
 }

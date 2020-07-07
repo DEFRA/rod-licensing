@@ -3,6 +3,7 @@
  */
 export const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 export const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
+export const ATTRIBUTION_REDIRECT_DEFAULT = '/'
 export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const REDIS_PORT_DEFAULT = 6379
 export const PAGE_STATE = { completed: true, error: false }
