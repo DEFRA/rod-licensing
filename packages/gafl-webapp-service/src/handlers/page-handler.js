@@ -75,7 +75,7 @@ export default (path, view, completion, getData) => ({
       }
     }
 
-    performTracking(request, path)
+    await performTracking(request, path)
 
     // Calculate the back reference and add to page
     pageData.backRef = await getBackReference(request)

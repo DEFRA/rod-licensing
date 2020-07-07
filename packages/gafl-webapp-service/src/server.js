@@ -122,9 +122,7 @@ const getPlugIns = () => {
             }
           }
           return {}
-        },
-        batchSize: 20,
-        batchInterval: 15000
+        }
       }
     })
   }
