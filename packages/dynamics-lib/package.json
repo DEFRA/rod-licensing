@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/dynamics-lib",
-  "version": "0.0.5",
+  "version": "0.1.0-rc.3",
   "description": "Framework to support integration with dynamics",
   "type": "module",
   "engines": {
@@ -36,11 +36,11 @@
     "@hapi/joi": "^17.1.1",
     "adal-node": "^0.2.1",
     "cache-manager": "^3.3.0",
-    "cache-manager-ioredis": "^2.0.0",
+    "cache-manager-ioredis": "^2.1.0",
     "dot-prop": "^5.2.0",
     "dynamics-web-api": "^1.6.4",
     "moment": "^2.27.0",
     "pluralize": "^8.0.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.2.0"
   }
 }
