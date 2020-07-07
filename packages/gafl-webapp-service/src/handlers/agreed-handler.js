@@ -18,7 +18,7 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { getTrackingProductDetailsFromTransaction } from '../services/analytics/analytics.js'
+import { getTrackingProductDetailsFromTransaction } from '../processors/analytics.js'
 const debug = db('webapp:agreed-handler')
 
 /**

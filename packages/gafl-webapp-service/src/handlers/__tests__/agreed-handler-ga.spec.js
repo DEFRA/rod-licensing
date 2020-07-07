@@ -35,7 +35,7 @@ jest.mock('../../services/payment/govuk-pay-service.js', () => ({
     }
   })
 }))
-jest.mock('../../services/analytics/analytics.js', () => ({
+jest.mock('../../processors/analytics.js', () => ({
   getTrackingProductDetailsFromTransaction: () => mockProductDetails
 }))
 

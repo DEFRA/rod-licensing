@@ -2,7 +2,7 @@ import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY, TERMS_AND_CONDITIONS } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
-import { getTrackingProductDetailsFromTransaction } from '../services/analytics/analytics.js'
+import { getTrackingProductDetailsFromTransaction } from '../processors/analytics.js'
 
 /**
  * Flattens the error structure from joi for use in the templates

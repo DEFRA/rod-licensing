@@ -20,7 +20,7 @@ jest.mock('../../uri.js', () => ({
   TERMS_AND_CONDITIONS: { uri: '/path/to/terms/and/conditions' },
   CONTROLLER: { uri: '/path/to/controller' }
 }))
-jest.mock('../../services/analytics/analytics.js', () => ({
+jest.mock('../../processors/analytics.js', () => ({
   getTrackingProductDetailsFromTransaction: () => mockProductDetails
 }))
 
