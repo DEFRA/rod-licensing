@@ -9,6 +9,7 @@ trap 'exit 1' INT
 TARGET_BRANCH=$1
 # Where we are merging from
 SOURCE_BRANCH=$2
+echo "Executing deployment - TARGET_BRANCH=${TARGET_BRANCH}, SOURCE_BRANCH=${SOURCE_BRANCH}"
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
@@ -33,10 +34,10 @@ if [ "${TARGET_BRANCH}" == "master" ]; then
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     if [ "${SOURCE_BRANCH}" == "develop" ]; then
         # Merge PR from develop, we'll bump the minor version number
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i minor)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i minor)"
     else
         # Merge PR from a hotfix branch, we'll bump the patch version
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i patch)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i patch)"
     fi
 elif [ "$TARGET_BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
@@ -44,10 +45,10 @@ elif [ "$TARGET_BRANCH" == "develop" ]; then
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Most recent version is a production release on master, start a new prerelease on develop
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i preminor --preid rc)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i preminor --preid rc)"
     else
         # Most recent version is already a pre-release on the develop branch, just increment the pre-release number
-        NEW_VERSION=$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)
+        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)"
     fi
 else
     echo "Skipping deployment for branch ${TARGET_BRANCH}"
@@ -64,7 +65,12 @@ lerna-changelog --from "${PREVIOUS_VERSION}" --to "${NEW_VERSION}" | cat - CHANG
 git commit -a --amend --no-edit --no-verify
 
 # Push new tag, updated changelog and package metadata to the remote
-git push
+echo "Pushing new release to the remote"
+git push origin "${TARGET_BRANCH}:${TARGET_BRANCH}" --no-verify
+
+echo "Pushing new release tag to the remote"
+git tag "${NEW_VERSION}" -m "${NEW_VERSION}" -f
+git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
 lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
