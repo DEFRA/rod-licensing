@@ -55,20 +55,9 @@ describe('Server GA integration', () => {
     expect(getHapiGapiPlugin()).not.toBeUndefined()
   })
 
-  it('passes sessionIdProducer that gets session id from process.env', async () => {
+  it('gets session id from cache', async () => {
     const cookieName = 'Bourbon-1272'
-    process.env.SESSION_COOKIE_NAME = 'session_cookie_name'
-    const request = generateRequestMock(undefined, process.env.SESSION_COOKIE_NAME, cookieName)
-    console.log('request.state', request.state)
-    await init()
-    const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(cookieName)
-  })
-
-  it('if session cookie hasn\'t been set, use default value for sessionIdProducer', async () => {
-    const cookieName = 'Garibaldi-1807'
-    delete process.env.SESSION_COOKIE_NAME
-    const request = generateRequestMock(undefined, SESSION_COOKIE_NAME_DEFAULT, cookieName)
+    const request = generateRequestMock(undefined, { getId: () => cookieName })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
     expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(cookieName)
@@ -148,17 +137,16 @@ describe('Server GA integration', () => {
     return plugins.find(p => p.plugin === HapiGapi)
   }
 
-  const generateRequestMock = (status = {}, sessionCookieName = 'sessionCookieName', sessionId = 'sessionId') => ({
-    state: {
-      [sessionCookieName]: { id: sessionId }
-    },
+  const generateRequestMock = (status = {}, cache = {}) => ({
     cache: jest.fn(() => ({
+      getId: () => {},
       helpers: {
         status: {
           get: jest.fn(() => status),
           set: jest.fn()
         }
-      }
+      },
+      ...cache
     }))
   })
 })

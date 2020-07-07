@@ -68,6 +68,8 @@ const cacheDecorator = sessionCookieName =>
     }
 
     return {
+      getId: () => id(),
+
       initialize: async () => {
         debug(`Initializing cache for key: ${id()}`)
         const cache = Object.values(contexts).reduce((a, c) => ({ ...a, [c.identifier]: c.initializer }), {})

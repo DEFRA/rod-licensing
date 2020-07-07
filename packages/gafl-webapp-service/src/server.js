@@ -106,7 +106,7 @@ const getPlugIns = () => {
             hitTypes: ['pageview']
           }
         ],
-        sessionIdProducer: request => useSessionCookie(request) ? request.state[getSessionCookieName()].id : null,
+        sessionIdProducer: request => useSessionCookie(request) ? request.cache().getId() : null,
         attributionProducer: async request => {
           if (useSessionCookie(request)) {
             const { attribution } = await request.cache().helpers.status.get()
