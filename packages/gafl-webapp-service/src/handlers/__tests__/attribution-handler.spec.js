@@ -5,7 +5,10 @@ import { LICENCE_LENGTH } from '../../uri'
 jest.mock('../../constants', () => ({
   UTM: {
     CAMPAIGN: 'utmcampaign',
-    MEDIUM: 'utmmedium'
+    MEDIUM: 'utmmedium',
+    CONTENT: 'utmcontent',
+    SOURCE: 'utmsource',
+    TERM: 'utmterm'
   },
   ATTRIBUTION_REDIRECT_DEFAULT: '/attribution/redirect/default'
 }))
@@ -22,6 +25,20 @@ describe('The attribution handler', () => {
     await attributionHandler(request, generateResponseToolkitMock())
     expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
       attribution: expect.objectContaining({ [utmValue]: sampleValue })
+    })
+  })
+
+  it.each([
+    [UTM.CAMPAIGN, '<script>alert("hacked")</script>', '%3Cscript%3Ealert(%22hacked%22)%3C%2Fscript%3E'],
+    [UTM.MEDIUM, '<script>alert("busted")</script>', '%3Cscript%3Ealert(%22busted%22)%3C%2Fscript%3E'],
+    [UTM.CONTENT, '<script>alert("stolen")</script>', '%3Cscript%3Ealert(%22stolen%22)%3C%2Fscript%3E'],
+    [UTM.SOURCE, '<script>alert("pilfered")</script>', '%3Cscript%3Ealert(%22pilfered%22)%3C%2Fscript%3E'],
+    [UTM.TERM, '<script>alert("pinched")</script>', '%3Cscript%3Ealert(%22pinched%22)%3C%2Fscript%3E']
+  ])('Sanitises input values before persisting them', async (utmValue, sampleValue, sanitised) => {
+    const request = generateRequestMock({ [utmValue]: sampleValue })
+    await attributionHandler(request, generateResponseToolkitMock())
+    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
+      attribution: expect.objectContaining({ [utmValue]: sanitised })
     })
   })
 
