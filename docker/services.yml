@@ -17,6 +17,22 @@ services:
         condition: on-failure
 
   ##############################################################################################################
+  # rod-licensing gafl_webapp_telesales
+  ##############################################################################################################
+  gafl_webapp_telesales:
+    image: rod-licensing/gafl_webapp:${TAG:-latest}
+    ports:
+      - 3100:3100
+    env_file:
+      - ./env/gafl_webapp_telesales.env
+      - ./env/gafl_webapp_telesales.secrets.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  ##############################################################################################################
   # rod-licensing payment_mop_up_job
   ##############################################################################################################
   payment_mop_up_job:
