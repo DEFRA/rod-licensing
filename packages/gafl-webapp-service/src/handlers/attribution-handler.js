@@ -3,7 +3,7 @@ import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
 const sanitiseInput = value => value ? encodeURIComponent(value) : value
 
 /**
- * Agreed route handler
+ * Attribution route handler
  * @param request
  * @param h
  * @returns {Promise}
@@ -11,18 +11,13 @@ const sanitiseInput = value => value ? encodeURIComponent(value) : value
 export default async (request, h) => {
   const redirectTarget = process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT
   const cache = request.cache()
-  const campaign = sanitiseInput(request.query[UTM.CAMPAIGN])
-  const medium = sanitiseInput(request.query[UTM.MEDIUM])
-  const content = sanitiseInput(request.query[UTM.CONTENT])
-  const source = sanitiseInput(request.query[UTM.SOURCE])
-  const term = sanitiseInput(request.query[UTM.TERM])
   await cache.helpers.status.set({
     attribution: {
-      [UTM.CAMPAIGN]: campaign,
-      [UTM.MEDIUM]: medium,
-      [UTM.CONTENT]: content,
-      [UTM.SOURCE]: source,
-      [UTM.TERM]: term
+      [UTM.CAMPAIGN]: sanitiseInput(request.query[UTM.CAMPAIGN]),
+      [UTM.MEDIUM]: sanitiseInput(request.query[UTM.MEDIUM]),
+      [UTM.CONTENT]: sanitiseInput(request.query[UTM.CONTENT]),
+      [UTM.SOURCE]: sanitiseInput(request.query[UTM.SOURCE]),
+      [UTM.TERM]: sanitiseInput(request.query[UTM.TERM])
     }
   })
   return h.redirect(redirectTarget)
