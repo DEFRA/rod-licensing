@@ -19,7 +19,8 @@ import {
   REDIS_PORT_DEFAULT,
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT,
-  FEEDBACK_URI_DEFAULT
+  FEEDBACK_URI_DEFAULT,
+  CHANNEL_DEFAULT
 } from './constants.js'
 import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
 
@@ -96,6 +97,7 @@ const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
     Object.assign(response.source.context, {
+      TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
       _uri: {
         cookies: COOKIES.uri,
         refunds: REFUND_POLICY.uri,

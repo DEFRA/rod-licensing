@@ -138,3 +138,30 @@ To stop the running services
 ```shell script
 docker stack rm rls
 ```
+
+### HTTPS
+
+In order for the OAuth 2.0 authentication to work on a users development environment for the telesales version of the service, it is necessary to run the service using HTTPS.
+
+To do this an nginx ssl reverse proxy has been provided which will serve the pages from:
+
+1. [https://localhost:3043]() - websales
+2. [https://localhost:3143]() - telesales
+
+The reverse proxy is started as part of the infrastructure stack (rli), however a root certificate will need to be installed on the keychain of the local machine.
+
+The root certificate file can be found at
+
+```
+./resources/infrastructure/nginx/ca/ca.pem
+```
+
+In order to add the root certificate to the keychain the following command can be used on MAC-OS:
+
+```shell script
+sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" ./resources/infrastructure/nginx/ca/ca.pem
+```
+
+Alternatively the graphical application `Key Chain access app` may be used. There are analogous processes available for Windows; "Credential Manager" that can be found in "Control Panel" and "update-ca-certificates" for Ubuntu.
+
+This procedure will not work if the user is using Firefox. Firefox uses Mozilla's proprietary root certificate store NSS.
