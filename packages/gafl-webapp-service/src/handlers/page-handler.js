@@ -1,8 +1,7 @@
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
-import { CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY, TERMS_AND_CONDITIONS } from '../uri.js'
+import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
-import { getTrackingProductDetailsFromTransaction } from '../processors/analytics.js'
 
 /**
  * Flattens the error structure from joi for use in the templates
@@ -25,21 +24,6 @@ const getBackReference = async (request) => {
   status.backRef.current = request.path
   await request.cache().helpers.status.setCurrentPermission(status)
   return status.backRef.previous
-}
-
-const performTracking = async (request, path) => {
-  if ([CONTACT_SUMMARY.uri, LICENCE_SUMMARY.uri].includes(path)) {
-    const transaction = await request.cache().helpers.transaction.get()
-    request.ga.ecommerce().detail(
-      getTrackingProductDetailsFromTransaction(transaction)
-    )
-  }
-  if (path === TERMS_AND_CONDITIONS.uri) {
-    const transaction = await request.cache().helpers.transaction.get()
-    request.ga.ecommerce().add(
-      getTrackingProductDetailsFromTransaction(transaction)
-    )
-  }
 }
 
 /**
@@ -74,8 +58,6 @@ export default (path, view, completion, getData) => ({
         throw err
       }
     }
-
-    await performTracking(request, path)
 
     // Calculate the back reference and add to page
     pageData.backRef = await getBackReference(request)

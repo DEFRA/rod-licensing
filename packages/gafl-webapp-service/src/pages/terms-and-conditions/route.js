@@ -1,11 +1,12 @@
 import pageRoute from '../../routes/page-route.js'
 import * as mappings from '../../processors/mapping-constants.js'
+import { getTrackingProductDetailsFromTransaction } from '../../processors/analytics.js'
 import Joi from '@hapi/joi'
 import { TERMS_AND_CONDITIONS, CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
 
 import GetDataRedirect from '../../handlers/get-data-redirect.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
 
   if (!status[LICENCE_SUMMARY.page]) {
@@ -15,6 +16,11 @@ const getData = async request => {
   if (!status[CONTACT_SUMMARY.page]) {
     throw new GetDataRedirect(CONTACT_SUMMARY.uri)
   }
+
+  const transaction = await request.cache().helpers.transaction.get()
+  request.ga.ecommerce().add(
+    getTrackingProductDetailsFromTransaction(transaction)
+  )
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   return {
