@@ -77,7 +77,7 @@ const createPayment = async (request, transaction, status) => {
   /*
    * Google Analytics tracking
    */
-  request.ga.ecommerce().checkout(
+  await request.ga.ecommerce().checkout(
     getTrackingProductDetailsFromTransaction(transaction)
   )
 
@@ -151,7 +151,7 @@ const processPayment = async (request, transaction, status) => {
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
 
-    request.ga.ecommerce().purchase(
+    await request.ga.ecommerce().purchase(
       getTrackingProductDetailsFromTransaction(transaction)
     )
   } else {
