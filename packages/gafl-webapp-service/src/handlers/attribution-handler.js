@@ -1,6 +1,6 @@
 import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
 
-const sanitiseInput = value => value ? encodeURIComponent(value) : value
+const sanitiseInput = value => (value ? encodeURIComponent(value) : value)
 
 /**
  * Attribution route handler

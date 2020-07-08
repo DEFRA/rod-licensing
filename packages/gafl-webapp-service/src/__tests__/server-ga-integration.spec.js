@@ -1,11 +1,11 @@
 import HapiGapi from 'hapi-gapi'
 import Hapi from '@hapi/hapi'
-import { SESSION_COOKIE_NAME_DEFAULT, UTM } from '../constants.js'
-import sessionManager, { useSessionCookie } from '../session-cache/session-manager.js'
+import { UTM } from '../constants.js'
+import { useSessionCookie } from '../session-cache/session-manager.js'
 
 jest.mock('@hapi/hapi', () => ({
   server: jest.fn(() => ({
-    app: { },
+    app: {},
     cache: () => {},
     decorate: () => {},
     ext: () => {},
@@ -63,7 +63,7 @@ describe('Server GA integration', () => {
     expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(cookieName)
   })
 
-  it('sessionIdProducer returns null if we\'re not using a session cookie', async () => {
+  it("sessionIdProducer returns null if we're not using a session cookie", async () => {
     useSessionCookie.mockReturnValueOnce(false)
     const request = generateRequestMock()
     await init()
@@ -82,7 +82,7 @@ describe('Server GA integration', () => {
     { [UTM.CAMPAIGN]: 'campaign-123b', [UTM.MEDIUM]: 'footer', [UTM.CONTENT]: 'foo-bar' },
     { [UTM.CAMPAIGN]: 'campaign-99xx', [UTM.SOURCE]: 'bbq', [UTM.TERM]: 'hilary' },
     { [UTM.MEDIUM]: 'banner', [UTM.CONTENT]: 'blah-di-blah' }
-  ])('sets correct values in attribution according to session attribution', async (attribution) => {
+  ])('sets correct values in attribution according to session attribution', async attribution => {
     const request = generateRequestMock({ attribution })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
@@ -109,7 +109,7 @@ describe('Server GA integration', () => {
     useSessionCookie.mockReturnValueOnce(false)
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect((await hapiGapiPlugin.options.attributionProducer({}))).toEqual({})
+    expect(await hapiGapiPlugin.options.attributionProducer({})).toEqual({})
   })
 
   it('initialises property settings for ANALYTICS_PRIMARY_PROPERTY', async () => {
@@ -134,7 +134,7 @@ describe('Server GA integration', () => {
     )
   })
 
-  it('omits ANALYTICS_PRIMARY_PROPERTY settings if it\'s not set', async () => {
+  it("omits ANALYTICS_PRIMARY_PROPERTY settings if it's not set", async () => {
     delete process.env.ANALYTICS_PRIMARY_PROPERTY
     await init()
     const [property] = getHapiGapiPlugin().options.propertySettings
@@ -147,7 +147,7 @@ describe('Server GA integration', () => {
     )
   })
 
-  it('omits ANALYTICS_XGOV_PROPERTY settings if it\'s not set', async () => {
+  it("omits ANALYTICS_XGOV_PROPERTY settings if it's not set", async () => {
     delete process.env.ANALYTICS_XGOV_PROPERTY
     await init()
     const [property] = getHapiGapiPlugin().options.propertySettings

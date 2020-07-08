@@ -77,9 +77,7 @@ const createPayment = async (request, transaction, status) => {
   /*
    * Google Analytics tracking
    */
-  await request.ga.ecommerce().checkout(
-    getTrackingProductDetailsFromTransaction(transaction)
-  )
+  await request.ga.ecommerce().checkout(getTrackingProductDetailsFromTransaction(transaction))
 
   /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
@@ -151,9 +149,7 @@ const processPayment = async (request, transaction, status) => {
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
 
-    await request.ga.ecommerce().purchase(
-      getTrackingProductDetailsFromTransaction(transaction)
-    )
+    await request.ga.ecommerce().purchase(getTrackingProductDetailsFromTransaction(transaction))
   } else {
     /*
      * This block deals with failed or cancelled payments

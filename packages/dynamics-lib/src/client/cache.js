@@ -8,7 +8,10 @@ export function config () {
     ...(process.env.REDIS_HOST && {
       store: redisStore,
       host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT || 6379
+      port: process.env.REDIS_PORT || 6379,
+      ...(process.env.REDIS_PASSWORD && {
+        password: process.env.REDIS_PASSWORD
+      })
     })
   }
 }

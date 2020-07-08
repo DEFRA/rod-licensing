@@ -1,7 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-const optionProc = c => Object.values(c.options)
-  .map(p => ({
+const optionProc = c =>
+  Object.values(c.options).map(p => ({
     code: p.description,
     name: p.label
   }))

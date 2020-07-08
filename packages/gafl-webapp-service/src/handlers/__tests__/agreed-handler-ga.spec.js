@@ -1,39 +1,43 @@
 import agreedHandler from '../agreed-handler.js'
 import { COMPLETION_STATUS } from '../../constants.js'
 
-const mockProductDetails = [{
-  id: 'Salmon 1 Year 3 Rod Licence (Full)',
-  name: 'Salmon and sea trout - 3 rod(s) licence',
-  brand: 'Rod Fishing Licence',
-  category: 'Salmon and sea trout/3 rod(s)/Full',
-  variant: '12 Month(s)',
-  quantity: 1,
-  price: 1
-}]
+const mockProductDetails = [
+  {
+    id: 'Salmon 1 Year 3 Rod Licence (Full)',
+    name: 'Salmon and sea trout - 3 rod(s) licence',
+    brand: 'Rod Fishing Licence',
+    category: 'Salmon and sea trout/3 rod(s)/Full',
+    variant: '12 Month(s)',
+    quantity: 1,
+    price: 1
+  }
+]
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
 jest.mock('../../services/payment/govuk-pay-service.js', () => ({
-  sendPayment: () => Promise.resolve({
-    payment_id: 'aaa-111',
-    created_date: '2020-08-01T12:51:12.000',
-    state: 'what a',
-    payment_provider: 'IOU',
-    _links: {
-      next_url: {
-        href: '/exciting/things/here'
-      },
-      self: {
-        href: '/its/full/of/stars'
+  sendPayment: () =>
+    Promise.resolve({
+      payment_id: 'aaa-111',
+      created_date: '2020-08-01T12:51:12.000',
+      state: 'what a',
+      payment_provider: 'IOU',
+      _links: {
+        next_url: {
+          href: '/exciting/things/here'
+        },
+        self: {
+          href: '/its/full/of/stars'
+        }
       }
-    }
-  }),
-  getPaymentStatus: () => Promise.resolve({
-    state: {
-      finished: true,
-      status: 'success'
-    }
-  })
+    }),
+  getPaymentStatus: () =>
+    Promise.resolve({
+      state: {
+        finished: true,
+        status: 'success'
+      }
+    })
 }))
 jest.mock('../../processors/analytics.js', () => ({
   getTrackingProductDetailsFromTransaction: () => mockProductDetails
