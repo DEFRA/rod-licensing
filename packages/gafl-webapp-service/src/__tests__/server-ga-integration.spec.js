@@ -41,7 +41,7 @@ describe('Server GA integration', () => {
 
   beforeEach(() => {
     process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-    process.env.ANALYTICS_EXGOV_PROPERTY = 'UA-987654321-0'
+    process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
     jest.clearAllMocks()
     createServer()
   })
@@ -114,7 +114,7 @@ describe('Server GA integration', () => {
 
   it.each([
     'ANALYTICS_PRIMARY_PROPERTY',
-    'ANALYTICS_EXGOV_PROPERTY'
+    'ANALYTICS_XGOV_PROPERTY'
   ])('doesn\'t initialise plugins with HapiGapi if %s flag isn\'t present', async (flag) => {
     delete process.env[flag]
     await init()

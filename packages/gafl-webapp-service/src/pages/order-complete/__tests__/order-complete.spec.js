@@ -17,7 +17,7 @@ salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(m
 const OLD_ENV = process.env
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_EXGOV_PROPERTY = 'UA-987654321-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
 })
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

@@ -25,7 +25,7 @@ To run from this directory:
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    | Yes                 |                               |
 | FEEDBACK_URI               | Location of feedback survey                     |    no    | #                   |                               |
 | ANALYTICS_PRIMARY_PROPERTY | Analytics ID for tracking inc ecommerce         |   yes    |                     |                               |
-| ANALYTICS_EXGOV_PROPERTY   | Analytics ID for page view tracking             |   yes    |                     |                               |
+| ANALYTICS_XGOV_PROPERTY    | Analytics ID for page view tracking             |   yes    |                     |                               |
 | ATTRIBUTION_REDIRECT       | Target for redirect of attribution endpoint     |    no    | /                   |                               |
 ## OS Places address lookup
 

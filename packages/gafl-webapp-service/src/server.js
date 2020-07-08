@@ -92,7 +92,7 @@ const getPlugIns = () => {
       }
     }
   ]
-  if (process.env.ANALYTICS_PRIMARY_PROPERTY && process.env.ANALYTICS_EXGOV_PROPERTY) {
+  if (process.env.ANALYTICS_PRIMARY_PROPERTY && process.env.ANALYTICS_XGOV_PROPERTY) {
     plugins.push({
       plugin: HapiGapi,
       options: {
@@ -102,7 +102,7 @@ const getPlugIns = () => {
             hitTypes: ['pageview', 'event', 'ecommerce']
           },
           {
-            id: process.env.ANALYTICS_EXGOV_PROPERTY,
+            id: process.env.ANALYTICS_XGOV_PROPERTY,
             hitTypes: ['pageview']
           }
         ],
