@@ -69,7 +69,7 @@ git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
 echo "Publishing latest packages to npm"
-lerna publish from-git --yes --no-git-reset --pre-dist-tag rc
+lerna publish from-git --yes --pre-dist-tag rc
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
 if [ "${TRAVIS_BRANCH}" == "master" ] && [ ${PATCH_RELEASE} == false ]; then
