@@ -106,7 +106,79 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: fulfilment-audit
+
+  SFTP_ED25519_HostKey:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: /dev/fsh/local/sftp/ssh_ed25519_host_key
+      Description: The private ed25519 host key used to emulate SFTP in the local development environment
+      SecretString: |
+        -----BEGIN OPENSSH PRIVATE KEY-----
+        b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+        QyNTUxOQAAACAr9b/hrH1Y+O3v77A/VV45wJj+jg1wATzO78rgox65rAAAAJC1giS2tYIk
+        tgAAAAtzc2gtZWQyNTUxOQAAACAr9b/hrH1Y+O3v77A/VV45wJj+jg1wATzO78rgox65rA
+        AAAEANew5I/nww1BhTBpRvOIcrHkb3h11K68vaKL//r2OiISv1v+GsfVj47e/vsD9VXjnA
+        mP6ODXABPM7vyuCjHrmsAAAACXRlc3Rfc2Z0cAECAwQ=
+        -----END OPENSSH PRIVATE KEY-----
+
+  SFTP_RSA_HostKey:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: /dev/fsh/local/sftp/ssh_rsa_host_key
+      Description: The private rsa host key used to emulate SFTP in the local development environment
+      SecretString: |
+        -----BEGIN OPENSSH PRIVATE KEY-----
+        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
+        xwMxouJ+XxMAAAAJdGVzdF9zZnRwAQI=
+        -----END OPENSSH PRIVATE KEY-----
+
 # At the time of writing (Mar 2020) there are problems using cloudformation templates to initialise SQS queues (FIFO support)
+# update jul 2020 - still a problem with redrive policies and referencing the DLQ via its ARN
 # SalesQueue:
 #    Type: AWS::SQS::Queue
 #    Properties:
