@@ -64,6 +64,24 @@ const createServer = options => {
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
 const getPlugIns = () => {
+  const hapiGapiPropertySettings = []
+  if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
+    hapiGapiPropertySettings.push({
+      id: process.env.ANALYTICS_PRIMARY_PROPERTY,
+      hitTypes: ['pageview', 'event', 'ecommerce']
+    })
+  } else {
+    console.warn('ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won\'t track this')
+  }
+  if (process.env.ANALYTICS_XGOV_PROPERTY) {
+    hapiGapiPropertySettings.push({
+      id: process.env.ANALYTICS_XGOV_PROPERTY,
+      hitTypes: ['pageview']
+    })
+  } else {
+    console.warn('ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won\'t track this')
+  }
+
   const plugins = [
     Inert,
     Vision,
@@ -90,22 +108,11 @@ const getPlugIns = () => {
         },
         logUnauthorized: true
       }
-    }
-  ]
-  if (process.env.ANALYTICS_PRIMARY_PROPERTY && process.env.ANALYTICS_XGOV_PROPERTY) {
-    plugins.push({
+    },
+    {
       plugin: HapiGapi,
       options: {
-        propertySettings: [
-          {
-            id: process.env.ANALYTICS_PRIMARY_PROPERTY,
-            hitTypes: ['pageview', 'event', 'ecommerce']
-          },
-          {
-            id: process.env.ANALYTICS_XGOV_PROPERTY,
-            hitTypes: ['pageview']
-          }
-        ],
+        propertySettings: hapiGapiPropertySettings,
         sessionIdProducer: request => useSessionCookie(request) ? request.cache().getId() : null,
         attributionProducer: async request => {
           if (useSessionCookie(request)) {
@@ -124,8 +131,8 @@ const getPlugIns = () => {
           return {}
         }
       }
-    })
-  }
+    }
+  ]
   return plugins
 }
 

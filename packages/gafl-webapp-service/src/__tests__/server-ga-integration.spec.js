@@ -112,13 +112,52 @@ describe('Server GA integration', () => {
     expect((await hapiGapiPlugin.options.attributionProducer({}))).toEqual({})
   })
 
-  it.each([
-    'ANALYTICS_PRIMARY_PROPERTY',
-    'ANALYTICS_XGOV_PROPERTY'
-  ])('doesn\'t initialise plugins with HapiGapi if %s flag isn\'t present', async (flag) => {
-    delete process.env[flag]
+  it('initialises property settings for ANALYTICS_PRIMARY_PROPERTY', async () => {
     await init()
-    expect(getHapiGapiPlugin()).toBeUndefined()
+    const [analyticsPrimaryProperty] = getHapiGapiPlugin().options.propertySettings
+    expect(analyticsPrimaryProperty).toEqual(
+      expect.objectContaining({
+        id: process.env.ANALYTICS_PRIMARY_PROPERTY,
+        hitTypes: ['pageview', 'event', 'ecommerce']
+      })
+    )
+  })
+
+  it('initialises property settings for ANALYTICS_XGOV_PROPERTY', async () => {
+    await init()
+    const analyticsXGovProperty = getHapiGapiPlugin().options.propertySettings[1]
+    expect(analyticsXGovProperty).toEqual(
+      expect.objectContaining({
+        id: process.env.ANALYTICS_XGOV_PROPERTY,
+        hitTypes: ['pageview']
+      })
+    )
+  })
+
+  it('omits ANALYTICS_PRIMARY_PROPERTY settings if it\'s not set', async () => {
+    delete process.env.ANALYTICS_PRIMARY_PROPERTY
+    await init()
+    const [property] = getHapiGapiPlugin().options.propertySettings
+    expect(getHapiGapiPlugin().options.propertySettings.length).toBe(1)
+    expect(property).toEqual(
+      expect.objectContaining({
+        id: process.env.ANALYTICS_XGOV_PROPERTY,
+        hitTypes: ['pageview']
+      })
+    )
+  })
+
+  it('omits ANALYTICS_XGOV_PROPERTY settings if it\'s not set', async () => {
+    delete process.env.ANALYTICS_XGOV_PROPERTY
+    await init()
+    const [property] = getHapiGapiPlugin().options.propertySettings
+    expect(getHapiGapiPlugin().options.propertySettings.length).toBe(1)
+    expect(property).toEqual(
+      expect.objectContaining({
+        id: process.env.ANALYTICS_PRIMARY_PROPERTY,
+        hitTypes: ['pageview', 'event', 'ecommerce']
+      })
+    )
   })
 
   const mapAttributionValues = attribution => {
