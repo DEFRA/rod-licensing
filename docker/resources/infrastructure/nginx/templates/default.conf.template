@@ -1,0 +1,34 @@
+# WEBSALES
+server {
+    listen                              ${WEBSALES_LISTEN} ssl;
+    ssl_certificate                     /etc/nginx/ssl/localhost.crt;
+    ssl_certificate_key                 /etc/nginx/ssl/localhost.key;
+    proxy_ssl_protocols                 TLSv1 TLSv1.1 TLSv1.2;
+    proxy_ssl_ciphers                   HIGH:!aNULL:!MD5;
+    server_name                         localhost;
+
+    location / {
+        proxy_pass                      http://host.docker.internal:${WEBSALES_UPSTREAM_PORT};
+        proxy_ssl_session_reuse         on;
+        proxy_set_header                Host $host:${WEBSALES_LISTEN};
+        proxy_set_header                X-Forwarded-Proto https;
+    }
+}
+
+# TELESALES
+server {
+    listen                              ${TELESALES_LISTEN} ssl;
+    ssl_certificate                     /etc/nginx/ssl/localhost.crt;
+    ssl_certificate_key                 /etc/nginx/ssl/localhost.key;
+    proxy_ssl_protocols                 TLSv1 TLSv1.1 TLSv1.2;
+    proxy_ssl_ciphers                   HIGH:!aNULL:!MD5;
+    server_name                         localhost;
+
+    location / {
+        proxy_pass                      http://host.docker.internal:${TELESALES_UPSTREAM_PORT};
+        proxy_ssl_session_reuse         on;
+        proxy_set_header                Host $host:${TELESALES_LISTEN};
+        proxy_set_header                X-Forwarded-Proto https;
+    }
+}
+
