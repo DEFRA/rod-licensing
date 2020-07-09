@@ -38,7 +38,7 @@ const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PA
  * @returns {function(*, *)}
  */
 const sessionManager = sessionCookieName => async (request, h) => {
-  if (request.path.startsWith('/buy')) {
+  if (!request.path.startsWith('/public')) {
     let initialized = false
 
     if (!request.state[sessionCookieName]) {
@@ -46,7 +46,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
        * No cookie - create and initialize cache
        */
       const id = uuidv4()
-      debug(`New session cookie: ${id}`)
+      debug(`New session cookie: ${id} create on ${request.path}`)
       h.state(sessionCookieName, { id })
       request.state[sessionCookieName] = { id }
       await request.cache().initialize()
@@ -58,11 +58,12 @@ const sessionManager = sessionCookieName => async (request, h) => {
       await request.cache().initialize()
       initialized = true
     } else {
+      const { id } = request.state[sessionCookieName]
       /*
        * Keep the cookie alive so that is persists as long as the cache -
        * the cache has the TTL reset on each write
        */
-      const { id } = request.state[sessionCookieName]
+      debug(`Renew session cookie: ${id} create on ${request.path}`)
       h.state(sessionCookieName, { id })
     }
 
