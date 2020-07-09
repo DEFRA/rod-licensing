@@ -40,7 +40,14 @@ export default [
   {
     method: 'GET',
     path: RENEWAL_PUBLIC.uri,
-    handler: async (request, h) => h.redirect(IDENTIFY.uri.replace('{referenceNumber}', request.params.referenceNumber))
+    handler: async (request, h) => {
+      await request.cache().initialize()
+      await addPermission(request)
+      if (request.params.referenceNumber) {
+        await request.cache().helpers.status.setCurrentPermission({ referenceNumber: request.params.referenceNumber })
+      }
+      return h.redirect(IDENTIFY.uri)
+    }
   },
   {
     method: 'GET',

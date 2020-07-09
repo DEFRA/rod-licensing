@@ -63,7 +63,6 @@ const sessionManager = sessionCookieName => async (request, h) => {
        * Keep the cookie alive so that is persists as long as the cache -
        * the cache has the TTL reset on each write
        */
-      debug(`Renew session cookie: ${id} create on ${request.path}`)
       h.state(sessionCookieName, { id })
     }
 

@@ -20,14 +20,18 @@ export default async (request, h) => {
     .createBirthDateValidator(Joi)
     .validateAsync(`${payload['date-of-birth-year']}-${payload['date-of-birth-month']}-${payload['date-of-birth-day']}`)
   const postcode = await validation.contact.createUKPostcodeValidator(Joi).validateAsync(payload.postcode)
-  const { referenceNumber } = await request.cache().helpers.status.getCurrentPermission()
+
+  const permission = await request.cache().helpers.status.getCurrentPermission()
+  const referenceNumber = payload.referenceNumber || permission.referenceNumber
 
   // Authenticate
   const authenticationResult = await salesApi.authenticate(referenceNumber, dateOfBirth, postcode)
 
   if (!authenticationResult) {
-    await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: false } })
-    return h.redirect(IDENTIFY.uri.replace('{referenceNumber}', referenceNumber))
+    payload.referenceNumber = referenceNumber
+    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload })
+    await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
+    return h.redirect(IDENTIFY.uri)
   } else {
     await setUpCacheFromAuthenticationResult(request, authenticationResult)
     await setUpPayloads(request)
