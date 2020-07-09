@@ -82,7 +82,7 @@ const getPlugIns = () => {
     console.warn('ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won\'t track this')
   }
 
-  const plugins = [
+  return [
     Inert,
     Vision,
     Scooter,
@@ -133,7 +133,6 @@ const getPlugIns = () => {
       }
     }
   ]
-  return plugins
 }
 
 /**
