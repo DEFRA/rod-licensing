@@ -23,7 +23,7 @@ describe('Analytics for licence summary', () => {
 
     await getData(request)
 
-    expect(request.ga.ecommerce.mock.results[0].value.add)
+    expect(request.ga.ecommerce.mock.results[0].value.add).toHaveBeenCalledWith(mockProductDetails)
   })
 })
 
