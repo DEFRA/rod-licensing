@@ -38,14 +38,15 @@ describe('tracking data transform', () => {
   })
 
   it.each([
-    ['Dalmationfish', 101, ['threats', 'coercion'], 'Dalmationfish/101 rod(s)/threats,coercion'],
-    ['Swordfish', 3, ['bribery'], 'Swordfish/3 rod(s)/bribery'],
+    ['Dalmationfish', 101, [{ name: 'threats' }, { name: 'coercion' }], 'Dalmationfish/101 rod(s)/threats,coercion'],
+    ['Swordfish', 3, [{ name: 'bribery' }], 'Swordfish/3 rod(s)/bribery'],
     ['Pollock', 1, [], 'Pollock/1 rod(s)/Full']
   ])('Generates category from permit subtype label, number of rods and concessions', (permitSubtypeLabel, numberOfRods, concessions, expectedCategory) => {
     const transaction = getSampleTransaction([
       getSamplePermission({ permitSubtypeLabel, numberOfRods, concessions })
     ])
     const [{ category }] = getTrackingProductDetailsFromTransaction(transaction)
+
     expect(category).toBe(expectedCategory)
   })
 

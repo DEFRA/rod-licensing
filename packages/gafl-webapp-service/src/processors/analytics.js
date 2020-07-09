@@ -1,15 +1,15 @@
 
-export const getTrackingProductDetailsFromTransaction = transaction =>
-  transaction.permissions.map(permission => ({
-    id: permission.permit.description,
-    name: `${permission.permit.permitSubtype.label} - ${permission.permit.numberOfRods} rod(s) licence`,
-    brand: permission.permit.permitType.label,
+export const getTrackingProductDetailsFromTransaction = ({ permissions }) =>
+  permissions.map(({ permit }) => ({
+    id: permit.description,
+    name: `${permit.permitSubtype.label} - ${permit.numberOfRods} rod(s) licence`,
+    brand: permit.permitType.label,
     category: [
-      permission.permit.permitSubtype.label,
-      `${permission.permit.numberOfRods} rod(s)`,
-      permission.permit.concessions.length ? permission.permit.concessions.join(',') : 'Full'
+      permit.permitSubtype.label,
+      `${permit.numberOfRods} rod(s)`,
+      permit.concessions.length ? permit.concessions.map(c => c.name).join(',') : 'Full'
     ].join('/'),
-    variant: `${permission.permit.durationMagnitude} ${permission.permit.durationDesignator.label}`,
+    variant: `${permit.durationMagnitude} ${permit.durationDesignator.label}`,
     quantity: 1,
-    price: permission.permit.cost
+    price: permit.cost
   }))
