@@ -14,12 +14,6 @@ import config from '../config.js'
 import db from 'debug'
 const debug = db('fulfilment:staging')
 
-/**
- * Maximum buffer size before writing to a part file.
- * This is set to 999 as the maximum size of a batch request to Dynamics is 1000 and we need to create the FulfilmentRequestFile entity as part of
- * the same request, leaving room to update 999 FulfilmentRequest entities
- */
-const DYNAMICS_BATCH_BUFFER_LIMIT = Math.min(config.file.size, 999)
 /** Date of execution */
 const EXECUTION_DATE = moment()
 
@@ -54,8 +48,8 @@ const processQueryPage = async page => {
   const fileExportedStatus = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
   while (page.length) {
     const fulfilmentFile = await getTargetFulfilmentFile()
-    const partNumber = Math.floor(fulfilmentFile.numberOfRequests / DYNAMICS_BATCH_BUFFER_LIMIT)
-    const partFileSize = Math.min(DYNAMICS_BATCH_BUFFER_LIMIT, config.file.size - fulfilmentFile.numberOfRequests)
+    const partNumber = Math.floor(fulfilmentFile.numberOfRequests / config.file.partFileSize)
+    const partFileSize = Math.min(config.file.partFileSize, config.file.size - fulfilmentFile.numberOfRequests)
     const itemsToWrite = page.splice(0, partFileSize).map(result => ({
       fulfilmentRequest: result.entity,
       permission: result.expanded.permission.entity,
