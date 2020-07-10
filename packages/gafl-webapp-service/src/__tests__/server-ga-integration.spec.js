@@ -36,7 +36,6 @@ jest.mock('../session-cache/session-manager.js', () => ({
 }))
 
 describe('Server GA integration', () => {
-  const OLD_ENV = process.env
   const { createServer, init } = require('../server.js')
 
   beforeEach(() => {
@@ -47,7 +46,8 @@ describe('Server GA integration', () => {
   })
 
   afterEach(() => {
-    process.env = OLD_ENV
+    delete process.env.ANALYTICS_PRIMARY_PROPERTY
+    delete process.env.ANALYTICS_XGOV_PROPERTY
   })
 
   it('registers HapiGapi plugin', async () => {
