@@ -1,4 +1,4 @@
-import { IDENTIFY, AUTHENTICATE, CONTROLLER, LICENCE_SUMMARY, TEST_TRANSACTION } from '../../../../uri.js'
+import { IDENTIFY, AUTHENTICATE, CONTROLLER, LICENCE_SUMMARY, TEST_TRANSACTION, RENEWAL_PUBLIC } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
@@ -11,7 +11,8 @@ beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-const VALID_IDENTIFY = IDENTIFY.uri.replace('{referenceNumber}', 'AAAAAA')
+const VALID_RENEWAL_PUBLIC = RENEWAL_PUBLIC.uri.replace('{referenceNumber?}', 'AAAAAA')
+const VALID_RENEWAL_PUBLIC_URI = RENEWAL_PUBLIC.uri.replace('{referenceNumber?}', '')
 
 const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
 const dobInvalid = moment().add(1, 'years')
@@ -24,42 +25,54 @@ const dobHelper = d => ({
 jest.mock('@defra-fish/connectors-lib')
 
 describe('The easy renewal identification page', () => {
-  it('returns a failure when not called with a permission reference ', async () => {
-    const data = await injectWithCookies('GET', IDENTIFY.uri)
-    expect(data.statusCode).toBe(403)
-  })
-
-  it('returns a failure when not called with an invalid permission reference ', async () => {
-    const data = await injectWithCookies('GET', IDENTIFY.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
-    expect(data.statusCode).toBe(403)
+  it('returns a failure when called with an invalid permission reference ', async () => {
+    const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data2.statusCode).toBe(403)
   })
 
   it('returns successfully when called with a valid reference ', async () => {
-    const data = await injectWithCookies('GET', VALID_IDENTIFY)
-    expect(data.statusCode).toBe(200)
+    const data = await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data2.statusCode).toBe(200)
   })
 
   it('redirects back to itself on posting an invalid postcode', async () => {
-    const data = await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'HHHHH' }, dobHelper(dobAdultToday)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    const data = await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'HHHHH' }, dobHelper(dobAdultToday)))
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(VALID_IDENTIFY)
+    expect(data.headers.location).toBe(IDENTIFY.uri)
   })
 
   it('redirects back to itself on posting an invalid data of birth', async () => {
-    const data = await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobInvalid)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    const data = await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobInvalid)))
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(VALID_IDENTIFY)
+    expect(data.headers.location).toBe(IDENTIFY.uri)
   })
 
   it('redirects back to itself on posting an valid but not authenticated details', async () => {
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(null)))
-    const data = await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC_URI)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    const data = await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(dobAdultToday))
+    )
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(AUTHENTICATE.uri)
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(VALID_IDENTIFY)
-    await injectWithCookies('GET', VALID_IDENTIFY)
+    expect(data2.headers.location).toBe(IDENTIFY.uri)
+    const data3 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it.each([
@@ -71,7 +84,13 @@ describe('The easy renewal identification page', () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
-    const data = await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    const data = await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(dobAdultToday))
+    )
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(AUTHENTICATE.uri)
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
@@ -85,7 +104,13 @@ describe('The easy renewal identification page', () => {
       .add(-65, 'years')
       .add(-1, 'days')
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
-    await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(dobAdultToday))
+    )
     await injectWithCookies('GET', AUTHENTICATE.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
