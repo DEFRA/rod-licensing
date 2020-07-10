@@ -43,6 +43,7 @@ describe('The attribution handler', () => {
   })
 
   it('redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn\'t set', async () => {
+    delete process.env.ATTRIBUTION_REDIRECT
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
@@ -50,14 +51,13 @@ describe('The attribution handler', () => {
   })
 
   it('redirects to ATTRIBUTION_REDIRECT env var if it\'s set', async () => {
-    const OLD_ENV = process.OLD_ENV
     const attributionRedirect = '/attribution/redirect'
     process.env.ATTRIBUTION_REDIRECT = attributionRedirect
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(attributionRedirect)
-    process.env = OLD_ENV
+    delete process.env.ATTRIBUTION_REDIRECT
   })
 
   const generateRequestMock = (query, status = {}) => ({

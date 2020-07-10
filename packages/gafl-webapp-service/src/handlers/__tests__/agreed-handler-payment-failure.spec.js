@@ -10,7 +10,6 @@ import mockPermitsConcessions from '../../__mocks__/data/permit-concessions'
 import mockConcessions from '../../__mocks__/data/concessions'
 import mockDefraCountries from '../../__mocks__/data/defra-country'
 
-const OLD_ENV = process.env
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
@@ -18,7 +17,10 @@ beforeAll(() => {
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
-afterAll(() => { process.env = OLD_ENV })
+afterAll(() => {
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
+  delete process.env.ANALYTICS_XGOV_PROPERTY
+})
 
 jest.mock('@defra-fish/connectors-lib')
 salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))

@@ -35,7 +35,6 @@ const dobHelper = d => ({
 })
 const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
 
-const OLD_ENV = process.env
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
@@ -43,7 +42,10 @@ beforeAll(() => {
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
-afterAll(() => { process.env = OLD_ENV })
+afterAll(() => {
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
+  delete process.env.ANALYTICS_XGOV_PROPERTY
+})
 
 describe('The licence summary page', () => {
   it('redirects to the licence length page if length is set', async () => {
