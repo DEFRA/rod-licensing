@@ -39,12 +39,23 @@ describe('config', () => {
   })
 
   describe('ftp', () => {
-    it('is an asynchronous function to retrieve ftp configuration values', async () => {
-      expect(config.ftp.host).toEqual('test-host')
-      expect(config.ftp.port).toEqual('2222')
-      expect(config.ftp.path).toEqual('/remote/share')
-      expect(config.ftp.username).toEqual('test-user')
-      expect(config.ftp.privateKey).toEqual('test-ssh-key')
+    it('provides properties relating the use of SFTP', async () => {
+      expect(config.ftp).toEqual(
+        expect.objectContaining({
+          host: 'test-host',
+          port: '2222',
+          path: '/remote/share',
+          username: 'test-user',
+          privateKey: 'test-ssh-key',
+          algorithms: { cipher: expect.any(Array), kex: expect.any(Array) },
+          // Wait up to 60 seconds for the SSH handshake
+          readyTimeout: expect.any(Number),
+          // Retry 5 times over a minute
+          retries: expect.any(Number),
+          retry_minTimeout: expect.any(Number),
+          debug: expect.any(Function)
+        })
+      )
     })
     it('defaults the sftp port to 22 if the environment variable is not configured', async () => {
       delete process.env.POCL_FTP_PORT
