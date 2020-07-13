@@ -1,10 +1,11 @@
+import config from '../config.js'
 import { execute } from '../pocl-processor.js'
 import { ftpToS3 } from '../transport/ftp-to-s3.js'
 import { s3ToLocal } from '../transport/s3-to-local.js'
 import { getFileRecords } from '../io/db.js'
 import { stage } from '../staging/pocl-data-staging.js'
 
-jest.mock('fs')
+jest.mock('../config.js')
 jest.mock('../transport/ftp-to-s3.js')
 jest.mock('../transport/s3-to-local.js')
 jest.mock('../io/db.js')
@@ -16,7 +17,8 @@ describe('pocl-processor', () => {
     s3ToLocal.mockResolvedValueOnce('local/1')
     s3ToLocal.mockResolvedValueOnce('local/2')
 
-    await execute()
+    await expect(execute()).resolves.toBeUndefined()
+    expect(config.initialise).toHaveBeenCalled()
     expect(ftpToS3).toHaveBeenCalled()
     expect(getFileRecords).toHaveBeenCalled()
     expect(s3ToLocal).toHaveBeenNthCalledWith(1, 's3path/1')
