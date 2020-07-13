@@ -25,7 +25,9 @@ To run from this directory:
 | GOV_PAY_APIKEY             | GOV pay access identifier                       |    no    | Yes                 |                               |
 | GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    | Yes                 |                               |
 | FEEDBACK_URI               | Location of feedback survey                     |    no    | #                   |                               |
-
+| ANALYTICS_PRIMARY_PROPERTY | Analytics ID for tracking inc ecommerce         |    no    |                     |                               |
+| ANALYTICS_XGOV_PROPERTY    | Analytics ID for page view tracking             |    no    |                     |                               |
+| ATTRIBUTION_REDIRECT       | Target for redirect of attribution endpoint     |    no    | /                   |                               |
 ## OS Places address lookup
 
 The address lookup can be port-forwarded locally to test the find-address page with a command similar to the following;
@@ -43,3 +45,4 @@ An address lookup key will also need to be set.
 ## GOV.UK pay setup
 
 The details of the GOV.UK payment API can be found here; https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation
+
