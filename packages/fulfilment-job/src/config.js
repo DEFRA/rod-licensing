@@ -75,14 +75,29 @@ class Config {
     }
   }
 
+  /**
+   * Fulfilment file configuration settings
+   * @type {object}
+   * @readonly
+   */
   get file () {
     return this._file
   }
 
+  /**
+   * FTP configuration settings
+   * @type {object}
+   * @readonly
+   */
   get ftp () {
     return this._ftp
   }
 
+  /**
+   * S3 configuration settings
+   * @type {object}
+   * @readonly
+   */
   get s3 () {
     return this._s3
   }

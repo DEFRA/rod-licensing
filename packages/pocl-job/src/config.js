@@ -73,14 +73,29 @@ class Config {
     }
   }
 
+  /**
+   * Database configuration settings
+   * @type {object}
+   * @readonly
+   */
   get db () {
     return this._db
   }
 
+  /**
+   * FTP configuration settings
+   * @type {object}
+   * @readonly
+   */
   get ftp () {
     return this._ftp
   }
 
+  /**
+   * S3 configuration settings
+   * @type {object}
+   * @readonly
+   */
   get s3 () {
     return this._s3
   }
