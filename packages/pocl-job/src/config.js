@@ -47,13 +47,13 @@ class Config {
   _s3
 
   async initialise () {
-    this._db = {
+    this.db = {
       fileStagingTable: process.env.POCL_FILE_STAGING_TABLE,
       recordStagingTable: process.env.POCL_RECORD_STAGING_TABLE,
       stagingTtlDelta: Number.parseInt(process.env.POCL_STAGING_TTL || 60 * 60 * 168)
     }
 
-    this._ftp = {
+    this.ftp = {
       host: process.env.POCL_FTP_HOST,
       port: process.env.POCL_FTP_PORT || '22',
       path: process.env.POCL_FTP_PATH,
@@ -68,7 +68,7 @@ class Config {
       debug: db('pocl:ftp')
     }
 
-    this._s3 = {
+    this.s3 = {
       bucket: process.env.POCL_S3_BUCKET
     }
   }
@@ -76,28 +76,37 @@ class Config {
   /**
    * Database configuration settings
    * @type {object}
-   * @readonly
    */
   get db () {
     return this._db
   }
 
+  set db (cfg) {
+    this._db = cfg
+  }
+
   /**
    * FTP configuration settings
    * @type {object}
-   * @readonly
    */
   get ftp () {
     return this._ftp
   }
 
+  set ftp (cfg) {
+    this._ftp = cfg
+  }
+
   /**
    * S3 configuration settings
    * @type {object}
-   * @readonly
    */
   get s3 () {
     return this._s3
+  }
+
+  set s3 (cfg) {
+    this._s3 = cfg
   }
 }
 export default new Config()

@@ -47,7 +47,7 @@ class Config {
   _s3
 
   async initialise () {
-    this._file = {
+    this.file = {
       size: Number.parseInt(process.env.FULFILMENT_FILE_SIZE),
       /**
        * Maximum buffer size before writing to a part file.
@@ -56,7 +56,7 @@ class Config {
        */
       partFileSize: Math.min(Number.parseInt(process.env.FULFILMENT_FILE_SIZE), 999)
     }
-    this._ftp = {
+    this.ftp = {
       host: process.env.FULFILMENT_FTP_HOST,
       port: process.env.FULFILMENT_FTP_PORT || '22',
       path: process.env.FULFILMENT_FTP_PATH,
@@ -70,7 +70,7 @@ class Config {
       retry_minTimeout: 12000,
       debug: db('fulfilment:ftp')
     }
-    this._s3 = {
+    this.s3 = {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
   }
@@ -78,28 +78,37 @@ class Config {
   /**
    * Fulfilment file configuration settings
    * @type {object}
-   * @readonly
    */
   get file () {
     return this._file
   }
 
+  set file (cfg) {
+    this._file = cfg
+  }
+
   /**
    * FTP configuration settings
    * @type {object}
-   * @readonly
    */
   get ftp () {
     return this._ftp
   }
 
+  set ftp (cfg) {
+    this._ftp = cfg
+  }
+
   /**
    * S3 configuration settings
    * @type {object}
-   * @readonly
    */
   get s3 () {
     return this._s3
+  }
+
+  set s3 (cfg) {
+    this._s3 = cfg
   }
 }
 export default new Config()
