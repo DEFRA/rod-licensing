@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.1 (2020-07-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#190](https://github.com/DEFRA/rod-licensing/pull/190) Implement Google Analytics ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v0.2.0 (2020-07-08)
 
