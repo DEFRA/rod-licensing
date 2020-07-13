@@ -3,6 +3,7 @@
  */
 export const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 export const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
+export const ATTRIBUTION_REDIRECT_DEFAULT = '/'
 export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const PORT_DEFAULT = 3000
 export const REDIS_PORT_DEFAULT = 6379
@@ -27,6 +28,14 @@ export const COMPLETION_STATUS = {
 export const GOVPAYFAIL = {
   prePaymentRetry: { step: 'pre-payment' },
   postPaymentRetry: { step: 'post-payment' }
+}
+
+export const UTM = {
+  CAMPAIGN: 'utm_campaign',
+  MEDIUM: 'utm_medium',
+  SOURCE: 'utm_source',
+  TERM: 'utm_term',
+  CONTENT: 'utm_content'
 }
 
 export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']

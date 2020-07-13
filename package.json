@@ -21,6 +21,7 @@
     "postinstall": "npm run lerna:bootstrap",
     "test": "jest",
     "test:only-changed": "jest --changedSince master",
+    "test:watch": "jest --watch",
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
     "lerna:bootstrap": "lerna bootstrap",

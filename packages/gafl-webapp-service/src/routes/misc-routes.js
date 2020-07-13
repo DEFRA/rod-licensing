@@ -10,7 +10,8 @@ import {
   AUTHENTICATE,
   RENEWAL_START_VALIDATE,
   RENEWAL_PUBLIC,
-  IDENTIFY
+  IDENTIFY,
+  ATTRIBUTION
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
@@ -20,6 +21,7 @@ import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
+import attribution from '../handlers/attribution-handler.js'
 
 export default [
   {
@@ -93,5 +95,10 @@ export default [
     method: 'GET',
     path: REFUND_POLICY.uri,
     handler: async (request, h) => h.view(REFUND_POLICY.page)
+  },
+  {
+    method: 'GET',
+    path: ATTRIBUTION.uri,
+    handler: attribution
   }
 ]

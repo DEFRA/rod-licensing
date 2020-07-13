@@ -14,9 +14,17 @@ salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => r
 salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
 salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
+beforeAll(() => {
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+})
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+afterAll(() => {
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
+  delete process.env.ANALYTICS_XGOV_PROPERTY
+})
 
 describe('The order completion handler', () => {
   it('throws a status 403 (forbidden) exception if the agreed flag is not set', async () => {
