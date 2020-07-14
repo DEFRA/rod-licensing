@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.3 (2020-07-14)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`
+  * [#236](https://github.com/DEFRA/rod-licensing/pull/236) Add support to authenticate with the configured redis instance ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.2 (2020-07-14)
 
 #### :rocket: Enhancement
