@@ -24,10 +24,17 @@ jest.mock('@defra-fish/connectors-lib', () => {
   }
 })
 
+jest.mock('../../config.js', () => ({
+  ftp: {
+    path: '/ftpservershare/'
+  },
+  s3: {
+    bucket: 'testbucket'
+  }
+}))
+
 describe('ftp-to-s3', () => {
   beforeAll(() => {
-    process.env.POCL_FTP_PATH = '/ftpservershare/'
-    process.env.POCL_S3_BUCKET = 'testbucket'
     getTempDir.mockReturnValue('/local/tmp')
     md5File.mockResolvedValue('example-md5')
   })
@@ -53,12 +60,12 @@ describe('ftp-to-s3', () => {
     expect(mockedFtpMethods.fastGet).toHaveBeenNthCalledWith(1, '/ftpservershare/test1.xml', localPath1, {})
     expect(mockedFtpMethods.fastGet).toHaveBeenNthCalledWith(2, '/ftpservershare/test2.xml', localPath2, {})
     expect(AwsMock.S3.mockedMethods.putObject).toHaveBeenNthCalledWith(1, {
-      Bucket: process.env.POCL_S3_BUCKET,
+      Bucket: 'testbucket',
       Key: s3Key1,
       Body: 'test1stream'
     })
     expect(AwsMock.S3.mockedMethods.putObject).toHaveBeenNthCalledWith(2, {
-      Bucket: process.env.POCL_S3_BUCKET,
+      Bucket: 'testbucket',
       Key: s3Key2,
       Body: 'test2stream'
     })
@@ -108,7 +115,7 @@ describe('ftp-to-s3', () => {
     const s3Key = `${moment().format('YYYY-MM-DD')}/test-already-processed.xml`
     expect(mockedFtpMethods.fastGet).toHaveBeenCalledWith('/ftpservershare/test-already-processed.xml', localPath, {})
     expect(AwsMock.S3.mockedMethods.putObject).toHaveBeenCalledWith({
-      Bucket: process.env.POCL_S3_BUCKET,
+      Bucket: 'testbucket',
       Key: s3Key,
       Body: 'teststream'
     })

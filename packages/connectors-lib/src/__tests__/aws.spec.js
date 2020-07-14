@@ -42,4 +42,17 @@ describe('aws connectors', () => {
     expect(s3.config.endpoint).toEqual('s3.eu-west-2.amazonaws.com')
     expect(s3.config.s3ForcePathStyle).toBeFalsy()
   })
+
+  it('configures secretsmanager with a custom endpoint if one is defined in configuration', async () => {
+    Config.aws.secretsManager.endpoint = TEST_ENDPOINT
+    const { secretsManager } = require('../aws.js').default()
+    expect(secretsManager.config.endpoint).toEqual(TEST_ENDPOINT)
+  })
+
+  it('uses default secretsmanager settings if a custom endpoint is not defined', async () => {
+    process.env.AWS_REGION = 'eu-west-2'
+    delete Config.aws.secretsManager.endpoint
+    const { secretsManager } = require('../aws.js').default()
+    expect(secretsManager.config.endpoint).toEqual('secretsmanager.eu-west-2.amazonaws.com')
+  })
 })

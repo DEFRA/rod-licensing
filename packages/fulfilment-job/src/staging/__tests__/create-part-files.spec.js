@@ -18,7 +18,13 @@ import {
 import { FULFILMENT_FILE_STATUS_OPTIONSET, FULFILMENT_REQUEST_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
 const EXECUTION_DATE = moment()
 
-jest.mock('../../config.js', () => ({ file: { size: 1 } }))
+jest.mock('../../config.js', () => ({
+  file: {
+    size: 1,
+    partFileSize: 1
+  }
+}))
+
 jest.mock('../../transport/s3.js')
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -57,7 +63,6 @@ describe('createPartFiles', () => {
   beforeEach(jest.clearAllMocks)
 
   it('queries dynamics for data and writes a part file', async () => {
-    config.file.size = 1
     const fulfilmentFileExpectations = expect.objectContaining({
       fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
       date: expect.anything(),

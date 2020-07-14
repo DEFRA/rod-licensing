@@ -9,6 +9,9 @@ export default {
     },
     dynamodb: {
       endpoint: process.env.AWS_DYNAMODB_ENDPOINT
+    },
+    secretsManager: {
+      endpoint: process.env.AWS_SECRETS_MANAGER_ENDPOINT
     }
   }
 }

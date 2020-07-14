@@ -42,49 +42,47 @@ export const SFTP_CIPHERS = [
 ]
 
 class Config {
-  _file
+  _db
   _ftp
   _s3
 
   async initialise () {
-    this.file = {
-      size: Number.parseInt(process.env.FULFILMENT_FILE_SIZE),
-      /**
-       * Maximum buffer size before writing to a part file.
-       * This is capped at 999 as the maximum size of a batch request to Dynamics is 1000 and we need to create the FulfilmentRequestFile entity as
-       * part of the same request, leaving room to update 999 FulfilmentRequest entities
-       */
-      partFileSize: Math.min(Number.parseInt(process.env.FULFILMENT_FILE_SIZE), 999)
+    this.db = {
+      fileStagingTable: process.env.POCL_FILE_STAGING_TABLE,
+      recordStagingTable: process.env.POCL_RECORD_STAGING_TABLE,
+      stagingTtlDelta: Number.parseInt(process.env.POCL_STAGING_TTL || 60 * 60 * 168)
     }
+
     this.ftp = {
-      host: process.env.FULFILMENT_FTP_HOST,
-      port: process.env.FULFILMENT_FTP_PORT || '22',
-      path: process.env.FULFILMENT_FTP_PATH,
-      username: process.env.FULFILMENT_FTP_USERNAME,
-      privateKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_FTP_KEY_SECRET_ID }).promise()).SecretString,
+      host: process.env.POCL_FTP_HOST,
+      port: process.env.POCL_FTP_PORT || '22',
+      path: process.env.POCL_FTP_PATH,
+      username: process.env.POCL_FTP_USERNAME,
+      privateKey: (await secretsManager.getSecretValue({ SecretId: process.env.POCL_FTP_KEY_SECRET_ID }).promise()).SecretString,
       algorithms: { cipher: SFTP_CIPHERS, kex: SFTP_KEY_EXCHANGE_ALGORITHMS },
       // Wait up to 60 seconds for the SSH handshake
       readyTimeout: 60000,
       // Retry 5 times over a minute
       retries: 5,
       retry_minTimeout: 12000,
-      debug: db('fulfilment:ftp')
+      debug: db('pocl:ftp')
     }
+
     this.s3 = {
-      bucket: process.env.FULFILMENT_S3_BUCKET
+      bucket: process.env.POCL_S3_BUCKET
     }
   }
 
   /**
-   * Fulfilment file configuration settings
+   * Database configuration settings
    * @type {object}
    */
-  get file () {
-    return this._file
+  get db () {
+    return this._db
   }
 
-  set file (cfg) {
-    this._file = cfg
+  set db (cfg) {
+    this._db = cfg
   }
 
   /**

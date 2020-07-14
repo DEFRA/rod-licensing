@@ -5,7 +5,6 @@ import { createFtpWriteStream } from '../../transport/ftp.js'
 import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
 import { FulfilmentRequestFile, executeQuery, persist } from '@defra-fish/dynamics-lib'
 
-jest.mock('fs')
 jest.mock('../../config.js')
 jest.mock('../../transport/s3.js')
 jest.mock('../../transport/ftp.js')
