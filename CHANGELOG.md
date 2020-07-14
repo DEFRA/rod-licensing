@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.4 (2020-07-14)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `pocl-job`
+  * [#235](https://github.com/DEFRA/rod-licensing/pull/235) Migrate FTP server, POCL and Fulfilment services to use AWS SecretsManager ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.3 (2020-07-14)
 
 #### :rocket: Enhancement
