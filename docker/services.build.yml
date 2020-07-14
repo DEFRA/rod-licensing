@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 #######################################################
 # Common project docker build options
 #######################################################
@@ -11,8 +11,8 @@ services:
   #
   # This is not designed to be deployed but to serve as the base image for rod-licensing services.
   ##############################################################################################################
-  rod-licensing-base:
-    image: rod-licensing/base
+  rod_licensing_base:
+    image: rod_licensing/base
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.base
@@ -23,8 +23,8 @@ services:
   # This is not designed to be deployed but to serve as the base image for building rod-licensing services.
   # Provides additional libraries for the build process not required at runtime.
   ##############################################################################################################
-  rod-licensing-builder:
-    image: rod-licensing/builder
+  rod_licensing_builder:
+    image: rod_licensing/builder
     build:
       <<: *common-build-options
       dockerfile: Dockerfile.build
@@ -33,7 +33,7 @@ services:
   # rod-licensing gafl_webapp
   ##############################################################################################################
   gafl_webapp:
-    image: rod-licensing/gafl_webapp:${TAG:-latest}
+    image: rod_licensing/gafl_webapp:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/gafl-webapp-service/${PROJECT_DOCKERFILE:-Dockerfile}
@@ -42,7 +42,7 @@ services:
   # rod-licensing sales_api
   ##############################################################################################################
   sales_api:
-    image: rod-licensing/sales_api:${TAG:-latest}
+    image: rod_licensing/sales_api:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/sales-api-service/${PROJECT_DOCKERFILE:-Dockerfile}
@@ -51,7 +51,7 @@ services:
   # rod-licensing pocl_job
   ##############################################################################################################
   pocl_job:
-    image: rod-licensing/pocl_job:${TAG:-latest}
+    image: rod_licensing/pocl_job:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/pocl-job/${PROJECT_DOCKERFILE:-Dockerfile}
@@ -60,7 +60,7 @@ services:
   # rod-licensing fulfilment_job
   ##############################################################################################################
   fulfilment_job:
-    image: rod-licensing/fulfilment_job:${TAG:-latest}
+    image: rod_licensing/fulfilment_job:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/fulfilment-job/${PROJECT_DOCKERFILE:-Dockerfile}
@@ -69,7 +69,7 @@ services:
   # rod-licensing payment_mop_up_job
   ##############################################################################################################
   payment_mop_up_job:
-    image: rod-licensing/payment_mop_up_job:${TAG:-latest}
+    image: rod_licensing/payment_mop_up_job:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/payment-mop-up-job/${PROJECT_DOCKERFILE:-Dockerfile}
@@ -78,7 +78,7 @@ services:
   # rod-licensing sqs_receiver
   ##############################################################################################################
   sqs_receiver:
-    image: rod-licensing/sqs_receiver:${TAG:-latest}
+    image: rod_licensing/sqs_receiver:${TAG:-latest}
     build:
       <<: *common-build-options
       dockerfile: packages/sqs-receiver-service/${PROJECT_DOCKERFILE:-Dockerfile}
