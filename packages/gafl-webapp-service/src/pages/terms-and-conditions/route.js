@@ -18,9 +18,7 @@ export const getData = async request => {
   }
 
   const transaction = await request.cache().helpers.transaction.get()
-  await request.ga.ecommerce().add(
-    getTrackingProductDetailsFromTransaction(transaction)
-  )
+  await request.ga.ecommerce().add(getTrackingProductDetailsFromTransaction(transaction))
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   return {

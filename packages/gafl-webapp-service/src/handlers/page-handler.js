@@ -17,7 +17,7 @@ export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: 
  * @param pageData
  * @returns {Promise<void>}
  */
-const getBackReference = async (request) => {
+const getBackReference = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   status.backRef = status.backRef || { current: null }
   status.backRef.previous = status.backRef.current

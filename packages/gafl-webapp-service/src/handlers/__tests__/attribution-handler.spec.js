@@ -1,6 +1,5 @@
 import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../../constants'
 import attributionHandler from '../attribution-handler'
-import { LICENCE_LENGTH } from '../../uri'
 
 jest.mock('../../constants', () => ({
   UTM: {
@@ -42,7 +41,7 @@ describe('The attribution handler', () => {
     })
   })
 
-  it('redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn\'t set', async () => {
+  it("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async () => {
     delete process.env.ATTRIBUTION_REDIRECT
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
     const responseToolkit = generateResponseToolkitMock()
@@ -50,7 +49,7 @@ describe('The attribution handler', () => {
     expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
   })
 
-  it('redirects to ATTRIBUTION_REDIRECT env var if it\'s set', async () => {
+  it("redirects to ATTRIBUTION_REDIRECT env var if it's set", async () => {
     const attributionRedirect = '/attribution/redirect'
     process.env.ATTRIBUTION_REDIRECT = attributionRedirect
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }

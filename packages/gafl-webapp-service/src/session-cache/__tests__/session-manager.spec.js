@@ -15,9 +15,7 @@ describe('Use session cookie', () => {
     expect(useSessionCookie({ path: '/buy' })).toBeTruthy()
   })
 
-  it.each(
-    ['/this/path/doesnt/work', '/nor/does/this/one', '/this/one/too']
-  )('path %s doesn\'t require session cookie', (path) => {
+  it.each(['/this/path/doesnt/work', '/nor/does/this/one', '/this/one/too'])("path %s doesn't require session cookie", path => {
     expect(useSessionCookie({ path })).toBeFalsy()
   })
 })
