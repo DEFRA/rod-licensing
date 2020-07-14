@@ -59,9 +59,7 @@ export const getData = async request => {
   const startTimeString = displayStartTime(permission)
 
   const transaction = await request.cache().helpers.transaction.get()
-  await request.ga.ecommerce().detail(
-    getTrackingProductDetailsFromTransaction(transaction)
-  )
+  await request.ga.ecommerce().detail(getTrackingProductDetailsFromTransaction(transaction))
 
   return {
     permission,

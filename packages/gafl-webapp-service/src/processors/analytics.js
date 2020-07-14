@@ -1,4 +1,3 @@
-
 export const getTrackingProductDetailsFromTransaction = ({ permissions }) =>
   permissions.map(({ permit }) => ({
     id: permit.description,

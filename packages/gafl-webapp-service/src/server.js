@@ -45,7 +45,10 @@ const createServer = options => {
                 partition: 'web-app',
                 host: process.env.REDIS_HOST,
                 port: process.env.REDIS_PORT || REDIS_PORT_DEFAULT,
-                db: 0
+                db: 0,
+                ...(process.env.REDIS_PASSWORD && {
+                  password: process.env.REDIS_PASSWORD
+                })
               }
             }
           }
@@ -72,7 +75,7 @@ const getPlugIns = () => {
       hitTypes: ['pageview', 'event', 'ecommerce']
     })
   } else {
-    console.warn('ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won\'t track this')
+    console.warn("ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won't track this")
   }
   if (process.env.ANALYTICS_XGOV_PROPERTY) {
     hapiGapiPropertySettings.push({
@@ -80,7 +83,7 @@ const getPlugIns = () => {
       hitTypes: ['pageview']
     })
   } else {
-    console.warn('ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won\'t track this')
+    console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
   }
 
   return [
@@ -91,9 +94,9 @@ const getPlugIns = () => {
       plugin: Blankie,
       options: {
         /*
-        * This defines the content security policy - which is as restrictive as possible
-        * It must allow web-fonts from 'fonts.gstatic.com'
-        */
+         * This defines the content security policy - which is as restrictive as possible
+         * It must allow web-fonts from 'fonts.gstatic.com'
+         */
         fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
         scriptSrc: [scriptHash],
         generateNonces: true
@@ -114,19 +117,19 @@ const getPlugIns = () => {
       plugin: HapiGapi,
       options: {
         propertySettings: hapiGapiPropertySettings,
-        sessionIdProducer: request => useSessionCookie(request) ? request.cache().getId() : null,
+        sessionIdProducer: request => (useSessionCookie(request) ? request.cache().getId() : null),
         attributionProducer: async request => {
           if (useSessionCookie(request)) {
             const { attribution } = await request.cache().helpers.status.get()
 
             if (attribution) {
-              return ({
+              return {
                 campaign: attribution[UTM.CAMPAIGN],
                 content: attribution[UTM.CONTENT],
                 medium: attribution[UTM.MEDIUM],
                 source: attribution[UTM.SOURCE],
                 term: attribution[UTM.TERM]
-              })
+              }
             }
           }
           return {}
