@@ -1,7 +1,7 @@
 ####################################################################################################################################
 # Used for local development debugging
 ####################################################################################################################################
-FROM rod-licensing/base
+FROM rod_licensing/base
 WORKDIR /app/packages/pocl-job
 # Volume to mount ssh keys for FTP access
 VOLUME /etc/pocl/keys

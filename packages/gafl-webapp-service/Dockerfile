@@ -1,25 +1,27 @@
 ####################################################################################################################################
 # Build stage 1 - Create a distribution of the project which we can copy in the second build stage.
 ####################################################################################################################################
-FROM rod-licensing/builder AS builder
+FROM rod_licensing/builder AS builder
 WORKDIR /app
 
 # Install app dependencies
 COPY packages/gafl-webapp-service/package*.json /app/
 COPY packages/gafl-webapp-service/assets /app/assets
 COPY packages/gafl-webapp-service/build /app/build
-RUN npm install
-RUN npm run prepare
-RUN npm prune --production
-RUN npm cache clean --force > /dev/null 2>&1
+RUN npm install \
+    && npm run prepare \
+    && npm prune --production \
+    && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
 COPY packages/gafl-webapp-service/ /app
 
+RUN rm -Rf /app/build /app/assets
+
 ####################################################################################################################################
 # Build stage 2 - Using the distribution from stage 1, build the final docker image with a minimal number of layers.
 ####################################################################################################################################
-FROM rod-licensing/base
+FROM rod_licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 
