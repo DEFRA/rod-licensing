@@ -5,6 +5,7 @@ import findPermit from '../find-permit.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
+import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
 import {
   LICENCE_SUMMARY,
   CONTROLLER,
@@ -25,7 +26,7 @@ const checkPageCompleted = (p, status) => {
   }
 }
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -56,6 +57,9 @@ const getData = async request => {
   await findPermit(permission, request)
 
   const startTimeString = displayStartTime(permission)
+
+  const transaction = await request.cache().helpers.transaction.get()
+  await request.ga.ecommerce().detail(getTrackingProductDetailsFromTransaction(transaction))
 
   return {
     permission,

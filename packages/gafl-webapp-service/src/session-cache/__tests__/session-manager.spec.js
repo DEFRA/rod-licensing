@@ -1,4 +1,5 @@
 import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie } from '../../__mocks__/test-utils.js'
+import { useSessionCookie } from '../session-manager.js'
 import {
   CONTROLLER,
   LICENCE_LENGTH,
@@ -9,11 +10,24 @@ import {
   PAYMENT_FAILED
 } from '../../uri.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+describe('Use session cookie', () => {
+  it('path not starting with /public marked as using a session cookie', () => {
+    expect(useSessionCookie({ path: '/foo' })).toBeTruthy()
+  })
+
+  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too'])(
+    "path %s doesn't require session cookie",
+    path => {
+      expect(useSessionCookie({ path })).toBeFalsy()
+    }
+  )
+})
 
 describe('The user', () => {
+  beforeAll(d => start(d))
+  beforeAll(d => initialize(d))
+  afterAll(d => stop(d))
+
   it('clearing the session cookie automatically create a new cookie and cache', async () => {
     const data = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)
     expect(data.statusCode).toBe(200)

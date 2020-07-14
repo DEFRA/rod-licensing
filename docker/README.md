@@ -91,8 +91,8 @@ There are a number of convenience scripts setup in the root `package.json`
 
 #### Production mode
 
-Building and running the images in production mode runs a full build of all services using the [rod-licensing/builder](../Dockerfile.build) image
-to execute any build steps before copying resources into an image based on the [rod-licensing/base](../Dockerfile.base). The base image only includes
+Building and running the images in production mode runs a full build of all services using the [rod_licensing/builder](../Dockerfile.build) image
+to execute any build steps before copying resources into an image based on the [rod_licensing/base](../Dockerfile.base). The base image only includes
 binaries that are essential to run the services and does not include any build-time dependencies.
 
 To build the images:

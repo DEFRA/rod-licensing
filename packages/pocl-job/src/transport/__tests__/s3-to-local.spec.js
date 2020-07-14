@@ -9,10 +9,13 @@ jest.mock('../../io/file.js', () => ({
   getTempDir: jest.fn((...subfolders) => `${MOCK_TMP}/${subfolders.join('/')}`)
 }))
 
+jest.mock('../../config.js', () => ({
+  s3: {
+    bucket: 'testbucket'
+  }
+}))
+
 describe('s3-to-local', () => {
-  beforeAll(() => {
-    process.env.POCL_S3_BUCKET = 'testbucket'
-  })
   beforeEach(() => {
     jest.clearAllMocks()
     AwsMock.__resetAll()
@@ -34,7 +37,7 @@ describe('s3-to-local', () => {
     expect(mockCreateReadStream).toHaveBeenCalled()
     expect(stream.pipeline).toHaveBeenCalled()
     expect(AwsMock.S3.mockedMethods.getObject).toHaveBeenCalledWith({
-      Bucket: process.env.POCL_S3_BUCKET,
+      Bucket: 'testbucket',
       Key: '/example/testS3Key.xml'
     })
   })

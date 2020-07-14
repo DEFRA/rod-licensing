@@ -1,6 +1,6 @@
 ####################################################################################################################################
 # Used for local development debugging
 ####################################################################################################################################
-FROM rod-licensing/base
+FROM rod_licensing/base
 WORKDIR /app/packages/sqs-receiver-service
 ENTRYPOINT [ "pm2-dev", "ecosystem.config.yml" ]

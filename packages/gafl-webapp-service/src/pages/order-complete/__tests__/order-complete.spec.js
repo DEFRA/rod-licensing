@@ -14,9 +14,17 @@ salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => r
 salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
 salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
+beforeAll(() => {
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+})
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+afterAll(() => {
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
+  delete process.env.ANALYTICS_XGOV_PROPERTY
+})
 
 describe('The order completion handler', () => {
   it('throws a status 403 (forbidden) exception if the agreed flag is not set', async () => {
@@ -33,11 +41,9 @@ describe('The order completion handler', () => {
   it('throw a status 403 (forbidden) exception if the finalized flag is not set', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
 
-    salesApi.createTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
 
-    salesApi.finaliseTransaction = jest.fn(async () =>
-      new Promise((resolve, reject) => reject(new Error())))
+    salesApi.finaliseTransaction = jest.fn(async () => new Promise((resolve, reject) => reject(new Error())))
 
     await injectWithCookies('GET', AGREED.uri)
     const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
@@ -47,11 +53,9 @@ describe('The order completion handler', () => {
   it('responds with the order completed page if the journey has finished', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
 
-    salesApi.createTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
 
-    salesApi.finaliseTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve({ ok: true })))
+    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
 
     const data1 = await injectWithCookies('GET', AGREED.uri)
     expect(data1.statusCode).toBe(302)
@@ -62,11 +66,9 @@ describe('The order completion handler', () => {
 
   it('responds with the order completed pdf when requested', async () => {
     await JUNIOR_12_MONTH_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
 
-    salesApi.finaliseTransaction = jest.fn(async () =>
-      new Promise(resolve => resolve({ ok: true })))
+    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
 
     await injectWithCookies('GET', AGREED.uri)
     await injectWithCookies('GET', ORDER_COMPLETE.uri)

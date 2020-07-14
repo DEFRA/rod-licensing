@@ -18,6 +18,7 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { getTrackingProductDetailsFromTransaction } from '../processors/analytics.js'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -72,6 +73,11 @@ const createPayment = async (request, transaction, status) => {
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
   const paymentResponse = await sendPayment(preparedPayment)
+
+  /*
+   * Google Analytics tracking
+   */
+  await request.ga.ecommerce().checkout(getTrackingProductDetailsFromTransaction(transaction))
 
   /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
@@ -142,6 +148,8 @@ const processPayment = async (request, transaction, status) => {
     // Defer setting the completed status in the journal until after finalization
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
+
+    await request.ga.ecommerce().purchase(getTrackingProductDetailsFromTransaction(transaction))
   } else {
     /*
      * This block deals with failed or cancelled payments

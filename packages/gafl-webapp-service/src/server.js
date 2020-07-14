@@ -7,6 +7,7 @@ import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
 import Inert from '@hapi/inert'
 import Scooter from '@hapi/scooter'
+import HapiGapi from 'hapi-gapi'
 import Crumb from '@hapi/crumb'
 import Blankie from 'blankie'
 import Nunjucks from 'nunjucks'
@@ -20,11 +21,12 @@ import {
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT,
   FEEDBACK_URI_DEFAULT,
+  UTM,
   CHANNEL_DEFAULT
 } from './constants.js'
 import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
 
-import sessionManager from './session-cache/session-manager.js'
+import sessionManager, { useSessionCookie } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
 
@@ -43,7 +45,10 @@ const createServer = options => {
                 partition: 'web-app',
                 host: process.env.REDIS_HOST,
                 port: process.env.REDIS_PORT || REDIS_PORT_DEFAULT,
-                db: 0
+                db: 0,
+                ...(process.env.REDIS_PASSWORD && {
+                  password: process.env.REDIS_PASSWORD
+                })
               }
             }
           }
@@ -61,34 +66,78 @@ const createServer = options => {
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
-const plugIns = [
-  Inert,
-  Vision,
-  Scooter,
-  {
-    plugin: Blankie,
-    options: {
-      /*
-       * This defines the content security policy - which is as restrictive as possible
-       * It must allow web-fonts from 'fonts.gstatic.com'
-       */
-      fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-      scriptSrc: [scriptHash],
-      generateNonces: true
-    }
-  },
-  {
-    plugin: Crumb,
-    options: {
-      key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
-      cookieOptions: {
-        isSecure: process.env.NODE_ENV !== 'development',
-        isHttpOnly: process.env.NODE_ENV !== 'development'
-      },
-      logUnauthorized: true
-    }
+const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+const getPlugIns = () => {
+  const hapiGapiPropertySettings = []
+  if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
+    hapiGapiPropertySettings.push({
+      id: process.env.ANALYTICS_PRIMARY_PROPERTY,
+      hitTypes: ['pageview', 'event', 'ecommerce']
+    })
+  } else {
+    console.warn("ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won't track this")
   }
-]
+  if (process.env.ANALYTICS_XGOV_PROPERTY) {
+    hapiGapiPropertySettings.push({
+      id: process.env.ANALYTICS_XGOV_PROPERTY,
+      hitTypes: ['pageview']
+    })
+  } else {
+    console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
+  }
+
+  return [
+    Inert,
+    Vision,
+    Scooter,
+    {
+      plugin: Blankie,
+      options: {
+        /*
+         * This defines the content security policy - which is as restrictive as possible
+         * It must allow web-fonts from 'fonts.gstatic.com'
+         */
+        fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
+        scriptSrc: [scriptHash],
+        generateNonces: true
+      }
+    },
+    {
+      plugin: Crumb,
+      options: {
+        key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+        cookieOptions: {
+          isSecure: process.env.NODE_ENV !== 'development',
+          isHttpOnly: process.env.NODE_ENV !== 'development'
+        },
+        logUnauthorized: true
+      }
+    },
+    {
+      plugin: HapiGapi,
+      options: {
+        propertySettings: hapiGapiPropertySettings,
+        sessionIdProducer: request => (useSessionCookie(request) ? request.cache().getId() : null),
+        attributionProducer: async request => {
+          if (useSessionCookie(request)) {
+            const { attribution } = await request.cache().helpers.status.get()
+
+            if (attribution) {
+              return {
+                campaign: attribution[UTM.CAMPAIGN],
+                content: attribution[UTM.CONTENT],
+                medium: attribution[UTM.MEDIUM],
+                source: attribution[UTM.SOURCE],
+                term: attribution[UTM.TERM]
+              }
+            }
+          }
+          return {}
+        }
+      }
+    }
+  ]
+}
 
 /**
  * Adds the uri's used by the layout page to each relevant response
@@ -111,7 +160,7 @@ const layoutContextAmalgamation = (request, h) => {
 }
 
 const init = async () => {
-  await server.register(plugIns)
+  await server.register(getPlugIns())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
@@ -141,7 +190,7 @@ const init = async () => {
     ]
   })
 
-  const sessionCookieName = process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+  const sessionCookieName = getSessionCookieName()
 
   const sessionCookieOptions = {
     ttl: process.env.SESSION_TTL_MS || SESSION_TTL_MS_DEFAULT, // Will be kept alive on each request

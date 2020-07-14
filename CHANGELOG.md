@@ -1,28 +1,69 @@
+## v0.3.0-rc.4 (2020-07-14)
 
+#### :rocket: Enhancement
+
+- `connectors-lib`, `fulfilment-job`, `pocl-job`
+  - [#235](https://github.com/DEFRA/rod-licensing/pull/235) Migrate FTP server, POCL and Fulfilment services to use AWS SecretsManager ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.3 (2020-07-14)
+
+#### :rocket: Enhancement
+
+- `dynamics-lib`, `gafl-webapp-service`
+  - [#236](https://github.com/DEFRA/rod-licensing/pull/236) Add support to authenticate with the configured redis instance ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.2 (2020-07-14)
+
+#### :rocket: Enhancement
+
+- `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  - [#237](https://github.com/DEFRA/rod-licensing/pull/237) Minor improvements to deployment configuration (both docker and npm) ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.1 (2020-07-13)
+
+#### :rocket: Enhancement
+
+- `gafl-webapp-service`
+  - [#190](https://github.com/DEFRA/rod-licensing/pull/190) Implement Google Analytics ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
 
 ## v0.2.0 (2020-07-08)
 
 #### :rocket: Enhancement
-* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
-  * [#228](https://github.com/DEFRA/rod-licensing/pull/228) Create new release ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  - [#228](https://github.com/DEFRA/rod-licensing/pull/228) Create new release ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
-- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## v0.1.0 (2020-07-07)
 
 #### :rocket: Enhancement
-* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
-  * [#227](https://github.com/DEFRA/rod-licensing/pull/227) Test release process ([@sgardnerdell](https://github.com/sgardnerdell))
-  * [#225](https://github.com/DEFRA/rod-licensing/pull/225) Create release ([@sgardnerdell](https://github.com/sgardnerdell))
+
+- `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  - [#227](https://github.com/DEFRA/rod-licensing/pull/227) Test release process ([@sgardnerdell](https://github.com/sgardnerdell))
+  - [#225](https://github.com/DEFRA/rod-licensing/pull/225) Create release ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
+
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
-
-
-
-
 
 ## v0.0.1-beta.57 (2020-06-30)
 

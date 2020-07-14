@@ -30,6 +30,8 @@ const protectionExemptSet = [
 
 const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
 
+export const useSessionCookie = request => !request.path.startsWith('/public')
+
 /**
  * If there is no session cookie create it and initialize user cache contexts
  * on the key stored in the cookie.
@@ -38,7 +40,7 @@ const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PA
  * @returns {function(*, *)}
  */
 const sessionManager = sessionCookieName => async (request, h) => {
-  if (!request.path.startsWith('/public')) {
+  if (useSessionCookie(request)) {
     let initialized = false
 
     if (!request.state[sessionCookieName]) {

@@ -14,13 +14,14 @@ services:
       - '4563-4599:4563-4599'
       - '${PORT_WEB_UI-4080}:${PORT_WEB_UI-8080}'
     environment:
-      - SERVICES=s3,dynamodb,cloudformation
+      - SERVICES=s3,dynamodb,secretsmanager,cloudformation
       - DEBUG=1
-      - DEFAULT_REGION=eu-west-1
+      - DEFAULT_REGION=eu-west-2
       - DATA_DIR=/tmp/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
+      - DYNAMODB_HEAP_SIZE=1G
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./volumes/localstack:/tmp/localstack
@@ -35,7 +36,7 @@ services:
     ports:
       - '8002:8001'
     environment:
-      - DYNAMO_ENDPOINT=http://host.docker.internal:4569
+      - DYNAMO_ENDPOINT=http://host.docker.internal:4566
     deploy:
       restart_policy:
         condition: on-failure
@@ -113,16 +114,25 @@ services:
   # Test SFTP server
   #######################################################
   test_sftp:
-    image: atmoz/sftp:alpine
+    image: test_sftp
+    build:
+      dockerfile: Dockerfile
+      context: ./resources/infrastructure/sftp
+    depends_on:
+      - localstack
     ports:
       - '2222:22'
     volumes:
-      - ./resources/infrastructure/sftp/sshd_config:/etc/ssh/sshd_config
-      - ./resources/infrastructure/sftp/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key:ro
-      - ./resources/infrastructure/sftp/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key:ro
-      - ./resources/infrastructure/sftp/ssh_host_rsa_key.pub:/home/test_sftp_user/.ssh/keys/id_rsa.pub:ro
       - ./volumes/sftp:/home/test_sftp_user/share
-    command: test_sftp_user::1001
+    environment:
+      SFTP_USER: test_sftp_user
+      SFTP_FOLDERS: share/pocl;share/fulfilment
+      AWS_SECRETSMANAGER_ENDPOINT: http://host.docker.internal:4566
+      AWS_DEFAULT_REGION: eu-west-2
+      AWS_ACCESS_KEY_ID: local
+      AWS_SECRET_ACCESS_KEY: local
+      SSH_HOST_ED25519_SECRET_ID: /dev/fsh/local/sftp/ssh_ed25519_host_key
+      SSH_HOST_RSA_SECRET_ID: /dev/fsh/local/sftp/ssh_rsa_host_key
     deploy:
       restart_policy:
         condition: on-failure
