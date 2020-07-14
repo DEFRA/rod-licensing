@@ -38,15 +38,21 @@ salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve
 
 describe('The easy renewal, change start date page', () => {
   beforeEach(async () => {
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(authenticationResult)))
+    const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .toISOString()
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(dobAdultToday)))
     await injectWithCookies('GET', AUTHENTICATE.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
   })
+
   it('displays the page when requested', async () => {
     const data = await injectWithCookies('GET', RENEWAL_START_DATE.uri)
     expect(data.statusCode).toBe(200)
   })
+
   it('redirects to a page when requesting an invalid start date', async () => {
     await injectWithCookies('GET', RENEWAL_START_DATE.uri)
     const data = await injectWithCookies('POST', RENEWAL_START_DATE.uri, {
@@ -61,7 +67,9 @@ describe('The easy renewal, change start date page', () => {
   it(`redirects back to the start date page when requesting an start date ${ADVANCED_PURCHASE_MAX_DAYS} days after the renewal date`, async () => {
     await injectWithCookies('GET', RENEWAL_START_DATE.uri)
 
-    const renewDate = moment(authenticationResult.permission.endDate).add(ADVANCED_PURCHASE_MAX_DAYS + 1, 'days')
+    const renewDate = moment()
+      .startOf('day')
+      .add(ADVANCED_PURCHASE_MAX_DAYS + 1, 'days')
     const data = await injectWithCookies('POST', RENEWAL_START_DATE.uri, {
       'licence-start-date-year': renewDate.year().toString(),
       'licence-start-date-month': (renewDate.month() + 1).toString(),
@@ -88,7 +96,9 @@ describe('The easy renewal, change start date page', () => {
 
   it('redirects back to the licence summary date page when requesting an start date in the allowed range', async () => {
     await injectWithCookies('GET', RENEWAL_START_DATE.uri)
-    const renewDate = moment(authenticationResult.permission.endDate).add(5, 'days')
+    const renewDate = moment()
+      .startOf('day')
+      .add(5, 'days')
     await injectWithCookies('POST', RENEWAL_START_DATE.uri, {
       'licence-start-date-year': renewDate.year().toString(),
       'licence-start-date-month': (renewDate.month() + 1).toString(),

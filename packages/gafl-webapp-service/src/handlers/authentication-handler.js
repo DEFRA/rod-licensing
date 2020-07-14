@@ -1,8 +1,9 @@
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
-import { IDENTIFY, CONTROLLER } from '../uri.js'
-import { validation } from '@defra-fish/business-rules-lib'
+import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../uri.js'
+import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS } from '@defra-fish/business-rules-lib'
 import Joi from '@hapi/joi'
 import { salesApi } from '@defra-fish/connectors-lib'
+import moment from 'moment'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
@@ -27,15 +28,43 @@ export default async (request, h) => {
   // Authenticate
   const authenticationResult = await salesApi.authenticate(referenceNumber, dateOfBirth, postcode)
 
+  const linkInactive = async reason => {
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: {
+        authorized: false,
+        reason: reason,
+        endDate: authenticationResult.permission.endDate
+      }
+    })
+    return h.redirect(RENEWAL_INACTIVE.uri)
+  }
+
   if (!authenticationResult) {
     payload.referenceNumber = referenceNumber
-    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload })
+    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
     await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
     return h.redirect(IDENTIFY.uri)
   } else {
-    await setUpCacheFromAuthenticationResult(request, authenticationResult)
-    await setUpPayloads(request)
-    await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: true } })
-    return h.redirect(CONTROLLER.uri)
+    // Test for 12 month licence
+    if (
+      authenticationResult.permission.permit.durationDesignator.description === 'M' &&
+      authenticationResult.permission.permit.durationMagnitude === 12
+    ) {
+      const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().startOf('day'), 'days')
+      // Test for active renewal
+      if (daysDiff > RENEW_BEFORE_DAYS) {
+        return linkInactive('not-due')
+      } else if (daysDiff < -RENEW_AFTER_DAYS) {
+        return linkInactive('expired')
+      } else {
+        await setUpCacheFromAuthenticationResult(request, authenticationResult)
+        await setUpPayloads(request)
+        await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: true } })
+        return h.redirect(CONTROLLER.uri)
+      }
+    } else {
+      return linkInactive('not-annual')
+    }
   }
 }

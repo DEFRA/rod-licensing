@@ -40,6 +40,7 @@ export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
  */
 export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber?}' }
 export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
+export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 export const RENEWAL_START_DATE = { uri: '/buy/renew/renewal-start-date', page: 'renewal-start-date' }
 export const RENEWAL_START_VALIDATE = { uri: '/buy/renew/renewal-start-date/validate' }

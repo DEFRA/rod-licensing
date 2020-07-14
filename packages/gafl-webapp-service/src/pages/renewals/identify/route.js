@@ -9,17 +9,12 @@ const getData = async request => {
   const permission = await request.cache().helpers.status.getCurrentPermission()
 
   if (permission.referenceNumber) {
-    const validatePermissionNumber = validation.permission.permissionNumberUniqueComponentValidator(Joi).validate(permission.referenceNumber)
+    const validatePermissionNumber = validation.permission
+      .permissionNumberUniqueComponentValidator(Joi)
+      .validate(permission.referenceNumber)
     if (validatePermissionNumber.error) {
       throw Boom.forbidden('Attempt to access the authentication page with an invalid permission number')
     }
-  }
-
-  /*
-   * If the authorization is denied then write a page-error object
-   */
-  if (permission.authentication && !permission.authentication.authorized) {
-    return { referenceNumber: permission.referenceNumber, error: { referenceNumber: 'string.invalid' } }
   }
 
   return { referenceNumber: permission.referenceNumber }

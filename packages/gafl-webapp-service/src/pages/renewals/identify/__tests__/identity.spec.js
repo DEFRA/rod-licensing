@@ -1,11 +1,12 @@
-import { IDENTIFY, AUTHENTICATE, CONTROLLER, LICENCE_SUMMARY, TEST_TRANSACTION, RENEWAL_PUBLIC } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
+import { IDENTIFY, AUTHENTICATE, CONTROLLER, LICENCE_SUMMARY, TEST_TRANSACTION, RENEWAL_PUBLIC, RENEWAL_INACTIVE } from '../../../../uri.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import { salesApi } from '@defra-fish/connectors-lib'
-import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
+import { JUNIOR_MAX_AGE, RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../__mocks__/data/authentication-result.js'
 import moment from 'moment'
 import * as constants from '../../../../processors/mapping-constants.js'
 import { hasSenior } from '../../../../processors/concession-helper.js'
+import { LICENCE_LENGTH } from '../../../../../../../../../rod-licensing/packages/gafl-webapp-service/src/uri'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -83,6 +84,9 @@ describe('The easy renewal identification page', () => {
   ])('redirects to the controller on posting a valid response - (how contacted=%s)', async (name, fn) => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .toISOString()
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
@@ -100,6 +104,9 @@ describe('The easy renewal identification page', () => {
 
   it('that an adult licence holder who is now over 65 gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .toISOString()
     newAuthenticationResult.permission.licensee.birthDate = moment()
       .add(-65, 'years')
       .add(-1, 'days')
@@ -116,5 +123,68 @@ describe('The easy renewal identification page', () => {
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(hasSenior(JSON.parse(payload).permissions[0])).toBeTruthy()
+  })
+
+  it('that an expiry to far in the future causes a redirect to the invalid renewal page', async () => {
+    const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .add(RENEW_BEFORE_DAYS + 1, 'days')
+      .toISOString()
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(dobAdultToday))
+    )
+    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(RENEWAL_INACTIVE.uri)
+
+    // Fetch the page
+    const data2 = await injectWithCookies('GET', RENEWAL_INACTIVE.uri)
+    expect(data2.statusCode).toBe(200)
+
+    const data3 = await postRedirectGet(RENEWAL_INACTIVE.uri, {})
+    expect(data3.statusCode).toBe(302)
+    expect(data3.headers.location).toBe(LICENCE_LENGTH.uri)
+  })
+
+  it('that an expiry that has expired causes a redirect to the invalid renewal page', async () => {
+    const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .add(-1 * (RENEW_AFTER_DAYS + 1), 'days')
+      .toISOString()
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(dobAdultToday))
+    )
+    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(RENEWAL_INACTIVE.uri)
+  })
+
+  it('that an expiry for a 1 or 8 day licence causes a redirect to the invalid renewal page', async () => {
+    const newAuthenticationResult = Object.assign({}, authenticationResult)
+    newAuthenticationResult.permission.permit.durationMagnitude = 1
+    newAuthenticationResult.permission.permit.durationDesignator.description = 'D'
+    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+    await injectWithCookies('GET', IDENTIFY.uri)
+    await injectWithCookies(
+      'POST',
+      IDENTIFY.uri,
+      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(dobAdultToday))
+    )
+    const data = await injectWithCookies('GET', AUTHENTICATE.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(RENEWAL_INACTIVE.uri)
   })
 })

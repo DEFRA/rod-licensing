@@ -1,6 +1,6 @@
 import moment from 'moment'
 
-const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
+export const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
 
 /**
  * Function to convert licence start and end times to standard strings for display in the service
@@ -22,6 +22,14 @@ export const displayStartTime = permission => {
   })()
 
   return `${timeComponent}, ${startDateString}`
+}
+
+// For renewals
+export const displayExpiryDate = permission => {
+  const startDateString = moment(permission.renewedEndDate, 'YYYY-MM-DD')
+    .add(-1, 'days')
+    .format(dateDisplayFormat)
+  return `11:59pm, ${startDateString}`
 }
 
 export const displayEndTime = permission => {

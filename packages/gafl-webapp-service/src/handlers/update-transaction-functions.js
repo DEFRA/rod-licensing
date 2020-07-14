@@ -26,6 +26,7 @@ import paymentCancelled from '../pages/payment/cancelled/update-transaction.js'
 import paymentFailed from '../pages/payment/failed/update-transaction.js'
 
 import termsAndConditions from '../pages/terms-and-conditions/update-transaction.js'
+import renewalInactive from '../pages/renewals/renewal-inactive/update-transaction.js'
 
 import {
   DATE_OF_BIRTH,
@@ -47,7 +48,8 @@ import {
   NEWSLETTER,
   TERMS_AND_CONDITIONS,
   PAYMENT_CANCELLED,
-  PAYMENT_FAILED
+  PAYMENT_FAILED,
+  RENEWAL_INACTIVE
 } from '../uri.js'
 
 export default {
@@ -70,5 +72,6 @@ export default {
   [NEWSLETTER.page]: newsletter,
   [TERMS_AND_CONDITIONS.page]: termsAndConditions,
   [PAYMENT_FAILED.page]: paymentFailed,
-  [PAYMENT_CANCELLED.page]: paymentCancelled
+  [PAYMENT_CANCELLED.page]: paymentCancelled,
+  [RENEWAL_INACTIVE.page]: renewalInactive
 }

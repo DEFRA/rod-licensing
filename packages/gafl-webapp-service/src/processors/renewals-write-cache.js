@@ -3,6 +3,7 @@ import db from 'debug'
 import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
+import { salesApi } from '@defra-fish/connectors-lib'
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -11,6 +12,11 @@ const debug = db('webapp:renewals-write-cache')
  */
 export const setUpCacheFromAuthenticationResult = async (request, authenticationResult) => {
   debug(`Set up cache from authentication result for renewal of ${authenticationResult.permission.referenceNumber}`)
+  const permitConcessions = await salesApi.permitConcessions.getAll()
+  const concessions = await salesApi.concessions.getAll()
+
+  console.log(concessions)
+  console.log(permitConcessions)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   permission.licenceLength = '12M' // Always for easy renewals
@@ -39,6 +45,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label
   permission.licensee.preferredMethodOfReminder = authenticationResult.permission.licensee.preferredMethodOfReminder.label
 
+  // TODO - this does not work!
   // Add in concession proofs
   authenticationResult.permission.concessions.forEach(c => {
     addDisabled(permission, c.proofType.label, c.referenceNumber)
