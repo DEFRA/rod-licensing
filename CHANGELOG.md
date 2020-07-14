@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.2 (2020-07-14)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#237](https://github.com/DEFRA/rod-licensing/pull/237) Minor improvements to deployment configuration (both docker and npm) ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.1 (2020-07-13)
 
 #### :rocket: Enhancement

@@ -1,7 +1,7 @@
 ####################################################################################################################################
 # Used for local development debugging
 ####################################################################################################################################
-FROM rod-licensing/base
+FROM rod_licensing/base
 WORKDIR /app/packages/payment-mop-up-job
 # Use node directly rather than pm2 for scheduled tasks
 ENTRYPOINT [ "node", "src/payment-mop-up-job.js" ]
