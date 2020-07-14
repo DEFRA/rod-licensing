@@ -1,4 +1,13 @@
-import { IDENTIFY, AUTHENTICATE, CONTROLLER, LICENCE_SUMMARY, TEST_TRANSACTION, RENEWAL_PUBLIC, RENEWAL_INACTIVE } from '../../../../uri.js'
+import {
+  IDENTIFY,
+  AUTHENTICATE,
+  CONTROLLER,
+  LICENCE_SUMMARY,
+  TEST_TRANSACTION,
+  RENEWAL_PUBLIC,
+  RENEWAL_INACTIVE,
+  LICENCE_LENGTH
+} from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE, RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'
@@ -6,7 +15,6 @@ import { authenticationResult } from '../__mocks__/data/authentication-result.js
 import moment from 'moment'
 import * as constants from '../../../../processors/mapping-constants.js'
 import { hasSenior } from '../../../../processors/concession-helper.js'
-import { LICENCE_LENGTH } from '../../../../../../../../../rod-licensing/packages/gafl-webapp-service/src/uri'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
