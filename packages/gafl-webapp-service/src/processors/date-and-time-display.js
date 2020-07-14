@@ -1,21 +1,21 @@
 import moment from 'moment'
 
 export const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
-
+const cacheDateFormat = 'YYYY-MM-DD'
 /**
  * Function to convert licence start and end times to standard strings for display in the service
  * @param permission
  * @returns {string}
  */
 export const displayStartTime = permission => {
-  const startDateString = moment(permission.licenceStartDate, 'YYYY-MM-DD').format(dateDisplayFormat)
+  const startDateString = moment(permission.licenceStartDate, cacheDateFormat).format(dateDisplayFormat)
   const timeComponent = (() => {
     if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
       return 'Midnight'
     } else if (permission.licenceStartTime === '12') {
       return 'Midday'
     } else {
-      return moment(permission.licenceStartDate, 'YYYY-MM-DD')
+      return moment(permission.licenceStartDate, cacheDateFormat)
         .add(permission.licenceStartTime, 'hours')
         .format('h:mma')
     }
@@ -26,7 +26,7 @@ export const displayStartTime = permission => {
 
 // For renewals
 export const displayExpiryDate = permission => {
-  const startDateString = moment(permission.renewedEndDate, 'YYYY-MM-DD')
+  const startDateString = moment(permission.renewedEndDate, cacheDateFormat)
     .add(-1, 'days')
     .format(dateDisplayFormat)
   return `11:59pm, ${startDateString}`
