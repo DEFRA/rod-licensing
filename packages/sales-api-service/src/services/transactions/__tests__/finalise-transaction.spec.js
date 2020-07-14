@@ -1,12 +1,12 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
 import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
-import { TRANSACTIONS_STAGING_TABLE, TRANSACTIONS_QUEUE } from '../../../config.js'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 
 describe('transaction service', () => {
   beforeAll(() => {
-    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
-    TRANSACTIONS_QUEUE.Url = 'TestQueueUrl'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    TRANSACTION_QUEUE.Url = 'TestQueueUrl'
   })
   beforeEach(AwsMock.__resetAll)
 
@@ -31,7 +31,7 @@ describe('transaction service', () => {
       expect(result).toEqual({ messageId: 'Test_Message', status: 'queued' })
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
         expect.objectContaining({
-          TableName: TRANSACTIONS_STAGING_TABLE.TableName,
+          TableName: TRANSACTION_STAGING_TABLE.TableName,
           Key: { id: mockRecord.id },
           UpdateExpression: `SET ${setFieldExpression}`,
           ExpressionAttributeValues: expect.objectContaining(expressionAttributeValues)
@@ -39,7 +39,7 @@ describe('transaction service', () => {
       )
       expect(AwsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
         expect.objectContaining({
-          QueueUrl: TRANSACTIONS_QUEUE.Url,
+          QueueUrl: TRANSACTION_QUEUE.Url,
           MessageGroupId: 'transactions',
           MessageDeduplicationId: mockRecord.id,
           MessageBody: JSON.stringify({ id: mockRecord.id })

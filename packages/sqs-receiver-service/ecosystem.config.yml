@@ -2,7 +2,7 @@ apps:
   - script: ./src/sqs-receiver-service.js
     name: 'Transactions Queue'
     env:
-      RECEIVER_PREFIX: TRANSACTIONS_QUEUE
+      RECEIVER_PREFIX: TRANSACTION_QUEUE
     exec_mode: cluster
     instances: 1
     autorestart: true
@@ -12,7 +12,7 @@ apps:
   - script: ./src/sqs-receiver-service.js
     name: 'Transactions DLQ'
     env:
-      RECEIVER_PREFIX: TRANSACTIONS_DLQ
+      RECEIVER_PREFIX: TRANSACTION_DLQ
     exec_mode: cluster
     instances: 1
     autorestart: true
