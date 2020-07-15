@@ -4,16 +4,16 @@ pipeline {
         stage('Prepare') {
             steps {
                 script {
-                    sh  """
+                    sh  '''
                         printenv
-                    """
+                    '''
                 }
             }
         }
         stage('Build') {
             steps {
                 script {
-                    sh  """
+                    sh  '''
                         # Deploy docker images
                         echo "Building docker images:  $(docker --version)"
                         # Authenticate Docker with AWS ECR
@@ -22,14 +22,14 @@ pipeline {
                         # Build all images
                         echo "Building images for tag ${TAG_NAME}"
                         TAG=${TAG_NAME} PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build
-                    """
+                    '''
                 }
             }
         }
         stage('Deploy images to ECR') {
             steps {
                 script {
-                    sh  """
+                    sh  '''
                         # Get list of rod_licensing images and push to the remote ECR repository
                         docker image list --format "{{.Repository}}" --filter=reference="rod_licensing/*:${TAG_NAME}" | {
                             while read -r IMAGE_NAME
@@ -43,7 +43,7 @@ pipeline {
                             echo "Waiting for all images to be pushed..."
                             wait || exit 1
                         }
-                    """
+                    '''
                 }
             }
         }
