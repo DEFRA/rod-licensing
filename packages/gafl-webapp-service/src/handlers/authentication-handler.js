@@ -33,7 +33,7 @@ export default async (request, h) => {
       referenceNumber,
       authentication: {
         authorized: false,
-        reason: reason,
+        reason,
         endDate: authenticationResult.permission.endDate
       }
     })

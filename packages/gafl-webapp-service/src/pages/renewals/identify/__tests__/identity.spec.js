@@ -133,7 +133,7 @@ describe('The easy renewal identification page', () => {
     expect(hasSenior(JSON.parse(payload).permissions[0])).toBeTruthy()
   })
 
-  it('that an expiry to far in the future causes a redirect to the invalid renewal page', async () => {
+  it('that an expiry too far in the future causes a redirect to the invalid renewal page', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.endDate = moment()
       .startOf('day')
