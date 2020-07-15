@@ -34,7 +34,14 @@ import { licenceTypeResults } from '../pages/licence-details/licence-type/result
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { licenceStartDate } from '../pages/licence-details/licence-start-date/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
+import * as constants from '../processors/mapping-constants'
 
+/**
+ * The structure of each atom is as follows
+ * currentPage - the current page
+ * nextPage - the page the use proceeds to as a consequence of the results of result-function for the page
+ * backLink - the location the back link, a uri literal, a function of the current status of a function of the status and transaction
+ */
 export default [
   {
     currentPage: 'start',
@@ -51,7 +58,8 @@ export default [
       [CommonResults.OK]: {
         page: LICENCE_LENGTH.uri
       }
-    }
+    },
+    backLink: IDENTIFY.uri
   },
 
   {
@@ -63,7 +71,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_SUMMARY.uri)
   },
 
   {
@@ -81,7 +90,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_LENGTH.uri)
   },
 
   {
@@ -93,7 +103,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri)
   },
 
   {
@@ -107,6 +118,15 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
+      }
+    },
+    backLink: (s, t) => {
+      if (s.fromSummary) {
+        return LICENCE_SUMMARY.uri
+      } else if (t.licenceType === constants.LICENCE_TYPE['salmon-and-sea-trout']) {
+        return LICENCE_TYPE.uri
+      } else {
+        return NUMBER_OF_RODS.uri
       }
     }
   },
@@ -123,7 +143,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: LICENCE_TO_START.uri
   },
 
   {
@@ -135,7 +156,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: LICENCE_START_DATE.uri
   },
 
   {
@@ -165,6 +187,17 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
+    },
+    backLink: (s, t) => {
+      if (s.fromSummary) {
+        return LICENCE_SUMMARY.uri
+      } else if (t.licenceToStart === licenceToStartResults.AFTER_PAYMENT) {
+        return LICENCE_TO_START.uri
+      } else if (t.licenceLength === '12M') {
+        return LICENCE_START_DATE.uri
+      } else {
+        return LICENCE_START_TIME.uri
+      }
     }
   },
 
@@ -177,7 +210,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: DATE_OF_BIRTH.uri
   },
 
   {
@@ -189,7 +223,8 @@ export default [
       [CommonResults.YES]: {
         page: BENEFIT_NI_NUMBER.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
   },
 
   {
@@ -201,7 +236,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: BENEFIT_CHECK.uri
   },
 
   {
@@ -216,19 +252,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
-  },
-
-  {
-    currentPage: BENEFIT_NI_NUMBER.page,
-    nextPage: {
-      [CommonResults.OK]: {
-        page: LICENCE_SUMMARY.uri
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    }
+    },
+    backLink: BENEFIT_CHECK.uri
   },
 
   {
@@ -240,7 +265,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
-    }
+    },
+    backLink: BLUE_BADGE_CHECK.uri
   },
 
   {
@@ -264,6 +290,15 @@ export default [
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
+    },
+    backLink: s => {
+      if (s.fromSummary === 'licence-summary') {
+        return LICENCE_SUMMARY.uri
+      } else if (s.fromSummary === 'contact-summary') {
+        return CONTACT_SUMMARY.uri
+      } else {
+        return LICENCE_LENGTH.uri
+      }
     }
   },
 
@@ -276,7 +311,8 @@ export default [
       [addressLookupResults.FOUND_NONE]: {
         page: ADDRESS_ENTRY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : NAME.uri)
   },
 
   {
@@ -288,7 +324,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -300,7 +337,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
-    }
+    },
+    backLink: ADDRESS_LOOKUP.uri
   },
 
   {
@@ -315,7 +353,8 @@ export default [
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -324,7 +363,8 @@ export default [
       [CommonResults.OK]: {
         page: CONTACT_SUMMARY.uri
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : CONTACT.uri)
   },
 
   {
@@ -344,7 +384,8 @@ export default [
       [CommonResults.OK]: {
         page: AGREED.uri
       }
-    }
+    },
+    backLink: CONTACT_SUMMARY.uri
   },
 
   {
