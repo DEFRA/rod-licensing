@@ -22,7 +22,7 @@ import {
   mockContactPayload,
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../__mocks__/test-data.js'
-import { TRANSACTIONS_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 
 jest.mock('../../reference-data.service.js', () => ({
@@ -61,7 +61,7 @@ jest.mock('../../contacts.service.js', () => ({
 
 describe('transaction service', () => {
   beforeAll(() => {
-    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
   beforeEach(AwsMock.__resetAll)
 
@@ -151,14 +151,14 @@ describe('transaction service', () => {
         expect(persist).toBeCalledWith(...entityExpectations)
         expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
           expect.objectContaining({
-            TableName: TRANSACTIONS_STAGING_TABLE.TableName,
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id },
             ConsistentRead: true
           })
         )
         expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.delete).toBeCalledWith(
           expect.objectContaining({
-            TableName: TRANSACTIONS_STAGING_TABLE.TableName,
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
             Key: { id: mockRecord.id }
           })
         )

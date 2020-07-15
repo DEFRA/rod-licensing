@@ -1,7 +1,7 @@
 import { processDlq } from '../process-transaction-dlq.js'
 import { retrieveStagedTransaction } from '../retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../../exceptions/exceptions.service.js'
-import { TRANSACTIONS_STAGING_TABLE } from '../../../config.js'
+import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 
 let mockProcessingException
@@ -27,7 +27,7 @@ jest.mock('../../exceptions/exceptions.service.js')
 const expectDynamoDbTtlUpdate = () => {
   expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
     expect.objectContaining({
-      TableName: TRANSACTIONS_STAGING_TABLE.TableName,
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
       Key: { id: 'test' },
       ConditionExpression: 'attribute_exists(id)',
       UpdateExpression: 'SET expires = :expires',
@@ -40,7 +40,7 @@ const expectDynamoDbTtlUpdate = () => {
 
 describe('transaction service', () => {
   beforeAll(() => {
-    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
   beforeEach(() => {
     mockProcessingException = new Error('Test error')
