@@ -34,7 +34,7 @@ import { licenceTypeResults } from '../pages/licence-details/licence-type/result
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { licenceStartDate } from '../pages/licence-details/licence-start-date/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
-import * as constants from '../processors/mapping-constants'
+import * as constants from '../processors/mapping-constants.js'
 
 /**
  * The structure of each atom is as follows
