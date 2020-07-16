@@ -102,4 +102,6 @@ const postRedirectGet = async (uri, payload) => {
   return injectWithCookies('GET', CONTROLLER.uri)
 }
 
-export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, postRedirectGet }
+const backLinkRegEx = uri => new RegExp(`<a href=\\"${uri}\\" .*>Back</a>`)
+
+export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, postRedirectGet, backLinkRegEx }

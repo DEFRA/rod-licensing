@@ -1,12 +1,11 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 import mockPermits from '../../../../__mocks__/data/permits.js'
 import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import mockConcessions from '../../../../__mocks__/data/concessions.js'
 import searchResultsOne from '../../../../services/address-lookup/__mocks__/data/search-results-one.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, backLinkRegEx } from '../../../../__mocks__/test-utils.js'
 
 import {
   CONTACT_SUMMARY,
@@ -20,14 +19,9 @@ import {
   LICENCE_TO_START,
   DATE_OF_BIRTH,
   NEWSLETTER,
-  NO_LICENCE_REQUIRED,
   LICENCE_LENGTH,
-  LICENCE_TYPE,
-  JUNIOR_LICENCE,
-  TEST_TRANSACTION
+  LICENCE_TYPE
 } from '../../../../uri.js'
-import moment from 'moment'
-import { JUNIOR_MAX_AGE, MINOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
@@ -58,19 +52,6 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
-const dobJuniorToday = moment().subtract(MINOR_MAX_AGE + 1, 'years')
-const dobJuniorTomorrow = moment()
-  .subtract(MINOR_MAX_AGE + 1, 'years')
-  .add(1, 'day')
-const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
-const dobSeniorToday = moment().add(-SENIOR_MIN_AGE, 'years')
-
-const dobHelper = d => ({
-  'date-of-birth-day': d.date().toString(),
-  'date-of-birth-month': (d.month() + 1).toString(),
-  'date-of-birth-year': d.year()
-})
-
 describe('The contact summary page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
     const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
@@ -99,6 +80,8 @@ describe('The contact summary page', () => {
     const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(NAME.uri)
+    const data2 = await injectWithCookies('GET', NAME.uri)
+    expect(data2.payload.search(backLinkRegEx(LICENCE_SUMMARY.uri)) > 0).toBeTruthy()
   })
 
   it('redirects to the address lookup page if no address has been posted', async () => {
@@ -114,9 +97,9 @@ describe('The contact summary page', () => {
 
   it('redirects to the contact page if no contact details have been set', async () => {
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT.uri)
+    const data2 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT.uri)
   })
 
   it('responds with the error page if the sales API fetch fails', async () => {
@@ -135,108 +118,53 @@ describe('The contact summary page', () => {
   })
 
   it('name amendments cause a redirect to the summary page', async () => {
+    const data = await injectWithCookies('GET', NAME.uri)
+    expect(data.payload.search(backLinkRegEx(CONTACT_SUMMARY.uri)) > 0).toBeTruthy()
     await injectWithCookies('POST', NAME.uri, {
       'last-name': 'James',
       'first-name': 'Bond'
     })
-    const data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    const data2 = await injectWithCookies('GET', CONTROLLER.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('address lookup amendment causes redirect the summary page', async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
     fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({ json: () => searchResultsOne, ok: true })))
+    const data = await injectWithCookies('GET', ADDRESS_LOOKUP.uri)
+    expect(data.payload.search(backLinkRegEx(CONTACT_SUMMARY.uri)) > 0).toBeTruthy()
     await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     await injectWithCookies('GET', ADDRESS_SELECT.uri)
-    const data = await postRedirectGet(ADDRESS_SELECT.uri, { address: '0' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    const data2 = await postRedirectGet(ADDRESS_SELECT.uri, { address: '0' })
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('address entry amendment causes redirect the summary page', async () => {
-    const data = await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
-    const data2 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-    expect(data2.statusCode).toBe(200)
+    const data = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
+    expect(data.payload.search(backLinkRegEx(CONTACT_SUMMARY.uri)) > 0).toBeTruthy()
+    const data2 = await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
+    const data3 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('contact amendment (email) causes redirect the summary page', async () => {
-    const data = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    const data = await injectWithCookies('GET', CONTACT.uri)
+    expect(data.payload.search(backLinkRegEx(CONTACT_SUMMARY.uri)) > 0).toBeTruthy()
+    const data2 = await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
   it('newsletter amendment causes redirect the contact summary page', async () => {
-    const data = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
-  })
-
-  it('date of birth amendment causes redirect the licence summary page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
-    const data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
-  })
-
-  it('date of birth (senior) amendment causes redirect the licence summary page and then the contact summary page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
-    const data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
-    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await injectWithCookies('POST', LICENCE_SUMMARY.uri)
-
-    const data2 = await injectWithCookies('GET', CONTROLLER.uri)
+    const data = await injectWithCookies('GET', NEWSLETTER.uri)
+    expect(data.payload.search(backLinkRegEx(CONTACT_SUMMARY.uri)) > 0).toBeTruthy()
+    const data2 = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
-  })
-
-  it('date of birth amendment (no licence required) causes a redirect to the no licence required page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorTomorrow))
-    const data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
-    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await injectWithCookies('POST', LICENCE_SUMMARY.uri)
-
-    const data2 = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
-  })
-
-  it('date of birth amendment (junior) causes redirect to the junior licence page and subsequent redirect to the licence summary page and then the contact summary page', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
-    let data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(JUNIOR_LICENCE.uri)
-    data = await postRedirectGet(JUNIOR_LICENCE.uri, {})
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
-
-    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await injectWithCookies('POST', LICENCE_SUMMARY.uri)
-
-    const data2 = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(CONTACT_SUMMARY.uri)
-  })
-
-  it('date of birth amendment (junior) causes a method of contact of letter to be set no none', async () => {
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
-    await injectWithCookies('GET', CONTROLLER.uri)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
-    await injectWithCookies('GET', CONTROLLER.uri)
-    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
-    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
-    expect(JSON.parse(payload2).permissions[0].licenceLength).toBe('12M')
   })
 })

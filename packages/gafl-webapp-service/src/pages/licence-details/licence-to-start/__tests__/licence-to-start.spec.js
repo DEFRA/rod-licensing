@@ -1,5 +1,5 @@
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
-import { LICENCE_TO_START, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
+import { start, stop, initialize, injectWithCookies, backLinkRegEx, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { LICENCE_TO_START, CONTROLLER, TEST_TRANSACTION, NUMBER_OF_RODS, LICENCE_TYPE } from '../../../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -8,6 +8,14 @@ afterAll(d => stop(d))
 describe("The 'when would you like you licence to start?' page", () => {
   it('Return success on requesting', async () => {
     const data = await injectWithCookies('GET', LICENCE_TO_START.uri)
+    expect(data.payload.search(backLinkRegEx(NUMBER_OF_RODS.uri)) > 0).toBeTruthy()
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('The back-link is to licence-type for a salmon and sea trout licence', async () => {
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
+    const data = await injectWithCookies('GET', LICENCE_TO_START.uri)
+    expect(data.payload.search(backLinkRegEx(LICENCE_TYPE.uri)) > 0).toBeTruthy()
     expect(data.statusCode).toBe(200)
   })
 

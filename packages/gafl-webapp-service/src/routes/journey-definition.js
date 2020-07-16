@@ -72,7 +72,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_SUMMARY.uri)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
   },
 
   {
@@ -297,7 +297,7 @@ export default [
       } else if (s.fromSummary === 'contact-summary') {
         return CONTACT_SUMMARY.uri
       } else {
-        return LICENCE_LENGTH.uri
+        return null
       }
     }
   },
@@ -312,7 +312,7 @@ export default [
         page: ADDRESS_ENTRY.uri
       }
     },
-    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : NAME.uri)
+    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : NAME.uri)
   },
 
   {
@@ -325,7 +325,7 @@ export default [
         page: CONTACT_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -354,7 +354,7 @@ export default [
         page: CONTACT_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -364,7 +364,7 @@ export default [
         page: CONTACT_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary ? CONTACT_SUMMARY.uri : CONTACT.uri)
+    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : CONTACT.uri)
   },
 
   {
