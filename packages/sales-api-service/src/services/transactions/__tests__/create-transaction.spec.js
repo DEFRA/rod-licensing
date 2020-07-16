@@ -7,7 +7,7 @@ import {
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_1DAY_SENIOR_PERMIT_ENTITY
 } from '../../../__mocks__/test-data.js'
-import { TRANSACTIONS_STAGING_TABLE } from '../../../config.js'
+import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 
 jest.mock('../../permissions.service.js', () => ({
@@ -32,7 +32,7 @@ jest.mock('../../reference-data.service.js', () => ({
 
 describe('transaction service', () => {
   beforeAll(() => {
-    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
   beforeEach(AwsMock.__resetAll)
 
@@ -49,7 +49,7 @@ describe('transaction service', () => {
       expect(result).toMatchObject(expectedRecord)
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
         expect.objectContaining({
-          TableName: TRANSACTIONS_STAGING_TABLE.TableName,
+          TableName: TRANSACTION_STAGING_TABLE.TableName,
           Item: expectedRecord
         })
       )
@@ -75,7 +75,7 @@ describe('transaction service', () => {
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
         expect.objectContaining({
           RequestItems: {
-            [TRANSACTIONS_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
+            [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
           }
         })
       )
