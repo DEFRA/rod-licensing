@@ -5,6 +5,7 @@ import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import JoiDate from '@hapi/joi-date'
 import moment from 'moment'
+import { displayExpiryDate } from '../../../processors/date-and-time-display.js'
 const JoiX = Joi.extend(JoiDate)
 
 const schema = Joi.object({
@@ -21,10 +22,12 @@ const validator = payload => {
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  const expiryTimeString = displayExpiryDate(permission)
+
   return {
-    exampleStartDate: moment()
-      .add(1, 'days')
-      .format('DD MM YYYY'),
+    expiryTimeString,
+    minStartDate: moment(permission.renewedEndDate).format('DD MM YYYY'),
     maxStartDate: moment(permission.renewedEndDate)
       .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
       .format('DD MM YYYY'),

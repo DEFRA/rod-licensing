@@ -30,7 +30,7 @@ const protectionExemptSet = [
 
 const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
 
-export const useSessionCookie = request => request.path.startsWith('/buy')
+export const useSessionCookie = request => !request.path.startsWith('/public')
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -48,7 +48,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
        * No cookie - create and initialize cache
        */
       const id = uuidv4()
-      debug(`New session cookie: ${id}`)
+      debug(`New session cookie: ${id} create on ${request.path}`)
       h.state(sessionCookieName, { id })
       request.state[sessionCookieName] = { id }
       await request.cache().initialize()
@@ -60,11 +60,11 @@ const sessionManager = sessionCookieName => async (request, h) => {
       await request.cache().initialize()
       initialized = true
     } else {
+      const { id } = request.state[sessionCookieName]
       /*
        * Keep the cookie alive so that is persists as long as the cache -
        * the cache has the TTL reset on each write
        */
-      const { id } = request.state[sessionCookieName]
       h.state(sessionCookieName, { id })
     }
 

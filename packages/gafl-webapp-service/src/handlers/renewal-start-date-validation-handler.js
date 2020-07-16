@@ -25,7 +25,7 @@ export default async (request, h) => {
   const schema = Joi.object({
     'licence-start-date': JoiX.date()
       .format(dateFormats)
-      .min(moment().add(-1, 'days'))
+      .min(moment(permission.renewedEndDate))
       .max(moment(permission.renewedEndDate).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
       .required()
   })

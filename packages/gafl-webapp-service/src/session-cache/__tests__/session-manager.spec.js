@@ -11,13 +11,16 @@ import {
 } from '../../uri.js'
 
 describe('Use session cookie', () => {
-  it('path starting with buy marked as using a session cookie', () => {
-    expect(useSessionCookie({ path: '/buy' })).toBeTruthy()
+  it('path not starting with /public marked as using a session cookie', () => {
+    expect(useSessionCookie({ path: '/foo' })).toBeTruthy()
   })
 
-  it.each(['/this/path/doesnt/work', '/nor/does/this/one', '/this/one/too'])("path %s doesn't require session cookie", path => {
-    expect(useSessionCookie({ path })).toBeFalsy()
-  })
+  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too'])(
+    "path %s doesn't require session cookie",
+    path => {
+      expect(useSessionCookie({ path })).toBeFalsy()
+    }
+  )
 })
 
 describe('The user', () => {

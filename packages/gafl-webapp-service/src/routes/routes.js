@@ -30,6 +30,7 @@ import paymentCancelled from '../pages/payment/cancelled/route.js'
 import paymentFailed from '../pages/payment/failed/route.js'
 
 import identify from '../pages/renewals/identify/route.js'
+import invalidLink from '../pages/renewals/renewal-inactive/route.js'
 import renewalStartDate from '../pages/renewals/renewal-start-date/route.js'
 
 import staticAssets from './static-routes.js'
@@ -64,6 +65,7 @@ const routes = [
   ...paymentFailed,
   ...orderComplete,
   ...identify,
+  ...invalidLink,
   ...renewalStartDate,
   orderCompletePdf
 ]

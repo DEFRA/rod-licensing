@@ -24,7 +24,8 @@ import {
   AGREED,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
-  IDENTIFY
+  IDENTIFY,
+  RENEWAL_INACTIVE
 } from '../uri.js'
 
 import { CommonResults } from '../constants.js'
@@ -37,6 +38,15 @@ import { addressLookupResults } from '../pages/contact/address/lookup/result-fun
 export default [
   {
     currentPage: 'start',
+    nextPage: {
+      [CommonResults.OK]: {
+        page: LICENCE_LENGTH.uri
+      }
+    }
+  },
+
+  {
+    currentPage: RENEWAL_INACTIVE.page,
     nextPage: {
       [CommonResults.OK]: {
         page: LICENCE_LENGTH.uri

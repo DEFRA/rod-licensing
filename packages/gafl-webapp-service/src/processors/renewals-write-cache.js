@@ -3,6 +3,7 @@ import db from 'debug'
 import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
+import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -17,7 +18,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
   permission.licenceStartTime = null
-  permission.licenceToStart = 'another-date-or-time'
+  permission.licenceToStart = licenceToStartResults.ANOTHER_DATE_OR_TIME
   permission.licenceStartDate = moment(authenticationResult.permission.endDate).format('YYYY-MM-DD')
   permission.renewedEndDate = permission.licenceStartDate
   permission.licensee = Object.assign(
@@ -39,6 +40,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label
   permission.licensee.preferredMethodOfReminder = authenticationResult.permission.licensee.preferredMethodOfReminder.label
 
+  // TODO - this does not work!
   // Add in concession proofs
   authenticationResult.permission.concessions.forEach(c => {
     addDisabled(permission, c.proofType.label, c.referenceNumber)

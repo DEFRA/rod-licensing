@@ -22,9 +22,11 @@
             'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
         },
         'referenceNumber' : {
+            'string.empty': { text: 'Enter the last six digits of your licence number', ref: '#ref' },
+            'string.pattern.base': { text: 'The last six digits of your licence number doesn\'t look right. Check and enter again', ref: '#ref' },
             'string.invalid': {
-                text: "The details you entered do not match those we have on record for licence number " + data.referenceNumber + " Please check you have entered the correct date of birth and postcode",
-                href: "#date-of-birth"
+                text: 'The details you entered do not match those we have on record for licence number ' + payload.referenceNumber + '. Please check you have entered the correct date of birth and postcode',
+                ref: "#ref"
             }
         }
     }
@@ -49,14 +51,11 @@
   ]
 %}
 
-{% set resultError = error if error else (data.error if data.error else null) %}
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {{ errorSummary(resultError, errorMap) }}
+        {{ errorSummary(error, errorMap) }}
         <form method="post">
-
             {% call govukFieldset({
               legend: {
                 text: title,
@@ -68,8 +67,33 @@
                 <p class="govuk-body-l">To find your licence details we first need to identify you. This helps us protect you personal information.</p>
                 <h2 class="govuk-heading-m">Confirm your details</h2>
 
-                <div id="ref-ro" class="govuk-body-m govuk-!-padding-bottom-2">
-                    <span class="govuk-hint">For the licence number ending <span class="govuk-!-font-weight-bold">{{ data.referenceNumber }}</span></span>
+                <div id="ref-rw" class="govuk-body-m">
+                    {{ govukInput({
+                      id: "ref",
+                      name: "referenceNumber",
+                      type: "text",
+                      classes: "govuk-!-width-one-third",
+                      errorMessage: { text: 'Enter the last 6 characters of your licence number' } if error['referenceNumber'],
+                      label: {
+                        text: "The last six characters of your licence number",
+                        classes: "govuk-!-font-weight-bold"
+                      },
+                      hint: {
+                          text: "For example F4A315"
+                      },
+                      attributes: {
+                        spellcheck: "false",
+                        maxlength: "6"
+                      },
+                      value: data.referenceNumber if data.referenceNumber else payload.referenceNumber
+                    }) }}
+                </div>
+
+                <div id="ref-ro" class="govuk-body-m initially-hidden">
+                    <span class="govuk-!-font-weight-bold">The licence number ending</span>
+                    <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }}
+                        &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+                    </span>
                 </div>
 
                 {{ govukDateInput({
@@ -83,7 +107,7 @@
                             classes: "govuk-!-font-weight-bold govuk-label"
                       }
                   },
-                  errorMessage: { text: 'Enter your date of birth' } if error or data.error,
+                  errorMessage: { text: 'Enter your date of birth' } if error['date-of-birth'] or error['referenceNumber'],
                   hint: {
                     text: "For example, 22 11 1970"
                   }
@@ -101,7 +125,7 @@
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-10",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: 'Enter your postcode' } if error['postcode'] or data.error
+                  errorMessage: { text: 'Enter your postcode' } if error['postcode'] or error['referenceNumber']
                 }) }}
 
                 {{ govukButton({
@@ -119,3 +143,20 @@
 </div>
 {% endblock %}
 
+{% block bodyEnd %}
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        if ({{ true if data.referenceNumber else false }}) {
+            document.getElementById("ref-ro").style.display = "block"
+            document.getElementById("ref-rw").style.display = "none"
+         } else {
+            document.getElementById("ref-ro").style.display = "none"
+            document.getElementById("ref-rw").style.display = "block"
+        }
+        document.getElementById("change").addEventListener("click", function () {
+            document.getElementById("ref-ro").style.display = "none"
+            document.getElementById("ref-rw").style.display = "block"
+        })
+    })()</script>
+{% endblock %}

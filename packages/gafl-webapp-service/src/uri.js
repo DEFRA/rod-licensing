@@ -39,8 +39,9 @@ export const ATTRIBUTION = { uri: '/buy/attribution' }
  * Renewals pages
  * @type {{uri: string}}
  */
-export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber}' }
-export const IDENTIFY = { uri: '/buy/renew/identify/{referenceNumber}', page: 'identify' }
+export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber?}' }
+export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
+export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 export const RENEWAL_START_DATE = { uri: '/buy/renew/renewal-start-date', page: 'renewal-start-date' }
 export const RENEWAL_START_VALIDATE = { uri: '/buy/renew/renewal-start-date/validate' }
@@ -56,10 +57,10 @@ export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 /**
  * These are informational static pages
  */
-export const COOKIES = { uri: '/cookies', page: 'cookies' }
-export const ACCESSIBILITY_STATEMENT = { uri: '/accessibility-statement', page: 'accessibility-statement' }
-export const PRIVACY_POLICY = { uri: '/privacy-policy', page: 'privacy-policy' }
-export const REFUND_POLICY = { uri: '/refund-policy', page: 'refund-policy' }
+export const COOKIES = { uri: '/guidance/cookies', page: 'cookies' }
+export const ACCESSIBILITY_STATEMENT = { uri: '/guidance/accessibility-statement', page: 'accessibility-statement' }
+export const PRIVACY_POLICY = { uri: '/guidance/privacy-policy', page: 'privacy-policy' }
+export const REFUND_POLICY = { uri: '/guidance/refund-policy', page: 'refund-policy' }
 
 /**
  * These are inserted at runtime by the test framework but the session manager needs to know about them

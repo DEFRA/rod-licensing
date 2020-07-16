@@ -200,7 +200,7 @@ const init = async () => {
     encoding: 'base64json',
     clearInvalid: true,
     strictHeader: true,
-    path: '/buy'
+    path: '/'
   }
 
   console.debug({ sessionCookieOptions })
