@@ -1,3 +1,12 @@
+
+## v0.3.0-rc.7 (2020-07-16)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#238](https://github.com/DEFRA/rod-licensing/pull/238) Feature/easy renewal second phase ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
 ## v0.3.0-rc.5 (2020-07-15)
 
 #### :rocket: Enhancement
