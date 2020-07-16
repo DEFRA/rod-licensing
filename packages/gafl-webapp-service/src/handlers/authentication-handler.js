@@ -32,8 +32,8 @@ export default async (request, h) => {
     await request.cache().helpers.status.setCurrentPermission({
       referenceNumber,
       authentication: {
-        authorized: false,
         reason,
+        authorized: false,
         endDate: authenticationResult.permission.endDate
       }
     })
