@@ -17,6 +17,7 @@ import {
 } from '../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -46,7 +47,7 @@ const getData = async request => {
     }
   }
 
-  status.fromSummary = 'contact-summary'
+  status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
 

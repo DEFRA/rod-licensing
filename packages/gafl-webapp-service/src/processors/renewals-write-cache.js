@@ -4,6 +4,7 @@ import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, 
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
+import { CONTACT_SUMMARY_SEEN } from '../constants.js'
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -48,7 +49,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   // Add appropriate age concessions
   ageConcessionHelper(permission)
   await request.cache().helpers.transaction.setCurrentPermission(permission)
-  await request.cache().helpers.status.setCurrentPermission({ renewal: true, fromSummary: 'contact-summary' })
+  await request.cache().helpers.status.setCurrentPermission({ renewal: true, fromSummary: CONTACT_SUMMARY_SEEN })
 }
 
 export const setUpPayloads = async request => {

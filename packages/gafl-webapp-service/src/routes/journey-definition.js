@@ -28,12 +28,13 @@ import {
   RENEWAL_INACTIVE
 } from '../uri.js'
 
-import { CommonResults } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
 import { dateOfBirthResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { licenceStartDate } from '../pages/licence-details/licence-start-date/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
+
 import * as constants from '../processors/mapping-constants.js'
 
 /**
@@ -292,9 +293,9 @@ export default [
       }
     },
     backLink: s => {
-      if (s.fromSummary === 'licence-summary') {
+      if (s.fromSummary === LICENCE_SUMMARY_SEEN) {
         return LICENCE_SUMMARY.uri
-      } else if (s.fromSummary === 'contact-summary') {
+      } else if (s.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
       } else {
         return null
@@ -312,7 +313,7 @@ export default [
         page: ADDRESS_ENTRY.uri
       }
     },
-    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : NAME.uri)
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : NAME.uri)
   },
 
   {
@@ -325,7 +326,7 @@ export default [
         page: CONTACT_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -354,7 +355,7 @@ export default [
         page: CONTACT_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -364,7 +365,7 @@ export default [
         page: CONTACT_SUMMARY.uri
       }
     },
-    backLink: s => (s.fromSummary === 'contact-summary' ? CONTACT_SUMMARY.uri : CONTACT.uri)
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : CONTACT.uri)
   },
 
   {
