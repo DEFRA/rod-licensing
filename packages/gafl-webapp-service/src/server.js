@@ -68,6 +68,7 @@ const createServer = options => {
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT
 const getPlugIns = () => {
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
@@ -106,7 +107,7 @@ const getPlugIns = () => {
     {
       plugin: Crumb,
       options: {
-        key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+        key: getCsrfTokenCookieName(),
         cookieOptions: {
           isSecure: process.env.NODE_ENV !== 'development',
           isHttpOnly: process.env.NODE_ENV !== 'development'
@@ -147,6 +148,8 @@ const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
     Object.assign(response.source.context, {
+      CSRF_TOKEN_NAME: getCsrfTokenCookieName(),
+      CSRF_TOKEN_VALUE: response.source.context[getCsrfTokenCookieName()],
       TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
       _uri: {
         cookies: COOKIES.uri,
