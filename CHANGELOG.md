@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.9 (2020-07-17)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#243](https://github.com/DEFRA/rod-licensing/pull/243) Fix issue with CSRF token when a custom CSRF cookie name is set ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.7 (2020-07-16)
 
