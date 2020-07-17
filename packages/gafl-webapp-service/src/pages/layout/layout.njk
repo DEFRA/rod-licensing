@@ -6,7 +6,7 @@
 {% from "header/macro.njk" import govukHeader %}
 
 {% macro csrf() %}
-<div><input type="hidden" name="rlsctkn" value="{{rlsctkn}}"></div>
+<div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
 {% endmacro %}
 
 {% block head %}
