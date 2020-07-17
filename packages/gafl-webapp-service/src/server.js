@@ -47,7 +47,8 @@ const createServer = options => {
                 port: process.env.REDIS_PORT || REDIS_PORT_DEFAULT,
                 db: 0,
                 ...(process.env.REDIS_PASSWORD && {
-                  password: process.env.REDIS_PASSWORD
+                  password: process.env.REDIS_PASSWORD,
+                  tls: {}
                 })
               }
             }
