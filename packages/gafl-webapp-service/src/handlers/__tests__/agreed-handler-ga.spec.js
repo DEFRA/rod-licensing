@@ -75,37 +75,21 @@ describe('Google Analytics for agreed handler', () => {
     )
   })
 
-  it.each([
-    'zzz-999',
-    'xxx-123',
-    'thj-598'
-  ])('provides transaction identifier for purchase', async samplePaymentId => {
+  it.each(['zzz-999', 'xxx-123', 'thj-598'])('provides transaction identifier for purchase', async samplePaymentId => {
     const request = getMockRequest(false, samplePaymentId)
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
-      expect.any(Array),
-      samplePaymentId,
-      expect.any(String)
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), samplePaymentId, expect.any(String))
   })
 
-  it.each([
-    'telesales',
-    'websales',
-    'door-to-door'
-  ])('provides channel for purchase', async sampleChannel => {
+  it.each(['telesales', 'websales', 'door-to-door'])('provides channel for purchase', async sampleChannel => {
     process.env.CHANNEL = sampleChannel
     const request = getMockRequest(false)
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
-      expect.any(Array),
-      expect.any(String),
-      sampleChannel
-    )
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), expect.any(String), sampleChannel)
   })
 })
 
