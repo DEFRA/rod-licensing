@@ -149,7 +149,7 @@ const processPayment = async (request, transaction, status) => {
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
 
-    await request.ga.ecommerce().purchase(getTrackingProductDetailsFromTransaction(transaction))
+    await request.ga.ecommerce().purchase(getTrackingProductDetailsFromTransaction(transaction), transaction.payment.payment_id)
   } else {
     /*
      * This block deals with failed or cancelled payments
