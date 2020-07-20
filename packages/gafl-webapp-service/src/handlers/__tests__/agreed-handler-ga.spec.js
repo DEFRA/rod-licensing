@@ -44,8 +44,15 @@ jest.mock('../../processors/analytics.js', () => ({
 }))
 
 describe('Google Analytics for agreed handler', () => {
+  const env_channel = process.env.CHANNEL
   beforeEach(() => {
+    delete process.env.CHANNEL
+    process.env.CHANNEL = 'websales'
     jest.clearAllMocks()
+  })
+
+  afterAll(() => {
+    process.env.CHANNEL = env_channel
   })
 
   it('sends checkout event with expected data when payment sent', async () => {
@@ -63,19 +70,41 @@ describe('Google Analytics for agreed handler', () => {
 
     expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
       mockProductDetails,
+      expect.any(String),
       expect.any(String)
     )
   })
 
-  it('provides transaction identifier for purchase', async () => {
-    const samplePaymentId = 'zzz-999'
+  it.each([
+    'zzz-999',
+    'xxx-123',
+    'thj-598'
+  ])('provides transaction identifier for purchase', async samplePaymentId => {
     const request = getMockRequest(false, samplePaymentId)
 
     await agreedHandler(request, getMockResponseToolkit())
 
     expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
       expect.any(Array),
-      samplePaymentId
+      samplePaymentId,
+      expect.any(String)
+    )
+  })
+
+  it.each([
+    'telesales',
+    'websales',
+    'door-to-door'
+  ])('provides channel for purchase', async sampleChannel => {
+    process.env.CHANNEL = sampleChannel
+    const request = getMockRequest(false)
+
+    await agreedHandler(request, getMockResponseToolkit())
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
+      expect.any(Array),
+      expect.any(String),
+      sampleChannel
     )
   })
 })
