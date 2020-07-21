@@ -3,47 +3,36 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
-                script {
-                    sh  '''
-                        printenv
-                    '''
+                withFolderProperties {
+                    script {
+                        SETTINGS = [:]
+                        SETTINGS.TAG_NAME = env.TAG_NAME
+                        SETTINGS.PROVISION_CREDENTIALS_ID = env.PROVISION_CREDENTIALS_ID
+                        SETTINGS.AWS_REGION = env.AWS_DEFAULT_REGION ?: env.AWS_REGION
+                        SETTINGS.ECR_REGISTRY_ID = env.ECR_REGISTRY_ID
+                        SETTINGS.ECR_ENDPOINT = "${SETTINGS.ECR_REGISTRY_ID}.dkr.ecr.${SETTINGS.AWS_REGION}.amazonaws.com"
+                        echo "Running with settings: ${SETTINGS}"
+                    }
                 }
             }
         }
         stage('Build') {
             steps {
                 script {
-                    sh  '''
-                        # Deploy docker images
-                        echo "Building docker images:  $(docker --version)"
-                        # Authenticate Docker with AWS ECR
-                        echo "Authenticating with the remote repository: $(aws ecr get-login-password | docker login --username AWS --password-stdin "${AWS_ECR_ENDPOINT}")"
-
-                        # Build all images
-                        echo "Building images for tag ${TAG_NAME}"
-                        TAG=${TAG_NAME} PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build
-                    '''
+                    sh  """
+                        ./scripts/docker/build.sh "${SETTINGS.TAG_NAME}"
+                    """
                 }
             }
         }
         stage('Deploy images to ECR') {
             steps {
                 script {
-                    sh  '''
-                        # Get list of rod_licensing images and push to the remote ECR repository
-                        docker image list --format "{{.Repository}}" --filter=reference="rod_licensing/*:${TAG_NAME}" | {
-                            while read -r IMAGE_NAME
-                            do
-                                echo "Pushing ${IMAGE_NAME}:${TAG_NAME} to ${AWS_ECR_ENDPOINT}/${IMAGE_NAME}:${TAG_NAME}"
-                                docker tag "${IMAGE_NAME}:${TAG_NAME}" "${AWS_ECR_ENDPOINT}/${IMAGE_NAME}:${TAG_NAME}"
-
-                                # Fork the push operations to allow them to run in parallel
-                                docker push "${AWS_ECR_ENDPOINT}/${IMAGE_NAME}:${TAG_NAME}" > /dev/null &
-                            done
-                            echo "Waiting for all images to be pushed..."
-                            wait || exit 1
-                        }
-                    '''
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: SETTINGS.PROVISION_CREDENTIALS_ID]]) {
+                        sh """
+                            ./scripts/docker/push_to_ecr.sh "${SETTINGS.TAG_NAME}" "${SETTINGS.ECR_ENDPOINT}"
+                        """
+                    }
                 }
             }
         }
