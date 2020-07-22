@@ -1,5 +1,6 @@
 import agreedHandler from '../agreed-handler.js'
 import { COMPLETION_STATUS } from '../../constants.js'
+import { getAffiliation } from '../../processors/analytics'
 
 const mockProductDetails = [
   {
@@ -12,6 +13,7 @@ const mockProductDetails = [
     price: 1
   }
 ]
+const mockAffiliation = 'mockAffiliation'
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
@@ -40,12 +42,20 @@ jest.mock('../../services/payment/govuk-pay-service.js', () => ({
     })
 }))
 jest.mock('../../processors/analytics.js', () => ({
-  getTrackingProductDetailsFromTransaction: () => mockProductDetails
+  getTrackingProductDetailsFromTransaction: jest.fn(() => mockProductDetails),
+  getAffiliation: jest.fn(channel => `Affiliation ${channel}`)
 }))
 
 describe('Google Analytics for agreed handler', () => {
+  const env_channel = process.env.CHANNEL
   beforeEach(() => {
+    delete process.env.CHANNEL
+    process.env.CHANNEL = 'websales'
     jest.clearAllMocks()
+  })
+
+  afterAll(() => {
+    process.env.CHANNEL = env_channel
   })
 
   it('sends checkout event with expected data when payment sent', async () => {
@@ -61,11 +71,42 @@ describe('Google Analytics for agreed handler', () => {
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(mockProductDetails)
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
+      mockProductDetails,
+      expect.any(String),
+      expect.any(String)
+    )
+  })
+
+  it.each(['zzz-999', 'xxx-123', 'thj-598'])('provides transaction identifier for purchase', async samplePaymentId => {
+    const request = getMockRequest(false, samplePaymentId)
+
+    await agreedHandler(request, getMockResponseToolkit())
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), samplePaymentId, expect.any(String))
+  })
+
+  it.each(['telesales', 'websales', 'door-to-door'])('passes channel to be transformed by affiliation', async sampleChannel => {
+    process.env.CHANNEL = sampleChannel
+    const request = getMockRequest(false)
+
+    await agreedHandler(request, getMockResponseToolkit())
+
+    expect(getAffiliation).toHaveBeenCalledWith(sampleChannel)
+  })
+
+  it.each(['telesales', 'websales', 'door-to-door'])('provides affiliation for purchase', async sampleChannel => {
+    process.env.CHANNEL = sampleChannel
+    const request = getMockRequest(false)
+
+    await agreedHandler(request, getMockResponseToolkit())
+    const affiliation = getAffiliation.mock.results[0].value
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), expect.any(String), affiliation)
   })
 })
 
-const getMockRequest = (checkout = true) => ({
+const getMockRequest = (checkout = true, payment_id = 'aaa111') => ({
   cache: jest.fn(() => ({
     helpers: {
       status: {
@@ -79,7 +120,7 @@ const getMockRequest = (checkout = true) => ({
       transaction: {
         get: () => ({
           payment: {
-            payment_id: 'aaa111'
+            payment_id
           },
           permissions: {
             permit: {

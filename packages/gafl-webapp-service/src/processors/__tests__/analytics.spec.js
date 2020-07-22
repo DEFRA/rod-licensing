@@ -1,4 +1,4 @@
-import { getTrackingProductDetailsFromTransaction } from '../analytics.js'
+import { getTrackingProductDetailsFromTransaction, getAffiliation } from '../analytics.js'
 
 describe('tracking data transform', () => {
   it.each(['Salmon 12 day licence', 'Pike 2 year licence', 'Trout 20 second licence'])(
@@ -73,6 +73,16 @@ describe('tracking data transform', () => {
       expect(products.length).toBe(permitDescriptions.length)
     }
   )
+})
+
+describe('affiliation transform', () => {
+  it('returns expected value for web sales', () => {
+    expect(getAffiliation('websales')).toBe('Get a fishing licence service - Web sales')
+  })
+
+  it('returns expected value for telesales', () => {
+    expect(getAffiliation('telesales')).toBe('Get a fishing licence service - Telephone sales')
+  })
 })
 
 const getSamplePermission = ({
