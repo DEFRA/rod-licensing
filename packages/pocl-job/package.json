@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@defra-fish/connectors-lib": "0.3.0-rc.14",
-    "commander": "^5.1.0",
+    "commander": "^6.0.0",
     "debug": "^4.1.1",
     "dot-prop": "^5.2.0",
     "filesize": "^6.1.0",
