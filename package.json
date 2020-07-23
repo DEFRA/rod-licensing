@@ -20,7 +20,7 @@
   "scripts": {
     "postinstall": "npm run lerna:bootstrap",
     "test": "jest",
-    "test:only-changed": "jest --changedSince master",
+    "test:only-changed": "jest --changedSince develop",
     "test:watch": "jest --watch",
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
@@ -70,12 +70,13 @@
   "husky": {
     "hooks": {
       "post-merge": "git update-index --skip-worktree docker/env/*.secrets.env",
-      "pre-commit": "npm run test:only-changed && lint-staged"
+      "pre-commit": "npm run test:only-changed && lint-staged",
+      "pre-push": "prettier-standard --check --lint --since develop"
     }
   },
   "lint-staged": {
     "*": [
-      "prettier-standard --lint"
+      "prettier-standard --fix --lint"
     ]
   },
   "jest": {
