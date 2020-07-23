@@ -50,7 +50,7 @@
     "blankie": "^5.0.0",
     "debug": "^4.1.1",
     "find": "^0.3.0",
-    "govuk-frontend": "^3.6.0",
+    "govuk-frontend": "^3.7.0",
     "hapi-gapi": "git+https://github.com/DEFRA/hapi-gapi.git",
     "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
