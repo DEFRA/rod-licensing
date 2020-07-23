@@ -38,6 +38,7 @@
   "dependencies": {
     "@defra-fish/business-rules-lib": "0.3.0-rc.14",
     "@defra-fish/connectors-lib": "0.3.0-rc.14",
+    "@defra/hapi-gapi": "^1.0.0",
     "@hapi/boom": "^9.1.0",
     "@hapi/catbox-redis": "^6.0.1",
     "@hapi/crumb": "^8.0.0",
@@ -51,7 +52,6 @@
     "debug": "^4.1.1",
     "find": "^0.3.0",
     "govuk-frontend": "^3.7.0",
-    "hapi-gapi": "^1.0.0",
     "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.2",
