@@ -113,7 +113,7 @@ services:
   #######################################################
   # Test SFTP server
   #######################################################
-  rod_licensing/ftp:
+  ftp:
     image: rod_licensing/ftp:${TAG:-latest}
     build:
       dockerfile: Dockerfile
