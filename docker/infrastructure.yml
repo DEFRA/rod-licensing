@@ -113,8 +113,8 @@ services:
   #######################################################
   # Test SFTP server
   #######################################################
-  test_sftp:
-    image: test_sftp
+  rod_licensing/ftp:
+    image: rod_licensing/ftp:${TAG:-latest}
     build:
       dockerfile: Dockerfile
       context: ./resources/infrastructure/sftp
