@@ -13,7 +13,6 @@ const mockProductDetails = [
     price: 1
   }
 ]
-const mockAffiliation = 'mockAffiliation'
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
@@ -47,7 +46,7 @@ jest.mock('../../processors/analytics.js', () => ({
 }))
 
 describe('Google Analytics for agreed handler', () => {
-  const env_channel = process.env.CHANNEL
+  const envChannel = process.env.CHANNEL
   beforeEach(() => {
     delete process.env.CHANNEL
     process.env.CHANNEL = 'websales'
@@ -55,7 +54,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 
   afterAll(() => {
-    process.env.CHANNEL = env_channel
+    process.env.CHANNEL = envChannel
   })
 
   it('sends checkout event with expected data when payment sent', async () => {
