@@ -19,4 +19,4 @@ WORKDIR /app
 COPY --from=builder /app/ /app/
 
 # Use node directly rather than pm2 for scheduled tasks
-ENTRYPOINT [ "node", "src/payment-mop-up-job.js" ]
+ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/payment-mop-up-job.js" ]

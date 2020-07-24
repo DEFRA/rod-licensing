@@ -1,5 +1,6 @@
 apps:
   - script: ./src/sqs-receiver-service.js
+    interpreter_args: '--unhandled-rejections=strict'
     name: 'Transactions Queue'
     env:
       RECEIVER_PREFIX: TRANSACTION_QUEUE
@@ -10,6 +11,7 @@ apps:
     restart_delay: 1000
 
   - script: ./src/sqs-receiver-service.js
+    interpreter_args: '--unhandled-rejections=strict'
     name: 'Transactions DLQ'
     env:
       RECEIVER_PREFIX: TRANSACTION_DLQ

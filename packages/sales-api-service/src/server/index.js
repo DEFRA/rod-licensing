@@ -47,8 +47,5 @@ export default async (opts = { port: SERVER.Port }) => {
 
   process.on('SIGINT', shutdown)
   process.on('SIGTERM', shutdown)
-  process.on('uncaughtException', console.error)
-  process.on('unhandledRejection', console.error)
-
   return server
 }

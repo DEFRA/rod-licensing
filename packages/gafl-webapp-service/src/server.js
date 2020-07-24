@@ -232,7 +232,6 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
-  process.on('unhandledRejection', console.error)
   server.route(routes)
   await server.start()
 

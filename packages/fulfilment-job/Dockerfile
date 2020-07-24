@@ -22,4 +22,4 @@ COPY --from=builder /app/ /app/
 VOLUME /etc/fulfilment/keys
 
 # Use node directly rather than pm2 for scheduled tasks
-ENTRYPOINT [ "node", "src/fulfilment-job.js", "execute" ]
+ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/fulfilment-job.js", "execute" ]
