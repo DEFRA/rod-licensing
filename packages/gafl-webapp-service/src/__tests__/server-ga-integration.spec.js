@@ -1,4 +1,4 @@
-import HapiGapi from 'hapi-gapi'
+import HapiGapi from '@defra/hapi-gapi'
 import Hapi from '@hapi/hapi'
 import { UTM } from '../constants.js'
 import { useSessionCookie } from '../session-cache/session-manager.js'
