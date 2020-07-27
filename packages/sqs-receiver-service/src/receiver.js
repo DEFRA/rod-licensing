@@ -10,10 +10,10 @@ const debug = db('sqs:receiver')
 
 // Validate the environment and return a standard object
 const { env } = environment(process.env, process.env.RECEIVER_PREFIX)
-
-console.log(`Running receiver process:${JSON.stringify(env, null, 4)}`)
+console.log(`Running receiver process: ${JSON.stringify(env, null, 4)}`)
+const ATTEMPTS_WITH_NO_DELAY = 5
 let messageLastReceived = Date.now()
-
+let attemptsWithNoMessages = 0
 /**
  * An infinite async loop to poll the queue
  * @returns {Promise<void>}
@@ -32,11 +32,18 @@ const receiver = async () => {
     )
     await deleteMessages(env.URL, messageSubscriberResults)
     messageLastReceived = Date.now()
+    attemptsWithNoMessages = 0
   } else {
-    // Invoke the poll delay only if no messages were received from the queue
-    const delay = Math.min(env.MAX_POLLING_INTERVAL_MS, Math.floor((0.5 * (Date.now() - messageLastReceived)) / 5000) * 5000)
-    debug('Waiting %d milliseconds before polling again', delay)
-    await new Promise(resolve => setTimeout(resolve, delay))
+    attemptsWithNoMessages++
+    /*
+      Invoke the poll delay only if no messages were received from the queue and we've tried a number of times.  With SQS even if there are several
+      hundred messages on the queue a receiveMessage request may return no messages (depending on which nodes were queried)
+     */
+    if (attemptsWithNoMessages >= ATTEMPTS_WITH_NO_DELAY) {
+      const delay = Math.min(env.MAX_POLLING_INTERVAL_MS, Math.floor((0.5 * (Date.now() - messageLastReceived)) / 5000) * 5000)
+      debug('Waiting %d milliseconds before polling again', delay)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
   }
 }
 
