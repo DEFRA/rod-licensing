@@ -82,7 +82,7 @@ export async function processQueue ({ id }) {
   chargeJournal.total = -totalTransactionValue
   paymentJournal.total = totalTransactionValue
 
-  debug('Persisting entities for staging id %s: %O', id, entities)
+  debug('Persisting %d entities for staging id %s', entities.length, id)
   await persist(...entities)
   debug('Moving staging data to history table for staging id %s', id)
   await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()

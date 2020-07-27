@@ -12,6 +12,6 @@ export const retrieveStagedTransaction = async id => {
     debug('Failed to retrieve a transaction with staging id %s', id)
     throw Boom.notFound('A transaction for the specified identifier was not found')
   }
-  debug('Retrieved transaction record for staging id %s: %O', id, record)
+  debug('Retrieved transaction record for staging id %s', id)
   return record
 }

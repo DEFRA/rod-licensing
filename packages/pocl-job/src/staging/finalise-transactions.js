@@ -2,6 +2,8 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import Path from 'path'
 import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
 import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
+import db from 'debug'
+const debug = db('pocl:staging')
 
 /**
  * Finalise transactions in the Sales API for the provided post-office file
@@ -79,6 +81,7 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       record.stage = RECORD_STAGE.TransactionFinalisationFailed
       record.finaliseTransactionError = result.reason
       state.failed++
+      debug('Failed to finalise transaction for record: %o', record)
       await salesApi.createStagingException({
         transactionFileException: {
           name: `${filename}: FAILED-FINALISE-${record.id}`,
