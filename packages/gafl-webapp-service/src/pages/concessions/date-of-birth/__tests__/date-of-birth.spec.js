@@ -1,10 +1,11 @@
 import moment from 'moment'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, backLinkRegEx } from '../../../../__mocks__/test-utils.js'
 import {
   DATE_OF_BIRTH,
   LICENCE_TO_START,
   LICENCE_START_DATE,
+  LICENCE_START_TIME,
   LICENCE_LENGTH,
   NO_LICENCE_REQUIRED,
   JUNIOR_LICENCE,
@@ -53,6 +54,22 @@ describe('The date of birth page', () => {
   it('return success on requesting the page', async () => {
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
     const data = await injectWithCookies('GET', DATE_OF_BIRTH.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('has the back-link set to licence-start-date for a 12 month licence starting in the future ', async () => {
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-and-time' })
+    const data = await injectWithCookies('GET', DATE_OF_BIRTH.uri)
+    expect(data.payload.search(backLinkRegEx(LICENCE_START_DATE.uri)) > 0).toBeTruthy()
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('has the back-link set to licence-start-time for a 1 day licence starting in the future ', async () => {
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-and-time' })
+    const data = await injectWithCookies('GET', DATE_OF_BIRTH.uri)
+    expect(data.payload.search(backLinkRegEx(LICENCE_START_TIME.uri)) > 0).toBeTruthy()
     expect(data.statusCode).toBe(200)
   })
 

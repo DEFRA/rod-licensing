@@ -19,6 +19,8 @@ import {
   RENEWAL_START_DATE
 } from '../../../uri.js'
 
+import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
+
 // Redirects back to page if incomplete
 const checkPageCompleted = (p, status) => {
   if (!status[p.page]) {
@@ -51,7 +53,7 @@ export const getData = async request => {
     checkPageCompleted(DATE_OF_BIRTH, status)
   }
 
-  status.fromSummary = status.fromSummary || 'licence-summary'
+  status.fromSummary = status.fromSummary || LICENCE_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
 
   await findPermit(permission, request)
