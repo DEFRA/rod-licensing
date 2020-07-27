@@ -3,6 +3,9 @@ import paymentMopUpJob from 'commander'
 import { execute } from './processors/processor.js'
 import { DEFAULT_INCOMPLETE_PURCHASE_AGE_MINUTES, MAX_INCOMPLETE_PURCHASE_AGE_MINUTES, DEFAULT_SCAN_DURATION_HOURS } from './constants.js'
 
+process.on('uncaughtException', console.error)
+process.on('unhandledRejection', console.error)
+
 paymentMopUpJob
   .description('Starts the payment mop-up job')
   .option('-a, --age-minutes <number>', 'The age of the incomplete purchase in minutes', Number, DEFAULT_INCOMPLETE_PURCHASE_AGE_MINUTES)

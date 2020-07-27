@@ -7,7 +7,7 @@ import CatboxRedis from '@hapi/catbox-redis'
 import Vision from '@hapi/vision'
 import Inert from '@hapi/inert'
 import Scooter from '@hapi/scooter'
-import HapiGapi from 'hapi-gapi'
+import HapiGapi from '@defra/hapi-gapi'
 import Crumb from '@hapi/crumb'
 import Blankie from 'blankie'
 import Nunjucks from 'nunjucks'
@@ -47,7 +47,8 @@ const createServer = options => {
                 port: process.env.REDIS_PORT || REDIS_PORT_DEFAULT,
                 db: 0,
                 ...(process.env.REDIS_PASSWORD && {
-                  password: process.env.REDIS_PASSWORD
+                  password: process.env.REDIS_PASSWORD,
+                  tls: {}
                 })
               }
             }
@@ -67,6 +68,7 @@ const createServer = options => {
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT
 const getPlugIns = () => {
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
@@ -105,7 +107,7 @@ const getPlugIns = () => {
     {
       plugin: Crumb,
       options: {
-        key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+        key: getCsrfTokenCookieName(),
         cookieOptions: {
           isSecure: process.env.NODE_ENV !== 'development',
           isHttpOnly: process.env.NODE_ENV !== 'development'
@@ -146,6 +148,8 @@ const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
     Object.assign(response.source.context, {
+      CSRF_TOKEN_NAME: getCsrfTokenCookieName(),
+      CSRF_TOKEN_VALUE: response.source.context[getCsrfTokenCookieName()],
       TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
       _uri: {
         cookies: COOKIES.uri,
@@ -228,7 +232,6 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
-  process.on('unhandledRejection', console.error)
   server.route(routes)
   await server.start()
 

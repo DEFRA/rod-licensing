@@ -12,3 +12,10 @@ export const getTrackingProductDetailsFromTransaction = ({ permissions }) =>
     quantity: 1,
     price: permit.cost
   }))
+
+export const getAffiliation = channel => {
+  if (channel === 'telesales') {
+    return 'Get a fishing licence service - Telephone sales'
+  }
+  return 'Get a fishing licence service - Web sales'
+}

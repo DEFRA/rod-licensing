@@ -7,9 +7,6 @@ fulfilmentJob
   .description('Run fulfilment processor')
   .action(processFulfilment)
 
-process.on('uncaughtException', console.error)
-process.on('unhandledRejection', console.error)
-
 // Configure help for unrecognised commands
 fulfilmentJob.command('*').action(() => fulfilmentJob.help())
 fulfilmentJob.parse()

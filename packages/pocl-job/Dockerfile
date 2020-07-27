@@ -22,4 +22,4 @@ COPY --from=builder /app/ /app/
 VOLUME /etc/pocl/keys
 
 # Use node directly rather than pm2 for scheduled tasks
-ENTRYPOINT [ "node", "src/pocl-job.js", "execute" ]
+ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/pocl-job.js", "execute" ]

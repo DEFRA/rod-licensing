@@ -1,23 +1,36 @@
+
+
+
+
+
+
+
+
+## v0.3.0-rc.9 (2020-07-17)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#243](https://github.com/DEFRA/rod-licensing/pull/243) Fix issue with CSRF token when a custom CSRF cookie name is set ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
 ## v0.3.0-rc.7 (2020-07-16)
 
 #### :rocket: Enhancement
-
-- `business-rules-lib`, `gafl-webapp-service`
-  - [#238](https://github.com/DEFRA/rod-licensing/pull/238) Feature/easy renewal second phase ([@graham-willis-druid](https://github.com/graham-willis-druid))
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#238](https://github.com/DEFRA/rod-licensing/pull/238) Feature/easy renewal second phase ([@graham-willis-druid](https://github.com/graham-willis-druid))
 
 #### Committers: 1
-
 - Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
-
 ## v0.3.0-rc.5 (2020-07-15)
 
 #### :rocket: Enhancement
-
-- `sales-api-service`, `sqs-receiver-service`
-  - [#239](https://github.com/DEFRA/rod-licensing/pull/239) Updates to support deployment into AWS ([@sgardnerdell](https://github.com/sgardnerdell))
+* `sales-api-service`, `sqs-receiver-service`
+  * [#239](https://github.com/DEFRA/rod-licensing/pull/239) Updates to support deployment into AWS ([@sgardnerdell](https://github.com/sgardnerdell))
 
 #### Committers: 1
-
 - sgd ([@sgardnerdell](https://github.com/sgardnerdell))
 
 ## v0.3.0-rc.4 (2020-07-14)
