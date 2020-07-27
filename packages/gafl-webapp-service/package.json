@@ -50,6 +50,7 @@
     "@hapi/vision": "^6.0.0",
     "blankie": "^5.0.0",
     "debug": "^4.1.1",
+    "disinfect": "^1.1.0",
     "find": "^0.3.0",
     "govuk-frontend": "^3.7.0",
     "moment": "^2.27.0",
