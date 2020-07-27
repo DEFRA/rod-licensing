@@ -19,6 +19,9 @@ let messageLastReceived = Date.now()
  * @returns {Promise<void>}
  */
 const receiver = async () => {
+  // Show queue statistics (if configured) on each iteration
+  await showQueueStatistics(env.URL)
+
   // Read the SQS message queue
   const messages = await readQueue(env.URL, env.VISIBILITY_TIMEOUT_MS, env.WAIT_TIME_MS)
 
@@ -29,12 +32,8 @@ const receiver = async () => {
     )
     await deleteMessages(env.URL, messageSubscriberResults)
     messageLastReceived = Date.now()
-  }
-
-  await showQueueStatistics(env.URL)
-
-  // Invoke the poll delay only if no messages were received from the queue
-  if (!messages.length) {
+  } else {
+    // Invoke the poll delay only if no messages were received from the queue
     const delay = Math.min(env.MAX_POLLING_INTERVAL_MS, Math.floor((0.5 * (Date.now() - messageLastReceived)) / 5000) * 5000)
     debug('Waiting %d milliseconds before polling again', delay)
     await new Promise(resolve => setTimeout(resolve, delay))
