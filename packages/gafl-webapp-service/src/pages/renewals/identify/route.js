@@ -21,9 +21,9 @@ const getData = async request => {
 }
 
 const schema = Joi.object({
+  referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
   'date-of-birth': validation.contact.createBirthDateValidator(Joi),
-  postcode: validation.contact.createUKPostcodeValidator(Joi),
-  referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi)
+  postcode: validation.contact.createUKPostcodeValidator(Joi)
 }).options({ abortEarly: false, allowUnknown: true })
 
 const validator = async payload => {
