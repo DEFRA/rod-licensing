@@ -25,7 +25,7 @@ const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
 
     const data = await sqs.receiveMessage(params).promise()
 
-    debug({ messages: data.Messages })
+    debug('Retrieved %d messages from %s', data.Messages.length, url)
 
     return data.Messages
   } catch (err) {

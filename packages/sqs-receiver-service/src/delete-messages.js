@@ -21,10 +21,10 @@ const deleteMessages = async (url, messageSubscriberResults) => {
       const results = await sqs.deleteMessageBatch(params).promise()
 
       if (results.Failed.length) {
-        console.error('Failed to delete from batch: %O', results.Failed)
+        console.error('Failed to delete messages from %s: %O', url, results.Failed)
       }
 
-      debug({ success: results.Successful, failed: results.Failed })
+      debug('Deleted %d messages from %s', results.Successful.length, url)
     }
   } catch (err) {
     console.error('Error deleting messages for %s: %O', url, err)
