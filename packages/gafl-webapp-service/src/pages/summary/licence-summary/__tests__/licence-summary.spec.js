@@ -292,18 +292,15 @@ describe('The licence summary page', () => {
     expect(data.headers.location).toBe(NAME.uri)
   })
 
-  it('date of birth amendment (junior) causes a method of contact of letter to be set no none', async () => {
+  it('date of birth amendment (junior) causes a method of contact of letter to be set to none', async () => {
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
     await injectWithCookies('GET', CONTROLLER.uri)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
     await injectWithCookies('GET', CONTROLLER.uri)
-    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
-    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
-    expect(JSON.parse(payload2).permissions[0].licenceLength).toBe('12M')
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload).permissions[0].licenceLength).toBe('12M')
   })
 })
