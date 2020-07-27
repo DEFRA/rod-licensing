@@ -84,6 +84,13 @@ describe('The contact summary page', () => {
     expect(data2.payload.search(backLinkRegEx(LICENCE_SUMMARY.uri)) > 0).toBeTruthy()
   })
 
+  it('on redirecting to the name page sets the back-link to the licence summary', async () => {
+    await injectWithCookies('GET', CONTROLLER.uri)
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+    const data = await injectWithCookies('GET', NAME.uri)
+    expect(data.payload.search(backLinkRegEx(LICENCE_SUMMARY.uri)) > 0).toBeTruthy()
+  })
+
   it('redirects to the address lookup page if no address has been posted', async () => {
     await injectWithCookies('POST', NAME.uri, {
       'last-name': 'Graham',
@@ -97,9 +104,9 @@ describe('The contact summary page', () => {
 
   it('redirects to the contact page if no contact details have been set', async () => {
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    const data2 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(CONTACT.uri)
+    const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(CONTACT.uri)
   })
 
   it('responds with the error page if the sales API fetch fails', async () => {
