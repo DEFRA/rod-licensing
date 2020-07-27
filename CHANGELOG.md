@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.18 (2020-07-27)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#261](https://github.com/DEFRA/rod-licensing/pull/261) Fix issues in SQS receiver and Sales API connector ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.17 (2020-07-27)
 
 #### :rocket: Enhancement
