@@ -17,10 +17,10 @@ const sftp = new FtpClient()
 
 export async function ftpToS3 () {
   try {
-    debug('Connecting to SFTP endpoint with configuration %O', config)
+    debug('Connecting to SFTP endpoint at sftp://%s:%s%s', config.ftp.host, config.ftp.port, config.ftp.path)
     await sftp.connect(config.ftp)
     const fileList = await sftp.list(config.ftp.path)
-    debug('Discovered the following files on the SFTP server: %O', fileList)
+    debug('Discovered the following files on the SFTP server: %o', fileList)
     const xmlFiles = fileList.filter(f => Path.extname(f.name).toLowerCase() === '.xml')
 
     if (!xmlFiles.length) {
