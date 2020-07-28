@@ -11,6 +11,7 @@ export const permissionNumberUniqueComponentValidator = joi =>
   joi
     .string()
     .trim()
+    .uppercase()
     .pattern(/^[A-Z0-9]{6}$/)
     .required()
     .description('The unqiue part of the permission reference number')

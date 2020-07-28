@@ -12,7 +12,7 @@ import { UTM } from './constants.js'
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
-export const getPlugIns = (getSessionCookieName, getCsrfTokenCookieName) => {
+export const getPlugins = (getSessionCookieName, getCsrfTokenCookieName) => {
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
     hapiGapiPropertySettings.push({

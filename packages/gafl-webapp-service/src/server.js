@@ -22,7 +22,7 @@ import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY } from 
 import sessionManager from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
-import { getPlugIns } from './plugins.js'
+import { getPlugins } from './plugins.js'
 
 let server
 
@@ -83,7 +83,7 @@ const layoutContextAmalgamation = (request, h) => {
 }
 
 const init = async () => {
-  await server.register(getPlugIns(getSessionCookieName, getCsrfTokenCookieName))
+  await server.register(getPlugins(getSessionCookieName, getCsrfTokenCookieName))
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
