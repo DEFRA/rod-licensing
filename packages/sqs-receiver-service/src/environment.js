@@ -20,7 +20,8 @@ const environment = (e, receiverName) => {
     VISIBILITY_TIMEOUT_MS: e[`${receiverName}_VISIBILITY_TIMEOUT_MS`],
     WAIT_TIME_MS: e[`${receiverName}_WAIT_TIME_MS`] || 20000,
     MAX_POLLING_INTERVAL_MS: e[`${receiverName}_MAX_POLLING_INTERVAL_MS`] || 300000,
-    SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`] || 90000
+    SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`] || 90000,
+    ATTEMPTS_WITH_NO_DELAY: e[`${receiverName}_ATTEMPTS_WITH_NO_DELAY`] || 10
   }
 
   // Create the joi validation schemas
@@ -36,6 +37,10 @@ const environment = (e, receiverName) => {
       .required()
       .min(1)
       .max(60 * 60 * 1000),
+    ATTEMPTS_WITH_NO_DELAY: Joi.number()
+      .integer()
+      .required()
+      .min(1),
     VISIBILITY_TIMEOUT_MS: Joi.number()
       .integer()
       .required()
