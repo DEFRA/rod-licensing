@@ -7,12 +7,12 @@ import Crumb from '@hapi/crumb'
 import HapiGapi from '@defra/hapi-gapi'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
-
+import { getCsrfTokenCookieName } from './server.js'
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
-export const getPlugins = (getSessionCookieName, getCsrfTokenCookieName) => {
+export const getPlugins = () => {
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
     hapiGapiPropertySettings.push({

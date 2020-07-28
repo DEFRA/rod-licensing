@@ -58,7 +58,7 @@ const createServer = options => {
  * The hapi plugins and their options which will be registered on initialization
  */
 const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
-const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT
+export const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT
 
 /**
  * Adds the uri's used by the layout page to each relevant response
@@ -83,7 +83,7 @@ const layoutContextAmalgamation = (request, h) => {
 }
 
 const init = async () => {
-  await server.register(getPlugins(getSessionCookieName, getCsrfTokenCookieName))
+  await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
