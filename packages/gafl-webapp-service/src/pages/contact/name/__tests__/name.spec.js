@@ -64,7 +64,7 @@ describe('The name page', () => {
 
   it('Redirects back to itself on posting a last name with invalid characters', async () => {
     const data = await injectWithCookies('POST', NAME.uri, {
-      'last-name': '&&&',
+      'last-name': '%%%%',
       'first-name': 'OK'
     })
     expect(data.statusCode).toBe(302)

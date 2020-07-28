@@ -12,6 +12,14 @@
 
 {%
     set errorMap = {
+        'referenceNumber' : {
+            'string.empty': { text: 'Enter the last six digits of your licence number', ref: '#ref' },
+            'string.pattern.base': { text: 'The last six digits of your licence number don\'t look right. Check and enter again', ref: '#ref' },
+            'string.invalid': {
+                text: 'We do not have any record of a licence number ending ' + payload.referenceNumber + ' matching these details.',
+                ref: "#ref"
+            }
+        },
         'date-of-birth': {
             'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
             'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
@@ -20,14 +28,6 @@
         'postcode': {
             'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
             'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
-        },
-        'referenceNumber' : {
-            'string.empty': { text: 'Enter the last six digits of your licence number', ref: '#ref' },
-            'string.pattern.base': { text: 'The last six digits of your licence number doesn\'t look right. Check and enter again', ref: '#ref' },
-            'string.invalid': {
-                text: 'The details you entered do not match those we have on record for licence number ' + payload.referenceNumber + '. Please check you have entered the correct date of birth and postcode',
-                ref: "#ref"
-            }
         }
     }
 %}
