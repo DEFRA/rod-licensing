@@ -32,6 +32,20 @@ test('10 messages: complete without error', async () => {
   await expect(receiver()).resolves.toBeUndefined()
 })
 
+test('Imposes delay after several empty reads', async () => {
+  AWS.__mockEmptyQueue()
+  fetch.__goodResult()
+  jest.useFakeTimers()
+  for (let i = 0; i < testEnv.TEST_ATTEMPTS_WITH_NO_DELAY; i++) {
+    process.nextTick(() => {
+      jest.runAllTimers()
+    })
+    await expect(receiver()).resolves.toBeUndefined()
+  }
+  expect(setTimeout).toHaveBeenCalled()
+  jest.useRealTimers()
+})
+
 test('Receiver: throws exception on general error', async () => {
   const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
   AWS.__mockFailNoQueue()
