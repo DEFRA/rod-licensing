@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.19 (2020-07-28)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#260](https://github.com/DEFRA/rod-licensing/pull/260) Adjust licence validator, introduce disinfect library, refactoring improvements ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.18 (2020-07-27)
 
 #### :bug: Bug Fix
