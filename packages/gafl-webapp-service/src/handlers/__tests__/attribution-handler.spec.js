@@ -27,20 +27,6 @@ describe('The attribution handler', () => {
     })
   })
 
-  it.each([
-    [UTM.CAMPAIGN, '<script>alert("hacked")</script>', '%3Cscript%3Ealert(%22hacked%22)%3C%2Fscript%3E'],
-    [UTM.MEDIUM, '<script>alert("busted")</script>', '%3Cscript%3Ealert(%22busted%22)%3C%2Fscript%3E'],
-    [UTM.CONTENT, '<script>alert("stolen")</script>', '%3Cscript%3Ealert(%22stolen%22)%3C%2Fscript%3E'],
-    [UTM.SOURCE, '<script>alert("pilfered")</script>', '%3Cscript%3Ealert(%22pilfered%22)%3C%2Fscript%3E'],
-    [UTM.TERM, '<script>alert("pinched")</script>', '%3Cscript%3Ealert(%22pinched%22)%3C%2Fscript%3E']
-  ])('Sanitises input values before persisting them', async (utmValue, sampleValue, sanitised) => {
-    const request = generateRequestMock({ [utmValue]: sampleValue })
-    await attributionHandler(request, generateResponseToolkitMock())
-    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
-      attribution: expect.objectContaining({ [utmValue]: sanitised })
-    })
-  })
-
   it("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async () => {
     delete process.env.ATTRIBUTION_REDIRECT
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
