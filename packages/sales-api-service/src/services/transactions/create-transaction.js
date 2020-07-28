@@ -18,7 +18,7 @@ export async function createTransaction (payload) {
   await docClient
     .put({ TableName: TRANSACTION_STAGING_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
     .promise()
-  debug('Transaction %s stored with payload %O', record.id, record)
+  debug('Transaction %s successfully created in DynamoDB table %s', record.id, TRANSACTION_STAGING_TABLE.TableName)
   return record
 }
 
@@ -36,7 +36,7 @@ export async function createTransactions (payload) {
     }
   }
   await docClient.batchWrite(params).promise()
-  debug('%s transactions created in batch', records.length)
+  debug('%d transactions created in batch', records.length)
   return records
 }
 

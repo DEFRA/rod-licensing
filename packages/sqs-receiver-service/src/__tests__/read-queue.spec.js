@@ -6,13 +6,13 @@ import AWS from 'aws-sdk'
 test('Nothing queued', async () => {
   AWS.__mockEmptyQueue()
   const messages = await readQueue('http://0.0.0.0:0000/queue')
-  expect(messages).toBeUndefined()
+  expect(messages).toHaveLength(0)
 })
 
 test('One message queued', async () => {
   AWS.__mockOneMessage()
   const messages = await readQueue('http://0.0.0.0:0000/queue')
-  expect(messages.length).toBe(1)
+  expect(messages).toHaveLength(1)
   expect(messages).toContainEqual({
     MessageId: '15eb8abc-c7c1-4167-9590-839c8feed6dd',
     ReceiptHandle: '15eb8abc-c7c1-4167-9590-839c8feed6dd#9be8971c-f9a9-4bb2-8515-98cdab660e1b',
@@ -27,7 +27,7 @@ test('One message queued', async () => {
 test('Five messages queued', async () => {
   AWS.__mockNMessages(5)
   const messages = await readQueue('http://0.0.0.0:0000/queue')
-  expect(messages.length).toBe(5)
+  expect(messages).toHaveLength(5)
 })
 
 test('Throws exception on no queue available', async () => {

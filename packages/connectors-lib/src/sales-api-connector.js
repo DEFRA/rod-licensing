@@ -3,7 +3,6 @@ import querystring from 'querystring'
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 20000
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
-const headers = { 'Content-Type': 'application/json' }
 
 /**
  * Make a request to the sales API
@@ -15,8 +14,8 @@ const headers = { 'Content-Type': 'application/json' }
  */
 export const call = async (url, method = 'get', payload = null) => {
   const response = await fetch(url.href, {
-    headers,
     method,
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     ...(payload && { body: JSON.stringify(payload) }),
     timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
   })

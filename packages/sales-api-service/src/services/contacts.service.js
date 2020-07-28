@@ -34,6 +34,7 @@ export const resolveContactPayload = async payload => {
   if (id) {
     // Resolve an existing contact id
     contact = await findById(Contact, id)
+    debug('Resolved existing contact record for id=%s - exists=%s', id, contact !== null)
   } else {
     const lookup = new Contact()
     lookup.firstName = payload.firstName
@@ -44,6 +45,7 @@ export const resolveContactPayload = async payload => {
 
     const candidates = await findByExample(lookup)
     if (candidates.length) {
+      debug('Resolved %d candidate contacts for contact %o', id, lookup)
       contact = candidates[0]
     }
   }
@@ -62,7 +64,5 @@ export const resolveContactPayload = async payload => {
     preferredMethodOfReminder
   )
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
-
-  debug('Transformed licensee to contact: %O', contact)
   return contact
 }
