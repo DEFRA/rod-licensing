@@ -1,4 +1,17 @@
 
+## v0.3.0-rc.20 (2020-07-28)
+
+#### :rocket: Enhancement
+* `sqs-receiver-service`
+  * [#262](https://github.com/DEFRA/rod-licensing/pull/262) Only delay polling SQS after several receive message requests return no messages ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### :bug: Bug Fix
+* `sqs-receiver-service`
+  * [#262](https://github.com/DEFRA/rod-licensing/pull/262) Only delay polling SQS after several receive message requests return no messages ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.19 (2020-07-28)
 
 #### :rocket: Enhancement
