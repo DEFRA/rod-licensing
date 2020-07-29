@@ -35,11 +35,12 @@ export const call = async (url, method = 'get', payload = null) => {
  * @returns {Promise<{}>}
  */
 const parseResponseBody = async response => {
+  const body = await response.text()
   try {
-    return await response.json()
+    return JSON.parse(body)
   } catch (e) {
     return {
-      text: await response.text()
+      text: body
     }
   }
 }
