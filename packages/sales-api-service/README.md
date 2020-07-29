@@ -15,6 +15,7 @@ The Rod Licensing Sales API is responsible for communication with Microsoft Dyna
 | PAYMENT_JOURNALS_TABLE                | The DynamoDB table used for payment journals                                       |   yes    |           |                               |       |
 | PAYMENT_JOURNALS_TABLE_TTL            | The time to live for records in the payment journals table (in seconds)            |    no    | 168 hours |                               |       |
 | TRANSACTION_QUEUE_URL                 | The SQS queue URL used for processing transactions                                 |   yes    |           |                               |       |
+| HAPI_SOCKET_TIMEOUT_MS                | Allows the socket timeout to be configured for the hapi server (for keep-alive)    |    no    | 2 minutes |                               |       |
 
 ### See also:
 
