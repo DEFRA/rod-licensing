@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.22 (2020-07-29)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#267](https://github.com/DEFRA/rod-licensing/pull/267) Avoid attempting to consume the node-fetch response body twice ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.21 (2020-07-29)
 
 #### :rocket: Enhancement
