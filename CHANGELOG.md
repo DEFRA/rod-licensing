@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.23 (2020-07-29)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#268](https://github.com/DEFRA/rod-licensing/pull/268) Network tuning parameters for AWS environment ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.22 (2020-07-29)
 
 #### :bug: Bug Fix
