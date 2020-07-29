@@ -18,7 +18,12 @@ export default async (opts = { port: SERVER.Port }) => {
               const handler = err.output.payload.validation.source === 'payload' ? Boom.badData : Boom.badRequest
               return handler(`Invalid ${err.output.payload.validation.source}: ${err.message}`)
             }
-          }
+          },
+          ...(SERVER.SocketTimeout && {
+            timeout: {
+              socket: Number.parseInt(SERVER.SocketTimeout)
+            }
+          })
         }
       },
       opts

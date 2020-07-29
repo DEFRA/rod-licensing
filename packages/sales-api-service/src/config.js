@@ -1,7 +1,8 @@
 const defaultStagingTtl = 60 * 60 * 168
 
 export const SERVER = {
-  Port: process.env.PORT || 4000
+  Port: process.env.PORT || 4000,
+  SocketTimeout: process.env.HAPI_SOCKET_TIMEOUT_MS
 }
 
 export const PAYMENTS_TABLE = {
