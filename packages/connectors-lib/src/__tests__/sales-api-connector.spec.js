@@ -73,6 +73,26 @@ describe('sales-api-connector', () => {
       })
       expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
     })
+
+    it('parses response text if a json response cannot be parsed', async () => {
+      const jsonResponseMethod = jest.fn(async () => {
+        throw new Error('Not JSON')
+      })
+      const textResponseMethod = jest.fn(async () => 'Text response')
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', json: jsonResponseMethod, text: textResponseMethod })
+      await expect(salesApi.call(new URL(TEST_HREF))).resolves.toEqual({
+        ok: false,
+        status: 404,
+        statusText: 'Not Found',
+        body: {
+          text: 'Text response'
+        }
+      })
+      expect(fetch).toHaveBeenCalledWith(TEST_HREF, { method: 'get', headers: expect.any(Object), timeout: 20000 })
+      expect(jsonResponseMethod).toHaveBeenCalled()
+      expect(textResponseMethod).toHaveBeenCalled()
+    })
+
     it('throws exceptions from fetch up the stack', async () => {
       fetch.mockRejectedValue(new Error('Request timeout'))
       await expect(salesApi.call(new URL(TEST_HREF))).rejects.toThrow(/Request timeout/)

@@ -35,6 +35,6 @@ export const preparePayment = (request, transaction) => {
     }
   }
 
-  debug('Creating prepared payment %O', result)
+  debug('Creating prepared payment %o', result)
   return result
 }

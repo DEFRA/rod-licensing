@@ -32,7 +32,7 @@ export const sendPayment = async preparedPayment => {
 
   if (response.ok) {
     const resBody = await response.json()
-    debug('Successful payment creation response: %O', resBody)
+    debug('Successful payment creation response: %o', resBody)
     return resBody
   } else {
     const errMsg = {
@@ -82,7 +82,7 @@ export const getPaymentStatus = async paymentId => {
 
   if (response.ok) {
     const resBody = await response.json()
-    debug('Payment status response: %O', resBody)
+    debug('Payment status response: %o', resBody)
     return resBody
   } else {
     const mes = {

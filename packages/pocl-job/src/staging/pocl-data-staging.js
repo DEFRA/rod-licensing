@@ -23,7 +23,7 @@ export const stage = async xmlFilePath => {
   const dynamicsRecord = await salesApi.getTransactionFile(filename)
   if (dynamicsRecord && DYNAMICS_IMPORT_STAGE.isAlreadyProcessed(dynamicsRecord.status.description)) {
     console.error(
-      'A file was retrieved but is already marked as processed in Dynamics, ignoring.  Dynamics record: %O, DynamoDB record: %O',
+      'A file was retrieved but is already marked as processed in Dynamics, ignoring.  Dynamics record: %o, DynamoDB record: %o',
       dynamicsRecord,
       fileRecord
     )

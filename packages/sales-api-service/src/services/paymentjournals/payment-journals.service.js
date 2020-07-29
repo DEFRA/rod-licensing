@@ -12,7 +12,7 @@ const debug = db('sales:paymentjournals')
 export async function createPaymentJournal (id, payload) {
   const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
   await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' }).promise()
-  debug('Payment journal stored with payload %O', record)
+  debug('Payment journal stored with payload %o', record)
   return record
 }
 
