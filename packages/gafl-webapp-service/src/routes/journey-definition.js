@@ -97,13 +97,19 @@ export default [
   },
 
   {
-    currentPage: RENEWAL_INACTIVE.page,
+    currentPage: LICENCE_TYPE.page,
     nextPage: {
-      [CommonResults.OK]: {
+      [licenceTypeResults.ASK_LICENCE_LENGTH]: {
         page: LICENCE_LENGTH.uri
+      },
+      [licenceTypeResults.SKIP_LICENCE_LENGTH]: {
+        page: LICENCE_SUMMARY.uri
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: IDENTIFY.uri
+    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri
   },
 
   {
@@ -117,25 +123,6 @@ export default [
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
-  },
-
-  {
-    currentPage: LICENCE_TYPE.page,
-    nextPage: {
-      [licenceTypeResults.TROUT_AND_COARSE]: {
-        page: NUMBER_OF_RODS.uri
-      },
-      [licenceTypeResults.TROUT_AND_COARSE_2_ROD]: {
-        page: LICENCE_TO_START.uri
-      },
-      [licenceTypeResults.SALMON_AND_SEA_TROUT]: {
-        page: LICENCE_TO_START.uri
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_LENGTH.uri)
   },
 
   {
@@ -383,6 +370,16 @@ export default [
         page: AGREED.uri
       }
     }
+  },
+
+  {
+    currentPage: RENEWAL_INACTIVE.page,
+    nextPage: {
+      [CommonResults.OK]: {
+        page: LICENCE_LENGTH.uri
+      }
+    },
+    backLink: IDENTIFY.uri
   },
 
   // This is the authentication journey

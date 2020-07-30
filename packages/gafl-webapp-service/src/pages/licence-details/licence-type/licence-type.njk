@@ -1,7 +1,8 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
+{% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'Which type of fishing licence do you want to get?' %}
+{% set title = 'Which type of licence do you want?' %}
 
 {%
     set errorMap = {
@@ -11,21 +12,48 @@
     }
 %}
 
+{% set troutAndCoarse2Rod %}
+    <p class="govuk-hint">This lets you fish non-migratory trout and freshwater fish</p>
+    <p class="govuk-hint">Rods are for the individual licence holder and must be attended at all times</p>
+{% endset -%}
+
+{% set troutAndCoarse3Rod %}
+    <p class="govuk-hint">This lets you fish non-migratory trout and freshwater fish</p>
+    <p class="govuk-hint">Rods are for the individual licence holder and must be attended at all times</p>
+{% endset -%}
+
+{% set salmonAndSeaTrout %}
+    {{ govukWarningText({
+      text: "You must submit an annual catch return",
+      iconFallbackText: "Warning"
+    }) }}
+    <p class="govuk-hint">You must report you yearly fishing activity in England and Wales if you have a salmon and sea trout licence, even if you did not fish.</p>
+    <p class="govuk-hint">More details can be found at <a target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a>.</p>
+{% endset -%}
+
 {% block pageContent %}
     {{ govukRadios({
         idPrefix: "licence-type",
         name: "licence-type",
         items: [
             {
-                text: "Trout and coarse",
-                value: "trout-and-coarse",
-                checked: payload['licence-type'] === 'trout-and-coarse'
+                text: "Trout and coarse, up to 2 rods",
+                value: data.licenseTypes.troutAndCoarse2Rod,
+                checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse2Rod,
+                conditional: { html: troutAndCoarse2Rod }
+            },
+            {
+                text: "Trout and coarse, up to 3 rods",
+                value: data.licenseTypes.troutAndCoarse3Rod,
+                checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
+                conditional: { html: troutAndCoarse3Rod }
             },
             {
                 text: "Salmon and sea trout",
                 value: "salmon-and-sea-trout",
-                hint: { text: "includes trout and coarse" },
-                checked: payload['licence-type'] === 'salmon-and-sea-trout'
+                hint: { text: "includes trout and coarse, 3 rods" },
+                checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
+                conditional: { html: salmonAndSeaTrout }
             }
         ],
         errorMessage: { text: 'Tell us which type of fishing licence you want' } if error
