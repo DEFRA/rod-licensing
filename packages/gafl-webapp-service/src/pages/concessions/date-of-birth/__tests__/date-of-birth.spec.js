@@ -52,11 +52,11 @@ describe('The date of birth page', () => {
   it('displays no back-link if the licence summary has not been seen', () => {
     // TODO - we need a procedure for stepping through the journey
   })
-  
+
   it('displays a back-link to the licence summary if the licence summary has been seen', () => {
     // TODO
   })
-  
+
   it('redirects to the licence summary if the licence summary has been seen', () => {
     // TODO
   })

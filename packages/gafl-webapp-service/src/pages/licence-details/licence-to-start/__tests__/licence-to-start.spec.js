@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, backLinkRegEx, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import { LICENCE_TO_START, DATE_OF_BIRTH, DISABILITY_CONCESSION, NO_LICENCE_REQUIRED } from '../../../../uri.js'
 import { ADVANCED_PURCHASE_MAX_DAYS, MINOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 import { DATE_AT_ADVANCED_PURCHASE_MAX_DAYS, startDateHelper, dobHelper, JUNIOR_TODAY, JUNIOR_TOMORROW } from '../../../../__mocks__/test-helpers.js'

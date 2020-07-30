@@ -1,10 +1,8 @@
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { DISABILITY_CONCESSION, LICENCE_TYPE, BENEFIT_CHECK, BENEFIT_NI_NUMBER, DATE_OF_BIRTH, LICENCE_SUMMARY, TEST_TRANSACTION } from '../../../../uri.js'
+import { DISABILITY_CONCESSION, LICENCE_TYPE, TEST_TRANSACTION } from '../../../../uri.js'
 import { disabilityConcessionTypes } from '../route.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
-
-import { dobHelper } from '../../../../__mocks__/test-helpers'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
