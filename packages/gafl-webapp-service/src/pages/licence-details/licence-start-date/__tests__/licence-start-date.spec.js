@@ -19,6 +19,8 @@ const dobHelper = d => ({
   'date-of-birth-year': d.year()
 })
 
+//
+
 // Start application before running the test case
 describe('The licence start date page', () => {
   it('returns success on requesting', async () => {

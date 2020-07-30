@@ -3,6 +3,7 @@
  */
 
 import dateOfBirth from '../pages/concessions/date-of-birth/update-transaction.js'
+import disabilityConcession from '../pages/concessions/disability/update-transaction.js'
 import benefitCheck from '../pages/concessions/benefit-check/update-transaction.js'
 import benefitNiNumber from '../pages/concessions/benefit-ni-number/update-transaction.js'
 import blueBadgeCheck from '../pages/concessions/blue-badge-check/update-transaction.js'
@@ -36,6 +37,7 @@ import {
   LICENCE_START_DATE,
   LICENCE_START_TIME,
   NUMBER_OF_RODS,
+  DISABILITY_CONCESSION,
   BENEFIT_CHECK,
   BENEFIT_NI_NUMBER,
   BLUE_BADGE_CHECK,
@@ -53,12 +55,12 @@ import {
 } from '../uri.js'
 
 export default {
-  [NAME.page]: name,
   [DATE_OF_BIRTH.page]: dateOfBirth,
+  [LICENCE_TO_START.page]: licenceToStart,
+  [DISABILITY_CONCESSION.page]: disabilityConcession,
   [LICENCE_LENGTH.page]: licenceLength,
   [LICENCE_TYPE.page]: licenceType,
   [NUMBER_OF_RODS.page]: numberOfRods,
-  [LICENCE_TO_START.page]: licenceToStart,
   [LICENCE_START_DATE.page]: licenceStartDate,
   [LICENCE_START_TIME.page]: licenceStartTime,
   [BENEFIT_CHECK.page]: benefitCheck,
@@ -68,6 +70,7 @@ export default {
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_SELECT.page]: addressSelect,
   [ADDRESS_ENTRY.page]: addressEntry,
+  [NAME.page]: name,
   [CONTACT.page]: contact,
   [NEWSLETTER.page]: newsletter,
   [TERMS_AND_CONDITIONS.page]: termsAndConditions,

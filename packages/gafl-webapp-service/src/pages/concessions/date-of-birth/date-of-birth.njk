@@ -1,7 +1,7 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'What\'s your date of birth?' %}
+{% set title = 'What age is the license holder?' %}
 
 {%
     set errorMap = {
@@ -33,7 +33,7 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-caption-m">We use this information to find out if you're eligible for a senior or junior concession</p>
+    <p class="govuk-caption-m">What is their date of birth?</p>
 
     {{ govukDateInput({
       id: "date-of-birth",
@@ -44,5 +44,8 @@
         text: "For example, 22 11 1970"
       }
     }) }}
+
+    <p class="govuk-body-m">When you buy a fishing licence, you will need to give us some personal data such as the name, address and date of birth of the licence holder.</p>
+    <div class="govuk-body-m">Read about <a href="{{ _uri.privacy }}">how we use your personal information</a>.</div>
 
 {% endblock %}

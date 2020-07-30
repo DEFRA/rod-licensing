@@ -3,11 +3,12 @@
  */
 import {
   DATE_OF_BIRTH,
+  LICENCE_TO_START,
+  DISABILITY_CONCESSION,
   JUNIOR_LICENCE,
   LICENCE_LENGTH,
   LICENCE_TYPE,
   NUMBER_OF_RODS,
-  LICENCE_TO_START,
   LICENCE_START_DATE,
   LICENCE_START_TIME,
   BENEFIT_CHECK,
@@ -23,11 +24,12 @@ import {
 } from '../uri.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
+import licenceToStart from '../pages/licence-details/licence-to-start/result-function.js'
+import disabilityConcession from '../pages/concessions/disability/result-function.js'
 import junior from '../pages/concessions/junior-licence/result-function.js'
 import licenceType from '../pages/licence-details/licence-type/result-function.js'
 import licenceLength from '../pages/licence-details/licence-length/result-function.js'
 import numberOfRods from '../pages/licence-details/number-of-rods/result-function.js'
-import licenceToStart from '../pages/licence-details/licence-to-start/result-function.js'
 import licenceStartDate from '../pages/licence-details/licence-start-date/result-function.js'
 import licenceStartTime from '../pages/licence-details/licence-start-time/result-function.js'
 import benefitCheck from '../pages/concessions/benefit-check/result-function.js'
@@ -46,11 +48,12 @@ import licenceSummary from '../pages/summary/licence-summary/result-function.js'
  */
 export default {
   [DATE_OF_BIRTH.page]: dateOfBirth,
+  [LICENCE_TO_START.page]: licenceToStart,
+  [DISABILITY_CONCESSION.page]: disabilityConcession,
   [JUNIOR_LICENCE.page]: junior,
   [LICENCE_LENGTH.page]: licenceLength,
   [LICENCE_TYPE.page]: licenceType,
   [NUMBER_OF_RODS.page]: numberOfRods,
-  [LICENCE_TO_START.page]: licenceToStart,
   [LICENCE_START_DATE.page]: licenceStartDate,
   [LICENCE_START_TIME.page]: licenceStartTime,
   [BENEFIT_CHECK.page]: benefitCheck,

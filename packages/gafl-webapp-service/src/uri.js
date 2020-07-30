@@ -11,6 +11,7 @@ export const LICENCE_START_TIME = { uri: '/buy/start-time', page: 'licence-start
 export const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence-required' }
 export const JUNIOR_LICENCE = { uri: '/buy/junior-licence', page: 'junior-licence' }
 
+export const DISABILITY_CONCESSION = { uri: '/buy/disability-concession', page: 'disability-concession' }
 export const BENEFIT_CHECK = { uri: '/buy/benefit-check', page: 'benefit-check' }
 export const BENEFIT_NI_NUMBER = { uri: '/buy/benefit-ni-number', page: 'benefit-ni-number' }
 export const BLUE_BADGE_CHECK = { uri: '/buy/blue-badge-check', page: 'blue-badge-check' }

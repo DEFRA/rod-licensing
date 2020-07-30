@@ -11,6 +11,7 @@ import licenceSummary from '../pages/summary/licence-summary/route.js'
 import dateOfBirth from '../pages/concessions/date-of-birth/route.js'
 import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
 import juniorLicence from '../pages/concessions/junior-licence/route.js'
+import disabilityConcession from '../pages/concessions/disability/route.js'
 import benefitCheck from '../pages/concessions/benefit-check/route.js'
 import benefitNINumber from '../pages/concessions/benefit-ni-number/route.js'
 import blueBadgeCheck from '../pages/concessions/blue-badge-check/route.js'
@@ -48,6 +49,7 @@ const routes = [
   ...dateOfBirth,
   ...noLicenceRequired,
   ...juniorLicence,
+  ...disabilityConcession,
   ...benefitCheck,
   ...benefitNINumber,
   ...blueBadgeCheck,

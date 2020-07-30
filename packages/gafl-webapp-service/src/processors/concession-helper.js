@@ -1,6 +1,6 @@
 import { CONCESSION, CONCESSION_PROOF, HOW_CONTACTED } from './mapping-constants.js'
 import moment from 'moment'
-import { isJunior, isMinor, isSenior } from '@defra-fish/business-rules-lib'
+import { isJunior, isMinor, isSenior, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 
 export const clear = permission => {
   delete permission.concessions
@@ -77,6 +77,15 @@ export const hasDisabled = permission => permission.concessions && permission.co
 export const removeDisabled = permission => {
   if (hasDisabled(permission)) {
     permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.DISABLED)
+  }
+}
+
+export const alwaysNoLicenceRequiredHelper = permission => {
+  delete permission.licensee.noLicenceRequired
+  const ageAtMaximumBuyAhead = moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(permission.licensee.birthDate), 'years')
+  if (isMinor(ageAtMaximumBuyAhead)) {
+    clear(permission)
+    Object.assign(permission.licensee, { noLicenceRequired: true })
   }
 }
 
