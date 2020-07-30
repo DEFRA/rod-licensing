@@ -16,9 +16,6 @@ export * from './entities/recurring-payment.entity.js'
 export * from './entities/recurring-payment-instruction.entity.js'
 export * from './entities/staging-exception.entity.js'
 
-// Option sets
-export * from './optionset/global-option-set-definition.js'
-
 // Queries
 export * from './queries/permission.queries.js'
 export * from './queries/fulfilment.queries.js'

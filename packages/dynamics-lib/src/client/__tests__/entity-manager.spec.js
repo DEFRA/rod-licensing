@@ -1,7 +1,6 @@
 import {
   Contact,
   Permission,
-  GlobalOptionSetDefinition,
   persist,
   retrieveMultiple,
   findById,
@@ -263,7 +262,7 @@ describe('entity manager', () => {
   }
 
   describe('retrieveGlobalOptionSets', () => {
-    it('retrieves a full listing when given no arguments', async () => {
+    it('retrieves a full listing', async () => {
       const result = await retrieveGlobalOptionSets().execute()
       expect(result).toMatchObject({
         defra_concessionproof: expect.objectContaining(optionSetInstance),
@@ -286,16 +285,6 @@ describe('entity manager', () => {
         defra_poclfilestatus: expect.objectContaining(optionSetInstance),
         defra_preferredcontactmethod: expect.objectContaining(optionSetInstance)
       })
-    })
-
-    it('retrieves listings for specific names', async () => {
-      const result = await retrieveGlobalOptionSets('defra_concessionproof', 'defra_country', 'defra_datasource').execute()
-      expect(result).toMatchObject({
-        defra_concessionproof: expect.objectContaining(optionSetInstance),
-        defra_country: expect.objectContaining(optionSetInstance),
-        defra_datasource: expect.objectContaining(optionSetInstance)
-      })
-      expect(Object.keys(result)).toHaveLength(3)
     })
 
     it('throws an error object on failure', async () => {
@@ -384,7 +373,7 @@ describe('entity manager', () => {
       lookup.boolVal = true
       lookup.dateVal = '1946-01-01'
       lookup.dateTimeVal = '1946-01-01T01:02:03Z'
-      lookup.optionSetVal = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
+      lookup.optionSetVal = { id: 910400000, label: 'test', description: 'test' }
       const expectedLookupSelect =
         "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
       const result = await findByExample(lookup)

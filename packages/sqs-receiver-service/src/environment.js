@@ -20,7 +20,7 @@ const environment = (e, receiverName) => {
     VISIBILITY_TIMEOUT_MS: e[`${receiverName}_VISIBILITY_TIMEOUT_MS`],
     WAIT_TIME_MS: e[`${receiverName}_WAIT_TIME_MS`] || 20000,
     MAX_POLLING_INTERVAL_MS: e[`${receiverName}_MAX_POLLING_INTERVAL_MS`] || 300000,
-    SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`] || 90000,
+    SUBSCRIBER_TIMEOUT_MS: e[`${receiverName}_SUBSCRIBER_TIMEOUT_MS`] || 180000,
     ATTEMPTS_WITH_NO_DELAY: e[`${receiverName}_ATTEMPTS_WITH_NO_DELAY`] || 10
   }
 
@@ -44,6 +44,7 @@ const environment = (e, receiverName) => {
     VISIBILITY_TIMEOUT_MS: Joi.number()
       .integer()
       .required()
+      .greater(Joi.ref('SUBSCRIBER_TIMEOUT_MS'))
       .min(1)
       .max(12 * 60 * 60 * 1000),
     WAIT_TIME_MS: Joi.number()
@@ -55,7 +56,7 @@ const environment = (e, receiverName) => {
       .integer()
       .required()
       .min(0)
-      .max(120000)
+      .max(300000)
   })
 
   // Validate

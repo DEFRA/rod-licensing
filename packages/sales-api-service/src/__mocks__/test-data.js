@@ -1,37 +1,25 @@
-import {
-  Concession,
-  ConcessionProof,
-  Contact,
-  GlobalOptionSetDefinition,
-  Permission,
-  Permit,
-  TransactionCurrency
-} from '@defra-fish/dynamics-lib'
+import { Concession, ConcessionProof, Contact, Permission, Permit, TransactionCurrency } from '@defra-fish/dynamics-lib'
 import { readFileSync } from 'fs'
 import Project from '../project.cjs'
 import Path from 'path'
-import dotProp from 'dot-prop'
 
 const optionSetDataPath = Path.join(Project.root, '..', 'dynamics-lib', 'src', '__mocks__', 'option-set-data.json')
-const optionSetData = JSON.parse(readFileSync(optionSetDataPath, { encoding: 'UTF-8' }))
-  .value.map(({ Name: name, Options: options }) => ({
-    name,
-    options: options.map(o => ({
-      id: o.Value,
-      label: dotProp.get(o, 'Label.UserLocalizedLabel.Label', ''),
-      description: dotProp.get(o, 'Description.UserLocalizedLabel.Label', '')
-    }))
-  }))
-  .reduce((acc, { name, options }) => {
+const optionSetData = JSON.parse(readFileSync(optionSetDataPath, { encoding: 'UTF-8' })).value.reduce(
+  (acc, { Name: name, Options: options }) => {
     acc[name] = {
       name,
       options: options.reduce((optionSetMapping, o) => {
-        optionSetMapping[o.id] = new GlobalOptionSetDefinition(name, o)
+        const id = o.Value
+        const label = o.Label?.UserLocalizedLabel?.Label || ''
+        const description = o.Description?.UserLocalizedLabel?.Label || label
+        optionSetMapping[id] = { id, label, description }
         return optionSetMapping
       }, {})
     }
     return acc
-  }, {})
+  },
+  {}
+)
 
 export const mockContactPayload = () => ({
   firstName: 'Fester',
