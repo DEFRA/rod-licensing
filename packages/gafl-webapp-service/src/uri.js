@@ -3,19 +3,11 @@
  */
 export const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 export const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
-export const NUMBER_OF_RODS = { uri: '/buy/number-of-rods', page: 'number-of-rods' }
 export const LICENCE_TO_START = { uri: '/buy/start-kind', page: 'licence-to-start' }
-export const LICENCE_START_DATE = { uri: '/buy/start-date', page: 'licence-start-date' }
 export const LICENCE_START_TIME = { uri: '/buy/start-time', page: 'licence-start-time' }
 
 export const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence-required' }
-export const JUNIOR_LICENCE = { uri: '/buy/junior-licence', page: 'junior-licence' }
-
 export const DISABILITY_CONCESSION = { uri: '/buy/disability-concession', page: 'disability-concession' }
-export const BENEFIT_CHECK = { uri: '/buy/benefit-check', page: 'benefit-check' }
-export const BENEFIT_NI_NUMBER = { uri: '/buy/benefit-ni-number', page: 'benefit-ni-number' }
-export const BLUE_BADGE_CHECK = { uri: '/buy/blue-badge-check', page: 'blue-badge-check' }
-export const BLUE_BADGE_NUMBER = { uri: '/buy/blue-badge-number', page: 'blue-badge-number' }
 export const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
 
 export const NAME = { uri: '/buy/name', page: 'name' }

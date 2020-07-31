@@ -15,7 +15,8 @@ import {
   LICENCE_TO_START,
   DISABILITY_CONCESSION,
   DATE_OF_BIRTH,
-  RENEWAL_START_DATE
+  RENEWAL_START_DATE,
+  NEW_TRANSACTION
 } from '../../../uri.js'
 
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
@@ -72,7 +73,8 @@ export const getData = async request => {
       licenceToStart: LICENCE_TO_START.uri,
       dateOfBirth: DATE_OF_BIRTH.uri,
       disabilityConcession: DISABILITY_CONCESSION.uri,
-      licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri
+      licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
+      clear: NEW_TRANSACTION.uri
     }
   }
 }

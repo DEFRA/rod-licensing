@@ -1,10 +1,11 @@
 import moment from 'moment'
 import db from 'debug'
-import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
+import { LICENCE_TYPE, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
 import { CONTACT_SUMMARY_SEEN } from '../constants.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
+import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -54,15 +55,21 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
 export const setUpPayloads = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  const type = () => {
+    if (permission.licenceType === constants.LICENCE_TYPE['trout-and-coarse']) {
+      if (permission.numberOfRods === '2') {
+        return licenseTypes.troutAndCoarse2Rod
+      } else {
+        return licenseTypes.troutAndCoarse3Rod
+      }
+    }
+    return licenseTypes.salmonAndSeaTrout
+  }
+
   await request.cache().helpers.page.setCurrentPermission(LICENCE_TYPE.page, {
     payload: {
-      'licence-type': Object.entries(constants.LICENCE_TYPE).find(e => e[1] === permission.licenceType)[0]
-    }
-  })
-
-  await request.cache().helpers.page.setCurrentPermission(NUMBER_OF_RODS.page, {
-    payload: {
-      'number-of-rods': permission.numberOfRods
+      'licence-type': type()
     }
   })
 

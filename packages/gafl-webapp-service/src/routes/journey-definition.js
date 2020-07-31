@@ -1,19 +1,12 @@
 import {
   LICENCE_LENGTH,
-  NUMBER_OF_RODS,
   LICENCE_TO_START,
-  LICENCE_START_DATE,
   LICENCE_START_TIME,
   DATE_OF_BIRTH,
   NO_LICENCE_REQUIRED,
-  JUNIOR_LICENCE,
   LICENCE_TYPE,
   NAME,
   DISABILITY_CONCESSION,
-  BENEFIT_CHECK,
-  BENEFIT_NI_NUMBER,
-  BLUE_BADGE_CHECK,
-  BLUE_BADGE_NUMBER,
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
@@ -143,74 +136,6 @@ export default [
       }
     },
     backLink: s => s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri
-  },
-
-  {
-    currentPage: JUNIOR_LICENCE.page,
-    nextPage: {
-      [CommonResults.OK]: {
-        page: BENEFIT_CHECK.uri
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: DATE_OF_BIRTH.uri
-  },
-
-  {
-    currentPage: BENEFIT_CHECK.page,
-    nextPage: {
-      [CommonResults.NO]: {
-        page: BLUE_BADGE_CHECK.uri
-      },
-      [CommonResults.YES]: {
-        page: BENEFIT_NI_NUMBER.uri
-      }
-    },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
-  },
-
-  {
-    currentPage: BENEFIT_NI_NUMBER.page,
-    nextPage: {
-      [CommonResults.OK]: {
-        page: LICENCE_SUMMARY.uri
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: BENEFIT_CHECK.uri
-  },
-
-  {
-    currentPage: BLUE_BADGE_CHECK.page,
-    nextPage: {
-      [CommonResults.NO]: {
-        page: LICENCE_SUMMARY.uri
-      },
-      [CommonResults.YES]: {
-        page: BLUE_BADGE_NUMBER.uri
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: BENEFIT_CHECK.uri
-  },
-
-  {
-    currentPage: BLUE_BADGE_NUMBER.page,
-    nextPage: {
-      [CommonResults.OK]: {
-        page: LICENCE_SUMMARY.uri
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: BLUE_BADGE_CHECK.uri
   },
 
   {
