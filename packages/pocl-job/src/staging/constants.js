@@ -1,4 +1,5 @@
-export const MAX_BATCH_SIZE = 25
+export const MAX_CREATE_TRANSACTION_BATCH_SIZE = 25
+export const MAX_FINALISE_TRANSACTION_BATCH_SIZE = 10
 
 export const POST_OFFICE_DATASOURCE = 'Post Office Sales'
 

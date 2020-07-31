@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import Path from 'path'
-import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
+import { MAX_CREATE_TRANSACTION_BATCH_SIZE, RECORD_STAGE } from './constants.js'
 import { transform } from '../transform/pocl-transform-stream.js'
 import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
 import db from 'debug'
@@ -21,7 +21,7 @@ export const createTransactions = async xmlFilePath => {
       if (!state.processedIds.has(data.id)) {
         state.processedIds.add(data.id)
         state.buffer.push(data)
-        if (state.buffer.length === MAX_BATCH_SIZE) {
+        if (state.buffer.length === MAX_CREATE_TRANSACTION_BATCH_SIZE) {
           await createTransactionsInSalesApi(filename, state)
         }
       }
