@@ -15,8 +15,7 @@ const debug = db('sqs:process-message')
  */
 
 /**
- * Posts what ever is in the body of the message to the subscriber. The message group id is added to the
- * subscriber url to allow the sent message to be directed to a specific endpoint
+ * Posts what ever is in the body of the message to the subscriber.
  *
  * @param {SQS.Message} message The message to be processed
  * @param {string} subscriber The subscriber URL
@@ -24,10 +23,7 @@ const debug = db('sqs:process-message')
  * @returns {Promise<ProcessingResponse>}
  */
 const processMessage = async (message, subscriber, subscriberTimeoutMs) => {
-  const subscriberURL = message.Attributes.MessageGroupId
-    ? new URL(`${subscriber}/${message.Attributes.MessageGroupId}`)
-    : new URL(subscriber)
-
+  const subscriberURL = new URL(subscriber)
   let responseData
   try {
     debug('Sending message to %s: %o', subscriberURL.toString(), message)

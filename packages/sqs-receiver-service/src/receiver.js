@@ -11,7 +11,7 @@ const debug = db('sqs:receiver')
 // Validate the environment and return a standard object
 const { env } = environment(process.env, process.env.RECEIVER_PREFIX)
 console.log(`Running receiver process: ${JSON.stringify(env, null, 4)}`)
-let messageLastReceived = Date.now()
+let lastActiveTime = Date.now()
 let attemptsWithNoMessages = 0
 /**
  * An infinite async loop to poll the queue
@@ -30,7 +30,7 @@ const receiver = async () => {
       messages.map(async m => processMessage(m, env.SUBSCRIBER, env.SUBSCRIBER_TIMEOUT_MS))
     )
     await deleteMessages(env.URL, messageSubscriberResults)
-    messageLastReceived = Date.now()
+    lastActiveTime = Date.now()
     attemptsWithNoMessages = 0
   } else {
     attemptsWithNoMessages++
@@ -39,9 +39,11 @@ const receiver = async () => {
       hundred messages on the queue a receiveMessage request may return no messages (depending on which nodes were queried)
      */
     if (attemptsWithNoMessages >= env.ATTEMPTS_WITH_NO_DELAY) {
-      const delay = Math.min(env.MAX_POLLING_INTERVAL_MS, Math.floor((0.5 * (Date.now() - messageLastReceived)) / 5000) * 5000)
+      const delay = Math.min(env.MAX_POLLING_INTERVAL_MS, Math.floor((0.5 * (Date.now() - lastActiveTime)) / 5000) * 5000)
       debug('Waiting %d milliseconds before polling again', delay)
       await new Promise(resolve => setTimeout(resolve, delay))
+    } else {
+      lastActiveTime = Date.now()
     }
   }
 }

@@ -31,7 +31,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
   const receipt = await sqs
     .sendMessage({
       QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: 'transactions',
+      MessageGroupId: id,
       MessageDeduplicationId: id,
       MessageBody: JSON.stringify({ id })
     })
