@@ -40,7 +40,7 @@ describe('transaction service', () => {
       expect(AwsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
         expect.objectContaining({
           QueueUrl: TRANSACTION_QUEUE.Url,
-          MessageGroupId: 'transactions',
+          MessageGroupId: mockRecord.id,
           MessageDeduplicationId: mockRecord.id,
           MessageBody: JSON.stringify({ id: mockRecord.id })
         })
