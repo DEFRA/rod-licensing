@@ -1,5 +1,4 @@
 import { BaseEntity, EntityDefinition } from '../base.entity'
-import { GlobalOptionSetDefinition } from '../../optionset/global-option-set-definition'
 import TestEntity from '../../__mocks__/TestEntity.js'
 
 describe('BaseEntity', () => {
@@ -95,16 +94,10 @@ describe('BaseEntity', () => {
   })
 
   it('validates global option set references when type=optionset', () => {
-    const testGlobalOptionSet = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
+    const testGlobalOptionSet = { id: 910400000, label: 'test', description: 'test' }
     runTestTypeConversion('optionSetVal', testGlobalOptionSet, testGlobalOptionSet, 910400000)
 
     const test = new TestEntity()
-    const testWrongGlobalOptionSet = new GlobalOptionSetDefinition('test_wrongglobaloption', {
-      id: 910400000,
-      label: 'test',
-      description: 'test'
-    })
-    expect(() => test._setState('optionSetVal', testWrongGlobalOptionSet)).toThrow('Value is not a valid GlobalOptionSetDefinition')
     expect(() => test._setState('optionSetVal', 'wrong type')).toThrow('Value is not a valid GlobalOptionSetDefinition')
   })
 

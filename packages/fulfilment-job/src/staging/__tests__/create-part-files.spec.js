@@ -2,20 +2,13 @@ import moment from 'moment'
 import { createPartFiles } from '../create-part-files.js'
 import { writeS3PartFile } from '../../transport/s3.js'
 import config from '../../config.js'
-import {
-  FulfilmentRequestFile,
-  FulfilmentRequest,
-  executePagedQuery,
-  executeQuery,
-  persist,
-  GlobalOptionSetDefinition
-} from '@defra-fish/dynamics-lib'
+import { FulfilmentRequestFile, FulfilmentRequest, executePagedQuery, executeQuery, persist } from '@defra-fish/dynamics-lib'
 import {
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../../sales-api-service/src/__mocks__/test-data.js'
-import { FULFILMENT_FILE_STATUS_OPTIONSET, FULFILMENT_REQUEST_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
+import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
 const EXECUTION_DATE = moment()
 
 jest.mock('../../config.js', () => ({
@@ -39,7 +32,7 @@ const mockFulfilmentRequest = Object.assign(new FulfilmentRequest(), {
   )}`,
   requestTimestamp: EXECUTION_DATE.toISOString(),
   notes: 'Initial fulfilment request created at point of sale',
-  status: new GlobalOptionSetDefinition(FULFILMENT_REQUEST_STATUS_OPTIONSET, { id: 910400000, label: 'Pending', description: 'Pending' })
+  status: { id: 910400000, label: 'Pending', description: 'Pending' }
 })
 
 const mockFulfilmentRequestQueryResult = {
