@@ -1,6 +1,7 @@
 import initialiseServer from '../index.js'
 import Boom from '@hapi/boom'
 import dotProp from 'dot-prop'
+import { SERVER } from '../../config.js'
 
 describe('hapi server', () => {
   describe('initialisation', () => {
@@ -18,8 +19,14 @@ describe('hapi server', () => {
         }
       }))
     })
+    beforeEach(jest.clearAllMocks)
 
     afterAll(jest.restoreAllMocks)
+
+    it('uses port 4000 if no port is specified', async () => {
+      await initialiseServer()
+      expect(serverConfigSpy).toHaveBeenCalledWith(expect.objectContaining({ port: 4000 }))
+    })
 
     it('starts on a configured port', async () => {
       await initialiseServer({ port: 6666 })
@@ -27,15 +34,25 @@ describe('hapi server', () => {
     })
 
     it('starts on a port defined by the environment', async () => {
-      process.env.PORT = 6666
+      SERVER.Port = 6666
       await initialiseServer()
       expect(serverConfigSpy).toHaveBeenCalledWith(expect.objectContaining({ port: 6666 }))
     })
 
-    it('uses port 4000 if no port is specified', async () => {
-      delete process.env.PORT
+    it('customises the socket timeout settings if defined in the environment', async () => {
+      SERVER.SocketTimeout = 123
       await initialiseServer()
-      expect(serverConfigSpy).toHaveBeenCalledWith(expect.objectContaining({ port: 4000 }))
+      expect(serverConfigSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          routes: {
+            timeout: {
+              socket: 123
+            },
+            validate: expect.anything()
+          }
+        })
+      )
+      delete SERVER.SocketTimeout
     })
   })
 

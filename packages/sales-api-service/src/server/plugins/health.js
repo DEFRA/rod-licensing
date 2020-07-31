@@ -9,6 +9,10 @@ export default {
   options: {
     id: Project.packageJson.name,
     name: Project.packageJson.description,
+    custom: {
+      versions: process.versions,
+      dependencies: Project.packageJson.dependencies
+    },
     tags: ['api', 'health'],
     test: {
       node: [

@@ -6,7 +6,7 @@ import {
   getGlobalOptionSetValue,
   getReferenceDataForEntity
 } from '../reference-data.service.js'
-import { Permit, Concession, GlobalOptionSetDefinition } from '@defra-fish/dynamics-lib'
+import { Permit, Concession } from '@defra-fish/dynamics-lib'
 import {
   MOCK_12MONTH_SENIOR_PERMIT_DYNAMICS_RESPONSE,
   MOCK_1DAY_SENIOR_PERMIT_DYNAMICS_RESPONSE,
@@ -16,7 +16,11 @@ import dynamicsWebApi from 'dynamics-web-api'
 
 const getOptionSetMappingExpectation = (name, ...keys) => {
   const options = keys.reduce((acc, k) => {
-    acc[k] = expect.any(GlobalOptionSetDefinition)
+    acc[k] = expect.objectContaining({
+      id: expect.any(Number),
+      label: expect.any(String),
+      description: expect.any(String)
+    })
     return acc
   }, {})
 
@@ -78,18 +82,13 @@ describe('reference-data service', () => {
 
   describe('getGlobalOptionSets', () => {
     it('retrieves a map of objects containing option-sets for the defined set of names', async () => {
-      const result = await getGlobalOptionSets('defra_duration', 'defra_concessionproof')
+      const result = await getGlobalOptionSets()
       expect(result).toMatchObject(
         expect.objectContaining({
           defra_duration: getOptionSetMappingExpectation('defra_duration', 910400000, 910400001, 910400002, 910400003),
           defra_concessionproof: getOptionSetMappingExpectation('defra_concessionproof', 910400000, 910400001, 910400002, 910400003)
         })
       )
-      expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
-    })
-    it('returns an empty object if not found', async () => {
-      const result = await getGlobalOptionSets('not-found1', 'not-found2')
-      expect(result).toMatchObject({})
       expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
   })
@@ -110,7 +109,7 @@ describe('reference-data service', () => {
   describe('getGlobalOptionSetValue', () => {
     it('retrieves a single option-set for a single name and label', async () => {
       const result = await getGlobalOptionSetValue('defra_duration', '1 day')
-      expect(result).toBeInstanceOf(GlobalOptionSetDefinition)
+      expect(result).toMatchObject({ id: 910400000, label: '1 day', description: '1 day' })
       expect(dynamicsWebApi.prototype.retrieveGlobalOptionSets).toHaveBeenCalledTimes(1)
     })
     it('returns undefined if the option-set label is not found', async () => {

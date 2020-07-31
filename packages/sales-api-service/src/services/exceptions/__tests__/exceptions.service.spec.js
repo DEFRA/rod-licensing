@@ -1,5 +1,5 @@
 import { createStagingException, createStagingExceptionFromError, createTransactionFileException } from '../exceptions.service.js'
-import { GlobalOptionSetDefinition, persist, PoclStagingException, StagingException } from '@defra-fish/dynamics-lib'
+import { persist, PoclStagingException, StagingException } from '@defra-fish/dynamics-lib'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -103,8 +103,8 @@ describe('payment-journals service', () => {
       expect(persist).toHaveBeenCalledWith(
         expect.objectContaining({
           ...transactionFileException,
-          type: expect.any(GlobalOptionSetDefinition),
-          status: expect.any(GlobalOptionSetDefinition)
+          type: expect.objectContaining({ id: 910400001, label: 'Failure', description: 'Failure' }),
+          status: expect.objectContaining({ id: 910400000, label: 'Open', description: 'Open' })
         })
       )
       expect(result).toBeInstanceOf(PoclStagingException)

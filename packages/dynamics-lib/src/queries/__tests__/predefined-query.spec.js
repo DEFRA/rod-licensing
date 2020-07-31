@@ -1,6 +1,5 @@
 import { PredefinedQuery } from '../predefined-query.js'
 import TestEntity from '../../__mocks__/TestEntity.js'
-import { GlobalOptionSetDefinition } from '../../optionset/global-option-set-definition.js'
 
 describe('PredefinedQuery', () => {
   const expectedTestEntitySelect = ['idval', 'strval', 'intval', 'decval', 'boolval', 'dateval', 'datetimeval', 'optionsetval']
@@ -33,7 +32,7 @@ describe('PredefinedQuery', () => {
   const optionSetData = {
     test_globaloption: {
       options: {
-        910400001: new GlobalOptionSetDefinition('test_globaloption', { id: 910400001, label: 'test', description: 'test' })
+        910400001: { id: 910400001, label: 'test', description: 'test' }
       }
     }
   }

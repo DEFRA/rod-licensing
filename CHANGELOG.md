@@ -1,4 +1,49 @@
 
+## v0.3.0-rc.25 (2020-07-31)
+
+#### :rocket: Enhancement
+* `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#272](https://github.com/DEFRA/rod-licensing/pull/272) Performance tuning of SQS integration and POCL job ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.24 (2020-07-31)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#269](https://github.com/DEFRA/rod-licensing/pull/269) Performance tuning improvements ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.23 (2020-07-29)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `sales-api-service`
+  * [#268](https://github.com/DEFRA/rod-licensing/pull/268) Network tuning parameters for AWS environment ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.22 (2020-07-29)
+
+#### :bug: Bug Fix
+* `connectors-lib`
+  * [#267](https://github.com/DEFRA/rod-licensing/pull/267) Avoid attempting to consume the node-fetch response body twice ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.21 (2020-07-29)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#265](https://github.com/DEFRA/rod-licensing/pull/265) Add fallback response parser method to Sales API connector and revise logging ouput ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.20 (2020-07-28)
 
 #### :rocket: Enhancement

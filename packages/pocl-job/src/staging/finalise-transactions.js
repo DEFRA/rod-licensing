@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import Path from 'path'
-import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
+import { MAX_FINALISE_TRANSACTION_BATCH_SIZE, RECORD_STAGE } from './constants.js'
 import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
 import db from 'debug'
 const debug = db('pocl:staging')
@@ -14,8 +14,8 @@ const debug = db('pocl:staging')
 export const finaliseTransactions = async xmlFilePath => {
   const filename = Path.basename(xmlFilePath)
   const state = await getInitialState(filename)
-  for (let i = 0; i < state.remainingRecords.length; i += MAX_BATCH_SIZE) {
-    state.buffer = state.remainingRecords.slice(i, i + MAX_BATCH_SIZE)
+  for (let i = 0; i < state.remainingRecords.length; i += MAX_FINALISE_TRANSACTION_BATCH_SIZE) {
+    state.buffer = state.remainingRecords.slice(i, i + MAX_FINALISE_TRANSACTION_BATCH_SIZE)
     await finaliseTransactionsInSalesApi(filename, state)
   }
   return { succeeded: state.succeeded, failed: state.failed }
