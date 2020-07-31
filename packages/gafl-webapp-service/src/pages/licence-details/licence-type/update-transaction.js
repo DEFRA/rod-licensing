@@ -16,6 +16,7 @@ export default async request => {
   } else if (payload['licence-type'] === licenseTypes.troutAndCoarse3Rod) {
     permission.licenceType = constants.LICENCE_TYPE['trout-and-coarse']
     permission.numberOfRods = '3'
+    permission.licenceLength = '12M'
   } else if (payload['licence-type'] === licenseTypes.salmonAndSeaTrout) {
     permission.licenceType = constants.LICENCE_TYPE['salmon-and-sea-trout']
     permission.numberOfRods = '1'

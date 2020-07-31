@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../uri.js'
-import { alwaysNoLicenceRequiredHelper } from '../../../processors/concession-helper.js'
+import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 
 /**
  * Transfer the validated page object
@@ -22,8 +22,8 @@ export default async request => {
   // Set the data of birth in the licensee object
   permission.licensee.birthDate = dateOfBirth
 
-  // Set the no licence required if we can
-  alwaysNoLicenceRequiredHelper(permission)
+  // Set age related concessions
+  ageConcessionHelper(permission)
 
   // Write the permission down
   await request.cache().helpers.transaction.setCurrentPermission(permission)

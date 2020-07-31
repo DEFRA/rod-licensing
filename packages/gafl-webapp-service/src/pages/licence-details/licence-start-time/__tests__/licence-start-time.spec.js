@@ -1,30 +1,29 @@
 import { LICENCE_START_TIME, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
 
-// Start application before running the test case
 describe('The licence start time page', () => {
   it('returns success on requesting', async () => {
-    const data = await injectWithCookies('GET', LICENCE_START_TIME.uri)
-    expect(data.statusCode).toBe(200)
+    const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
+    expect(response.statusCode).toBe(200)
   })
   it('redirects back to itself on posting no response', async () => {
-    const data = await injectWithCookies('POST', LICENCE_START_TIME.uri, {})
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_START_TIME.uri)
+    const response = await injectWithCookies('POST', LICENCE_START_TIME.uri, {})
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
   it('redirects back to itself on an invalid time', async () => {
-    const data = await injectWithCookies('POST', LICENCE_START_TIME.uri, {
+    const response = await injectWithCookies('POST', LICENCE_START_TIME.uri, {
       'licence-start-time': '25'
     })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_START_TIME.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
   it.each([
-    ['Midnight', '0'],
+    ['Start of the day', '0'],
     ['1am', '1'],
     ['2am', '2'],
     ['3am', '3'],
@@ -49,16 +48,8 @@ describe('The licence start time page', () => {
     ['10pm', '22'],
     ['11pm', '23']
   ])('stores the transaction on successful submission of %s', async (desc, code) => {
-    const data = await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': code })
-
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTROLLER.uri)
-
-    // Hit the controller
-    await injectWithCookies('GET', CONTROLLER.uri)
-
+    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': code })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-
     expect(JSON.parse(payload).permissions[0].licenceStartTime).toBe(code)
   })
 })

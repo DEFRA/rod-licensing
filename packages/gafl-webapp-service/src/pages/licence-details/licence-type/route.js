@@ -12,6 +12,9 @@ const validator = Joi.object({
   'licence-type': Joi.string().valid(...Object.values(licenseTypes)).required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = () => ({ licenseTypes })
+const getData = async request => ({
+  licenseTypes,
+  permission: await request.cache().helpers.transaction.getCurrentPermission()
+})
 
 export default pageRoute(LICENCE_TYPE.page, LICENCE_TYPE.uri, validator, CONTROLLER.uri, getData)

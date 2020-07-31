@@ -31,31 +31,38 @@
     <p class="govuk-hint">More details can be found at <a target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a>.</p>
 {% endset -%}
 
+{% set items = [
+        {
+            text: "Trout and coarse, up to 2 rods",
+            value: data.licenseTypes.troutAndCoarse2Rod,
+            checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse2Rod,
+            conditional: { html: troutAndCoarse2Rod }
+        }
+    ]
+%}
+
+{% if not data.permission.licenceLength or data.permission.licenceLength === '12M' %}
+    {{ items.push({
+        text: "Trout and coarse, up to 3 rods",
+        value: data.licenseTypes.troutAndCoarse3Rod,
+        checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
+        conditional: { html: troutAndCoarse3Rod }
+    }) }}
+{% endif %}
+
+{{ items.push({
+    text: "Salmon and sea trout",
+    value: "salmon-and-sea-trout",
+    hint: { text: "includes trout and coarse, 3 rods" },
+    checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
+    conditional: { html: salmonAndSeaTrout }
+}) }}
+
 {% block pageContent %}
     {{ govukRadios({
         idPrefix: "licence-type",
         name: "licence-type",
-        items: [
-            {
-                text: "Trout and coarse, up to 2 rods",
-                value: data.licenseTypes.troutAndCoarse2Rod,
-                checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse2Rod,
-                conditional: { html: troutAndCoarse2Rod }
-            },
-            {
-                text: "Trout and coarse, up to 3 rods",
-                value: data.licenseTypes.troutAndCoarse3Rod,
-                checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
-                conditional: { html: troutAndCoarse3Rod }
-            },
-            {
-                text: "Salmon and sea trout",
-                value: "salmon-and-sea-trout",
-                hint: { text: "includes trout and coarse, 3 rods" },
-                checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
-                conditional: { html: salmonAndSeaTrout }
-            }
-        ],
+        items: items,
         errorMessage: { text: 'Tell us which type of fishing licence you want' } if error
     }) }}
- {% endblock %}
+{% endblock %}

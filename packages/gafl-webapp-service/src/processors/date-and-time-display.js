@@ -11,7 +11,7 @@ export const displayStartTime = permission => {
   const startDateString = moment(permission.licenceStartDate, cacheDateFormat).format(dateDisplayFormat)
   const timeComponent = (() => {
     if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
-      return 'Midnight'
+      return 'Start of the day'
     } else if (permission.licenceStartTime === '12') {
       return 'Midday'
     } else {

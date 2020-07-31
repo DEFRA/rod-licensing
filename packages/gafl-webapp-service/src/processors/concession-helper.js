@@ -80,18 +80,12 @@ export const removeDisabled = permission => {
   }
 }
 
-export const alwaysNoLicenceRequiredHelper = permission => {
-  delete permission.licensee.noLicenceRequired
-  const ageAtMaximumBuyAhead = moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(permission.licensee.birthDate), 'years')
-  if (isMinor(ageAtMaximumBuyAhead)) {
-    clear(permission)
-    Object.assign(permission.licensee, { noLicenceRequired: true })
-  }
-}
-
 export const ageConcessionHelper = permission => {
   delete permission.licensee.noLicenceRequired
-  const ageAtLicenceStartDate = moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
+  const ageAtLicenceStartDate = permission.licenceStartDate
+    ? moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
+    : moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(permission.licensee.birthDate), 'years')
+
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
     clear(permission)

@@ -31,9 +31,10 @@ import {
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
-import { licenceStartDate } from '../pages/licence-details/licence-start-date/result-function.js'
+import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
+import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
 
 /**
  * The structure of each atom is as follows
@@ -76,6 +77,9 @@ export default [
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
         page: NO_LICENCE_REQUIRED.uri
       },
+      [licenceToStartResults.AND_START_TIME]: {
+        page: LICENCE_START_TIME.uri
+      },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
@@ -116,55 +120,29 @@ export default [
     currentPage: LICENCE_LENGTH.page,
     nextPage: {
       [CommonResults.OK]: {
-        page: LICENCE_TYPE.uri
-      },
-      [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
-  },
-
-  {
-    currentPage: NUMBER_OF_RODS.page,
-    nextPage: {
-      [CommonResults.OK]: {
-        page: LICENCE_TO_START.uri
       },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
-      }
-    },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri)
-  },
-
-  {
-    currentPage: LICENCE_START_DATE.page,
-    nextPage: {
-      [licenceStartDate.AND_START_TIME]: {
+      [licenceLengthResults.REQUIRE_TIME]: {
         page: LICENCE_START_TIME.uri
       },
-      [licenceStartDate.AND_CONTINUE]: {
-        page: DATE_OF_BIRTH.uri
-      },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: LICENCE_TO_START.uri
+    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri
   },
 
   {
     currentPage: LICENCE_START_TIME.page,
     nextPage: {
       [CommonResults.OK]: {
-        page: DATE_OF_BIRTH.uri
+        page: LICENCE_SUMMARY.uri
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: LICENCE_START_DATE.uri
+    backLink: s => s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri
   },
 
   {

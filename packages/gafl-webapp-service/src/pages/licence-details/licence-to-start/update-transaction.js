@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { LICENCE_TO_START } from '../../../uri.js'
+import { LICENCE_TO_START, LICENCE_START_TIME } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 /**
  * Transfer the validate page object
@@ -31,4 +31,7 @@ export default async request => {
   ageConcessionHelper(permission)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
+
+  // Clear the start time always here otherwise it can end up being set incorrectly
+  await request.cache().helpers.page.setCurrentPermission(LICENCE_START_TIME.page, {})
 }
