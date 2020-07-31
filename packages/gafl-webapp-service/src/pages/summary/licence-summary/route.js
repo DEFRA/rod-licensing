@@ -63,9 +63,7 @@ export const getData = async request => {
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
     disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
-    licenceTypes: mappings.LICENCE_TYPE,
     hasJunior: !!concessionHelper.hasJunior(permission),
-    hasSenior: !!concessionHelper.hasSenior(permission),
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {
