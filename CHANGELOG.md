@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.24 (2020-07-31)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#269](https://github.com/DEFRA/rod-licensing/pull/269) Performance tuning improvements ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.23 (2020-07-29)
 
 #### :rocket: Enhancement
