@@ -6,6 +6,7 @@ import HealthCheck from './plugins/health.js'
 import Routes from './routes/index.js'
 import Boom from '@hapi/boom'
 import { SERVER } from '../config.js'
+import moment from 'moment'
 
 export default async (opts = { port: SERVER.Port }) => {
   const server = new Hapi.Server(
@@ -43,7 +44,7 @@ export default async (opts = { port: SERVER.Port }) => {
   server.route(Routes)
 
   await server.start()
-  console.log('Server running at:', server.info.uri)
+  console.log('Server started at %s. Listening on %s', moment().toISOString(), server.info.uri)
 
   const shutdown = async (code = 0) => {
     await server.stop()
