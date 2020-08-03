@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.26 (2020-08-03)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#273](https://github.com/DEFRA/rod-licensing/pull/273) Add additional logging to track OAuth token refresh behaviour ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.25 (2020-07-31)
 
 #### :rocket: Enhancement
