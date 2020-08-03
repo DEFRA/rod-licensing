@@ -35,6 +35,7 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "adal-node": "^0.2.1",
+    "bottleneck": "^2.19.5",
     "cache-manager": "^3.3.0",
     "cache-manager-ioredis": "^2.1.0",
     "debug": "^4.1.1",
