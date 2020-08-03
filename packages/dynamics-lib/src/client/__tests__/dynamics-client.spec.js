@@ -1,5 +1,6 @@
-import { mockAuthenticationContext, mockAcquireTokenWithClientCredentials } from 'adal-node'
+import { mockAuthenticationContext, mockAcquireTokenWithClientCredentials, mockLoggingOptions } from 'adal-node'
 import { config } from '../dynamics-client.js'
+import db from 'debug'
 
 describe('dynamics-client', () => {
   it('is configured via environment variables', async () => {
@@ -29,5 +30,16 @@ describe('dynamics-client', () => {
       process.env.OAUTH_CLIENT_SECRET,
       expect.any(Function)
     )
+  })
+
+  it('debugs adal-node if dynamics:auth debug variable is set', async () => {
+    config()
+    expect(mockLoggingOptions).not.toHaveBeenCalled()
+    db.enable('dynamics:auth')
+    config()
+    expect(mockLoggingOptions).toHaveBeenCalled()
+    const loggerFunction = mockLoggingOptions.mock.calls[0][0].log
+    expect(loggerFunction).toBeInstanceOf(Function)
+    expect(loggerFunction('test')).toBeUndefined()
   })
 })

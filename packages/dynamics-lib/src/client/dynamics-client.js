@@ -1,8 +1,18 @@
 import util from 'util'
 import DynamicsWebApi from 'dynamics-web-api'
 import AdalNode from 'adal-node'
+import db from 'debug'
+const debug = db('dynamics:auth')
 
 export function config () {
+  if (debug.enabled) {
+    AdalNode.Logging.setLoggingOptions({
+      log: (level, message, error) => debug(message, error ?? ''),
+      level: AdalNode.Logging.LOGGING_LEVEL.VERBOSE,
+      loggingWithPII: false
+    })
+  }
+
   const authorityUrl = `${process.env.OAUTH_AUTHORITY_HOST_URL}${process.env.OAUTH_TENANT}`
   const adalContext = new AdalNode.AuthenticationContext(authorityUrl)
   const acquireTokenWithClientCredentials = util.promisify(adalContext.acquireTokenWithClientCredentials).bind(adalContext)
