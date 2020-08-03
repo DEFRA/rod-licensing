@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.27 (2020-08-03)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#276](https://github.com/DEFRA/rod-licensing/pull/276) Workaround for bug in adal-node failing to cache tokens and leaking memory ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.26 (2020-08-03)
 
 #### :rocket: Enhancement
