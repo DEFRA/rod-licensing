@@ -16,7 +16,8 @@ describe('hapi server', () => {
         route: jest.fn(),
         info: {
           uri: 'test'
-        }
+        },
+        listener: {}
       }))
     })
     beforeEach(jest.clearAllMocks)
@@ -39,20 +40,13 @@ describe('hapi server', () => {
       expect(serverConfigSpy).toHaveBeenCalledWith(expect.objectContaining({ port: 6666 }))
     })
 
-    it('customises the socket timeout settings if defined in the environment', async () => {
-      SERVER.SocketTimeout = 123
+    it('customises the keep-alive timeout settings if defined in the environment', async () => {
+      SERVER.KeepAliveTimeout = 123
       await initialiseServer()
-      expect(serverConfigSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          routes: {
-            timeout: {
-              socket: 123
-            },
-            validate: expect.anything()
-          }
-        })
-      )
-      delete SERVER.SocketTimeout
+      expect(serverConfigSpy.mock.results[0].value.listener).toEqual({
+        keepAliveTimeout: 123,
+        headersTimeout: 5123
+      })
     })
   })
 
