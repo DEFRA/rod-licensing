@@ -11,22 +11,21 @@ const getData = async request => {
 
   // We need to have set the licence length, dob and start date here to determining the contact
   // messaging
-  if (!permission.licenceLength) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
+  if (!permission.licensee.birthDate) {
+    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
 
   if (!permission.licenceStartDate) {
     throw new GetDataRedirect(LICENCE_TO_START.uri)
   }
 
-  if (!permission.licensee.birthDate) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  if (!permission.licenceLength) {
+    throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
   return {
     licensee: permission.licensee,
-    licenceLength: permission.licenceLength,
-    junior: concessionHelper.hasJunior(permission),
+    isPhysical: permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission),
     howContacted: HOW_CONTACTED
   }
 }

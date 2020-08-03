@@ -13,22 +13,23 @@
 %}
 
 {% set troutAndCoarse2Rod %}
-    <p class="govuk-hint">This lets you fish non-migratory trout and freshwater fish</p>
-    <p class="govuk-hint">Rods are for the individual licence holder and must be attended at all times</p>
+    <p class="govuk-body-m">This lets you fish non-migratory trout and freshwater fish</p>
+    <p class="govuk-body-m">Rods are for the individual licence holder and must be attended at all times</p>
 {% endset -%}
 
 {% set troutAndCoarse3Rod %}
-    <p class="govuk-hint">This lets you fish non-migratory trout and freshwater fish</p>
-    <p class="govuk-hint">Rods are for the individual licence holder and must be attended at all times</p>
+    <p class="govuk-body-m">This lets you fish non-migratory trout and freshwater fish</p>
+    <p class="govuk-body-m">Rods are for the individual licence holder and must be attended at all times</p>
 {% endset -%}
 
 {% set salmonAndSeaTrout %}
     {{ govukWarningText({
       text: "You must submit an annual catch return",
-      iconFallbackText: "Warning"
+      iconFallbackText: "Warning",
+      classes: "govuk-!-margin-top-6"
     }) }}
-    <p class="govuk-hint">You must report you yearly fishing activity in England and Wales if you have a salmon and sea trout licence, even if you did not fish.</p>
-    <p class="govuk-hint">More details can be found at <a target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a>.</p>
+    <p class="govuk-body-m">You must report you yearly fishing activity in England and Wales if you have a salmon and sea trout licence, even if you did not fish.</p>
+    <p class="govuk-body-m">More details can be found at <a target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a>.</p>
 {% endset -%}
 
 {% set items = [
@@ -53,7 +54,7 @@
 {{ items.push({
     text: "Salmon and sea trout",
     value: "salmon-and-sea-trout",
-    hint: { text: "includes trout and coarse, 3 rods" },
+    hint: { text: "Includes trout and coarse, up to 3 rods" },
     checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
     conditional: { html: salmonAndSeaTrout }
 }) }}
