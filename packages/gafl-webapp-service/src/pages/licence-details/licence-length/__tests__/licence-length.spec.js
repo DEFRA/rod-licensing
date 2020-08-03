@@ -47,5 +47,4 @@ describe('The licence length page', () => {
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
-
 })

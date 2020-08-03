@@ -1,7 +1,6 @@
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../__mocks__/test-utils.js'
 import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE } from '../../uri.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
-import { postRedirectGet } from '../../__mocks__/test-utils'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
