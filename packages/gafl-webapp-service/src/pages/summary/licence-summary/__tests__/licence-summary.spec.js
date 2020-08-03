@@ -109,6 +109,4 @@ describe('The licence summary page', () => {
       expect(response.statusCode).toBe(200)
     })
   })
-
-
 })

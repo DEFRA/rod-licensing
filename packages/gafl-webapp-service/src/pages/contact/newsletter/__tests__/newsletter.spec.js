@@ -54,7 +54,7 @@ describe('The newsletter page', () => {
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
     expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
   })
-  
+
   it('with an email previously entered and the preferred method of contact is letter, when posting no - delete the email address', async () => {
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none', email: 'example@email.com' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)

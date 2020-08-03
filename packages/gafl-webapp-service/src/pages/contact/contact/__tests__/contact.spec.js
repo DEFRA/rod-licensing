@@ -7,7 +7,6 @@ import {
   CONTACT_SUMMARY,
   NEWSLETTER,
   TEST_TRANSACTION
-  , LICENCE_SUMMARY, LICENCE_TYPE
 } from '../../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
@@ -16,7 +15,6 @@ import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../
 
 import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-helpers'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
-import { licenseTypes } from '../../../licence-details/licence-type/route'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

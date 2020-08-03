@@ -1,4 +1,4 @@
-import { LICENCE_START_TIME, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
+import { LICENCE_START_TIME, TEST_TRANSACTION } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))
