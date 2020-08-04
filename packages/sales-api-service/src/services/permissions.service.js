@@ -38,8 +38,7 @@ export const generatePermissionNumber = async (
   const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
   const block2 = permit.numberOfRods + channel + type + duration + age + initials
 
-  const block3 = cryptoRandomString({ length: 6, characters: 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789' })
-
+  const block3 = cryptoRandomString({ length: 6, characters: 'BCDFGHJKLMNPQRSTVWXZ256789' })
   return [block1, block2, block3].join('-')
 }
 
