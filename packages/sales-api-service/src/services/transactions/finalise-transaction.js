@@ -7,7 +7,7 @@ const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
 export async function finaliseTransaction ({ id, ...payload }) {
-  debug('Received request to complete transaction %s', id)
+  debug('Finalising transaction %s', id)
   const transactionRecord = await retrieveStagedTransaction(id)
   if (transactionRecord.cost !== payload.payment.amount) {
     throw Boom.paymentRequired('The payment amount did not match the cost of the transaction')
@@ -31,7 +31,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
   const receipt = await sqs
     .sendMessage({
       QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: 'transactions',
+      MessageGroupId: id,
       MessageDeduplicationId: id,
       MessageBody: JSON.stringify({ id })
     })

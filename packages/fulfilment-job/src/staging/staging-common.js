@@ -11,6 +11,6 @@ export const FULFILMENT_FILE_STATUS_OPTIONSET = 'defra_fulfilmentrequestfilestat
  * @returns {Promise<GlobalOptionSetDefinition>}
  */
 export const getOptionSetEntry = async (optionSetName, label) => {
-  const statuses = await retrieveGlobalOptionSets(optionSetName).cached()
+  const statuses = await retrieveGlobalOptionSets().cached()
   return Object.values(statuses[optionSetName].options).find(o => o.label === label)
 }

@@ -16,7 +16,7 @@ const debug = db('sales:exceptions')
  * @returns {Promise<StagingException>}
  */
 export const createStagingException = async exceptionData => {
-  debug('Adding staging exception for stagingId %s', exceptionData.stagingId)
+  debug('Adding staging exception: %o', exceptionData)
   const exception = Object.assign(new StagingException(), exceptionData)
   await persist(exception)
   return exception
@@ -52,7 +52,7 @@ export const createStagingExceptionFromError = async (stagingId, exception, tran
  * @returns {Promise<PoclStagingException>}
  */
 export const createTransactionFileException = async transactionFileError => {
-  debug('Adding exception for transaction file %s', transactionFileError.transactionFile)
+  debug('Adding exception for transaction file: %o', transactionFileError)
   const stagingException = Object.assign(new PoclStagingException(), {
     ...transactionFileError,
     type: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.type.ref, transactionFileError.type),

@@ -1,3 +1,13 @@
+jest.mock('cache-manager', () => ({
+  caching: () => ({
+    store: {
+      getClient: () => ({
+        on: () => {}
+      })
+    }
+  })
+}))
+
 describe('cache', () => {
   it('uses redis on the configured host and port', async () => {
     process.env.REDIS_HOST = 'localhost'
@@ -8,6 +18,21 @@ describe('cache', () => {
       host: 'localhost',
       port: '123',
       ttl: 60 * 60 * 12
+    })
+  })
+
+  it('configures tls and uses a password if one is supplied', async () => {
+    process.env.REDIS_HOST = 'localhost'
+    process.env.REDIS_PASSWORD = 'opensesame'
+    delete process.env.REDIS_PORT
+    const options = require('../cache.js').config()
+    expect(options).toMatchObject({
+      store: expect.objectContaining({}),
+      host: 'localhost',
+      port: 6379,
+      ttl: 60 * 60 * 12,
+      password: 'opensesame',
+      tls: {}
     })
   })
 

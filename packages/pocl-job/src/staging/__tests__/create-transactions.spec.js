@@ -1,6 +1,6 @@
 import Project from '../../project.cjs'
 import { createTransactions } from '../create-transactions.js'
-import { RECORD_STAGE, MAX_BATCH_SIZE } from '../constants.js'
+import { RECORD_STAGE, MAX_CREATE_TRANSACTION_BATCH_SIZE } from '../constants.js'
 import * as db from '../../io/db.js'
 import { v4 as uuidv4 } from 'uuid'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -40,11 +40,11 @@ describe('create-transactions', () => {
   })
 
   it('stages the 25 record test file (on batch-size boundary)', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(MAX_BATCH_SIZE))
+    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(MAX_CREATE_TRANSACTION_BATCH_SIZE))
     await createTransactions(`${Project.root}/src/__mocks__/test-25-records.xml`)
-    expectCreateTransactionCalls(MAX_BATCH_SIZE)
+    expectCreateTransactionCalls(MAX_CREATE_TRANSACTION_BATCH_SIZE)
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(1)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_BATCH_SIZE)
+    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_CREATE_TRANSACTION_BATCH_SIZE)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -58,9 +58,9 @@ describe('create-transactions', () => {
   it('stages the 30 record test file (over batch-size boundary)', async () => {
     salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(30))
     await createTransactions(`${Project.root}/src/__mocks__/test-30-records.xml`)
-    expectCreateTransactionCalls(MAX_BATCH_SIZE, 5)
+    expectCreateTransactionCalls(MAX_CREATE_TRANSACTION_BATCH_SIZE, 5)
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_BATCH_SIZE)
+    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_CREATE_TRANSACTION_BATCH_SIZE)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
       expect.arrayContaining([
         expect.objectContaining({

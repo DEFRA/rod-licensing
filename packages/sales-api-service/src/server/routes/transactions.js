@@ -59,7 +59,7 @@ export default [
     path: '/transactions/$batch',
     options: {
       handler: async (request, h) => {
-        debug('[%s] Received request to create %s transactions', request.info.id, request.payload.length)
+        debug('Received request to create %d transactions', request.payload.length)
         const responsesByIndex = {}
         const validPayloadsByIndex = {}
         for (let i = 0; i < request.payload.length; i++) {
@@ -69,8 +69,8 @@ export default [
             responsesByIndex[i] = Boom.badData(e).output.payload
           }
         }
-        debug('[%s] Finished validating %s transaction payloads', request.info.id, request.payload.length)
         const validEntries = Object.entries(validPayloadsByIndex)
+        debug('Checked %d transaction payloads and found %d were valid', request.payload.length, validEntries.length)
         if (validEntries.length) {
           const createTransactionResults = await createTransactions(validEntries.map(([, v]) => v))
           createTransactionResults.forEach((response, i) => {

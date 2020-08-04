@@ -1,7 +1,8 @@
 const defaultStagingTtl = 60 * 60 * 168
 
 export const SERVER = {
-  Port: process.env.PORT || 4000
+  Port: process.env.PORT || 4000,
+  KeepAliveTimeout: process.env.HAPI_KEEP_ALIVE_TIMEOUT_MS || 60000
 }
 
 export const PAYMENTS_TABLE = {

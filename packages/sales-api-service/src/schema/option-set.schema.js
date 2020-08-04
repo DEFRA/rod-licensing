@@ -12,16 +12,21 @@ export const optionSetOption = Joi.object({
 
 export const optionSetEntriesExample = { 910400000: optionSetOptionExample }
 export const optionSetEntries = Joi.object()
-  .pattern(Joi.string(), optionSetOption)
+  .pattern(/.*/, optionSetOption)
   .example(optionSetEntriesExample)
   .label('option-set-definition-options')
 
-export const optionSetDefinition = Joi.object()
-  .pattern(Joi.string(), Joi.object({ name: Joi.string().required(), options: optionSetEntries }))
-  .example({ option_set_name: { name: 'option_set_name', options: optionSetEntriesExample } })
+export const optionSetDefinitionExample = { name: 'option_set_name', options: optionSetEntriesExample }
+export const optionSetDefinition = Joi.object({
+  name: Joi.string().required(),
+  options: optionSetEntries
+})
+  .example(optionSetDefinitionExample)
   .label('option-set-definition')
+  .description('option-set-definition')
 
 export const optionSetMappings = Joi.object()
-  .example({ option_set_name1: {}, option_set_name2: {} })
-  .pattern(Joi.string(), optionSetDefinition)
+  .example({ option_set_name1: optionSetDefinitionExample, option_set_name2: optionSetDefinitionExample })
+  .pattern(/.*/, optionSetDefinition)
   .label('option-set-mappings')
+  .description('A listing of all option-sets, using the option set name as the key')

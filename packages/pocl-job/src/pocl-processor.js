@@ -17,7 +17,7 @@ export async function execute () {
     const pendingFileRecords = await getFileRecords(FILE_STAGE.Pending, FILE_STAGE.Staging, FILE_STAGE.Finalising)
     debug('Found %s files remaining to be processed', pendingFileRecords.length)
     const localXmlFiles = await Promise.all(pendingFileRecords.map(record => s3ToLocal(record.s3Key)))
-    debug('Processing files: %O', localXmlFiles)
+    debug('Processing files: %o', localXmlFiles)
     await Promise.all(localXmlFiles.map(f => stage(f)))
   } finally {
     removeTemp()

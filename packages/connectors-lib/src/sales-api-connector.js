@@ -24,7 +24,24 @@ export const call = async (url, method = 'get', payload = null) => {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: response.status !== 204 ? await response.json() : undefined
+    body: response.status !== 204 ? await parseResponseBody(response) : undefined
+  }
+}
+
+/**
+ * Retrieve the response json, falling back to reading text on error
+ *
+ * @param response node-fetch response object
+ * @returns {Promise<{}>}
+ */
+const parseResponseBody = async response => {
+  const body = await response.text()
+  try {
+    return JSON.parse(body)
+  } catch (e) {
+    return {
+      text: body
+    }
   }
 }
 

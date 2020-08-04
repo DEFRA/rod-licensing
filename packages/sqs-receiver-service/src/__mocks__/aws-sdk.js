@@ -9,12 +9,7 @@ let deleteFailures
 
 AwsSdk.__mockEmptyQueue = () => {
   exception = null
-  result = Object.create({
-    ResponseMetadata: {
-      RequestId: '00000000-0000-0000-0000-000000000000'
-    },
-    Messages: []
-  })
+  result = Object.create({})
 }
 
 AwsSdk.__mockOneMessage = () => {

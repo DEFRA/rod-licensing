@@ -9,4 +9,15 @@ export const mockAuthenticationContext = jest.fn(authorityUrl => ({
 
 AdalNode.AuthenticationContext = mockAuthenticationContext
 
+export const mockLoggingOptions = jest.fn()
+AdalNode.Logging = {
+  setLoggingOptions: mockLoggingOptions,
+  LOGGING_LEVEL: {
+    ERROR: 0,
+    WARN: 1,
+    INFO: 2,
+    VERBOSE: 3
+  }
+}
+
 export default AdalNode

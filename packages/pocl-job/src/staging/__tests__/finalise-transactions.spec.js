@@ -1,5 +1,5 @@
 import { finaliseTransactions } from '../finalise-transactions.js'
-import { RECORD_STAGE, MAX_BATCH_SIZE } from '../constants.js'
+import { RECORD_STAGE, MAX_FINALISE_TRANSACTION_BATCH_SIZE } from '../constants.js'
 import * as db from '../../io/db.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
@@ -62,13 +62,13 @@ describe('finalise-transactions', () => {
     ])
   })
 
-  it(`calls finalisation in batches of ${MAX_BATCH_SIZE}`, async () => {
+  it(`calls finalisation in batches of ${MAX_FINALISE_TRANSACTION_BATCH_SIZE}`, async () => {
     db.getProcessedRecords.mockReturnValueOnce(
-      Array(MAX_BATCH_SIZE + 1).fill({ id: `test-${Math.random()}`, stage: RECORD_STAGE.TransactionCreated })
+      Array(MAX_FINALISE_TRANSACTION_BATCH_SIZE + 1).fill({ id: `test-${Math.random()}`, stage: RECORD_STAGE.TransactionCreated })
     )
     salesApi.finaliseTransaction.mockResolvedValue({ messageId: `message-${Math.random()}`, status: 'queued' })
     await finaliseTransactions(TEST_FILENAME)
-    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(MAX_BATCH_SIZE + 1)
+    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(MAX_FINALISE_TRANSACTION_BATCH_SIZE + 1)
     expect(db.updateRecordStagingTable).toHaveBeenCalledTimes(2)
   })
 

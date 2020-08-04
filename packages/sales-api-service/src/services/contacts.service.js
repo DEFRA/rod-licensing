@@ -45,7 +45,7 @@ export const resolveContactPayload = async payload => {
 
     const candidates = await findByExample(lookup)
     if (candidates.length) {
-      debug('Resolved %d candidate contacts for contact %o', id, lookup)
+      debug('Resolved %d candidate contacts for contact %o', candidates.length, lookup)
       contact = candidates[0]
     }
   }

@@ -10,13 +10,17 @@ export default ENTITY_TYPES.map(e => ({
   path: `/${e.definition.localCollection}`,
   options: {
     handler: async request => {
-      debug('Retrieving reference data for entity %s using params: %o', e.definition.localCollection, request.params)
       const data = await getReferenceDataForEntity(e)
       const result = data.filter(instance => {
         const json = instance.toJSON()
         return Object.entries(request.query).reduce((acc, [k, v]) => acc && String(dotProp.get(json, k)) === v, true)
       })
-      debug('Retrieved %d items for entity %s', result.length, e.definition.localCollection)
+      debug(
+        'Retrieved %d reference data records for entity %s using params: %o',
+        result.length,
+        e.definition.localCollection,
+        request.params
+      )
       return result
     },
     description: `Retrieve reference data for the collection ${e.definition.localCollection}`,
