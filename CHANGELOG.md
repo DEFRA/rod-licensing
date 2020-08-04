@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.28 (2020-08-04)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#277](https://github.com/DEFRA/rod-licensing/pull/277) Update sales-api to correctly set keep-alive timeout on the server listener ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.27 (2020-08-03)
 
 #### :bug: Bug Fix
