@@ -43,12 +43,6 @@ describe('The licence summary page', () => {
       d()
     })
 
-    it('redirects to the date-of-birth page if no date of birth has been set', async () => {
-      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-      expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
-    })
-
     it('redirects to the licence to start page if no licence start date has been set has been set', async () => {
       await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)

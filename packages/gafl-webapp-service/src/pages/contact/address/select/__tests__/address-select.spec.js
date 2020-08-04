@@ -1,6 +1,6 @@
 import { ADDRESS_SELECT, CONTACT, ADDRESS_LOOKUP, TEST_TRANSACTION } from '../../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
-import searchResultsMany from '../../../../../services/address-lookup/__mocks__/response/search-results-many'
+import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

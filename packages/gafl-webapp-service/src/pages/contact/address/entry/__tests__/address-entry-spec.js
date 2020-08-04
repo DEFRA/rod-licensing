@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../uri.js'
-import mockDefraCountries from '../../../../../__mocks__/response/defra-country.js'
+import mockDefraCountries from '../../../../../__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
 
 beforeAll(d => start(d))

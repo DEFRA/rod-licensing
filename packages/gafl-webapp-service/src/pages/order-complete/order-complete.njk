@@ -4,74 +4,34 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 {% from "table/macro.njk" import govukTable %}
+{% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = 'Licence conditions' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
-{% set bailiffMessage %}
-<p class="govuk-body">If our bailiffs ask to see your licence, you must show them:</p>
-    <ol class="class="govuk-list govuk-list--number">
-        <li class="govuk-body"><span class="govuk-!-font-weight-bold">Proof of your licence: </span><a id= "prt" class="no-print" href="#">Print out this page</a><span class="print-area">take this printout with you</span> or make a note of your licence number</li>
-        <li class="govuk-body"><span class="govuk-!-font-weight-bold">Proof of your identity: </span>such as your driver's licence or other photo ID</li>
-    </ol>
-{% endset -%}
-
 {% if data.permission.licenceLength === '1D' %}
     {% set lengthText = '1 day' %}
-    {% set licenceLengthMessage %}
-        <h2 class="govuk-heading-m">We don't send 1-day licences in the post</h2>
-        {{ bailiffMessage | trim | safe }}
-    {% endset -%}
 {% elseif data.permission.licenceLength === '8D' %}
     {% set lengthText = '8 days' %}
-    {% set licenceLengthMessage %}
-        <h2 class="govuk-heading-m">We don't send 8-day licences in the post</h2>
-        {{ bailiffMessage | trim | safe }}
-    {% endset -%}
 {% else %}
     {% set lengthText = '12 months' %}
-    {% set licenceLengthMessage %}
-        {% if data.hasJunior  %}
-            <h2 class="govuk-heading-m">We don't send junior licences in the post</h2>
-            <p class="govuk-body">If our bailiffs ask to see your licence, you must show them proof of your licence. <a id= "prt" class="no-print" href="#">Print out this page</a><span class="print-area">take this printout with you</span> or make a note of your licence number.</p>
-        {% else %}
-            <h2 class="govuk-heading-m">Want to go fishing before your licence arrives?</h2>
-            {{ bailiffMessage | trim | safe }}
-        {% endif %}
-    {% endset -%}
 {% endif %}
 
 {% set licenseDetailsSummaryRows = [] %}
 {{ licenseDetailsSummaryRows.push([ { text: 'Name' }, { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.permission.licenceType } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.licenceTypeStr } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: lengthText } ]) }}
-{% if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] %}
-    {{ licenseDetailsSummaryRows.push([{ text: 'Number of rods' }, { text: data.permission.numberOfRods }]) }}
-{% endif %}
-
-{% if data.hasJunior and data.disabled %}
-    {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Junior, Disabled' } ]) }}
-{% elseif data.hasJunior %}
-    {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Junior' } ]) }}
-{% elseif data.hasSenior and data.disabled %}
-   {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Senior, Disabled' } ]) }}
-{% elseif data.hasSenior %}
-   {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Senior' } ]) }}
-{% elseif data.disabled %}
-   {{ licenseDetailsSummaryRows.push([ { text: 'Concessions' }, { text: 'Disabled' } ]) }}
-{% endif %}
 {{ licenseDetailsSummaryRows.push([ { text: 'Valid from' }, { text: data.startTimeString } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Expires' }, { text: data.endTimeString } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Valid to' }, { text: data.endTimeString } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Paid' }, { text: "£" + data.permission.permit.cost if data.permission.permit.cost else "free" } ]) }}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
         {{ govukPanel({
-          titleText: "You've bought your licence" if data.permission.cost !== 0 else "You've successfully ordered your licence",
-          html: 'Your fishing licence number is <br><strong>' + data.permission.referenceNumber +
-            '</strong></br><span class="panel-white-text govuk-body-m">This licence can only be used by ' + data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName + '</span></br>' +
-            '<a class="panel-white-text govuk-body-l no-print" href="' + data.uri.pdf + '">Save licence (PDF)</a>'
+          titleText: "Your licence details" if data.permission.cost !== 0 else "Payment complete",
+          html: 'This is your licence number<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span>'
         }) }}
 
         {{ govukTable({
@@ -82,17 +42,19 @@
           classes: "govuk-!-margin-top-8"
         }) }}
 
-        {{ licenceLengthMessage | trim | safe }}
+        <p class="govuk-body">Only the named licence holder can use this licence.</p>
 
         <div class="govuk-!-margin-top-8 no-print">
-            <h2 class="govuk-heading-m">Check the byelaws before you go</h2>
-            <p class="govuk-body">You must follow the <a target="_blank" href="https://www.gov.uk/freshwater-rod-fishing-rules">rod fishing rules</a> and <a target="_blank" href="https://www.gov.uk/government/collections/local-fishing-byelaws">local fishing byelaws</a> (pages will open in a new window or tab) when you go fishing. These include the rules on:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>where you can fish</li>
-                <li>when you can fish</li>
-                <li>which fish you’re allowed to keep</li>
-            </ul>
-        </div>
+            <h2 class="govuk-heading-m">Before you go fishing</h2>
+            <p class="govuk-body">You can go fishing before you get your licence card, but you must be able to confirm your licence details if asked by an enforcement officer.</p>
+            {{ govukWarningText({
+              text: "Make a record of your licence number",
+              iconFallbackText: "Warning",
+              classes: "govuk-!-margin-top-6"
+            }) }}
+            <p class="govuk-body" class="no-print">Get a <a class="govuk-link" href="{{ data.uri.pdf }}">PDF copy of your licence details</a>. If you gave us your email address, you’ll get a confirmation message that includes your licence number.</p>
+            <p class="govuk-body">You must follow the <a target="_blank" href="https://www.gov.uk/freshwater-rod-fishing-rules">rod fishing rules</a> and <a target="_blank" href="https://www.gov.uk/government/collections/local-fishing-byelaws">local fishing byelaws</a>.</p>
+         </div>
 
         {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
             <div class="govuk-!-margin-top-8">
@@ -102,30 +64,14 @@
             </div>
         {% endif %}
 
-        <div class="govuk-!-margin-top-8 no-print">
-            <h2 class="govuk-heading-m">Refunds</h2>
-            <p class="govuk-body">In certain circumstances you may be eligible for a refund on a 12-month licence. Please see our <a href="{{ data.uri.refund }}">refund policy</a> for details.</p>
-        </div>
+        <p class="govuk-body"><a target="_blank" href="{{ data.uri.feedback }}">What did you think of the service</a> (takes 30 seconds)</p>
 
-        {% if data.permission.cost !== 0 %}
-        <div class="govuk-!-margin-top-8 no-print">
-            <h2 class="govuk-heading-m">How your licence money gets spent</h2>
-            <p class="govuk-body">We use your fishing licence money to:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>improve angling facilities and fish habitats</li>
-                <li>protect fisheries from illegal activity</li>
-                <li>prevent the spread of fish diseases and invasive, non-native species</li>
-                <li>rear and stock coarse fish to boost natural stocks</li>
-                <li>encourage more people to go fishing</li>
-            </ul>
-            <p class="govuk-body">Read the <a target="_blank" href="https://www.gov.uk/government/publications/environment-agency-annual-fisheries-report">annual fisheries report</a> (opens in a new window or tab) for more detail about how we spend this money.</p>
-        </div>
+        {% if data.isPhysical %}
+            <div class="govuk-!-margin-top-8 no-print">
+                <h2 class="govuk-heading-m">What happens next</h2>
+                <p class="govuk-body">We’ll send your <span class="govuk-!-font-weight-bold">licence card</span> by post. You should get it within 10 working days. </p>
+            </div>
         {% endif %}
-
-        <div class="govuk-!-margin-top-8 no-print">
-            <h2 class="govuk-heading-m">Your feedback</h2>
-            <p class="govuk-body"><a target="_blank" href="{{ data.uri.feedback }}">Tell us what you think about buying your licence</a> (takes 30 seconds, opens in another page)</p>
-        </div>
 
         {{ govukButton({
             href: data.uri.new,

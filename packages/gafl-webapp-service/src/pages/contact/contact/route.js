@@ -1,10 +1,10 @@
 import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
-import * as concessionHelper from '../../../processors/concession-helper.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()

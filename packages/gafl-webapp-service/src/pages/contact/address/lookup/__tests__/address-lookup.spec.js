@@ -1,8 +1,8 @@
 import { ADDRESS_LOOKUP, ADDRESS_SELECT, ADDRESS_ENTRY } from '../../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
-import searchResultsMany from '../../../../../services/address-lookup/__mocks__/response/search-results-many'
-import searchResultsOne from '../../../../../services/address-lookup/__mocks__/response/search-results-one'
-import searchResultsNone from '../../../../../services/address-lookup/__mocks__/response/search-results-none'
+import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
+import searchResultsOne from '../../../../../services/address-lookup/__mocks__/data/search-results-one'
+import searchResultsNone from '../../../../../services/address-lookup/__mocks__/data/search-results-none'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))

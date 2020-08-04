@@ -6,6 +6,7 @@ import Boom from '@hapi/boom'
 import { displayStartTime, displayEndTime } from '../../processors/date-and-time-display.js'
 import * as mappings from '../../processors/mapping-constants.js'
 import * as concessionHelper from '../../processors/concession-helper.js'
+import { licenceTypeDisplay } from '../../processors/licence-type-display.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -43,6 +44,8 @@ const getData = async request => {
     hasJunior: !!concessionHelper.hasJunior(permission),
     hasSenior: !!concessionHelper.hasSenior(permission),
     permission,
+    licenceTypeStr: licenceTypeDisplay(permission),
+    isPhysical: permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission),
     startTimeString,
     endTimeString
   }

@@ -33,6 +33,7 @@ export default async request => {
         licensee.preferredMethodOfReminder = HOW_CONTACTED.none
       }
 
+      licensee.preferredMethodOfNewsletter = HOW_CONTACTED.none
       licensee.mobilePhone = null
       licensee.email = null
   }
