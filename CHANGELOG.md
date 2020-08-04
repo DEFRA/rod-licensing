@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.32 (2020-08-04)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `sales-api-service`
+  * [#263](https://github.com/DEFRA/rod-licensing/pull/263) Prevent expletives from being generated in the licence number ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.30 (2020-08-04)
 
