@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.29 (2020-08-04)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `sales-api-service`
+  * [#284](https://github.com/DEFRA/rod-licensing/pull/284) Remove adal-node and replace with simple-oauth2 ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.28 (2020-08-04)
 
 #### :rocket: Enhancement
