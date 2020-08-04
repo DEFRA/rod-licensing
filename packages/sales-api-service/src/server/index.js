@@ -19,17 +19,14 @@ export default async (opts = { port: SERVER.Port }) => {
               const handler = err.output.payload.validation.source === 'payload' ? Boom.badData : Boom.badRequest
               return handler(`Invalid ${err.output.payload.validation.source}: ${err.message}`)
             }
-          },
-          ...(SERVER.SocketTimeout && {
-            timeout: {
-              socket: Number.parseInt(SERVER.SocketTimeout)
-            }
-          })
+          }
         }
       },
       opts
     )
   )
+  server.listener.keepAliveTimeout = SERVER.KeepAliveTimeout
+  server.listener.headersTimeout = SERVER.KeepAliveTimeout + 5000 // must be greater than server.listener.keepAliveTimeout
 
   server.ext('onPreResponse', (request, h) => {
     const response = request.response
