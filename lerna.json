@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.3.0-rc.27",
+  "version": "0.3.0-rc.30",
   "npmClient": "npm",
   "command": {
     "bootstrap": {},
