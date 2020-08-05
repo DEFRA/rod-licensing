@@ -14,7 +14,7 @@
      }) %}
      <p class="govuk-body-m">We have logged the error and we will look into it, and make sure it doesn’t happen again. However if you keep seeing this page, please send your <a href="">feedback</a> to help us improve the service.</p>
      <h2 class="govuk-heading-m">What now?</h2>
-     <a class="govuk-link" href="{{ uri.new }}">By another licence</a>
+     <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
    {% endcall %}
 {% endmacro %}
 
@@ -43,7 +43,7 @@
                         classes: "govuk-!-margin-top-5"
                     }) }}
                {% endcall %}
-               <a class="govuk-link" href="{{ uri.new }}">By another licence</a>
+               <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
             {% elseif serverError.origin.step === 'post-payment' %}
                {% call govukFieldset({
                    legend: {
@@ -68,7 +68,7 @@
                         classes: "govuk-!-margin-top-5"
                     }) }}
                 {% endcall %}
-                <a class="govuk-link" href="{{ uri.new }}">By another licence</a>
+                <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
             {% else %}
                 {{ standard() }}
             {% endif %}

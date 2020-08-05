@@ -29,6 +29,7 @@ import renewalStartDate from '../pages/renewals/renewal-start-date/route.js'
 
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
+import telesalesRoutes from './telesales-routes.js'
 
 const routes = [
   ...staticAssets,
@@ -57,5 +58,9 @@ const routes = [
   ...renewalStartDate,
   orderCompletePdf
 ]
+
+if (process.env.CHANNEL === 'telesales') {
+  routes.push(...telesalesRoutes)
+}
 
 export default routes

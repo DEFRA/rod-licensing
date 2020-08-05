@@ -5,6 +5,7 @@ import Scooter from '@hapi/scooter'
 import Blankie from 'blankie'
 import Crumb from '@hapi/crumb'
 import HapiGapi from '@defra/hapi-gapi'
+import Cookie from '@hapi/cookie'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
@@ -35,6 +36,7 @@ export const getPlugins = () => {
     Inert,
     Vision,
     Scooter,
+    Cookie,
     {
       plugin: Disinfect,
       options: {
