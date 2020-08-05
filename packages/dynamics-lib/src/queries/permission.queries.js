@@ -1,5 +1,6 @@
 import { PredefinedQuery } from './predefined-query.js'
 import { Permission } from '../entities/permission.entity.js'
+import { ConcessionProof } from '../entities/concession-proof.entity.js'
 import { escapeODataStringValue } from '../client/util.js'
 
 /**
@@ -12,11 +13,16 @@ import { escapeODataStringValue } from '../client/util.js'
  */
 export const permissionForLicensee = (permissionReferenceNumber, licenseeBirthDate, licenseePostcode) => {
   const { licensee, permit, concessionProofs } = Permission.definition.relationships
+  const { concession } = ConcessionProof.definition.relationships
   let filter = `endswith(${Permission.definition.mappings.referenceNumber.field}, '${escapeODataStringValue(permissionReferenceNumber)}')`
   filter += ` and ${licensee.property}/${licensee.entity.definition.mappings.postcode.field} eq '${escapeODataStringValue(
     licenseePostcode
   )}'`
   filter += ` and ${licensee.property}/${licensee.entity.definition.mappings.birthDate.field} eq ${licenseeBirthDate}`
   filter += ` and ${Permission.definition.defaultFilter}`
-  return new PredefinedQuery({ root: Permission, filter: filter, expand: [licensee, permit, concessionProofs] })
+  return new PredefinedQuery({
+    root: Permission,
+    filter: filter,
+    expand: [licensee, permit, { ...concessionProofs, expand: [concession] }]
+  })
 }

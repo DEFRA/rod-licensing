@@ -12,6 +12,7 @@ import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE, RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../__mocks__/data/authentication-result.js'
+import mockConcessions from '../../../../__mocks__/data/concessions.js'
 import moment from 'moment'
 import * as constants from '../../../../processors/mapping-constants.js'
 import { hasSenior } from '../../../../processors/concession-helper.js'
@@ -32,6 +33,7 @@ const dobHelper = d => ({
 })
 
 jest.mock('@defra-fish/connectors-lib')
+salesApi.concessions.getAll.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(mockConcessions))))
 
 describe('The easy renewal identification page', () => {
   it('returns a failure when called with an invalid permission reference ', async () => {
@@ -67,7 +69,7 @@ describe('The easy renewal identification page', () => {
   })
 
   it('redirects back to itself on posting an valid but not authenticated details', async () => {
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(null)))
+    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(null))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC_URI)
     await injectWithCookies('GET', IDENTIFY.uri)
     const data = await injectWithCookies(
@@ -95,7 +97,7 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.endDate = moment()
       .startOf('day')
       .toISOString()
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     const data = await injectWithCookies(
@@ -118,7 +120,7 @@ describe('The easy renewal identification page', () => {
     newAuthenticationResult.permission.licensee.birthDate = moment()
       .add(-65, 'years')
       .add(-1, 'days')
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies(
@@ -139,7 +141,7 @@ describe('The easy renewal identification page', () => {
       .startOf('day')
       .add(RENEW_BEFORE_DAYS + 1, 'days')
       .toISOString()
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies(
@@ -166,7 +168,7 @@ describe('The easy renewal identification page', () => {
       .startOf('day')
       .add(-1 * (RENEW_AFTER_DAYS + 1), 'days')
       .toISOString()
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies(
@@ -183,7 +185,7 @@ describe('The easy renewal identification page', () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.permit.durationMagnitude = 1
     newAuthenticationResult.permission.permit.durationDesignator.description = 'D'
-    salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
+    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
     await injectWithCookies(

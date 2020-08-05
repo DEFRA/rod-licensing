@@ -47,12 +47,27 @@ export const authenticationResult = {
     },
     concessions: [
       {
-        id: '3a4cb914-f7b1-ea11-a812-000d3a64905b',
-        referenceNumber: '1233',
-        proofType: {
-          id: 910400000,
-          label: 'Blue Badge',
-          description: 'Blue Badge'
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        proof: {
+          id: 'concession-proof-id',
+          referenceNumber: '1233',
+          type: {
+            id: 910400000,
+            label: 'Blue Badge',
+            description: 'Blue Badge'
+          }
+        }
+      },
+      {
+        id: 'unknown-should-be-ignored',
+        proof: {
+          id: 'unknown',
+          referenceNumber: 'unknown',
+          type: {
+            id: 910400000,
+            label: 'Blue Badge',
+            description: 'Blue Badge'
+          }
         }
       }
     ],

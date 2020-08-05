@@ -192,7 +192,7 @@ const createFulfilmentRequest = async permission => {
 const createConcessionProof = async (concession, permission) => {
   const proof = new ConcessionProof()
   const concessionEntity = await getReferenceDataForEntityAndId(Concession, concession.id)
-  proof.proofType = await getGlobalOptionSetValue(ConcessionProof.definition.mappings.proofType.ref, concession.proof.type)
+  proof.type = await getGlobalOptionSetValue(ConcessionProof.definition.mappings.type.ref, concession.proof.type)
   proof.referenceNumber = concession.proof.referenceNumber
   proof.bindToEntity(ConcessionProof.definition.relationships.permission, permission)
   proof.bindToEntity(ConcessionProof.definition.relationships.concession, concessionEntity)

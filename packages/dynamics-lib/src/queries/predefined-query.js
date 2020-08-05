@@ -9,7 +9,6 @@ const buildExpands = expand => ({
   ...(expand && {
     expand: expand.map(e => ({
       property: e.property,
-      select: e.entity.definition.select,
       ...buildExpands(e.expand)
     }))
   })
