@@ -9,6 +9,7 @@ export default {
   options: {
     id: Project.packageJson.name,
     name: Project.packageJson.description,
+    version: Project.packageJson.version,
     custom: {
       versions: process.versions,
       dependencies: Project.packageJson.dependencies

@@ -36,7 +36,6 @@
     "@types/hapi__hapi": "^19.0.4",
     "@types/jest": "^26.0.5",
     "aws-sdk": "^2.718.0",
-    "adal-node": "^0.2.1",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.1.0",
     "dynamics-web-api": "^1.6.8",
@@ -48,6 +47,7 @@
     "lerna-update-wizard": "^0.17.8",
     "lint-staged": "^10.2.11",
     "prettier-standard": "^16.4.1",
+    "simple-oauth2": "^4.1.0",
     "standard": "^14.3.4"
   },
   "eslintConfig": {

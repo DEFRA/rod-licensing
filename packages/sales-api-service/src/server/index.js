@@ -6,6 +6,7 @@ import HealthCheck from './plugins/health.js'
 import Routes from './routes/index.js'
 import Boom from '@hapi/boom'
 import { SERVER } from '../config.js'
+import moment from 'moment'
 
 export default async (opts = { port: SERVER.Port }) => {
   const server = new Hapi.Server(
@@ -18,17 +19,14 @@ export default async (opts = { port: SERVER.Port }) => {
               const handler = err.output.payload.validation.source === 'payload' ? Boom.badData : Boom.badRequest
               return handler(`Invalid ${err.output.payload.validation.source}: ${err.message}`)
             }
-          },
-          ...(SERVER.SocketTimeout && {
-            timeout: {
-              socket: Number.parseInt(SERVER.SocketTimeout)
-            }
-          })
+          }
         }
       },
       opts
     )
   )
+  server.listener.keepAliveTimeout = SERVER.KeepAliveTimeout
+  server.listener.headersTimeout = SERVER.KeepAliveTimeout + 5000 // must be greater than server.listener.keepAliveTimeout
 
   server.ext('onPreResponse', (request, h) => {
     const response = request.response
@@ -43,7 +41,7 @@ export default async (opts = { port: SERVER.Port }) => {
   server.route(Routes)
 
   await server.start()
-  console.log('Server running at:', server.info.uri)
+  console.log('Server started at %s. Listening on %s', moment().toISOString(), server.info.uri)
 
   const shutdown = async (code = 0) => {
     await server.stop()

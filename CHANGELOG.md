@@ -1,4 +1,59 @@
 
+## v0.3.0-rc.32 (2020-08-04)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `sales-api-service`
+  * [#263](https://github.com/DEFRA/rod-licensing/pull/263) Prevent expletives from being generated in the licence number ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
+## v0.3.0-rc.30 (2020-08-04)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#286](https://github.com/DEFRA/rod-licensing/pull/286) Add validation to the Sales API config and convert types as required ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.29 (2020-08-04)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `sales-api-service`
+  * [#284](https://github.com/DEFRA/rod-licensing/pull/284) Remove adal-node and replace with simple-oauth2 ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.28 (2020-08-04)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#277](https://github.com/DEFRA/rod-licensing/pull/277) Update sales-api to correctly set keep-alive timeout on the server listener ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.27 (2020-08-03)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#276](https://github.com/DEFRA/rod-licensing/pull/276) Workaround for bug in adal-node failing to cache tokens and leaking memory ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.26 (2020-08-03)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#273](https://github.com/DEFRA/rod-licensing/pull/273) Add additional logging to track OAuth token refresh behaviour ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.25 (2020-07-31)
 
 #### :rocket: Enhancement

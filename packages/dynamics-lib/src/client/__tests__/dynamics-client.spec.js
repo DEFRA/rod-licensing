@@ -1,5 +1,5 @@
-import { mockAuthenticationContext, mockAcquireTokenWithClientCredentials } from 'adal-node'
 import { config } from '../dynamics-client.js'
+import SimpleOAuth2 from 'simple-oauth2'
 
 describe('dynamics-client', () => {
   it('is configured via environment variables', async () => {
@@ -10,7 +10,7 @@ describe('dynamics-client', () => {
     process.env.OAUTH_TENANT = 'tenant'
     process.env.OAUTH_CLIENT_ID = 'clientId'
     process.env.OAUTH_CLIENT_SECRET = 'clientSecret'
-    process.env.OAUTH_RESOURCE = 'https://resource/'
+    process.env.OAUTH_RESOURCE = 'https://resource/.default'
     const dynamicsApiConfig = config()
 
     expect(dynamicsApiConfig).toMatchObject({
@@ -21,13 +21,19 @@ describe('dynamics-client', () => {
     })
     const testCallback = jest.fn()
     await dynamicsApiConfig.onTokenRefresh(testCallback)
-    expect(testCallback).toHaveBeenCalled()
-    expect(mockAuthenticationContext).toHaveBeenCalledWith(`${process.env.OAUTH_AUTHORITY_HOST_URL}${process.env.OAUTH_TENANT}`)
-    expect(mockAcquireTokenWithClientCredentials).toHaveBeenCalledWith(
-      process.env.OAUTH_RESOURCE,
-      process.env.OAUTH_CLIENT_ID,
-      process.env.OAUTH_CLIENT_SECRET,
-      expect.any(Function)
-    )
+    expect(testCallback).toHaveBeenCalledWith('MOCK TOKEN')
+  })
+
+  it('caches tokens until they expire', async () => {
+    const dynamicsApiConfig = config()
+    const testCallback = jest.fn()
+    await dynamicsApiConfig.onTokenRefresh(testCallback)
+    expect(testCallback).toHaveBeenLastCalledWith('MOCK TOKEN')
+    SimpleOAuth2.__setMockTokenReturnValue('NEW MOCK TOKEN')
+    await dynamicsApiConfig.onTokenRefresh(testCallback)
+    expect(testCallback).toHaveBeenLastCalledWith('MOCK TOKEN')
+    SimpleOAuth2.__setMockTokenExpired(true)
+    await dynamicsApiConfig.onTokenRefresh(testCallback)
+    expect(testCallback).toHaveBeenLastCalledWith('NEW MOCK TOKEN')
   })
 })
