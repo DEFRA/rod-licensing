@@ -1,10 +1,10 @@
 import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-import * as concessionHelper from '../../../processors/concession-helper.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
+import { isPhysical } from '../../../processors/licence-type-display.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -25,7 +25,7 @@ const getData = async request => {
 
   return {
     licensee: permission.licensee,
-    isPhysical: permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission),
+    isPhysical: isPhysical(permission),
     howContacted: HOW_CONTACTED
   }
 }

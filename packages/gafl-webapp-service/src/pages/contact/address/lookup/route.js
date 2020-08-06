@@ -3,6 +3,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
 
 const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
@@ -14,7 +15,8 @@ const getData = async request => {
   return {
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
-    entryPage: ADDRESS_ENTRY.uri
+    entryPage: ADDRESS_ENTRY.uri,
+    isPhysical: isPhysical(permission)
   }
 }
 

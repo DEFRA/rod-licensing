@@ -3,7 +3,9 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'What is your preferred way of being contacted?' if data.isPhysical else 'How would you like to receive your licence details?' %}
+{% set title = 'How would you like to receive your licence details?' if data.isPhysical else 'What is your preferred way of being contacted?' %}
+{% set errorMsg = 'You have not told us how would you like to receive your licence details?' if data.isPhysical else 'You have not told us your preferred way of being contacted?' %}
+{% set errorMsg2 = 'Select how would you like to receive your licence details?' if data.isPhysical else 'Select your preferred way of being contacted?' %}
 
 {% set errorMap = {
         'how-contacted': {
@@ -93,12 +95,12 @@
 {% endset -%}
 
 {% block pageContent %}
-    <p class="govuk-body-m">We will normally only send you messages that are key to the service such as payment confirmation, licence details and renewal reminders.</p>
+    <p class="govuk-body-m">We will normally only send you messages about the licence such as payment confirmation, licence details and renewal reminders.</p>
 
     {{ govukRadios({
       idPrefix: "how-contacted",
       name: "how-contacted",
-      errorMessage: { text: 'Select how you would like to receive your licence details' } if error['how-contacted'],
+      errorMessage: { text: errorMsg2 } if error['how-contacted'],
       fieldset: {
         legend: {
           text: selectText,

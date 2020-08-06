@@ -3,8 +3,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { countries } from '../../../processors/refdata-helper.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
-import * as concessionHelper from '../../../processors/concession-helper.js'
-
+import { isPhysical } from '../../../processors/licence-type-display.js'
 import {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
@@ -46,7 +45,7 @@ const getData = async request => {
   return {
     permission,
     countryName,
-    isPhysical: permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission),
+    isPhysical: isPhysical(permission),
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     newsLetter: permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none,
     howContacted: HOW_CONTACTED,

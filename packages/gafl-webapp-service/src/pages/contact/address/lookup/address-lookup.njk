@@ -41,8 +41,11 @@
               }
             }) %}
 
-                <p class="govuk-body-m">{{ 'We must know this by law.' if data.licenceLength !== '12M' or data.junior
-                    else 'We must know this by law. This is also where we will send your licence card.' }}</p>
+                {% if data.isPhysical %}
+                    <p class="govuk-body-m">We must know this by law. This is also where we will send your licence card.</p>
+                {% else %}
+                    <p class="govuk-body-m">We must know this by law.</p>
+                {% endif %}
 
                 {{ govukInput({
                   label: {

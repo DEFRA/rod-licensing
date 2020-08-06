@@ -23,3 +23,5 @@ export const licenceTypeDisplay = permission => {
 
   return typesStrArr.join(', ')
 }
+
+export const isPhysical = permission => permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission)

@@ -1,6 +1,6 @@
 import { CONTACT } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
@@ -25,7 +25,7 @@ export default async request => {
       break
 
     default:
-      if (permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission)) {
+      if (isPhysical(permission)) {
         licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
         licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
       } else {

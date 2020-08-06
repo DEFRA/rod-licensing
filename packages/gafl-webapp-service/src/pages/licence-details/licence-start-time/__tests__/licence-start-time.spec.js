@@ -67,27 +67,24 @@ describe('The licence start time page', () => {
     expect(JSON.parse(payload).permissions[0].licenceStartTime).toBe(code)
   })
 
-  // it('does not display prior times for same day licence', async () => {
-  //   await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-  //   await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-  //   await postRedirectGet(LICENCE_TO_START.uri, {
-  //     'licence-to-start': licenceToStart.ANOTHER_DATE,
-  //     ...startDateHelper(moment())
-  //   })
-  //
-  //   const minHour = moment()
-  //     .add(30, 'minute')
-  //     .hour()
-  //   const disabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${
-  //     minHour <= 12 ? 'am' : 'pm'
-  //   }-${minHour}" name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
-  //   const enabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${minHour + 1 <= 12 ? 'am' : 'pm'}-${minHour +
-  //     1}" name="licence-start-time" type="radio" value="${minHour}">`
-  //
-  //   const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
-  //   expect(response.payload).toContain(disabledFragment)
-  //   expect(response.payload).toContain(enabledFragment)
-  // })
+  it('does not display prior times for same day licence', async () => {
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await postRedirectGet(LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment())
+    })
+
+    const minHour = moment()
+      .add(30, 'minute')
+      .hour()
+    const disabledFragment = `name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
+    const enabledFragment = `name="licence-start-time" type="radio" value="${minHour}">`
+
+    const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
+    expect(response.payload).toContain(disabledFragment)
+    expect(response.payload).toContain(enabledFragment)
+  })
 
   it('redirects to the summary page if the summary page has been seen', async () => {
     await injectWithCookies('GET', CONTROLLER.uri)
