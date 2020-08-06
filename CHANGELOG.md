@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.34 (2020-08-06)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#295](https://github.com/DEFRA/rod-licensing/pull/295) Expose concession id in renewals authentication response ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.33 (2020-08-06)
 
 #### :bug: Bug Fix
