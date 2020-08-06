@@ -6,8 +6,8 @@ import moment from 'moment'
 const minHour = permission =>
   moment(permission.licenceStartDate, 'YYYY-MM-DD').isSame(moment(), 'day')
     ? moment()
-        .add(30, 'minute')
-        .hour()
+      .add(30, 'minute')
+      .hour()
     : 0
 
 const hours = Array(24)
