@@ -94,7 +94,7 @@ export const ageConcessionHelper = permission => {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M', licenceStartTime: '0' })
     addJunior(permission)
-    // Junior licences are net sent out by post so if the contact details are by letter then reset to none
+    // Junior licences are not sent out by post so if the contact details are by letter then reset to none
     if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none

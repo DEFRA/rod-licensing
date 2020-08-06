@@ -12,7 +12,8 @@ import {
   LICENCE_TO_START,
   DATE_OF_BIRTH,
   CONTROLLER,
-  DISABILITY_CONCESSION
+  DISABILITY_CONCESSION,
+  TEST_TRANSACTION
 } from '../../../../uri.js'
 
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction.js'
@@ -43,7 +44,13 @@ describe('The licence summary page', () => {
       d()
     })
 
-    it('redirects to the licence to start page if no licence start date has been set has been set', async () => {
+    it('redirects to the date of birth page if the date of birth has been not been set', async () => {
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    })
+
+    it('redirects to the licence to start page if no licence start date has been set', async () => {
       await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
@@ -82,6 +89,21 @@ describe('The licence summary page', () => {
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })
+
+    it('filters the correct permit', async () => {
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 2 Rod Licence (Full)')
+    })
+
+    it('re-filters the correct permit on a material change', async () => {
+      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 3 Rod Licence (Full)')
+    })
   })
 
   describe('for a disabled concession 12 month, 2 rod, trout and coarse licence', async () => {
@@ -101,6 +123,13 @@ describe('The licence summary page', () => {
     it('displays the page on request', async () => {
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
+    })
+
+    it('filters the correct permit', async () => {
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 2 Rod Licence (Full, Disabled)')
     })
   })
 })

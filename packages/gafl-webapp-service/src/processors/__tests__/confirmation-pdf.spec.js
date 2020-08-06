@@ -1,4 +1,5 @@
 import { orderConfirmationPdf } from '../confirmation-pdf.js'
+import { addJunior } from '../concession-helper.js'
 
 const disabledPermission = {
   licensee: {
@@ -46,8 +47,17 @@ describe('The PDF generator', () => {
     const permission = Object.assign({}, disabledPermission)
     permission.licenceType = 'Salmon and sea trout'
     permission.concessions = []
+    permission.permit.cost = 91
     const result = orderConfirmationPdf(permission)
     expect(result.content[5].table.body[1][1].text).toBe('Salmon and sea trout')
+    expect(result.content[5].table.body[5][1].text).toBe('£91')
+  })
+
+  it('completes for junior licence', () => {
+    const permission = Object.assign({}, disabledPermission)
+    addJunior(permission)
+    const result = orderConfirmationPdf(permission)
+    expect(result.content[5].table.body[1][1].text).toBe('Junior, Disabled, Trout and coarse, 3 rod')
   })
 
   it('completes for a 1 Day licence', () => {

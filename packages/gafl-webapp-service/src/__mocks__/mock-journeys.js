@@ -226,7 +226,7 @@ export const SENIOR_12_MONTH_LICENCE = {
   }
 }
 
-export const JUNIOR_12_MONTH_LICENCE = {
+export const JUNIOR_LICENCE = {
   transActionResponse: {
     id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
     expires: 1588412128,
@@ -271,6 +271,73 @@ export const JUNIOR_12_MONTH_LICENCE = {
     // Set up the licence details
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+
+    // Set up the contact details
+    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+    // Complete the pre-payment journey
+    await postRedirectGet(CONTACT_SUMMARY.uri)
+    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+  }
+}
+
+export const JUNIOR_DISABLED_LICENCE = {
+  transActionResponse: {
+    id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
+    expires: 1588412128,
+    dataSource: 'Web Sales',
+    permissions: [
+      {
+        permitId: 'd91b34a0-0c66-e611-80dc-c4346bad0190',
+        licensee: {
+          birthDate: '2006-01-01',
+          firstName: 'Graham',
+          lastName: 'Willis',
+          premises: '14 Howecroft Court',
+          street: 'Eastmead Lane',
+          town: 'Bristol',
+          postcode: 'BS9 1HJ',
+          country: 'United Kingdom',
+          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfConfirmation: 'Prefer not to be contacted',
+          preferredMethodOfReminder: 'Prefer not to be contacted'
+        },
+        issueDate: '2020-04-30T09:35:28.014Z',
+        startDate: '2020-04-29T23:00:00.000Z',
+        concessions: [
+          {
+            id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: 'NH 34 67 44 A'
+            }
+          }
+        ],
+        referenceNumber: '01300420-1WS0JGW-FLNA84',
+        endDate: '2020-04-29T23:00:00.000Z'
+      }
+    ],
+    cost: 0
+  },
+  setup: async () => {
+    // Initialize
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
+
+    // Set up the licence details
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      'disability-concession': disabilityConcessionTypes.pipDla,
+      'ni-number': 'NH 34 67 44 A'
+    })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)

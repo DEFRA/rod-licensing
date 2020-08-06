@@ -17,7 +17,7 @@ export default async request => {
   } else if (
     payload['disability-concession'] === disabilityConcessionTypes.blueBadge) {
     concessionHelper.addDisabled(permission, CONCESSION_PROOF.blueBadge, payload['blue-badge-number'])
-  } else if (payload['disability-concession'] === disabilityConcessionTypes.no) {
+  } else {
     concessionHelper.removeDisabled(permission)
   }
 

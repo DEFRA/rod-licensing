@@ -12,7 +12,7 @@ export const licenceTypeDisplay = permission => {
   }
 
   if (concessionHelper.hasDisabled(permission)) {
-    typesStrArr.push(typesStrArr.length ? 'disabled' : 'Disabled')
+    typesStrArr.push('Disabled')
   }
 
   typesStrArr.push(permission.licenceType)

@@ -1,5 +1,19 @@
-import { LICENCE_START_TIME, TEST_TRANSACTION } from '../../../../uri.js'
+import {
+  LICENCE_START_TIME,
+  TEST_TRANSACTION,
+  DATE_OF_BIRTH,
+  LICENCE_LENGTH,
+  LICENCE_TO_START,
+  CONTROLLER,
+  LICENCE_SUMMARY,
+  LICENCE_TYPE
+} from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+
+import { ADULT_TODAY, dobHelper, startDateHelper } from '../../../../__mocks__/test-helpers'
+import { licenceToStart } from '../../licence-to-start/update-transaction'
+import moment from 'moment'
+import { licenseTypes } from '../../licence-type/route'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -51,5 +65,38 @@ describe('The licence start time page', () => {
     await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': code })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceStartTime).toBe(code)
+  })
+
+  it('does not display prior times for same day licence', async () => {
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await postRedirectGet(LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment())
+    })
+
+    const minHour = moment().add(30, 'minute').hour()
+    const disabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${minHour <= 12 ? 'am' : 'pm'}-${minHour}" name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
+    const enabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${minHour + 1 <= 12 ? 'am' : 'pm'}-${minHour + 1}" name="licence-start-time" type="radio" value="${minHour}">`
+
+    const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
+    expect(response.payload).toContain(disabledFragment)
+    expect(response.payload).toContain(enabledFragment)
+  })
+
+  it('redirects to the summary page if the summary page has been seen', async () => {
+    await injectWithCookies('GET', CONTROLLER.uri)
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment().add(1, 'day'))
+    })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '11' })
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+    const response = await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '12' })
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 })

@@ -1,9 +1,10 @@
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { LICENCE_TO_START, DATE_OF_BIRTH, DISABILITY_CONCESSION, NO_LICENCE_REQUIRED } from '../../../../uri.js'
+import { LICENCE_TO_START, DATE_OF_BIRTH, DISABILITY_CONCESSION, NO_LICENCE_REQUIRED, LICENCE_LENGTH, LICENCE_START_TIME } from '../../../../uri.js'
 import { ADVANCED_PURCHASE_MAX_DAYS, MINOR_MAX_AGE } from '@defra-fish/business-rules-lib'
-import { DATE_AT_ADVANCED_PURCHASE_MAX_DAYS, startDateHelper, dobHelper, JUNIOR_TODAY, JUNIOR_TOMORROW } from '../../../../__mocks__/test-helpers.js'
+import { DATE_AT_ADVANCED_PURCHASE_MAX_DAYS, startDateHelper, dobHelper, JUNIOR_TODAY, JUNIOR_TOMORROW, ADULT_TODAY } from '../../../../__mocks__/test-helpers.js'
 import { licenceToStart } from '../update-transaction.js'
 import moment from 'moment'
+
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
@@ -92,5 +93,16 @@ describe("The 'when would you like you licence to start?' page", () => {
     })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+  })
+
+  it('redirects to the start-time page if it already known that this is a 1 or 8 day licence', async () => {
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const response = await postRedirectGet(LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment().add(16, 'day'))
+    })
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
 })

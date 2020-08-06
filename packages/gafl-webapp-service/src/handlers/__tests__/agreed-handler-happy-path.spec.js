@@ -6,7 +6,8 @@ import {
   ADULT_DISABLED_12_MONTH_LICENCE,
   SENIOR_12_MONTH_LICENCE,
   MOCK_PAYMENT_RESPONSE,
-  JUNIOR_12_MONTH_LICENCE
+  JUNIOR_LICENCE,
+  JUNIOR_DISABLED_LICENCE
 } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
@@ -113,17 +114,18 @@ describe('The agreed handler', () => {
     expect(response3.statusCode).toBe(200)
   })
 
-  it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
-    await JUNIOR_12_MONTH_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
-
+  it.each([
+    ['junior', JUNIOR_LICENCE],
+    ['junior, disabled', JUNIOR_DISABLED_LICENCE]
+  ])('processes the series of steps necessary to complete a successful no-payment journey: %s', async (desc, journey) => {
+    await journey.setup()
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(journey.transActionResponse)))
     salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
-
     const response1 = await injectWithCookies('GET', AGREED.uri)
     expect(response1.statusCode).toBe(302)
     expect(response1.headers.location).toBe(ORDER_COMPLETE.uri)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(JUNIOR_12_MONTH_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(JUNIOR_LICENCE.transActionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
@@ -135,8 +137,8 @@ describe('The agreed handler', () => {
   })
 
   it('redirects to order-completed for finalized transactions', async () => {
-    await JUNIOR_12_MONTH_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+    await JUNIOR_LICENCE.setup()
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_LICENCE.transActionResponse)))
     salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
     await injectWithCookies('GET', AGREED.uri)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)

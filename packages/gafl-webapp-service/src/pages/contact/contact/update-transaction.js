@@ -21,7 +21,7 @@ export default async request => {
       licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
       licensee.preferredMethodOfReminder = HOW_CONTACTED.text
       licensee.mobilePhone = payload.text
-      licensee.email = null
+      licensee.email = licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
       break
 
     default:
@@ -33,9 +33,8 @@ export default async request => {
         licensee.preferredMethodOfReminder = HOW_CONTACTED.none
       }
 
-      licensee.preferredMethodOfNewsletter = HOW_CONTACTED.none
       licensee.mobilePhone = null
-      licensee.email = null
+      licensee.email = licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
