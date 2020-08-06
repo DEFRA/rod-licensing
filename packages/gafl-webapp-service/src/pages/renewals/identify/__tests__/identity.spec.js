@@ -87,7 +87,9 @@ describe('The easy renewal identification page', () => {
   ])('redirects to the controller on posting a valid response - (how contacted=%s)', async (name, fn) => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
-    newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .toISOString()
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
@@ -116,22 +118,29 @@ describe('The easy renewal identification page', () => {
   }
 
   it.each([
-    ['Trout and coarse - 2 rod', { subType: troutAndCoarsePermitSubtype, numberOfRods: '2', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }],
-    ['Trout and coarse - 3 rod', { subType: troutAndCoarsePermitSubtype, numberOfRods: '3', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }],
-    ['Salmon and sea trout', { subType: salmonAndSeaTroutPermitSubtype, numberOfRods: '1', licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'] }]
+    [
+      'Trout and coarse - 2 rod',
+      { subType: troutAndCoarsePermitSubtype, numberOfRods: '2', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }
+    ],
+    [
+      'Trout and coarse - 3 rod',
+      { subType: troutAndCoarsePermitSubtype, numberOfRods: '3', licenceType: constants.LICENCE_TYPE['trout-and-coarse'] }
+    ],
+    [
+      'Salmon and sea trout',
+      { subType: salmonAndSeaTroutPermitSubtype, numberOfRods: '1', licenceType: constants.LICENCE_TYPE['salmon-and-sea-trout'] }
+    ]
   ])('redirects to the controller on posting a valid response - (licence type=%s)', async (name, obj) => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.permit.numberOfRods = obj.numberOfRods
     newAuthenticationResult.permission.permit.permitSubtype = obj.subType
-    newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
+    newAuthenticationResult.permission.endDate = moment()
+      .startOf('day')
+      .toISOString()
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
-    await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
+    await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     await injectWithCookies('GET', AUTHENTICATE.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
@@ -151,11 +160,7 @@ describe('The easy renewal identification page', () => {
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
-    await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
+    await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     await injectWithCookies('GET', AUTHENTICATE.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
@@ -172,11 +177,7 @@ describe('The easy renewal identification page', () => {
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
-    await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
+    await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     const data = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(RENEWAL_INACTIVE.uri)
@@ -199,11 +200,7 @@ describe('The easy renewal identification page', () => {
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
-    await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
+    await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     const data = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(RENEWAL_INACTIVE.uri)
@@ -216,11 +213,7 @@ describe('The easy renewal identification page', () => {
     salesApi.authenticate = jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult)))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
-    await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
+    await injectWithCookies('POST', IDENTIFY.uri, Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY)))
     const data = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(RENEWAL_INACTIVE.uri)

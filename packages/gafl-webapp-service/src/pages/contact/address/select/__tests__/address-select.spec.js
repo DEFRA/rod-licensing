@@ -8,7 +8,8 @@ import {
   LICENCE_LENGTH,
   LICENCE_SUMMARY,
   LICENCE_TO_START,
-  LICENCE_TYPE, NAME,
+  LICENCE_TYPE,
+  NAME,
   NEWSLETTER
 } from '../../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
@@ -71,10 +72,15 @@ describe('The address select page', () => {
       await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
       process.env.ADDRESS_LOOKUP_KEY = 'bar'
-      fetch.mockImplementationOnce(async () => new Promise(resolve => resolve({
-        json: () => searchResultsMany,
-        ok: true
-      })))
+      fetch.mockImplementationOnce(
+        async () =>
+          new Promise(resolve =>
+            resolve({
+              json: () => searchResultsMany,
+              ok: true
+            })
+          )
+      )
       await postRedirectGet(ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
       await injectWithCookies('GET', ADDRESS_SELECT.uri)
       await postRedirectGet(ADDRESS_SELECT.uri, { address: '5' })

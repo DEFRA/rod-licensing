@@ -25,10 +25,13 @@ const schema = Joi.object({
 
 const validator = payload => {
   const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
-  Joi.assert({
-    'licence-start-date': licenceStartDate,
-    'licence-to-start': payload['licence-to-start']
-  }, schema)
+  Joi.assert(
+    {
+      'licence-start-date': licenceStartDate,
+      'licence-to-start': payload['licence-to-start']
+    },
+    schema
+  )
 }
 
 const getData = () => ({

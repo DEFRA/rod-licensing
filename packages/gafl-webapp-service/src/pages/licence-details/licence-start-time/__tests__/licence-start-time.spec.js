@@ -75,9 +75,14 @@ describe('The licence start time page', () => {
       ...startDateHelper(moment())
     })
 
-    const minHour = moment().add(30, 'minute').hour()
-    const disabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${minHour <= 12 ? 'am' : 'pm'}-${minHour}" name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
-    const enabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${minHour + 1 <= 12 ? 'am' : 'pm'}-${minHour + 1}" name="licence-start-time" type="radio" value="${minHour}">`
+    const minHour = moment()
+      .add(30, 'minute')
+      .hour()
+    const disabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${
+      minHour <= 12 ? 'am' : 'pm'
+    }-${minHour}" name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
+    const enabledFragment = `<input class="govuk-radios__input" id="licence-start-time-${minHour + 1 <= 12 ? 'am' : 'pm'}-${minHour +
+      1}" name="licence-start-time" type="radio" value="${minHour}">`
 
     const response = await injectWithCookies('GET', LICENCE_START_TIME.uri)
     expect(response.payload).toContain(disabledFragment)

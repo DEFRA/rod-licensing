@@ -14,8 +14,7 @@ export default async request => {
 
   if (payload['disability-concession'] === disabilityConcessionTypes.pipDla) {
     concessionHelper.addDisabled(permission, CONCESSION_PROOF.NI, payload['ni-number'])
-  } else if (
-    payload['disability-concession'] === disabilityConcessionTypes.blueBadge) {
+  } else if (payload['disability-concession'] === disabilityConcessionTypes.blueBadge) {
     concessionHelper.addDisabled(permission, CONCESSION_PROOF.blueBadge, payload['blue-badge-number'])
   } else {
     concessionHelper.removeDisabled(permission)

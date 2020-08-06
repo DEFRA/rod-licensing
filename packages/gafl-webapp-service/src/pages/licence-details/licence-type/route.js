@@ -9,7 +9,9 @@ export const licenseTypes = {
 }
 
 const validator = Joi.object({
-  'licence-type': Joi.string().valid(...Object.values(licenseTypes)).required()
+  'licence-type': Joi.string()
+    .valid(...Object.values(licenseTypes))
+    .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 const getData = async request => ({

@@ -1,8 +1,11 @@
 import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
 import { DATE_OF_BIRTH, LICENCE_TO_START, NO_LICENCE_REQUIRED } from '../../../../uri.js'
 import {
-  ADULT_TODAY, JUNIOR_AT_ADVANCE_PURCHASE_MAX, MINOR_AT_ADVANCE_PURCHASE_MAX,
-  DATE_AT_ADVANCED_PURCHASE_MAX_DAYS, dobHelper
+  ADULT_TODAY,
+  JUNIOR_AT_ADVANCE_PURCHASE_MAX,
+  MINOR_AT_ADVANCE_PURCHASE_MAX,
+  DATE_AT_ADVANCED_PURCHASE_MAX_DAYS,
+  dobHelper
 } from '../../../../__mocks__/test-helpers.js'
 
 beforeAll(d => start(d))
@@ -37,13 +40,17 @@ describe('The date of birth page', () => {
     expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
-  it(`redirects to the licence-to-start page if a junior on ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format('YYYY-MM-DD')} - i.e. born ${JUNIOR_AT_ADVANCE_PURCHASE_MAX.format('YYYY-MM-DD')}`, async () => {
+  it(`redirects to the licence-to-start page if a junior on ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format(
+    'YYYY-MM-DD'
+  )} - i.e. born ${JUNIOR_AT_ADVANCE_PURCHASE_MAX.format('YYYY-MM-DD')}`, async () => {
     const response = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_AT_ADVANCE_PURCHASE_MAX))
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
-  it(`redirects to the no-licence-required page if a minor on ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format('YYYY-MM-DD')} - i.e. born ${MINOR_AT_ADVANCE_PURCHASE_MAX.format('YYYY-MM-DD')}`, async () => {
+  it(`redirects to the no-licence-required page if a minor on ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format(
+    'YYYY-MM-DD'
+  )} - i.e. born ${MINOR_AT_ADVANCE_PURCHASE_MAX.format('YYYY-MM-DD')}`, async () => {
     const response = await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(MINOR_AT_ADVANCE_PURCHASE_MAX))
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(NO_LICENCE_REQUIRED.uri)

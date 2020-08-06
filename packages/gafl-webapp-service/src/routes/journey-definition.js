@@ -58,7 +58,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : null
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
   },
 
   {
@@ -77,7 +77,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
   },
 
   {
@@ -90,7 +90,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri)
   },
 
   {
@@ -106,7 +106,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
   },
 
   {
@@ -122,7 +122,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri)
   },
 
   {
@@ -135,7 +135,7 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     },
-    backLink: s => s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri
+    backLink: s => (s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri)
   },
 
   {

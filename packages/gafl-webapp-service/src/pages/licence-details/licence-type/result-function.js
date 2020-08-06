@@ -16,8 +16,7 @@ export default async request => {
   }
 
   // If junior, or 3 rod trout and coarse then it is always a 12 month licence
-  return hasJunior(permission) || (permission.licenceType === constants.LICENCE_TYPE['trout-and-coarse'] &&
-    permission.numberOfRods === '3')
+  return hasJunior(permission) || (permission.licenceType === constants.LICENCE_TYPE['trout-and-coarse'] && permission.numberOfRods === '3')
     ? licenceTypeResults.SKIP_LICENCE_LENGTH
     : licenceTypeResults.ASK_LICENCE_LENGTH
 }
