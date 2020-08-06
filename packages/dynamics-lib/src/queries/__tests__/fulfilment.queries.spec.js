@@ -9,10 +9,9 @@ describe('Fulfilment Queries', () => {
         expand: expect.arrayContaining([
           expect.objectContaining({
             property: 'defra_PermissionId',
-            select: expect.any(Array),
             expand: expect.arrayContaining([
-              expect.objectContaining({ property: 'defra_ContactId', select: expect.any(Array) }),
-              expect.objectContaining({ property: 'defra_PermitId', select: expect.any(Array) })
+              expect.objectContaining({ property: 'defra_ContactId' }),
+              expect.objectContaining({ property: 'defra_PermitId' })
             ])
           })
         ]),

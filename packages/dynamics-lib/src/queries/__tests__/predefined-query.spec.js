@@ -66,12 +66,10 @@ describe('PredefinedQuery', () => {
       select: expectedTestEntitySelect,
       expand: [
         {
-          property: 'parent_test_entity',
-          select: expectedTestEntitySelect
+          property: 'parent_test_entity'
         },
         {
-          property: 'child_test_entity',
-          select: expectedTestEntitySelect
+          property: 'child_test_entity'
         }
       ]
     })
