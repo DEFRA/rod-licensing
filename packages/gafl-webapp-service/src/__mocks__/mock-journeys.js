@@ -272,7 +272,6 @@ export const JUNIOR_LICENCE = {
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
@@ -339,7 +338,6 @@ export const JUNIOR_DISABLED_LICENCE = {
       'ni-number': 'NH 34 67 44 A'
     })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details

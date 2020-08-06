@@ -48,14 +48,23 @@
 {% endset -%}
 
 {% block pageContent %}
-    <p class="govuk-body-m">If you receive one of the following, and you are applying for a 12 month licence, you may be eligible for a disability concession.</p>
+    {% if data.hasJunior %}
+        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you can opt to get a disability licence, though you won’t receive any further discount on your licence price.</p>
+        {% set niText = 'National Insurance or Child Reference Number' %}
+    {% elseif data.hasSenior %}
+        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you can opt to get a disability licence, though you won’t receive any further discount on your licence price.</p>
+        {% set niText = 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)' %}
+    {% else %}
+        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you may be eligible for a disability concession.</p>
+        {% set niText = 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)' %}
+    {% endif %}
 
     {{ govukRadios({
            idPrefix: "disability-concession",
            name: "disability-concession",
            items: [
                {
-                   text: "Personal Independence Payment (PIP) or disability living allowance",
+                   html: niText,
                    value: data.pipDla,
                    checked: payload['disability-concession'] === data.pipDla,
                    conditional: { html: pipDla }

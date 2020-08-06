@@ -116,7 +116,6 @@ describe('The licence summary page', () => {
       })
       await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       d()
     })
 

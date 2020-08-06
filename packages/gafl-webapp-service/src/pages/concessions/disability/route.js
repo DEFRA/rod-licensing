@@ -2,6 +2,7 @@ import { DISABILITY_CONCESSION, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 export const disabilityConcessionTypes = {
   pipDla: 'pip-dla',
@@ -27,6 +28,13 @@ const validator = Joi.object({
   })
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = () => disabilityConcessionTypes
+const getData = async request => {
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  return {
+    hasJunior: concessionHelper.hasJunior(permission),
+    hasSenior: concessionHelper.hasSenior(permission),
+    ...disabilityConcessionTypes
+  }
+}
 
 export default pageRoute(DISABILITY_CONCESSION.page, DISABILITY_CONCESSION.uri, validator, CONTROLLER.uri, getData)

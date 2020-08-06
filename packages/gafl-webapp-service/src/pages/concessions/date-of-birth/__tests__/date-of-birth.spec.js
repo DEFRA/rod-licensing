@@ -55,16 +55,4 @@ describe('The date of birth page', () => {
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
   })
-
-  it('displays no back-link if the licence summary has not been seen', () => {
-    // TODO - we need a procedure for stepping through the journey
-  })
-
-  it('displays a back-link to the licence summary if the licence summary has been seen', () => {
-    // TODO
-  })
-
-  it('redirects to the licence summary if the licence summary has been seen', () => {
-    // TODO
-  })
 })
