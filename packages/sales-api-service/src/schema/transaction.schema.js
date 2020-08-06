@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi'
 import { PoclFile } from '@defra-fish/dynamics-lib'
-import { createPermissionSchema, createPermissionResponseSchema } from './permission.schema.js'
+import { finalisePermissionResponseSchema, stagedPermissionSchema } from './permission.schema.js'
 import { contactRequestSchema } from './contact.schema.js'
 import { createAlternateKeyValidator, buildJoiOptionSetValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
@@ -13,19 +13,21 @@ import { v4 as uuidv4 } from 'uuid'
  */
 export const BATCH_CREATE_MAX_COUNT = 25
 
+const createTransactionRequestSchemaContent = {
+  permissions: Joi.array()
+    .min(1)
+    .max(MAX_PERMISSIONS_PER_TRANSACTION)
+    .items(stagedPermissionSchema)
+    .required()
+    .label('create-transaction-request-permissions'),
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales')
+}
+
 /**
  * Schema for the create transaction request
  * @type {Joi.AnySchema}
  */
-export const createTransactionSchema = Joi.object({
-  permissions: Joi.array()
-    .min(1)
-    .max(MAX_PERMISSIONS_PER_TRANSACTION)
-    .items(createPermissionSchema)
-    .required()
-    .label('create-transaction-request-permissions'),
-  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales')
-}).label('create-transaction-request')
+export const createTransactionSchema = Joi.object(createTransactionRequestSchemaContent).label('create-transaction-request')
 
 /**
  * Validates a request to create transactions in batch.
@@ -39,30 +41,40 @@ export const createTransactionBatchSchema = Joi.array()
   .items(
     Joi.object()
       .required()
+      .label('create-transaction-batch-item')
       .description('See create-transaction-request for proper structure')
   )
   .required()
   .label('create-transaction-batch-request')
 
-/**
- * Schema for the create transaction response
- * @type {Joi.AnySchema}
- */
-export const createTransactionResponseSchema = Joi.object({
+const createTransactionResponseSchemaContent = {
   id: Joi.string()
     .trim()
     .guid()
     .required(),
   expires: Joi.number().required(),
+  ...createTransactionRequestSchemaContent,
   permissions: Joi.array()
     .min(1)
-    .items(createPermissionResponseSchema)
+    .items(stagedPermissionSchema)
     .required()
     .label('create-transaction-response-permissions'),
-  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
   cost: Joi.number().required(),
-  isRecurringPaymentSupported: Joi.boolean().required()
-}).label('create-transaction-response')
+  isRecurringPaymentSupported: Joi.boolean().required(),
+  status: Joi.object({
+    id: Joi.string()
+      .valid('STAGED')
+      .required()
+  })
+    .label('create-transaction-status')
+    .required()
+}
+
+/**
+ * Schema for the create transaction response
+ * @type {Joi.AnySchema}
+ */
+export const createTransactionResponseSchema = Joi.object(createTransactionResponseSchemaContent).label('create-transaction-response')
 
 /**
  * Schema for the create transaction batch response
@@ -72,18 +84,16 @@ export const createTransactionBatchResponseSchema = Joi.array()
   .items(
     Joi.object({
       statusCode: Joi.number().required(),
-      response: createTransactionResponseSchema.optional(),
+      response: Joi.object(createTransactionResponseSchemaContent)
+        .label('create-transaction-batch-item-response')
+        .optional(),
       error: Joi.string().optional(),
       message: Joi.string().optional()
     }).label('create-transaction-batch-response-item')
   )
   .label('create-transaction-batch-response')
 
-/**
- * Schema for the finalise transaction request
- * @type {Joi.AnySchema}
- */
-export const finaliseTransactionRequestSchema = Joi.object({
+const finaliseTransactionRequestSchemaContent = {
   transactionFile: Joi.string()
     .optional()
     .external(createAlternateKeyValidator(PoclFile)),
@@ -117,9 +127,28 @@ export const finaliseTransactionRequestSchema = Joi.object({
   })
     .label('finalise-transaction-payment-details')
     .required()
-}).label('finalise-transaction-request')
+}
+
+/**
+ * Schema for the finalise transaction request
+ * @type {Joi.AnySchema}
+ */
+export const finaliseTransactionRequestSchema = Joi.object(finaliseTransactionRequestSchemaContent).label('finalise-transaction-request')
 
 export const finaliseTransactionResponseSchema = Joi.object({
-  messageId: Joi.string().required(),
-  status: Joi.string().required()
+  ...createTransactionResponseSchemaContent,
+  ...finaliseTransactionRequestSchemaContent,
+  permissions: Joi.array()
+    .min(1)
+    .items(finalisePermissionResponseSchema)
+    .required()
+    .label('finalise-transaction-response-permissions'),
+  status: Joi.object({
+    id: Joi.string()
+      .valid('FINALISED')
+      .required(),
+    messageId: Joi.string().required()
+  })
+    .required()
+    .label('finalise-transaction-status')
 }).label('finalise-transaction-response')

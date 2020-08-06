@@ -1,30 +1,19 @@
 import { createTransaction, createTransactions } from '../create-transaction.js'
 import {
   mockTransactionPayload,
-  mockTransactionRecord,
-  MOCK_PERMISSION_NUMBER,
-  MOCK_END_DATE,
   MOCK_12MONTH_SENIOR_PERMIT,
-  MOCK_1DAY_SENIOR_PERMIT_ENTITY
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
+  MOCK_12MONTH_DISABLED_PERMIT
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
-
-jest.mock('../../permissions.service.js', () => ({
-  generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
-  calculateEndDate: () => MOCK_END_DATE
-}))
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
   getReferenceDataForEntityAndId: async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
-      if (id === MOCK_12MONTH_SENIOR_PERMIT.id) {
-        item = MOCK_12MONTH_SENIOR_PERMIT
-      } else if (id === MOCK_1DAY_SENIOR_PERMIT_ENTITY.id) {
-        item = MOCK_1DAY_SENIOR_PERMIT_ENTITY
-      }
+      item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
     }
     return item
   }
@@ -38,19 +27,21 @@ describe('transaction service', () => {
 
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
-      const expectedRecord = Object.assign(mockTransactionRecord(), {
+      const mockPayload = mockTransactionPayload()
+      const expectedResult = Object.assign({}, mockPayload, {
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
-        cost: 30,
-        isRecurringPaymentSupported: true
+        cost: 54,
+        isRecurringPaymentSupported: true,
+        status: { id: 'STAGED' }
       })
 
-      const result = await createTransaction(mockTransactionPayload())
-      expect(result).toMatchObject(expectedRecord)
+      const result = await createTransaction(mockPayload)
+      expect(result).toMatchObject(expectedResult)
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
         expect.objectContaining({
           TableName: TRANSACTION_STAGING_TABLE.TableName,
-          Item: expectedRecord
+          Item: expectedResult
         })
       )
     })
@@ -63,14 +54,16 @@ describe('transaction service', () => {
 
   describe('createTransactions', () => {
     it('accepts multiple transactions', async () => {
-      const expectedRecord = Object.assign(mockTransactionRecord(), {
+      const mockPayload = mockTransactionPayload()
+      const expectedRecord = Object.assign({}, mockPayload, {
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
-        cost: 30,
-        isRecurringPaymentSupported: true
+        cost: 54,
+        isRecurringPaymentSupported: true,
+        status: { id: 'STAGED' }
       })
 
-      const result = await createTransactions([mockTransactionPayload(), mockTransactionPayload()])
+      const result = await createTransactions([mockPayload, mockPayload])
       expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
         expect.objectContaining({

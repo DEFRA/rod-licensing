@@ -13,10 +13,10 @@ import {
   TransactionJournal
 } from '@defra-fish/dynamics-lib'
 import {
-  mockTransactionRecord,
-  mockCompletedTransactionRecord,
+  mockFinalisedTransactionRecord,
   MOCK_1DAY_SENIOR_PERMIT_ENTITY,
   MOCK_12MONTH_SENIOR_PERMIT,
+  MOCK_12MONTH_DISABLED_PERMIT,
   MOCK_CONCESSION,
   MOCK_TRANSACTION_CURRENCY,
   mockContactPayload,
@@ -36,11 +36,7 @@ jest.mock('../../reference-data.service.js', () => ({
   getReferenceDataForEntityAndId: async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
-      if (id === MOCK_12MONTH_SENIOR_PERMIT.id) {
-        item = MOCK_12MONTH_SENIOR_PERMIT
-      } else if (id === MOCK_1DAY_SENIOR_PERMIT_ENTITY.id) {
-        item = MOCK_1DAY_SENIOR_PERMIT_ENTITY
-      }
+      item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
     } else if (entityType === MOCK_CONCESSION.constructor) {
       item = MOCK_CONCESSION
     }
@@ -71,7 +67,7 @@ describe('transaction service', () => {
         [
           'short term licences',
           () => {
-            const mockRecord = mockCompletedTransactionRecord()
+            const mockRecord = mockFinalisedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
             return mockRecord
           },
@@ -87,7 +83,7 @@ describe('transaction service', () => {
         [
           'long term licences',
           () => {
-            const mockRecord = mockCompletedTransactionRecord()
+            const mockRecord = mockFinalisedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             return mockRecord
           },
@@ -104,7 +100,7 @@ describe('transaction service', () => {
         [
           'long term licences (no concession)',
           () => {
-            const mockRecord = mockCompletedTransactionRecord()
+            const mockRecord = mockFinalisedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             delete mockRecord.permissions[0].concessions
             return mockRecord
@@ -121,7 +117,7 @@ describe('transaction service', () => {
         [
           'licences with a recurring payment',
           () => {
-            const mockRecord = mockCompletedTransactionRecord()
+            const mockRecord = mockFinalisedTransactionRecord()
             mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             mockRecord.payment.recurring = {
               referenceNumber: 'Test Reference Number',
@@ -179,7 +175,7 @@ describe('transaction service', () => {
 
     it('handles requests which relate to an transaction file', async () => {
       const transactionFilename = 'test-file.xml'
-      const mockRecord = mockCompletedTransactionRecord()
+      const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.transactionFile = transactionFilename
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToAlternateKey')
@@ -192,7 +188,7 @@ describe('transaction service', () => {
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
-      const mockRecord = mockTransactionRecord()
+      const mockRecord = mockFinalisedTransactionRecord()
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
       try {
         await processQueue({ id: mockRecord.id })

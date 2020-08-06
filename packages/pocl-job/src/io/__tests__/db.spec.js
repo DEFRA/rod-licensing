@@ -57,7 +57,12 @@ describe('database operations', () => {
         expect.objectContaining({
           TableName: 'TestFileTable',
           Key: { filename: TEST_FILENAME },
-          UpdateExpression: 'SET expires = :expires,param1 = :param1,param2 = :param2',
+          UpdateExpression: 'SET #expires = :expires,#param1 = :param1,#param2 = :param2',
+          ExpressionAttributeNames: {
+            '#expires': 'expires',
+            '#param1': 'param1',
+            '#param2': 'param2'
+          },
           ExpressionAttributeValues: {
             ':expires': expect.any(Number),
             ':param1': 'test1',

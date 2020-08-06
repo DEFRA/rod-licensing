@@ -75,7 +75,7 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       record.stage = RECORD_STAGE.TransactionFinalised
       delete record.createTransactionPayload
       delete record.finaliseTransactionPayload
-      record.finaliseTransactionId = result.value.messageId
+      record.finaliseTransactionId = result.value.status.messageId
       state.succeeded++
     } else {
       record.stage = RECORD_STAGE.TransactionFinalisationFailed

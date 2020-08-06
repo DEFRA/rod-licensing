@@ -27,7 +27,7 @@ describe('finalise-transactions', () => {
       { id: 'test1', stage: RECORD_STAGE.TransactionCreated },
       { id: 'test2', stage: RECORD_STAGE.TransactionCreated }
     ])
-    salesApi.finaliseTransaction.mockResolvedValueOnce({ messageId: 'message1' })
+    salesApi.finaliseTransaction.mockResolvedValueOnce({ status: { id: 'FINALISED', messageId: 'message1' } })
     salesApi.finaliseTransaction.mockRejectedValueOnce(fakeApiError)
     await finaliseTransactions(TEST_FILENAME)
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(2)
@@ -53,7 +53,7 @@ describe('finalise-transactions', () => {
       { id: 'test2', stage: RECORD_STAGE.TransactionFinalisationFailed },
       { id: 'test3', stage: RECORD_STAGE.TransactionCreated }
     ])
-    salesApi.finaliseTransaction.mockResolvedValue({ messageId: `message-${Math.random()}`, status: 'queued' })
+    salesApi.finaliseTransaction.mockResolvedValue({ status: { id: 'FINALISED', messageId: `message-${Math.random()}` } })
     await finaliseTransactions(TEST_FILENAME)
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(1)
     expect(db.updateRecordStagingTable).toHaveBeenCalledTimes(1)
@@ -66,7 +66,7 @@ describe('finalise-transactions', () => {
     db.getProcessedRecords.mockReturnValueOnce(
       Array(MAX_FINALISE_TRANSACTION_BATCH_SIZE + 1).fill({ id: `test-${Math.random()}`, stage: RECORD_STAGE.TransactionCreated })
     )
-    salesApi.finaliseTransaction.mockResolvedValue({ messageId: `message-${Math.random()}`, status: 'queued' })
+    salesApi.finaliseTransaction.mockResolvedValue({ status: { id: 'FINALISED', messageId: `message-${Math.random()}` } })
     await finaliseTransactions(TEST_FILENAME)
     expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(MAX_FINALISE_TRANSACTION_BATCH_SIZE + 1)
     expect(db.updateRecordStagingTable).toHaveBeenCalledTimes(2)

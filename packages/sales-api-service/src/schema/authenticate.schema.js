@@ -3,7 +3,7 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { concessionProofSchema } from './concession-proof.schema.js'
 import { permitSchema } from './permit.schema.js'
 import { contactResponseSchema } from './contact.schema.js'
-import { permissionFieldsSchemaDefinitions } from './permission.schema.js'
+import { finalisedPermissionSchemaContent } from './permission.schema.js'
 
 export const authenticateRenewalRequestParamsSchema = Joi.object({
   referenceNumber: Joi.string()
@@ -22,7 +22,7 @@ export const authenticateRenewalRequestQuerySchema = Joi.object({
 
 export const authenticateRenewalResponseSchema = Joi.object({
   permission: {
-    ...permissionFieldsSchemaDefinitions,
+    ...finalisedPermissionSchemaContent,
     licensee: contactResponseSchema,
     concessions: concessionProofSchema,
     permit: permitSchema
