@@ -21,7 +21,7 @@ describe('The govuk-pay-service', () => {
     ).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Salmon 12 month 1 Rod Licence (Senior)',
+      description: 'Senior, Salmon and sea trout, 12 months',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
@@ -43,7 +43,7 @@ describe('The govuk-pay-service', () => {
     expect(preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'https' } }, mockTransaction2)).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Salmon 12 month 1 Rod Licence (Senior)',
+      description: 'Senior, Salmon and sea trout, 12 months',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
