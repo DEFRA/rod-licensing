@@ -40,10 +40,11 @@ describe('The govuk-pay-service', () => {
   it('prepares a correct payment creation object - with locality', async () => {
     const mockTransaction2 = Object.assign({}, mockTransaction)
     mockTransaction2.permissions[0].licensee.locality = 'Stoke Bishop'
+    mockTransaction2.permissions[0].licenceLength = '8D'
     expect(preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'https' } }, mockTransaction2)).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Senior, Salmon and sea trout, 12 months',
+      description: 'Senior, Salmon and sea trout, 8 days',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
