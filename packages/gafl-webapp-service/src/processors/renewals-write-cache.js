@@ -6,6 +6,8 @@ import { ageConcessionHelper, addDisabled } from './concession-helper.js'
 import { CONTACT_SUMMARY_SEEN } from '../constants.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
+import { salesApi } from '@defra-fish/connectors-lib'
+
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -41,10 +43,13 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label
   permission.licensee.preferredMethodOfReminder = authenticationResult.permission.licensee.preferredMethodOfReminder.label
 
-  // TODO - this does not work!
   // Add in concession proofs
-  authenticationResult.permission.concessions.forEach(c => {
-    addDisabled(permission, c.proofType.label, c.referenceNumber)
+  const concessions = await salesApi.concessions.getAll()
+  authenticationResult.permission.concessions.forEach(concessionProof => {
+    const concessionReference = concessions.find(c => c.id === concessionProof.id)
+    if (concessionReference && concessionReference.name === constants.CONCESSION.DISABLED) {
+      addDisabled(permission, concessionProof.proof.type.label, concessionProof.proof.referenceNumber)
+    }
   })
 
   // Add appropriate age concessions
