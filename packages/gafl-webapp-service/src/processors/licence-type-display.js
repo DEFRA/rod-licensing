@@ -27,11 +27,11 @@ export const licenceTypeDisplay = permission => {
 export const licenceTypeAndLengthDisplay = permission => {
   switch (permission.licenceLength) {
     case '12M':
-      return licenceTypeDisplay(permission) + ', 12 months'
+      return `${licenceTypeDisplay(permission)}, 12 months`
     case '8D':
-      return licenceTypeDisplay(permission) + ', 8 days'
+      return `${licenceTypeDisplay(permission)}, 8 days`
     default:
-      return licenceTypeDisplay(permission) + ', 1 day'
+      return `${licenceTypeDisplay(permission)}, 1 day`
   }
 }
 

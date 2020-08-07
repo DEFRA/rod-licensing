@@ -33,21 +33,21 @@ const getData = async request => {
   const endTimeString = displayEndTime(permission)
 
   return {
+    permission,
+    startTimeString,
+    endTimeString,
+    disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
+    licenceTypes: mappings.LICENCE_TYPE,
+    hasJunior: !!concessionHelper.hasJunior(permission),
+    hasSenior: !!concessionHelper.hasSenior(permission),
+    licenceTypeStr: licenceTypeDisplay(permission),
+    isPhysical: isPhysical(permission),
     uri: {
       new: NEW_TRANSACTION.uri,
       refund: REFUND_POLICY.uri,
       pdf: ORDER_COMPLETE_PDF.uri,
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
-    },
-    disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
-    licenceTypes: mappings.LICENCE_TYPE,
-    hasJunior: !!concessionHelper.hasJunior(permission),
-    hasSenior: !!concessionHelper.hasSenior(permission),
-    permission,
-    licenceTypeStr: licenceTypeDisplay(permission),
-    isPhysical: isPhysical(permission),
-    startTimeString,
-    endTimeString
+    }
   }
 }
 

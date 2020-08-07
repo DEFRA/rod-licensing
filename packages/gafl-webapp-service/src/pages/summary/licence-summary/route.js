@@ -3,7 +3,6 @@ import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
-import * as mappings from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
@@ -58,13 +57,13 @@ export const getData = async request => {
 
   return {
     permission,
-    licenceTypeStr: licenceTypeDisplay(permission),
     startTimeString,
+    licenceTypeStr: licenceTypeDisplay(permission),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
-    disabled: permission.concessions ? permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED) : null,
-    hasJunior: !!concessionHelper.hasJunior(permission),
+    disabled: concessionHelper.hasDisabled(permission),
+    hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
     uri: {
