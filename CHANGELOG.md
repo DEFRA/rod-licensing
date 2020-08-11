@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.35 (2020-08-11)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`
+  * [#297](https://github.com/DEFRA/rod-licensing/pull/297) Front end journey redesign ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.34 (2020-08-06)
 
 #### :rocket: Enhancement
