@@ -1,0 +1,88 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "input/macro.njk" import govukInput %}
+{% set title = 'Do you receive any of the following?' %}
+
+{%
+    set errorMap = {
+        'disability-concession': {
+            'any.required': { ref: '#disability-concession', text: 'You have not told us if you receive any disability concessions' }
+        },
+        'ni-number': {
+            'string.empty': { ref: '#ni-number', text: 'You have not told us your national insurance number' },
+            'string.pattern.base': { ref: '#ni-number', text: 'This does not look like a valid UK national insurance number, please check you have entered it correctly' }
+        },
+        'blue-badge-number': {
+            'string.empty': { ref: '#blue-badge-number', text: 'You have not told us your blue badge number' },
+            'string.max': { ref: '#blue-badge-number', text: 'You blue badge number is longer than 40 characters' }
+        }
+    }
+%}
+
+{% set pipDla %}
+    {{ govukInput({
+      label: {
+        text: "NI number"
+      },
+      id: "ni-number",
+      name: "ni-number",
+      value: payload['ni-number'],
+      classes: "govuk-input--width-20",
+      attributes: { maxlength: 13 },
+      errorMessage: { text: 'Check your national insurance number' } if error['ni-number']
+    }) }}
+{% endset -%}
+
+{% set blueBadge %}
+    {{ govukInput({
+      label: {
+        text: "Blue Badge Number"
+      },
+      id: "blue-badge-number",
+      name: "blue-badge-number",
+      value: payload['blue-badge-number'],
+      classes: "govuk-input--width-20",
+      attributes: { maxlength: 13 },
+      errorMessage: { text: 'Check your blue badge number' } if error['blue-badge-number']
+    }) }}
+{% endset -%}
+
+{% block pageContent %}
+    {% if data.hasJunior %}
+        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you can opt to get a disability licence, though you won’t receive any further discount on your licence price.</p>
+        {% set niText = 'National Insurance or Child Reference Number' %}
+    {% elseif data.hasSenior %}
+        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you can opt to get a disability licence, though you won’t receive any further discount on your licence price.</p>
+        {% set niText = 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)' %}
+    {% else %}
+        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you may be eligible for a disability concession.</p>
+        {% set niText = 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)' %}
+    {% endif %}
+
+    {{ govukRadios({
+           idPrefix: "disability-concession",
+           name: "disability-concession",
+           items: [
+               {
+                   html: niText,
+                   value: data.pipDla,
+                   checked: payload['disability-concession'] === data.pipDla,
+                   conditional: { html: pipDla }
+               },
+               {
+                  text: "Blue Badge",
+                  value: data.blueBadge,
+                  checked: payload['disability-concession'] === data.blueBadge,
+                  conditional: { html: blueBadge }
+               },
+               {
+                   text: "No",
+                   value: data.no,
+                   checked: payload['disability-concession'] === data.no
+               }
+           ],
+           errorMessage: { text: 'Tell us if you claim Disability Living Allowance or Personal Independence Payment' } if error['disability-concession']
+       })
+     }}
+
+{% endblock %}

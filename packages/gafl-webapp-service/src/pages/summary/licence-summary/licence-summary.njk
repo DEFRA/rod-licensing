@@ -9,28 +9,10 @@
 {% if data.isRenewal %}
     {% set title = 'Check your licence renewal details' %}
 {% else %}
-    {% set title = 'Check your new licence details' %}
+    {% set title = 'Check the licence you are requesting is correct' %}
 {% endif %}
 
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
-
-{% macro addressLine(line) %}
-    {% if line %}{{ line }}</br>{% endif %}
-{% endmacro %}
-
-{% set types = [] %}
-
-{% if data.hasJunior %}
-    {{ types.push('Junior') }}
-{% elseif data.hasSenior %}
-    {{ types.push('Senior') }}
-{% else %}
-    {{ types.push('Adult') }}
-{% endif %}
-
-{% if data.disabled %}
-    {{ types.push('Disabled') }}
-{% endif %}
 
 {% set licenseDetailsSummaryRows = [
     {
@@ -38,16 +20,8 @@
         text: "Type"
       },
       value: {
-        text: types | join(', ')
+        text: data.licenceTypeStr
       },
-      classes: 'no-border',
-      actions: {items: [{}]}
-    },
-    {
-      value: {
-        text: data.permission.licenceType
-      },
-      classes: 'no-border' if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] else '',
       actions: {
         items: [
           {
@@ -61,24 +35,6 @@
     }
   ]
 %}
-
-{% if data.permission.licenceType === data.licenceTypes['trout-and-coarse'] %}
-    {{ licenseDetailsSummaryRows.push({
-      value: {
-        text: 'Up to 2 rods' if data.permission.numberOfRods === '2' else 'Up to 3 rods'
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.numberOfRods,
-            text: "Change",
-            visuallyHiddenText: "number of rods",
-            attributes: { id: 'change-number-of-rods' }
-          }
-        ] if data.permission.licenceLength === '12M'
-      }
-    }) }}
-{% endif %}
 
 {{ licenseDetailsSummaryRows.push({
   key: {
@@ -95,7 +51,7 @@
         visuallyHiddenText: "licence length",
         attributes: { id: 'change-licence-length' }
       }
-    ] if not data.hasJunior and not data.isRenewal
+    ] if not data.hasJunior and not data.isRenewal and data.permission.numberOfRods !== '3'
   }
 }) }}
 
@@ -141,45 +97,24 @@
 }) }}
 
 {% if data.permission.licenceLength === '12M' %}
-    {% if data.disabled %}
-        {{ licenseDetailsSummaryRows.push({
-          key: {
-            text: "Disability support"
-          },
-          value: {
-            html: data.disabled.proof.type + ":&nbsp;" + data.disabled.proof.referenceNumber
-          },
-          actions: {
-            items: [
-              {
-                href: data.uri.benefitCheck,
-                text: "Change",
-                visuallyHiddenText: "benefit check",
-                attributes: { id: 'change-benefit-check' }
-              }
-            ]
-        }
-        }) }}
-    {% else %}
-        {{ licenseDetailsSummaryRows.push({
-          key: {
-            text: "Disability support"
-          },
-          value: {
-            html: '<span class="govuk-caption-m">None</span>'
-          },
-          actions: {
-            items: [
-              {
-                href: data.uri.benefitCheck,
-                text: "Change",
-                visuallyHiddenText: "benefit check",
-                attributes: { id: 'change-benefit-check' }
-              }
-            ]
-        }
-        }) }}
-    {% endif %}
+    {{ licenseDetailsSummaryRows.push({
+      key: {
+        text: "Disability support"
+      },
+      value: {
+        html: data.disabled.proof.type + ":&nbsp;" + data.disabled.proof.referenceNumber if data.disabled else '<span class="govuk-caption-m">None</span>'
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.disabilityConcession,
+            text: "Change",
+            visuallyHiddenText: "benefit check",
+            attributes: { id: 'change-benefit-check' }
+          }
+        ]
+    }
+    }) }}
 {% endif %}
 
 {{ licenseDetailsSummaryRows.push({
@@ -199,7 +134,6 @@
         isPageHeading: true
       }
     }) %}
-        <p class="govuk-body-l">Do you want to make any changes?</p>
         {{ govukSummaryList({ rows: licenseDetailsSummaryRows }) }}
     {% endcall %}
 {% endset -%}
@@ -227,6 +161,7 @@
 
             {{ csrf() }}
         </form>
+        <a class="govuk-link" href="{{ data.uri.clear }}">Buy a different licence</a>
     </div>
 </div>
 {% endblock %}

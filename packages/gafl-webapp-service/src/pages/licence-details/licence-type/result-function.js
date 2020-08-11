@@ -1,24 +1,24 @@
-import { LICENCE_TYPE } from '../../../uri.js'
 import { CommonResults } from '../../../constants.js'
+import { hasJunior, hasDisabled } from '../../../processors/concession-helper.js'
+import * as constants from '../../../processors/mapping-constants.js'
 
 export const licenceTypeResults = {
-  TROUT_AND_COARSE: 'trout-and-coarse',
-  TROUT_AND_COARSE_2_ROD: 'trout-and-coarse-2r',
-  SALMON_AND_SEA_TROUT: 'salmon-and-sea-trout'
+  ASK_LICENCE_LENGTH: 'ask-length',
+  SKIP_LICENCE_LENGTH: 'skip-length'
 }
 
 export default async request => {
-  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TYPE.page)
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const status = await request.cache().helpers.status.getCurrentPermission()
 
-  if (payload['licence-type'] === 'salmon-and-sea-trout') {
-    return status.fromSummary ? CommonResults.SUMMARY : licenceTypeResults.SALMON_AND_SEA_TROUT
-  } else {
-    const permission = await request.cache().helpers.transaction.getCurrentPermission()
-    if (permission.licenceLength !== '12M') {
-      return status.fromSummary ? CommonResults.SUMMARY : licenceTypeResults.TROUT_AND_COARSE_2_ROD
-    } else {
-      return licenceTypeResults.TROUT_AND_COARSE
-    }
+  if (status.fromSummary) {
+    return CommonResults.SUMMARY
   }
+
+  // If junior, disabled, or 3 rod trout and coarse then it is always a 12 month licence
+  return hasJunior(permission) ||
+    hasDisabled(permission) ||
+    (permission.licenceType === constants.LICENCE_TYPE['trout-and-coarse'] && permission.numberOfRods === '3')
+    ? licenceTypeResults.SKIP_LICENCE_LENGTH
+    : licenceTypeResults.ASK_LICENCE_LENGTH
 }

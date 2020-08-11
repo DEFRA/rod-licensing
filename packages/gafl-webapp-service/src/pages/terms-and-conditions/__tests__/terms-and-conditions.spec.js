@@ -16,7 +16,7 @@ import {
   AGREED
 } from '../../../uri.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils-system.js'
 import mockPermits from '../../../__mocks__/data/permits.js'
 import mockPermitsConcessions from '../../../__mocks__/data/permit-concessions.js'
 import mockConcessions from '../../../__mocks__/data/concessions.js'

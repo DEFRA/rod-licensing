@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 import { NO_LICENCE_REQUIRED } from '../../../../uri.js'
 
 beforeAll(d => start(d))

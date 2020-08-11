@@ -12,7 +12,9 @@ export default async request => {
 
   if (payload.newsletter === 'yes') {
     licensee.preferredMethodOfNewsletter = HOW_CONTACTED.email
-    licensee.email = payload.email
+    if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {
+      licensee.email = payload.email
+    }
   } else {
     licensee.preferredMethodOfNewsletter = HOW_CONTACTED.none
     if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {

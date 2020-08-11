@@ -4,6 +4,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 {% from "error-summary.njk" import errorSummary %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = 'Licence conditions' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
@@ -19,6 +20,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
 
         {{ errorSummary(error, errorMap) }}
 

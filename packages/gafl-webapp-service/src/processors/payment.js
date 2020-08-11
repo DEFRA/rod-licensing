@@ -1,5 +1,6 @@
 import { AGREED } from '../uri.js'
 import db from 'debug'
+import { licenceTypeAndLengthDisplay } from './licence-type-display.js'
 const debug = db('webapp:payment-processors')
 
 /**
@@ -15,7 +16,7 @@ export const preparePayment = (request, transaction) => {
     return_url: url.href,
     amount: transaction.cost * 100,
     reference: transaction.id,
-    description: transaction.permissions.length === 1 ? transaction.permissions[0].permit.description : 'Multiple permits',
+    description: transaction.permissions.length === 1 ? licenceTypeAndLengthDisplay(transaction.permissions[0]) : 'Multiple permits',
     delayed_capture: false
   }
 

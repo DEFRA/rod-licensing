@@ -1,6 +1,6 @@
 import { CONCESSION, CONCESSION_PROOF, HOW_CONTACTED } from './mapping-constants.js'
 import moment from 'moment'
-import { isJunior, isMinor, isSenior } from '@defra-fish/business-rules-lib'
+import { isJunior, isMinor, isSenior, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 
 export const clear = permission => {
   delete permission.concessions
@@ -82,7 +82,12 @@ export const removeDisabled = permission => {
 
 export const ageConcessionHelper = permission => {
   delete permission.licensee.noLicenceRequired
-  const ageAtLicenceStartDate = moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
+  const ageAtLicenceStartDate = permission.licenceStartDate
+    ? moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
+    : moment()
+      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+      .diff(moment(permission.licensee.birthDate), 'years')
+
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
     clear(permission)
@@ -91,7 +96,7 @@ export const ageConcessionHelper = permission => {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M', licenceStartTime: '0' })
     addJunior(permission)
-    // Junior licences are net sent out by post so if the contact details are by letter then reset to none
+    // Junior licences are not sent out by post so if the contact details are by letter then reset to none
     if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none

@@ -4,29 +4,28 @@ import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // We need to have set the licence length, dob and start date here to determining the contact
   // messaging
-  if (!permission.licenceLength) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
+  if (!permission.licensee.birthDate) {
+    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
 
   if (!permission.licenceStartDate) {
     throw new GetDataRedirect(LICENCE_TO_START.uri)
   }
 
-  if (!permission.licensee.birthDate) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  if (!permission.licenceLength) {
+    throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
   return {
     licensee: permission.licensee,
-    licenceLength: permission.licenceLength,
-    junior: concessionHelper.hasJunior(permission),
+    isPhysical: isPhysical(permission),
     howContacted: HOW_CONTACTED
   }
 }

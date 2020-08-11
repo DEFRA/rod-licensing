@@ -1,11 +1,13 @@
 import moment from 'moment'
 import db from 'debug'
-import { LICENCE_TYPE, NUMBER_OF_RODS, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
+import { LICENCE_TYPE, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
-import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { CONTACT_SUMMARY_SEEN } from '../constants.js'
+import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
+import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { salesApi } from '@defra-fish/connectors-lib'
+
 const debug = db('webapp:renewals-write-cache')
 
 /**
@@ -19,7 +21,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
   permission.licenceStartTime = null
-  permission.licenceToStart = licenceToStartResults.ANOTHER_DATE_OR_TIME
+  permission.licenceToStart = licenceToStart.AFTER_PAYMENT
   permission.licenceStartDate = moment(authenticationResult.permission.endDate).format('YYYY-MM-DD')
   permission.renewedEndDate = permission.licenceStartDate
   permission.licensee = Object.assign(
@@ -41,7 +43,6 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licensee.preferredMethodOfConfirmation = authenticationResult.permission.licensee.preferredMethodOfConfirmation.label
   permission.licensee.preferredMethodOfReminder = authenticationResult.permission.licensee.preferredMethodOfReminder.label
 
-  // TODO - graham, check you're happy with this - it sets disabled correctly, and I assume senior/junior are handled by ageConcessionHelper?
   // Add in concession proofs
   const concessions = await salesApi.concessions.getAll()
   authenticationResult.permission.concessions.forEach(concessionProof => {
@@ -59,15 +60,21 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
 export const setUpPayloads = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  const type = () => {
+    if (permission.licenceType === constants.LICENCE_TYPE['trout-and-coarse']) {
+      if (permission.numberOfRods === '2') {
+        return licenseTypes.troutAndCoarse2Rod
+      } else {
+        return licenseTypes.troutAndCoarse3Rod
+      }
+    }
+    return licenseTypes.salmonAndSeaTrout
+  }
+
   await request.cache().helpers.page.setCurrentPermission(LICENCE_TYPE.page, {
     payload: {
-      'licence-type': Object.entries(constants.LICENCE_TYPE).find(e => e[1] === permission.licenceType)[0]
-    }
-  })
-
-  await request.cache().helpers.page.setCurrentPermission(NUMBER_OF_RODS.page, {
-    payload: {
-      'number-of-rods': permission.numberOfRods
+      'licence-type': type()
     }
   })
 

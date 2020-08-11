@@ -1,7 +1,7 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'When would you like your licence renewal to start?' %}
+{% set title = 'When would you like your licence to start?' %}
 
 {%
     set errorMap = {
@@ -33,8 +33,8 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-l">Your current licence expires on {{ data.expiryTimeString }}</p>
-    <p class="govuk-body-l">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence expires</p>
+    <p class="govuk-body-m">Your current licence expires on {{ data.expiryTimeString }}</p>
+    <p class="govuk-body-m">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence expires</p>
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",

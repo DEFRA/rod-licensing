@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { injectWithCookies, postRedirectGet } from './test-utils'
-import moment from 'moment'
+import { injectWithCookies, postRedirectGet } from './test-utils-system.js'
+import { dobHelper, ADULT_TODAY, JUNIOR_TODAY, SENIOR_TODAY } from './test-utils-business-rules.js'
 
 import mockPermits from './data/permits.js'
 import mockPermitsConcessions from './data/permit-concessions.js'
@@ -21,11 +21,12 @@ import {
   NEW_TRANSACTION,
   NEWSLETTER,
   TERMS_AND_CONDITIONS,
-  BENEFIT_CHECK,
-  BENEFIT_NI_NUMBER
+  DISABILITY_CONCESSION
 } from '../uri.js'
+import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction'
+import { licenseTypes } from '../pages/licence-details/licence-type/route'
 
-import { JUNIOR_MAX_AGE, MINOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
+import { disabilityConcessionTypes } from '../pages/concessions/disability/route'
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
@@ -35,16 +36,6 @@ const goodAddress = {
   postcode: 'BS9 1HJ',
   'country-code': 'GB'
 }
-
-const dobHelper = d => ({
-  'date-of-birth-day': d.date().toString(),
-  'date-of-birth-month': (d.month() + 1).toString(),
-  'date-of-birth-year': d.year()
-})
-
-const dobJuniorToday = moment().subtract(MINOR_MAX_AGE + 1, 'years')
-const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
-const dobSeniorToday = moment().add(-SENIOR_MIN_AGE, 'years')
 
 salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
 salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
@@ -82,19 +73,25 @@ export const ADULT_FULL_1_DAY_LICENCE = {
     cost: 12
   },
   setup: async () => {
+    // Initialize
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
+
+    // Set up the licence details
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await postRedirectGet(LICENCE_SUMMARY.uri)
+
+    // Set up the contact details
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
     await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+    // Complete the pre-payment journey
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
@@ -139,20 +136,29 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
     cost: 82
   },
   setup: async () => {
+    // Initialize
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
+
+    // Set up the licence details
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      'disability-concession': disabilityConcessionTypes.pipDla,
+      'ni-number': 'NH 34 67 44 A'
+    })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
-    await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': 'NH436677A' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await postRedirectGet(LICENCE_SUMMARY.uri)
+
+    // Set up the contact details
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+    // Complete the pre-payment journey
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
@@ -196,24 +202,31 @@ export const SENIOR_12_MONTH_LICENCE = {
     cost: 54
   },
   setup: async () => {
+    // Initialize
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
+
+    // Set up the licence details
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobSeniorToday))
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await postRedirectGet(LICENCE_SUMMARY.uri)
+
+    // Set up the contact details
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+    // Complete the pre-payment journey
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
 }
 
-export const JUNIOR_12_MONTH_LICENCE = {
+export const JUNIOR_LICENCE = {
   transActionResponse: {
     id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
     expires: 1588412128,
@@ -251,18 +264,90 @@ export const JUNIOR_12_MONTH_LICENCE = {
     cost: 0
   },
   setup: async () => {
+    // Initialize
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await injectWithCookies('GET', CONTROLLER.uri)
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobJuniorToday))
+
+    // Set up the licence details
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await postRedirectGet(LICENCE_SUMMARY.uri)
+
+    // Set up the contact details
     await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none' })
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+    // Complete the pre-payment journey
+    await postRedirectGet(CONTACT_SUMMARY.uri)
+    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+  }
+}
+
+export const JUNIOR_DISABLED_LICENCE = {
+  transActionResponse: {
+    id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
+    expires: 1588412128,
+    dataSource: 'Web Sales',
+    permissions: [
+      {
+        permitId: 'd91b34a0-0c66-e611-80dc-c4346bad0190',
+        licensee: {
+          birthDate: '2006-01-01',
+          firstName: 'Graham',
+          lastName: 'Willis',
+          premises: '14 Howecroft Court',
+          street: 'Eastmead Lane',
+          town: 'Bristol',
+          postcode: 'BS9 1HJ',
+          country: 'United Kingdom',
+          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfConfirmation: 'Prefer not to be contacted',
+          preferredMethodOfReminder: 'Prefer not to be contacted'
+        },
+        issueDate: '2020-04-30T09:35:28.014Z',
+        startDate: '2020-04-29T23:00:00.000Z',
+        concessions: [
+          {
+            id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: 'NH 34 67 44 A'
+            }
+          }
+        ],
+        referenceNumber: '01300420-1WS0JGW-FLNA84',
+        endDate: '2020-04-29T23:00:00.000Z'
+      }
+    ],
+    cost: 0
+  },
+  setup: async () => {
+    // Initialize
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('GET', CONTROLLER.uri)
+
+    // Set up the licence details
+    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      'disability-concession': disabilityConcessionTypes.pipDla,
+      'ni-number': 'NH 34 67 44 A'
+    })
+    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+
+    // Set up the contact details
+    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
+    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+    // Complete the pre-payment journey
     await postRedirectGet(CONTACT_SUMMARY.uri)
     await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }

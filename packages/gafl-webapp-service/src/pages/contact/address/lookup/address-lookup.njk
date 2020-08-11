@@ -32,6 +32,7 @@
         {% endif %}
         {{ errorSummary(error, errorMap) }}
         <form method="post">
+
             {% call govukFieldset({
               legend: {
                 text: 'Find your address',
@@ -39,6 +40,12 @@
                 isPageHeading: true
               }
             }) %}
+
+                {% if data.isPhysical %}
+                    <p class="govuk-body-m">We must know this by law. This is also where we will send your licence card.</p>
+                {% else %}
+                    <p class="govuk-body-m">We must know this by law.</p>
+                {% endif %}
 
                 {{ govukInput({
                   label: {

@@ -22,7 +22,9 @@ export default async request => {
   // Set the data of birth in the licensee object
   permission.licensee.birthDate = dateOfBirth
 
-  // Calculate the age when the licence starts
+  // Set age related concessions
   ageConcessionHelper(permission)
+
+  // Write the permission down
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

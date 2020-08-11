@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithoutSessionCookie } from '../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithoutSessionCookie } from '../__mocks__/test-utils-system.js'
 
 beforeAll(d => {
   start(d)

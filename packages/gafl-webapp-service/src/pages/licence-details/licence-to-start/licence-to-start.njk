@@ -1,17 +1,56 @@
 {% extends "standard-form.njk" %}
 
 {% from "radios/macro.njk" import govukRadios %}
+{% from "date-input/macro.njk" import govukDateInput %}
 {% set title = 'When would you like your licence to start?' %}
 
 {%
     set errorMap = {
         'licence-to-start': {
             'any.required': { ref: '#licence-to-start', text: 'Tell us when would you like your licence to start?' }
+        },
+        'licence-start-date': {
+            'date.format': { ref: '#licence-start-date-day', text: 'Not a valid date. Enter the date you want the licence to start on and include a day, month and year' },
+            'date.max': { ref: '#licence-start-date-day', text: 'Enter a date up to and including ' + data.maxStartDate },
+            'date.min': { ref: '#licence-start-date-day', text: 'The licence must not start in the past' }
         }
     }
 %}
 
+{% set dateInputItems = [
+    {
+      name: "day",
+      classes: "govuk-input--width-2",
+      value: payload['licence-start-date-day']
+    },
+    {
+      name: "month",
+      classes: "govuk-input--width-2",
+      value: payload['licence-start-date-month']
+    },
+    {
+      name: "year",
+      classes: "govuk-input--width-4",
+      value: payload['licence-start-date-year']
+    }
+  ]
+%}
+
+{% set startDate %}
+    {{ govukDateInput({
+      id: "licence-start-date",
+      namePrefix: "licence-start-date",
+      items: dateInputItems,
+      errorMessage: { text: 'Enter a valid date that is within ' + data.advancedPurchaseMaxDays + ' days' } if error['licence-start-date'],
+      hint: {
+        text: "Enter a date up to and including " + data.maxStartDate
+      }
+    }) }}
+{% endset -%}
+
 {% block pageContent %}
+    <p class="govuk-body-m">Your licence can start today or any day within the next {{ data.advancedPurchaseMaxDays }} days.</p>
+
     {{ govukRadios({
         idPrefix: "licence-to-start",
         name: "licence-to-start",
@@ -22,11 +61,14 @@
                 checked: payload['licence-to-start'] === 'after-payment'
             },
             {
-                text: "Another time or date",
-                value: "another-date-or-time",
-                checked: payload['licence-to-start'] === 'another-date-or-time'
+                text: "Another date",
+                value: "another-date",
+                checked: payload['licence-to-start'] === 'another-date',
+                conditional: {
+                    html: startDate
+                }
             }
         ],
-        errorMessage: { text: 'Select when you\'d like your licence to start' } if error
+        errorMessage: { text: 'Select when you\'d like your licence to start' } if error['licence-to-start']
     }) }}
 {% endblock %}

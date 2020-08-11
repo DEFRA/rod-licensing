@@ -1,5 +1,5 @@
 import { getData } from '../route.js'
-import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TYPE } from '../../../../uri.js'
+import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TYPE, LICENCE_TO_START } from '../../../../uri.js'
 
 const mockProductDetails = [
   {
@@ -35,9 +35,10 @@ const getMockRequest = () => ({
       status: {
         getCurrentPermission: () =>
           Promise.resolve({
+            [DATE_OF_BIRTH.page]: true,
+            [LICENCE_TO_START.page]: true,
             [LICENCE_LENGTH.page]: true,
-            [LICENCE_TYPE.page]: true,
-            [DATE_OF_BIRTH.page]: true
+            [LICENCE_TYPE.page]: true
           }),
         setCurrentPermission: () => Promise.resolve()
       },
@@ -46,9 +47,13 @@ const getMockRequest = () => ({
         getCurrentPermission: () =>
           Promise.resolve({
             numberOfRods: 1,
+            licenceLength: '12M',
             licenceStartDate: '2020-01-01T00:00:00.000Z',
+            licenceType: 'Salmon and sea trout',
             permit: { cost: 0 },
-            licensee: {}
+            licensee: {
+              birthDate: '01-01-1970'
+            }
           })
       }
     }

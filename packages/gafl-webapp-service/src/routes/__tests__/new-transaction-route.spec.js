@@ -1,4 +1,4 @@
-import { start, stop, server } from '../../__mocks__/test-utils.js'
+import { start, stop, server } from '../../__mocks__/test-utils-system.js'
 import * as sessionManager from '../../session-cache/session-manager'
 const spy = jest.spyOn(sessionManager, 'default')
 

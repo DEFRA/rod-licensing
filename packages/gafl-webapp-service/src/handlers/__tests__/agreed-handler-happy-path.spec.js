@@ -1,12 +1,13 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
-import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils'
+import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils-system'
 
 import {
   ADULT_FULL_1_DAY_LICENCE,
   ADULT_DISABLED_12_MONTH_LICENCE,
   SENIOR_12_MONTH_LICENCE,
   MOCK_PAYMENT_RESPONSE,
-  JUNIOR_12_MONTH_LICENCE
+  JUNIOR_LICENCE,
+  JUNIOR_DISABLED_LICENCE
 } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
@@ -48,8 +49,8 @@ const paymentStatusSuccess = cost => ({
 
 describe('The agreed handler', () => {
   it('throws a status 403 (forbidden) exception is the agreed flag is not set', async () => {
-    const data = await injectWithCookies('GET', AGREED.uri)
-    expect(data.statusCode).toBe(403)
+    const response = await injectWithCookies('GET', AGREED.uri)
+    expect(response.statusCode).toBe(403)
   })
 
   it.each([
@@ -75,9 +76,9 @@ describe('The agreed handler', () => {
     salesApi.updatePaymentJournal = jest.fn()
     salesApi.createPaymentJournal = jest.fn()
 
-    const data = await injectWithCookies('GET', AGREED.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
+    const response = await injectWithCookies('GET', AGREED.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
 
     // Check the journal creation
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
@@ -89,9 +90,9 @@ describe('The agreed handler', () => {
     })
 
     // On return from the GOV.UK Payment pages
-    const data2 = await injectWithCookies('GET', AGREED.uri)
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(ORDER_COMPLETE.uri)
+    const response2 = await injectWithCookies('GET', AGREED.uri)
+    expect(response2.statusCode).toBe(302)
+    expect(response2.headers.location).toBe(ORDER_COMPLETE.uri)
 
     // Check that the journal entry is updated with the complete status
     // salesApi.updatePaymentJournal = jest.fn()
@@ -109,41 +110,42 @@ describe('The agreed handler', () => {
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
 
-    const data3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(data3.statusCode).toBe(200)
+    const response3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    expect(response3.statusCode).toBe(200)
   })
 
-  it('processes the series of steps necessary to complete a successful no-payment journey', async () => {
-    await JUNIOR_12_MONTH_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
-
+  it.each([
+    ['junior', JUNIOR_LICENCE],
+    ['junior, disabled', JUNIOR_DISABLED_LICENCE]
+  ])('processes the series of steps necessary to complete a successful no-payment journey: %s', async (desc, journey) => {
+    await journey.setup()
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(journey.transActionResponse)))
     salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
-
-    const data1 = await injectWithCookies('GET', AGREED.uri)
-    expect(data1.statusCode).toBe(302)
-    expect(data1.headers.location).toBe(ORDER_COMPLETE.uri)
+    const response1 = await injectWithCookies('GET', AGREED.uri)
+    expect(response1.statusCode).toBe(302)
+    expect(response1.headers.location).toBe(ORDER_COMPLETE.uri)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(JUNIOR_12_MONTH_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(JUNIOR_LICENCE.transActionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
-    const data3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(data3.statusCode).toBe(200)
+    const response3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    expect(response3.statusCode).toBe(200)
   })
 
   it('redirects to order-completed for finalized transactions', async () => {
-    await JUNIOR_12_MONTH_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_12_MONTH_LICENCE.transActionResponse)))
+    await JUNIOR_LICENCE.setup()
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_LICENCE.transActionResponse)))
     salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
     await injectWithCookies('GET', AGREED.uri)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
-    const data = await injectWithCookies('GET', AGREED.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(ORDER_COMPLETE.uri)
+    const response = await injectWithCookies('GET', AGREED.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
     await injectWithCookies('GET', ORDER_COMPLETE.uri)
   })
 })

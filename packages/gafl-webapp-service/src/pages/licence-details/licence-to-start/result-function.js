@@ -1,22 +1,23 @@
-import { LICENCE_TO_START } from '../../../uri.js'
 import { CommonResults } from '../../../constants.js'
+import { ageConcessionResults } from '../../concessions/date-of-birth/result-function.js'
+import { licenceToStart } from './update-transaction.js'
 
 export const licenceToStartResults = {
-  AFTER_PAYMENT: 'after-payment',
-  ANOTHER_DATE_OR_TIME: 'another-date-or-time'
+  AND_START_TIME: 'and-start-time'
 }
 
 export default async request => {
-  const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_TO_START.page)
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const status = await request.cache().helpers.status.getCurrentPermission()
 
-  let result
-
-  if (payload['licence-to-start'] === 'after-payment') {
-    result = status.fromSummary ? CommonResults.SUMMARY : licenceToStartResults.AFTER_PAYMENT
-  } else {
-    result = licenceToStartResults.ANOTHER_DATE_OR_TIME
+  if (permission.licensee.noLicenceRequired) {
+    return ageConcessionResults.NO_LICENCE_REQUIRED
   }
 
-  return result
+  // If we already know its a 1 or 8 day licence then always jump to the time-of-day
+  if (permission.licenceToStart === licenceToStart.ANOTHER_DATE && permission.licenceLength && permission.licenceLength !== '12M') {
+    return licenceToStartResults.AND_START_TIME
+  }
+
+  return status.fromSummary ? CommonResults.SUMMARY : CommonResults.OK
 }

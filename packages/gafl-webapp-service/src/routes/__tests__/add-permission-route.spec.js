@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies } from '../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies } from '../../__mocks__/test-utils-system.js'
 import { ADD_PERMISSION, NEW_TRANSACTION, TEST_TRANSACTION } from '../../uri.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
