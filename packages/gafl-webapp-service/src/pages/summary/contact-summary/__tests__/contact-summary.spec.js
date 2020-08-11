@@ -4,7 +4,7 @@ import mockPermitsConcessions from '../../../../__mocks__/data/permit-concession
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import mockConcessions from '../../../../__mocks__/data/concessions.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 
 import {
   CONTACT_SUMMARY,
@@ -22,7 +22,7 @@ import {
   NEW_TRANSACTION
 } from '../../../../uri.js'
 
-import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-helpers'
+import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
 

@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../__mocks__/test-utils-system.js'
 import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE } from '../../uri.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 

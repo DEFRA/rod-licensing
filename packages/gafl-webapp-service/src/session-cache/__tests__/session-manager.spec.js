@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie } from '../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie } from '../../__mocks__/test-utils-system.js'
 import { useSessionCookie } from '../session-manager.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {

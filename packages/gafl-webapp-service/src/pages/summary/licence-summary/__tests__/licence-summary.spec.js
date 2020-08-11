@@ -2,8 +2,8 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import mockPermits from '../../../../__mocks__/data/permits.js'
 import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
 import mockConcessions from '../../../../__mocks__/data/concessions.js'
-import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-helpers.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 
 import {
   LICENCE_SUMMARY,

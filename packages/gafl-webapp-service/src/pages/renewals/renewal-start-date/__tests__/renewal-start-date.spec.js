@@ -9,7 +9,7 @@ import {
   CONTACT_SUMMARY,
   TEST_TRANSACTION
 } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../../identify/__mocks__/data/authentication-result.js'

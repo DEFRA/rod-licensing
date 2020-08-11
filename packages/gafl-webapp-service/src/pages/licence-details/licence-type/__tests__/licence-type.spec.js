@@ -9,9 +9,9 @@ import {
   NEW_TRANSACTION
 } from '../../../../uri.js'
 import * as mappings from '../../../../processors/mapping-constants.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 import { licenseTypes } from '../route.js'
-import { JUNIOR_TODAY, ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-helpers'
+import { JUNIOR_TODAY, ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../licence-to-start/update-transaction'
 import { disabilityConcessionTypes } from '../../../concessions/disability/route'
 

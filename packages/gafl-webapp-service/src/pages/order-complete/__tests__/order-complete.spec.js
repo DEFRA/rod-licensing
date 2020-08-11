@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-import { initialize, injectWithCookies, postRedirectGet, start, stop } from '../../../__mocks__/test-utils'
+import { initialize, injectWithCookies, postRedirectGet, start, stop } from '../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../__mocks__/mock-journeys.js'
 import { AGREED, ORDER_COMPLETE, TERMS_AND_CONDITIONS, ORDER_COMPLETE_PDF } from '../../../uri.js'
 import mockPermits from '../../../__mocks__/data/permits.js'

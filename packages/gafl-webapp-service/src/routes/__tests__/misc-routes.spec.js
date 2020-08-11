@@ -1,4 +1,4 @@
-import { start, stop, server } from '../../__mocks__/test-utils.js'
+import { start, stop, server } from '../../__mocks__/test-utils-system.js'
 import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, RENEWAL_PUBLIC, IDENTIFY } from '../../uri.js'
 
 // Start application before running the test case

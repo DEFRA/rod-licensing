@@ -1,6 +1,6 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { initialize, injectWithCookies, postRedirectGet, start, stop } from '../../__mocks__/test-utils'
+import { initialize, injectWithCookies, postRedirectGet, start, stop } from '../../__mocks__/test-utils-system'
 import { ADULT_FULL_1_DAY_LICENCE, MOCK_PAYMENT_RESPONSE } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'

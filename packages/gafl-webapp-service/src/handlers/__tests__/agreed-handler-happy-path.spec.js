@@ -1,5 +1,5 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
-import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils'
+import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils-system'
 
 import {
   ADULT_FULL_1_DAY_LICENCE,

@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { injectWithCookies, postRedirectGet } from './test-utils.js'
-import { dobHelper, ADULT_TODAY, JUNIOR_TODAY, SENIOR_TODAY } from './test-helpers.js'
+import { injectWithCookies, postRedirectGet } from './test-utils-system.js'
+import { dobHelper, ADULT_TODAY, JUNIOR_TODAY, SENIOR_TODAY } from './test-utils-business-rules.js'
 
 import mockPermits from './data/permits.js'
 import mockPermitsConcessions from './data/permit-concessions.js'

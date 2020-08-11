@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 import {
   LICENCE_TO_START,
   DATE_OF_BIRTH,
@@ -15,7 +15,7 @@ import {
   JUNIOR_TODAY,
   JUNIOR_TOMORROW,
   ADULT_TODAY
-} from '../../../../__mocks__/test-helpers.js'
+} from '../../../../__mocks__/test-utils-business-rules.js'
 import { licenceToStart } from '../update-transaction.js'
 import moment from 'moment'
 

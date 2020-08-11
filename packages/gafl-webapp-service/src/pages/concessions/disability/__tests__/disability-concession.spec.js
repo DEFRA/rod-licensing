@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 import { DISABILITY_CONCESSION, LICENCE_TYPE, TEST_TRANSACTION } from '../../../../uri.js'
 import { disabilityConcessionTypes } from '../route.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'

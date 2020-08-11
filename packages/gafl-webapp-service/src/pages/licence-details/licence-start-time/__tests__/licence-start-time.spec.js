@@ -8,9 +8,9 @@ import {
   LICENCE_SUMMARY,
   LICENCE_TYPE
 } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 
-import { ADULT_TODAY, dobHelper, startDateHelper } from '../../../../__mocks__/test-helpers'
+import { ADULT_TODAY, dobHelper, startDateHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../licence-to-start/update-transaction'
 import moment from 'moment'
 import { licenseTypes } from '../../licence-type/route'

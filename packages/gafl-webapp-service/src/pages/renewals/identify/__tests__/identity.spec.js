@@ -8,8 +8,8 @@ import {
   RENEWAL_INACTIVE,
   LICENCE_LENGTH
 } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
-import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-helpers.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
 
 import { salesApi } from '@defra-fish/connectors-lib'
 import { RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'

@@ -1,4 +1,4 @@
-import { initialize, injectWithCookies, start, stop } from '../../../../__mocks__/test-utils.js'
+import { initialize, injectWithCookies, start, stop } from '../../../../__mocks__/test-utils-system.js'
 import { PAYMENT_CANCELLED } from '../../../../uri.js'
 
 beforeAll(d => start(d))

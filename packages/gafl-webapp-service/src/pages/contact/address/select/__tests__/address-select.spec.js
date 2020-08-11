@@ -12,10 +12,10 @@ import {
   NAME,
   NEWSLETTER
 } from '../../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils-system.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 
-import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-helpers'
+import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 

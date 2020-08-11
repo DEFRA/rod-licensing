@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
 import { DATE_OF_BIRTH, LICENCE_TO_START, NO_LICENCE_REQUIRED } from '../../../../uri.js'
 import {
   ADULT_TODAY,
@@ -6,7 +6,7 @@ import {
   MINOR_AT_ADVANCE_PURCHASE_MAX,
   DATE_AT_ADVANCED_PURCHASE_MAX_DAYS,
   dobHelper
-} from '../../../../__mocks__/test-helpers.js'
+} from '../../../../__mocks__/test-utils-business-rules.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
