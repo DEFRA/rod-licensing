@@ -27,7 +27,7 @@ const processPaymentResults = async transaction => {
     await salesApi.finaliseTransaction(transaction.id, {
       payment: {
         amount: transaction.paymentStatus.amount / 100,
-        timestamp: moment().toISOString(),
+        timestamp: transaction.paymentStatus.transactionTimestamp,
         source: TRANSACTION_SOURCE.govPay,
         method: PAYMENT_TYPE.debit
       }
@@ -52,8 +52,14 @@ const processPaymentResults = async transaction => {
 }
 
 const getStatus = async paymentReference => {
-  const response = await govUkPayApi.fetchPaymentStatus(paymentReference)
-  return response.json()
+  const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference)
+  const paymentStatus = await paymentStatusResponse.json()
+  if (paymentStatus.state.status === 'success') {
+    const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference)
+    const { events } = await eventsResponse.json()
+    paymentStatus.transactionTimestamp = events.find(e => e.state.status === 'success')?.updated
+  }
+  return paymentStatus
 }
 
 const getStatusWrapped = limiter.wrap(getStatus)

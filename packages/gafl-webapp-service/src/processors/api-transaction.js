@@ -4,8 +4,9 @@ import { TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib
 import * as concessionHelper from '../processors/concession-helper.js'
 import { countries } from './refdata-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
+import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 
-const prepareApiTransactionPayload = async request => {
+export const prepareApiTransactionPayload = async request => {
   const transactionCache = await request.cache().helpers.transaction.get()
   const concessions = await salesApi.concessions.getAll()
   const countryList = await countries.getAll()
@@ -18,13 +19,16 @@ const prepareApiTransactionPayload = async request => {
         licensee: Object.assign((({ countryCode, ...l }) => l)(p.licensee), {
           country: countryList.find(c => c.code === p.licensee.countryCode).name
         }),
-        issueDate: moment().toISOString(),
-        startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
-          .add(p.licenceStartTime, 'hours')
-          .toISOString()
+        issueDate: null,
+        startDate: null,
+        ...(p.licenceToStart === licenceToStart.ANOTHER_DATE && {
+          startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
+            .add(p.licenceStartTime, 'hours')
+            .toISOString()
+        })
       }
 
-      // Calculate the concession (proof entry) - disabl;ed takes precedence
+      // Calculate the concession (proof entry) - disabled takes precedence
       if (concessionHelper.hasDisabled(p)) {
         permission.concessions = [
           {
@@ -57,7 +61,7 @@ const prepareApiTransactionPayload = async request => {
   }
 }
 
-const prepareApiFinalisationPayload = async request => {
+export const prepareApiFinalisationPayload = async request => {
   const transaction = await request.cache().helpers.transaction.get()
   return {
     payment: {
@@ -68,5 +72,3 @@ const prepareApiFinalisationPayload = async request => {
     }
   }
 }
-
-export { prepareApiTransactionPayload, prepareApiFinalisationPayload }

@@ -96,14 +96,17 @@ const paymentIncomplete = {
 }
 
 describe('The agreed handler', () => {
+  beforeEach(jest.clearAllMocks)
+
   it.each([
     ['rejected', paymentStatusRejected],
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
   ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
 
+    salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
     )
@@ -122,13 +125,13 @@ describe('The agreed handler', () => {
     expect(data2.headers.location).toBe(PAYMENT_FAILED.uri)
 
     // Ensure that the journal status has been updated correctly
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id, {
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed
     })
 
     // Ensure correctness of transaction
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
 
     // Test states
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
@@ -156,7 +159,7 @@ describe('The agreed handler', () => {
 
   it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
@@ -178,13 +181,13 @@ describe('The agreed handler', () => {
     expect(data2.headers.location).toBe(PAYMENT_CANCELLED.uri)
 
     // Ensure the the jounal status is set to cancelled
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id, {
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled
     })
 
     // Ensure correctness of transaction
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
 
     // Test states
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
@@ -214,7 +217,7 @@ describe('The agreed handler', () => {
     salesApi.getPaymentJournal = jest.fn(async () => true)
     salesApi.updatePaymentJournal = jest.fn()
     await injectWithCookies('GET', AGREED.uri)
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id, {
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
       paymentReference: MOCK_PAYMENT_RESPONSE.payment_id,
       paymentTimestamp: MOCK_PAYMENT_RESPONSE.created_date,
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
@@ -223,7 +226,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 (server) error with the retry flag set if the GOV.UK Pay API throws a (recoverable) exception on payment creation', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(async () => new Promise((resolve, reject) => reject(new Error('Time out'))))
 
@@ -235,7 +238,7 @@ describe('The agreed handler', () => {
     expect(data.statusCode).toBe(500)
     expect(data.payload.includes(TRY_AGAIN_STR)).toBeTruthy()
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
@@ -252,7 +255,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 (server) error with the retry flag set if the GOV.UK Pay API rate limit is exceeded on create payment', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => paymentTooManyRequests, ok: false, status: 429 }))
@@ -268,7 +271,7 @@ describe('The agreed handler', () => {
     expect(data.statusCode).toBe(500)
     expect(data.payload.includes(TRY_AGAIN_STR)).toBeTruthy()
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
@@ -281,7 +284,7 @@ describe('The agreed handler', () => {
   it('posts a 500 error without the retry flag set if the GOV.UK Pay API returns any arbitrary 400 error on payment creation', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => paymentIdNotFound, ok: false, status: 404 }))
@@ -294,7 +297,7 @@ describe('The agreed handler', () => {
     expect(data.statusCode).toBe(500)
     expect(data.payload.includes(TRY_AGAIN_STR)).not.toBeTruthy()
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
@@ -306,7 +309,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 error without the retry flag set if the GOV.UK Pay API returns any arbitrary 500 error on payment creation', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => paymentGovUkPayUnavailable, ok: false, status: 500 }))
@@ -319,7 +322,7 @@ describe('The agreed handler', () => {
     expect(data.statusCode).toBe(500)
     expect(data.payload.includes(TRY_AGAIN_STR)).not.toBeTruthy()
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
@@ -332,7 +335,7 @@ describe('The agreed handler', () => {
   it('posts a 400 (forbidden) error if requested where if the GOV.UK Pay API returns an incomplete payment status', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
@@ -365,7 +368,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 (server) error if the GOV.UK Pay API throws en exception on fetching status', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
@@ -395,7 +398,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 (server) error if the GOV.UK Pay API returns an the rate limit response getting status', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
@@ -425,7 +428,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 (server) error if the GOV.UK Pay API returns an arbituary error response', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transActionResponse)))
+    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))

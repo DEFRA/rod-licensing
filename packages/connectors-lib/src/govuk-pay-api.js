@@ -46,3 +46,21 @@ export const fetchPaymentStatus = async paymentId => {
     throw err
   }
 }
+
+/**
+ * Fetch a payment events for a given paymentId
+ * @param paymentId
+ * @returns {Promise<unknown>}
+ */
+export const fetchPaymentEvents = async paymentId => {
+  try {
+    return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
+      headers: headers(),
+      method: 'get',
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+    })
+  } catch (err) {
+    console.error(`Error retrieving the payment events from the GOV.UK API service - paymentId: ${paymentId}`, err)
+    throw err
+  }
+}

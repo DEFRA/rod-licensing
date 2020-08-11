@@ -43,7 +43,7 @@ salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve
 salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
 export const ADULT_FULL_1_DAY_LICENCE = {
-  transActionResponse: {
+  transactionResponse: {
     id: 'ad28f2b3-2ab3-4d45-abc7-ae62c4da7944',
     expires: 1588342308,
     dataSource: 'Web Sales',
@@ -98,7 +98,7 @@ export const ADULT_FULL_1_DAY_LICENCE = {
 }
 
 export const ADULT_DISABLED_12_MONTH_LICENCE = {
-  transActionResponse: {
+  transactionResponse: {
     id: '50c26295-013f-48c0-b354-f22544254fab',
     expires: 1588408572,
     dataSource: 'Web Sales',
@@ -165,7 +165,7 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
 }
 
 export const SENIOR_12_MONTH_LICENCE = {
-  transActionResponse: {
+  transactionResponse: {
     id: 'cb913e36-a3ab-45a7-af6c-40af8befd931',
     expires: 1588411018,
     dataSource: 'Web Sales',
@@ -227,7 +227,7 @@ export const SENIOR_12_MONTH_LICENCE = {
 }
 
 export const JUNIOR_LICENCE = {
-  transActionResponse: {
+  transactionResponse: {
     id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
     expires: 1588412128,
     dataSource: 'Web Sales',
@@ -288,7 +288,7 @@ export const JUNIOR_LICENCE = {
 }
 
 export const JUNIOR_DISABLED_LICENCE = {
-  transActionResponse: {
+  transactionResponse: {
     id: '8793ff10-6372-4e9c-b4f8-d0cde0ed2277',
     expires: 1588412128,
     dataSource: 'Web Sales',

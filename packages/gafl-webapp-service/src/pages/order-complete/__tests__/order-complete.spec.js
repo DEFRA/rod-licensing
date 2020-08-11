@@ -40,10 +40,8 @@ describe('The order completion handler', () => {
 
   it('throw a status 403 (forbidden) exception if the finalized flag is not set', async () => {
     await JUNIOR_LICENCE.setup()
-
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_LICENCE.transActionResponse)))
-
-    salesApi.finaliseTransaction = jest.fn(async () => new Promise((resolve, reject) => reject(new Error())))
+    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockRejectedValue(new Error())
 
     await injectWithCookies('GET', AGREED.uri)
     const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
@@ -52,10 +50,8 @@ describe('The order completion handler', () => {
 
   it('responds with the order completed page if the journey has finished', async () => {
     await JUNIOR_LICENCE.setup()
-
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_LICENCE.transActionResponse)))
-
-    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
+    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
 
     const data1 = await injectWithCookies('GET', AGREED.uri)
     expect(data1.statusCode).toBe(302)
@@ -66,9 +62,8 @@ describe('The order completion handler', () => {
 
   it('responds with the order completed pdf when requested', async () => {
     await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_LICENCE.transActionResponse)))
-
-    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
+    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
 
     await injectWithCookies('GET', AGREED.uri)
     await injectWithCookies('GET', ORDER_COMPLETE.uri)

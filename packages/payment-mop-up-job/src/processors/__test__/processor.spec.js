@@ -37,13 +37,14 @@ const journalEntries = [
   }
 ]
 
-const govUkPayEntries = [
+const govUkPayStatusEntries = [
   {
     payment_id: '05nioqikvvnuu5l8m2qeaj0qap',
     state: {
       status: 'success',
       finished: true
-    }
+    },
+    amount: 8200
   },
   {
     payment_id: '0f3dr9ugp7u68qq18vt9h8ma85',
@@ -78,30 +79,68 @@ const govUkPayEntries = [
   }
 ]
 
+const createPaymentEventsEntry = paymentStatus => {
+  return {
+    events: [
+      {
+        payment_id: paymentStatus.payment_id,
+        state: {
+          status: 'created',
+          finished: false
+        },
+        updated: 'INTERIM_PAYMENT_EVENT_TIMESTAMP'
+      },
+      {
+        payment_id: paymentStatus.payment_id,
+        state: {
+          status: 'started',
+          finished: false
+        },
+        updated: 'INTERIM_PAYMENT_EVENT_TIMESTAMP'
+      },
+      {
+        payment_id: paymentStatus.payment_id,
+        state: {
+          status: 'submitted',
+          finished: false
+        },
+        updated: 'INTERIM_PAYMENT_EVENT_TIMESTAMP'
+      },
+      {
+        payment_id: paymentStatus.payment_id,
+        state: paymentStatus.state,
+        updated: 'FINAL_PAYMENT_EVENT_TIMESTAMP'
+      }
+    ]
+  }
+}
+
 describe('processor', () => {
   beforeEach(jest.clearAllMocks)
 
   it('completes normally where there are no journal records retrieved', async () => {
-    salesApi.paymentJournals.getAll = jest.fn(async () => [])
-    govUkPayApi.fetchPaymentStatus = jest.fn()
+    salesApi.paymentJournals.getAll.mockReturnValue([])
+    govUkPayApi.fetchPaymentStatus.mockImplementation(jest.fn())
     await execute(1, 1)
     expect(govUkPayApi.fetchPaymentStatus).not.toHaveBeenCalled()
   })
 
   it('completes normally where there are journal records retrieved', async () => {
-    salesApi.paymentJournals.getAll = jest.fn(async () => journalEntries)
-    salesApi.updatePaymentJournal = jest.fn()
-    salesApi.finaliseTransaction = jest.fn()
-    govUkPayApi.fetchPaymentStatus = jest
-      .fn()
-      .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[0] }))
-      .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[1] }))
-      .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[2] }))
-      .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[3] }))
-      .mockImplementationOnce(async () => ({ json: async () => govUkPayEntries[4] }))
+    salesApi.paymentJournals.getAll.mockReturnValue(journalEntries)
+    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+    salesApi.finaliseTransaction.mockImplementation(jest.fn())
+    govUkPayStatusEntries.forEach(status => {
+      govUkPayApi.fetchPaymentStatus.mockReturnValueOnce({ json: async () => status })
+      govUkPayApi.fetchPaymentEvents.mockReturnValueOnce({ json: async () => createPaymentEventsEntry(status) })
+    })
+
     await execute(1, 1)
-    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalled()
-    expect(salesApi.finaliseTransaction).toHaveBeenCalled()
+    expect(govUkPayApi.fetchPaymentStatus).toHaveBeenCalledTimes(govUkPayStatusEntries.length)
+    expect(govUkPayApi.fetchPaymentEvents).toHaveBeenCalledTimes(govUkPayStatusEntries.filter(s => s.state.status === 'success').length)
+    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(govUkPayStatusEntries.filter(s => s.state.status === 'success').length)
+    expect(salesApi.finaliseTransaction).toHaveBeenCalledWith('4fa393ab-07f4-407e-b233-89be2a6f5f77', {
+      payment: { amount: 82, method: 'Debit card', source: 'Gov Pay', timestamp: 'FINAL_PAYMENT_EVENT_TIMESTAMP' }
+    })
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('4fa393ab-07f4-407e-b233-89be2a6f5f77', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
     })

@@ -48,6 +48,8 @@ const paymentStatusSuccess = cost => ({
 })
 
 describe('The agreed handler', () => {
+  beforeEach(jest.clearAllMocks)
+
   it('throws a status 403 (forbidden) exception is the agreed flag is not set', async () => {
     const response = await injectWithCookies('GET', AGREED.uri)
     expect(response.statusCode).toBe(403)
@@ -60,21 +62,13 @@ describe('The agreed handler', () => {
   ])('processes the series of steps necessary to complete a successful payment journey - %s', async (desc, journey) => {
     await journey.setup()
 
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(journey.transActionResponse)))
-
-    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
-
-    govUkPayApi.createPayment = jest.fn(
-      async () => new Promise(resolve => resolve({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 }))
-    )
-
-    govUkPayApi.fetchPaymentStatus = jest.fn(
-      async () => new Promise(resolve => resolve({ json: () => paymentStatusSuccess(journey.cost), ok: true, status: 201 }))
-    )
-
-    salesApi.getPaymentJournal = jest.fn(async () => false)
-    salesApi.updatePaymentJournal = jest.fn()
-    salesApi.createPaymentJournal = jest.fn()
+    salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
+    govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
+    govUkPayApi.fetchPaymentStatus.mockResolvedValue({ json: () => paymentStatusSuccess(journey.cost), ok: true, status: 201 })
+    salesApi.getPaymentJournal.mockResolvedValue(false)
+    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+    salesApi.createPaymentJournal.mockImplementation(jest.fn())
 
     const response = await injectWithCookies('GET', AGREED.uri)
     expect(response.statusCode).toBe(302)
@@ -82,8 +76,8 @@ describe('The agreed handler', () => {
 
     // Check the journal creation
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
-    expect(salesApi.getPaymentJournal).toHaveBeenCalledWith(journey.transActionResponse.id)
-    expect(salesApi.createPaymentJournal).toHaveBeenCalledWith(journey.transActionResponse.id, {
+    expect(salesApi.getPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id)
+    expect(salesApi.createPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
       paymentReference: MOCK_PAYMENT_RESPONSE.payment_id,
       paymentTimestamp: MOCK_PAYMENT_RESPONSE.created_date,
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
@@ -96,13 +90,13 @@ describe('The agreed handler', () => {
 
     // Check that the journal entry is updated with the complete status
     // salesApi.updatePaymentJournal = jest.fn()
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(journey.transActionResponse.id, {
+    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
     })
 
     // Check the cache status
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(journey.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(journey.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
@@ -119,13 +113,13 @@ describe('The agreed handler', () => {
     ['junior, disabled', JUNIOR_DISABLED_LICENCE]
   ])('processes the series of steps necessary to complete a successful no-payment journey: %s', async (desc, journey) => {
     await journey.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(journey.transActionResponse)))
-    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
+    salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
     const response1 = await injectWithCookies('GET', AGREED.uri)
     expect(response1.statusCode).toBe(302)
     expect(response1.headers.location).toBe(ORDER_COMPLETE.uri)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(JUNIOR_LICENCE.transActionResponse.id)
+    expect(JSON.parse(payload).id).toBe(JUNIOR_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
@@ -138,8 +132,8 @@ describe('The agreed handler', () => {
 
   it('redirects to order-completed for finalized transactions', async () => {
     await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(JUNIOR_LICENCE.transActionResponse)))
-    salesApi.finaliseTransaction = jest.fn(async () => new Promise(resolve => resolve({ ok: true })))
+    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
     await injectWithCookies('GET', AGREED.uri)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
     expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
