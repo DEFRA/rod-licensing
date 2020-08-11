@@ -35,6 +35,15 @@ const getBackReference = async (request, view) => {
   }
 }
 
+const clearErrorsFromOtherPages = async (request, view) => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const pagesWithError = Object.entries(status)
+    .filter(entry => entry[0] !== 'currentPage' && entry[0] !== view && entry[1] === PAGE_STATE.error)
+    .map(entry => entry[0])
+
+  await Promise.all(pagesWithError.map(async p => request.cache().helpers.page.setCurrentPermission(p, {})))
+}
+
 /**
  * @param path - the path attached to the handler
  * @param view - the name of the view template
@@ -67,6 +76,10 @@ export default (path, view, completion, getData) => ({
         throw err
       }
     }
+
+    // It is necessary then using the back buttons and other indirect navigations to clear any errors
+    // from abandoned pages
+    await clearErrorsFromOtherPages(request, view)
 
     // Calculate the back reference and add to page
     pageData.backRef = await getBackReference(request, view)

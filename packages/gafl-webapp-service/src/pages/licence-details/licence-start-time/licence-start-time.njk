@@ -12,7 +12,7 @@
 %}
 
 {% set am = [
-    { text: "Start of the day", value: "0", checked: payload['licence-start-time'] === '0', disabled: true if data.minHour > 0 else false },
+    { text: "12am (midnight)", value: "0", checked: payload['licence-start-time'] === '0', disabled: true if data.minHour > 0 else false },
     { text: "1am", value: "1", checked: payload['licence-start-time'] === '1', disabled: true if data.minHour > 1 else false },
     { text: "2am", value: "2", checked: payload['licence-start-time'] === '2', disabled: true if data.minHour > 2 else false },
     { text: "3am", value: "3", checked: payload['licence-start-time'] === '3', disabled: true if data.minHour > 3 else false },
@@ -27,7 +27,7 @@
 ] %}
 
 {% set pm = [
-    { text: "Midday", value: "12", checked: payload['licence-start-time'] === '12', disabled: true if data.minHour > 12 else false },
+    { text: "12pm (midday)", value: "12", checked: payload['licence-start-time'] === '12', disabled: true if data.minHour > 12 else false },
     { text: "1pm", value: "13", checked: payload['licence-start-time'] === '13', disabled: true if data.minHour > 13 else false },
     { text: "2pm", value: "14", checked: payload['licence-start-time'] === '14', disabled: true if data.minHour > 14 else false },
     { text: "3pm", value: "15", checked: payload['licence-start-time'] === '15', disabled: true if data.minHour > 15 else false },

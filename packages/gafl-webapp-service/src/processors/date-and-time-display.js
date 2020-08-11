@@ -11,9 +11,9 @@ export const displayStartTime = permission => {
   const startDateString = moment(permission.licenceStartDate, cacheDateFormat).format(dateDisplayFormat)
   const timeComponent = (() => {
     if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
-      return 'Start of the day'
+      return '12:00am (midnight)'
     } else if (permission.licenceStartTime === '12') {
-      return 'Midday'
+      return '12:00pm (midday)'
     } else {
       return moment(permission.licenceStartDate, cacheDateFormat)
         .add(permission.licenceStartTime, 'hours')
@@ -21,7 +21,7 @@ export const displayStartTime = permission => {
     }
   })()
 
-  return `${timeComponent}, ${startDateString}`
+  return `${startDateString}, ${timeComponent}`
 }
 
 // For renewals
@@ -29,7 +29,7 @@ export const displayExpiryDate = permission => {
   const startDateString = moment(permission.renewedEndDate, cacheDateFormat)
     .add(-1, 'days')
     .format(dateDisplayFormat)
-  return `11:59pm, ${startDateString}`
+  return `${startDateString}, 11:59pm`
 }
 
 export const displayEndTime = permission => {
@@ -39,12 +39,12 @@ export const displayEndTime = permission => {
   let result
 
   if (endTimeHours === 12) {
-    result = `Midday ${endDateString}`
+    result = `${endDateString}, 12:00pm (midday)`
   } else if (endTimeHours === 0) {
     endDateString = endDateTime.add(-1, 'days').format(dateDisplayFormat)
-    result = `11:59pm ${endDateString}`
+    result = `${endDateString}, 11:59pm`
   } else {
-    result = `${endDateTime.hours(endTimeHours).format('h:mma')} ${endDateString}`
+    result = `${endDateString}, ${endDateTime.hours(endTimeHours).format('h:mma')}`
   }
 
   return result

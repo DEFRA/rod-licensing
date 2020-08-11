@@ -26,21 +26,6 @@ afterAll(d => stop(d))
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
 
-const strip = p => {
-  const {
-    birthDate,
-    email,
-    firstName,
-    lastName,
-    preferredMethodOfConfirmation,
-    preferredMethodOfNewsletter,
-    preferredMethodOfReminder,
-    mobilePhone,
-    ...r
-  } = p
-  return r
-}
-
 describe('The address select page', () => {
   it('returns success on requesting', async () => {
     const response = await injectWithCookies('GET', ADDRESS_SELECT.uri)
@@ -88,49 +73,68 @@ describe('The address select page', () => {
       await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
       d()
     })
+
     it('redirects to the contact page', async () => {
       const response = await postRedirectGet(ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(CONTACT.uri)
     })
+
     it('redirects to the summary page if the summary page is seen', async () => {
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       const response = await postRedirectGet(ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
     })
+
     it('The contact information has been set in the transaction', async () => {
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(strip(JSON.parse(payload).permissions[0].licensee)).toEqual({
-        premises: '14 HOWECROFT COURT',
-        street: 'EASTMEAD LANE',
-        town: 'BRISTOL',
-        postcode: 'BS9 1HJ',
-        countryCode: 'GB'
-      })
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          premises: '14 HOWECROFT COURT',
+          street: 'EASTMEAD LANE',
+          town: 'BRISTOL',
+          postcode: 'BS9 1HJ',
+          countryCode: 'GB'
+        })
+      )
     })
   })
 
   it('Select and address with no street', async () => {
     await postRedirectGet(ADDRESS_SELECT.uri, { address: '6' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(strip(JSON.parse(payload).permissions[0].licensee)).toEqual({
-      premises: '15 HOWECROFT COURT',
-      town: 'BRISTOL',
-      postcode: 'BS9 1HJ',
-      countryCode: 'GB'
-    })
+    const {
+      permissions: [{ licensee }]
+    } = JSON.parse(payload)
+    expect(licensee).toEqual(
+      expect.objectContaining({
+        premises: '15 HOWECROFT COURT',
+        town: 'BRISTOL',
+        postcode: 'BS9 1HJ',
+        countryCode: 'GB'
+      })
+    )
   })
+
   it('Select and address with a locality', async () => {
     await postRedirectGet(ADDRESS_SELECT.uri, { address: '7' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(strip(JSON.parse(payload).permissions[0].licensee)).toEqual({
-      premises: '16 HOWECROFT COURT',
-      street: 'EASTMEAD LANE',
-      locality: 'Sneyd Park',
-      town: 'BRISTOL',
-      postcode: 'BS9 1HJ',
-      countryCode: 'GB'
-    })
+    const {
+      permissions: [{ licensee }]
+    } = JSON.parse(payload)
+    expect(licensee).toEqual(
+      expect.objectContaining({
+        premises: '16 HOWECROFT COURT',
+        street: 'EASTMEAD LANE',
+        locality: 'Sneyd Park',
+        town: 'BRISTOL',
+        postcode: 'BS9 1HJ',
+        countryCode: 'GB'
+      })
+    )
   })
 })

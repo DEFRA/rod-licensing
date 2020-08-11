@@ -55,10 +55,17 @@ describe('The newsletter page', () => {
         'email-entry': 'no'
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.none,
+          preferredMethodOfConfirmation: HOW_CONTACTED.email,
+          preferredMethodOfReminder: HOW_CONTACTED.email,
+          email: 'example@email.com'
+        })
+      )
     })
 
     it('if posting no it redirects to the summary page', async () => {
@@ -76,10 +83,17 @@ describe('The newsletter page', () => {
         'email-entry': 'no'
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.email,
+          preferredMethodOfConfirmation: HOW_CONTACTED.email,
+          preferredMethodOfReminder: HOW_CONTACTED.email,
+          email: 'example@email.com'
+        })
+      )
     })
 
     it('if posting yes and subsequently setting the preferred method of contact to text, the email is preserved', async () => {
@@ -89,10 +103,17 @@ describe('The newsletter page', () => {
       })
       await postRedirectGet(CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.text)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.text)
-      expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.email,
+          preferredMethodOfConfirmation: HOW_CONTACTED.text,
+          preferredMethodOfReminder: HOW_CONTACTED.text,
+          email: 'example@email.com'
+        })
+      )
     })
 
     it('if posting yes it redirects to the summary page', async () => {
@@ -121,10 +142,16 @@ describe('The newsletter page', () => {
         'email-entry': 'yes'
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.text)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.text)
-      expect(JSON.parse(payload).permissions[0].licensee.email).not.toBeTruthy()
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.none,
+          preferredMethodOfConfirmation: HOW_CONTACTED.text,
+          preferredMethodOfReminder: HOW_CONTACTED.text
+        })
+      )
     })
 
     it('if posting no it redirects to the summary page', async () => {
@@ -143,10 +170,17 @@ describe('The newsletter page', () => {
         email: 'example@email.com'
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.text)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.text)
-      expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.email,
+          preferredMethodOfConfirmation: HOW_CONTACTED.text,
+          preferredMethodOfReminder: HOW_CONTACTED.text,
+          email: 'example@email.com'
+        })
+      )
     })
 
     it('if posting yes it redirects to the summary page', async () => {
