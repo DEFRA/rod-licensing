@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.36 (2020-08-12)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`
+  * [#302](https://github.com/DEFRA/rod-licensing/pull/302) Rework services to allow issue and expiry to be calculated after payment ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.35 (2020-08-11)
 
 #### :rocket: Enhancement
