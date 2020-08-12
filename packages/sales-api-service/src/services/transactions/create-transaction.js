@@ -1,4 +1,4 @@
-import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
+import { TRANSACTION_STATUS } from './constants.js'
 import { getReferenceDataForEntityAndId } from '../reference-data.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../config.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -52,6 +52,9 @@ async function createTransactionRecord (payload) {
   const record = {
     id: transactionId,
     expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_TABLE.Ttl,
+    status: {
+      id: TRANSACTION_STATUS.STAGED
+    },
     cost: 0.0,
     isRecurringPaymentSupported: true,
     ...payload
@@ -59,9 +62,6 @@ async function createTransactionRecord (payload) {
 
   // Generate derived fields
   for (const permission of record.permissions) {
-    permission.referenceNumber = await generatePermissionNumber(permission, payload.dataSource)
-    permission.endDate = await calculateEndDate(permission)
-
     const permit = await getReferenceDataForEntityAndId(Permit, permission.permitId)
     record.isRecurringPaymentSupported = record.isRecurringPaymentSupported && permit.isRecurringPaymentSupported
     record.cost += permit.cost

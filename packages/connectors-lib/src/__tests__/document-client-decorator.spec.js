@@ -64,4 +64,22 @@ describe('document client decorations', () => {
       })
     )
   })
+
+  it('provides a convenience method to simplify building an update expression for DynamoDB', async () => {
+    const test = {
+      name: 'name-value',
+      number: 123
+    }
+    expect(docClient.createUpdateExpression(test)).toStrictEqual({
+      UpdateExpression: 'SET #name = :name,#number = :number',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#number': 'number'
+      },
+      ExpressionAttributeValues: {
+        ':name': 'name-value',
+        ':number': 123
+      }
+    })
+  })
 })

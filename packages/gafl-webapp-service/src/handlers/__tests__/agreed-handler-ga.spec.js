@@ -1,6 +1,9 @@
+import { salesApi } from '@defra-fish/connectors-lib'
+
 import agreedHandler from '../agreed-handler.js'
 import { COMPLETION_STATUS } from '../../constants.js'
 import { getAffiliation } from '../../processors/analytics'
+import { ADULT_FULL_1_DAY_LICENCE } from '../../__mocks__/mock-journeys.js'
 
 const mockProductDetails = [
   {
@@ -15,6 +18,7 @@ const mockProductDetails = [
 ]
 
 jest.mock('@defra-fish/connectors-lib')
+
 jest.mock('../../processors/payment.js')
 jest.mock('../../services/payment/govuk-pay-service.js', () => ({
   sendPayment: () =>
@@ -40,6 +44,7 @@ jest.mock('../../services/payment/govuk-pay-service.js', () => ({
       }
     })
 }))
+
 jest.mock('../../processors/analytics.js', () => ({
   getTrackingProductDetailsFromTransaction: jest.fn(() => mockProductDetails),
   getAffiliation: jest.fn(channel => `Affiliation ${channel}`)
@@ -51,6 +56,8 @@ describe('Google Analytics for agreed handler', () => {
     delete process.env.CHANNEL
     process.env.CHANNEL = 'websales'
     jest.clearAllMocks()
+    salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
   })
 
   afterAll(() => {
@@ -77,7 +84,7 @@ describe('Google Analytics for agreed handler', () => {
     )
   })
 
-  it.each(['zzz-999', 'xxx-123', 'thj-598'])('provides transaction identifier for purchase', async samplePaymentId => {
+  it.each(['zzz-999', 'xxx-123', 'thj-598'])('provides transaction identifier for purchase: %s', async samplePaymentId => {
     const request = getMockRequest(false, samplePaymentId)
 
     await agreedHandler(request, getMockResponseToolkit())
@@ -121,24 +128,26 @@ const getMockRequest = (checkout = true, payment_id = 'aaa111') => ({
           payment: {
             payment_id
           },
-          permissions: {
-            permit: {
-              description: 'description',
-              permitSubtype: {
-                label: 'permitSubtypeLabel'
-              },
-              numberOfRods: 1,
-              permitType: {
-                label: 'permitTypeLabel'
-              },
-              durationMagnitude: 1,
-              durationDesignator: {
-                label: 'durationDesignatorLabel'
-              },
-              cost: 1,
-              concessions: ['a']
+          permissions: [
+            {
+              permit: {
+                description: 'description',
+                permitSubtype: {
+                  label: 'permitSubtypeLabel'
+                },
+                numberOfRods: 1,
+                permitType: {
+                  label: 'permitTypeLabel'
+                },
+                durationMagnitude: 1,
+                durationDesignator: {
+                  label: 'durationDesignatorLabel'
+                },
+                cost: 1,
+                concessions: ['a']
+              }
             }
-          },
+          ],
           id: 'fff-111-eee-222',
           cost: 1
         }),

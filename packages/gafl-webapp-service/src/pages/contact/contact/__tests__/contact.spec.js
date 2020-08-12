@@ -35,7 +35,7 @@ const goodAddress = {
   'country-code': 'GB'
 }
 describe('The contact preferences page', () => {
-  describe('where the prerequisite are not fulfilled', async () => {
+  describe('where the prerequisite are not fulfilled', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', CONTROLLER.uri)
       d()
@@ -63,7 +63,7 @@ describe('The contact preferences page', () => {
     })
   })
 
-  describe('for a full 12 month licence, adult', async () => {
+  describe('for a full 12 month licence, adult', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
@@ -155,7 +155,7 @@ describe('The contact preferences page', () => {
     })
   })
 
-  describe('for a junior licence', async () => {
+  describe('for a junior licence', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
@@ -171,7 +171,7 @@ describe('The contact preferences page', () => {
     })
   })
 
-  describe('for 1 day licence', async () => {
+  describe('for 1 day licence', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
@@ -188,7 +188,7 @@ describe('The contact preferences page', () => {
     })
   })
 
-  describe('if the contact summary has been seen', async () => {
+  describe('if the contact summary has been seen', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)

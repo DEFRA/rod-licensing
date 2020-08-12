@@ -24,7 +24,11 @@ describe('payment-journals service', () => {
       expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
-        UpdateExpression: 'SET expires = :expires,some = :some',
+        UpdateExpression: 'SET #expires = :expires,#some = :some',
+        ExpressionAttributeNames: {
+          '#expires': 'expires',
+          '#some': 'some'
+        },
         ExpressionAttributeValues: {
           ':expires': expect.any(Number),
           ':some': 'data'

@@ -11,8 +11,8 @@ export const optionSetOption = Joi.object({
   .label('option-set-definition-option')
 
 export const optionSetEntriesExample = { 910400000: optionSetOptionExample }
-export const optionSetEntries = Joi.object()
-  .pattern(/.*/, optionSetOption)
+export const optionSetEntries = Joi.object({})
+  .pattern(Joi.string().label('option-set-name'), optionSetOption)
   .example(optionSetEntriesExample)
   .label('option-set-definition-options')
 

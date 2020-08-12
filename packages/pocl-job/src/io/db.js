@@ -10,15 +10,11 @@ const { docClient } = AWS()
  * @returns {Promise<void>}
  */
 export const updateFileStagingTable = async ({ filename, ...entries }) => {
-  const data = { expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries }
-  const setFieldExpression = Object.keys(data).map(k => `${k} = :${k}`)
-  const expressionAttributeValues = Object.entries(data).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
   await docClient
     .update({
       TableName: config.db.fileStagingTable,
       Key: { filename },
-      UpdateExpression: `SET ${setFieldExpression}`,
-      ExpressionAttributeValues: expressionAttributeValues
+      ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
     })
     .promise()
 }

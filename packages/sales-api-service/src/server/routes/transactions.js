@@ -124,6 +124,7 @@ export default [
             404: { description: 'A transaction for the specified identifier was not found' },
             402: { description: 'The payment amount did not match the cost of the transaction' },
             409: { description: 'The transaction does not support recurring payments but an instruction was supplied' },
+            410: { description: 'The transaction has already been finalised' },
             422: { description: 'The transaction completion payload was invalid' }
           },
           order: 2

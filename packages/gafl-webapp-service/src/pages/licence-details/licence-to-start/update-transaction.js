@@ -18,6 +18,7 @@ export default async request => {
   if (payload['licence-to-start'] === 'after-payment') {
     permission.licenceToStart = licenceToStart.AFTER_PAYMENT
     permission.licenceStartDate = moment().format('YYYY-MM-DD')
+    delete permission.licenceStartTime
   } else {
     permission.licenceToStart = licenceToStart.ANOTHER_DATE
     permission.licenceStartDate = moment({

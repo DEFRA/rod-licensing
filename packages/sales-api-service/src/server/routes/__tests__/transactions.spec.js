@@ -1,9 +1,9 @@
 import initialiseServer from '../../index.js'
-import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
+import { mockTransactionPayload, mockStagedTransactionRecord } from '../../../__mocks__/test-data.js'
 import { v4 as uuidv4 } from 'uuid'
 jest.mock('../../../services/transactions/transactions.service.js', () => ({
-  createTransaction: jest.fn(async () => mockTransactionRecord()),
-  createTransactions: jest.fn(async payloads => Array(payloads.length).fill(mockTransactionRecord())),
+  createTransaction: jest.fn(async () => mockStagedTransactionRecord()),
+  createTransactions: jest.fn(async payloads => Array(payloads.length).fill(mockStagedTransactionRecord())),
   finaliseTransaction: jest.fn(async () => 'FINALISE_TRANSACTION_RESULT'),
   processQueue: jest.fn(async () => {}),
   processDlq: jest.fn(async () => {})
@@ -44,9 +44,11 @@ describe('transaction handler', () => {
 
   describe('postNewTransaction', () => {
     it('calls createTransaction on the transaction service', async () => {
-      const result = await server.inject({ method: 'POST', url: '/transactions', payload: mockTransactionPayload() })
+      const transactionPayload = mockTransactionPayload()
+      const expectedTransactionRecord = mockStagedTransactionRecord(transactionPayload)
+      const result = await server.inject({ method: 'POST', url: '/transactions', payload: transactionPayload })
       expect(result.statusCode).toBe(201)
-      expect(JSON.parse(result.payload)).toMatchObject(mockTransactionRecord())
+      expect(JSON.parse(result.payload)).toMatchObject(expectedTransactionRecord)
     })
     it('throws 422 errors if the payload schema fails validation', async () => {
       const result = await server.inject({ method: 'POST', url: '/transactions', payload: {} })
@@ -66,7 +68,7 @@ describe('transaction handler', () => {
           Array(25).fill(
             expect.objectContaining({
               statusCode: 201,
-              response: mockTransactionRecord()
+              response: mockStagedTransactionRecord()
             })
           )
         )
@@ -83,7 +85,7 @@ describe('transaction handler', () => {
         expect.arrayContaining([
           expect.objectContaining({
             statusCode: 201,
-            response: mockTransactionRecord()
+            response: mockStagedTransactionRecord()
           }),
           expect.objectContaining({
             statusCode: 422,
@@ -92,7 +94,7 @@ describe('transaction handler', () => {
           }),
           expect.objectContaining({
             statusCode: 201,
-            response: mockTransactionRecord()
+            response: mockStagedTransactionRecord()
           })
         ])
       )

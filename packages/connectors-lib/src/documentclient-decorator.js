@@ -23,5 +23,16 @@ export const createDocumentClient = options => {
   docClient.queryAllPromise = wrapPagedDocumentClientOperation('query')
   docClient.scanAllPromise = wrapPagedDocumentClientOperation('scan')
 
+  docClient.createUpdateExpression = payload =>
+    Object.entries(payload).reduce(
+      (acc, [k, v], idx) => {
+        acc.UpdateExpression += `${idx > 0 ? ',' : ''}#${k} = :${k}`
+        acc.ExpressionAttributeNames[`#${k}`] = k
+        acc.ExpressionAttributeValues[`:${k}`] = v
+        return acc
+      },
+      { UpdateExpression: 'SET ', ExpressionAttributeNames: {}, ExpressionAttributeValues: {} }
+    )
+
   return docClient
 }

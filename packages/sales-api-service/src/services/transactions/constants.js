@@ -1,0 +1,4 @@
+export const TRANSACTION_STATUS = {
+  STAGED: 'STAGED',
+  FINALISED: 'FINALISED'
+}
