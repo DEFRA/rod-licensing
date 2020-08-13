@@ -3,7 +3,8 @@ import * as contactBindings from '../contact/contact.bindings.js'
 import * as licenceBindings from '../licence/licence.bindings.js'
 import * as concessionBindings from '../licence/concession.bindings.js'
 import { POST_OFFICE_DATASOURCE } from '../../../../staging/constants.js'
-import moment from 'moment'
+import { SERVICE_LOCAL_TIME } from '../../../../../../business-rules-lib/src'
+import moment from 'moment-timezone'
 
 /**
  * Sequential serial number
@@ -71,11 +72,10 @@ export const Transaction = new Binding({
   ],
   element: 'REC',
   transform: ({ children }) => {
-    const transactionDate = moment(
-      children[TransactionDate.element] + children[TransactionTime.element],
-      'DD/MM/YYYYHH:mm:ss',
-      true
-    ).toISOString()
+    const transactionDate = moment
+      .tz(children[TransactionDate.element] + children[TransactionTime.element], 'DD/MM/YYYYHH:mm:ss', true, SERVICE_LOCAL_TIME)
+      .utc()
+      .toISOString()
     const email = children[contactBindings.NotifyEmail.element] || children[contactBindings.CommsEmail.element]
     const mobilePhone = children[contactBindings.NotifyMobilePhone.element] || children[contactBindings.CommsMobilePhone.element]
     const preferredNotifyMethod = getPreferredContactMethod(
@@ -112,8 +112,11 @@ export const Transaction = new Binding({
             startDate: moment(
               children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element],
               'DD/MM/YYYYHH:mm',
-              true
-            ).toISOString(),
+              true,
+              SERVICE_LOCAL_TIME
+            )
+              .utc()
+              .toISOString(),
             permitId: children[licenceBindings.ItemId.element],
             ...children[concessionBindings.SeniorConcession.element],
             ...children[concessionBindings.PipConcession.element],
