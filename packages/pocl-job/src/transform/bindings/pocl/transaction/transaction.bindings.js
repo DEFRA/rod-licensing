@@ -3,7 +3,7 @@ import * as contactBindings from '../contact/contact.bindings.js'
 import * as licenceBindings from '../licence/licence.bindings.js'
 import * as concessionBindings from '../licence/concession.bindings.js'
 import { POST_OFFICE_DATASOURCE } from '../../../../staging/constants.js'
-import { SERVICE_LOCAL_TIME } from '../../../../../../business-rules-lib/src'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
 /**
