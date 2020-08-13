@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.38 (2020-08-13)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`, `pocl-job`
+  * [#307](https://github.com/DEFRA/rod-licensing/pull/307) Fix handling of date/times when running in docker container ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.37 (2020-08-13)
 
 #### :rocket: Enhancement
