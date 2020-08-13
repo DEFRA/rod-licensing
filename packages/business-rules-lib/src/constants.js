@@ -50,3 +50,8 @@ export const RENEW_AFTER_DAYS = 60 // The number of days after licence expiry th
  * @type {number}
  */
 export const START_AFTER_PAYMENT_MINUTES = 30
+
+/**
+ * Timezone of the service
+ */
+export const SERVICE_LOCAL_TIME = 'Europe/London'

@@ -1,6 +1,7 @@
-import moment from 'moment'
+import moment from 'moment-timezone'
 import db from 'debug'
 import { LICENCE_TYPE, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
 import { CONTACT_SUMMARY_SEEN } from '../constants.js'
@@ -22,7 +23,10 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
   permission.licenceStartTime = null
   permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-  permission.licenceStartDate = moment(authenticationResult.permission.endDate).format('YYYY-MM-DD')
+  permission.licenceStartDate = moment
+    .utc(authenticationResult.permission.endDate)
+    .tz(SERVICE_LOCAL_TIME)
+    .format('YYYY-MM-DD')
   permission.renewedEndDate = permission.licenceStartDate
   permission.licensee = Object.assign(
     (({ country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...l }) => l)(

@@ -54,6 +54,7 @@
     "find": "^0.3.0",
     "govuk-frontend": "^3.7.0",
     "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.2",
     "pdfmake": "^0.1.66",
