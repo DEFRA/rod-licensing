@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi'
 import moment from 'moment'
 import JoiDate from '@hapi/joi-date'
-import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import { LICENCE_TO_START, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { dateFormats } from '../../../constants.js'
@@ -41,7 +41,8 @@ const getData = () => ({
   maxStartDate: moment()
     .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
     .format('DD MM YYYY'),
-  advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS
+  advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
+  startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
 })
 
 export default pageRoute(LICENCE_TO_START.page, LICENCE_TO_START.uri, validator, CONTROLLER.uri, getData)

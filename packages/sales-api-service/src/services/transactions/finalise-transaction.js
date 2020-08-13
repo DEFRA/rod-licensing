@@ -2,6 +2,8 @@ import { TRANSACTION_STATUS } from './constants.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -25,7 +27,11 @@ export async function finaliseTransaction ({ id, ...payload }) {
   // Generate derived fields
   for (const permission of transactionRecord.permissions) {
     permission.issueDate = permission.issueDate ?? payload.payment.timestamp
-    permission.startDate = permission.startDate ?? payload.payment.timestamp
+    permission.startDate =
+      permission.startDate ??
+      moment(payload.payment.timestamp)
+        .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
+        .toISOString()
     permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
     permission.endDate = await calculateEndDate(permission)
   }
