@@ -44,3 +44,9 @@ export const PAYMENT_TYPE = { debit: 'Debit card' }
  */
 export const RENEW_BEFORE_DAYS = 60 // The number of days before licence expiry the link is active
 export const RENEW_AFTER_DAYS = 60 // The number of days after licence expiry the link is active
+
+/**
+ * The number of minutes after payment that a licence will start
+ * @type {number}
+ */
+export const START_AFTER_PAYMENT_MINUTES = 30

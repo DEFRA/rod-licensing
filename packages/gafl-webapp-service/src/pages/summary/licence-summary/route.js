@@ -17,6 +17,7 @@ import {
   RENEWAL_START_DATE,
   NEW_TRANSACTION
 } from '../../../uri.js'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 
@@ -58,6 +59,7 @@ export const getData = async request => {
   return {
     permission,
     startTimeString,
+    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
     licenceTypeStr: licenceTypeDisplay(permission),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
