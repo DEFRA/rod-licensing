@@ -109,12 +109,13 @@ export const Transaction = new Binding({
               preferredMethodOfReminder: preferredNotifyMethod
             },
             issueDate: transactionDate,
-            startDate: moment(
-              children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element],
-              'DD/MM/YYYYHH:mm',
-              true,
-              SERVICE_LOCAL_TIME
-            )
+            startDate: moment
+              .tz(
+                children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element],
+                'DD/MM/YYYYHH:mm',
+                true,
+                SERVICE_LOCAL_TIME
+              )
               .utc()
               .toISOString(),
             permitId: children[licenceBindings.ItemId.element],
