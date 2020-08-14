@@ -69,7 +69,7 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
  */
 export const pricingDetail = async (page, request) => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions(request)
+  const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 
   const userConcessions = []
   if (concessionHelper.hasJunior(permission)) {

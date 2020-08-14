@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-export const getPermitsJoinPermitConcessions = async request => {
+export const getPermitsJoinPermitConcessions = async () => {
   const permits = await salesApi.permits.getAll()
   const permitConcessions = await salesApi.permitConcessions.getAll()
   const concessions = await salesApi.concessions.getAll()
@@ -13,7 +13,7 @@ export const getPermitsJoinPermitConcessions = async request => {
 const filterPermits = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const licenseeConcessions = permission.concessions || []
-  const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions(request)
+  const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 
   // Filter the joined list to include every and only those concessions in licenseeConcessions
   const filteredPermitsJoinPermitConcessions = permitsJoinPermitConcessions.filter(
