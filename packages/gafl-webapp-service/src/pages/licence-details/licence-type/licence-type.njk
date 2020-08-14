@@ -1,6 +1,7 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 {% from "warning-text/macro.njk" import govukWarningText %}
+{% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
 {% set title = 'Which type of licence do you want?' %}
 
@@ -34,30 +35,29 @@
 
 {% set items = [
         {
+            id: 'selector-' + data.licenseTypes.troutAndCoarse2Rod,
             text: "Trout and coarse, up to 2 rods",
             value: data.licenseTypes.troutAndCoarse2Rod,
             checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse2Rod,
             conditional: { html: troutAndCoarse2Rod }
+        },
+        {
+            id: 'selector-' + data.licenseTypes.troutAndCoarse3Rod,
+            text: "Trout and coarse, up to 3 rods",
+            value: data.licenseTypes.troutAndCoarse3Rod,
+            checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
+            conditional: { html: troutAndCoarse3Rod }
+        },
+        {
+            id: 'selector-' + data.licenseTypes.salmonAndSeaTrout,
+            text: "Salmon and sea trout",
+            value: "salmon-and-sea-trout",
+            hint: { text: "Includes trout and coarse, up to 3 rods" },
+            checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
+            conditional: { html: salmonAndSeaTrout }
         }
     ]
 %}
-
-{% if not data.permission.licenceLength or data.permission.licenceLength === '12M' %}
-    {{ items.push({
-        text: "Trout and coarse, up to 3 rods",
-        value: data.licenseTypes.troutAndCoarse3Rod,
-        checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
-        conditional: { html: troutAndCoarse3Rod }
-    }) }}
-{% endif %}
-
-{{ items.push({
-    text: "Salmon and sea trout",
-    value: "salmon-and-sea-trout",
-    hint: { text: "Includes trout and coarse, up to 3 rods" },
-    checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
-    conditional: { html: salmonAndSeaTrout }
-}) }}
 
 {% block pageContent %}
     {{ govukRadios({
@@ -66,4 +66,19 @@
         items: items,
         errorMessage: { text: 'Tell us which type of fishing licence you want' } if error
     }) }}
+{% endblock %}
+
+{% block pricingSummary %}
+    {{ pricingSummary(data.pricing.byType, {
+        '12M': { desc: '12 month' },
+        '8D': { desc: '8 days' },
+        '1D': { desc: '1 day' },
+        'no-short': 'Shorter lengths are not available for this licence type'
+    }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    {{ pricingSummaryScript(data.pricing.byType, nonce) }}
 {% endblock %}

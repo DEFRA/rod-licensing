@@ -9,14 +9,11 @@ import {
   CONTACT_SUMMARY,
   TEST_TRANSACTION
 } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { JUNIOR_MAX_AGE, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../../identify/__mocks__/data/authentication-result.js'
 import moment from 'moment'
-import mockPermits from '../../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../../__mocks__/data/concessions.js'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -40,9 +37,7 @@ const dobHelper = d => ({
 })
 
 jest.mock('@defra-fish/connectors-lib')
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+mockSalesApi()
 
 describe('The easy renewal, change start date page', () => {
   beforeEach(async () => {

@@ -1,4 +1,5 @@
 {% extends "standard-form.njk" %}
+{% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
 {% from "radios/macro.njk" import govukRadios %}
 {% set title = 'How long do you want your licence for?' %}
@@ -17,16 +18,19 @@
         name: "licence-length",
         items: [
             {
+                id: 'selector-12M',
                 text: "12 months",
                 value: "12M",
                 checked: payload['licence-length'] === '12M'
             },
             {
+                id: 'selector-8D',
                 text: "8 days",
                 value: "8D",
                 checked: payload['licence-length'] === '8D'
             },
             {
+                id: 'selector-1D',
                 text: "1 day",
                 value: "1D",
                 checked: payload['licence-length'] === '1D'
@@ -34,4 +38,16 @@
         ],
         errorMessage: { text: 'Tell us which fishing licence you want' } if error
     }) }}
+{% endblock %}
+
+{% block pricingSummary %}
+    {{ pricingSummary(data.pricing.byLength, {
+        'total': { desc: 'Total' }
+    }, data.licenceTypeStr ) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    {{ pricingSummaryScript(data.pricing.byLength, nonce) }}
 {% endblock %}

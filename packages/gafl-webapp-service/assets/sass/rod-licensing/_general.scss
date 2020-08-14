@@ -29,3 +29,16 @@ div.no-border {
 div.initially-hidden {
   display: none;
 }
+
+.payment-summary-wrap {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 30px;
+}
+
+.payment-summary {
+  margin-top: 30px;
+  border-top: 2px solid #1d70b8;
+  padding: 15px;
+  background-color: #f3f2f1;
+}

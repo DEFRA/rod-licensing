@@ -11,10 +11,6 @@ export const licenceTypeDisplay = permission => {
     typesStrArr.push('Senior')
   }
 
-  if (concessionHelper.hasDisabled(permission)) {
-    typesStrArr.push('Disabled')
-  }
-
   typesStrArr.push(permission.licenceType)
 
   if (permission.licenceLength === '12M' && permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
