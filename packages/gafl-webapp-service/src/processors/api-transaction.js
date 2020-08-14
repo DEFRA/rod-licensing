@@ -1,3 +1,4 @@
+import { advancePurchaseDateMoment } from './date-and-time-display.js'
 import moment from 'moment'
 import * as mappings from './mapping-constants.js'
 import { TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
@@ -22,8 +23,8 @@ export const prepareApiTransactionPayload = async request => {
         issueDate: null,
         startDate: null,
         ...(p.licenceToStart === licenceToStart.ANOTHER_DATE && {
-          startDate: moment(p.licenceStartDate, 'YYYY-MM-DD')
-            .add(p.licenceStartTime, 'hours')
+          startDate: advancePurchaseDateMoment(p)
+            .utc()
             .toISOString()
         })
       }

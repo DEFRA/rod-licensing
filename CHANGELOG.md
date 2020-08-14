@@ -1,4 +1,22 @@
 
+## v0.3.0-rc.38 (2020-08-13)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`, `pocl-job`
+  * [#307](https://github.com/DEFRA/rod-licensing/pull/307) Fix handling of date/times when running in docker container ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.37 (2020-08-13)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#304](https://github.com/DEFRA/rod-licensing/pull/304) Add constant for no. of minutes after payment and fix start date calculation ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.36 (2020-08-12)
 
 #### :rocket: Enhancement

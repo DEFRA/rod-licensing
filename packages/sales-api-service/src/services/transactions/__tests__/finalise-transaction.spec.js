@@ -1,6 +1,8 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
 import { MOCK_END_DATE, MOCK_PERMISSION_NUMBER, mockTransactionPayload, mockStagedTransactionRecord } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../../config.js'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 import AwsMock from 'aws-sdk'
 import { TRANSACTION_STATUS } from '../constants.js'
 
@@ -63,7 +65,11 @@ describe('transaction service', () => {
           ':permissions': mockRecord.permissions.map(p => ({
             ...p,
             issueDate: p.issueDate ?? completionFields.payment.timestamp,
-            startDate: p.startDate ?? completionFields.payment.timestamp,
+            startDate:
+              p.startDate ??
+              moment(completionFields.payment.timestamp)
+                .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
+                .toISOString(),
             endDate: expect.any(String),
             referenceNumber: expect.any(String)
           })),

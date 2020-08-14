@@ -81,7 +81,7 @@
         text: "Valid from"
       },
       value: {
-        html: '30 minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString +
+        html: data.startAfterPaymentMinutes + ' minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString +
         ('</br><span class="govuk-caption-m">Immediately after the current licence expires</span>' if data.isContinuing and data.isRenewal else '')
       },
       actions: {

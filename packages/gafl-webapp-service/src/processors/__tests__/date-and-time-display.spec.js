@@ -13,9 +13,13 @@ describe('displayStartTime', () => {
     const startTime = displayStartTime({ licenceStartDate: '2021-01-01', licenceStartTime: '12' })
     expect(startTime).toEqual('Friday, January 1st, 2021, 12:00pm (midday)')
   })
-  it('displays the date in the correct format where the start time is 3pm', () => {
+  it('displays the date in the correct format where the start time is 3pm (UTC)', () => {
     const startTime = displayStartTime({ licenceStartDate: '2021-01-01', licenceStartTime: '15' })
     expect(startTime).toEqual('Friday, January 1st, 2021, 3:00pm')
+  })
+  it('displays the date in the correct format where the start time is 3pm (BST)', () => {
+    const startTime = displayStartTime({ licenceStartDate: '2021-07-01', licenceStartTime: '15' })
+    expect(startTime).toEqual('Thursday, July 1st, 2021, 3:00pm')
   })
 
   it('displays the date in the correct format where the API start time is midnight', () => {
@@ -24,16 +28,20 @@ describe('displayStartTime', () => {
     expect(startTime).toEqual('Friday, January 1st, 2021, 12:00am (midnight)')
   })
   it('displays the date in the correct where the API start time is 1 minute past midnight', () => {
-    const endTime = displayStartTime({ startDate: '2020-01-01T00:01:00.000Z', licenceStartDate: '2020-01-01' })
-    expect(endTime).toEqual('Wednesday, January 1st, 2020, 12:01am')
+    const startTime = displayStartTime({ startDate: '2020-01-01T00:01:00.000Z', licenceStartDate: '2020-01-01' })
+    expect(startTime).toEqual('Wednesday, January 1st, 2020, 12:01am')
   })
   it('displays the date in the correct format where the API start time is 12pm', () => {
     const startTime = displayStartTime({ startDate: '2021-01-01T12:00:00.000Z', licenceStartDate: '2020-01-01', licenceStartTime: '12' })
     expect(startTime).toEqual('Friday, January 1st, 2021, 12:00pm (midday)')
   })
-  it('displays the date in the correct format where the API start time is 3pm', () => {
+  it('displays the date in the correct format where the API start time is 3pm (UTC)', () => {
     const startTime = displayStartTime({ startDate: '2021-01-01T15:00:00.000Z', licenceStartDate: '2021-01-01', licenceStartTime: '15' })
     expect(startTime).toEqual('Friday, January 1st, 2021, 3:00pm')
+  })
+  it('displays the date in the correct format where the API start time is 3pm (BST)', () => {
+    const startTime = displayStartTime({ startDate: '2021-07-01T14:00:00.000Z', licenceStartDate: '2021-07-01', licenceStartTime: '15' })
+    expect(startTime).toEqual('Thursday, July 1st, 2021, 3:00pm')
   })
 })
 
