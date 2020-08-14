@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.39 (2020-08-14)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#309](https://github.com/DEFRA/rod-licensing/pull/309) Correct use of moment-timezone for POCL record start-time ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.38 (2020-08-13)
 
 #### :bug: Bug Fix
