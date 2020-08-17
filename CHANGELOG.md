@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.41 (2020-08-17)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#312](https://github.com/DEFRA/rod-licensing/pull/312) OpenID Connect authentication and role based authorisation for telesales ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.40 (2020-08-17)
 
 #### :rocket: Enhancement
