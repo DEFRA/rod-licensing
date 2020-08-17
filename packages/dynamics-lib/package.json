@@ -39,10 +39,10 @@
     "cache-manager-ioredis": "^2.1.0",
     "debug": "^4.1.1",
     "dot-prop": "^5.2.0",
-    "dynamics-web-api": "^1.6.8",
+    "dynamics-web-api": "^1.6.10",
     "moment": "^2.27.0",
     "pluralize": "^8.0.0",
     "simple-oauth2": "^4.1.0",
-    "uuid": "^8.2.0"
+    "uuid": "^8.3.0"
   }
 }
