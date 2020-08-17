@@ -23,7 +23,7 @@ export const addJunior = permission => {
   }
 }
 
-export const hasJunior = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
+export const hasJunior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
 
 export const removeJunior = permission => {
   if (hasJunior(permission)) {
@@ -48,7 +48,7 @@ export const addSenior = permission => {
   }
 }
 
-export const hasSenior = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.SENIOR)
+export const hasSenior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.SENIOR)
 
 export const removeSenior = permission => {
   if (hasSenior(permission)) {
@@ -72,7 +72,7 @@ export const addDisabled = (permission, concessionProof, referenceNumber) => {
   })
 }
 
-export const hasDisabled = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED)
+export const hasDisabled = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.DISABLED)
 
 export const removeDisabled = permission => {
   if (hasDisabled(permission)) {

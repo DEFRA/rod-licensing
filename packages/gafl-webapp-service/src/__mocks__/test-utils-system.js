@@ -1,8 +1,14 @@
 import { createServer, init, server } from '../server.js'
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
-import { TEST_TRANSACTION, TEST_STATUS, CONTROLLER } from '../uri.js'
+import { TEST_TRANSACTION, TEST_STATUS, CONTROLLER, GET_PRICING_TYPES, GET_PRICING_LENGTHS, LICENCE_LENGTH, LICENCE_TYPE } from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
+import { salesApi } from '@defra-fish/connectors-lib'
+import mockPermits from './data/permits'
+import mockPermitsConcessions from './data/permit-concessions'
+import mockConcessions from './data/concessions'
+import mockDefraCountries from './data/defra-country'
+import { pricingDetail } from '../processors/pricing-summary'
 
 createServer({
   cache: [
@@ -30,6 +36,18 @@ const start = async done => {
     method: 'GET',
     path: TEST_STATUS.uri,
     handler: async request => request.cache().helpers.status.get()
+  })
+
+  server.route({
+    method: 'GET',
+    path: GET_PRICING_TYPES.uri,
+    handler: async request => pricingDetail(LICENCE_TYPE.page, request)
+  })
+
+  server.route({
+    method: 'GET',
+    path: GET_PRICING_LENGTHS.uri,
+    handler: async request => pricingDetail(LICENCE_LENGTH.page, request)
   })
 
   // clear cache
@@ -102,6 +120,11 @@ const postRedirectGet = async (uri, payload) => {
   return injectWithCookies('GET', CONTROLLER.uri)
 }
 
-const backLinkRegEx = uri => new RegExp(`<a href=\\"${uri}\\" .*>Back</a>`)
+const mockSalesApi = () => {
+  salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
+  salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
+  salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+  salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+}
 
-export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, postRedirectGet, backLinkRegEx }
+export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, postRedirectGet, mockSalesApi }

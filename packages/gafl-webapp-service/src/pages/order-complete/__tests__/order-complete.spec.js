@@ -1,18 +1,11 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-import { initialize, injectWithCookies, postRedirectGet, start, stop } from '../../../__mocks__/test-utils-system'
+import { initialize, injectWithCookies, postRedirectGet, start, stop, mockSalesApi } from '../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../__mocks__/mock-journeys.js'
 import { AGREED, ORDER_COMPLETE, TERMS_AND_CONDITIONS, ORDER_COMPLETE_PDF } from '../../../uri.js'
-import mockPermits from '../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../__mocks__/data/concessions.js'
-import mockDefraCountries from '../../../__mocks__/data/defra-country.js'
 
 jest.mock('@defra-fish/connectors-lib')
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+mockSalesApi()
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'

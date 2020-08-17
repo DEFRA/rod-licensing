@@ -21,6 +21,7 @@
 {{ licenseDetailsSummaryRows.push([ { text: 'Name' }, { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.licenceTypeStr } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: lengthText } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Disability support ' }, { text: 'yes' if data.disabled else 'no' } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Valid from' }, { text: data.startTimeString } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Valid to' }, { text: data.endTimeString } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Paid' }, { text: "£" + data.permission.permit.cost if data.permission.permit.cost else "free" } ]) }}

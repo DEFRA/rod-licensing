@@ -38,9 +38,10 @@ const disabledPermission = {
 }
 
 describe('The PDF generator', () => {
-  it('completes for a trout and coarse licence', () => {
+  it('completes for a disabled concession trout and coarse licence', () => {
     const result = orderConfirmationPdf(disabledPermission)
-    expect(result.content[5].table.body[1][1].text).toBe('Disabled, Trout and coarse, 3 rod')
+    expect(result.content[5].table.body[1][1].text).toBe('Trout and coarse, 3 rod')
+    expect(result.content[5].table.body[3][1].text).toBe('yes')
   })
 
   it('completes for a salmon and sea trout licence', () => {
@@ -50,14 +51,15 @@ describe('The PDF generator', () => {
     permission.permit.cost = 91
     const result = orderConfirmationPdf(permission)
     expect(result.content[5].table.body[1][1].text).toBe('Salmon and sea trout')
-    expect(result.content[5].table.body[5][1].text).toBe('£91')
+    expect(result.content[5].table.body[3][1].text).toBe('no')
+    expect(result.content[5].table.body[6][1].text).toBe('£91')
   })
 
   it('completes for junior licence', () => {
     const permission = Object.assign({}, disabledPermission)
     addJunior(permission)
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[1][1].text).toBe('Junior, Disabled, Trout and coarse, 3 rod')
+    expect(result.content[5].table.body[1][1].text).toBe('Junior, Trout and coarse, 3 rod')
   })
 
   it('completes for a 1 Day licence', () => {

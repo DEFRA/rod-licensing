@@ -1,9 +1,5 @@
-import { salesApi } from '@defra-fish/connectors-lib'
-import mockPermits from '../../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../../__mocks__/data/concessions.js'
 import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 import {
   LICENCE_SUMMARY,
@@ -20,9 +16,7 @@ import { licenceToStart } from '../../../licence-details/licence-to-start/update
 import { licenseTypes } from '../../../licence-details/licence-type/route.js'
 import { disabilityConcessionTypes } from '../../../concessions/disability/route.js'
 
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+mockSalesApi()
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'

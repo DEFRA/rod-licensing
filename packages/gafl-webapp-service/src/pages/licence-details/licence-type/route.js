@@ -1,5 +1,6 @@
 import { LICENCE_TYPE, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
+import { pricingDetail } from '../../../processors/pricing-summary.js'
 import Joi from '@hapi/joi'
 
 export const licenseTypes = {
@@ -14,9 +15,10 @@ const validator = Joi.object({
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => ({
-  licenseTypes,
-  permission: await request.cache().helpers.transaction.getCurrentPermission()
-})
+const getData = async request => {
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const pricing = await pricingDetail(LICENCE_TYPE.page, request)
+  return { licenseTypes, permission, pricing }
+}
 
 export default pageRoute(LICENCE_TYPE.page, LICENCE_TYPE.uri, validator, CONTROLLER.uri, getData)

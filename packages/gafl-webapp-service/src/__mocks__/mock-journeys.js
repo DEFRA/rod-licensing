@@ -1,11 +1,5 @@
-import { salesApi } from '@defra-fish/connectors-lib'
-import { injectWithCookies, postRedirectGet } from './test-utils-system.js'
+import { injectWithCookies, postRedirectGet, mockSalesApi } from './test-utils-system.js'
 import { dobHelper, ADULT_TODAY, JUNIOR_TODAY, SENIOR_TODAY } from './test-utils-business-rules.js'
-
-import mockPermits from './data/permits.js'
-import mockPermitsConcessions from './data/permit-concessions.js'
-import mockConcessions from './data/concessions.js'
-import mockDefraCountries from './data/defra-country.js'
 
 import {
   ADDRESS_ENTRY,
@@ -37,10 +31,7 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+mockSalesApi()
 
 export const ADULT_FULL_1_DAY_LICENCE = {
   transactionResponse: {
