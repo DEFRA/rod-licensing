@@ -49,6 +49,6 @@
     "hapi-and-healthy": "^7.0.7",
     "hapi-swagger": "^13.0.2",
     "moment": "^2.27.0",
-    "uuid": "^8.2.0"
+    "uuid": "^8.3.0"
   }
 }
