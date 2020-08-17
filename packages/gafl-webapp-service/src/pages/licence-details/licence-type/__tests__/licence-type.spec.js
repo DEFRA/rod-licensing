@@ -9,7 +9,7 @@ import {
   NEW_TRANSACTION
 } from '../../../../uri.js'
 import * as mappings from '../../../../processors/mapping-constants.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { licenseTypes } from '../route.js'
 import { JUNIOR_TODAY, ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../licence-to-start/update-transaction'
@@ -18,6 +18,8 @@ import { disabilityConcessionTypes } from '../../../concessions/disability/route
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+
+mockSalesApi()
 
 describe('The licence type page', () => {
   it('returns success on requesting', async () => {
@@ -57,7 +59,7 @@ describe('The licence type page', () => {
     expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
-  it('on success redirects directly to the summary page for a disabled concession', async () => {
+  it('on success redirects directly to the length page for a disabled concession', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
@@ -67,7 +69,7 @@ describe('The licence type page', () => {
     })
     const response = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 
   it('on success redirects directly to the summary page for a 3 rod licence', async () => {

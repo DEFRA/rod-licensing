@@ -1,9 +1,11 @@
 import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, TEST_TRANSACTION } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+
+mockSalesApi()
 
 describe('The licence length page', () => {
   it('returns success on requesting', async () => {

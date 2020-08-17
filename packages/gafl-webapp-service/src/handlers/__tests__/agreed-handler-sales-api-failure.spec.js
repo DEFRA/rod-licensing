@@ -1,14 +1,11 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
-import { initialize, injectWithCookies, start, stop } from '../../__mocks__/test-utils-system'
+import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../__mocks__/test-utils-system'
 import { ADULT_FULL_1_DAY_LICENCE, MOCK_PAYMENT_RESPONSE } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 
 import mockPermits from '../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../__mocks__/data/concessions.js'
-import mockDefraCountries from '../../__mocks__/data/defra-country.js'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -23,10 +20,7 @@ afterAll(() => {
 })
 
 jest.mock('@defra-fish/connectors-lib')
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+mockSalesApi()
 
 const paymentStatusSuccess = cost => ({
   amount: cost,

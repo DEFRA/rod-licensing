@@ -1,4 +1,5 @@
 import { CommonResults } from '../../../constants.js'
+import { licenceToStart } from '../licence-to-start/update-transaction.js'
 
 export const licenceLengthResults = { REQUIRE_TIME: 'require-time' }
 
@@ -10,5 +11,9 @@ export default async request => {
     return CommonResults.SUMMARY
   }
 
-  return permission.licenceLength === '12M' ? CommonResults.OK : licenceLengthResults.REQUIRE_TIME
+  if (permission.licenceToStart === licenceToStart.AFTER_PAYMENT || permission.licenceLength === '12M') {
+    return CommonResults.OK
+  }
+
+  return licenceLengthResults.REQUIRE_TIME
 }

@@ -1,4 +1,3 @@
-import { salesApi } from '@defra-fish/connectors-lib'
 import moment from 'moment'
 
 import {
@@ -16,11 +15,7 @@ import {
   AGREED
 } from '../../../uri.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils-system.js'
-import mockPermits from '../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../__mocks__/data/concessions.js'
-import mockDefraCountries from '../../../__mocks__/data/defra-country.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../__mocks__/test-utils-system.js'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -51,10 +46,7 @@ const dobHelper = d => ({
 
 const dob16Today = moment().add(-16, 'years')
 
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+mockSalesApi()
 
 describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {

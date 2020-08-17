@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie } from '../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie, mockSalesApi } from '../../__mocks__/test-utils-system.js'
 import { useSessionCookie } from '../session-manager.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
@@ -10,6 +10,8 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED
 } from '../../uri.js'
+
+mockSalesApi()
 
 describe('Use session cookie', () => {
   it('path not starting with /public marked as using a session cookie', () => {

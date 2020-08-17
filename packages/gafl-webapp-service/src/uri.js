@@ -64,3 +64,5 @@ export const REFUND_POLICY = { uri: '/guidance/refund-policy', page: 'refund-pol
  */
 export const TEST_STATUS = { uri: '/buy/status' }
 export const TEST_TRANSACTION = { uri: '/buy/transaction' }
+export const GET_PRICING_TYPES = { uri: '/buy/get-pricing/types' }
+export const GET_PRICING_LENGTHS = { uri: '/buy/get-pricing/lengths' }

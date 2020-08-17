@@ -942,11 +942,11 @@ export default [
       label: '12 months',
       description: ''
     },
-    durationMagnitude: 8,
+    durationMagnitude: 12,
     durationDesignator: {
-      id: 910400000,
-      label: 'Day(s)',
-      description: 'D'
+      id: 910400001,
+      label: 'Month(s)',
+      description: 'M'
     },
     equipment: {
       id: 910400003,

@@ -1,10 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import mockPermits from '../../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
-import mockConcessions from '../../../../__mocks__/data/concessions.js'
-
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 import {
   CONTACT_SUMMARY,
@@ -28,9 +24,7 @@ import { licenseTypes } from '../../../licence-details/licence-type/route'
 
 jest.mock('node-fetch')
 
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+mockSalesApi()
 salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
 beforeAll(() => {

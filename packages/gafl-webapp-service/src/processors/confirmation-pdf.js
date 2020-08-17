@@ -8,7 +8,7 @@ import Dirname from '../../dirname.cjs'
 import { displayStartTime, displayEndTime } from './date-and-time-display.js'
 import * as mappings from './mapping-constants.js'
 import { licenceTypeDisplay } from './licence-type-display.js'
-
+import { hasDisabled } from './concession-helper.js'
 const crownImage = path.join(Dirname, 'public/images/govuk-crest.png')
 
 const style = {
@@ -45,6 +45,7 @@ const getTable = permission => {
     ]
   }
 
+  tab.body.push(tableRowHelper('Disability support', hasDisabled(permission) ? 'yes' : 'no'))
   tab.body.push(tableRowHelper('Valid from', displayStartTime(permission)))
   tab.body.push(tableRowHelper('Valid to', displayEndTime(permission)))
   tab.body.push(tableRowHelper('Paid', permission.permit.cost === 0 ? 'free' : `£${permission.permit.cost}`))

@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.40 (2020-08-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#310](https://github.com/DEFRA/rod-licensing/pull/310) Add pricing tables to the licence selection pages ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.39 (2020-08-14)
 
 #### :bug: Bug Fix
