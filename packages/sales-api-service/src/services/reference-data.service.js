@@ -3,11 +3,12 @@ import {
   Concession,
   TransactionCurrency,
   PermitConcession,
+  Role,
   retrieveMultipleAsMap,
   retrieveGlobalOptionSets
 } from '@defra-fish/dynamics-lib'
 
-export const ENTITY_TYPES = [Permit, Concession, TransactionCurrency, PermitConcession]
+export const ENTITY_TYPES = [Permit, Concession, TransactionCurrency, PermitConcession, Role]
 
 export async function getReferenceData () {
   return retrieveMultipleAsMap(...ENTITY_TYPES).cached()

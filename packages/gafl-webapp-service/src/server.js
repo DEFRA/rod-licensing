@@ -22,6 +22,7 @@ import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY } from 
 import sessionManager from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
+import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 
 let server
@@ -76,7 +77,8 @@ const layoutContextAmalgamation = (request, h) => {
         accessibility: ACCESSIBILITY_STATEMENT.uri,
         privacy: PRIVACY_POLICY.uri,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
-      }
+      },
+      credentials: request.auth.credentials
     })
   }
   return h.continue
@@ -150,6 +152,10 @@ const init = async () => {
    * simple setters and getters hiding the session key.
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
+
+  if (process.env.CHANNEL === 'telesales') {
+    await initialiseOIDC(server)
+  }
 
   server.route(routes)
   await server.start()

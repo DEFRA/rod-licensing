@@ -15,6 +15,7 @@ import TestEntity from '../../__mocks__/TestEntity.js'
 import { v4 as uuidv4 } from 'uuid'
 import MockDynamicsWebApi from 'dynamics-web-api'
 import { PredefinedQuery } from '../../queries/predefined-query.js'
+import { BaseEntity, EntityDefinition } from '../../entities/base.entity.js'
 
 describe('entity manager', () => {
   beforeEach(async () => {
@@ -384,6 +385,52 @@ describe('entity manager', () => {
       })
       expect(result).toHaveLength(1)
       expect(result[0]).toBeInstanceOf(TestEntity)
+    })
+
+    it('does not require the entity to define a default filter', async () => {
+      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
+
+      class SameEntity extends BaseEntity {
+        static _definition = new EntityDefinition(() => ({
+          localName: 'sampleEntity',
+          dynamicsCollection: 'sample',
+          mappings: {
+            id: { field: 'idval', type: 'string' },
+            testVal: { field: 'testval', type: 'string' }
+          }
+        }))
+
+        /**
+         * @returns {EntityDefinition} the definition providing mappings between Dynamics entity and the local entity
+         */
+        static get definition () {
+          return SameEntity._definition
+        }
+
+        /**
+         * The testVal field
+         * @type {string}
+         */
+        get testVal () {
+          return super._getState('testVal')
+        }
+
+        set testVal (testVal) {
+          super._setState('testVal', testVal)
+        }
+      }
+
+      const lookup = new SameEntity()
+      lookup.testVal = 'StringData'
+      const expectedLookupSelect = "testval eq 'StringData'"
+      const result = await findByExample(lookup)
+      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+        collection: SameEntity.definition.dynamicsCollection,
+        select: SameEntity.definition.select,
+        filter: expect.stringMatching(`${expectedLookupSelect}`)
+      })
+      expect(result).toHaveLength(1)
+      expect(result[0]).toBeInstanceOf(SameEntity)
     })
 
     it('only serializes fields into the select statement if they are set', async () => {

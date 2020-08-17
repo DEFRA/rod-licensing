@@ -5,6 +5,7 @@ import TransactionFiles from './transaction-files.js'
 import PaymentJournals from './payment-journals.js'
 import StagingExceptions from './staging-exceptions.js'
 import Authenticate from './authenticate.js'
+import Users from './system-users.js'
 
 import Static from './static.js'
 
@@ -16,5 +17,6 @@ export default [
   ...TransactionFiles,
   ...PaymentJournals,
   ...StagingExceptions,
-  ...Authenticate
+  ...Authenticate,
+  ...Users
 ]

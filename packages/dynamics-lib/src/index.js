@@ -16,6 +16,10 @@ export * from './entities/recurring-payment.entity.js'
 export * from './entities/recurring-payment-instruction.entity.js'
 export * from './entities/staging-exception.entity.js'
 
+export * from './entities/role.entity.js'
+export * from './entities/system-user-role.entity.js'
+export * from './entities/system-user.entity.js'
+
 // Queries
 export * from './queries/permission.queries.js'
 export * from './queries/fulfilment.queries.js'

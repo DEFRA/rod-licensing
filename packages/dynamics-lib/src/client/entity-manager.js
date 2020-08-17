@@ -173,7 +173,7 @@ export async function findByAlternateKey (entityType, alternateKey) {
 export async function findByExample (entity) {
   try {
     const filter = [
-      entity.constructor.definition.defaultFilter,
+      ...(entity.constructor.definition.defaultFilter ? [entity.constructor.definition.defaultFilter] : []),
       ...Object.entries(entity.constructor.definition.mappings).reduce((acc, [property, { field, type }]) => {
         let serialized = entity._toSerialized(property)
         if (serialized !== undefined) {

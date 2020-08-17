@@ -28,6 +28,10 @@ export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complet
 export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
 export const ATTRIBUTION = { uri: '/buy/attribution' }
 
+export const OIDC_SIGNIN = { uri: '/oidc/signin' }
+export const OIDC_ROLE_REQUIRED = { uri: '/oidc/role-required', page: 'role-required' }
+export const OIDC_ACCOUNT_DISABLED = { uri: '/oidc/account-disabled', page: 'account-disabled' }
+
 /**
  * Renewals pages
  * @type {{uri: string}}

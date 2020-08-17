@@ -120,7 +120,6 @@ export const createPaymentJournal = async (id, data) => exec2xxOrThrow(call(new 
  *
  * @param {string} id the identifier of the payment journal to retrieve
  * @returns {Promise<*>}
- * @throws on a non-2xx response
  */
 export const getPaymentJournal = async id => exec2xxOrNull(call(new URL(`/paymentJournals/${id}`, urlBase), 'get'))
 
@@ -142,6 +141,14 @@ export const updatePaymentJournal = async (id, data) => exec2xxOrThrow(call(new 
  * @throws on a non-2xx response
  */
 export const createStagingException = async data => exec2xxOrThrow(call(new URL('/stagingExceptions', urlBase), 'post', data))
+
+/**
+ * Retrieve details of a system user
+ *
+ * @param oid the Azure object ID pertaining to the system user
+ * @returns {Promise<*>}
+ */
+export const getSystemUser = async oid => exec2xxOrNull(call(new URL(`/systemUsers/${oid}`, urlBase), 'get'))
 
 /**
  * Supports querying of reference data from the Sales API

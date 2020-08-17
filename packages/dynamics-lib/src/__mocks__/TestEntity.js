@@ -6,39 +6,14 @@ export default class TestEntity extends BaseEntity {
     dynamicsCollection: 'test',
     defaultFilter: 'statecode eq 0',
     mappings: {
-      id: {
-        field: 'idval',
-        type: 'string'
-      },
-      strVal: {
-        field: 'strval',
-        type: 'string'
-      },
-      intVal: {
-        field: 'intval',
-        type: 'integer'
-      },
-      decVal: {
-        field: 'decval',
-        type: 'decimal'
-      },
-      boolVal: {
-        field: 'boolval',
-        type: 'boolean'
-      },
-      dateVal: {
-        field: 'dateval',
-        type: 'date'
-      },
-      dateTimeVal: {
-        field: 'datetimeval',
-        type: 'datetime'
-      },
-      optionSetVal: {
-        field: 'optionsetval',
-        type: 'optionset',
-        ref: 'test_globaloption'
-      }
+      id: { field: 'idval', type: 'string' },
+      strVal: { field: 'strval', type: 'string' },
+      intVal: { field: 'intval', type: 'integer' },
+      decVal: { field: 'decval', type: 'decimal' },
+      boolVal: { field: 'boolval', type: 'boolean' },
+      dateVal: { field: 'dateval', type: 'date' },
+      dateTimeVal: { field: 'datetimeval', type: 'datetime' },
+      optionSetVal: { field: 'optionsetval', type: 'optionset', ref: 'test_globaloption' }
     },
     alternateKey: 'strval',
     relationships: {
@@ -55,106 +30,85 @@ export default class TestEntity extends BaseEntity {
   }
 
   /**
-   * @returns {string} the strVal to test
+   * The test strVal field
+   * @type {string}
    */
   get strVal () {
     return super._getState('strVal')
   }
 
-  /**
-   * Set the strVal to test
-   * @param {string} strVal the strVal to set
-   */
   set strVal (strVal) {
     super._setState('strVal', strVal)
   }
 
   /**
-   * @returns {number} the intVal to test
+   * The test intVal field
+   * @type {number}
    */
   get intVal () {
     return super._getState('intVal')
   }
 
-  /**
-   * Set the intVal to test
-   * @param {number} intVal the intVal to set
-   */
   set intVal (intVal) {
     super._setState('intVal', intVal)
   }
 
   /**
-   * @returns {number} the decVal to test
+   * The test decVal field
+   * @type {number}
    */
   get decVal () {
     return super._getState('decVal')
   }
 
-  /**
-   * Set the decVal to test
-   * @param {number} decVal the decVal to set
-   */
   set decVal (decVal) {
     super._setState('decVal', decVal)
   }
 
   /**
-   * @returns {boolean} the boolVal to test
+   * The test boolVal field
+   * @type {boolean}
    */
   get boolVal () {
     return super._getState('boolVal')
   }
 
-  /**
-   * Set the boolVal to test
-   * @param {boolean} boolVal the boolVal to set
-   */
   set boolVal (boolVal) {
     super._setState('boolVal', boolVal)
   }
 
   /**
-   * @returns {string|Date} the dateVal to test
+   * The test dateVal field
+   * @type {string|Date}
    */
   get dateVal () {
     return super._getState('dateVal')
   }
 
-  /**
-   * Set the dateVal to test
-   * @param {string|Date} dateVal the dateVal to set
-   */
   set dateVal (dateVal) {
     super._setState('dateVal', dateVal)
   }
 
   /**
-   * @returns {string|Date} the dateTimeVal to test
+   * The test dateTimeVal field
+   * @type {string|Date}
    */
   get dateTimeVal () {
     return super._getState('dateTimeVal')
   }
 
-  /**
-   * Set the dateTimeVal to test
-   * @param {string|Date} dateTimeVal the dateTimeVal to set
-   */
   set dateTimeVal (dateTimeVal) {
     super._setState('dateTimeVal', dateTimeVal)
   }
 
   /**
-   * @returns {Object<GlobalOptionSetDefinition>} the optionSetVal to test
+   * The test dateTimeVal field
+   * @type {GlobalOptionSetDefinition}
    */
   get optionSetVal () {
     return super._getState('optionSetVal')
   }
 
-  /**
-   * Set the optionSetVal to test
-   * @param {Object<GlobalOptionSetDefinition>} optionSetVal the optionSetVal to set
-   */
   set optionSetVal (optionSetVal) {
     super._setState('optionSetVal', optionSetVal)
   }

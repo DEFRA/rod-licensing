@@ -41,6 +41,7 @@
     "@defra/hapi-gapi": "^1.0.0",
     "@hapi/boom": "^9.1.0",
     "@hapi/catbox-redis": "^6.0.1",
+    "@hapi/cookie": "^11.0.1",
     "@hapi/crumb": "^8.0.0",
     "@hapi/hapi": "^19.2.0",
     "@hapi/inert": "^6.0.1",
@@ -57,6 +58,7 @@
     "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.0",
     "nunjucks": "^3.2.2",
+    "openid-client": "^3.15.9",
     "pdfmake": "^0.1.66",
     "semver": "^7.3.2",
     "uuid": "^8.2.0"
