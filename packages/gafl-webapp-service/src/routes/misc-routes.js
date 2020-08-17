@@ -82,6 +82,9 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) =>
       h.view(COOKIES.page, {
+        uri: {
+          buy: CONTROLLER.uri
+        },
         cookie: {
           csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
           sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT

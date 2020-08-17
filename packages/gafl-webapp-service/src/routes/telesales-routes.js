@@ -1,4 +1,4 @@
-import { OIDC_SIGNIN, OIDC_ACCOUNT_DISABLED, OIDC_ROLE_REQUIRED } from '../uri.js'
+import { OIDC_SIGNIN, OIDC_ACCOUNT_DISABLED, OIDC_ROLE_REQUIRED, CONTROLLER } from '../uri.js'
 import { signIn } from '../handlers/oidc-handler.js'
 
 export default [
@@ -16,13 +16,13 @@ export default [
   {
     method: ['GET'],
     path: OIDC_ACCOUNT_DISABLED.uri,
-    handler: async (request, h) => h.view(OIDC_ACCOUNT_DISABLED.page),
+    handler: async (request, h) => h.view(OIDC_ACCOUNT_DISABLED.page, { uri: { buy: CONTROLLER.uri } }),
     options: { auth: false }
   },
   {
     method: ['GET'],
     path: OIDC_ROLE_REQUIRED.uri,
-    handler: async (request, h) => h.view(OIDC_ROLE_REQUIRED.page),
+    handler: async (request, h) => h.view(OIDC_ROLE_REQUIRED.page, { uri: { buy: CONTROLLER.uri } }),
     options: { auth: false }
   }
 ]

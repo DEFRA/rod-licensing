@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { OIDC_SIGNIN } from '../uri.js'
+import { OIDC_SIGNIN, CONTROLLER } from '../uri.js'
 import Boom from '@hapi/boom'
 import OpenIdClient from 'openid-client'
 import moment from 'moment'
@@ -79,7 +79,7 @@ export const signIn = async (request, h) => {
   const success = !!request.payload.id_token
   if (success) {
     // Retrieve the nonce from the server cache for the given state value
-    const { nonce, state, postAuthRedirect = '/buy' } = (await cache.get(request.payload.state)) ?? {}
+    const { nonce, state, postAuthRedirect = CONTROLLER.uri } = (await cache.get(request.payload.state)) ?? {}
     // Validate the jwt token
     const tokenSet = await client.callback(redirectUri, request.payload, { nonce: nonce, state: state })
 
