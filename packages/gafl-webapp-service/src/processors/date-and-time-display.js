@@ -32,10 +32,5 @@ const endMomentStr = m => {
 }
 
 // For renewals
-export const displayExpiryDate = permission => {
-  return endMomentStr(moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME))
-}
-
-export const displayEndTime = permission => {
-  return endMomentStr(moment.utc(permission.endDate).tz(SERVICE_LOCAL_TIME))
-}
+export const displayExpiryDate = permission => endMomentStr(moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME))
+export const displayEndTime = permission => endMomentStr(moment.utc(permission.endDate).tz(SERVICE_LOCAL_TIME))
