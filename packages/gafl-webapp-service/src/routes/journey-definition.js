@@ -19,7 +19,8 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
   IDENTIFY,
-  RENEWAL_INACTIVE
+  RENEWAL_INACTIVE,
+  RENEWAL_START_DATE
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
@@ -293,5 +294,11 @@ export default [
         page: LICENCE_SUMMARY.uri
       }
     }
+  },
+
+  // The change start time is handled directly - not via the controller, as it has dynamic validation
+  {
+    currentPage: RENEWAL_START_DATE.page,
+    backLink: LICENCE_SUMMARY.uri
   }
 ]

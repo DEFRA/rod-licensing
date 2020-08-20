@@ -13,7 +13,7 @@ export const prepareApiTransactionPayload = async request => {
   const countryList = await countries.getAll()
 
   return {
-    dataSource: mappings.DATA_SOURCE.web,
+    dataSource: process.env.CHANNEL === 'telesales' ? mappings.DATA_SOURCE.telesales : mappings.DATA_SOURCE.web,
     permissions: transactionCache.permissions.map(p => {
       const permission = {
         permitId: p.permit.id,

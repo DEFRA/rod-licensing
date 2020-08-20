@@ -30,7 +30,8 @@ const protectionExemptSet = [
 
 const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
 
-export const useSessionCookie = request => !request.path.startsWith('/public') && !request.path.startsWith('/oidc')
+export const useSessionCookie = request =>
+  !request.path.startsWith('/public') && !request.path.startsWith('/oidc') && request.path !== '/robots.txt'
 
 /**
  * If there is no session cookie create it and initialize user cache contexts

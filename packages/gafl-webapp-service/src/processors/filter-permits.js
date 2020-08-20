@@ -10,8 +10,7 @@ export const getPermitsJoinPermitConcessions = async () => {
   }))
 }
 
-const filterPermits = async request => {
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+const filterPermits = async permission => {
   const licenseeConcessions = permission.concessions || []
   const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 

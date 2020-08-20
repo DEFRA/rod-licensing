@@ -13,7 +13,7 @@ export default async (permission, request) => {
 
   // To calculate a permit, hash and save
   const addHashAndPermit = async () => {
-    const permit = await filterPermits(request)
+    const permit = await filterPermits(permission)
     permission.permit = permit
     const hash = crypto.createHash('sha256')
     hash.update(JSON.stringify(hashOperand))

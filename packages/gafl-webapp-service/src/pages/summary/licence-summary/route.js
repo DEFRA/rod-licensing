@@ -18,8 +18,8 @@ import {
   NEW_TRANSACTION
 } from '../../../uri.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
-
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
+import { CONCESSION } from '../../../processors/mapping-constants.js'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -64,7 +64,7 @@ export const getData = async request => {
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
-    disabled: concessionHelper.hasDisabled(permission),
+    disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
