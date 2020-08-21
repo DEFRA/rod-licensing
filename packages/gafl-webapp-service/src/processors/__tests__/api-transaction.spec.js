@@ -47,8 +47,9 @@ describe('prepareApiTransactionPayload', () => {
       })
     }
 
+    process.env.CHANNEL = 'telesales'
     await expect(prepareApiTransactionPayload(fakeRequest)).resolves.toEqual({
-      dataSource: 'Web Sales',
+      dataSource: 'Telesales',
       permissions: [
         {
           permitId: 'd91b34a0-0c66-e611-80dc-c4346bad0190',
@@ -107,6 +108,7 @@ describe('prepareApiTransactionPayload', () => {
       })
     }
 
+    delete process.env.CHANNEL
     await expect(prepareApiTransactionPayload(fakeRequest)).resolves.toEqual({
       dataSource: 'Web Sales',
       permissions: [
