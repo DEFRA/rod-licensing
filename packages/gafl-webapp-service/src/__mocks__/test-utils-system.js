@@ -41,13 +41,13 @@ const start = async done => {
   server.route({
     method: 'GET',
     path: GET_PRICING_TYPES.uri,
-    handler: async request => pricingDetail(LICENCE_TYPE.page, request)
+    handler: async request => pricingDetail(LICENCE_TYPE.page, await request.cache().helpers.transaction.getCurrentPermission())
   })
 
   server.route({
     method: 'GET',
     path: GET_PRICING_LENGTHS.uri,
-    handler: async request => pricingDetail(LICENCE_LENGTH.page, request)
+    handler: async request => pricingDetail(LICENCE_LENGTH.page, await request.cache().helpers.transaction.getCurrentPermission())
   })
 
   // clear cache

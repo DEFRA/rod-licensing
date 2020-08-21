@@ -83,13 +83,3 @@
     </div>
 </div>
 {% endblock %}
-
-{% block bodyEnd %}
-    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
-    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
-    <script nonce={{nonce}}>(function () {
-        document.getElementById("prt").addEventListener("click", function () {
-            window.print();
-        })
-    })()</script>
-{% endblock %}

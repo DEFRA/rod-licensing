@@ -1,4 +1,4 @@
-import { ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { dateFormats } from '../../../constants.js'
 import { RENEWAL_START_DATE, RENEWAL_START_VALIDATE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
@@ -11,7 +11,6 @@ const JoiX = Joi.extend(JoiDate)
 const schema = Joi.object({
   'licence-start-date': JoiX.date()
     .format(dateFormats)
-    .min(moment().add(-1, 'days'))
     .required()
 })
 
@@ -24,11 +23,14 @@ const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   const expiryTimeString = displayExpiryDate(permission)
+  const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
 
   return {
     expiryTimeString,
-    minStartDate: moment(permission.renewedEndDate).format('DD MM YYYY'),
-    maxStartDate: moment(permission.renewedEndDate)
+    hasExpired: permission.renewedHasExpired,
+    minStartDate: endDateMoment.format('DD MM YYYY'),
+    maxStartDate: endDateMoment
+      .clone()
       .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
       .format('DD MM YYYY'),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS

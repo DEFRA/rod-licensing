@@ -67,8 +67,7 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
  * @param request
  * @returns  {Promise<{byLength: {}}|{byType: {}}>}
  */
-export const pricingDetail = async (page, request) => {
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+export const pricingDetail = async (page, permission) => {
   const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 
   const userConcessions = []

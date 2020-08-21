@@ -33,8 +33,8 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">Your current licence expires on {{ data.expiryTimeString }}</p>
-    <p class="govuk-body-m">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence expires</p>
+    <p class="govuk-body-m">Your current licence {% if data.hasExpired %}expired on{% else %}expires{% endif %} on {{ data.expiryTimeString }}</p>
+    <p class="govuk-body-m">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence {% if data.hasExpired %}expired{% else %}expires{% endif %}</p>
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",

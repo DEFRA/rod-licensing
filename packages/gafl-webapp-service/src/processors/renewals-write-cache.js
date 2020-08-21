@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import db from 'debug'
-import { LICENCE_TYPE, RENEWAL_START_DATE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
+import { LICENCE_TYPE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
@@ -21,13 +21,16 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceLength = '12M' // Always for easy renewals
   permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
-  permission.licenceStartTime = null
-  permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-  permission.licenceStartDate = moment
-    .utc(authenticationResult.permission.endDate)
-    .tz(SERVICE_LOCAL_TIME)
-    .format('YYYY-MM-DD')
-  permission.renewedEndDate = permission.licenceStartDate
+
+  const endDateMoment = moment.utc(authenticationResult.permission.endDate).tz(SERVICE_LOCAL_TIME)
+
+  const renewedHasExpired = !endDateMoment.isAfter()
+
+  permission.licenceToStart = renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE
+  permission.licenceStartDate = renewedHasExpired ? moment().format('YYYY-MM-DD') : endDateMoment.format('YYYY-MM-DD')
+  permission.licenceStartTime = renewedHasExpired ? 0 : endDateMoment.hours()
+  permission.renewedEndDate = endDateMoment.toISOString()
+  permission.renewedHasExpired = renewedHasExpired
   permission.licensee = Object.assign(
     (({ country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...l }) => l)(
       authenticationResult.permission.licensee
@@ -79,18 +82,6 @@ export const setUpPayloads = async request => {
   await request.cache().helpers.page.setCurrentPermission(LICENCE_TYPE.page, {
     payload: {
       'licence-type': type()
-    }
-  })
-
-  await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, {
-    payload: {
-      'licence-start-date-day': moment(permission.licenceStartDate)
-        .date()
-        .toString(),
-      'licence-start-date-month': (moment(permission.licenceStartDate).month() + 1).toString(),
-      'licence-start-date-year': moment(permission.licenceStartDate)
-        .year()
-        .toString()
     }
   })
 

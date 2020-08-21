@@ -18,8 +18,27 @@ import {
   NEW_TRANSACTION
 } from '../../../uri.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
-
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
+import { CONCESSION } from '../../../processors/mapping-constants.js'
+
+// Extracted to keep sonar happy
+const checkNavigation = permission => {
+  if (!permission.licensee.birthDate) {
+    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  }
+
+  if (!permission.licenceStartDate) {
+    throw new GetDataRedirect(LICENCE_TO_START.uri)
+  }
+
+  if (!permission.numberOfRods || !permission.licenceType) {
+    throw new GetDataRedirect(LICENCE_TYPE.uri)
+  }
+
+  if (!permission.licenceLength) {
+    throw new GetDataRedirect(LICENCE_LENGTH.uri)
+  }
+}
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -32,21 +51,7 @@ export const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary.
      */
-    if (!permission.licensee.birthDate) {
-      throw new GetDataRedirect(DATE_OF_BIRTH.uri)
-    }
-
-    if (!permission.licenceStartDate) {
-      throw new GetDataRedirect(LICENCE_TO_START.uri)
-    }
-
-    if (!permission.numberOfRods || !permission.licenceType) {
-      throw new GetDataRedirect(LICENCE_TYPE.uri)
-    }
-
-    if (!permission.licenceLength) {
-      throw new GetDataRedirect(LICENCE_LENGTH.uri)
-    }
+    checkNavigation(permission)
   }
 
   status.fromSummary = status.fromSummary || LICENCE_SUMMARY_SEEN
@@ -64,7 +69,7 @@ export const getData = async request => {
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
-    disabled: concessionHelper.hasDisabled(permission),
+    disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
