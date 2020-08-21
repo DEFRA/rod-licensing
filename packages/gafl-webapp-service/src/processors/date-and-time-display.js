@@ -20,11 +20,12 @@ export const displayStartTime = permission => {
   return `${startMoment.format(dateDisplayFormat)}, ${timeComponent}`
 }
 
-const endMomentStr = m => {
+const endMomentStr = d => {
+  const m = moment.utc(d).tz(SERVICE_LOCAL_TIME)
   const timeComponent = m
     .format('h:mma')
     .replace('12:00am', () => {
-      m = m.subtract(1, 'days')
+      m.subtract(1, 'days')
       return '11:59pm'
     })
     .replace('12:00pm', '12:00pm (midday)')
@@ -32,5 +33,5 @@ const endMomentStr = m => {
 }
 
 // For renewals
-export const displayExpiryDate = permission => endMomentStr(moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME))
-export const displayEndTime = permission => endMomentStr(moment.utc(permission.endDate).tz(SERVICE_LOCAL_TIME))
+export const displayExpiryDate = permission => endMomentStr(permission.renewedEndDate)
+export const displayEndTime = permission => endMomentStr(permission.endDate)
