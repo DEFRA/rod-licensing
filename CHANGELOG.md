@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.43 (2020-08-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#316](https://github.com/DEFRA/rod-licensing/pull/316) Changes to correct renewal start time logic and other changes ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 
 ## v0.3.0-rc.41 (2020-08-17)
 
