@@ -1,4 +1,4 @@
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 import { createStagingException, createTransactionFileException } from '../../../services/exceptions/exceptions.service.js'
 
 jest.mock('../../../services/exceptions/exceptions.service.js')

@@ -1,4 +1,4 @@
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 import { mockTransactionPayload, mockStagedTransactionRecord } from '../../../__mocks__/test-data.js'
 import { v4 as uuidv4 } from 'uuid'
 jest.mock('../../../services/transactions/transactions.service.js', () => ({

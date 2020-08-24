@@ -1,4 +1,4 @@
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 let server = null
 
 const getOptionSetMappingExpectation = (name, ...keys) => {

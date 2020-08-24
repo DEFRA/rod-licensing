@@ -1,4 +1,4 @@
-import initialiseServer from '../index.js'
+import initialiseServer from '../server.js'
 import Boom from '@hapi/boom'
 import dotProp from 'dot-prop'
 import { SERVER } from '../../config.js'
@@ -86,7 +86,11 @@ describe('hapi server', () => {
           message: expect.any(String)
         })
       )
-      expect(consoleErrorSpy).toHaveBeenCalledWith(expect.any(Error))
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error processing request. Request: %j, Exception: %o',
+        expect.objectContaining({ path: expect.any(String), params: expect.anything(), payload: undefined, query: expect.anything() }),
+        expect.any(Error)
+      )
     })
 
     describe('handles process interrupts', () => {

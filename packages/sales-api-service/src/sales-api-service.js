@@ -1,2 +1,2 @@
-import Server from './server/index.js'
+import Server from './server/server.js'
 export default Server()

@@ -4,7 +4,7 @@ import {
   updatePaymentJournal,
   queryJournalsByTimestamp
 } from '../../../services/paymentjournals/payment-journals.service.js'
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 jest.mock('../../../services/paymentjournals/payment-journals.service.js')
 
 let server = null

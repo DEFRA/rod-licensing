@@ -1,4 +1,4 @@
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 import { findByExample, SystemUser, SystemUserRole } from '@defra-fish/dynamics-lib'
 
 jest.mock('../../../services/reference-data.service.js', () => ({
