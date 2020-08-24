@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.45 (2020-08-24)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  * [#318](https://github.com/DEFRA/rod-licensing/pull/318) Improve logging output when encountering errors persisting to Dynamics ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.44 (2020-08-24)
 
 #### :rocket: Enhancement
