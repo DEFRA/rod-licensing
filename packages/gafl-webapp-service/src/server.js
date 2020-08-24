@@ -19,7 +19,7 @@ import {
 } from './constants.js'
 import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY } from './uri.js'
 
-import sessionManager from './session-cache/session-manager.js'
+import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
@@ -86,7 +86,7 @@ const layoutContextAmalgamation = (request, h) => {
 
 // Add default headers
 const addDefaultHeaders = (request, h) => {
-  if (!request.path.startsWith('/public') && request.path !== '/robots.txt') {
+  if (!isStaticResource(request)) {
     request.response.header('X-Frame-Options', 'DENY')
     request.response.header('Cache-Control', 'no-store')
     request.response.header('X-XSS-Protection', '1; mode=block')

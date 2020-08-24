@@ -30,8 +30,11 @@ const protectionExemptSet = [
 
 const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
 
-export const useSessionCookie = request =>
-  !request.path.startsWith('/public') && !request.path.startsWith('/oidc') && request.path !== '/robots.txt'
+const staticMatcherPublic = /^(\/public\/.*|^\/robots.txt)/
+const staticMatcherOidc = /^\/oicd\/.*/
+
+export const isStaticResource = request => staticMatcherPublic.test(request.path)
+export const useSessionCookie = request => !isStaticResource(request) && !staticMatcherOidc.test(request.path)
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
