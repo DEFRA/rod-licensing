@@ -19,7 +19,7 @@ import {
 } from './constants.js'
 import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY } from './uri.js'
 
-import sessionManager from './session-cache/session-manager.js'
+import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
@@ -84,6 +84,18 @@ const layoutContextAmalgamation = (request, h) => {
   return h.continue
 }
 
+// Add default headers
+const addDefaultHeaders = (request, h) => {
+  if (!isStaticResource(request)) {
+    request.response.header('X-Frame-Options', 'DENY')
+    request.response.header('Cache-Control', 'no-store')
+    request.response.header('X-XSS-Protection', '1; mode=block')
+  }
+  request.response.header('X-Content-Type-Options', 'nosniff')
+
+  return h.continue
+}
+
 const init = async () => {
   await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
@@ -140,6 +152,9 @@ const init = async () => {
 
   // Add the uri's required by the template to every view response
   server.ext('onPreResponse', layoutContextAmalgamation)
+
+  // Add default headers to the page responses
+  server.ext('onPreResponse', addDefaultHeaders)
 
   // Point the server plugin cache to an application cache to hold authenticated session data
   server.app.cache = server.cache({

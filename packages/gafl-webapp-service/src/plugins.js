@@ -54,7 +54,8 @@ export const getPlugins = () => {
          */
         fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
         scriptSrc: [scriptHash],
-        generateNonces: true
+        generateNonces: true,
+        frameAncestors: 'none'
       }
     },
     {
