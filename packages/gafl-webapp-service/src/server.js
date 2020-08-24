@@ -84,7 +84,7 @@ const layoutContextAmalgamation = (request, h) => {
   return h.continue
 }
 
-// Add the uri's required by the template to every view response
+// Add default headers
 const addDefaultHeaders = (request, h) => {
   if (!request.path.startsWith('/public') && request.path !== '/robots.txt') {
     request.response.header('X-Frame-Options', 'DENY')
