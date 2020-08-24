@@ -1,5 +1,5 @@
 import { findByAlternateKey, persist, PoclFile } from '@defra-fish/dynamics-lib'
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 import { getGlobalOptionSetValue } from '../../../services/reference-data.service.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({

@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie, mockSalesApi } from '../../__mocks__/test-utils-system.js'
-import { useSessionCookie } from '../session-manager.js'
+import { isStaticResource, useSessionCookie } from '../session-manager.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
   CONTROLLER,
@@ -13,12 +13,25 @@ import {
 
 mockSalesApi()
 
+describe('isStaticResource', () => {
+  it('returns false for path which are not a static resource', () => {
+    expect(isStaticResource({ path: '/foo' })).toBeFalsy()
+  })
+
+  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too', '/robots.txt'])(
+    'returns true for paths which are static resources (%s)',
+    path => {
+      expect(isStaticResource({ path })).toBeTruthy()
+    }
+  )
+})
+
 describe('Use session cookie', () => {
   it('path not starting with /public marked as using a session cookie', () => {
     expect(useSessionCookie({ path: '/foo' })).toBeTruthy()
   })
 
-  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too'])(
+  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too', '/robots.txt'])(
     "path %s doesn't require session cookie",
     path => {
       expect(useSessionCookie({ path })).toBeFalsy()

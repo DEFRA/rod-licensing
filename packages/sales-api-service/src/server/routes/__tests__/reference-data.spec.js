@@ -1,5 +1,5 @@
 import { MOCK_12MONTH_SENIOR_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY } from '../../../__mocks__/test-data.js'
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 let server = null
 
 jest.mock('../../../services/reference-data.service.js', () => ({

@@ -30,7 +30,7 @@ const protectionExemptSet = [
 
 const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
 
-const staticMatcherPublic = /^(\/public\/.*|^\/robots.txt)/
+const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt)/
 const staticMatcherOidc = /^\/oicd\/.*/
 
 export const isStaticResource = request => staticMatcherPublic.test(request.path)

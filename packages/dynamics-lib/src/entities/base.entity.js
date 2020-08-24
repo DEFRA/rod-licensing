@@ -302,6 +302,19 @@ export class BaseEntity {
   }
 
   /**
+   * Convert the entity into the data structure required to persist via dynamics-web-api.
+   * @returns {{}} the JSON structure required by dynamics-web-api.
+   */
+  toPersistRequest () {
+    return {
+      ...(!this.isNew() && { key: this.id }),
+      collection: this.constructor.definition.dynamicsCollection,
+      contentId: this.uniqueContentId,
+      entity: this.toRequestBody()
+    }
+  }
+
+  /**
    * Create a new entity using the response from a query to the Dynamics ODATA Web API
    *
    * @param {string} etag the etag of the entity

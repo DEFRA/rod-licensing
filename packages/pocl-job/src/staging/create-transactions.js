@@ -78,6 +78,7 @@ const createTransactionsInSalesApi = async (filename, state) => {
         record.stage = RECORD_STAGE.TransactionCreated
         record.createTransactionId = apiResponse.response.id
         state.succeeded++
+        debug('Successfully created transaction for record: %o', record)
       } else {
         record.stage = RECORD_STAGE.TransactionCreationFailed
         record.createTransactionError = apiResponse

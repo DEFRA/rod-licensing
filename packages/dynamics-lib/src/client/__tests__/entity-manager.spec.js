@@ -62,14 +62,28 @@ describe('entity manager', () => {
     it('throws an error object on failure', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
-      await expect(persist(new TestEntity())).rejects.toThrow('Test error')
-      expect(consoleErrorSpy).toHaveBeenCalled()
+      const newEntity = Object.assign(new TestEntity(), { strVal: 'test', intVal: 0 })
+      const existingEntity = TestEntity.fromResponse(
+        {
+          '@odata.etag': 'W/"202465000"',
+          idval: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
+          strval: 'Fester',
+          intval: 1,
+          boolval: true
+        },
+        {}
+      )
+      await expect(persist(newEntity, existingEntity)).rejects.toThrow('Test error')
+      // Expect the console error to contain details of the batch data (one createRequest, one updateRequest plus the exception object)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringMatching('Error persisting batch. Data: %j, Exception: %o'),
+        expect.arrayContaining([{ createRequest: expect.any(Object) }, { updateRequest: expect.any(Object) }]),
+        expect.any(Error)
+      )
     })
 
     it('throws an error on implementation failure', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      await expect(persist(null)).rejects.toThrow("Cannot read property 'toRequestBody' of null")
-      expect(consoleErrorSpy).toHaveBeenCalled()
+      await expect(persist(null)).rejects.toThrow("Cannot read property 'isNew' of null")
     })
   })
 

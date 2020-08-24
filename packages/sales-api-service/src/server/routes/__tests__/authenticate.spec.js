@@ -1,4 +1,4 @@
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 import { executeQuery, permissionForLicensee } from '@defra-fish/dynamics-lib'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
