@@ -53,7 +53,7 @@ export const getPlugins = () => {
          * It must allow web-fonts from 'fonts.gstatic.com'
          */
         fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-        scriptSrc: [scriptHash],
+        scriptSrc: ['self', 'unsafe-inline', scriptHash],
         generateNonces: true,
         frameAncestors: 'none'
       }
