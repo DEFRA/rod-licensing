@@ -82,6 +82,11 @@ export default [
   },
 
   {
+    currentPage: NO_LICENCE_REQUIRED.page,
+    backLink: DATE_OF_BIRTH.uri
+  },
+
+  {
     currentPage: DISABILITY_CONCESSION.page,
     nextPage: {
       [CommonResults.OK]: {
