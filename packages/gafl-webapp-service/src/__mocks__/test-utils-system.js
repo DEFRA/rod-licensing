@@ -10,7 +10,7 @@ import mockConcessions from './data/concessions'
 import mockDefraCountries from './data/defra-country'
 import { pricingDetail } from '../processors/pricing-summary'
 
-process.env.SESSION_COOKIE_PASSWORD = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+process.env.SESSION_COOKIE_PASSWORD = 'A'.repeat(32)
 
 createServer({
   cache: [
