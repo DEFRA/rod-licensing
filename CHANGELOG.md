@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.47 (2020-08-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#325](https://github.com/DEFRA/rod-licensing/pull/325) Fix OIDC handler to handle accounts not present in Dynamics ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.45 (2020-08-24)
 
