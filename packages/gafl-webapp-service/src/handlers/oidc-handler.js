@@ -87,9 +87,9 @@ export const signIn = async (request, h) => {
     const { oid, name, email, exp } = tokenSet.claims()
 
     const userDetails = await salesApi.getSystemUser(oid)
-    const hasTelesalesRole = !!userDetails.roles.find(role => role.name === process.env.OIDC_REQUIRE_DYNAMICS_ROLE)
+    const hasTelesalesRole = !!userDetails?.roles.find(role => role.name === process.env.OIDC_REQUIRE_DYNAMICS_ROLE)
 
-    if (userDetails.isDisabled) {
+    if (!userDetails || userDetails.isDisabled) {
       return h.redirect('/oidc/account-disabled')
     } else if (!hasTelesalesRole) {
       return h.redirect('/oidc/role-required')
