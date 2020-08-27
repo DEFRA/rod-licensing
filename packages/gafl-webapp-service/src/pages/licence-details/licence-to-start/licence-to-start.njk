@@ -7,12 +7,12 @@
 {%
     set errorMap = {
         'licence-to-start': {
-            'any.required': { ref: '#licence-to-start', text: 'Tell us when would you like your licence to start?' }
+            'any.required': { ref: '#licence-to-start', text: 'Choose when would you like the licence to start' }
         },
         'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: 'Not a valid date. Enter the date you want the licence to start on and include a day, month and year' },
-            'date.max': { ref: '#licence-start-date-day', text: 'Enter a date up to and including ' + data.maxStartDate },
-            'date.min': { ref: '#licence-start-date-day', text: 'The licence must not start in the past' }
+            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want the licence to start, include a day, month and year' },
+            'date.max': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' },
+            'date.min': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' }
         }
     }
 %}
@@ -37,11 +37,12 @@
 %}
 
 {% set startDate %}
+    <p class="govuk-body-m">1 or 8 day licences may be started at any time of day. Enter today's date if you want the licence to start later today.</p>
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: 'Enter a valid date that is within ' + data.advancedPurchaseMaxDays + ' days' } if error['licence-start-date'],
+      errorMessage: { text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' } if error['licence-start-date'],
       hint: {
         text: "Enter a date up to and including " + data.maxStartDate
       }
@@ -69,6 +70,6 @@
                 }
             }
         ],
-        errorMessage: { text: 'Select when you\'d like your licence to start' } if error['licence-to-start']
+        errorMessage: { text: 'Choose when you\'d like your licence to start' } if error['licence-to-start']
     }) }}
 {% endblock %}

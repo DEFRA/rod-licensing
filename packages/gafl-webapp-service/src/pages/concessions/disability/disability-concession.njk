@@ -1,20 +1,20 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
-{% set title = 'Do you receive any of the following?' %}
+{% set title = 'Do you have a Blue Badge or get DLA or PIP?' %}
 
 {%
     set errorMap = {
         'disability-concession': {
-            'any.required': { ref: '#disability-concession', text: 'You have not told us if you receive any disability concessions' }
+            'any.required': { ref: '#disability-concession', text: 'Choose Personal Independence Payment (PIP) or disability living allowance (DLA), Blue Badge or No.' }
         },
         'ni-number': {
-            'string.empty': { ref: '#ni-number', text: 'You have not told us your national insurance number' },
-            'string.pattern.base': { ref: '#ni-number', text: 'This does not look like a valid UK national insurance number, please check you have entered it correctly' }
+            'string.empty': { ref: '#ni-number', text: 'Enter the National Insurance number' },
+            'string.pattern.base': { ref: '#ni-number', text: 'This does not look like a valid UK national insurance number, please check you have entered it correctly.' }
         },
         'blue-badge-number': {
-            'string.empty': { ref: '#blue-badge-number', text: 'You have not told us your blue badge number' },
-            'string.max': { ref: '#blue-badge-number', text: 'You blue badge number is longer than 40 characters' }
+            'string.empty': { ref: '#blue-badge-number', text: 'Enter the Blue Badge Number' },
+            'string.max': { ref: '#blue-badge-number', text: 'Enter the Blue Badge Number' }
         }
     }
 %}
@@ -22,41 +22,37 @@
 {% set pipDla %}
     {{ govukInput({
       label: {
-        text: "NI number"
+        html: 'National Insurance or Child Reference number' if data.hasJunior else 'National Insurance number'
+      },
+      hint: {
+        html: "Its on your National Insurance card, benefit letter, payslip or P60.<p>For example 'QQ 12 34 56 C'</p>" if not data.hasJunior
       },
       id: "ni-number",
       name: "ni-number",
       value: payload['ni-number'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 13 },
-      errorMessage: { text: 'Check your national insurance number' } if error['ni-number']
+      errorMessage: { text: 'Enter the National Insurance number' } if error['ni-number']
     }) }}
 {% endset -%}
 
 {% set blueBadge %}
     {{ govukInput({
       label: {
-        text: "Blue Badge Number"
+        html: "Blue Badge Number"
       },
       id: "blue-badge-number",
       name: "blue-badge-number",
       value: payload['blue-badge-number'],
       classes: "govuk-input--width-20",
-      attributes: { maxlength: 13 },
-      errorMessage: { text: 'Check your blue badge number' } if error['blue-badge-number']
+      attributes: { maxlength: 25 },
+      errorMessage: { text: 'Enter the Blue Badge number' } if error['blue-badge-number']
     }) }}
 {% endset -%}
 
 {% block pageContent %}
-    {% if data.hasJunior %}
-        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you can opt to get a disability licence, though you won’t receive any further discount on your licence price.</p>
-        {% set niText = 'National Insurance or Child Reference Number' %}
-    {% elseif data.hasSenior %}
-        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you can opt to get a disability licence, though you won’t receive any further discount on your licence price.</p>
-        {% set niText = 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)' %}
-    {% else %}
-        <p class="govuk-body-m">If you receive one of the following and you’re applying for a 12-month licence, you may be eligible for a disability concession.</p>
-        {% set niText = 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)' %}
+    {% if not data.hasJunior and not data.hasSenior %}
+        <p class="govuk-body-m">You maybe eligible for a concession on a 12 month licence.</p>
     {% endif %}
 
     {{ govukRadios({
@@ -64,7 +60,7 @@
            name: "disability-concession",
            items: [
                {
-                   html: niText,
+                   html: 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)',
                    value: data.pipDla,
                    checked: payload['disability-concession'] === data.pipDla,
                    conditional: { html: pipDla }
@@ -81,7 +77,7 @@
                    checked: payload['disability-concession'] === data.no
                }
            ],
-           errorMessage: { text: 'Tell us if you claim Disability Living Allowance or Personal Independence Payment' } if error['disability-concession']
+           errorMessage: { text: 'Choose one option' } if error['disability-concession']
        })
      }}
 

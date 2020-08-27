@@ -66,3 +66,6 @@ export const TEST_STATUS = { uri: '/buy/status' }
 export const TEST_TRANSACTION = { uri: '/buy/transaction' }
 export const GET_PRICING_TYPES = { uri: '/buy/get-pricing/types' }
 export const GET_PRICING_LENGTHS = { uri: '/buy/get-pricing/lengths' }
+
+export const FRESHWATER_FISING_RULES = { uri: 'https://www.gov.uk/freshwater-rod-fishing-rules' }
+export const LOCAL_BYELAWS = { uri: 'https://www.gov.uk/government/collections/local-fishing-byelaws' }
