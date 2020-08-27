@@ -1,12 +1,12 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = 'When would you like your licence to start on ' + data.startDateStr + '?' %}
+{% set title = 'Choose the time you like your licence to start on ' + data.startDateStr + '?' %}
 
 {%
     set errorMap = {
         'licence-start-time': {
-            'any.required': { ref: '#licence-start-time-am', text: 'Enter the time you want the licence to start on ' + data.startDateStr }
+            'any.required': { ref: '#licence-start-time-am', text: 'Choose the time you want the licence to start on ' + data.startDateStr }
         }
     }
 %}
@@ -48,7 +48,7 @@
                    idPrefix: "licence-start-time-am",
                    name: "licence-start-time",
                    items: am,
-                   errorMessage: { text: 'Select a start time' } if error
+                   errorMessage: { text: 'Choose the time you would like your licence to start' } if error
                })
              }}
         </div>
