@@ -7,7 +7,7 @@
 {%
     set errorMap = {
         'licence-length': {
-            'any.required': { ref: '#licence-length', text: 'You did not tell us which licence you want' }
+            'any.required': { ref: '#licence-length', text: 'Choose how long you want you licence for' }
         }
     }
 %}
@@ -36,7 +36,7 @@
                 checked: payload['licence-length'] === '1D'
             }
         ],
-        errorMessage: { text: 'Tell us which fishing licence you want' } if error
+        errorMessage: { text: 'Choose how long you want you licence for' } if error
     }) }}
 {% endblock %}
 
