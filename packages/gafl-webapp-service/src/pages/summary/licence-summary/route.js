@@ -19,7 +19,7 @@ import {
 } from '../../../uri.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
-import { CONCESSION } from '../../../processors/mapping-constants.js'
+import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
@@ -70,9 +70,10 @@ export const getData = async request => {
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
     disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
+    concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('LL'),
+    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('Qo MMMM YYYY'),
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,

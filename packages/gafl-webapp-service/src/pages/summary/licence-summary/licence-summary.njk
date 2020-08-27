@@ -99,10 +99,10 @@
 {% if data.permission.licenceLength === '12M' %}
     {{ licenseDetailsSummaryRows.push({
       key: {
-        text: "Disability support"
+        text: 'Blue Badge Number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance Number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession')
       },
       value: {
-        html: data.disabled.proof.type + ":&nbsp;" + data.disabled.proof.referenceNumber if data.disabled else '<span class="govuk-caption-m">None</span>'
+        html: data.disabled.proof.referenceNumber if data.disabled else '<span class="govuk-caption-m">None</span>'
       },
       actions: {
         items: [
