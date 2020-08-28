@@ -13,7 +13,7 @@
 {% endmacro %}
 
 {% if not data.isPhysical and data.contactMethod === data.howContacted['none'] %}
-    {% set contactPref = 'I don’t have email or a mobile phone' %}
+    {% set contactPref = 'None' %}
 {% elseif data.contactMethod === data.howContacted['email'] %}
     {% set contactPref = 'By email to ' + data.permission.licensee.email %}
 {% elseif data.contactMethod === data.howContacted['text'] %}
@@ -29,7 +29,7 @@
 {% elseif data.contactMethod === data.howContacted['text'] %}
     {% set licenceDetails = 'By text to ' + data.permission.licensee.mobilePhone %}
 {% else %}
-    {% set licenceDetails = 'Write it down after payment' %}
+    {% set licenceDetails = 'I will make a note after payment' %}
 {% endif %}
 
 {% set licenseeDetailsSummaryRows = [
@@ -97,7 +97,16 @@
 
 {{ licenseeDetailsSummaryRows.push({
     key: {
-      text: "Email newsletter"
+      text: "The licence card" if data.isPhysical else "Licence details"
+    },
+    value: {
+      text: licenceDetails
+    }
+}) }}
+
+{{ licenseeDetailsSummaryRows.push({
+    key: {
+      text: "Newsletter"
     },
     value: {
       text: 'Yes' if data.newsLetter else 'No'
@@ -111,15 +120,6 @@
           attributes: { id: 'change-newsletter' }
         }
       ]
-    }
-}) }}
-
-{{ licenseeDetailsSummaryRows.push({
-    key: {
-      text: "The licence card" if data.isPhysical else "Licence details"
-    },
-    value: {
-      text: licenceDetails
     }
 }) }}
 
