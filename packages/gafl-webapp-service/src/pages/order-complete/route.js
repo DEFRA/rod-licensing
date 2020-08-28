@@ -42,6 +42,8 @@ const getData = async request => {
     hasSenior: concessionHelper.hasSenior(permission),
     licenceTypeStr: licenceTypeDisplay(permission),
     isPhysical: isPhysical(permission),
+    contactMethod: permission.licensee.preferredMethodOfConfirmation,
+    howContacted: mappings.HOW_CONTACTED,
     uri: {
       new: NEW_TRANSACTION.uri,
       refund: REFUND_POLICY.uri,

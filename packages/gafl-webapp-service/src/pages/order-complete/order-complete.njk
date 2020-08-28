@@ -6,7 +6,7 @@
 {% from "table/macro.njk" import govukTable %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'Licence conditions' %}
+{% set title = 'Application Complete' if data.permission.cost === 0 else 'Payment Complete' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% if data.permission.licenceLength === '1D' %}
@@ -21,9 +21,9 @@
 {{ licenseDetailsSummaryRows.push([ { text: 'Name' }, { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.licenceTypeStr } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: lengthText } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Disability support ' }, { text: 'yes' if data.disabled else 'no' } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Valid from' }, { text: data.startTimeString } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Valid to' }, { text: data.endTimeString } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Disability concession' }, { text: 'yes' if data.disabled else 'no' } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Start date' }, { text: data.startTimeString } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'End date' }, { text: data.endTimeString } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Paid' }, { text: "£" + data.permission.permit.cost if data.permission.permit.cost else "free" } ]) }}
 
 {% block content %}
@@ -31,7 +31,7 @@
     <div class="govuk-grid-column-full">
 
         {{ govukPanel({
-          titleText: "Your licence details" if data.permission.cost !== 0 else "Payment complete",
+          titleText: title,
           html: 'This is your licence number<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span>'
         }) }}
 
@@ -44,6 +44,24 @@
         }) }}
 
         <p class="govuk-body">Only the named licence holder can use this licence.</p>
+
+        <div class="govuk-!-margin-top-8 no-print">
+            <h2 class="govuk-heading-m">What happens next</h2>
+            <ul class="govuk-list govuk-list--bullet"">
+            {% if data.isPhysical %}
+                <li class="govuk-body">We’ll send your <span class="govuk-!-font-weight-bold">licence card</span> by post. You should get it within 10 working days.</li>
+            {% endif %}
+            {% if data.contactMethod === data.howContacted['email'] %}
+                <li class="govuk-body">You should have received an email with your licence details.</li>
+            {% endif %}
+            {% if data.contactMethod === data.howContacted['text'] %}
+                <li class="govuk-body">You should have received a text message with your licence details.</li>
+            {% endif %}
+            {% if data.contactMethod === data.howContacted['none'] %}
+                <li class="govuk-body">Make a note of your licence number and you take it with you when you go fishing.</li>
+            {% endif %}
+            </ul>
+        </div>
 
         <div class="govuk-!-margin-top-8 no-print">
             <h2 class="govuk-heading-m">Before you go fishing</h2>
@@ -66,13 +84,6 @@
         {% endif %}
 
         <p class="govuk-body"><a target="_blank" href="{{ data.uri.feedback }}">What did you think of the service</a> (takes 30 seconds)</p>
-
-        {% if data.isPhysical %}
-            <div class="govuk-!-margin-top-8 no-print">
-                <h2 class="govuk-heading-m">What happens next</h2>
-                <p class="govuk-body">We’ll send your <span class="govuk-!-font-weight-bold">licence card</span> by post. You should get it within 10 working days. </p>
-            </div>
-        {% endif %}
 
         {{ govukButton({
             href: data.uri.new,
