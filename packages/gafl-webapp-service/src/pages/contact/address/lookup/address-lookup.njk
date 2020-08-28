@@ -10,12 +10,12 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'You did not enter your building number or name' },
-            'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
+            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
+            'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
-            'string.pattern.base': { ref: '#postcode', text: 'Enter a valid UK postcode. If you live outside the UK, enter your address manually.' }
+            'string.empty': { ref: '#postcode', text: 'Enter the postcode' },
+            'string.pattern.base': { ref: '#postcode', text: 'Enter a UK postcode. If the address is outside the UK, enter the address manually.' }
         }
     }
 %}
@@ -41,11 +41,9 @@
               }
             }) %}
 
-                {% if data.isPhysical %}
-                    <p class="govuk-body-m">We must know this by law. This is also where we will send your licence card.</p>
-                {% else %}
-                    <p class="govuk-body-m">We must know this by law.</p>
-                {% endif %}
+                <p class="govuk-body-m">{% if data.isPhysical %}This is also where we will send the licence card. {% endif %}
+                If you are buying on behalf of someone else then put their address not yours.  We will send the licence card to this address.
+                A bankside enforcement officer may also ask for this information if the licence is checked.</p>
 
                 {{ govukInput({
                   label: {
@@ -58,7 +56,7 @@
                   classes: "govuk-input--width-20",
                   autocomplete: 'given-name',
                   attributes: { maxlength: 50 },
-                  errorMessage: { text: 'Enter your house number or name' } if error['premises']
+                  errorMessage: { text: 'Enter the house number or name' } if error['premises']
                 }) }}
 
                 {{ govukInput({
@@ -72,20 +70,20 @@
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-20",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: 'Enter your postcode' } if error['postcode']
+                  errorMessage: { text: 'Enter the postcode' } if error['postcode']
                 }) }}
 
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
                     name: "continue",
-                    text: "Find your address",
+                    text: "Continue",
                     classes: "govuk-!-margin-top-5"
                 }) }}
 
             {% endcall %}
             <p class="govuk-body-m">
-                <a href="{{ data.entryPage }}">Enter my address manually / I live outside the UK</a>
+                <a href="{{ data.entryPage }}">Enter my address manually</a>
             </p>
             {{ csrf() }}
         </form>
