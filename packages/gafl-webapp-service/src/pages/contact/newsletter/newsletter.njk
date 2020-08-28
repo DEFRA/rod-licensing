@@ -3,12 +3,13 @@
 {% from "radios/macro.njk" import govukRadios %}
 
 {% set title = 'Would you like to receive our email newsletter?' %}
+{% set emailError = 'Enter an email address' %}
 
 {% set errorMap = {
        'email': {
-            'string.empty': { ref: '#email', text: 'You did not enter your email address' },
-            'string.email': { ref: '#email', text: 'You did not enter a valid email address' },
-            'string.max': { ref: '#email', text: 'You did not enter a valid email address' }
+            'string.empty': { ref: '#email', text: emailError },
+            'string.email': { ref: '#email', text: emailError },
+            'string.max': { ref: '#email', text: emailError }
         }
     }
 %}
@@ -21,7 +22,7 @@
       classes: "govuk-!-width-two-thirds",
       autocomplete: "email",
       value: payload.email,
-      errorMessage: { text: 'Enter your email address' } if error['email'],
+      errorMessage: { text: emailError } if error['email'],
       label: {
         text: "Email address"
       },
