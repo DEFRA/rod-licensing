@@ -9,7 +9,9 @@ const minHour = permission =>
     .tz(SERVICE_LOCAL_TIME)
     .isSame(moment(), 'day')
     ? moment()
+      .add(1, 'hour')
       .add(30, 'minute')
+      .startOf('hour')
       .hour()
     : 0
 
