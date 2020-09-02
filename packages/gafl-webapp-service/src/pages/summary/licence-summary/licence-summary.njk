@@ -6,12 +6,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% if data.isRenewal %}
-    {% set title = 'Check your licence renewal details' %}
-{% else %}
-    {% set title = 'Check the licence you are requesting is correct' %}
-{% endif %}
-
+{% set title = 'Check the licence details' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% set licenseDetailsSummaryRows = [
@@ -38,7 +33,7 @@
 
 {{ licenseDetailsSummaryRows.push({
   key: {
-    text: "Licence length"
+    text: "Length"
   },
   value: {
     text: '12 months' if data.permission.licenceLength === '12M' else ('8 days' if data.permission.licenceLength === '8D' else '1 day')
@@ -78,7 +73,7 @@
 
 {{ licenseDetailsSummaryRows.push({
       key: {
-        text: "Valid from"
+        text: "Start date"
       },
       value: {
         html: data.startAfterPaymentMinutes + ' minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString +
@@ -102,7 +97,7 @@
         text: 'Blue Badge Number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance Number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession')
       },
       value: {
-        html: data.disabled.proof.referenceNumber if data.disabled else '<span class="govuk-caption-m">None</span>'
+        html: data.disabled.proof.referenceNumber if data.disabled else '<span>None</span>'
       },
       actions: {
         items: [

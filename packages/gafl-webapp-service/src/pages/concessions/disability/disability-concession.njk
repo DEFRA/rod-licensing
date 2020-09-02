@@ -1,7 +1,7 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
-{% set title = 'Do you have a Blue Badge or get DLA or PIP?' %}
+{% set title = 'Do you get any of the following?' %}
 
 {%
     set errorMap = {
@@ -25,7 +25,7 @@
         html: 'National Insurance or Child Reference number' if data.hasJunior else 'National Insurance number'
       },
       hint: {
-        html: "Its on your National Insurance card, benefit letter, payslip or P60.<p>For example 'QQ 12 34 56 C'</p>" if not data.hasJunior
+        html: "Its on your National Insurance card, benefit letter, payslip or P60. For example 'QQ 12 34 56 C'" if not data.hasJunior else "<p>For example 'QQ 12 34 56 C'</p>"
       },
       id: "ni-number",
       name: "ni-number",
@@ -39,7 +39,7 @@
 {% set blueBadge %}
     {{ govukInput({
       label: {
-        html: "Blue Badge Number"
+        html: "Blue Badge number"
       },
       id: "blue-badge-number",
       name: "blue-badge-number",

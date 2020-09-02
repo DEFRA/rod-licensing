@@ -147,7 +147,7 @@
     <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if ({{ true if data.referenceNumber else false }}) {
+        if ({{ true if data.referenceNumber else false }} && !'{{ error.referenceNumber }}') {
             document.getElementById("ref-ro").style.display = "block"
             document.getElementById("ref-rw").style.display = "none"
          } else {

@@ -37,7 +37,10 @@
 %}
 
 {% set startDate %}
-    <p class="govuk-body-m">1 or 8 day licences may be started at any time of day. Enter today's date if you want the licence to start later today.</p>
+    {% if not data.hasJunior %}
+        <p class="govuk-body-m">Enter today's date if you want a 1 or 8 day licence to start later today.</p>
+    {% endif %}
+
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",
@@ -62,7 +65,7 @@
                 checked: payload['licence-to-start'] === 'after-payment'
             },
             {
-                text: "Another date",
+                text: "Later",
                 value: "another-date",
                 checked: payload['licence-to-start'] === 'another-date',
                 conditional: {

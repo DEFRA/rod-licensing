@@ -12,26 +12,6 @@
     {% if line %}{{ line }}{% if not term %},{% endif %} {% endif %}
 {% endmacro %}
 
-{% if not data.isPhysical and data.contactMethod === data.howContacted['none'] %}
-    {% set contactPref = 'None' %}
-{% elseif data.contactMethod === data.howContacted['email'] %}
-    {% set contactPref = 'By email to ' + data.permission.licensee.email %}
-{% elseif data.contactMethod === data.howContacted['text'] %}
-    {% set contactPref = 'By text to ' + data.permission.licensee.mobilePhone %}
-{% else %}
-    {% set contactPref = 'By post' %}
-{% endif %}
-
-{% if data.isPhysical %}
-    {% set licenceDetails = 'By post within the next 10 days' %}
-{% elseif data.contactMethod === data.howContacted['email'] %}
-    {% set licenceDetails = 'By email to ' + data.permission.licensee.email %}
-{% elseif data.contactMethod === data.howContacted['text'] %}
-    {% set licenceDetails = 'By text to ' + data.permission.licensee.mobilePhone %}
-{% else %}
-    {% set licenceDetails = 'I will make a note after payment' %}
-{% endif %}
-
 {% set licenseeDetailsSummaryRows = [
     {
       key: {
@@ -73,12 +53,35 @@
           }
         ]
       }
-    },
-    {
-      key: {
-        text: "Contact preference"
-      },
-      value: {
+    }
+  ]
+%}
+
+{% if data.isPhysical %}
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Licence card"
+        },
+        value: {
+          text: 'By post within the next 10 days'
+        }
+    }) }}
+{% endif %}
+
+{% if data.isPhysical %}
+    {% if data.contactMethod === data.howContacted['letter'] %}
+        {% set contactPref = 'By post' %}
+    {% elseif data.contactMethod === data.howContacted['email'] %}
+        {% set contactPref = 'By email: ' + data.permission.licensee.email %}
+    {% elseif data.contactMethod === data.howContacted['text'] %}
+        {% set contactPref = 'By text: ' + data.permission.licensee.mobilePhone %}
+    {% endif %}
+
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Contact preference"
+        },
+        value: {
         html: contactPref
       },
       actions: {
@@ -91,18 +94,35 @@
           }
         ]
       }
-    }
-  ]
-%}
+    }) }}
+{% else %}
+    {% if data.contactMethod === data.howContacted['none'] %}
+        {% set licencePref = 'I will make a note on confirmation' %}
+    {% elseif data.contactMethod === data.howContacted['email'] %}
+        {% set licencePref = 'By email: ' + data.permission.licensee.email %}
+    {% elseif data.contactMethod === data.howContacted['text'] %}
+        {% set licencePref = 'By text: ' + data.permission.licensee.mobilePhone %}
+    {% endif %}
 
-{{ licenseeDetailsSummaryRows.push({
-    key: {
-      text: "The licence card" if data.isPhysical else "Licence details"
-    },
-    value: {
-      text: licenceDetails
-    }
-}) }}
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Licence"
+        },
+        value: {
+          text: licencePref
+        },
+        actions: {
+            items: [
+              {
+                href: data.uri.contact,
+                text: "Change",
+                visuallyHiddenText: "contact",
+                attributes: { id: 'change-contact' }
+              }
+            ]
+          }
+    }) }}
+{% endif %}
 
 {{ licenseeDetailsSummaryRows.push({
     key: {

@@ -10,8 +10,8 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
-            'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
+            'string.empty': { ref: '#premises', text: 'Enter the house number or name' },
+            'string.max': { ref: '#premises', text: 'The house number or name must be less than 50 characters' }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: 'Enter the postcode' },
@@ -41,9 +41,9 @@
               }
             }) %}
 
-                <p class="govuk-body-m">{% if data.isPhysical %}This is also where we will send the licence card. {% endif %}
-                If you are buying on behalf of someone else then put their address not yours.  We will send the licence card to this address.
-                A bankside enforcement officer may also ask for this information if the licence is checked.</p>
+                <p class="govuk-body-m">{% if data.isPhysical %}This is where we will send the licence card. {% endif %}
+                If you are buying on behalf of someone else then put their address not yours.
+                A bankside enforcement officer may ask for this information if the licence is checked.</p>
 
                 {{ govukInput({
                   label: {

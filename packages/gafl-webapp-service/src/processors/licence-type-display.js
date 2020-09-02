@@ -8,13 +8,13 @@ export const licenceTypeDisplay = permission => {
   if (concessionHelper.hasJunior(permission)) {
     typesStrArr.push('Junior')
   } else if (concessionHelper.hasSenior(permission)) {
-    typesStrArr.push('Senior')
+    typesStrArr.push('Over 65')
   }
 
   typesStrArr.push(permission.licenceType)
 
-  if (permission.licenceLength === '12M' && permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
-    typesStrArr.push(permission.numberOfRods === '2' ? '2 rod' : '3 rod')
+  if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
+    typesStrArr.push(permission.numberOfRods === '2' ? 'up to 2 rods' : 'up to 3 rods')
   }
 
   return typesStrArr.join(', ')
