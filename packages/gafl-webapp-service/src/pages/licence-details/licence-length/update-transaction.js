@@ -3,7 +3,7 @@ import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { LICENCE_LENGTH } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceToStart } from '../licence-to-start/update-transaction.js'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 /**
  * Transfer the validate page object

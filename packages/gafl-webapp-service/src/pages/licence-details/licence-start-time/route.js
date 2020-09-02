@@ -2,7 +2,7 @@ import { LICENCE_START_TIME, CONTROLLER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import Joi from '@hapi/joi'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 const minHour = permission =>
   moment(permission.licenceStartDate, 'YYYY-MM-DD')

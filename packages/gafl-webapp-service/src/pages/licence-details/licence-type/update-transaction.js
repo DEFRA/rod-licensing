@@ -1,7 +1,7 @@
 import { LICENCE_TYPE } from '../../../uri.js'
 import * as constants from '../../../processors/mapping-constants.js'
 import { licenseTypes } from './route.js'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { licenceToStart } from '../licence-to-start/update-transaction.js'
 /**

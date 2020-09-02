@@ -10,8 +10,8 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter the house number or name' },
-            'string.max': { ref: '#premises', text: 'The house number or name must be less than 50 characters' }
+            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
+            'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: 'Enter the postcode' },
@@ -47,7 +47,7 @@
 
                 {{ govukInput({
                   label: {
-                    text: "House number or name"
+                    text: "building number or name"
                   },
                   id: "premises",
                   name: "premises",
@@ -56,7 +56,7 @@
                   classes: "govuk-input--width-20",
                   autocomplete: 'given-name',
                   attributes: { maxlength: 50 },
-                  errorMessage: { text: 'Enter the house number or name' } if error['premises']
+                  errorMessage: { text: 'Enter the building number or name' } if error['premises']
                 }) }}
 
                 {{ govukInput({
