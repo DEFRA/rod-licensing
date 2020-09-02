@@ -21,4 +21,4 @@ Object.assign(namePageRoute[1].options, {
   }
 })
 
-export default namePageRoute
+export { namePageRoute as default }
