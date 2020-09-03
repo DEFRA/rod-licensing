@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.49 (2020-09-03)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#326](https://github.com/DEFRA/rod-licensing/pull/326) Implement content changes from UCD ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.48 (2020-09-03)
 
 #### :rocket: Enhancement
