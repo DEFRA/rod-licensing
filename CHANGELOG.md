@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.48 (2020-09-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#333](https://github.com/DEFRA/rod-licensing/pull/333) Allow server keep-alive to be configured for the frontend ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.47 (2020-08-26)
 
 #### :bug: Bug Fix
