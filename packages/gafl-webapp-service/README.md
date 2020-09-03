@@ -11,6 +11,7 @@ To run from this directory:
 | name                       | description                                                      | required | default             | valid                         |
 | -------------------------- | ---------------------------------------------------------------- | :------: | ------------------- | ----------------------------- |
 | NODE_ENV                   | Node environment                                                 |    no    |                     | development, test, production |
+| HAPI_KEEP_ALIVE_TIMEOUT_MS | Configure the keep-alive timeout on the server listener          |    no    | 1 minute            |                               |
 | PORT                       | The http port the listens on                                     |    no    | 3000                |                               |
 | REDIS_HOST                 | Hostname of the redis instance used for session caching          |   yes    |                     |                               |
 | REDIS_PORT                 | Port number of the redis instance used for session caching       |    no    | 6379                |                               |
