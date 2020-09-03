@@ -5,6 +5,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
+import { hasJunior } from '../../../processors/concession-helper.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -26,6 +27,7 @@ const getData = async request => {
   return {
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
+    isJunior: hasJunior(permission),
     howContacted: HOW_CONTACTED
   }
 }

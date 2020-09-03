@@ -3,7 +3,7 @@ import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/busi
 import { dateFormats, PAGE_STATE } from '../constants.js'
 import { errorShimm } from './page-handler.js'
 import Joi from '@hapi/joi'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import JoiDate from '@hapi/joi-date'
 import { ageConcessionHelper } from '../processors/concession-helper.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'

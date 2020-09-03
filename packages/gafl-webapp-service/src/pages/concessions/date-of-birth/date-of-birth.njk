@@ -1,14 +1,14 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'What age is the license holder?' %}
+{% set title = "What's your date of birth?" %}
 
 {%
     set errorMap = {
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
-            'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
-            'date.min': { ref: '#date-of-birth-day', text: 'Your date of birth is too long ago' }
+            'date.format': { ref: '#date-of-birth-day', text: 'Enter date of birth and include a day, month and year' },
+            'date.max': { ref: '#date-of-birth-day', text: 'Date of birth must be in the past' },
+            'date.min': { ref: '#date-of-birth-day', text: 'Enter date of birth and include a day, month and year' }
         }
     }
 %}
@@ -33,7 +33,7 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-caption-m">What is their date of birth?</p>
+    <p class="govuk-body-m">If you're applying for someone else enter their date of birth.</p>
 
     {{ govukDateInput({
       id: "date-of-birth",
@@ -41,11 +41,8 @@
       items: dateInputItems,
       errorMessage: { text: 'Enter your date of birth' } if error,
       hint: {
-        text: "For example, 22 11 1970"
+        text: "For example, 23 11 1979"
       }
     }) }}
-
-    <p class="govuk-body-m">When you buy a fishing licence, you will need to give us some personal data such as the name, address and date of birth of the licence holder.</p>
-    <div class="govuk-body-m">Read about <a href="{{ _uri.privacy }}">how we use your personal information</a>.</div>
-
+    <div class="govuk-body-m">Read about <a href="{{ _uri.privacy }}">how we use personal information</a>.</div>
 {% endblock %}

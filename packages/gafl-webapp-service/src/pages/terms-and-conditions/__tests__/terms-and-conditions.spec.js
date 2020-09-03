@@ -1,5 +1,3 @@
-import moment from 'moment'
-
 import {
   LICENCE_LENGTH,
   TERMS_AND_CONDITIONS,
@@ -16,6 +14,7 @@ import {
 } from '../../../uri.js'
 
 import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../__mocks__/test-utils-system.js'
+import { postDateHelper, ADULT_TODAY } from '../../../__mocks__/test-utils-business-rules.js'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -38,14 +37,6 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
-const dobHelper = d => ({
-  'date-of-birth-day': d.date().toString(),
-  'date-of-birth-month': (d.month() + 1).toString(),
-  'date-of-birth-year': d.year()
-})
-
-const dob16Today = moment().add(-16, 'years')
-
 mockSalesApi()
 
 describe('The terms and conditions page', () => {
@@ -59,7 +50,7 @@ describe('The terms and conditions page', () => {
     await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
     await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
+    await postRedirectGet(DATE_OF_BIRTH.uri, postDateHelper(ADULT_TODAY))
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     await postRedirectGet(LICENCE_SUMMARY.uri)
     const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)

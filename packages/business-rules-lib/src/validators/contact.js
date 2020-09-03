@@ -242,7 +242,7 @@ const createNameStringValidator = joi =>
     rules: {
       allowable: {
         validate (value, helpers) {
-          if (!/\p{L}/gu.test(value)) {
+          if (!/^[\p{L}\s\-'.]*$/gu.test(value)) {
             return helpers.error('string.forbidden')
           }
           return value
