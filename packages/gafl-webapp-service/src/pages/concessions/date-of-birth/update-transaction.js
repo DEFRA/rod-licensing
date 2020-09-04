@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
+import { checkAfterPayment } from '../../licence-details/licence-to-start/update-transaction.js'
 
 /**
  * Transfer the validated page object
@@ -24,6 +25,7 @@ export default async request => {
 
   // Set age related concessions
   ageConcessionHelper(permission)
+  checkAfterPayment(permission)
 
   // Write the permission down
   await request.cache().helpers.transaction.setCurrentPermission(permission)
