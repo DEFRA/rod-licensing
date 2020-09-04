@@ -13,15 +13,21 @@ const del = require('del')
 const minify = require('gulp-minify')
 const merge = require('gulp-merge')
 const path = require('path')
+const concat = require('gulp-concat')
 
 const paths = {
   assets: path.join('..', 'assets/'),
   public: path.join('..', 'public/'),
-  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'govuk/')
+  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'govuk/'),
+  flatpickr: path.join('..', 'node_modules/flatpickr/dist/')
 }
 
 Object.assign(paths, {
   govUkAssets: path.join(paths.govUk, '/assets/{images/**/*.*,fonts/**/*.*}')
+})
+
+Object.assign(paths, {
+  otherAssets: path.join(paths.assets, '{images/**/*.*,fonts/**/*.*}')
 })
 
 console.log(`Building gafl-webapp-service. Paths: ${JSON.stringify(paths, null, 4)}`)
@@ -31,7 +37,7 @@ const clean = () => {
 }
 
 const copyAssets = () => {
-  return gulp.src(paths.govUkAssets)
+  return gulp.src([paths.govUkAssets, paths.otherAssets])
     .pipe(gulp.dest(paths.public))
 }
 
@@ -41,10 +47,10 @@ const copyRobots = () => {
 }
 
 const copyJs = () => {
-  return merge(
-    gulp.src(`${paths.govUk}all.js`),
-    gulp.src(`${paths.assets}javascript/**/*.*`)
-  ).pipe(minify({ noSource: true })).pipe(gulp.dest(`${paths.public}javascript`))
+  return gulp.src([`${paths.govUk}all.js`, `${paths.flatpickr}flatpickr.js`])
+    .pipe(concat('all.js'))
+    .pipe(minify({ noSource: true }))
+    .pipe(gulp.dest(`${paths.public}javascript`))
 }
 
 // Build the sass
