@@ -2,7 +2,7 @@ import moment from 'moment'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
-import { displayStartTime } from '../../../processors/date-and-time-display.js'
+import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
@@ -68,12 +68,12 @@ export const getData = async request => {
     licenceTypeStr: licenceTypeDisplay(permission),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
-    hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
+    hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),
     disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
     concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('Qo MMMM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Qo MMMM YYYY'),
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,

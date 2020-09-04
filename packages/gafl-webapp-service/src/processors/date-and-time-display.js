@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 export const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
-const cacheDateFormat = 'YYYY-MM-DD'
+export const cacheDateFormat = 'YYYY-MM-DD'
 
 export const advancePurchaseDateMoment = permission =>
   moment.tz(permission.licenceStartDate, cacheDateFormat, SERVICE_LOCAL_TIME).add(permission.licenceStartTime ?? 0, 'hours')
