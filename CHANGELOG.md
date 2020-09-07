@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.52 (2020-09-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#339](https://github.com/DEFRA/rod-licensing/pull/339) Fix DoB format string ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.51 (2020-09-07)
 
 #### :rocket: Enhancement
