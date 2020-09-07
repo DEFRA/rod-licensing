@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.50 (2020-09-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#336](https://github.com/DEFRA/rod-licensing/pull/336) Fix: all indirect methods of selecting a 12 month licence  ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.49 (2020-09-03)
 
 #### :rocket: Enhancement
