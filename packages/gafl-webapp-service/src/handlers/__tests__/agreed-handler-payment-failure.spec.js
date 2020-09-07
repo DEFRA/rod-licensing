@@ -1,6 +1,6 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { initialize, injectWithCookies, postRedirectGet, start, stop, mockSalesApi } from '../../__mocks__/test-utils-system'
+import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../__mocks__/test-utils-system'
 import { ADULT_FULL_1_DAY_LICENCE, MOCK_PAYMENT_RESPONSE } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
@@ -136,7 +136,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
     await injectWithCookies('GET', PAYMENT_FAILED.uri)
-    const data4 = await postRedirectGet(PAYMENT_FAILED.uri, {})
+    const data4 = await injectWithCookies('POST', PAYMENT_FAILED.uri, {})
     expect(data4.statusCode).toBe(302)
     expect(data4.headers.location).toBe(AGREED.uri)
 
@@ -193,7 +193,7 @@ describe('The agreed handler', () => {
 
     // Perform the redirect to the payment failed screen and attempt payment again
     await injectWithCookies('GET', PAYMENT_CANCELLED.uri)
-    const data3 = await postRedirectGet(PAYMENT_CANCELLED.uri, {})
+    const data3 = await injectWithCookies('POST', PAYMENT_CANCELLED.uri, {})
     expect(data3.statusCode).toBe(302)
     expect(data3.headers.location).toBe(AGREED.uri)
 

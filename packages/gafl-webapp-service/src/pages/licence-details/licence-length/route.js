@@ -1,8 +1,9 @@
-import { LICENCE_LENGTH, CONTROLLER } from '../../../uri.js'
+import { LICENCE_LENGTH } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { pricingDetail } from '../../../processors/pricing-summary.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const validator = Joi.object({
   'licence-length': Joi.string()
@@ -16,4 +17,4 @@ const getData = async request => {
   return { pricing, licenceTypeStr: licenceTypeDisplay(permission) }
 }
 
-export default pageRoute(LICENCE_LENGTH.page, LICENCE_LENGTH.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(LICENCE_LENGTH.page, LICENCE_LENGTH.uri, validator, nextPage, getData)

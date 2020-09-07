@@ -1,14 +1,10 @@
-import { DISABILITY_CONCESSION, CONTROLLER } from '../../../uri.js'
+import { DISABILITY_CONCESSION } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-
-export const disabilityConcessionTypes = {
-  pipDla: 'pip-dla',
-  blueBadge: 'blue-badge',
-  no: 'no'
-}
+import { nextPage } from '../../../routes/next-page.js'
+import { disabilityConcessionTypes } from './update-transaction.js'
 
 const validator = Joi.object({
   'disability-concession': Joi.string()
@@ -37,4 +33,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(DISABILITY_CONCESSION.page, DISABILITY_CONCESSION.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(DISABILITY_CONCESSION.page, DISABILITY_CONCESSION.uri, validator, nextPage, getData)

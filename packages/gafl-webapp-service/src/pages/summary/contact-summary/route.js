@@ -4,17 +4,9 @@ import { countries } from '../../../processors/refdata-helper.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
-import {
-  CONTACT_SUMMARY,
-  LICENCE_SUMMARY,
-  CONTROLLER,
-  NAME,
-  ADDRESS_ENTRY,
-  ADDRESS_SELECT,
-  ADDRESS_LOOKUP,
-  CONTACT,
-  NEWSLETTER
-} from '../../../uri.js'
+import { nextPage } from '../../../routes/next-page.js'
+
+import { CONTACT_SUMMARY, LICENCE_SUMMARY, NAME, ADDRESS_ENTRY, ADDRESS_SELECT, ADDRESS_LOOKUP, CONTACT, NEWSLETTER } from '../../../uri.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -59,4 +51,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, CONTROLLER.uri, getData)
+export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)

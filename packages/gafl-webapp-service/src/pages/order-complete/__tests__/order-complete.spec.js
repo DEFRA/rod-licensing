@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-import { initialize, injectWithCookies, postRedirectGet, start, stop, mockSalesApi } from '../../../__mocks__/test-utils-system'
+import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../__mocks__/mock-journeys.js'
 import { AGREED, ORDER_COMPLETE, TERMS_AND_CONDITIONS, ORDER_COMPLETE_PDF } from '../../../uri.js'
 
@@ -26,7 +26,7 @@ describe('The order completion handler', () => {
   })
 
   it('throws a status 403 (forbidden) exception if the posted flag is not set', async () => {
-    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
     expect(data.statusCode).toBe(403)
   })
