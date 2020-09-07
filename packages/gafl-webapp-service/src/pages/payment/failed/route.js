@@ -2,7 +2,8 @@ import Boom from '@hapi/boom'
 import pageRoute from '../../../routes/page-route.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { COMPLETION_STATUS } from '../../../constants.js'
-import { PAYMENT_FAILED, CONTROLLER, NEW_TRANSACTION } from '../../../uri.js'
+import { PAYMENT_FAILED, NEW_TRANSACTION } from '../../../uri.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -21,4 +22,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(PAYMENT_FAILED.page, PAYMENT_FAILED.uri, null, CONTROLLER.uri, getData)
+export default pageRoute(PAYMENT_FAILED.page, PAYMENT_FAILED.uri, null, nextPage, getData)

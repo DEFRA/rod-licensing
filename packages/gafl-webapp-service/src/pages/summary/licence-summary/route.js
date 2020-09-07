@@ -8,7 +8,6 @@ import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
 import {
   LICENCE_SUMMARY,
-  CONTROLLER,
   LICENCE_LENGTH,
   LICENCE_TYPE,
   LICENCE_TO_START,
@@ -20,6 +19,7 @@ import {
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
@@ -86,4 +86,4 @@ export const getData = async request => {
   }
 }
 
-export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, CONTROLLER.uri, getData)
+export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, nextPage, getData)

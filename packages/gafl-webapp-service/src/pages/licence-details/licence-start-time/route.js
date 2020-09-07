@@ -1,9 +1,10 @@
-import { LICENCE_START_TIME, CONTROLLER } from '../../../uri.js'
+import { LICENCE_START_TIME } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import Joi from '@hapi/joi'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const minHour = permission =>
   moment(permission.licenceStartDate, cacheDateFormat)
@@ -34,4 +35,4 @@ const getData = async request => {
   return { startDateStr, minHour: minHour(permission) }
 }
 
-export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)
