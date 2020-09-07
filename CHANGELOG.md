@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.51 (2020-09-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#338](https://github.com/DEFRA/rod-licensing/pull/338) Remove redundant redirects ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.50 (2020-09-07)
 
 #### :bug: Bug Fix
