@@ -73,7 +73,7 @@ export const getData = async request => {
     concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Qo MMMM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,
