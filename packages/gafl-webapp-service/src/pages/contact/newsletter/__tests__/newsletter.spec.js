@@ -11,7 +11,7 @@ import {
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 
 import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
@@ -22,7 +22,7 @@ afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
   it('returns success on request', async () => {
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
     const response = await injectWithCookies('GET', NEWSLETTER.uri)
     expect(response.statusCode).toBe(200)
   })
@@ -42,15 +42,15 @@ describe('The newsletter page', () => {
   describe('if the user has set the preferred method of contact to email ', async () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
       d()
     })
 
     it('if posting no it sets the newsletter contact method to none and preserves the contact methods and email', async () => {
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'no',
         'email-entry': 'no'
       })
@@ -69,7 +69,7 @@ describe('The newsletter page', () => {
     })
 
     it('if posting no it redirects to the summary page', async () => {
-      const response = await postRedirectGet(NEWSLETTER.uri, {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'no'
       })
@@ -78,7 +78,7 @@ describe('The newsletter page', () => {
     })
 
     it('if posting yes it sets the newsletter contact method to email and preserves the contact methods and email', async () => {
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'no'
       })
@@ -97,11 +97,11 @@ describe('The newsletter page', () => {
     })
 
     it('if posting yes and subsequently setting the preferred method of contact to text, the email is preserved', async () => {
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'no'
       })
-      await postRedirectGet(CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const {
         permissions: [{ licensee }]
@@ -117,7 +117,7 @@ describe('The newsletter page', () => {
     })
 
     it('if posting yes it redirects to the summary page', async () => {
-      const response = await postRedirectGet(NEWSLETTER.uri, {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'no'
       })
@@ -129,15 +129,15 @@ describe('The newsletter page', () => {
   describe('if the user has set the preferred method of contact to text ', async () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      await postRedirectGet(CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
       d()
     })
 
     it('if posting no it sets the newsletter contact method to none and preserves the email address', async () => {
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'no',
         'email-entry': 'yes'
       })
@@ -155,7 +155,7 @@ describe('The newsletter page', () => {
     })
 
     it('if posting no it redirects to the summary page', async () => {
-      const response = await postRedirectGet(NEWSLETTER.uri, {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'no',
         'email-entry': 'yes'
       })
@@ -164,7 +164,7 @@ describe('The newsletter page', () => {
     })
 
     it('if posting yes it sets the newsletter contact method to email and sets the email address', async () => {
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'yes',
         email: 'example@email.com'
@@ -184,7 +184,7 @@ describe('The newsletter page', () => {
     })
 
     it('if posting yes it redirects to the summary page', async () => {
-      const response = await postRedirectGet(NEWSLETTER.uri, {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'no',
         email: 'example@email.com'
@@ -194,12 +194,12 @@ describe('The newsletter page', () => {
     })
 
     it('if having previously posting yes and subsequently posting no, it nulls the email', async () => {
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'yes',
         email: 'example@email.com'
       })
-      await postRedirectGet(NEWSLETTER.uri, {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'no',
         'email-entry': 'no'
       })

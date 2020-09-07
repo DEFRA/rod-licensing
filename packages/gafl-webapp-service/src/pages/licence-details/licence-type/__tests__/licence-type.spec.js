@@ -9,11 +9,11 @@ import {
   NEW_TRANSACTION
 } from '../../../../uri.js'
 import * as mappings from '../../../../processors/mapping-constants.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { licenseTypes } from '../route.js'
 import { JUNIOR_TODAY, ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
-import { licenceToStart } from '../../licence-to-start/update-transaction'
-import { disabilityConcessionTypes } from '../../../concessions/disability/route'
+import { licenceToStart } from '../../licence-to-start/update-transaction.js'
+import { disabilityConcessionTypes } from '../../../concessions/disability/update-transaction.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -44,7 +44,7 @@ describe('The licence type page', () => {
     ['Trout and coarse, 2 rod', { postData: licenseTypes.troutAndCoarse2Rod, type: mappings.LICENCE_TYPE['trout-and-coarse'], rods: '2' }],
     ['Trout and coarse, 3 rod', { postData: licenseTypes.troutAndCoarse3Rod, type: mappings.LICENCE_TYPE['trout-and-coarse'], rods: '3' }]
   ])('stores the transaction on successful submission of %s', async (desc, d) => {
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': d.postData })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': d.postData })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceType).toBe(d.type)
     expect(JSON.parse(payload).permissions[0].numberOfRods).toBe(d.rods)
@@ -52,40 +52,40 @@ describe('The licence type page', () => {
 
   it('on success redirects directly to the summary page for a junior licence', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    const response = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
   it('on success redirects directly to the length page for a disabled concession', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    await postRedirectGet(DISABILITY_CONCESSION.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.blueBadge,
       'blue-badge-number': '1234'
     })
-    const response = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
+    const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
   })
 
   it('on success redirects directly to the summary page for a 3 rod licence', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    const response = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
   it('on success redirects to the length page for an adult', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    const response = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
   })

@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 import {
   CONTACT_SUMMARY,
@@ -63,24 +63,24 @@ describe('The contact summary page', () => {
     })
 
     it('redirects to the address lookup page if the address entry or address select page has not been visited', async () => {
-      await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
     })
 
     it('redirects to the contact page if it has not been visited', async () => {
-      await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-      await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+      await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(CONTACT.uri)
     })
 
     it('redirects to the newsletter page if it has not been visited', async () => {
-      await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-      await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-      await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'graham@gmail.com' })
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+      await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'graham@gmail.com' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(NEWSLETTER.uri)
@@ -93,17 +93,17 @@ describe('The contact summary page', () => {
       await injectWithCookies('GET', CONTROLLER.uri)
 
       // Set up the licence details
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      await postRedirectGet(LICENCE_SUMMARY.uri)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', LICENCE_SUMMARY.uri)
 
       // Set up the contact details
-      await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-      await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-      await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-      await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+      await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+      await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
       d()
     })
 

@@ -8,7 +8,7 @@ import {
   LICENCE_SUMMARY,
   LICENCE_TYPE
 } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 
 import { ADULT_TODAY, dobHelper, startDateHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../licence-to-start/update-transaction'
@@ -62,15 +62,15 @@ describe('The licence start time page', () => {
     ['10pm', '22'],
     ['11pm', '23']
   ])('stores the transaction on successful submission of %s', async (desc, code) => {
-    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': code })
+    await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': code })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceStartTime).toBe(code)
   })
 
   it('does not display prior times for same day licence', async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await postRedirectGet(LICENCE_TO_START.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, {
       'licence-to-start': licenceToStart.ANOTHER_DATE,
       ...startDateHelper(moment())
     })
@@ -90,16 +90,16 @@ describe('The licence start time page', () => {
 
   it('redirects to the summary page if the summary page has been seen', async () => {
     await injectWithCookies('GET', CONTROLLER.uri)
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, {
       'licence-to-start': licenceToStart.ANOTHER_DATE,
       ...startDateHelper(moment().add(1, 'day'))
     })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '11' })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': '11' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    const response = await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '12' })
+    const response = await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': '12' })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
   })

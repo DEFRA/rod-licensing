@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 import {
   LICENCE_TO_START,
   DATE_OF_BIRTH,
@@ -72,14 +72,14 @@ describe("The 'when would you like you licence to start?' page", () => {
 
   describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, async () => {
     beforeEach(async d => {
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(juniorIn16Days))
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(juniorIn16Days))
       d()
     })
 
     it(`redirects to the disabled concessions page when posting a licence start date of ${moment()
       .add(16, 'day')
       .format('YYYY-MM-DD')}`, async () => {
-      const response = await postRedirectGet(LICENCE_TO_START.uri, {
+      const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
         'licence-to-start': licenceToStart.ANOTHER_DATE,
         ...startDateHelper(moment().add(16, 'day'))
       })
@@ -90,7 +90,7 @@ describe("The 'when would you like you licence to start?' page", () => {
     it(`redirects to the no licence required page when posting a licence start date of ${moment()
       .add(15, 'day')
       .format('YYYY-MM-DD')}`, async () => {
-      const response = await postRedirectGet(LICENCE_TO_START.uri, {
+      const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
         'licence-to-start': licenceToStart.ANOTHER_DATE,
         ...startDateHelper(moment().add(15, 'day'))
       })
@@ -102,8 +102,8 @@ describe("The 'when would you like you licence to start?' page", () => {
   it(`for a user who is born on the ${JUNIOR_TOMORROW.format(
     'YYYY-MM-DD'
   )} and when posting a licence starting immediately, it redirects to the no licence required page`, async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TOMORROW))
-    const response = await postRedirectGet(LICENCE_TO_START.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TOMORROW))
+    const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
       'licence-to-start': licenceToStart.AFTER_PAYMENT
     })
     expect(response.statusCode).toBe(302)
@@ -113,8 +113,8 @@ describe("The 'when would you like you licence to start?' page", () => {
   it(`for a user who is born on the ${JUNIOR_TODAY.format(
     'YYYY-MM-DD'
   )} and when posting a licence starting immediately, it redirects to the disabled concessions`, async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
-    const response = await postRedirectGet(LICENCE_TO_START.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
       'licence-to-start': licenceToStart.AFTER_PAYMENT
     })
     expect(response.statusCode).toBe(302)
@@ -122,9 +122,9 @@ describe("The 'when would you like you licence to start?' page", () => {
   })
 
   it('redirects to the start-time page if it already known that this is a 1 or 8 day licence', async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    const response = await postRedirectGet(LICENCE_TO_START.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
       'licence-to-start': licenceToStart.ANOTHER_DATE,
       ...startDateHelper(moment().add(16, 'day'))
     })

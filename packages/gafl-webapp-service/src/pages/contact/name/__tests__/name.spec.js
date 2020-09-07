@@ -1,4 +1,4 @@
-import { NAME, CONTROLLER, TEST_TRANSACTION } from '../../../../uri.js'
+import { NAME, TEST_TRANSACTION, ADDRESS_LOOKUP } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 
 beforeAll(d => start(d))
@@ -77,8 +77,7 @@ describe('The name page', () => {
       'first-name': 'GRAHAM    MICHAEL'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTROLLER.uri)
-    await injectWithCookies('GET', CONTROLLER.uri)
+    expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
 
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'Graham Michael', lastName: 'Willis' })

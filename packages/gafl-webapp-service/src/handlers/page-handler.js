@@ -97,7 +97,12 @@ export default (path, view, completion, getData) => ({
     status.currentPage = view
     status[view] = PAGE_STATE.completed
     await request.cache().helpers.status.setCurrentPermission(status)
-    return h.redirect(completion)
+
+    if (typeof completion === 'function') {
+      return h.redirect(await completion(request))
+    } else {
+      return h.redirect(completion)
+    }
   },
   /**
    * Generic error handler for pages

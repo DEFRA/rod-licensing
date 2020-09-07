@@ -1,5 +1,5 @@
 import { dobHelper, JUNIOR_TODAY, ADULT_TODAY, SENIOR_TODAY } from '../../__mocks__/test-utils-business-rules.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet, mockSalesApi } from '../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../__mocks__/test-utils-system.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 
 import {
@@ -13,7 +13,7 @@ import {
 } from '../../uri.js'
 
 import { licenceToStart } from '../../pages/licence-details/licence-to-start/update-transaction.js'
-import { disabilityConcessionTypes } from '../../pages/concessions/disability/route'
+import { disabilityConcessionTypes } from '../../pages/concessions/disability/update-transaction.js'
 
 mockSalesApi()
 
@@ -234,9 +234,9 @@ describe('The pricing summary calculator', () => {
   describe('for a junior licence', () => {
     beforeEach(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
-      await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.no
       })
     })
@@ -247,11 +247,11 @@ describe('The pricing summary calculator', () => {
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.pipDla,
         'ni-number': 'NH 34 67 44 A'
       })
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
       expect(result.byType).toEqual(expect.objectContaining(juniorPricingByType))
     })
@@ -265,9 +265,9 @@ describe('The pricing summary calculator', () => {
   describe('for an adult licence', () => {
     beforeEach(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.no
       })
     })
@@ -278,24 +278,24 @@ describe('The pricing summary calculator', () => {
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.pipDla,
         'ni-number': 'NH 34 67 44 A'
       })
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
       expect(result.byType).toEqual(expect.objectContaining(adultDisabledPricingByType))
     })
 
     it('returns the correct length pricing data', async () => {
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
       expect(result.byLength).toEqual(expect.objectContaining(adultPricingByLength))
     })
 
     it('returns the correct length pricing data for a disabled concession', async () => {
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.pipDla,
         'ni-number': 'NH 34 67 44 A'
       })
@@ -307,9 +307,9 @@ describe('The pricing summary calculator', () => {
   describe('for an senior licence', () => {
     beforeEach(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
-      await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.no
       })
     })
@@ -320,7 +320,7 @@ describe('The pricing summary calculator', () => {
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.pipDla,
         'ni-number': 'NH 34 67 44 A'
       })
@@ -329,17 +329,17 @@ describe('The pricing summary calculator', () => {
     })
 
     it('returns the correct length pricing data', async () => {
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
       expect(result.byLength).toEqual(expect.objectContaining(seniorPricingByLength))
     })
 
     it('returns the correct length pricing data for a disabled concession', async () => {
-      await postRedirectGet(DISABILITY_CONCESSION.uri, {
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.pipDla,
         'ni-number': 'NH 34 67 44 A'
       })
-      await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
       expect(result.byLength).toEqual(expect.objectContaining(seniorPricingByLength))
     })
