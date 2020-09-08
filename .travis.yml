@@ -27,7 +27,7 @@ before_install:
 
 script:
   - echo "Starting tests at $(date)"
-  - npm test
+  - jest --maxWorkers=4
   - echo "Tests completed at $(date)"
   - sonar-scanner
   - echo "Sonar analysis completed at $(date)"
