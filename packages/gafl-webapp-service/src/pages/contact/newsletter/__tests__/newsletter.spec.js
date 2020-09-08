@@ -101,7 +101,7 @@ describe('The newsletter page', () => {
         newsletter: 'yes',
         'email-entry': 'no'
       })
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+447000000000' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const {
         permissions: [{ licensee }]
@@ -132,7 +132,7 @@ describe('The newsletter page', () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07900000000' })
       d()
     })
 
