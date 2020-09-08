@@ -1,4 +1,12 @@
 
+## v0.3.0-rc.56 (2020-09-08)
+
+#### :rocket: Enhancement
+* [#343](https://github.com/DEFRA/rod-licensing/pull/343) Add dependabot v2 config, improve jest performance when running in travis ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.55 (2020-09-08)
 
 #### :rocket: Enhancement
