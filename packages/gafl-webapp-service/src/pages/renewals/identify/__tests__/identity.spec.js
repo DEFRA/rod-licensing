@@ -8,7 +8,7 @@ import {
   RENEWAL_INACTIVE,
   LICENCE_LENGTH
 } from '../../../../uri.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
 
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -193,7 +193,7 @@ describe('The easy renewal identification page', () => {
     const data2 = await injectWithCookies('GET', RENEWAL_INACTIVE.uri)
     expect(data2.statusCode).toBe(200)
 
-    const data3 = await postRedirectGet(RENEWAL_INACTIVE.uri, {})
+    const data3 = await injectWithCookies('POST', RENEWAL_INACTIVE.uri, {})
     expect(data3.statusCode).toBe(302)
     expect(data3.headers.location).toBe(LICENCE_LENGTH.uri)
   })

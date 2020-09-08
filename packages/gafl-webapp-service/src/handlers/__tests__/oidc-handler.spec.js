@@ -129,6 +129,19 @@ describe('oidc handler', () => {
       expect(fakeHandler.redirect).toHaveBeenCalledWith('/oidc/role-required')
     })
 
+    it('redirects to /oidc/account-disabled if the user account is not recognised in Dynamics', async () => {
+      const fakeRequest = {
+        payload: { id_token: 'sample_token', state: 'test_stored_state' },
+        cookieAuth: { set: jest.fn(), ttl: jest.fn() }
+      }
+      const fakeHandler = { redirect: jest.fn() }
+      salesApi.getSystemUser.mockResolvedValue(null)
+      await expect(signIn(fakeRequest, fakeHandler)).resolves.toBeUndefined()
+      expect(fakeRequest.cookieAuth.set).not.toHaveBeenCalled()
+      expect(fakeRequest.cookieAuth.ttl).not.toHaveBeenCalled()
+      expect(fakeHandler.redirect).toHaveBeenCalledWith('/oidc/account-disabled')
+    })
+
     it('redirects to /oidc/account-disabled if the user account has been set to disabled in Dynamics', async () => {
       const fakeRequest = {
         payload: { id_token: 'sample_token', state: 'test_stored_state' },

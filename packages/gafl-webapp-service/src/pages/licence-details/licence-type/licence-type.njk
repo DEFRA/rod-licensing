@@ -8,29 +8,27 @@
 {%
     set errorMap = {
         'licence-type': {
-            'any.required': { ref: '#licence-type', text: 'You did not tell us which type of licence you want' }
+            'any.required': { ref: '#licence-type', text: 'Choose which type of fishing licence you want' }
         }
     }
 %}
 
 {% set troutAndCoarse2Rod %}
-    <p class="govuk-body-m">This lets you fish non-migratory trout and freshwater fish</p>
-    <p class="govuk-body-m">Rods are for the individual licence holder and must be attended at all times</p>
+    <p class="govuk-body-m">The 2 rods coarse licence is the simplest rod licence. This will cover you for all the forms of fishing with a rod and let you fish non-migratory trout and coarse fish. It will allow you to fish with 1 or 2 rods at the same time. (subject to the <a target="_blank" href="{{ data.uri.freshWaterFishingRules }}">rod fishing rules</a> and <a target="_blank" href="{{ data.uri.localByelaws }}">local fishing byelaws</a>)</p>
 {% endset -%}
 
 {% set troutAndCoarse3Rod %}
-    <p class="govuk-body-m">This lets you fish non-migratory trout and freshwater fish</p>
-    <p class="govuk-body-m">Rods are for the individual licence holder and must be attended at all times</p>
+    <p class="govuk-body-m">You will only need a 3 rod licence if you plan to fish with 3 rods at the same time. This may be for specialist carp fishing for example. This will cover you for all the forms of fishing with a rod and let you fish non-migratory trout and coarse fish. (subject to the <a target="_blank" href="{{ data.uri.freshWaterFishingRules }}">rod fishing rules</a> and <a target="_blank" href="{{ data.uri.localByelaws }}">local fishing byelaws</a>)</p>
 {% endset -%}
 
 {% set salmonAndSeaTrout %}
+    {% if data.hasJunior %}<p class="govuk-body-m">You'll only need this licence if you are specifically fishing for salmon or sea trout.</p>{% endif %}
     {{ govukWarningText({
-      text: "You must submit an annual catch return",
+      text: "You will need to submit an annual catch return",
       iconFallbackText: "Warning",
       classes: "govuk-!-margin-top-6"
     }) }}
-    <p class="govuk-body-m">You must report you yearly fishing activity in England and Wales if you have a salmon and sea trout licence, even if you did not fish.</p>
-    <p class="govuk-body-m">More details can be found at <a target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a>.</p>
+    <p class="govuk-body-m">You must by law <a target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
 {% endset -%}
 
 {% set items = [
@@ -60,11 +58,12 @@
 %}
 
 {% block pageContent %}
+    <p class="govuk-body-m">Rods are for use by the licence holder only and must be attended at all times.</p>
     {{ govukRadios({
         idPrefix: "licence-type",
         name: "licence-type",
         items: items,
-        errorMessage: { text: 'Tell us which type of fishing licence you want' } if error
+        errorMessage: { text: 'Choose which type of fishing licence you want' } if error
     }) }}
 {% endblock %}
 

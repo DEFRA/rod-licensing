@@ -67,9 +67,11 @@ describe('contact validators', () => {
       })
     })
 
-    describe('does not allow banned characters', () => {
-      it.each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split(''))('does not allow the %s character', async c => {
-        await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(c)).rejects.toThrow('contains forbidden characters')
+    describe('does not allow names containing banned characters', () => {
+      it.each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split(''))('does not allow a string containing the %s character', async c => {
+        await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(`Mich${c}`)).rejects.toThrow(
+          'contains forbidden characters'
+        )
       })
     })
 
@@ -105,6 +107,7 @@ describe('contact validators', () => {
         [' SMITH-JONES ', 'Smith-Jones'],
         ['smith-jones', 'Smith-Jones'],
         ['denver', 'Denver'],
+        ['Ian St. John', 'Ian St. John'],
         ['smythé', 'Smythé'],
         ["O'DELL", "O'Dell"],
         ['mcdonald', 'McDonald'],
@@ -125,9 +128,11 @@ describe('contact validators', () => {
       })
     })
 
-    describe('does not allow banned characters', () => {
+    describe('does not allow names containing banned characters', () => {
       it.each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split(''))('does not allow the %s character', async c => {
-        await expect(contactValidation.createLastNameValidator(Joi).validateAsync(c)).rejects.toThrow('contains forbidden characters')
+        await expect(contactValidation.createLastNameValidator(Joi).validateAsync(`Gra${c}am`)).rejects.toThrow(
+          'contains forbidden characters'
+        )
       })
     })
 

@@ -1,10 +1,12 @@
-import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
+import { CONTACT, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
+import { hasJunior } from '../../../processors/concession-helper.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -26,6 +28,7 @@ const getData = async request => {
   return {
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
+    isJunior: hasJunior(permission),
     howContacted: HOW_CONTACTED
   }
 }
@@ -46,4 +49,4 @@ const validator = Joi.object({
   })
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(CONTACT.page, CONTACT.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(CONTACT.page, CONTACT.uri, validator, nextPage, getData)

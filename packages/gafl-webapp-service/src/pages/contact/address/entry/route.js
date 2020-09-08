@@ -1,8 +1,9 @@
-import { ADDRESS_ENTRY, CONTROLLER, ADDRESS_LOOKUP } from '../../../../uri.js'
+import { ADDRESS_ENTRY, ADDRESS_LOOKUP } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { countries } from '../../../../processors/refdata-helper.js'
+import { nextPage } from '../../../../routes/next-page.js'
 
 const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
@@ -17,7 +18,7 @@ const validator = Joi.object({
   'country-code': Joi.string().required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(ADDRESS_ENTRY.page, ADDRESS_ENTRY.uri, validator, CONTROLLER.uri, async () => ({
+export default pageRoute(ADDRESS_ENTRY.page, ADDRESS_ENTRY.uri, validator, nextPage, async () => ({
   countries: await countries.getAll(),
   lookupPage: ADDRESS_LOOKUP.uri
 }))

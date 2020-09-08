@@ -53,6 +53,9 @@ const createServer = options => {
       options
     )
   )
+  const keepAlive = Number.parseInt(process.env.HAPI_KEEP_ALIVE_TIMEOUT_MS || 60000)
+  server.listener.keepAliveTimeout = keepAlive
+  server.listener.headersTimeout = keepAlive + 5000
 }
 
 /*

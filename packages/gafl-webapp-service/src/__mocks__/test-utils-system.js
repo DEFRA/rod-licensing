@@ -1,6 +1,6 @@
 import { createServer, init, server } from '../server.js'
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
-import { TEST_TRANSACTION, TEST_STATUS, CONTROLLER, GET_PRICING_TYPES, GET_PRICING_LENGTHS, LICENCE_LENGTH, LICENCE_TYPE } from '../uri.js'
+import { TEST_TRANSACTION, TEST_STATUS, GET_PRICING_TYPES, GET_PRICING_LENGTHS, LICENCE_LENGTH, LICENCE_TYPE } from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -117,11 +117,6 @@ const injectWithoutSessionCookie = async (method, url, payload = {}) => {
   })
 }
 
-const postRedirectGet = async (uri, payload) => {
-  await injectWithCookies('POST', uri, payload)
-  return injectWithCookies('GET', CONTROLLER.uri)
-}
-
 const mockSalesApi = () => {
   salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
   salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
@@ -129,4 +124,4 @@ const mockSalesApi = () => {
   salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 }
 
-export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, postRedirectGet, mockSalesApi }
+export { start, stop, server, getCookies, initialize, injectWithCookies, injectWithoutSessionCookie, mockSalesApi }

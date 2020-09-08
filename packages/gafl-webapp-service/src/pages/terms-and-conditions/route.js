@@ -2,7 +2,8 @@ import pageRoute from '../../routes/page-route.js'
 import * as mappings from '../../processors/mapping-constants.js'
 import { getTrackingProductDetailsFromTransaction } from '../../processors/analytics.js'
 import Joi from '@hapi/joi'
-import { TERMS_AND_CONDITIONS, CONTROLLER, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
+import { TERMS_AND_CONDITIONS, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
+import { nextPage } from '../../routes/next-page.js'
 
 import GetDataRedirect from '../../handlers/get-data-redirect.js'
 
@@ -33,4 +34,4 @@ const validator = Joi.object({
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(TERMS_AND_CONDITIONS.page, TERMS_AND_CONDITIONS.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(TERMS_AND_CONDITIONS.page, TERMS_AND_CONDITIONS.uri, validator, nextPage, getData)

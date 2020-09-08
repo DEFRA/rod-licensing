@@ -3,12 +3,13 @@
 {% from "radios/macro.njk" import govukRadios %}
 
 {% set title = 'Would you like to receive our email newsletter?' %}
+{% set emailError = 'Enter an email address in the correct format, like name@example.com' %}
 
 {% set errorMap = {
        'email': {
-            'string.empty': { ref: '#email', text: 'You did not enter your email address' },
-            'string.email': { ref: '#email', text: 'You did not enter a valid email address' },
-            'string.max': { ref: '#email', text: 'You did not enter a valid email address' }
+            'string.empty': { ref: '#email', text: emailError },
+            'string.email': { ref: '#email', text: emailError },
+            'string.max': { ref: '#email', text: emailError }
         }
     }
 %}
@@ -21,12 +22,12 @@
       classes: "govuk-!-width-two-thirds",
       autocomplete: "email",
       value: payload.email,
-      errorMessage: { text: 'Enter your email address' } if error['email'],
+      errorMessage: { text: emailError } if error['email'],
       label: {
         text: "Email address"
       },
       hint: {
-          text: "For example angling@email.com"
+          text: "For example name@example.com"
       },
       attributes: {
         spellcheck: "false",
@@ -41,7 +42,7 @@
       name: "newsletter",
       fieldset: {
         legend: {
-          text: "Stay up to date with the latest news on angling and fisheries and how we spend your licence money. You can unsubscribe at any time",
+          text: "Stay up to date with the latest news on angling and fisheries and how we spend your licence money. You can unsubscribe at any time.",
           isPageHeading: false,
           classes: "govuk-body-m"
         }

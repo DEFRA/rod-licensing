@@ -82,6 +82,11 @@ export default [
   },
 
   {
+    currentPage: NO_LICENCE_REQUIRED.page,
+    backLink: DATE_OF_BIRTH.uri
+  },
+
+  {
     currentPage: DISABILITY_CONCESSION.page,
     nextPage: {
       [CommonResults.OK]: {
@@ -214,11 +219,8 @@ export default [
   {
     currentPage: CONTACT.page,
     nextPage: {
-      [CommonResults.YES]: {
+      [CommonResults.OK]: {
         page: NEWSLETTER.uri
-      },
-      [CommonResults.NO]: {
-        page: CONTACT_SUMMARY.uri
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri

@@ -1,8 +1,11 @@
 import { DISABILITY_CONCESSION } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
-import { disabilityConcessionTypes } from './route.js'
-
+export const disabilityConcessionTypes = {
+  pipDla: 'pip-dla',
+  blueBadge: 'blue-badge',
+  no: 'no'
+}
 /**
  * Transfer the validate page object
  * @param request

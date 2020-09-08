@@ -1,4 +1,67 @@
 
+## v0.3.0-rc.53 (2020-09-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#341](https://github.com/DEFRA/rod-licensing/pull/341)  Remove redundant redirects from contact pages ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.52 (2020-09-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#339](https://github.com/DEFRA/rod-licensing/pull/339) Fix DoB format string ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.51 (2020-09-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#338](https://github.com/DEFRA/rod-licensing/pull/338) Remove redundant redirects ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.50 (2020-09-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#336](https://github.com/DEFRA/rod-licensing/pull/336) Fix: all indirect methods of selecting a 12 month licence  ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.49 (2020-09-03)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#326](https://github.com/DEFRA/rod-licensing/pull/326) Implement content changes from UCD ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.48 (2020-09-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#333](https://github.com/DEFRA/rod-licensing/pull/333) Allow server keep-alive to be configured for the frontend ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.47 (2020-08-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#325](https://github.com/DEFRA/rod-licensing/pull/325) Fix OIDC handler to handle accounts not present in Dynamics ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.45 (2020-08-24)
 

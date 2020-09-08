@@ -3,10 +3,11 @@ import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/busi
 import { dateFormats, PAGE_STATE } from '../constants.js'
 import { errorShimm } from './page-handler.js'
 import Joi from '@hapi/joi'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import JoiDate from '@hapi/joi-date'
 import { ageConcessionHelper } from '../processors/concession-helper.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
+import { cacheDateFormat } from '../processors/date-and-time-display.js'
 
 const JoiX = Joi.extend(JoiDate)
 /**
@@ -47,9 +48,9 @@ export default async (request, h) => {
       year: payload['licence-start-date-year'],
       month: Number.parseInt(payload['licence-start-date-month']) - 1,
       day: payload['licence-start-date-day']
-    }).format('YYYY-MM-DD')
+    }).format(cacheDateFormat)
 
-    if (moment(permission.licenceStartDate, 'YYYY-MM-DD').isSame(endDateMoment, 'day')) {
+    if (moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day')) {
       // If today is the day of the renewal
       if (endDateMoment.isAfter()) {
         // Not yet expired - set the start time accordingly

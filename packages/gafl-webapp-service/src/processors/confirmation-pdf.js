@@ -45,9 +45,9 @@ const getTable = permission => {
     ]
   }
 
-  tab.body.push(tableRowHelper('Disability support', hasDisabled(permission) ? 'yes' : 'no'))
-  tab.body.push(tableRowHelper('Valid from', displayStartTime(permission)))
-  tab.body.push(tableRowHelper('Valid to', displayEndTime(permission)))
+  tab.body.push(tableRowHelper('Disability concession', hasDisabled(permission) ? 'yes' : 'no'))
+  tab.body.push(tableRowHelper('Start date', displayStartTime(permission)))
+  tab.body.push(tableRowHelper('End date', displayEndTime(permission)))
   tab.body.push(tableRowHelper('Paid', permission.permit.cost === 0 ? 'free' : `£${permission.permit.cost}`))
 
   return tab

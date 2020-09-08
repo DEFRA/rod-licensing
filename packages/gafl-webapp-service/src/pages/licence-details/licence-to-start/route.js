@@ -2,9 +2,11 @@ import Joi from '@hapi/joi'
 import moment from 'moment'
 import JoiDate from '@hapi/joi-date'
 import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
-import { LICENCE_TO_START, CONTROLLER } from '../../../uri.js'
+import { LICENCE_TO_START } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { dateFormats } from '../../../constants.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const JoiX = Joi.extend(JoiDate)
 
@@ -34,15 +36,19 @@ const validator = payload => {
   )
 }
 
-const getData = () => ({
-  exampleStartDate: moment()
-    .add(1, 'days')
-    .format('DD MM YYYY'),
-  maxStartDate: moment()
-    .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-    .format('DD MM YYYY'),
-  advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
-  startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
-})
+const getData = async request => {
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  return {
+    hasJunior: concessionHelper.hasJunior(permission), // If a junior on max advance purchase days
+    exampleStartDate: moment()
+      .add(1, 'days')
+      .format('DD MM YYYY'),
+    maxStartDate: moment()
+      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+      .format('DD MM YYYY'),
+    advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
+    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
+  }
+}
 
-export default pageRoute(LICENCE_TO_START.page, LICENCE_TO_START.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(LICENCE_TO_START.page, LICENCE_TO_START.uri, validator, nextPage, getData)

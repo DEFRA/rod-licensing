@@ -1,7 +1,8 @@
-import { NEWSLETTER, CONTROLLER } from '../../../uri.js'
+import { NEWSLETTER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const getData = async request => {
   const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
@@ -32,4 +33,4 @@ const validator = Joi.object({
   })
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(NEWSLETTER.page, NEWSLETTER.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(NEWSLETTER.page, NEWSLETTER.uri, validator, nextPage, getData)

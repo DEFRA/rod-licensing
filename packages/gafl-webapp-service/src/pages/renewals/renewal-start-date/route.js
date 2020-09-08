@@ -4,7 +4,7 @@ import { RENEWAL_START_DATE, RENEWAL_START_VALIDATE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import JoiDate from '@hapi/joi-date'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { displayExpiryDate } from '../../../processors/date-and-time-display.js'
 const JoiX = Joi.extend(JoiDate)
 

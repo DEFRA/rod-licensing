@@ -6,6 +6,7 @@ import { useSessionCookie } from '../session-cache/session-manager.js'
 jest.mock('@hapi/hapi', () => ({
   server: jest.fn(() => ({
     app: {},
+    listener: {},
     cache: () => {},
     decorate: () => {},
     ext: () => {},

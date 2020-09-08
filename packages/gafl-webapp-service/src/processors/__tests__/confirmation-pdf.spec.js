@@ -40,7 +40,7 @@ const disabledPermission = {
 describe('The PDF generator', () => {
   it('completes for a disabled concession trout and coarse licence', () => {
     const result = orderConfirmationPdf(disabledPermission)
-    expect(result.content[5].table.body[1][1].text).toBe('Trout and coarse, 3 rod')
+    expect(result.content[5].table.body[1][1].text).toBe('Trout and coarse, up to 3 rods')
     expect(result.content[5].table.body[3][1].text).toBe('yes')
   })
 
@@ -59,7 +59,7 @@ describe('The PDF generator', () => {
     const permission = Object.assign({}, disabledPermission)
     addJunior(permission)
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[1][1].text).toBe('Junior, Trout and coarse, 3 rod')
+    expect(result.content[5].table.body[1][1].text).toBe('Junior, Trout and coarse, up to 3 rods')
   })
 
   it('completes for a 1 Day licence', () => {
