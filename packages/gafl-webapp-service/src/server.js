@@ -176,6 +176,17 @@ const init = async () => {
   }
 
   server.route(routes)
+
+  // Handle shutdown
+  const shutdown = async (code = 0) => {
+    console.log(`Server is shutdown with ${code}`)
+    await server.stop()
+    process.exit(code)
+  }
+
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
+
   await server.start()
 
   console.log('Server running on %s', server.info.uri)

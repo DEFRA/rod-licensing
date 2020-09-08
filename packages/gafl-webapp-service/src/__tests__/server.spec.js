@@ -23,6 +23,17 @@ describe('The server', () => {
     await init()
   })
 
+  describe('handles process interrupts', () => {
+    it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', async signal => {
+      const serverStopSpy = jest.spyOn(server, 'stop').mockImplementation(async () => {})
+      const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
+      await process.emit(signal)
+      expect(serverStopSpy).toHaveBeenCalled()
+      expect(processStopSpy).toHaveBeenCalledWith(0)
+      jest.restoreAllMocks()
+    })
+  })
+
   it('configures session handling in redis by default', async () => {
     process.env.REDIS_HOST = '0.0.0.0'
     process.env.REDIS_PORT = '12345'
