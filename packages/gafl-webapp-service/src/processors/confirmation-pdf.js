@@ -66,7 +66,7 @@ const getContent = permission => {
       alignment: alignment.CENTRE
     },
     {
-      text: 'Your licence details',
+      text: 'Your rod fishing licence details',
       style: style.HEADER,
       alignment: alignment.CENTRE
     },
@@ -92,6 +92,14 @@ const getContent = permission => {
   content.push({
     text:
       'You can go fishing before you get your licence card, but you must be able to confirm your licence details if asked by an enforcement officer.',
+    style: 'para'
+  })
+
+  content.push({
+    text: [
+      'You must follow the ',
+      { text: 'rod fishing rules and local byelaws', link: 'https://www.gov.uk/freshwater-rod-fishing-rules', decoration: 'underline' }
+    ],
     style: 'para'
   })
 
