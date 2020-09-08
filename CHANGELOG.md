@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.53 (2020-09-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#341](https://github.com/DEFRA/rod-licensing/pull/341)  Remove redundant redirects from contact pages ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.52 (2020-09-07)
 
 #### :bug: Bug Fix
