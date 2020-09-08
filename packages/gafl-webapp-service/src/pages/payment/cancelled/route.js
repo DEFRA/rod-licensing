@@ -1,6 +1,7 @@
 import Boom from '@hapi/boom'
 import pageRoute from '../../../routes/page-route.js'
-import { PAYMENT_CANCELLED, CONTROLLER, NEW_TRANSACTION } from '../../../uri.js'
+import { PAYMENT_CANCELLED, NEW_TRANSACTION } from '../../../uri.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 import { COMPLETION_STATUS } from '../../../constants.js'
 
@@ -19,4 +20,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(PAYMENT_CANCELLED.page, PAYMENT_CANCELLED.uri, null, CONTROLLER.uri, getData)
+export default pageRoute(PAYMENT_CANCELLED.page, PAYMENT_CANCELLED.uri, null, nextPage, getData)

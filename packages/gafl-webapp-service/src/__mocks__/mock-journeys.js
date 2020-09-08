@@ -1,4 +1,4 @@
-import { injectWithCookies, postRedirectGet, mockSalesApi } from './test-utils-system.js'
+import { injectWithCookies, mockSalesApi } from './test-utils-system.js'
 import { dobHelper, ADULT_TODAY, JUNIOR_TODAY, SENIOR_TODAY } from './test-utils-business-rules.js'
 
 import {
@@ -20,7 +20,7 @@ import {
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../pages/licence-details/licence-type/route'
 
-import { disabilityConcessionTypes } from '../pages/concessions/disability/route'
+import { disabilityConcessionTypes } from '../pages/concessions/disability/update-transaction.js'
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
@@ -69,22 +69,22 @@ export const ADULT_FULL_1_DAY_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
     // Complete the pre-payment journey
-    await postRedirectGet(CONTACT_SUMMARY.uri)
-    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('POST', CONTACT_SUMMARY.uri)
+    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
 }
 
@@ -132,26 +132,26 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    await postRedirectGet(DISABILITY_CONCESSION.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.pipDla,
       'ni-number': 'NH 34 67 44 A'
     })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
     // Complete the pre-payment journey
-    await postRedirectGet(CONTACT_SUMMARY.uri)
-    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('POST', CONTACT_SUMMARY.uri)
+    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
 }
 
@@ -198,22 +198,22 @@ export const SENIOR_12_MONTH_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
     // Complete the pre-payment journey
-    await postRedirectGet(CONTACT_SUMMARY.uri)
-    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('POST', CONTACT_SUMMARY.uri)
+    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
 }
 
@@ -260,21 +260,21 @@ export const JUNIOR_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
     // Complete the pre-payment journey
-    await postRedirectGet(CONTACT_SUMMARY.uri)
-    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('POST', CONTACT_SUMMARY.uri)
+    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
 }
 
@@ -322,25 +322,25 @@ export const JUNIOR_DISABLED_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-    await postRedirectGet(DISABILITY_CONCESSION.uri, {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.pipDla,
       'ni-number': 'NH 34 67 44 A'
     })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
     // Complete the pre-payment journey
-    await postRedirectGet(CONTACT_SUMMARY.uri)
-    await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('POST', CONTACT_SUMMARY.uri)
+    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
   }
 }
 
