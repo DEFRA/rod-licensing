@@ -14,9 +14,9 @@ describe('The server', () => {
       ]
     })
 
-    server.events.on('start', () => {
+    server.events.on('start', async () => {
       expect(server.info.port).toBe(1234)
-      server.stop()
+      await server.stop()
       done()
     })
 
