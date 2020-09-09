@@ -132,13 +132,13 @@ const init = async () => {
   })
 
   const sessionCookieName = getSessionCookieName()
-
   const sessionCookieOptions = {
     ttl: process.env.SESSION_TTL_MS || SESSION_TTL_MS_DEFAULT, // Will be kept alive on each request
     isSecure: process.env.NODE_ENV !== 'development',
     isHttpOnly: process.env.NODE_ENV !== 'development',
     isSameSite: 'Lax', // Needed for the GOV pay redirect back into the service
-    encoding: 'base64json',
+    encoding: 'iron',
+    password: process.env.SESSION_COOKIE_PASSWORD,
     clearInvalid: true,
     strictHeader: true,
     path: '/'
