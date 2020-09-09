@@ -100,7 +100,7 @@ const addDefaultHeaders = (request, h) => {
   return h.continue
 }
 
-const init = async () => {
+const init = async (sd = true) => {
   await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
