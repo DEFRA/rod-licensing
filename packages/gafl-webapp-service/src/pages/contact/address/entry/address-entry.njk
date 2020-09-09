@@ -69,6 +69,7 @@
       name: "locality",
       value: payload['locality'],
       classes: "govuk-input--width-20",
+      autocomplete: 'address-level2',
       attributes: { maxlength: 50 }
     }) }}
 
@@ -81,6 +82,7 @@
       value: payload['town'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
+      autocomplete: 'address-level1',
       errorMessage: { text: 'Enter the town or city' } if error['town']
     }) }}
 
@@ -93,6 +95,7 @@
       value: payload['postcode'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 10 },
+      autocomplete: 'postal-code',
       errorMessage: { text: 'Enter the postcode' } if error['postcode']
     }) }}
 
