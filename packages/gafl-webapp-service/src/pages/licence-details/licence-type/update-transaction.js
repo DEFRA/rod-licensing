@@ -1,9 +1,8 @@
 import { LICENCE_TYPE } from '../../../uri.js'
 import * as constants from '../../../processors/mapping-constants.js'
 import { licenseTypes } from './route.js'
-import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { licenceToStart } from '../licence-to-start/update-transaction.js'
+import { checkAfterPayment } from '../licence-to-start/update-transaction.js'
+
 /**
  * Transfer the validate page object
  * @param request
@@ -21,15 +20,7 @@ export default async request => {
     permission.numberOfRods = '3'
     permission.licenceLength = '12M'
     permission.licenceStartTime = null
-    // If the licence start date has previously be chosen as today, for a 12 month
-    // then set start after payment
-    if (
-      moment(permission.licenceStartDate, 'YYYY-MM-DD')
-        .tz(SERVICE_LOCAL_TIME)
-        .isSame(moment(), 'day')
-    ) {
-      permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-    }
+    checkAfterPayment(permission)
   } else {
     permission.licenceType = constants.LICENCE_TYPE['salmon-and-sea-trout']
     permission.numberOfRods = '1'

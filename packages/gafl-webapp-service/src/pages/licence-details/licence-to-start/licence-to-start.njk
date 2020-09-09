@@ -86,13 +86,6 @@
         calImageDiv.height = dataInputDiv.height
         calImageDiv.id = 'cal-image-div'
         calImageDiv.setAttribute('aria-hidden', true)
-        const calInput = document.createElement('input')
-        calInput.type = 'image'
-        calInput.id = 'cal-button'
-        calInput.src = '/public/images/icon-calendar-2x.png'
-        calInput.setAttribute('formmethod', 'dialog')
-        calInput.setAttribute('alt', 'Open calendar')
-        calImageDiv.appendChild(calInput)
         dataInputDiv.appendChild(calImageDiv)
         const fpk = flatpickr(calImageDiv, {
             dateFormat: "d m Y",
@@ -118,7 +111,7 @@
                 fpk.close()
             }
         })
-        calInput.onclick = function() {
+        calImageDiv.onclick = function() {
             fpk.open()
         }
     })()</script>

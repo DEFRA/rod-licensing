@@ -2,13 +2,12 @@ import moment from 'moment'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
-import { displayStartTime } from '../../../processors/date-and-time-display.js'
+import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
 import {
   LICENCE_SUMMARY,
-  CONTROLLER,
   LICENCE_LENGTH,
   LICENCE_TYPE,
   LICENCE_TO_START,
@@ -20,6 +19,7 @@ import {
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
@@ -68,12 +68,12 @@ export const getData = async request => {
     licenceTypeStr: licenceTypeDisplay(permission),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
-    hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, 'YYYY-MM-DD')),
+    hasExpired: moment(moment()).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),
     disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
     concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, 'YYYY-MM-DD').format('Qo MMMM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
     uri: {
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,
@@ -86,4 +86,4 @@ export const getData = async request => {
   }
 }
 
-export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, CONTROLLER.uri, getData)
+export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, nextPage, getData)

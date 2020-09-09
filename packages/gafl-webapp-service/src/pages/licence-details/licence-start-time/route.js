@@ -1,11 +1,13 @@
-import { LICENCE_START_TIME, CONTROLLER } from '../../../uri.js'
+import { LICENCE_START_TIME } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import Joi from '@hapi/joi'
 import moment from 'moment-timezone'
+import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const minHour = permission =>
-  moment(permission.licenceStartDate, 'YYYY-MM-DD')
+  moment(permission.licenceStartDate, cacheDateFormat)
     .tz(SERVICE_LOCAL_TIME)
     .isSame(moment(), 'day')
     ? moment()
@@ -29,8 +31,8 @@ const validator = Joi.object({
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const startDateStr = moment(permission.licenceStartDate, 'YYYY-MM-DD').format('dddd, Do MMMM, YYYY')
+  const startDateStr = moment(permission.licenceStartDate, cacheDateFormat).format('dddd, Do MMMM, YYYY')
   return { startDateStr, minHour: minHour(permission) }
 }
 
-export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)

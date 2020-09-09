@@ -1,7 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { ADDRESS_ENTRY, CONTACT, TEST_TRANSACTION } from '../../../../../uri.js'
 import mockDefraCountries from '../../../../../__mocks__/data/defra-country.js'
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -96,7 +96,7 @@ describe('The manual address entry page', () => {
 
   it('redirects to the contact page on posting a valid UK address', async () => {
     const addr = Object.assign({}, goodAddress)
-    const response = await postRedirectGet(ADDRESS_ENTRY.uri, addr)
+    const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(CONTACT.uri)
 
@@ -115,7 +115,7 @@ describe('The manual address entry page', () => {
     const addr = Object.assign({}, goodAddress)
     addr['country-code'] = 'FR'
     addr.postcode = 'not checked'
-    const response = await postRedirectGet(ADDRESS_ENTRY.uri, addr)
+    const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(CONTACT.uri)
 

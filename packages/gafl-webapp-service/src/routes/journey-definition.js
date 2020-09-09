@@ -219,11 +219,8 @@ export default [
   {
     currentPage: CONTACT.page,
     nextPage: {
-      [CommonResults.YES]: {
+      [CommonResults.OK]: {
         page: NEWSLETTER.uri
-      },
-      [CommonResults.NO]: {
-        page: CONTACT_SUMMARY.uri
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY.uri

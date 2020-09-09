@@ -8,9 +8,8 @@ import { CONTACT_SUMMARY_SEEN } from '../constants.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { salesApi } from '@defra-fish/connectors-lib'
-
+import { cacheDateFormat } from './date-and-time-display.js'
 const debug = db('webapp:renewals-write-cache')
-
 /**
  * Module is used for easy renewals where the data is read from the CRM and written into the session
  * cache.
@@ -27,7 +26,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   const renewedHasExpired = !endDateMoment.isAfter()
 
   permission.licenceToStart = renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE
-  permission.licenceStartDate = renewedHasExpired ? moment().format('YYYY-MM-DD') : endDateMoment.format('YYYY-MM-DD')
+  permission.licenceStartDate = renewedHasExpired ? moment().format(cacheDateFormat) : endDateMoment.format(cacheDateFormat)
   permission.licenceStartTime = renewedHasExpired ? 0 : endDateMoment.hours()
   permission.renewedEndDate = endDateMoment.toISOString()
   permission.renewedHasExpired = renewedHasExpired
