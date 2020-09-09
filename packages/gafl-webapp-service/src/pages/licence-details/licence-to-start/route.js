@@ -35,16 +35,19 @@ const validator = payload => {
   )
 }
 
-const getData = () => ({
-  exampleStartDate: moment()
-    .add(1, 'days')
-    .format('DD MM YYYY'),
-  minStartDate: moment().format('DD MM YYYY'),
-  maxStartDate: moment()
-    .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-    .format('DD MM YYYY'),
-  advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
-  startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
-})
+const getData = () => {
+  const fmt = 'DD MM YYYY'
+  return {
+    exampleStartDate: moment()
+      .add(1, 'days')
+      .format(fmt),
+    minStartDate: moment().format(fmt),
+    maxStartDate: moment()
+      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+      .format(fmt),
+    advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
+    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
+  }
+}
 
 export default pageRoute(LICENCE_TO_START.page, LICENCE_TO_START.uri, validator, nextPage, getData)
