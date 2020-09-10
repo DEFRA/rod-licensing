@@ -2,7 +2,7 @@ import { createServer, init, server } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 
 describe('The server', () => {
-  it('starts', async done => {
+  it('starts', async () => {
     createServer({
       port: 1234,
       cache: [
@@ -14,24 +14,12 @@ describe('The server', () => {
       ]
     })
 
-    server.events.on('start', async () => {
-      expect(server.info.port).toBe(1234)
-      await server.stop()
-      done()
-    })
+    expect(server.info.port).toBe(1234)
+    await server.stop()
 
     await init()
-  })
-
-  describe('handles process interrupts', () => {
-    it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', async signal => {
-      const serverStopSpy = jest.spyOn(server, 'stop').mockImplementation(async () => {})
-      const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
-      await process.emit(signal)
-      expect(serverStopSpy).toHaveBeenCalled()
-      expect(processStopSpy).toHaveBeenCalledWith(0)
-      jest.restoreAllMocks()
-    })
+    expect(server.info.port).toBe(1234)
+    await server.stop()
   })
 
   it('configures session handling in redis by default', async () => {

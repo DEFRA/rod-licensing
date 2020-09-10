@@ -15,23 +15,4 @@ describe('gafl-web-service', () => {
       expect(global.initialised).toBeTruthy()
     })
   })
-
-  it('terminates', () => {
-    jest.isolateModules(async () => {
-      jest.clearAllMocks().mock('../server.js', () => {
-        return {
-          createServer: () => {},
-          init: () => {
-            return Promise.reject(new Error())
-          }
-        }
-      })
-      const procError = jest.spyOn(process, 'exit').mockImplementation(() => {})
-      await (async () => {
-        require('../gafl-webapp-service')
-      })()
-      expect(procError).toHaveBeenCalled()
-      procError.mockRestore()
-    })
-  })
 })

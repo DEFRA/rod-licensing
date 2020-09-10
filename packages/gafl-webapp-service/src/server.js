@@ -100,7 +100,7 @@ const addDefaultHeaders = (request, h) => {
   return h.continue
 }
 
-const init = async (sd = true) => {
+const init = async () => {
   await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
@@ -177,20 +177,18 @@ const init = async (sd = true) => {
   }
 
   server.route(routes)
-
-  // Handle shutdown
-  const shutdown = async (code = 0) => {
-    console.log(`Server is shutdown with ${code}`)
-    await server.stop()
-    process.exit(code)
-  }
-
-  process.on('SIGINT', shutdown)
-  process.on('SIGTERM', shutdown)
-
   await server.start()
 
   console.log('Server running on %s', server.info.uri)
 }
 
-export { createServer, server, init }
+const shutdownBehavior = () => {
+  const shutdown = async (code = 0) => {
+    console.log(`Server is shutdown with ${code}`)
+    await server.stop()
+  }
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
+}
+
+export { createServer, server, init, shutdownBehavior }
