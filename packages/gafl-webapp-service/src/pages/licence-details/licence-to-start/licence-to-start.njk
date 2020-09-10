@@ -76,3 +76,44 @@
         errorMessage: { text: 'Choose when you\'d like your licence to start' } if error['licence-to-start']
     }) }}
 {% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        const dataInputDiv = document.getElementById('licence-start-date')
+        const calImageDiv = document.createElement('div')
+        calImageDiv.height = dataInputDiv.height
+        calImageDiv.id = 'cal-image-div'
+        calImageDiv.setAttribute('aria-hidden', true)
+        dataInputDiv.appendChild(calImageDiv)
+        const fpk = flatpickr(calImageDiv, {
+            dateFormat: "d m Y",
+            disableMobile: true,
+            minDate: 'today',
+            maxDate: '{{ data.maxStartDate }}',
+            position: 'below',
+            monthSelectorType: 'static',
+            showMonths: 1,
+            clickOpens: false,
+            onChange: function(selectedDates, dateStr, instance) {
+                var d = new Date(selectedDates[0])
+                document.getElementById('licence-start-date-day').value = d.getDate()
+                document.getElementById('licence-start-date-month').value = d.getMonth() + 1
+                document.getElementById('licence-start-date-year').value = d.getFullYear()
+            }
+        })
+        window.addEventListener('keydown', function (event) {
+            if (event.defaultPrevented) {
+                return;
+            }
+            if (event.key === 'Esc' || event.key === 'Escape' ) {
+                fpk.close()
+            }
+        })
+        calImageDiv.onclick = function() {
+            fpk.open()
+        }
+    })()</script>
+{% endblock %}
+

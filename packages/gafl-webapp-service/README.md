@@ -19,7 +19,7 @@ To run from this directory:
 | CHANNEL                    | The sales channel                                                |    no    | websales                                                  | websales, telesales           |
 | SESSION_COOKIE_NAME        | Name of the session cookie                                       |    no    | sid                                                       |                               |
 | CSRF_TOKEN_COOKIE_NAME     | Name of the CSRF token cookie                                    |    no    | rlsctkn                                                   |                               |
-| SESSION_COOKIE_PASSWORD    | Encryption key for the session cookie (at least 32 characters)   |   yes    |                     |                               |
+| SESSION_COOKIE_PASSWORD    | Encryption key for the session cookie (at least 32 characters)   |   yes    |                                                           |                               |
 | SESSION_TTL_MS             | Time to live for the session cookie and cache                    |    no    | 10800000                                                  |                               |
 | ADDRESS_LOOKUP_URL         | Location of address lookup facade                                |    no    |                                                           |                               |
 | ADDRESS_LOOKUP_KEY         | The API key required by OS places                                |    no    |                                                           |                               |
