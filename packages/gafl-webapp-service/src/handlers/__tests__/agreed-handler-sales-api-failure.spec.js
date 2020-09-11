@@ -66,8 +66,6 @@ describe('The agreed handler', () => {
 
   it('throws a status 500 (server) exception and if there is an exception thrown finalizing the transaction', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    jest.setTimeout(30000)
-
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockRejectedValue(new Error())
     govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })

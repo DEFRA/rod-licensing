@@ -35,7 +35,7 @@ export async function createTransactions (payload) {
       [TRANSACTION_STAGING_TABLE.TableName]: records.map(record => ({ PutRequest: { Item: record } }))
     }
   }
-  await docClient.batchWrite(params).promise()
+  await docClient.batchWriteAllPromise(params)
   debug('%d transactions created in batch', records.length)
   return records
 }
