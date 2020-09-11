@@ -184,8 +184,14 @@ const init = async () => {
 
 const shutdownBehavior = () => {
   const shutdown = async (code = 0) => {
-    console.log(`Server is shutdown with ${code}`)
-    await server.stop()
+    try {
+      console.log(`Server is shutdown with ${code}`)
+      await server.stop()
+      process.exit(code)
+    } catch (e) {
+      console.log(e)
+      process.exit(code)
+    }
   }
   process.on('SIGINT', shutdown)
   process.on('SIGTERM', shutdown)

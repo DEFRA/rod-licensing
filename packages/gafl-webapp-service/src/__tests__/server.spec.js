@@ -1,19 +1,20 @@
 import { createServer, init, server } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 
+export const catboxOptions = {
+  port: 1234,
+  cache: [
+    {
+      provider: {
+        constructor: CatboxMemory
+      }
+    }
+  ]
+}
+
 describe('The server', () => {
   it('starts', async () => {
-    createServer({
-      port: 1234,
-      cache: [
-        {
-          provider: {
-            constructor: CatboxMemory
-          }
-        }
-      ]
-    })
-
+    createServer(catboxOptions)
     expect(server.info.port).toBe(1234)
     await server.stop()
 
@@ -37,5 +38,27 @@ describe('The server', () => {
         }
       ])
     )
+  })
+
+  describe('handles process interrupts', () => {
+    it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', (signal, done) => {
+      jest.isolateModules(async () => {
+        const { shutdownBehavior, createServer, init } = require('../server.js')
+        try {
+          createServer(catboxOptions)
+          await init()
+          shutdownBehavior()
+          jest.spyOn(process, 'exit').mockImplementation(async () => {
+            expect(true).toBeTruthy()
+            // Allows time for the server to shut down
+            await new Promise(resolve => setTimeout(resolve, 1000))
+            done()
+          })
+          process.emit(signal)
+        } catch (e) {
+          console.log(e)
+        }
+      })
+    })
   })
 })
