@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.57 (2020-09-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#346](https://github.com/DEFRA/rod-licensing/pull/346) Add calendar control to licence start date page ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.56 (2020-09-08)
 
 #### :rocket: Enhancement
