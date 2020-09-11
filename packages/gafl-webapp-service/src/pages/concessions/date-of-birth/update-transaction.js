@@ -1,8 +1,8 @@
 import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
-import { onLengthChange } from '../../licence-details/licence-to-start/update-transaction.js'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
+import { onLengthChange } from '../../licence-details/licence-length/update-transaction'
 /**
  * Transfer the validated page object
  * @param request
