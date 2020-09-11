@@ -1,7 +1,7 @@
 import { LICENCE_TYPE } from '../../../uri.js'
 import * as constants from '../../../processors/mapping-constants.js'
 import { licenseTypes } from './route.js'
-import { checkAfterPayment } from '../licence-to-start/update-transaction.js'
+import { onLengthChange } from '../licence-to-start/update-transaction.js'
 
 /**
  * Transfer the validate page object
@@ -20,7 +20,7 @@ export default async request => {
     permission.numberOfRods = '3'
     permission.licenceLength = '12M'
     permission.licenceStartTime = null
-    checkAfterPayment(permission)
+    onLengthChange(permission)
   } else {
     permission.licenceType = constants.LICENCE_TYPE['salmon-and-sea-trout']
     permission.numberOfRods = '1'

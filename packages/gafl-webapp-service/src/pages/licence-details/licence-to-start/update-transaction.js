@@ -3,6 +3,8 @@ import { LICENCE_TO_START, LICENCE_START_TIME } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 
 /**
  * Transfer the validate page object
@@ -14,9 +16,9 @@ export const licenceToStart = {
   ANOTHER_DATE: 'another-date'
 }
 
-// If the licence start date has be chosen as today, and the licence is changed to a 12 month
-// then set the start after payment flag
-export const checkAfterPayment = permission => {
+export const onLengthChange = permission => {
+  // If the licence start date has be chosen as today, and the licence is changed to a 12 month
+  // then set the start after payment flag
   if (
     permission.licenceLength === '12M' &&
     moment(permission.licenceStartDate, cacheDateFormat)
@@ -25,6 +27,17 @@ export const checkAfterPayment = permission => {
   ) {
     permission.licenceToStart = licenceToStart.AFTER_PAYMENT
     permission.licenceStartTime = null
+  }
+
+  // If we have set the licence type to physical change the method of contact from 'none' to 'letter' and vice-versa
+  if (isPhysical(permission) && permission?.licensee?.preferredMethodOfConfirmation === HOW_CONTACTED.none) {
+    permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
+    permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
+  }
+
+  if (!isPhysical(permission) && permission?.licensee?.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
+    permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
+    permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
   }
 }
 
@@ -47,7 +60,7 @@ export default async request => {
 
   // Write the age concessions into the cache
   ageConcessionHelper(permission)
-  checkAfterPayment(permission)
+  onLengthChange(permission)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 

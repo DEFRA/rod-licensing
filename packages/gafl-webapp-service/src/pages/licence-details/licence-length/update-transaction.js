@@ -1,7 +1,7 @@
 import * as mappings from '../../../processors/mapping-constants.js'
 import { LICENCE_LENGTH } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import { checkAfterPayment } from '../licence-to-start/update-transaction.js'
+import { onLengthChange } from '../licence-to-start/update-transaction.js'
 
 /**
  * Transfer the validate page object
@@ -19,9 +19,9 @@ export default async request => {
     if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
       permission.numberOfRods = '2'
     }
-  } else {
-    checkAfterPayment(permission)
   }
+
+  onLengthChange(permission)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }
