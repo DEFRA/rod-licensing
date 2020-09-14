@@ -65,6 +65,82 @@ describe('document client decorations', () => {
     )
   })
 
+  it('deals with UnprocessedItems when making batchWrite requests to DynamoDB', async () => {
+    AWSSdk.DynamoDB.DocumentClient.__setNextResponses(
+      'batchWrite',
+      {
+        UnprocessedItems: {
+          NameOfTableToUpdate: [
+            { PutRequest: { Item: { key: '1', field: 'data1' } } },
+            { PutRequest: { Item: { key: '2', field: 'data2' } } }
+          ]
+        }
+      },
+      {
+        UnprocessedItems: null
+      }
+    )
+    await docClient.batchWriteAllPromise({
+      RequestItems: {
+        NameOfTableToUpdate: [
+          { PutRequest: { Item: { key: '1', field: 'data1' } } },
+          { PutRequest: { Item: { key: '2', field: 'data2' } } },
+          { PutRequest: { Item: { key: '3', field: 'data3' } } }
+        ]
+      }
+    })
+    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenCalledTimes(2)
+    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        RequestItems: {
+          NameOfTableToUpdate: [
+            { PutRequest: { Item: { key: '1', field: 'data1' } } },
+            { PutRequest: { Item: { key: '2', field: 'data2' } } },
+            { PutRequest: { Item: { key: '3', field: 'data3' } } }
+          ]
+        }
+      })
+    )
+    expect(AWSSdk.DynamoDB.DocumentClient.mockedMethods.batchWrite).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        RequestItems: {
+          NameOfTableToUpdate: [
+            { PutRequest: { Item: { key: '1', field: 'data1' } } },
+            { PutRequest: { Item: { key: '2', field: 'data2' } } }
+          ]
+        }
+      })
+    )
+  })
+
+  it('deals with UnprocessedItems when making batchWrite requests to DynamoDB up to the given retry limit', async () => {
+    const batchWriteResponses = Array(11).fill({
+      UnprocessedItems: {
+        NameOfTableToUpdate: [
+          { PutRequest: { Item: { key: '1', field: 'data1' } } },
+          { PutRequest: { Item: { key: '2', field: 'data2' } } }
+        ]
+      }
+    })
+    AWSSdk.DynamoDB.DocumentClient.__setNextResponses('batchWrite', ...batchWriteResponses)
+    const request = {
+      RequestItems: {
+        NameOfTableToUpdate: [
+          { PutRequest: { Item: { key: '1', field: 'data1' } } },
+          { PutRequest: { Item: { key: '2', field: 'data2' } } },
+          { PutRequest: { Item: { key: '3', field: 'data3' } } }
+        ]
+      }
+    }
+    // Don't delay on setTimeouts!
+    jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
+    await expect(docClient.batchWriteAllPromise(request)).rejects.toThrow(
+      'Failed to write items to DynamoDB using batch write.  UnprocessedItems were returned and maxRetries has been reached.'
+    )
+  })
+
   it('provides a convenience method to simplify building an update expression for DynamoDB', async () => {
     const test = {
       name: 'name-value',

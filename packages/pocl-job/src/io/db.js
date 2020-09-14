@@ -62,7 +62,7 @@ export const updateRecordStagingTable = async (filename, records) => {
         }))
       }
     }
-    await docClient.batchWrite(params).promise()
+    await docClient.batchWriteAllPromise(params)
   }
 }
 

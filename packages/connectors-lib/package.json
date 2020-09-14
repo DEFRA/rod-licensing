@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.747.0",
+    "debug": "^4.1.1",
     "node-fetch": "^2.6.1"
   }
 }

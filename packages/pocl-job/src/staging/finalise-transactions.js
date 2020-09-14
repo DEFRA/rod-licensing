@@ -68,33 +68,74 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       salesApi.finaliseTransaction(r.createTransactionId, { transactionFile: filename, ...r.finaliseTransactionPayload })
     )
   )
-  for (let idx = 0; idx < state.buffer.length; idx++) {
-    const record = state.buffer[idx]
+  const succeeded = []
+  const failed = []
+  state.buffer.forEach((record, idx) => {
     const result = finalisationResults[idx]
-    if (result.status === 'fulfilled') {
-      record.stage = RECORD_STAGE.TransactionFinalised
-      delete record.createTransactionPayload
-      delete record.finaliseTransactionPayload
-      record.finaliseTransactionId = result.value.status.messageId
-      state.succeeded++
-      debug('Successfully finalised transaction for record: %o', record)
-    } else {
-      record.stage = RECORD_STAGE.TransactionFinalisationFailed
-      record.finaliseTransactionError = result.reason
-      state.failed++
-      debug('Failed to finalise transaction for record: %o', record)
-      await salesApi.createStagingException({
-        transactionFileException: {
-          name: `${filename}: FAILED-FINALISE-${record.id}`,
-          description: JSON.stringify(result.reason, null, 2),
-          json: JSON.stringify(record, null, 2),
-          notes: 'Failed to finalise the transaction in the Sales API',
-          type: 'Failure',
-          transactionFile: filename
-        }
-      })
-    }
-  }
-  await updateRecordStagingTable(filename, state.buffer)
+    ;(result.status === 'fulfilled' ? succeeded : failed).push({ record, result })
+  })
+
+  await processSucceeded(filename, succeeded)
+  await processFailed(filename, failed)
+
+  state.succeeded += succeeded.length
+  state.failed += failed.length
   state.buffer = []
+}
+
+/**
+ * Update the status of records which were successfully finalised in the sales API
+ *
+ * @param {string} filename the name of the file being processed
+ * @param {Array<Object>} succeeded An array of objects.  Each object shall contain a record key and a result key
+ * @returns {Promise<void>}
+ */
+const processSucceeded = async (filename, succeeded) => {
+  const recordUpdates = succeeded.map(({ record, result }) => {
+    record.stage = RECORD_STAGE.TransactionFinalised
+    delete record.createTransactionPayload
+    delete record.finaliseTransactionPayload
+    record.finaliseTransactionId = result.value.status.messageId
+    debug('Successfully finalised transaction for record: %o', record)
+    return record
+  })
+  await updateRecordStagingTable(filename, recordUpdates)
+}
+
+/**
+ * Update the status of records which failed to be finalised in the sales API
+ *
+ * @param {string} filename the name of the file being processed
+ * @param {Array<Object>} failed An array of objects.  Each object shall contain a record key and a result key
+ * @returns {Promise<void>}
+ */
+const processFailed = async (filename, failed) => {
+  // For record data errors, update the record status to be failed and insert a staging exception into Dynamics
+  // 5xx system errors are dealt with by terminating the process (which will be resumed/replayed by the step function managing this process)
+  const recordErrors = []
+  const systemErrors = []
+  failed.forEach(entry => (salesApi.isSystemError(entry.result.reason?.status) ? systemErrors : recordErrors).push(entry))
+  for (const { record, result } of recordErrors) {
+    record.stage = RECORD_STAGE.TransactionFinalisationFailed
+    record.finaliseTransactionError = result.reason
+    debug('Failed to finalise transaction for record: %o', record)
+    await salesApi.createStagingException({
+      transactionFileException: {
+        name: `${filename}: FAILED-FINALISE-${record.id}`,
+        description: JSON.stringify(result.reason, null, 2),
+        json: JSON.stringify(record, null, 2),
+        notes: 'Failed to finalise the transaction in the Sales API',
+        type: 'Failure',
+        transactionFile: filename
+      }
+    })
+  }
+  const recordUpdates = recordErrors.map(({ record }) => record)
+  await updateRecordStagingTable(filename, recordUpdates)
+
+  if (systemErrors.length) {
+    // Throw an exception to terminate the process when encountering system errors.  The process will be resumed via the step function or can be
+    // replayed later
+    throw new Error(`System error(s) encountered while finalising records: ${JSON.stringify(systemErrors)}`)
+  }
 }
