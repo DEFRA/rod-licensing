@@ -10,7 +10,8 @@ import {
   LICENCE_TYPE,
   NEWSLETTER,
   NAME,
-  AGREED
+  AGREED,
+  NEW_TRANSACTION
 } from '../../../uri.js'
 
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../__mocks__/test-utils-system.js'
@@ -60,6 +61,12 @@ describe('The terms and conditions page', () => {
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
   })
 
+  it('redirects back to itself on invalid response', async () => {
+    const data = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'no way' })
+    expect(data.statusCode).toBe(302)
+    expect(data.headers.location).toBe(TERMS_AND_CONDITIONS.uri)
+  })
+
   it('responds with the terms and conditions page if all data is provided', async () => {
     await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
@@ -71,13 +78,8 @@ describe('The terms and conditions page', () => {
     expect(data.statusCode).toBe(200)
   })
 
-  it('redirects back to itself on invalid response', async () => {
-    const data = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'no way' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(TERMS_AND_CONDITIONS.uri)
-  })
-
   it('sets agreed (locked) status when submitted and causes any request to redirect to the agreed handler', async () => {
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
     const data1 = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     expect(data1.statusCode).toBe(302)
     expect(data1.headers.location).toBe(AGREED.uri)

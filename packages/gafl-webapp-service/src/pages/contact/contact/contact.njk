@@ -6,7 +6,7 @@
 {% set title = 'How should we contact you?' if data.isPhysical else 'How should we send you the licence?' %}
 {% set errorMsg = 'Choose how you would like to be contacted' if data.isPhysical else 'Choose how you would like to receive the licence details' %}
 {% set emailError = 'Enter an email address in the correct format, like name@example.com' %}
-{% set mobileError = "Enter a mobile number, for overseas numbers include '+' followed by your country code" %}
+{% set mobileError = "Enter a UK mobile number like '07700 900 900'" %}
 
 {% set errorMap = {
         'how-contacted': {
@@ -65,15 +65,15 @@
           type: "tel",
           autocomplete: "tel",
           classes: "govuk-!-width-two-thirds",
-          errorMessage: { text: 'Enter a mobile phone number' } if error['text'],
+          errorMessage: { text: 'Enter a UK mobile phone number' } if error['text'],
           label: {
-            text: "Mobile phone number"
+            text: "UK mobile phone number"
           },
           hint: {
               text: "For example 07700 900 900"
           },
           attributes: {
-            maxlength: "30"
+            maxlength: "16"
           },
           value: payload.text if payload['how-contacted'] === 'text' else ''
         }) }}

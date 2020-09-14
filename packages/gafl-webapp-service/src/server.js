@@ -95,6 +95,7 @@ const addDefaultHeaders = (request, h) => {
     request.response.header('X-XSS-Protection', '1; mode=block')
   }
   request.response.header('X-Content-Type-Options', 'nosniff')
+  request.response.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
 
   return h.continue
 }
@@ -181,4 +182,19 @@ const init = async () => {
   console.log('Server running on %s', server.info.uri)
 }
 
-export { createServer, server, init }
+const shutdownBehavior = () => {
+  const shutdown = async (code = 0) => {
+    try {
+      console.log(`Server is shutdown with ${code}`)
+      await server.stop()
+      process.exit(code)
+    } catch (e) {
+      console.log(e)
+      process.exit(code)
+    }
+  }
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
+}
+
+export { createServer, server, init, shutdownBehavior }

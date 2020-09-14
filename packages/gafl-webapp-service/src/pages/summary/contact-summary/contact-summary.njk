@@ -106,7 +106,7 @@
 
     {{ licenseeDetailsSummaryRows.push({
         key: {
-          text: "Licence"
+          text: "Licence details"
         },
         value: {
           text: licencePref
@@ -158,13 +158,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-            {% if backRef %}
-                {{ govukBackLink({
-                  text: "Back",
-                  href: backRef,
-                  classes: "govuk-!-margin-bottom-7"
-                }) }}
-            {% endif %}
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
         <form method="post">
 
             {{ licenseeDetailsSummary | trim | safe }}

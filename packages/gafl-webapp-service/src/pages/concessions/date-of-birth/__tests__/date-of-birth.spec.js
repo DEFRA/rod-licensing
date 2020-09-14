@@ -2,6 +2,7 @@ import { start, stop, initialize, injectWithCookies } from '../../../../__mocks_
 import { DATE_OF_BIRTH, LICENCE_TO_START, NO_LICENCE_REQUIRED } from '../../../../uri.js'
 import {
   ADULT_TODAY,
+  SENIOR_TODAY,
   JUNIOR_AT_ADVANCE_PURCHASE_MAX,
   MINOR_AT_ADVANCE_PURCHASE_MAX,
   DATE_AT_ADVANCED_PURCHASE_MAX_DAYS,
@@ -32,6 +33,12 @@ describe('The date of birth page', () => {
     })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+  })
+
+  it('redirects to the licence-to-start page on posting a date of birth for an adult licence', async () => {
+    const response = await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
   it('redirects to the licence-to-start page on posting a date of birth for an adult licence', async () => {

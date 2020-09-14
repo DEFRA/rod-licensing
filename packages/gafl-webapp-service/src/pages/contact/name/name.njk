@@ -5,16 +5,16 @@
 
 {% set errorMap = {
         'first-name': {
-            'string.empty': { ref: '#first-name', text: 'Enter the first name' },
-            'string.min': { ref: '#first-name', text: 'The first name must be between 2 and 100 characters' },
-            'string.max': { ref: '#first-name', text: 'The first name must be between 2 and 100 characters' },
-            'string.forbidden': { ref: '#first-name', text: 'The first name must only contain letters' }
+            'string.empty': { ref: '#first-name', text: 'Enter your first name' },
+            'string.min': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
+            'string.max': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
+            'string.forbidden': { ref: '#first-name', text: 'Your first name must only contain letters' }
         },
         'last-name': {
-            'string.empty': { ref: '#last-name', text: 'Enter the last name' },
-            'string.min': { ref: '#last-name', text: 'The last name must be between 2 and 100 characters' },
-            'string.max': { ref: '#last-name', text: 'The last name must be between 2 and 100 characters' },
-            'string.forbidden': { ref: '#last-name', text: 'The last name must only contain letters' }
+            'string.empty': { ref: '#last-name', text: 'Enter your last name' },
+            'string.min': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
+            'string.max': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
+            'string.forbidden': { ref: '#last-name', Your: 'The last name must only contain letters' }
         }
     }
 %}
@@ -33,7 +33,7 @@
       classes: "govuk-input--width-20",
       autocomplete: 'given-name',
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter the first name' } if error['first-name']
+      errorMessage: { text: 'Enter your first name' } if error['first-name']
     }) }}
 
     {{ govukInput({
@@ -46,7 +46,7 @@
       autocomplete: 'family-name',
       classes: "govuk-input--width-20",
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter the last name' } if error['last-name']
+      errorMessage: { text: 'Enter your last name' } if error['last-name']
     }) }}
 
 {% endblock %}

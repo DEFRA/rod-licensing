@@ -28,10 +28,8 @@ const protectionExemptSet = [
   TEST_STATUS.uri
 ]
 
-const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
-
-const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt)/
-const staticMatcherOidc = /^\/oicd\/.*/
+const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/
+const staticMatcherOidc = /^\/oidc\/.*/
 
 export const isStaticResource = request => staticMatcherPublic.test(request.path)
 export const useSessionCookie = request => !isStaticResource(request) && !staticMatcherOidc.test(request.path)
@@ -90,11 +88,11 @@ const sessionManager = sessionCookieName => async (request, h) => {
 
     /*
      * If we have a new cookie/cache - covering the cases where the cookie expires - then any request to a page
-     * in the forbidden-unless-agreed set, is redirected to the controller. This avoids showing a 400 error
+     * is redirected to the controller.
      * if these pages are refreshed after being dormant for a long period. This can typically happen on mobile
      * devices where a browser is woken up.
      */
-    if (initialized && forbiddenUnlessAgreedSet.includes(request.path)) {
+    if (initialized) {
       return h.redirect(CONTROLLER.uri).takeover()
     }
   }

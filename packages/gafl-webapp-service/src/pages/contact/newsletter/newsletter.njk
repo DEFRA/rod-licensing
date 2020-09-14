@@ -6,6 +6,9 @@
 {% set emailError = 'Enter an email address in the correct format, like name@example.com' %}
 
 {% set errorMap = {
+       'newsletter' : {
+            'any.required': { ref: '#newsletter', text: 'Choose if you would like to receive our email newsletter' }
+       },
        'email': {
             'string.empty': { ref: '#email', text: emailError },
             'string.email': { ref: '#email', text: emailError },

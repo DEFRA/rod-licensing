@@ -17,17 +17,20 @@
     {
       name: "day",
       classes: "govuk-input--width-2",
-      value: payload['date-of-birth-day']
+      value: payload['date-of-birth-day'],
+      attributes: { maxlength : 2 }
     },
     {
       name: "month",
       classes: "govuk-input--width-2",
-      value: payload['date-of-birth-month']
+      value: payload['date-of-birth-month'],
+      attributes: { maxlength : 2 }
     },
     {
       name: "year",
       classes: "govuk-input--width-4",
-      value: payload['date-of-birth-year']
+      value: payload['date-of-birth-year'],
+      attributes: { maxlength : 4 }
     }
   ]
 %}

@@ -33,6 +33,14 @@ const getData = async request => {
   }
 }
 
+// Validate UK mobile phone numbers
+export const mobilePhoneRegex = /^((\+44)(\s?)|(0))(7\d{3})(\s?)(\d{3})(\s?)(\d{3})$/
+export const mobilePhoneValidator = Joi.string()
+  .trim()
+  .pattern(mobilePhoneRegex)
+  .replace(mobilePhoneRegex, '$2$4$5$7$9')
+  .example('+44 7700 900088')
+
 const validator = Joi.object({
   'how-contacted': Joi.string()
     .valid('email', 'text', 'none')
@@ -44,7 +52,7 @@ const validator = Joi.object({
   }),
   text: Joi.alternatives().conditional('how-contacted', {
     is: 'text',
-    then: validation.contact.createMobilePhoneValidator(Joi),
+    then: mobilePhoneValidator,
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })

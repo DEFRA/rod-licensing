@@ -1,6 +1,5 @@
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../__mocks__/test-utils-system.js'
-import { CONTROLLER, LICENCE_LENGTH, LICENCE_TYPE } from '../../uri.js'
-import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
+import { CONTROLLER, LICENCE_TYPE } from '../../uri.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -9,17 +8,11 @@ afterAll(d => stop(d))
 mockSalesApi()
 
 describe('The session cache removal', () => {
-  it('will not disrupt the flow of the journey on a simple get', async () => {
+  it('will result in a redirect to the controller', async () => {
     await injectWithCookies('GET', '/buy/clear-cache')
     const response = await injectWithCookies('GET', LICENCE_TYPE.uri)
-    expect(response.statusCode).toBe(200)
-  })
-
-  it('will not disrupt the flow of the journey a valid post response', async () => {
-    await injectWithCookies('GET', '/buy/clear-cache')
-    const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+    expect(response.headers.location).toBe(CONTROLLER.uri)
   })
 
   /*

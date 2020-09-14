@@ -1,8 +1,8 @@
 import moment from 'moment'
-import { LICENCE_TO_START, LICENCE_START_TIME } from '../../../uri.js'
+import { LICENCE_START_TIME, LICENCE_TO_START } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
+import { onLengthChange } from '../licence-length/update-transaction.js'
 
 /**
  * Transfer the validate page object
@@ -12,20 +12,6 @@ import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 export const licenceToStart = {
   AFTER_PAYMENT: 'after-payment',
   ANOTHER_DATE: 'another-date'
-}
-
-// If the licence start date has be chosen as today, and the licence is changed to a 12 month
-// then set the start after payment flag
-export const checkAfterPayment = permission => {
-  if (
-    permission.licenceLength === '12M' &&
-    moment(permission.licenceStartDate, cacheDateFormat)
-      .tz(SERVICE_LOCAL_TIME)
-      .isSame(moment(), 'day')
-  ) {
-    permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-    permission.licenceStartTime = null
-  }
 }
 
 export default async request => {
@@ -47,7 +33,7 @@ export default async request => {
 
   // Write the age concessions into the cache
   ageConcessionHelper(permission)
-  checkAfterPayment(permission)
+  onLengthChange(permission)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 

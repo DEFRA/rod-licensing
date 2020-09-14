@@ -34,6 +34,7 @@ const goodAddress = {
   postcode: 'BS9 1HJ',
   'country-code': 'GB'
 }
+
 describe('The contact preferences page', () => {
   describe('where the prerequisite are not fulfilled', () => {
     beforeAll(async d => {
@@ -107,11 +108,14 @@ describe('The contact preferences page', () => {
       expect(response.headers.location).toBe(CONTACT.uri)
     })
 
-    it('redirects to itself on an invalid mobile number', async () => {
-      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: 'foo' })
-      expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
-    })
+    it.each(['+44(0)7513438168', '923246734', 'email@com', '01179835413', '+457513 438 167'])(
+      'redirects to itself on an invalid mobile number: %s',
+      async mobileNumber => {
+        const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: mobileNumber })
+        expect(response.statusCode).toBe(302)
+        expect(response.headers.location).toBe(CONTACT.uri)
+      }
+    )
 
     it('post response none sets how-contacted - letter, in the cache', async () => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
@@ -135,11 +139,19 @@ describe('The contact preferences page', () => {
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.email)
     })
 
-    it('post response text sets how-contacted - text in the cache', async () => {
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+    it.each([
+      ['07513438122', '07513438122'],
+      ['07513 438167', '07513438167'],
+      ['07513 438 167', '07513438167'],
+      ['+447513 438 167', '+447513438167'],
+      ['+44 7513 438 167', '+447513438167'],
+      ['07513438168', '07513438168']
+    ])('post response text sets how-contacted - text in the cache for mobile number %s', async (mobileNumberi, mobileNumbero) => {
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: mobileNumberi })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.text)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.text)
+      expect(JSON.parse(payload).permissions[0].licensee.mobilePhone).toEqual(mobileNumbero)
     })
 
     it('controller redirects to the newsletter page if an email is given', async () => {
@@ -149,7 +161,7 @@ describe('The contact preferences page', () => {
     })
 
     it('controller redirects to the newsletter page if a text number is given', async () => {
-      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+22 0445638902' })
+      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(NEWSLETTER.uri)
     })

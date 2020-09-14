@@ -106,7 +106,6 @@ export const createEmailValidator = joi =>
     .lowercase()
     .example('person@example.com')
 
-// TODO: Investigate/improve regular expression
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
 /**
  * Create a validator to check a contact's mobile phone number
