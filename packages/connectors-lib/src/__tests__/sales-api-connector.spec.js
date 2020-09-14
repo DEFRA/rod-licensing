@@ -383,6 +383,30 @@ describe('sales-api-connector', () => {
     })
   })
 
+  describe('getSystemUser', () => {
+    it('retrieves details of a system user', async () => {
+      const expectedResponse = { some: 'data' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.getSystemUser('test-id')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/systemUsers/test-id',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+    it('returns null if none found', async () => {
+      fetch.mockReturnValue({ ok: false, status: 404, statusText: 'Not Found', text: async () => JSON.stringify({ error: 'Description' }) })
+      await expect(salesApi.getSystemUser('test-id')).resolves.toBeNull()
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/systemUsers/test-id',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+  })
+
   describe('query endpoints', () => {
     describe.each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals'])(
       'allows %s to be queried with different methods',
@@ -500,6 +524,19 @@ describe('sales-api-connector', () => {
           timeout: 20000
         }
       )
+    })
+  })
+
+  describe('isSystemError', () => {
+    it.each([
+      [500, true],
+      [502, true],
+      [404, false],
+      [null, false],
+      [undefined, false],
+      [200, false]
+    ])('when given a "%s" status code, returns %s', async (statusCode, expected) => {
+      expect(salesApi.isSystemError(statusCode)).toEqual(expected)
     })
   })
 })
