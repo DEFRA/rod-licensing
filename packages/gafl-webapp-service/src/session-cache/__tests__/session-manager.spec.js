@@ -44,9 +44,10 @@ describe('The user', () => {
   beforeAll(d => initialize(d))
   afterAll(d => stop(d))
 
-  it('clearing the session cookie automatically create a new cookie and cache', async () => {
+  it('clearing the session cookie automatically creates a new cookie and cache', async () => {
     const response = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)
-    expect(response.statusCode).toBe(200)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(CONTROLLER.uri)
   })
 
   it('Clearing the session cookie will redirect to the start of the journey on a post valid response', async () => {
