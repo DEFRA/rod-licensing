@@ -1,5 +1,6 @@
-import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, TEST_TRANSACTION } from '../../../../uri.js'
+import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, TEST_TRANSACTION, CONTACT } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
+import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -48,5 +49,15 @@ describe('The licence length page', () => {
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
+  })
+
+  it("where contact is 'none' setting a 12 month licence changes it to 'post' and vice-versa", async () => {
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
   })
 })

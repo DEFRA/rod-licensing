@@ -1,7 +1,7 @@
 import { LICENCE_TYPE } from '../../../uri.js'
 import * as constants from '../../../processors/mapping-constants.js'
 import { licenseTypes } from './route.js'
-import { onLengthChange } from '../licence-length/update-transaction'
+import { onLengthChange } from '../licence-length/update-transaction.js'
 
 /**
  * Transfer the validate page object

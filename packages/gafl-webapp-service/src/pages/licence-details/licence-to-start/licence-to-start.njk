@@ -10,7 +10,7 @@
             'any.required': { ref: '#licence-to-start', text: 'Choose when would you like the licence to start' }
         },
         'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want the licence to start, include a day, month and year' },
+            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want your licence to start, include a day, month and year' },
             'date.max': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' },
             'date.min': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' }
         }
@@ -21,17 +21,20 @@
     {
       name: "day",
       classes: "govuk-input--width-2",
-      value: payload['licence-start-date-day']
+      value: payload['licence-start-date-day'],
+      attributes: { maxlength : 2 }
     },
     {
       name: "month",
       classes: "govuk-input--width-2",
-      value: payload['licence-start-date-month']
+      value: payload['licence-start-date-month'],
+      attributes: { maxlength : 2 }
     },
     {
       name: "year",
       classes: "govuk-input--width-4",
-      value: payload['licence-start-date-year']
+      value: payload['licence-start-date-year'],
+      attributes: { maxlength : 4 }
     }
   ]
 %}

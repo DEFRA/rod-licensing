@@ -9,12 +9,12 @@
             'any.required': { ref: '#disability-concession', text: 'Choose Personal Independence Payment (PIP) or disability living allowance (DLA), Blue Badge or No.' }
         },
         'ni-number': {
-            'string.empty': { ref: '#ni-number', text: 'Enter the National Insurance number' },
+            'string.empty': { ref: '#ni-number', text: 'Enter your National Insurance number' },
             'string.pattern.base': { ref: '#ni-number', text: 'This does not look like a valid UK national insurance number, please check you have entered it correctly.' }
         },
         'blue-badge-number': {
-            'string.empty': { ref: '#blue-badge-number', text: 'Enter the Blue Badge Number' },
-            'string.max': { ref: '#blue-badge-number', text: 'Enter the Blue Badge Number' }
+            'string.empty': { ref: '#blue-badge-number', text: 'Enter your Blue Badge Number' },
+            'string.max': { ref: '#blue-badge-number', text: 'Enter your Blue Badge Number' }
         }
     }
 %}
@@ -32,7 +32,7 @@
       value: payload['ni-number'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 13 },
-      errorMessage: { text: 'Enter the National Insurance number' } if error['ni-number']
+      errorMessage: { text: 'Enter your National Insurance number' } if error['ni-number']
     }) }}
 {% endset -%}
 
@@ -46,7 +46,7 @@
       value: payload['blue-badge-number'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 25 },
-      errorMessage: { text: 'Enter the Blue Badge number' } if error['blue-badge-number']
+      errorMessage: { text: 'Enter your Blue Badge number' } if error['blue-badge-number']
     }) }}
 {% endset -%}
 

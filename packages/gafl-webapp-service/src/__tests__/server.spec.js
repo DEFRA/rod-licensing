@@ -45,7 +45,7 @@ describe('The server', () => {
       jest.isolateModules(async () => {
         const { shutdownBehavior, createServer, init } = require('../server.js')
         try {
-          createServer(catboxOptions)
+          createServer((({ port, ...l }) => l)(catboxOptions))
           await init()
           shutdownBehavior()
           jest.spyOn(process, 'exit').mockImplementation(async () => {

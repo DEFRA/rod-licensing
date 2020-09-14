@@ -2,7 +2,7 @@ import moment from 'moment'
 import { LICENCE_START_TIME, LICENCE_TO_START } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
-import { onLengthChange } from '../licence-length/update-transaction'
+import { onLengthChange } from '../licence-length/update-transaction.js'
 
 /**
  * Transfer the validate page object

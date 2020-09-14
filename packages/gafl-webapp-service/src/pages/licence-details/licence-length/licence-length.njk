@@ -2,12 +2,12 @@
 {% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
 {% from "radios/macro.njk" import govukRadios %}
-{% set title = 'How long do you want the licence for?' %}
+{% set title = 'How long do you want your licence for?' %}
 
 {%
     set errorMap = {
         'licence-length': {
-            'any.required': { ref: '#licence-length', text: 'Choose how long you want the licence for' }
+            'any.required': { ref: '#licence-length', text: 'Choose how long you want your licence for' }
         }
     }
 %}
@@ -47,7 +47,7 @@
                 conditional: { html: 1day }
             }
         ],
-        errorMessage: { text: 'Choose how long you want you licence for' } if error
+        errorMessage: { text: 'Choose how long you want your licence for' } if error
     }) }}
 {% endblock %}
 
