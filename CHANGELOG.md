@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.58 (2020-09-14)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#352](https://github.com/DEFRA/rod-licensing/pull/352) Improve reliability and error handling of the POCL processor  ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.57 (2020-09-10)
 
 #### :rocket: Enhancement
