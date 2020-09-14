@@ -236,3 +236,11 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
       'get'
     )
   )
+
+/**
+ * Helper to check if an HTTP status code is classed as a system error
+ *
+ * @param {number} statusCode the HTTP status code to test
+ * @returns {boolean} true if the status code represents a system error, false otherwise
+ */
+export const isSystemError = statusCode => Math.floor(statusCode / 100) === 5

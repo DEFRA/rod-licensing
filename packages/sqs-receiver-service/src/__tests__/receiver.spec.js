@@ -35,15 +35,11 @@ test('10 messages: complete without error', async () => {
 test('Imposes delay after several empty reads', async () => {
   AWS.__mockEmptyQueue()
   fetch.__goodResult()
-  jest.useFakeTimers()
+  const setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation(cb => cb())
   for (let i = 0; i < testEnv.TEST_ATTEMPTS_WITH_NO_DELAY; i++) {
-    process.nextTick(() => {
-      jest.runAllTimers()
-    })
     await expect(receiver()).resolves.toBeUndefined()
   }
-  expect(setTimeout).toHaveBeenCalled()
-  jest.useRealTimers()
+  expect(setTimeoutSpy).toHaveBeenCalled()
 })
 
 test('Receiver: throws exception on general error', async () => {
