@@ -1,7 +1,7 @@
 import * as mappings from '../../../processors/mapping-constants.js'
 import { LICENCE_LENGTH } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import moment from 'moment'
+import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
