@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.59 (2020-09-14)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#345](https://github.com/DEFRA/rod-licensing/pull/345) Multiple frontend functional and content changes ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.58 (2020-09-14)
 
 #### :rocket: Enhancement
