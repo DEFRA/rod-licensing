@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.62 (2020-09-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#357](https://github.com/DEFRA/rod-licensing/pull/357) QA review of content ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.61 (2020-09-15)
 
 #### :rocket: Enhancement
