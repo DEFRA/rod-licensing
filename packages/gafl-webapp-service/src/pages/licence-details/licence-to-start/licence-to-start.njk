@@ -88,6 +88,9 @@
         const calImageDiv = document.createElement('div')
         calImageDiv.height = dataInputDiv.height
         calImageDiv.id = 'cal-image-div'
+        const calImage = document.createElement('img')
+        calImage.src = '/public/images/icon-calendar-2x.png'
+        calImageDiv.appendChild(calImage)
         calImageDiv.setAttribute('aria-hidden', true)
         dataInputDiv.appendChild(calImageDiv)
         const fpk = flatpickr(calImageDiv, {
