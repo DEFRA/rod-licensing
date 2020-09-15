@@ -8,14 +8,20 @@ const optionProc = c =>
 
 const local = {}
 
+const fetch = async () =>
+  optionProc(await salesApi.countries.getAll())
+    .filter(c => !['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR'].includes(c.code))
+    .sort(a => (a.code === 'GB' ? -1 : 0))
+
+// .filter(c => !['GB-ENG', 'GB-WLS', 'GB_SCT', 'GB-NIR'].includes(c.code))
 // Process the country code option set into a useful form - once
 export const countries = {
   getAll: async () => {
-    local.countries = local.countries || optionProc(await salesApi.countries.getAll()).sort(a => (a.code === 'GB' ? -1 : 0))
+    local.countries = local.countries || (await fetch())
     return local.countries
   },
   nameFromCode: async code => {
-    local.countries = local.countries || optionProc(await salesApi.countries.getAll()).sort(a => (a.code === 'GB' ? -1 : 0))
+    local.countries = local.countries || (await fetch())
     return local.countries.find(c => c.code === code).name
   }
 }
