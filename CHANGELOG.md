@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.60 (2020-09-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#353](https://github.com/DEFRA/rod-licensing/pull/353) Filter non-iso compliant entries from countries list ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.59 (2020-09-14)
 
 #### :rocket: Enhancement
