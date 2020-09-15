@@ -13,7 +13,6 @@ const fetch = async () =>
     .filter(c => !['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR'].includes(c.code))
     .sort(a => (a.code === 'GB' ? -1 : 0))
 
-// .filter(c => !['GB-ENG', 'GB-WLS', 'GB_SCT', 'GB-NIR'].includes(c.code))
 // Process the country code option set into a useful form - once
 export const countries = {
   getAll: async () => {

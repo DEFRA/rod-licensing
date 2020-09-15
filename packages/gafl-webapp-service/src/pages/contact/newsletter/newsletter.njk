@@ -62,7 +62,7 @@
         {
           value: "no",
           text: "No",
-          checked: true if not payload else false
+          checked: true if not payload or payload['newsletter'] === 'no' else false
         }
       ]
     }) }}

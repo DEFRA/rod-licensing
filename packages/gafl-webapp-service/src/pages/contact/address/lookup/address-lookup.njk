@@ -10,12 +10,12 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
-            'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
+            'string.empty': { ref: '#premises', text: 'Enter your building number or name' },
+            'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'Enter the postcode' },
-            'string.pattern.base': { ref: '#postcode', text: 'Enter a UK postcode. If the address is outside the UK, enter the address manually.' }
+            'string.empty': { ref: '#postcode', text: 'Enter your postcode' },
+            'string.pattern.base': { ref: '#postcode', text: 'Enter a UK postcode. If your address is outside the UK, enter your address manually.' }
         }
     }
 %}
@@ -55,7 +55,7 @@
                   value: payload['premises'],
                   classes: "govuk-input--width-20",
                   attributes: { maxlength: 50 },
-                  errorMessage: { text: 'Enter the building number or name' } if error['premises']
+                  errorMessage: { text: 'Enter your building number or name' } if error['premises']
                 }) }}
 
                 {{ govukInput({
@@ -69,7 +69,7 @@
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-20",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: 'Enter the postcode' } if error['postcode']
+                  errorMessage: { text: 'Enter your postcode' } if error['postcode']
                 }) }}
 
                 {{ govukButton({
@@ -82,13 +82,12 @@
 
             {% endcall %}
             <p class="govuk-body-m">
-                <a href="{{ data.entryPage }}">Enter my address manually</a>
+                <a href="{{ data.entryPage }}">Enter your address manually</a>
             </p>
             {{ csrf() }}
         </form>
       <p class="govuk-body-s">© Crown copyright and database rights 2016 <a href="http://www.ordnancesurvey.co.uk" target="_blank">OS</a> 100024198.
-      <br>Use of this addressing  data is subject to&nbsp;the <a href="">terms and conditions</a>.</p>
+      <br>Use of this addressing data is subject to&nbsp;the <a href="">terms and conditions</a>.</p>
     </div>
 </div>
 {% endblock %}
-
