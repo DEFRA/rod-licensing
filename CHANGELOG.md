@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.61 (2020-09-15)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `pocl-job`
+  * [#356](https://github.com/DEFRA/rod-licensing/pull/356) Add debug capability to sales-api-connector ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.60 (2020-09-15)
 
 #### :rocket: Enhancement
