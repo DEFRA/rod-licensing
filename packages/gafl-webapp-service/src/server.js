@@ -144,7 +144,7 @@ const init = async () => {
     path: '/'
   }
 
-  console.debug({ sessionCookieOptions })
+  console.debug((({ password, ...o }) => o)(sessionCookieOptions))
 
   server.state(sessionCookieName, sessionCookieOptions)
 
