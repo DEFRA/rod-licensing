@@ -22,7 +22,7 @@ export const finaliseTransactions = async xmlFilePath => {
 }
 
 /**
- * Get the inital state (supports resuming an interrupted process)
+ * Get the initial state (supports resuming an interrupted process)
  *
  * @typedef TransactionFinalisationState
  * @property {Array<Object>} buffer the current buffer being processed

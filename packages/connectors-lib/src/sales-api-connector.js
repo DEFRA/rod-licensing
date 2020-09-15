@@ -1,8 +1,10 @@
 import fetch from 'node-fetch'
 import querystring from 'querystring'
+import db from 'debug'
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 20000
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
+const debug = db('connectors:sales-api')
 
 /**
  * Make a request to the sales API
@@ -13,19 +15,30 @@ const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
  * @returns {Promise<{statusText: *, ok: *, body: *, status: *}>}
  */
 export const call = async (url, method = 'get', payload = null) => {
+  const requestTimestamp = new Date().toISOString()
   const response = await fetch(url.href, {
     method,
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     ...(payload && { body: JSON.stringify(payload) }),
     timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
   })
-
-  return {
+  const responseTimestamp = new Date().toISOString()
+  const responseData = {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
     body: response.status !== 204 ? await parseResponseBody(response) : undefined
   }
+  debug(
+    'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',
+    requestTimestamp,
+    method,
+    url.href,
+    payload,
+    responseTimestamp,
+    responseData
+  )
+  return responseData
 }
 
 /**
