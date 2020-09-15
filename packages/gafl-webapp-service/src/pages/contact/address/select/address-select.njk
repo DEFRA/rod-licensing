@@ -5,7 +5,7 @@
 
 {% set errorMap = {
         'address': {
-            'any.required': { ref: '#address', text: 'Choose the address' }
+            'any.required': { ref: '#address', text: 'Choose your address' }
         }
     }
 %}
@@ -27,8 +27,8 @@
            idPrefix: "address",
            name: "address",
            items: addressItems,
-           errorMessage: { text: 'Choose the address' } if error
+           errorMessage: { text: 'Choose your address' } if error
        })
     }}
-     <p class="govuk-body-m"><a href="{{ data.entryPage }}">My address is not listed</a></p>
+    <p class="govuk-body-m"><a href="{{ data.entryPage }}">Your address is not listed</a></p>
 {% endblock %}

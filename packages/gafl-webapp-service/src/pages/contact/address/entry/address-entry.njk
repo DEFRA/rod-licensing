@@ -19,19 +19,19 @@
 {%
     set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
-            'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
+            'string.empty': { ref: '#premises', text: 'Enter your building number or name' },
+            'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: 'Enter your postcode' },
-            'string.pattern.base': { ref: '#postcode', text: 'The postcode doesn\'t look right. Check and enter again' }
+            'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
         },
         'town': {
-            'string.empty': { ref: '#town', text: 'Enter a town or city' },
-            'string.max': { ref: '#town', text: 'The town or city must be less than 50 characters long' }
+            'string.empty': { ref: '#town', text: 'Enter your town or city' },
+            'string.max': { ref: '#town', text: 'Your town or city must be less than 50 characters long' }
         },
         'country': {
-            'string.empty': { ref: '#country', text: 'Choose a country' }
+            'string.empty': { ref: '#country', text: 'Choose your country' }
         }
     }
 %}
@@ -47,7 +47,7 @@
       value: payload['premises'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
-      errorMessage: { text: 'Enter the building name or number' } if error['premises']
+      errorMessage: { text: 'Enter your building number or name' } if error['premises']
     }) }}
 
     {{ govukInput({
@@ -83,7 +83,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
       autocomplete: 'address-level1',
-      errorMessage: { text: 'Enter the town or city' } if error['town']
+      errorMessage: { text: 'Enter your town or city' } if error['town']
     }) }}
 
     {{ govukInput({
@@ -96,7 +96,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 10 },
       autocomplete: 'postal-code',
-      errorMessage: { text: 'Enter the postcode' } if error['postcode']
+      errorMessage: { text: 'Enter your postcode' } if error['postcode']
     }) }}
 
     {{ govukSelect({
@@ -106,8 +106,8 @@
         text: "Country"
       },
       items: countries,
-      errorMessage: { text: 'Select the country' } if error['country-code']
+      errorMessage: { text: 'Select your country' } if error['country-code']
     }) }}
 
-    <p class="govuk-body-m"><a href="{{ data.lookupPage }}">Find my address</a></p>
+    <p class="govuk-body-m"><a href="{{ data.lookupPage }}">Find your address</a></p>
 {% endblock %}
