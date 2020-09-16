@@ -72,7 +72,18 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
   const failed = []
   state.buffer.forEach((record, idx) => {
     const result = finalisationResults[idx]
-    ;(result.status === 'fulfilled' ? succeeded : failed).push({ record, result })
+    if (result.status === 'fulfilled') {
+      succeeded.push({ record, response: result.value })
+    } else if (result.reason.status === 410) {
+      /*
+        HTTP-410 errors indicate that the record has already been finalised.  This can occur if the process is terminated while finalising records
+        (between the API call and the database update.) As the transaction has already been finalised, treat these as successful.  The data for the
+        previously finalised record is returned under the data key of the error structure returned by the Sales API
+       */
+      succeeded.push({ record, response: result.reason.body.data })
+    } else {
+      failed.push({ record, reason: result.reason })
+    }
   })
 
   await processSucceeded(filename, succeeded)
@@ -91,11 +102,11 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
  * @returns {Promise<void>}
  */
 const processSucceeded = async (filename, succeeded) => {
-  const recordUpdates = succeeded.map(({ record, result }) => {
+  const recordUpdates = succeeded.map(({ record, response }) => {
     record.stage = RECORD_STAGE.TransactionFinalised
     delete record.createTransactionPayload
     delete record.finaliseTransactionPayload
-    record.finaliseTransactionId = result.value.status.messageId
+    record.finaliseTransactionId = response.status.messageId
     debug('Successfully finalised transaction for record: %o', record)
     return record
   })
@@ -114,15 +125,15 @@ const processFailed = async (filename, failed) => {
   // 5xx system errors are dealt with by terminating the process (which will be resumed/replayed by the step function managing this process)
   const recordErrors = []
   const systemErrors = []
-  failed.forEach(entry => (salesApi.isSystemError(entry.result.reason?.status) ? systemErrors : recordErrors).push(entry))
-  for (const { record, result } of recordErrors) {
+  failed.forEach(entry => (salesApi.isSystemError(entry.reason.status) ? systemErrors : recordErrors).push(entry))
+  for (const { record, reason } of recordErrors) {
     record.stage = RECORD_STAGE.TransactionFinalisationFailed
-    record.finaliseTransactionError = result.reason
+    record.finaliseTransactionError = reason
     debug('Failed to finalise transaction for record: %o', record)
     await salesApi.createStagingException({
       transactionFileException: {
         name: `${filename}: FAILED-FINALISE-${record.id}`,
-        description: JSON.stringify(result.reason, null, 2),
+        description: JSON.stringify(reason, null, 2),
         json: JSON.stringify(record, null, 2),
         notes: 'Failed to finalise the transaction in the Sales API',
         type: 'Failure',

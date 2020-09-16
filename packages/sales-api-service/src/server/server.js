@@ -30,10 +30,14 @@ export default async (opts = { port: SERVER.Port }) => {
 
   server.ext('onPreResponse', (request, h) => {
     const response = request.response
-    if (response.isBoom && response.isServer) {
-      const requestDetail = { path: request.path, query: request.query, params: request.params, payload: request.payload }
-      console.error('Error processing request. Request: %j, Exception: %o', requestDetail, response)
+    if (response.isBoom) {
+      if (response.isServer) {
+        const requestDetail = { path: request.path, query: request.query, params: request.params, payload: request.payload }
+        console.error('Error processing request. Request: %j, Exception: %o', requestDetail, response)
+      }
+
       response.reformat(true)
+      response.output.payload.data = response.data
     }
     return h.continue
   })

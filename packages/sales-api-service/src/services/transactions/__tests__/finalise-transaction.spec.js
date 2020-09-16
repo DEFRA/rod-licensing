@@ -90,12 +90,28 @@ describe('transaction service', () => {
       )
     })
 
-    it('throws 410 Gone if the transaction has already been finalised', async () => {
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: { status: { id: 'FINALISED' } } })
+    it('throws 410 Gone if the transaction has already been finalised (and not yet staged into Dynamics)', async () => {
+      const recordData = { status: { id: 'FINALISED' } }
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: recordData })
       try {
         await finaliseTransaction({ id: 'already_finalised' })
       } catch (e) {
         expect(e.message).toEqual('The transaction has already been finalised')
+        expect(e.data).toEqual(recordData)
+        expect(e.output.statusCode).toEqual(410)
+      }
+    })
+
+    it('throws 410 Gone if the transaction has already been finalised (and staged into Dynamics)', async () => {
+      const recordData = { status: { id: 'FINALISED' } }
+      // See retrieve-transaction.js - 1st response is null on the transaction table, 2nd response is the record from the transaction history table
+      AwsMock.DynamoDB.DocumentClient.__setNextResponses('get', { Item: null }, { Item: recordData })
+
+      try {
+        await finaliseTransaction({ id: 'already_finalised' })
+      } catch (e) {
+        expect(e.message).toEqual('The transaction has already been finalised')
+        expect(e.data).toEqual(recordData)
         expect(e.output.statusCode).toEqual(410)
       }
     })
