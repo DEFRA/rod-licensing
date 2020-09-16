@@ -86,7 +86,6 @@
     <script nonce={{nonce}}>(function () {
         const dataInputDiv = document.getElementById('licence-start-date')
         const calImageDiv = document.createElement('div')
-        calImageDiv.height = dataInputDiv.height
         calImageDiv.id = 'cal-image-div'
         const calImage = document.createElement('img')
         calImage.src = '/public/images/icon-calendar-2x.png'
@@ -102,6 +101,7 @@
             monthSelectorType: 'static',
             showMonths: 1,
             clickOpens: false,
+            ariaDateFormat: "",
             onChange: function(selectedDates, dateStr, instance) {
                 var d = new Date(selectedDates[0])
                 document.getElementById('licence-start-date-day').value = d.getDate()
