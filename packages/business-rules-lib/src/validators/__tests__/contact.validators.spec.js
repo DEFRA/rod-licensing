@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi'
-import * as contactValidation from '../contact.js'
+import * as contactValidation from '../contact.validators.js'
 import moment from 'moment'
 
 describe('contact validators', () => {
@@ -63,7 +63,9 @@ describe('contact validators', () => {
 
     describe('allows specific punctuation characters', () => {
       it.each("'-".split(''))('allows the %s character', async c => {
-        await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(`Test${c}`)).resolves.toEqual(`Test${c}`)
+        await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(`Test${c}Separator`)).resolves.toEqual(
+          `Test${c}Separator`
+        )
       })
     })
 
@@ -76,7 +78,7 @@ describe('contact validators', () => {
     })
 
     it('allows and trims forenames', async () => {
-      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(' John ')).resolves.toEqual('John')
+      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(' Peter  Paul ')).resolves.toEqual('Peter Paul')
     })
 
     it('throws on empty forenames', async () => {
@@ -124,7 +126,9 @@ describe('contact validators', () => {
 
     describe('allows specific punctuation characters', () => {
       it.each("'-".split(''))('allows the %s character', async c => {
-        await expect(contactValidation.createLastNameValidator(Joi).validateAsync(`Test${c}`)).resolves.toEqual(`Test${c}`)
+        await expect(contactValidation.createLastNameValidator(Joi).validateAsync(`Test${c}Separator`)).resolves.toEqual(
+          `Test${c}Separator`
+        )
       })
     })
 

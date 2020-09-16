@@ -241,7 +241,7 @@ const createNameStringValidator = joi =>
     rules: {
       allowable: {
         validate (value, helpers) {
-          if (!/^[\p{L}\s\-'.]*$/gu.test(value)) {
+          if (!/^\p{L}+(?:(?:\.?\s|[-'\s])\p{L}+)*$/u.test(value)) {
             return helpers.error('string.forbidden')
           }
           return value
@@ -257,12 +257,13 @@ const createNameStringValidator = joi =>
  * Create a validator to check a contact's first name
  *
  * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @param {number} minimumLength allow the default minimum allowed length to be overridden
  * @returns {Joi.AnySchema}
  */
-export const createFirstNameValidator = joi =>
+export const createFirstNameValidator = (joi, { minimumLength = 2 }) =>
   createNameStringValidator(joi)
     .allowable()
-    .min(2)
+    .min(minimumLength)
     .max(100)
     .trim()
     .external(toTitleCase())
@@ -273,12 +274,13 @@ export const createFirstNameValidator = joi =>
  * Create a validator to check a contact's last name
  *
  * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @param {number} minimumLength allow the default minimum allowed length to be overridden
  * @returns {Joi.AnySchema}
  */
-export const createLastNameValidator = joi =>
+export const createLastNameValidator = (joi, { minimumLength = 2 }) =>
   createNameStringValidator(joi)
     .allowable()
-    .min(2)
+    .min(minimumLength)
     .max(100)
     .trim()
     .external(toTitleCase(['van', 'de', 'der', 'den']))
