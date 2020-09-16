@@ -27,4 +27,5 @@ export * from './queries/fulfilment.queries.js'
 // Framework functionality
 export * from './client/util.js'
 export { dynamicsClient } from './client/dynamics-client.js'
+export * from './client/cache.js'
 export * from './client/entity-manager.js'

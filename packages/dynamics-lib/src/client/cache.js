@@ -24,19 +24,35 @@ const cache = cacheManager.caching(config())
 process.env.REDIS_HOST && cache.store.getClient().on('error', console.error)
 
 export class CacheableOperation {
-  constructor (cacheKey, fetchOp, resultProcessor) {
+  /**
+   * Create a new CacheableOperation
+   *
+   * @param {string} cacheKey the key to use for the cache
+   * @param {function: Promise<*>} fetchOp the fetch operation whose result will be cached
+   * @param {function(*): *} resultProcessor a post-processor to apply to the result
+   * @param {function(string): Promise<boolean>} isCacheableValue a function which is passed a result and may return false to exclude the value from the cache
+   */
+  constructor (cacheKey, fetchOp, resultProcessor, isCacheableValue = () => true) {
     this._cacheKey = cacheKey
     this._fetchOp = fetchOp
     this._resultProcessor = resultProcessor
+    this._isCacheableValue = isCacheableValue
   }
 
   async execute () {
     return this._resultProcessor(await this._fetchOp())
   }
 
-  async cached () {
-    const data = await cache.wrap(this._cacheKey, this._fetchOp)
-    return this._resultProcessor(data)
+  async cached (options = {}) {
+    let result = await cache.get(this._cacheKey)
+    if (result === undefined || result === null) {
+      result = await this._fetchOp()
+      const isCacheable = await this._isCacheableValue(result)
+      if (isCacheable) {
+        await cache.set(this._cacheKey, result, options)
+      }
+    }
+    return this._resultProcessor(result)
   }
 }
 
