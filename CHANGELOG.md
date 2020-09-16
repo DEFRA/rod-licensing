@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.63 (2020-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#358](https://github.com/DEFRA/rod-licensing/pull/358) Fix calendar noshow on IE11 ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.62 (2020-09-15)
 
 #### :rocket: Enhancement
