@@ -11,7 +11,6 @@ const sass = require('gulp-sass')
 const sourcemaps = require('gulp-sourcemaps')
 const del = require('del')
 const minify = require('gulp-minify')
-const merge = require('gulp-merge')
 const path = require('path')
 const concat = require('gulp-concat')
 
