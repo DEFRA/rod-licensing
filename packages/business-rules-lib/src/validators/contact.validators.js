@@ -227,6 +227,12 @@ const substitutes = txt =>
     .replace(regexMultiSpace, '\u0020')
 
 /**
+ * Regular expression used to validate firstname and lastname fields
+ * @type {RegExp}
+ */
+const nameStringRegex = /^\p{L}+(?:(?:\.?\s|[-'\s])\p{L}+)*$/u
+
+/**
  * Create a custom validator extension to check names
  *
  * @param {Joi.Root} joi the joi validator used by the consuming project
@@ -241,7 +247,7 @@ const createNameStringValidator = joi =>
     rules: {
       allowable: {
         validate (value, helpers) {
-          if (!/^\p{L}+(?:(?:\.?\s|[-'\s])\p{L}+)*$/u.test(value)) {
+          if (!nameStringRegex.test(value)) {
             return helpers.error('string.forbidden')
           }
           return value
@@ -260,7 +266,7 @@ const createNameStringValidator = joi =>
  * @param {number} minimumLength allow the default minimum allowed length to be overridden
  * @returns {Joi.AnySchema}
  */
-export const createFirstNameValidator = (joi, { minimumLength = 2 }) =>
+export const createFirstNameValidator = (joi, { minimumLength = 2 } = {}) =>
   createNameStringValidator(joi)
     .allowable()
     .min(minimumLength)
@@ -277,7 +283,7 @@ export const createFirstNameValidator = (joi, { minimumLength = 2 }) =>
  * @param {number} minimumLength allow the default minimum allowed length to be overridden
  * @returns {Joi.AnySchema}
  */
-export const createLastNameValidator = (joi, { minimumLength = 2 }) =>
+export const createLastNameValidator = (joi, { minimumLength = 2 } = {}) =>
   createNameStringValidator(joi)
     .allowable()
     .min(minimumLength)
