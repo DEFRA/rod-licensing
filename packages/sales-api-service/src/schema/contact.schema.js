@@ -11,8 +11,8 @@ const commonContactSchema = {
     .external(createEntityIdValidator(Contact))
     .description('the contact identifier of an existing contact record to be updated')
     .example('1329a866-d175-ea11-a811-000d3a64905b'),
-  firstName: validation.contact.createFirstNameValidator(Joi),
-  lastName: validation.contact.createLastNameValidator(Joi),
+  firstName: validation.contact.createFirstNameValidator(Joi, { minimumLength: 1 }),
+  lastName: validation.contact.createLastNameValidator(Joi, { minimumLength: 1 }),
   birthDate: validation.contact.createBirthDateValidator(Joi),
   email: validation.contact.createEmailValidator(Joi).allow(null),
   mobilePhone: validation.contact.createMobilePhoneValidator(Joi).allow(null),

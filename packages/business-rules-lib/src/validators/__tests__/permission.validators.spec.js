@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi'
-import * as permissionValidation from '../permission.js'
+import * as permissionValidation from '../permission.validators.js'
 
 describe('permission validators', () => {
   describe('permissionNumberValidator', () => {
