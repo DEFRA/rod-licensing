@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.65 (2020-09-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#360](https://github.com/DEFRA/rod-licensing/pull/360) Improve the look of the calendar control ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.64 (2020-09-17)
 
 #### :rocket: Enhancement
