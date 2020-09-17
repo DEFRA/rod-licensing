@@ -50,6 +50,34 @@ describe('finalise-transactions', () => {
     })
   })
 
+  it('treats 410 Gone errors from the Sales API as a success', async () => {
+    const fakeApiError = {
+      status: 410,
+      error: 'Gone',
+      message: 'The transaction has already been finalised',
+      body: {
+        data: { status: { id: 'FINALISED', messageId: 'message2' } }
+      }
+    }
+    db.getProcessedRecords.mockReturnValueOnce([
+      { id: 'test1', stage: RECORD_STAGE.TransactionCreated },
+      { id: 'test2', stage: RECORD_STAGE.TransactionCreated }
+    ])
+    salesApi.finaliseTransaction.mockResolvedValueOnce({ status: { id: 'FINALISED', messageId: 'message1' } })
+    salesApi.finaliseTransaction.mockRejectedValueOnce(fakeApiError)
+    await finaliseTransactions(TEST_FILENAME)
+    expect(salesApi.finaliseTransaction).toHaveBeenCalledTimes(2)
+    expect(db.updateRecordStagingTable).toHaveBeenCalledTimes(2)
+    // 1st call to update record staging table for successful transactions
+    expect(db.updateRecordStagingTable).toHaveBeenCalledWith(TEST_FILENAME, [
+      { id: 'test1', stage: RECORD_STAGE.TransactionFinalised, finaliseTransactionId: 'message1' },
+      { id: 'test2', stage: RECORD_STAGE.TransactionFinalised, finaliseTransactionId: 'message2' }
+    ])
+    // 2nd call to update record staging table for failed transactions (empty for this case)
+    expect(db.updateRecordStagingTable).toHaveBeenNthCalledWith(2, TEST_FILENAME, [])
+    expect(salesApi.createStagingException).not.toHaveBeenCalled()
+  })
+
   it('throws an exception if a system error occurs on finalisation', async () => {
     const fakeApiError = { status: 500, error: 'System error', message: 'System error message' }
     db.getProcessedRecords.mockReturnValueOnce([

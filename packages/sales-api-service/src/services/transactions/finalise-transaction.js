@@ -15,7 +15,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
   const transactionRecord = await retrieveStagedTransaction(id)
 
   if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED) {
-    throw Boom.resourceGone('The transaction has already been finalised')
+    throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
   }
   if (transactionRecord.cost !== payload.payment.amount) {
     throw Boom.paymentRequired('The payment amount did not match the cost of the transaction')

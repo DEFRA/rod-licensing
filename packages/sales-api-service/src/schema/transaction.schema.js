@@ -13,6 +13,12 @@ import { v4 as uuidv4 } from 'uuid'
  */
 export const BATCH_CREATE_MAX_COUNT = 25
 
+/**
+ * Allow the existence of a transaction file to be cached for a period of time to reduce calls to Dynamics when processing POCL files
+ * @type {number}
+ */
+export const TRANSACTION_FILE_VALIDATION_CACHE_TTL = 60 * 15 // 15 minutes
+
 const createTransactionRequestSchemaContent = {
   permissions: Joi.array()
     .min(1)
@@ -96,7 +102,7 @@ export const createTransactionBatchResponseSchema = Joi.array()
 const finaliseTransactionRequestSchemaContent = {
   transactionFile: Joi.string()
     .optional()
-    .external(createAlternateKeyValidator(PoclFile)),
+    .external(createAlternateKeyValidator(PoclFile, { cache: TRANSACTION_FILE_VALIDATION_CACHE_TTL })),
   payment: Joi.object({
     amount: Joi.number().required(),
     timestamp: Joi.string()
