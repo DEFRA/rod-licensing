@@ -107,6 +107,19 @@
                 document.getElementById('licence-start-date-day').value = d.getDate()
                 document.getElementById('licence-start-date-month').value = d.getMonth() + 1
                 document.getElementById('licence-start-date-year').value = d.getFullYear()
+            },
+            onOpen: [ function(selectedDates, dateStr, instance) {
+                const yearInputWrapper = document.getElementsByClassName('numInputWrapper')[0];
+                yearInputWrapper.style.display= 'none';
+                const currentMonthDiv = document.getElementsByClassName('flatpickr-current-month')[0];
+                const yearReadOnly = document.createElement('span');
+                yearReadOnly.id = 'year-read-only';
+                yearReadOnly.innerHTML = ' ' + instance.currentYear;
+                currentMonthDiv.appendChild(yearReadOnly);
+            } ],
+            onYearChange: function(selectedDates, dateStr, instance) {
+                const yearReadOnly = document.getElementById('year-read-only');
+                yearReadOnly.innerHTML = ' ' + instance.currentYear;
             }
         })
         window.addEventListener('keydown', function (event) {
