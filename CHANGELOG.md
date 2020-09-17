@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.66 (2020-09-17)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `sales-api-service`
+  * [#363](https://github.com/DEFRA/rod-licensing/pull/363) Revise contact name validation rules ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.65 (2020-09-17)
 
 #### :rocket: Enhancement
