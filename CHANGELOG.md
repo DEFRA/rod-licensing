@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.64 (2020-09-17)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#361](https://github.com/DEFRA/rod-licensing/pull/361) Improvements to POCL loader to ensure process is resumable and improve efficiency  ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.63 (2020-09-16)
 
 #### :bug: Bug Fix
