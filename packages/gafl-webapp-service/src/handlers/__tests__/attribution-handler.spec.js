@@ -17,7 +17,7 @@ describe('The attribution handler', () => {
     jest.clearAllMocks()
   })
 
-  it.skip.each([
+  it.each([
     [UTM.CAMPAIGN, 'campaign-12'],
     [UTM.MEDIUM, 'click_bait'],
     [UTM.CONTENT, 'eieioh'],
@@ -31,7 +31,7 @@ describe('The attribution handler', () => {
     })
   })
 
-  it.skip("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async () => {
+  it("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async () => {
     delete process.env.ATTRIBUTION_REDIRECT
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
     const responseToolkit = generateResponseToolkitMock()
@@ -39,7 +39,7 @@ describe('The attribution handler', () => {
     expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
   })
 
-  it.skip("redirects to ATTRIBUTION_REDIRECT env var if it's set", async () => {
+  it("redirects to ATTRIBUTION_REDIRECT env var if it's set", async () => {
     const attributionRedirect = '/attribution/redirect'
     process.env.ATTRIBUTION_REDIRECT = attributionRedirect
     const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
