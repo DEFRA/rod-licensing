@@ -4,6 +4,17 @@ import { ftpToS3 } from '../transport/ftp-to-s3.js'
 import { s3ToLocal } from '../transport/s3-to-local.js'
 import { getFileRecords } from '../io/db.js'
 import { stage } from '../staging/pocl-data-staging.js'
+import { DistributedLock } from '@defra-fish/connectors-lib'
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  ...jest.requireActual('@defra-fish/connectors-lib'),
+  DistributedLock: jest.fn().mockReturnValue({
+    obtainAndExecute: jest.fn(async ({ onLockObtained }) => {
+      await onLockObtained()
+    }),
+    release: jest.fn()
+  })
+}))
 
 jest.mock('../config.js')
 jest.mock('../transport/ftp-to-s3.js')
@@ -25,5 +36,13 @@ describe('pocl-processor', () => {
     expect(s3ToLocal).toHaveBeenNthCalledWith(2, 's3path/2')
     expect(stage).toHaveBeenNthCalledWith(1, 'local/1')
     expect(stage).toHaveBeenNthCalledWith(2, 'local/2')
+  })
+
+  it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', async signal => {
+    const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
+    await process.emit(signal)
+    expect(processStopSpy).toHaveBeenCalledWith(0)
+    expect(DistributedLock.mock.results[0].value.release).toHaveBeenCalled()
+    jest.restoreAllMocks()
   })
 })

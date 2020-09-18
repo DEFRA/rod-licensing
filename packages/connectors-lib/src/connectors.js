@@ -1,4 +1,5 @@
 import AWS from './aws.js'
 import * as salesApi from './sales-api-connector.js'
 import * as govUkPayApi from './govuk-pay-api.js'
-export { AWS, salesApi, govUkPayApi }
+import { DistributedLock } from './distributed-lock.js'
+export { AWS, salesApi, govUkPayApi, DistributedLock }

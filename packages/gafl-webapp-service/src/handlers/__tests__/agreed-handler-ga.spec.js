@@ -96,7 +96,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 
   it.each(['zzz-999', 'xxx-123', 'thj-598'])('provides transaction identifier for purchase: %s', async samplePaymentId => {
-    const request = getMockRequest({ checkout: false, payment_id: samplePaymentId })
+    const request = getMockRequest({ checkout: false, paymentId: samplePaymentId })
 
     await agreedHandler(request, getMockResponseToolkit())
 
@@ -128,7 +128,11 @@ describe('Google Analytics for agreed handler', () => {
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(mockJuniorProductDetails, expect.any(String), expect.any(String))
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(
+      mockJuniorProductDetails,
+      expect.any(String),
+      expect.any(String)
+    )
   })
 
   it('sends session id as payment id when transaction cost is zero', async () => {
@@ -152,7 +156,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 })
 
-const getMockRequest = ({ checkout = true, payment_id = 'aaa111', cost = 1, sessionId = 'aaa111' } = {}) => ({
+const getMockRequest = ({ checkout = true, paymentId = 'aaa111', cost = 1, sessionId = 'aaa111' } = {}) => ({
   cache: jest.fn(() => ({
     helpers: {
       status: {
@@ -166,7 +170,7 @@ const getMockRequest = ({ checkout = true, payment_id = 'aaa111', cost = 1, sess
       transaction: {
         get: () => ({
           payment: {
-            payment_id
+            payment_id: paymentId
           },
           permissions: [
             {
