@@ -212,6 +212,10 @@ export default async (request, h) => {
     if (next) {
       return h.redirect(next)
     }
+  } else {
+    await request.ga
+      .ecommerce()
+      .purchase(getTrackingProductDetailsFromTransaction(transaction), '', getAffiliation(process.env.CHANNEL))
   }
 
   // If the transaction has already been finalised then redirect to the order completed page

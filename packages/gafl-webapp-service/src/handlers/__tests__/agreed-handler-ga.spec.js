@@ -2,7 +2,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 
 import agreedHandler from '../agreed-handler.js'
 import { COMPLETION_STATUS } from '../../constants.js'
-import { getAffiliation } from '../../processors/analytics'
+import { getAffiliation, getTrackingProductDetailsFromTransaction } from '../../processors/analytics'
 import { ADULT_FULL_1_DAY_LICENCE } from '../../__mocks__/mock-journeys.js'
 
 const mockProductDetails = [
@@ -14,6 +14,18 @@ const mockProductDetails = [
     variant: '12 Month(s)',
     quantity: 1,
     price: 1
+  }
+]
+
+const mockJuniorProductDetails = [
+  {
+    id: 'Salmon 1 Year Junior Red Licence',
+    name: 'Salmon and sea trout - Junior licence',
+    brand: 'Rod Fishing Licence',
+    category: 'Salmon and sea trout/1 rod/Junior',
+    variant: '12 Month(s)',
+    quantity: 1,
+    price: 0
   }
 ]
 
@@ -73,7 +85,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 
   it('sends purchase event with expected data when payment succeeds', async () => {
-    const request = getMockRequest(false)
+    const request = getMockRequest({ checkout: false })
 
     await agreedHandler(request, getMockResponseToolkit())
 
@@ -85,7 +97,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 
   it.each(['zzz-999', 'xxx-123', 'thj-598'])('provides transaction identifier for purchase: %s', async samplePaymentId => {
-    const request = getMockRequest(false, samplePaymentId)
+    const request = getMockRequest({ checkout: false, payment_id: samplePaymentId })
 
     await agreedHandler(request, getMockResponseToolkit())
 
@@ -94,7 +106,7 @@ describe('Google Analytics for agreed handler', () => {
 
   it.each(['telesales', 'websales', 'door-to-door'])('passes channel to be transformed by affiliation', async sampleChannel => {
     process.env.CHANNEL = sampleChannel
-    const request = getMockRequest(false)
+    const request = getMockRequest({ checkout: false })
 
     await agreedHandler(request, getMockResponseToolkit())
 
@@ -103,7 +115,35 @@ describe('Google Analytics for agreed handler', () => {
 
   it.each(['telesales', 'websales', 'door-to-door'])('provides affiliation for purchase', async sampleChannel => {
     process.env.CHANNEL = sampleChannel
-    const request = getMockRequest(false)
+    const request = getMockRequest({ checkout: false })
+
+    await agreedHandler(request, getMockResponseToolkit())
+    const affiliation = getAffiliation.mock.results[0].value
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), expect.any(String), affiliation)
+  })
+
+  it('sends purchase event with expected data when transaction cost is zero', async () => {
+    const request = getMockRequest({ cost: 0 })
+    getTrackingProductDetailsFromTransaction.mockReturnValueOnce(mockJuniorProductDetails)
+
+    await agreedHandler(request, getMockResponseToolkit())
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(mockJuniorProductDetails, expect.any(String), expect.any(String))
+  })
+
+  it('sends empty payment id when transaction cost is zero', async () => {
+    const request = getMockRequest({ cost: 0 })
+    getTrackingProductDetailsFromTransaction.mockReturnValueOnce(mockJuniorProductDetails)
+
+    await agreedHandler(request, getMockResponseToolkit())
+
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), '', expect.any(String))
+  })
+
+  it('sends purchase event with expected data when transaction cost is zero', async () => {
+    const request = getMockRequest({ cost: 0 })
+    getTrackingProductDetailsFromTransaction.mockReturnValueOnce(mockJuniorProductDetails)
 
     await agreedHandler(request, getMockResponseToolkit())
     const affiliation = getAffiliation.mock.results[0].value
@@ -112,7 +152,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 })
 
-const getMockRequest = (checkout = true, payment_id = 'aaa111') => ({
+const getMockRequest = ({ checkout = true, payment_id = 'aaa111', cost = 1 } = {}) => ({
   cache: jest.fn(() => ({
     helpers: {
       status: {
@@ -149,7 +189,7 @@ const getMockRequest = (checkout = true, payment_id = 'aaa111') => ({
             }
           ],
           id: 'fff-111-eee-222',
-          cost: 1
+          cost
         }),
         set: () => {}
       }
