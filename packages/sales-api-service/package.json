@@ -48,7 +48,7 @@
     "dot-prop": "^5.3.0",
     "hapi-and-healthy": "^7.0.7",
     "hapi-swagger": "^13.1.0",
-    "moment": "^2.27.0",
+    "moment": "^2.28.0",
     "uuid": "^8.3.0"
   }
 }
