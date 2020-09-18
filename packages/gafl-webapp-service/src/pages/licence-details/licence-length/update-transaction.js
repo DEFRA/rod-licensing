@@ -29,14 +29,15 @@ const checkContactDetails = permission => {
  * @param permission
  */
 const checkLicenceToStart = permission => {
-  if (
-    permission.licenceLength === '12M' &&
-    moment(permission.licenceStartDate, cacheDateFormat)
-      .tz(SERVICE_LOCAL_TIME)
-      .isSame(moment(), 'day')
-  ) {
-    permission.licenceToStart = licenceToStart.AFTER_PAYMENT
+  if (permission.licenceLength === '12M') {
     permission.licenceStartTime = null
+    if (
+      moment(permission.licenceStartDate, cacheDateFormat)
+        .tz(SERVICE_LOCAL_TIME)
+        .isSame(moment(), 'day')
+    ) {
+      permission.licenceToStart = licenceToStart.AFTER_PAYMENT
+    }
   }
 }
 

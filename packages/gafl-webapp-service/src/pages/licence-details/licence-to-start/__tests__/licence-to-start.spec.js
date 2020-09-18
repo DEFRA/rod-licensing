@@ -5,7 +5,8 @@ import {
   DISABILITY_CONCESSION,
   NO_LICENCE_REQUIRED,
   LICENCE_LENGTH,
-  LICENCE_START_TIME
+  LICENCE_START_TIME,
+  TEST_TRANSACTION
 } from '../../../../uri.js'
 import { ADVANCED_PURCHASE_MAX_DAYS, MINOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 import {
@@ -130,5 +131,39 @@ describe("The 'when would you like you licence to start?' page", () => {
     })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
+  })
+
+  it('changing from a 12 month to a one day licence removes the start time', async () => {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment().add(16, 'day'))
+    })
+    await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': 11 })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    const permission = JSON.parse(payload).permissions[0]
+    expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
+    expect(permission.licenceStartTime).toBe('11')
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    const permission2 = JSON.parse(payload2).permissions[0]
+    expect(permission2.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
+    expect(permission2.licenceStartTime).toBeFalsy()
+  })
+
+  it("changing from a 12 month to a one day licence, starting today, removes the start time and sets 'after-payment'", async () => {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    await injectWithCookies('POST', LICENCE_TO_START.uri, {
+      'licence-to-start': licenceToStart.ANOTHER_DATE,
+      ...startDateHelper(moment())
+    })
+    await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': 23 })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    const permission = JSON.parse(payload).permissions[0]
+    expect(permission.licenceToStart).toBe(licenceToStart.AFTER_PAYMENT)
+    expect(permission.licenceStartTime).toBeFalsy()
   })
 })
