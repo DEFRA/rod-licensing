@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.68 (2020-09-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#373](https://github.com/DEFRA/rod-licensing/pull/373) Rebrand PDF printout to be EA rather than GDS ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.67 (2020-09-18)
 
 #### :rocket: Enhancement
