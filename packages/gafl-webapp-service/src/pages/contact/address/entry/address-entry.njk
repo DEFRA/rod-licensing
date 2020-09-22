@@ -2,6 +2,7 @@
 
 {% from "input/macro.njk" import govukInput %}
 {% from "select/macro.njk" import govukSelect %}
+{% from "inset-text/macro.njk" import govukInsetText %}
 
 {% set title = 'Enter your address' %}
 
@@ -37,6 +38,15 @@
 %}
 
 {% block pageContent %}
+
+    {% if data.searchTerms %}
+        {{ govukInsetText({
+          html: '<p>We could not find an address for premises <span class="govuk-!-font-weight-bold">' +
+          data.searchTerms.premises + '</span> and postcode <span class="govuk-!-font-weight-bold">' + data.searchTerms.postcode + '</span></p>' +
+            '<p>Enter your full address below</p>'
+         }) }}
+    {% endif %}
+
     {{ govukInput({
       label: {
         text: "Building number or name"
