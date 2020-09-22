@@ -70,7 +70,7 @@ describe('The address lookup page', () => {
     expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
   })
 
-  it('redirects to the entry page where there is no result', async () => {
+  it("redirects to the entry page where there is no result - and displays the 'not-found' insert text ", async () => {
     process.env.ADDRESS_LOOKUP_URL = 'http://localhost:9002'
     process.env.ADDRESS_LOOKUP_KEY = 'bar'
 
@@ -79,6 +79,10 @@ describe('The address lookup page', () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
+
+    const response2 = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
+
+    expect(response2.result).toContain('We could not find an address ')
   })
 
   it('redirects to the entry page where there an exception thrown in the address lookup request', async () => {
