@@ -3,6 +3,8 @@ import { start, stop, initialize, injectWithCookies } from '../../../../../__moc
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 import searchResultsOne from '../../../../../services/address-lookup/__mocks__/data/search-results-one'
 import searchResultsNone from '../../../../../services/address-lookup/__mocks__/data/search-results-none'
+import { salesApi } from '@defra-fish/connectors-lib'
+import mockDefraCountries from '../../../../../__mocks__/data/defra-country'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -10,6 +12,7 @@ afterAll(d => stop(d))
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
+salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
 
 describe('The address lookup page', () => {
   it('returns success on requesting', async () => {
@@ -81,7 +84,7 @@ describe('The address lookup page', () => {
     expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
 
     const response2 = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
-    expect(response2.payload.includes('We could not find an address')).toBeTruthy()
+    expect(response2.payload).toContain('We could not find an address')
   })
 
   it('redirects to the entry page where there an exception thrown in the address lookup request', async () => {
