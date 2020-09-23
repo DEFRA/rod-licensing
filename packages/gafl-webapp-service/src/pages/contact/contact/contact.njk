@@ -104,7 +104,7 @@
             <p class="govuk-body-m">We don't provide physical cards for junior licences.</p>
             <p class="govuk-body-m">You will need to confirm your licence number if asked by an enforcement officer.</p>
         {% else %}
-            <p class="govuk-body-m">We don't provide physical cards for 1 or 8 day licences licences.</p>
+            <p class="govuk-body-m">We don't provide physical cards for 1 or 8 day licences.</p>
             <p class="govuk-body-m">You will need to confirm your licence number if asked by an enforcement officer.</p>
         {% endif %}
     {% endif %}
@@ -151,7 +151,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
         if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' && !'{{ error.email }}' ) {

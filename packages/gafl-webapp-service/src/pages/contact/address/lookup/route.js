@@ -1,4 +1,4 @@
-import { ADDRESS_LOOKUP, ADDRESS_ENTRY } from '../../../../uri.js'
+import { ADDRESS_LOOKUP, ADDRESS_ENTRY, OS_TERMS } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from '@hapi/joi'
 import { validation } from '@defra-fish/business-rules-lib'
@@ -16,8 +16,11 @@ const getData = async request => {
   return {
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
-    entryPage: ADDRESS_ENTRY.uri,
-    isPhysical: isPhysical(permission)
+    isPhysical: isPhysical(permission),
+    uri: {
+      entryPage: ADDRESS_ENTRY.uri,
+      osTerms: OS_TERMS.uri
+    }
   }
 }
 

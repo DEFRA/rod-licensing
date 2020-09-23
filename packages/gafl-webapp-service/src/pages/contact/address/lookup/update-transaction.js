@@ -19,6 +19,6 @@ export default async request => {
     })
   } else {
     debug('The address lookup service is not set up. The system cannot search for the users address')
-    await request.cache().helpers.addressLookup.setCurrentPermission({ addresses: [] })
+    await request.cache().helpers.addressLookup.setCurrentPermission({ addresses: [], searchTerms: null })
   }
 }
