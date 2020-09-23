@@ -121,6 +121,15 @@ describe('contact validators', () => {
       const internationStr = 'ÆÇÉÑØĶŤ'
       await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(internationStr)).resolves.toEqual('Æçéñøķť')
     })
+
+    it('allows the minimum number of required alpha characters to be configured', async () => {
+      // Default to 2
+      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync('AB')).resolves.toEqual('Ab')
+      // Allows customisation of rules using minimumLength property
+      await expect(contactValidation.createFirstNameValidator(Joi, { minimumLength: 3 }).validateAsync('AB')).rejects.toThrow(
+        '"value" must contain at least 3 alpha characters'
+      )
+    })
   })
 
   describe('lastNameValidator', () => {
@@ -212,6 +221,15 @@ describe('contact validators', () => {
     it('allows a range of unicode characters from plane 1', async () => {
       const internationStr = 'ÆÇÉÑØĶŤ'
       await expect(contactValidation.createLastNameValidator(Joi).validateAsync(internationStr)).resolves.toEqual('Æçéñøķť')
+    })
+
+    it('allows the minimum number of required alpha characters to be configured', async () => {
+      // Default to 2
+      await expect(contactValidation.createLastNameValidator(Joi).validateAsync('AB')).resolves.toEqual('Ab')
+      // Allows customisation of rules using minimumLength property
+      await expect(contactValidation.createLastNameValidator(Joi, { minimumLength: 3 }).validateAsync('AB')).rejects.toThrow(
+        '"value" must contain at least 3 alpha characters'
+      )
     })
   })
 
