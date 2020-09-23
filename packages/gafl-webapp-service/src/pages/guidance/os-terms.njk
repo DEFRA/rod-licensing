@@ -1,0 +1,33 @@
+{% extends "layout.njk" %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% block pageTitle %}Ordnance Survey terms and conditions - GOV.UK{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ govukBackLink({
+          text: "Back",
+          href: "/buy",
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
+
+        <h1 class="govuk-heading-l">Ordnance Survey terms and conditions</h1>
+
+        <p class="govuk-body">
+                Addressing information and mapping data from Ordnance Survey is © Crown copyright and database rights 2016
+                <a href="http://www.ordnancesurvey.co.uk" target="_blank">OS</a> 100024198. Use of this data is subject to&nbsp;the following conditions
+                by way of exception to the standard Open Government Licence referred to at the foot of this page:
+        </p>
+
+        <ol class="govuk-list govuk-list--number">
+            <li>You are granted a non-exclusive, royalty free revocable licence solely to view the licensed mapping and addressing data
+                for non-commercial purposes for the period during which we make it available;
+            </li>
+            <li>You are not permitted to copy, sub-license, distribute, sell or otherwise make available such data to third parties in
+                any form; and</li>
+            <li>Third party rights to enforce the terms of this licence shall be reserved to OS.</li>
+        </ol>
+    </div>
+</div>
+{% endblock %}

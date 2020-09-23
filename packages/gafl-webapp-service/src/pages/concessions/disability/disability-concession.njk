@@ -1,12 +1,12 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
-{% set title = 'Do you get any of the following?' %}
+{% set title = 'Do you receive any of the following?' %}
 
 {%
     set errorMap = {
         'disability-concession': {
-            'any.required': { ref: '#disability-concession', text: 'Choose Personal Independence Payment (PIP) or disability living allowance (DLA), Blue Badge or No.' }
+            'any.required': { ref: '#disability-concession', text: 'Choose Personal Independence Payment (PIP) or Disability Living Allowance (DLA), Blue Badge or No.' }
         },
         'ni-number': {
             'string.empty': { ref: '#ni-number', text: 'Enter your National Insurance number' },
@@ -25,7 +25,7 @@
         html: 'National Insurance or Child Reference number' if data.hasJunior else 'National Insurance number'
       },
       hint: {
-        html: "Its on your National Insurance card, benefit letter, payslip or P60. For example 'QQ 12 34 56 C'" if not data.hasJunior else "<p>For example 'QQ 12 34 56 C'</p>"
+        html: "This is on your National Insurance card, benefit letter, payslip or P60. For example 'QQ 12 34 56 C'" if not data.hasJunior else "<p>For example 'QQ 12 34 56 C'</p>"
       },
       id: "ni-number",
       name: "ni-number",
@@ -60,7 +60,7 @@
            name: "disability-concession",
            items: [
                {
-                   html: 'Personal Independence Payment (PIP)</br> or disability living allowance (DLA)',
+                   html: 'Personal Independence Payment (PIP)</br> or Disability Living Allowance (DLA)',
                    value: data.pipDla,
                    checked: payload['disability-concession'] === data.pipDla,
                    conditional: { html: pipDla }
