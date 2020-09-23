@@ -9,7 +9,7 @@ import { displayStartTime, displayEndTime } from './date-and-time-display.js'
 import * as mappings from './mapping-constants.js'
 import { licenceTypeDisplay } from './licence-type-display.js'
 import { hasDisabled } from './concession-helper.js'
-const crownImage = path.join(Dirname, 'public/images/govuk-crest.png')
+const eaImage = path.join(Dirname, 'public/images/EA-logo_black.png')
 
 const style = {
   TABLE_HEADER: 'tableHeader',
@@ -56,14 +56,9 @@ const getTable = permission => {
 const getContent = permission => {
   const content = [
     {
-      image: crownImage,
-      alignment: alignment.CENTRE
-    },
-    {
-      text: 'GOV.UK',
-      style: 'subHeader',
-      margin: [4, 6, 0, 0],
-      alignment: alignment.CENTRE
+      image: eaImage,
+      alignment: alignment.CENTRE,
+      width: 300
     },
     {
       text: 'Your rod fishing licence details',
