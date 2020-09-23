@@ -156,7 +156,7 @@
 
             {{ csrf() }}
         </form>
-        {% if data.isRenewal %}<a class="govuk-link" href="{{ data.uri.clear }}">Buy a different licence</a>{% endif %}
+        {% if data.isRenewal %}<a class="govuk-link" class="govuk-link" href="{{ data.uri.clear }}">Buy a different licence</a>{% endif %}
     </div>
 </div>
 {% endblock %}
