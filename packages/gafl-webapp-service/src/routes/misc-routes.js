@@ -11,6 +11,7 @@ import {
   RENEWAL_START_VALIDATE,
   RENEWAL_PUBLIC,
   IDENTIFY,
+  OS_TERMS,
   ATTRIBUTION
 } from '../uri.js'
 
@@ -22,6 +23,12 @@ import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 import attribution from '../handlers/attribution-handler.js'
+
+const simpleView = view => ({
+  method: 'GET',
+  path: view.uri,
+  handler: async (request, h) => h.view(view.page)
+})
 
 export default [
   {
@@ -93,22 +100,11 @@ export default [
   },
   {
     method: 'GET',
-    path: ACCESSIBILITY_STATEMENT.uri,
-    handler: async (request, h) => h.view(ACCESSIBILITY_STATEMENT.page)
-  },
-  {
-    method: 'GET',
-    path: PRIVACY_POLICY.uri,
-    handler: async (request, h) => h.view(PRIVACY_POLICY.page)
-  },
-  {
-    method: 'GET',
-    path: REFUND_POLICY.uri,
-    handler: async (request, h) => h.view(REFUND_POLICY.page)
-  },
-  {
-    method: 'GET',
     path: ATTRIBUTION.uri,
     handler: attribution
-  }
+  },
+  simpleView(ACCESSIBILITY_STATEMENT),
+  simpleView(PRIVACY_POLICY),
+  simpleView(REFUND_POLICY),
+  simpleView(OS_TERMS)
 ]

@@ -1,7 +1,7 @@
 {% macro pricingSummary(selectors, content, subHeader) %}
 <aside class="govuk-grid-column-one-third payment-summary-wrap">
     {% for selector, load in selectors %}
-    <div id="pricing-{{ selector }}" class="payment-summary">
+    <div id="pricing-{{ selector }}" class="payment-summary initially-hidden">
         <h2 class="govuk-heading-m">How much will this cost?</h2>
         <p class="govuk-body-s">{{ subHeader }}</p>
         {% for k, v in load %}
