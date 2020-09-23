@@ -144,7 +144,7 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
         if ({{ true if data.referenceNumber else false }} && !'{{ error.referenceNumber }}') {

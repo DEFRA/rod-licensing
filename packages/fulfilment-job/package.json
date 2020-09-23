@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/fulfilment-job",
-  "version": "0.3.0-rc.66",
+  "version": "0.3.0-rc.70",
   "description": "Rod Licensing Sales Fulfilment Job",
   "type": "module",
   "engines": {
@@ -35,8 +35,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/connectors-lib": "0.3.0-rc.66",
-    "@defra-fish/dynamics-lib": "0.3.0-rc.66",
+    "@defra-fish/connectors-lib": "0.3.0-rc.70",
+    "@defra-fish/dynamics-lib": "0.3.0-rc.70",
     "commander": "^6.1.0",
     "debug": "^4.1.1",
     "merge2": "^1.4.1",

@@ -37,11 +37,19 @@ const disabledPermission = {
   }
 }
 
+const indexMap = {
+  TYPE: 1,
+  LENGTH: 2,
+  CONCESSION: 3,
+  COST: 6
+}
+const tableContentByIndex = (result, idx) => result.content[4].table.body[idx][1].text
+
 describe('The PDF generator', () => {
   it('completes for a disabled concession trout and coarse licence', () => {
     const result = orderConfirmationPdf(disabledPermission)
-    expect(result.content[5].table.body[1][1].text).toBe('Trout and coarse, up to 3 rods')
-    expect(result.content[5].table.body[3][1].text).toBe('yes')
+    expect(tableContentByIndex(result, indexMap.TYPE)).toBe('Trout and coarse, up to 3 rods')
+    expect(tableContentByIndex(result, indexMap.CONCESSION)).toBe('yes')
   })
 
   it('completes for a salmon and sea trout licence', () => {
@@ -50,16 +58,16 @@ describe('The PDF generator', () => {
     permission.concessions = []
     permission.permit.cost = 91
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[1][1].text).toBe('Salmon and sea trout')
-    expect(result.content[5].table.body[3][1].text).toBe('no')
-    expect(result.content[5].table.body[6][1].text).toBe('£91')
+    expect(tableContentByIndex(result, indexMap.TYPE)).toBe('Salmon and sea trout')
+    expect(tableContentByIndex(result, indexMap.CONCESSION)).toBe('no')
+    expect(tableContentByIndex(result, indexMap.COST)).toBe('£91')
   })
 
   it('completes for junior licence', () => {
     const permission = Object.assign({}, disabledPermission)
     addJunior(permission)
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[1][1].text).toBe('Junior, Trout and coarse, up to 3 rods')
+    expect(tableContentByIndex(result, indexMap.TYPE)).toBe('Junior, Trout and coarse, up to 3 rods')
   })
 
   it('completes for a 1 Day licence', () => {
@@ -68,7 +76,7 @@ describe('The PDF generator', () => {
     permission.numberOfRods = '2'
     permission.concessions = []
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[2][1].text).toBe('1 day')
+    expect(tableContentByIndex(result, indexMap.LENGTH)).toBe('1 day')
   })
 
   it('completes for an 8 Day licence', () => {
@@ -77,6 +85,6 @@ describe('The PDF generator', () => {
     permission.numberOfRods = '2'
     permission.concessions = []
     const result = orderConfirmationPdf(permission)
-    expect(result.content[5].table.body[2][1].text).toBe('8 days')
+    expect(tableContentByIndex(result, indexMap.LENGTH)).toBe('8 days')
   })
 })
