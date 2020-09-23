@@ -216,21 +216,75 @@ export const createOverseasPostcodeValidator = joi =>
     .uppercase()
     .required()
 
-const regexApostrophe = /\u2019/g
-const regexHyphen = /\u2014/g
-const regexMultiSpace = /\u0020{2,}/g
+const nameStringSubstitutions = [
+  /*
+    hyphen-minus U+002D (included here to remove surrounding spacing)
+    hyphen U+2010
+    non-breaking hyphen U+2011
+    figure dash U+2012
+    en dash U+2013
+    em dash U+2014
+    horizontal bar U+2015
+    hyphen bullet U+2043
+    swung dash U+2053
+    minus sign U+2212
+   */
+  { replacement: '\u002d', regex: '\\s*[\u002d\u2010\u2011\u2012\u2013\u2014\u2015\u2053\u2212]\\s*' },
+  /*
+    apostrophe U+0027 (included here to remove surrounding spacing)
+    backtick / grave accent U+0060
+    acute accent U+00B4
+    left single quotation mark U+2018
+    right single quotation mark U+2019
+    prime U+2032
+    reversed prime U+2035
+    hebrew punctuation geresh U+05F3
+    heavy single comma quotation mark ornament U+275C
+    latin small letter saltillo U+A78C
+    fullwidth apostrophe U+FF07
+   */
+  { replacement: '\u0027', regex: '\\s*[\u0027\u0060\u00B4\u2018\u2019\u2032\u2035\u05F3\u275C\uA78C\uFF07]\\s*' },
+  /*
+    comma U+002C
+    full stop U+002E
+    no-break space U+00A0
+    zero width space U+200B
+    narrow no-break space U+202F
+    word joiner U+2060
+    ideographic space U+3000
+    zero width no-break space U+FEFF
+   */
 
-const substitutes = txt =>
-  txt
-    .replace(regexApostrophe, '\u0027')
-    .replace(regexHyphen, '\u2010')
-    .replace(regexMultiSpace, '\u0020')
+  { replacement: ' ', regex: '\\s*[\u002c\u002e\u00a0\u200b\u202f\u2060\u3000\ufeff]\\s*' },
+  // brackets with improper spacing
+  { replacement: '(', regex: '\\(\\s+' },
+  { replacement: ')', regex: '\\s+\\)' }
+]
+const nameStringSubstitutionRegex = new RegExp(nameStringSubstitutions.map(s => `(${s.regex})`).join('|'), 'g')
 
+/**
+ * Substitutes characters with their designated standard replacement
+ *
+ * @param {string} value The string in which to search for substitutions
+ * @returns {string} The substituted string
+ */
+export const standardiseName = value =>
+  String(value)
+    .replace(nameStringSubstitutionRegex, (match, ...groups) => {
+      // Find the first group which is matched (not returned as undefined)  This will be the index of the matched rule.
+      const matchPos = groups.findIndex(g => g !== undefined)
+      return nameStringSubstitutions[matchPos].replacement
+    })
+    .replace(/\s+/g, ' ')
+    .trim()
+
+// Regular expression component for validating a term within a name.  Allows a alpha sequence or an alpha sequence surrounding by brackets
+const nameTermRegex = '(?:\\p{L}+|\\(\\p{L}+\\))'
 /**
  * Regular expression used to validate firstname and lastname fields
  * @type {RegExp}
  */
-const nameStringRegex = /^\p{L}+(?:(?:\.?\s|[-'\s])\p{L}+)*$/u
+const nameStringRegex = new RegExp(`^${nameTermRegex}(?:[-'\\s]${nameTermRegex})*$`, 'u')
 
 /**
  * Create a custom validator extension to check names
@@ -238,15 +292,17 @@ const nameStringRegex = /^\p{L}+(?:(?:\.?\s|[-'\s])\p{L}+)*$/u
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.AnySchema}
  */
-const createNameStringValidator = joi =>
+const createNameStringValidator = (joi, { minimumLength = 2 }) =>
   joi.string().extend({
     type: 'name',
-    coerce (value) {
-      return { value: substitutes(value) }
-    },
     rules: {
       allowable: {
         validate (value, helpers) {
+          const alphaCharacters = value.replace(/\P{L}/gu, '')
+          if (alphaCharacters.length < minimumLength) {
+            return helpers.error('string.min')
+          }
+          value = standardiseName(value)
           if (!nameStringRegex.test(value)) {
             return helpers.error('string.forbidden')
           }
@@ -255,6 +311,7 @@ const createNameStringValidator = joi =>
       }
     },
     messages: {
+      'string.min': `{{#label}} must contain at least ${minimumLength} alpha characters`,
       'string.forbidden': '{{#label}} contains forbidden characters'
     }
   })
@@ -267,9 +324,8 @@ const createNameStringValidator = joi =>
  * @returns {Joi.AnySchema}
  */
 export const createFirstNameValidator = (joi, { minimumLength = 2 } = {}) =>
-  createNameStringValidator(joi)
+  createNameStringValidator(joi, { minimumLength })
     .allowable()
-    .min(minimumLength)
     .max(100)
     .trim()
     .external(toTitleCase())
@@ -284,9 +340,8 @@ export const createFirstNameValidator = (joi, { minimumLength = 2 } = {}) =>
  * @returns {Joi.AnySchema}
  */
 export const createLastNameValidator = (joi, { minimumLength = 2 } = {}) =>
-  createNameStringValidator(joi)
+  createNameStringValidator(joi, { minimumLength })
     .allowable()
-    .min(minimumLength)
     .max(100)
     .trim()
     .external(toTitleCase(['van', 'de', 'der', 'den']))

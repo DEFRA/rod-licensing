@@ -61,6 +61,24 @@ describe('contact validators', () => {
       })
     })
 
+    describe('standardises formatting of allowed punctuation and standardises spacing', () => {
+      it.each([
+        // Standard dash
+        ['  Peter  -  Paul  ', 'Peter-Paul'],
+        // Endash
+        ['Peter – Paul', 'Peter-Paul'],
+        // Emdash
+        ['Peter — Paul', 'Peter-Paul'],
+        // Comma
+        ['Peter, Paul,', 'Peter Paul'],
+        // Period
+        ['Peter . Paul .', 'Peter Paul'],
+        ['J.Sue.', 'J Sue']
+      ])('converts %s to %s', async (name, expected) => {
+        await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(name)).resolves.toEqual(expected)
+      })
+    })
+
     describe('allows specific punctuation characters', () => {
       it.each("'-".split(''))('allows the %s character', async c => {
         await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(`Test${c}Separator`)).resolves.toEqual(
@@ -81,8 +99,16 @@ describe('contact validators', () => {
       await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(' Peter  Paul ')).resolves.toEqual('Peter Paul')
     })
 
-    it('throws on empty forenames', async () => {
-      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
+    it.each([
+      ['', '"value" is not allowed to be empty'],
+      ['..', '"value" must contain at least 2 alpha characters'],
+      ['()', '"value" must contain at least 2 alpha characters'],
+      ["''", '"value" must contain at least 2 alpha characters'],
+      ['--', '"value" must contain at least 2 alpha characters'],
+      ['A', '"value" must contain at least 2 alpha characters'],
+      ['A..', '"value" must contain at least 2 alpha characters']
+    ])('throws on cases where the forename does not contain sufficient alpha characters - "%s"', async (testValue, expectedError) => {
+      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(testValue)).rejects.toThrow(expectedError)
     })
 
     it('throws where the name exceeds the maximum allowed length', async () => {
@@ -91,15 +117,18 @@ describe('contact validators', () => {
       )
     })
 
-    it('throws where the name is a single character', async () => {
-      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync('A')).rejects.toThrow(
-        '"value" length must be at least 2 characters long'
-      )
-    })
-
     it('allows a range of unicode characters from plane 1', async () => {
       const internationStr = 'ÆÇÉÑØĶŤ'
       await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(internationStr)).resolves.toEqual('Æçéñøķť')
+    })
+
+    it('allows the minimum number of required alpha characters to be configured', async () => {
+      // Default to 2
+      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync('AB')).resolves.toEqual('Ab')
+      // Allows customisation of rules using minimumLength property
+      await expect(contactValidation.createFirstNameValidator(Joi, { minimumLength: 3 }).validateAsync('AB')).rejects.toThrow(
+        '"value" must contain at least 3 alpha characters'
+      )
     })
   })
 
@@ -109,7 +138,7 @@ describe('contact validators', () => {
         [' SMITH-JONES ', 'Smith-Jones'],
         ['smith-jones', 'Smith-Jones'],
         ['denver', 'Denver'],
-        ['Ian St. John', 'Ian St. John'],
+        ['ian st. john', 'Ian St John'],
         ['smythé', 'Smythé'],
         ["O'DELL", "O'Dell"],
         ['mcdonald', 'McDonald'],
@@ -124,6 +153,37 @@ describe('contact validators', () => {
       })
     })
 
+    describe('standardises formatting of allowed punctuation and standardises spacing', () => {
+      it.each([
+        // Standard dash
+        ['  Bedford  -  Cuffe  ', 'Bedford-Cuffe'],
+        // Endash
+        ['Bedford – Cuffe', 'Bedford-Cuffe'],
+        // Emdash
+        ['Bedford — Cuffe', 'Bedford-Cuffe'],
+        // Apostrophe
+        ["O' Connor", "O'Connor"],
+        // Right single quotation mark
+        ['O’ Connor', "O'Connor"],
+        // Left single quotation mark
+        ['O‘ Connor', "O'Connor"],
+        // Backtick/Grave Accent
+        ['O` Connor', "O'Connor"],
+        // Acute Accent
+        ['O´ Connor', "O'Connor"],
+        // Prime
+        ['O′ Connor', "O'Connor"],
+        // Reversed prime
+        ['O‵ Connor', "O'Connor"],
+        // Fullwidth apostrophe
+        ['O＇Connor', "O'Connor"],
+        // Brackets
+        ['Dean ( Senior ) ', 'Dean (Senior)']
+      ])('converts %s to %s', async (name, expected) => {
+        await expect(contactValidation.createLastNameValidator(Joi).validateAsync(name)).resolves.toEqual(expected)
+      })
+    })
+
     describe('allows specific punctuation characters', () => {
       it.each("'-".split(''))('allows the %s character', async c => {
         await expect(contactValidation.createLastNameValidator(Joi).validateAsync(`Test${c}Separator`)).resolves.toEqual(
@@ -133,15 +193,23 @@ describe('contact validators', () => {
     })
 
     describe('does not allow names containing banned characters', () => {
-      it.each('!@£$%^&()+*/{}[];":;|\\?<>§±`~0123456789'.split(''))('does not allow the %s character', async c => {
+      it.each('!@£$%^&()+*/{}[];":;|\\?<>§±~0123456789'.split(''))('does not allow the %s character', async c => {
         await expect(contactValidation.createLastNameValidator(Joi).validateAsync(`Gra${c}am`)).rejects.toThrow(
           'contains forbidden characters'
         )
       })
     })
 
-    it('throws on empty last names', async () => {
-      await expect(contactValidation.createLastNameValidator(Joi).validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
+    it.each([
+      ['', '"value" is not allowed to be empty'],
+      ['..', '"value" must contain at least 2 alpha characters'],
+      ['()', '"value" must contain at least 2 alpha characters'],
+      ["''", '"value" must contain at least 2 alpha characters'],
+      ['--', '"value" must contain at least 2 alpha characters'],
+      ['A', '"value" must contain at least 2 alpha characters'],
+      ['A..', '"value" must contain at least 2 alpha characters']
+    ])('throws on cases where the last name does not contain sufficient alpha characters - "%s"', async (testValue, expectedError) => {
+      await expect(contactValidation.createLastNameValidator(Joi).validateAsync(testValue)).rejects.toThrow(expectedError)
     })
 
     it('throws where the name exceeds the maximum allowed length', async () => {
@@ -150,15 +218,18 @@ describe('contact validators', () => {
       )
     })
 
-    it('throws where the name is a single character', async () => {
-      await expect(contactValidation.createLastNameValidator(Joi).validateAsync('A')).rejects.toThrow(
-        '"value" length must be at least 2 characters long'
-      )
-    })
-
     it('allows a range of unicode characters from plane 1', async () => {
       const internationStr = 'ÆÇÉÑØĶŤ'
       await expect(contactValidation.createLastNameValidator(Joi).validateAsync(internationStr)).resolves.toEqual('Æçéñøķť')
+    })
+
+    it('allows the minimum number of required alpha characters to be configured', async () => {
+      // Default to 2
+      await expect(contactValidation.createLastNameValidator(Joi).validateAsync('AB')).resolves.toEqual('Ab')
+      // Allows customisation of rules using minimumLength property
+      await expect(contactValidation.createLastNameValidator(Joi, { minimumLength: 3 }).validateAsync('AB')).rejects.toThrow(
+        '"value" must contain at least 3 alpha characters'
+      )
     })
   })
 
