@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.70 (2020-09-23)
+
+#### :rocket: Enhancement
+* `business-rules-lib`
+  * [#378](https://github.com/DEFRA/rod-licensing/pull/378) Improve contact first/last name validation rules ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.69 (2020-09-23)
 
 #### :rocket: Enhancement
