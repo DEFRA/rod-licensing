@@ -81,7 +81,7 @@ describe('The address lookup page', () => {
     expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
 
     const response2 = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
-    expect(response2.result).toContain('We could not find an address ')
+    expect(response2.payload.includes('We could not find an address')).toBeTruthy()
   })
 
   it('redirects to the entry page where there an exception thrown in the address lookup request', async () => {
