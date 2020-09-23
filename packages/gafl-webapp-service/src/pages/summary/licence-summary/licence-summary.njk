@@ -22,7 +22,7 @@
           {
             href: data.uri.licenceType,
             text: "Change",
-            visuallyHiddenText: "licence type",
+            visuallyHiddenText: "Type",
             attributes: { id: 'change-licence-type' }
           }
         ]
@@ -43,7 +43,7 @@
       {
         href: data.uri.licenceLength,
         text: "Change",
-        visuallyHiddenText: "licence length",
+        visuallyHiddenText: "Length",
         attributes: { id: 'change-licence-length' }
       }
     ] if not data.hasJunior and not data.isRenewal
@@ -63,7 +63,7 @@
           {
             href: data.uri.dateOfBirth,
             text: "Change",
-            visuallyHiddenText: "date of birth",
+            visuallyHiddenText: "Date of birth",
             attributes: { id: 'change-birth-date' }
           }
         ]
@@ -84,7 +84,7 @@
           {
             href:  data.uri.licenceStartDate if data.isRenewal else data.uri.licenceToStart,
             text: "Change",
-            visuallyHiddenText: "valid from",
+            visuallyHiddenText: "Start date",
             attributes: { id: 'change-licence-to-start' }
           }
         ]
@@ -92,9 +92,10 @@
 }) }}
 
 {% if data.permission.licenceLength === '12M' %}
+    {% set concessionText = 'Blue Badge Number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance Number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession') %}
     {{ licenseDetailsSummaryRows.push({
       key: {
-        text: 'Blue Badge Number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance Number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession')
+        text: concessionText
       },
       value: {
         html: data.disabled.proof.referenceNumber if data.disabled else '<span>None</span>'
@@ -104,7 +105,7 @@
           {
             href: data.uri.disabilityConcession,
             text: "Change",
-            visuallyHiddenText: "benefit check",
+            visuallyHiddenText: concessionText,
             attributes: { id: 'change-benefit-check' }
           }
         ]
