@@ -18,7 +18,11 @@ const validator = Joi.object({
   'country-code': Joi.string().required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(ADDRESS_ENTRY.page, ADDRESS_ENTRY.uri, validator, nextPage, async () => ({
-  countries: await countries.getAll(),
-  lookupPage: ADDRESS_LOOKUP.uri
-}))
+export default pageRoute(ADDRESS_ENTRY.page, ADDRESS_ENTRY.uri, validator, nextPage, async request => {
+  const { addresses, searchTerms } = await request.cache().helpers.addressLookup.getCurrentPermission()
+  return {
+    searchTerms: !addresses?.length && searchTerms ? searchTerms : null,
+    countries: await countries.getAll(),
+    lookupPage: ADDRESS_LOOKUP.uri
+  }
+})
