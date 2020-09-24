@@ -30,7 +30,6 @@ const mockJuniorProductDetails = [
 ]
 
 jest.mock('@defra-fish/connectors-lib')
-
 jest.mock('../../processors/payment.js')
 jest.mock('../../services/payment/govuk-pay-service.js', () => ({
   sendPayment: () =>
@@ -132,13 +131,14 @@ describe('Google Analytics for agreed handler', () => {
     expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(mockJuniorProductDetails, expect.any(String), expect.any(String))
   })
 
-  it('sends empty payment id when transaction cost is zero', async () => {
-    const request = getMockRequest({ cost: 0 })
+  it('sends session id as payment id when transaction cost is zero', async () => {
+    const sessionId = 'qwe-345-lkj-101'
+    const request = getMockRequest({ cost: 0, sessionId })
     getTrackingProductDetailsFromTransaction.mockReturnValueOnce(mockJuniorProductDetails)
 
     await agreedHandler(request, getMockResponseToolkit())
 
-    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), '', expect.any(String))
+    expect(request.ga.ecommerce.mock.results[0].value.purchase).toHaveBeenCalledWith(expect.any(Array), sessionId, expect.any(String))
   })
 
   it('sends purchase event with expected data when transaction cost is zero', async () => {
@@ -152,7 +152,7 @@ describe('Google Analytics for agreed handler', () => {
   })
 })
 
-const getMockRequest = ({ checkout = true, payment_id = 'aaa111', cost = 1 } = {}) => ({
+const getMockRequest = ({ checkout = true, payment_id = 'aaa111', cost = 1, sessionId = 'aaa111' } = {}) => ({
   cache: jest.fn(() => ({
     helpers: {
       status: {
@@ -193,7 +193,8 @@ const getMockRequest = ({ checkout = true, payment_id = 'aaa111', cost = 1 } = {
         }),
         set: () => {}
       }
-    }
+    },
+    getId: () => sessionId
   })),
   ga: {
     ecommerce: jest.fn(() => ({
