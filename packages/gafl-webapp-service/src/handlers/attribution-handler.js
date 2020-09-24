@@ -9,6 +9,9 @@ import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
 export default async (request, h) => {
   const redirectTarget = process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT
   const cache = request.cache()
+  if (!(request.query[UTM.CAMPAIGN] && request.query[UTM.SOURCE])) {
+    console.warn('Campaign and source values should be set in attribution')
+  }
   await cache.helpers.status.set({
     attribution: {
       [UTM.CAMPAIGN]: request.query[UTM.CAMPAIGN],
