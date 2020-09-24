@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.72 (2020-09-24)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#382](https://github.com/DEFRA/rod-licensing/pull/382) Use NODE_ENV in environment name of service-status output ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.71 (2020-09-24)
 
 #### :bug: Bug Fix
