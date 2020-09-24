@@ -18,6 +18,31 @@
 {% endblock %}
 
 {% block header %}
+    <div id="global-cookie-message" class="cookie-banner no-print" role="region" aria-label="cookie banner">
+      <div class="govuk-width-container">
+        <p class="govuk-body">
+          This website only stores the cookies that are essential to make it work. Read more about <a class="govuk-link" href="/guidance/cookies">how we use cookies</a>
+        </p>
+      </div>
+    </div>
+    <script nonce={{nonce}} type="text/javascript">
+        (function () {
+        'use strict'
+        var cookies = document.cookie.split(';').map(c => c.trim().split('='))
+        var gds_seen_cookie_message = document.cookie.split(';').some(c => /^\s*?gds_seen_cookie_message=/.test(c))
+            if (gds_seen_cookie_message) {
+                var elem = document.getElementById('global-cookie-message')
+                if (elem.parentNode) {
+                    elem.parentNode.removeChild(elem)
+                }
+            } else {
+                debugger
+                var expiry = new Date()
+                expiry.setDate(expiry.getDate() + 90)
+                document.cookie = ' gds_seen_cookie_message=true; expires=' + expiry.toUTCString()
+            }
+        })()
+    </script>
     {{ govukHeader({
             assetsPath: assetPath + '/images',
             homepageUrl: "https://www.gov.uk/",
@@ -31,7 +56,7 @@
 {% block beforeContent %}
     {% if TELESALES %}
         {{ govukPhaseBanner({
-            tag: {
+            tag: { 
                 text: "beta"
             },
             html: '<b>User:</b>&nbsp;&nbsp;' + credentials.name + ' (' + credentials.email + ')' if credentials else '<b>User:</b>&nbsp;&nbsp;Not logged in',
