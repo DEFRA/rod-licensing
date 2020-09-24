@@ -8,6 +8,7 @@ export default {
   plugin: HapiAndHealthy,
   options: {
     id: Project.packageJson.name,
+    env: process.env.NODE_ENV,
     name: Project.packageJson.description,
     version: Project.packageJson.version,
     custom: {

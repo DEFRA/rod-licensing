@@ -1,4 +1,23 @@
 
+## v0.3.0-rc.72 (2020-09-24)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#382](https://github.com/DEFRA/rod-licensing/pull/382) Use NODE_ENV in environment name of service-status output ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.71 (2020-09-24)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#367](https://github.com/DEFRA/rod-licensing/pull/367) Bugfix: Junior Licences not tracked as sales ([@jaucourt](https://github.com/jaucourt))
+  * [#364](https://github.com/DEFRA/rod-licensing/pull/364) Bugfix: Campaign values not registering in GA ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v0.3.0-rc.70 (2020-09-23)
 
 #### :rocket: Enhancement
