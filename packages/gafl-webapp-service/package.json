@@ -50,7 +50,7 @@
     "@hapi/scooter": "^6.0.0",
     "@hapi/vision": "^6.0.1",
     "blankie": "^5.0.0",
-    "debug": "^4.1.1",
+    "debug": "^4.2.0",
     "disinfect": "^1.1.0",
     "find": "^0.3.0",
     "flatpickr": "^4.6.6",
