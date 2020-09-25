@@ -21,6 +21,7 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>remember what notifications you’ve seen so that you’re not shown them more than once</li>
             <li>to protect the service against malicious activity</li>
+            <li>to ensure that you have a consistent experience when we make changes to the service</li>
         </ul>
 
         <p class="govuk-body">Find out <a class="govuk-link" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies on the Information Commissioners' website</a>.</p>
@@ -49,6 +50,20 @@
           head: [ { text: "Name" }, { text: "Purpose" }, { text: "Expires" } ],
           rows: [
             [ { text: "seen_cookie_message" }, { text: "Stores a message to let us know that you have seen our cookie message" }, { text: "1 month" } ]
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Infrastructure cookies</h2>
+
+        <p class="govuk-body">These cookies ensure you have a consistent experience when we make changes to the service.</p>
+
+        {{ govukTable({
+          caption: "Infrastructure cookie details",
+          firstCellIsHeader: true,
+          head: [ { text: "Name" }, { text: "Purpose" }, { text: "Expires" } ],
+          rows: [
+            [ { text: cookie.alb }, { text: "Used to ensure you receive a consistent experience" }, { text: "3 hours after you stop using the service" } ],
+            [ { text: cookie.albcors }, { text: "Used to ensure you receive a consistent experience" }, { text: "3 hours after you stop using the service" } ]
           ]
         }) }}
 

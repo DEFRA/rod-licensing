@@ -15,7 +15,7 @@ import {
   ATTRIBUTION
 } from '../uri.js'
 
-import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
 import agreedHandler from '../handlers/agreed-handler.js'
@@ -94,7 +94,9 @@ export default [
         },
         cookie: {
           csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
-          sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+          sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,
+          alb: ALB_COOKIE_NAME,
+          albcors: ALBCORS_COOKIE_NAME
         }
       })
   },
