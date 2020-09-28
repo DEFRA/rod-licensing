@@ -40,7 +40,7 @@
     "@defra-fish/dynamics-lib": "0.3.0-rc.73",
     "@hapi/boom": "^9.1.0",
     "@hapi/hapi": "^19.2.0",
-    "@hapi/inert": "^6.0.2",
+    "@hapi/inert": "^6.0.3",
     "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.1",
     "crypto-random-string": "^3.3.0",

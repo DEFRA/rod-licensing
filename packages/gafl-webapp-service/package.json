@@ -44,7 +44,7 @@
     "@hapi/cookie": "^11.0.1",
     "@hapi/crumb": "^8.0.0",
     "@hapi/hapi": "^19.2.0",
-    "@hapi/inert": "^6.0.2",
+    "@hapi/inert": "^6.0.3",
     "@hapi/joi": "^17.1.1",
     "@hapi/joi-date": "^2.0.1",
     "@hapi/scooter": "^6.0.0",
