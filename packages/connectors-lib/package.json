@@ -34,8 +34,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "aws-sdk": "^2.747.0",
-    "debug": "^4.1.1",
+    "aws-sdk": "^2.762.0",
+    "debug": "^4.2.0",
     "node-fetch": "^2.6.1"
   }
 }
