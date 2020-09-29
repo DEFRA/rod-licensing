@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.75 (2020-09-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#383](https://github.com/DEFRA/rod-licensing/pull/383) Add load balancer cookies to the guidance page ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 
 
 ## v0.3.0-rc.72 (2020-09-24)
