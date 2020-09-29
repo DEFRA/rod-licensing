@@ -1,6 +1,6 @@
 import { ADDRESS_LOOKUP, ADDRESS_ENTRY, OS_TERMS } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'

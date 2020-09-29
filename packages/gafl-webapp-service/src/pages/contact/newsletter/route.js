@@ -1,6 +1,6 @@
 import { NEWSLETTER } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 

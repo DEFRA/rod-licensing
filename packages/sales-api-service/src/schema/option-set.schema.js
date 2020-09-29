@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 
 export const optionSetOptionExample = { id: 910400000, label: 'Example Label', description: 'Example Description' }
 

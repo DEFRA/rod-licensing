@@ -2,7 +2,7 @@ import { CONTACT, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { hasJunior } from '../../../processors/concession-helper.js'

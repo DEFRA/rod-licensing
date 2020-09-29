@@ -1,6 +1,6 @@
 'use strict'
 
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 
 /**
  * Read the environment, validate and return either a representational object or an error for a given

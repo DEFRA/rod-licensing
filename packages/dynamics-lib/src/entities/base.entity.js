@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import util from 'util'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import moment from 'moment'
 import pluralize from 'pluralize'
 import { escapeODataStringValue } from '../client/util.js'

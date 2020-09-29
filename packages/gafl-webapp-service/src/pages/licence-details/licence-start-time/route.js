@@ -1,7 +1,7 @@
 import { LICENCE_START_TIME } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'

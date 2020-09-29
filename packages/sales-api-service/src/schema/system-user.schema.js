@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 
 export const systemUsersRequestParamsSchema = Joi.object({
   oid: Joi.string()

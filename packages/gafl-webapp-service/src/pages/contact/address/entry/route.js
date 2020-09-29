@@ -1,6 +1,6 @@
 import { ADDRESS_ENTRY, ADDRESS_LOOKUP } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { countries } from '../../../../processors/refdata-helper.js'
 import { nextPage } from '../../../../routes/next-page.js'
