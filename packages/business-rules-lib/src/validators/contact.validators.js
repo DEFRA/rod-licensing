@@ -292,7 +292,7 @@ const nameStringRegex = new RegExp(`^${nameTermRegex}(?:[-'\\s]${nameTermRegex})
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.AnySchema}
  */
-const createNameStringValidator = (joi, { minimumLength = 2 }) =>
+const createNameStringValidator = (joi, { minimumLength }) =>
   joi.string().extend({
     type: 'name',
     rules: {
