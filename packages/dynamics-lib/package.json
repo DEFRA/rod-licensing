@@ -33,7 +33,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@hapi/joi": "^17.1.1",
+    "joi": "^17.1.1",
     "cache-manager": "^3.4.0",
     "cache-manager-ioredis": "^2.1.0",
     "debug": "^4.2.0",

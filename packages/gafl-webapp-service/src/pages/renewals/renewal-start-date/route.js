@@ -2,7 +2,7 @@ import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/busi
 import { dateFormats } from '../../../constants.js'
 import { RENEWAL_START_DATE, RENEWAL_START_VALIDATE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import JoiDate from '@hapi/joi-date'
 import moment from 'moment-timezone'
 import { displayExpiryDate } from '../../../processors/date-and-time-display.js'

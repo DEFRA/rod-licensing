@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { buildJoiOptionSetValidator, createReferenceDataEntityValidator } from './validators/validators.js'
 import { Concession } from '@defra-fish/dynamics-lib'
 import { v4 as uuid } from 'uuid'

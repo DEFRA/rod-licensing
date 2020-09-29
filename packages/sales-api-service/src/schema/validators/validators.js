@@ -4,7 +4,7 @@ import {
   getReferenceDataForEntityAndId
 } from '../../services/reference-data.service.js'
 import { findById, findByAlternateKey, PermitConcession, CacheableOperation } from '@defra-fish/dynamics-lib'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 
 export function buildJoiOptionSetValidator (optionSetName, exampleValue) {
   return Joi.string()

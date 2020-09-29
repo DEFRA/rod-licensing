@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { optionSetOption } from './option-set.schema.js'
 import { v4 as uuid } from 'uuid'
 

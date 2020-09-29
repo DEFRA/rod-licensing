@@ -1,5 +1,5 @@
 import { DATE_OF_BIRTH } from '../../../uri.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import pageRoute from '../../../routes/page-route.js'
 import { validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'

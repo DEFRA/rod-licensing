@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { buildJoiOptionSetValidator, createEntityIdValidator } from './validators/validators.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'

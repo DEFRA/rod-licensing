@@ -1,6 +1,6 @@
 import { ADDRESS_SELECT, ADDRESS_LOOKUP, ADDRESS_ENTRY } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { nextPage } from '../../../../routes/next-page.js'
 
 const getData = async request => {

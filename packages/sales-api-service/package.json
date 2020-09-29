@@ -39,15 +39,15 @@
     "@defra-fish/connectors-lib": "0.3.0-rc.73",
     "@defra-fish/dynamics-lib": "0.3.0-rc.73",
     "@hapi/boom": "^9.1.0",
-    "@hapi/hapi": "^19.2.0",
+    "@hapi/hapi": "^20.0.1",
     "@hapi/inert": "^6.0.3",
-    "@hapi/joi": "^17.1.1",
     "@hapi/vision": "^6.0.1",
     "crypto-random-string": "^3.3.0",
     "debug": "^4.2.0",
     "dot-prop": "^5.3.0",
     "hapi-and-healthy": "^7.0.7",
-    "hapi-swagger": "^13.1.0",
+    "hapi-swagger": "^14.0.0",
+    "joi": "^17.1.1",
     "moment": "^2.29.0",
     "uuid": "^8.3.0"
   }

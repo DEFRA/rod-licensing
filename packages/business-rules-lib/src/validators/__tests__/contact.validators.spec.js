@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import * as contactValidation from '../contact.validators.js'
 import moment from 'moment'
 

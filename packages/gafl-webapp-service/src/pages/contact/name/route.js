@@ -1,5 +1,5 @@
 import pageRoute from '../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { NAME } from '../../../uri.js'
 import { validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'

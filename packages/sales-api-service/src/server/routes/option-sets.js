@@ -1,5 +1,5 @@
 import Boom from '@hapi/boom'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { getGlobalOptionSets, getGlobalOptionSet } from '../../services/reference-data.service.js'
 import { optionSetMappings, optionSetDefinition } from '../../schema/option-set.schema.js'
 
