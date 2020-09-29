@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "0.3.0-rc.73",
+  "version": "0.3.0-rc.74",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -36,8 +36,8 @@
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "0.3.0-rc.73",
-    "@defra-fish/connectors-lib": "0.3.0-rc.73",
+    "@defra-fish/business-rules-lib": "0.3.0-rc.74",
+    "@defra-fish/connectors-lib": "0.3.0-rc.74",
     "@defra/hapi-gapi": "^1.0.2",
     "@hapi/boom": "^9.1.0",
     "@hapi/catbox-redis": "^6.0.2",
@@ -45,6 +45,7 @@
     "@hapi/crumb": "^8.0.1",
     "@hapi/hapi": "^20.0.1",
     "@hapi/inert": "^6.0.3",
+    "@hapi/joi-date": "^2.0.1",
     "@hapi/scooter": "^6.0.1",
     "@hapi/vision": "^6.0.1",
     "blankie": "^5.0.0",
@@ -54,7 +55,6 @@
     "flatpickr": "^4.6.6",
     "govuk-frontend": "^3.9.1",
     "joi": "^17.1.1",
-    "@hapi/joi-date": "^2.0.1",
     "moment": "^2.29.0",
     "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.1",
