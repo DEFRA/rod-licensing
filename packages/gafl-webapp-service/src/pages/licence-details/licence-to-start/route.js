@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import moment from 'moment'
 import JoiDate from '@hapi/joi-date'
 import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'

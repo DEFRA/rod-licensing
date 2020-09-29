@@ -1,7 +1,7 @@
 import { LICENCE_TYPE, FRESHWATER_FISING_RULES, LOCAL_BYELAWS } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { pricingDetail } from '../../../processors/pricing-summary.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 

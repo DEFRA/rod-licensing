@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { contactRequestSchema } from './contact.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
 import { optionSetOption } from './option-set.schema.js'

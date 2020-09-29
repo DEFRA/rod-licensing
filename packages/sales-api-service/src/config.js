@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 const defaultStagingTtl = 60 * 60 * 168
 
 const validateAndConvert = (config, schema) => {

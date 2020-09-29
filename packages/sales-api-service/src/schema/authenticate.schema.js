@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { concessionProofSchema } from './concession-proof.schema.js'
 import { permitSchema } from './permit.schema.js'

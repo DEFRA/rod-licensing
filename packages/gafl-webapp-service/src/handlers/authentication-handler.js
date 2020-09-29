@@ -1,7 +1,7 @@
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
 import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../uri.js'
 import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS } from '@defra-fish/business-rules-lib'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { salesApi } from '@defra-fish/connectors-lib'
 import moment from 'moment'
 

@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { getReferenceDataForEntity, ENTITY_TYPES } from '../../services/reference-data.service.js'
 import { referenceDataItemListSchema } from '../../schema/reference-data.schema.js'
 import dotProp from 'dot-prop'

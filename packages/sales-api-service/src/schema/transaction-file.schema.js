@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { buildJoiOptionSetValidator } from './validators/validators.js'
 
 export const transactionFileParamsSchema = Joi.object({

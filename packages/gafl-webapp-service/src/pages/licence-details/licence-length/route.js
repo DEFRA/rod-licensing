@@ -1,6 +1,6 @@
 import { LICENCE_LENGTH } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { pricingDetail } from '../../../processors/pricing-summary.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
