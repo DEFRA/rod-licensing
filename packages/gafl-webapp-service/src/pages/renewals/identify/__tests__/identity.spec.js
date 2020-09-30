@@ -20,11 +20,6 @@ import * as constants from '../../../../processors/mapping-constants.js'
 import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 
-jest.mock('node-fetch')
-
-mockSalesApi()
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
-
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
@@ -45,7 +40,7 @@ const VALID_RENEWAL_PUBLIC_URI = RENEWAL_PUBLIC.uri.replace('{referenceNumber?}'
 const dobInvalid = moment().add(1, 'years')
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+salesApi.countries.getAll = jest.fn(() => Promise.resolve(mockDefraCountries))
 
 describe('The easy renewal identification page', () => {
   it('returns a failure when called with an invalid permission reference ', async () => {
