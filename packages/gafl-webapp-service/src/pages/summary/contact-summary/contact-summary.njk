@@ -97,7 +97,7 @@
     }) }}
 {% else %}
     {% if data.contactMethod === data.howContacted['none'] %}
-        {% set licencePref = 'I will make a note on confirmation' %}
+        {% set licencePref = 'Make a note on confirmation' %}
     {% elseif data.contactMethod === data.howContacted['email'] %}
         {% set licencePref = 'By email: ' + data.permission.licensee.email %}
     {% elseif data.contactMethod === data.howContacted['text'] %}
