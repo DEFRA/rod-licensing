@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.77 (2020-09-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#396](https://github.com/DEFRA/rod-licensing/pull/396) Fix content ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.76 (2020-09-29)
 
 #### :rocket: Enhancement
