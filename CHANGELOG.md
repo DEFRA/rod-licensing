@@ -1,4 +1,22 @@
 
+## v0.3.0-rc.76 (2020-09-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`
+  * [#395](https://github.com/DEFRA/rod-licensing/pull/395) Adjust contact name validator to ensure 100% coverage  ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.75 (2020-09-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#383](https://github.com/DEFRA/rod-licensing/pull/383) Add load balancer cookies to the guidance page ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 
 
 ## v0.3.0-rc.72 (2020-09-24)
