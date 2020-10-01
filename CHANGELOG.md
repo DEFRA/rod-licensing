@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.78 (2020-10-01)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#397](https://github.com/DEFRA/rod-licensing/pull/397) Amend accept cookies cookie name ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v0.3.0-rc.77 (2020-09-30)
 
 #### :rocket: Enhancement
