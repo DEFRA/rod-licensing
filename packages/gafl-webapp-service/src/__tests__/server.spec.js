@@ -40,23 +40,25 @@ describe('The server', () => {
     )
   })
 
-  describe('handles process interrupts', () => {
-    it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', (signal, done) => {
+  describe.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', signal => {
+    it('calls the hapi shutdown hook', done => {
       jest.isolateModules(async () => {
         const { shutdownBehavior, createServer, init } = require('../server.js')
         try {
           createServer((({ port, ...l }) => l)(catboxOptions))
           await init()
           shutdownBehavior()
-          jest.spyOn(process, 'exit').mockImplementation(async () => {
-            expect(true).toBeTruthy()
-            // Allows time for the server to shut down
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            done()
-          })
-          process.emit(signal)
+          const serverStopSpy = jest.spyOn(server, 'stop').mockImplementation(jest.fn())
+          const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
+          await process.emit(signal)
+          expect(serverStopSpy).toHaveBeenCalled()
+          expect(processStopSpy).toHaveBeenCalledWith(0)
+          jest.restoreAllMocks()
+          done()
         } catch (e) {
-          console.log(e)
+          done(e)
+        } finally {
+          await server.stop()
         }
       })
     })
