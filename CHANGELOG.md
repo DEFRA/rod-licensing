@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.79 (2020-10-05)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sqs-receiver-service`
+  * [#398](https://github.com/DEFRA/rod-licensing/pull/398) Implement distributed locks to prevent concurrent execution of ETL tasks ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.78 (2020-10-01)
 
 #### :bug: Bug Fix
