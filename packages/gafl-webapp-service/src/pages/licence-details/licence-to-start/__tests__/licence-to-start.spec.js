@@ -166,4 +166,29 @@ describe("The 'when would you like you licence to start?' page", () => {
     expect(permission.licenceToStart).toBe(licenceToStart.AFTER_PAYMENT)
     expect(permission.licenceStartTime).toBeFalsy()
   })
+
+  it('Ensure date limits are calculated each time the validator runs', async () => {
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    jest.isolateModules(async () => {
+      try {
+        jest.mock('moment')
+        const moment = require('moment')
+        moment.mockImplementation(() => {
+          return jest
+            .requireActual('moment')()
+            .add(46, 'day')
+        })
+        const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
+          'licence-to-start': licenceToStart.ANOTHER_DATE,
+          ...startDateHelper(moment().add(48, 'day'))
+        })
+        expect(response.statusCode).toBe(302)
+        expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
+        jest.restoreAllMocks()
+      } catch (e) {
+        console.error(e)
+      }
+    })
+  })
 })
