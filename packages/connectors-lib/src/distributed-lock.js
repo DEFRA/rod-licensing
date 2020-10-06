@@ -73,15 +73,28 @@ export class DistributedLock {
    * automatically be released
    *
    * @param {function: Promise} onLockObtained the method to execute after obtaining a lock
+   * @param {function(Error): Promise} [onLockError] optionally, a method to execute if an error occurred attempting to obtain the lock
    * @param {number} maxWaitSeconds the time to wait when attempting to obtain the lock
    * @returns {Promise<void>}
    */
-  async obtainAndExecute ({ onLockObtained, maxWaitSeconds }) {
-    await this.obtain({ maxWaitSeconds })
+  async obtainAndExecute ({
+    onLockObtained,
+    onLockError = async e => {
+      throw e
+    },
+    maxWaitSeconds
+  }) {
     try {
-      await onLockObtained()
-    } finally {
-      await this.release()
+      await this.obtain({ maxWaitSeconds })
+    } catch (e) {
+      await onLockError(e)
+    }
+    if (this._lock) {
+      try {
+        await onLockObtained()
+      } finally {
+        await this.release()
+      }
     }
   }
 

@@ -141,7 +141,7 @@ describe('DistributedLock', () => {
     })
   })
 
-  it('throws if the lock cannot be obtained within the allowed time', async () => {
+  it('throws if onLockError not set and the lock cannot be obtained within the allowed time', async () => {
     const lock = new DistributedLock('test-process1', 50)
 
     mockLockFn.mockRejectedValue(new Error('Lock not obtainable'))
@@ -153,5 +153,22 @@ describe('DistributedLock', () => {
         maxWaitSeconds: 0
       })
     ).rejects.toThrow("Unable to obtain the lock 'test-process1' within the required time.")
+  })
+
+  it('invokes onLockError if it is set and the lock cannot be obtained within the allowed time', async () => {
+    const lock = new DistributedLock('test-process1', 50)
+    mockLockFn.mockRejectedValue(new Error('Lock not obtainable'))
+
+    const mockOnLockObtained = jest.fn()
+    const mockOnLockError = jest.fn()
+    await expect(
+      lock.obtainAndExecute({
+        onLockObtained: mockOnLockObtained,
+        onLockError: mockOnLockError,
+        maxWaitSeconds: 0
+      })
+    ).resolves.toBeUndefined()
+    expect(mockOnLockObtained).not.toHaveBeenCalled()
+    expect(mockOnLockError).toHaveBeenCalledWith(expect.any(Error))
   })
 })

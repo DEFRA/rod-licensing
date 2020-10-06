@@ -11,6 +11,10 @@ lock
     onLockObtained: async () => {
       await execute(incompletePurchaseAgeMinutes, scanDurationHours)
     },
+    onLockError: async e => {
+      console.log('Unable to obtain a lock for the payment mop-up job, skipping execution.', e)
+      process.exit(0)
+    },
     maxWaitSeconds: 0
   })
   .catch(console.error)
