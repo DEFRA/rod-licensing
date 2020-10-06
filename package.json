@@ -35,7 +35,7 @@
     "@babel/preset-env": "^7.11.5",
     "@types/hapi__hapi": "^20.0.1",
     "@types/jest": "^26.0.14",
-    "aws-sdk": "^2.765.0",
+    "aws-sdk": "^2.767.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.3.0",
     "clone-deep": "^4.0.1",
