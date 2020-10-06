@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.81 (2020-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#404](https://github.com/DEFRA/rod-licensing/pull/404) Ensure date validator schemas are created at the time of use ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.80 (2020-10-05)
 
 #### :rocket: Enhancement
