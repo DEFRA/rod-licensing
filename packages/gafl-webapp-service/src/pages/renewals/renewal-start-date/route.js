@@ -8,15 +8,16 @@ import moment from 'moment-timezone'
 import { displayExpiryDate } from '../../../processors/date-and-time-display.js'
 const JoiX = Joi.extend(JoiDate)
 
-const schema = Joi.object({
-  'licence-start-date': JoiX.date()
-    .format(dateFormats)
-    .required()
-})
-
 const validator = payload => {
   const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
-  Joi.assert({ 'licence-start-date': licenceStartDate }, schema)
+  Joi.assert(
+    { 'licence-start-date': licenceStartDate },
+    Joi.object({
+      'licence-start-date': JoiX.date()
+        .format(dateFormats)
+        .required()
+    })
+  )
 }
 
 const getData = async request => {

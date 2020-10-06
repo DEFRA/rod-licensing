@@ -9,21 +9,6 @@ import { nextPage } from '../../../routes/next-page.js'
 
 const JoiX = Joi.extend(JoiDate)
 
-const schema = Joi.object({
-  'licence-to-start': Joi.string()
-    .valid('after-payment', 'another-date')
-    .required(),
-  'licence-start-date': Joi.alternatives().conditional('licence-to-start', {
-    is: 'another-date',
-    then: JoiX.date()
-      .format(dateFormats)
-      .min(moment().add(-1, 'days'))
-      .max(moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
-      .required(),
-    otherwise: Joi.string().empty('')
-  })
-}).options({ abortEarly: false, allowUnknown: true })
-
 const validator = payload => {
   const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
   Joi.assert(
@@ -31,7 +16,20 @@ const validator = payload => {
       'licence-start-date': licenceStartDate,
       'licence-to-start': payload['licence-to-start']
     },
-    schema
+    Joi.object({
+      'licence-to-start': Joi.string()
+        .valid('after-payment', 'another-date')
+        .required(),
+      'licence-start-date': Joi.alternatives().conditional('licence-to-start', {
+        is: 'another-date',
+        then: JoiX.date()
+          .format(dateFormats)
+          .min(moment().startOf('day'))
+          .max(moment().add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
+          .required(),
+        otherwise: Joi.string().empty('')
+      })
+    }).options({ abortEarly: false, allowUnknown: true })
   )
 }
 
