@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.80 (2020-10-05)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#403](https://github.com/DEFRA/rod-licensing/pull/403) Tweak fulfilment to ensure duration/equipment compatible with old service ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.79 (2020-10-05)
 
 #### :rocket: Enhancement
