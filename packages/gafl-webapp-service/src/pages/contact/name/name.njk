@@ -6,15 +6,15 @@
 {% set errorMap = {
         'first-name': {
             'string.empty': { ref: '#first-name', text: 'Enter your first name' },
-            'string.min': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
-            'string.max': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
+            'string.min': { ref: '#first-name', text: 'Your first name must contain at least 2 letters' },
+            'string.max': { ref: '#first-name', text: 'Your first name must not be longer than 100 letters' },
             'string.forbidden': { ref: '#first-name', text: 'Your first name must only contain letters' }
         },
         'last-name': {
             'string.empty': { ref: '#last-name', text: 'Enter your last name' },
-            'string.min': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
-            'string.max': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
-            'string.forbidden': { ref: '#last-name', Your: 'The last name must only contain letters' }
+            'string.min': { ref: '#last-name', text: 'Your last name must contain at least 2 letters' },
+            'string.max': { ref: '#last-name', text: 'Your last name must not be longer than 100 letters' },
+            'string.forbidden': { ref: '#last-name', 'Your last name must only contain letters' }
         }
     }
 %}
