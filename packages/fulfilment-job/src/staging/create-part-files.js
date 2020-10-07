@@ -79,7 +79,7 @@ const getTargetFulfilmentFile = async () => {
   let targetFile = files.find(file => file.status.label === 'Pending')
   if (!targetFile) {
     targetFile = new FulfilmentRequestFile()
-    targetFile.fileName = `EAFF${EXECUTION_DATE.format('YYYYMMDD')}${String(files.length + 1).padStart(4, '0')}.json`
+    targetFile.fileName = `EAFF${EXECUTION_DATE.format('YYYYMMDD')}${String(getNextInSequence(files)).padStart(4, '0')}.json`
     targetFile.date = EXECUTION_DATE
     targetFile.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Pending')
     targetFile.notes = 'The fulfilment file is currently being populated prior to exporting.'
@@ -90,5 +90,14 @@ const getTargetFulfilmentFile = async () => {
   }
   return targetFile
 }
+
+/**
+ * Calculate the next sequence number based on any existing files.
+ *
+ * @param files the existing fileset
+ * @returns {number} the next sequence number to be used
+ */
+const getNextInSequence = files =>
+  files.reduce((acc, file) => Math.max(acc, 1 + Number.parseInt(/^EAFF\d{8}0*(?<seq>\d+).json$/.exec(file.fileName).groups.seq)), 1)
 
 const getFulfilmentFiles = async () => (await executeQuery(findFulfilmentFiles({ date: EXECUTION_DATE }))).map(r => r.entity)

@@ -19,6 +19,7 @@ const pipelinePromise = promisify(pipeline)
 export const deliverFulfilmentFiles = async () => {
   debug('Aggregating fulfilment part files')
   const results = await executeQuery(findFulfilmentFiles({ status: await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported') }))
+  results.sort((a, b) => a.entity.fileName.localeCompare(b.entity.fileName))
   for (const { entity: file } of results) {
     await deliver(file.fileName, await createDataReadStream(file))
     await deliver(`${file.fileName}.sha256`, await createDataReadStream(file), createHash('sha256').setEncoding('hex'))
