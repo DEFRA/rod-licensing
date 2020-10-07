@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.82 (2020-10-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#406](https://github.com/DEFRA/rod-licensing/pull/406) Change error messages on name page ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.81 (2020-10-06)
 
 #### :bug: Bug Fix
