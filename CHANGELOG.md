@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.84 (2020-10-07)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#409](https://github.com/DEFRA/rod-licensing/pull/409) Handle cases where no country available on contact record being fulfilled ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.83 (2020-10-07)
 
 #### :rocket: Enhancement
