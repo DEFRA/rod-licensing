@@ -14,6 +14,15 @@ const debug = db('pocl:processor')
  * @type {DistributedLock}
  */
 const lock = new DistributedLock('pocl-etl', 5 * 60 * 1000)
+
+/**
+ * Execute the POCL processor.  This will:
+ *   - scan the target FTP server for files to import and stage these into S3
+ *   - check S3 for files not yet imported or partially imported
+ *   - stage any outstanding data into Dynamics via the Sales API
+ *
+ * @returns {Promise<void>}
+ */
 export async function execute () {
   await lock.obtainAndExecute({
     onLockObtained: async () => {
@@ -29,6 +38,10 @@ export async function execute () {
       } finally {
         removeTemp()
       }
+    },
+    onLockError: async e => {
+      console.log('Unable to obtain a lock for the pocl job, skipping execution.', e)
+      process.exit(0)
     },
     maxWaitSeconds: 0
   })

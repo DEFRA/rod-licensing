@@ -56,4 +56,10 @@ export class CacheableOperation {
   }
 }
 
+/**
+ * Terminate the cache manager to release any resources
+ * @returns {Promise<boolean|*>}
+ */
+export const terminateCacheManager = async () => cache.store.name === 'redis' && cache.store.getClient().quit()
+
 export default cache

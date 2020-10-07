@@ -1,13 +1,24 @@
 import * as processor from '../processors/processor.js'
-import { DistributedLock } from '@defra-fish/connectors-lib'
 
+global.simulateLockError = false
+global.lockReleased = false
 jest.mock('@defra-fish/connectors-lib', () => ({
   ...jest.requireActual('@defra-fish/connectors-lib'),
   DistributedLock: jest.fn().mockReturnValue({
-    obtainAndExecute: jest.fn(async ({ onLockObtained }) => {
-      await onLockObtained()
+    obtainAndExecute: jest.fn(async ({ onLockObtained, onLockError }) => {
+      if (global.simulateLockError) {
+        await onLockError(new Error('Test error'))
+      } else {
+        try {
+          await onLockObtained()
+        } finally {
+          global.lockReleased = true
+        }
+      }
     }),
-    release: jest.fn()
+    release: jest.fn(async () => {
+      global.lockReleased = true
+    })
   })
 }))
 jest.mock('../processors/processor.js')
@@ -15,25 +26,35 @@ jest.mock('../processors/processor.js')
 describe('payment-mop-up-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    global.simulateLockError = false
+    global.lockReleased = false
   })
 
-  it('starts the mop up job with --age-minutes=3 and --scan-duration=67', () => {
+  it('starts the mop up job with --age-minutes=3 and --scan-duration=67', done => {
     jest.isolateModules(() => {
       processor.execute.mockResolvedValue(undefined)
       process.env.INCOMPLETE_PURCHASE_AGE_MINUTES = 3
       process.env.SCAN_DURATION_HOURS = 67
       require('../payment-mop-up-job.js')
-      expect(processor.execute).toHaveBeenCalledWith(3, 67)
+      process.nextTick(() => {
+        expect(processor.execute).toHaveBeenCalledWith(3, 67)
+        expect(global.lockReleased).toEqual(true)
+        done()
+      })
     })
   })
 
-  it('starts the mop up job with default age of 180 minutes and scan duration of 24 hours', () => {
+  it('starts the mop up job with default age of 180 minutes and scan duration of 24 hours', done => {
     jest.isolateModules(() => {
       processor.execute.mockResolvedValue(undefined)
       delete process.env.INCOMPLETE_PURCHASE_AGE_MINUTES
       delete process.env.SCAN_DURATION_HOURS
       require('../payment-mop-up-job.js')
-      expect(processor.execute).toHaveBeenCalledWith(180, 24)
+      process.nextTick(() => {
+        expect(processor.execute).toHaveBeenCalledWith(180, 24)
+        expect(global.lockReleased).toEqual(true)
+        done()
+      })
     })
   })
 
@@ -46,11 +67,28 @@ describe('payment-mop-up-job', () => {
         require('../payment-mop-up-job.js')
         process.nextTick(() => {
           expect(consoleErrorSpy).toHaveBeenCalledWith(testError)
+          expect(global.lockReleased).toEqual(true)
           done()
         })
       } catch (e) {
         done(e)
       }
+    })
+  })
+
+  it('outputs a warning and exits with code 0 if the lock cannot be obtained', done => {
+    jest.isolateModules(() => {
+      global.simulateLockError = true
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
+      require('../payment-mop-up-job.js')
+      expect(processor.execute).not.toHaveBeenCalled()
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        'Unable to obtain a lock for the payment mop-up job, skipping execution.',
+        expect.any(Error)
+      )
+      expect(processExitSpy).toHaveBeenCalledWith(0)
+      done()
     })
   })
 
@@ -64,7 +102,7 @@ describe('payment-mop-up-job', () => {
         process.nextTick(() => {
           try {
             expect(processStopSpy).toHaveBeenCalledWith(0)
-            expect(DistributedLock.mock.results[0].value.release).toHaveBeenCalled()
+            expect(global.lockReleased).toEqual(true)
             jest.restoreAllMocks()
             done()
           } catch (e) {

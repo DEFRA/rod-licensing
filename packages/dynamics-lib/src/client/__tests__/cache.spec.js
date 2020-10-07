@@ -1,3 +1,4 @@
+const mockCacheManagerClientQuit = jest.fn()
 jest.mock('cache-manager', () => {
   const mockCache = {}
   const mockCacheGet = jest.fn(async (key, value) => mockCache[key])
@@ -10,7 +11,9 @@ jest.mock('cache-manager', () => {
       get: mockCacheGet,
       set: mockCacheSet,
       store: {
+        name: 'redis',
         getClient: () => ({
+          quit: mockCacheManagerClientQuit,
           on: () => {}
         })
       }
@@ -111,5 +114,11 @@ describe('cache', () => {
     expect(testFetchOp).toHaveBeenCalledTimes(2)
     expect(cache.get).toHaveBeenCalledTimes(2)
     expect(cache.set).not.toHaveBeenCalled()
+  })
+
+  it('exposes a method to allow the cache to be terminated', async () => {
+    const { terminateCacheManager } = require('../cache.js')
+    await expect(terminateCacheManager()).resolves.toBeUndefined()
+    expect(mockCacheManagerClientQuit).toHaveBeenCalled()
   })
 })
