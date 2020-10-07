@@ -42,7 +42,7 @@ export async function * fulfilmentDataTransformer (source) {
           ...(licensee.locality && { locality: licensee.locality }),
           town: licensee.town,
           postcode: licensee.postcode,
-          country: licensee.country.label
+          country: licensee.country?.label
         }
       }
     })
