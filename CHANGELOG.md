@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.83 (2020-10-07)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `payment-mop-up-job`, `pocl-job`
+  * [#408](https://github.com/DEFRA/rod-licensing/pull/408) Updates and fixes to the ETL tasks ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.82 (2020-10-07)
 
 #### :rocket: Enhancement
