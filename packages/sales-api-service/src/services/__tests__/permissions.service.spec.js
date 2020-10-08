@@ -1,4 +1,4 @@
-import { generatePermissionNumber, calculateEndDate } from '../permissions.service.js'
+import { generatePermissionNumber, calculateEndDate, generate } from '../permissions.service.js'
 import moment from 'moment'
 import {
   MOCK_12MONTH_SENIOR_PERMIT,
@@ -33,6 +33,8 @@ jest.mock('../reference-data.service.js', () => ({
 }))
 
 describe('permissions service', () => {
+  beforeEach(jest.clearAllMocks)
+
   describe('generatePermissionNumber', () => {
     it('generates a permission number for adults', async () => {
       const now = moment()
@@ -56,7 +58,7 @@ describe('permissions service', () => {
         .startOf('hour')
         .add(1, 'year')
         .format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-1TS3FFT-[A-HJ-NP-Z0-9]{6}$`)
+      const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
 
@@ -82,7 +84,7 @@ describe('permissions service', () => {
         .startOf('hour')
         .add(1, 'day')
         .format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-2WC1JFT-[A-HJ-NP-Z0-9]{6}$`)
+      const expected = new RegExp(`^${block1}-2WC1JFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
 
@@ -108,7 +110,7 @@ describe('permissions service', () => {
         .startOf('hour')
         .add(1, 'day')
         .format('HHDDMMYY')
-      const expected = new RegExp(`^${block1}-2WC1SFT-[A-HJ-NP-Z0-9]{6}$`)
+      const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
   })
@@ -131,6 +133,16 @@ describe('permissions service', () => {
           .add(366, 'days')
           .toISOString()
       )
+    })
+  })
+
+  describe('sequence generator', () => {
+    it('generates a rolling sequence', () => {
+      const results = []
+      for (let i = 0; i < 12; i++) {
+        results.push(generate(i, ['AB', '123']))
+      }
+      expect(results).toEqual(['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'A1', 'A2', 'A3', 'B1', 'B2', 'B3'])
     })
   })
 })
