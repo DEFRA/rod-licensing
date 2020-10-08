@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.87 (2020-10-08)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#412](https://github.com/DEFRA/rod-licensing/pull/412) Update permission number generator to use a sequence and add a checksum ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.86 (2020-10-08)
 
 #### :rocket: Enhancement
