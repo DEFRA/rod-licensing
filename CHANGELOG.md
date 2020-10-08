@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.86 (2020-10-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#413](https://github.com/DEFRA/rod-licensing/pull/413) Add section to privacy policy regarding use of Google Analytics ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.84 (2020-10-07)
 
