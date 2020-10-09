@@ -17,7 +17,8 @@ export const preparePayment = (request, transaction) => {
     amount: transaction.cost * 100,
     reference: transaction.id,
     description: transaction.permissions.length === 1 ? licenceTypeAndLengthDisplay(transaction.permissions[0]) : 'Multiple permits',
-    delayed_capture: false
+    delayed_capture: false,
+    moto: process.env.CHANNEL === 'telesales'
   }
 
   if (transaction.permissions.length === 1) {
