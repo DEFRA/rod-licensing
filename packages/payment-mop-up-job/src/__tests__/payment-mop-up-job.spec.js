@@ -44,14 +44,14 @@ describe('payment-mop-up-job', () => {
     })
   })
 
-  it('starts the mop up job with default age of 180 minutes and scan duration of 24 hours', done => {
+  it('starts the mop up job with default age of 60 minutes and scan duration of 24 hours', done => {
     jest.isolateModules(() => {
       processor.execute.mockResolvedValue(undefined)
       delete process.env.INCOMPLETE_PURCHASE_AGE_MINUTES
       delete process.env.SCAN_DURATION_HOURS
       require('../payment-mop-up-job.js')
       process.nextTick(() => {
-        expect(processor.execute).toHaveBeenCalledWith(180, 24)
+        expect(processor.execute).toHaveBeenCalledWith(60, 24)
         expect(global.lockReleased).toEqual(true)
         done()
       })
