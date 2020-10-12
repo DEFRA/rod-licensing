@@ -62,7 +62,7 @@
     "openid-client": "^4.1.1",
     "pdfmake": "^0.1.66",
     "semver": "^7.3.2",
-    "uuid": "^8.3.0"
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",
