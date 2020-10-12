@@ -1,4 +1,12 @@
 
+## v0.3.0-rc.91 (2020-10-12)
+
+#### :rocket: Enhancement
+* [#425](https://github.com/DEFRA/rod-licensing/pull/425) Improve versioning control in travis deploy script when merging to master ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.89 (2020-10-12)
 
