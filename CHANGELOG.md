@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.89 (2020-10-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#423](https://github.com/DEFRA/rod-licensing/pull/423) Use dates in local time for licence start date calculation/validation in the frontend. ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.88 (2020-10-12)
 
 #### :rocket: Enhancement
