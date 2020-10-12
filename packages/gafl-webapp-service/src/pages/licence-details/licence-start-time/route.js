@@ -9,7 +9,7 @@ import { nextPage } from '../../../routes/next-page.js'
 const minHour = permission =>
   moment(permission.licenceStartDate, cacheDateFormat)
     .tz(SERVICE_LOCAL_TIME)
-    .isSame(moment(), 'day')
+    .isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')
     ? moment()
       .tz(SERVICE_LOCAL_TIME)
       .add(1, 'hour')

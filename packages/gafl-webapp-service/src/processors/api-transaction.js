@@ -1,7 +1,7 @@
 import { advancePurchaseDateMoment } from './date-and-time-display.js'
-import moment from 'moment'
+import moment from 'moment-timezone'
+import { SERVICE_LOCAL_TIME, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 import * as mappings from './mapping-constants.js'
-import { TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../processors/concession-helper.js'
 import { countries } from './refdata-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -67,7 +67,9 @@ export const prepareApiFinalisationPayload = async request => {
   return {
     payment: {
       amount: transaction.cost,
-      timestamp: moment().toISOString(),
+      timestamp: moment()
+        .tz(SERVICE_LOCAL_TIME)
+        .toISOString(),
       source: TRANSACTION_SOURCE.govPay,
       method: PAYMENT_TYPE.debit
     }

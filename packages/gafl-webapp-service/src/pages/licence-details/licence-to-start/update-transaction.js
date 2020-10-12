@@ -1,4 +1,5 @@
-import moment from 'moment'
+import moment from 'moment-timezone'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { LICENCE_START_TIME, LICENCE_TO_START } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
@@ -20,7 +21,9 @@ export default async request => {
 
   if (payload['licence-to-start'] === 'after-payment') {
     permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-    permission.licenceStartDate = moment().format(cacheDateFormat)
+    permission.licenceStartDate = moment()
+      .tz(SERVICE_LOCAL_TIME)
+      .format(cacheDateFormat)
     delete permission.licenceStartTime
   } else {
     permission.licenceToStart = licenceToStart.ANOTHER_DATE

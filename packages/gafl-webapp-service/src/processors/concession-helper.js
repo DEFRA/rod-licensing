@@ -1,6 +1,6 @@
 import { CONCESSION, CONCESSION_PROOF, HOW_CONTACTED } from './mapping-constants.js'
-import moment from 'moment'
-import { isJunior, isMinor, isSenior, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import moment from 'moment-timezone'
+import { SERVICE_LOCAL_TIME, isJunior, isMinor, isSenior, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 
 export const clear = permission => {
   delete permission.concessions
@@ -79,6 +79,7 @@ export const ageConcessionHelper = permission => {
   const ageAtLicenceStartDate = permission.licenceStartDate
     ? moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
     : moment()
+      .tz(SERVICE_LOCAL_TIME)
       .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
       .diff(moment(permission.licensee.birthDate), 'years')
 
