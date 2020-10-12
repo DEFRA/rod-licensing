@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.88 (2020-10-12)
+
+#### :rocket: Enhancement
+* `payment-mop-up-job`
+  * [#422](https://github.com/DEFRA/rod-licensing/pull/422) Reduce default time for mop-up eligibility to 60 minutes ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.87 (2020-10-08)
 
 #### :rocket: Enhancement
