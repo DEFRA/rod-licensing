@@ -1,9 +1,9 @@
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
 import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../uri.js'
-import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS } from '@defra-fish/business-rules-lib'
+import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import Joi from 'joi'
 import { salesApi } from '@defra-fish/connectors-lib'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
@@ -51,7 +51,12 @@ export default async (request, h) => {
       authenticationResult.permission.permit.durationDesignator.description === 'M' &&
       authenticationResult.permission.permit.durationMagnitude === 12
     ) {
-      const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().startOf('day'), 'days')
+      const daysDiff = moment(authenticationResult.permission.endDate).diff(
+        moment()
+          .startOf('day')
+          .tz(SERVICE_LOCAL_TIME),
+        'days'
+      )
       // Test for active renewal
       if (daysDiff > RENEW_BEFORE_DAYS) {
         return linkInactive('not-due')
