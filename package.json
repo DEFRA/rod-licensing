@@ -41,7 +41,7 @@
     "clone-deep": "^4.0.1",
     "dynamics-web-api": "^1.6.12",
     "husky": "^4.3.0",
-    "jest": "^26.4.2",
+    "jest": "^26.5.3",
     "jest-circus": "^26.4.2",
     "lerna": "^3.22.1",
     "lerna-changelog": "^1.0.1",
