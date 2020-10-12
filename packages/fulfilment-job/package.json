@@ -40,7 +40,7 @@
     "commander": "^6.1.0",
     "debug": "^4.2.0",
     "merge2": "^1.4.1",
-    "moment": "^2.29.0",
+    "moment": "^2.29.1",
     "pluralize": "^8.0.0",
     "ssh2-sftp-client": "^5.3.1"
   }
