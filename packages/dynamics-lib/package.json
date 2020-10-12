@@ -38,7 +38,7 @@
     "debug": "^4.2.0",
     "dynamics-web-api": "^1.6.12",
     "joi": "^17.1.1",
-    "moment": "^2.29.0",
+    "moment": "^2.29.1",
     "pluralize": "^8.0.0",
     "simple-oauth2": "^4.1.0",
     "uuid": "^8.3.0"
