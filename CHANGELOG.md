@@ -1,4 +1,12 @@
 
+## v0.3.0-rc.93 (2020-10-13)
+
+#### :bug: Bug Fix
+* [#428](https://github.com/DEFRA/rod-licensing/pull/428) Fix bug in travis deploy script ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.92 (2020-10-13)
 
 #### :rocket: Enhancement
