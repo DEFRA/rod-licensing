@@ -1,11 +1,11 @@
 {% extends "standard-form.njk" %}
 
 {% from "radios/macro.njk" import govukRadios %}
-{% set title = 'Select your address' %}
+{% set title = 'Choose your address' %}
 
 {% set errorMap = {
         'address': {
-            'any.required': { ref: '#address', text: 'You did not select an address' }
+            'any.required': { ref: '#address', text: 'Choose your address' }
         }
     }
 %}
@@ -27,8 +27,8 @@
            idPrefix: "address",
            name: "address",
            items: addressItems,
-           errorMessage: { text: 'Select an address' } if error
+           errorMessage: { text: 'Choose your address' } if error
        })
     }}
-     <p class="govuk-body-m"><a href="{{ data.entryPage }}">My address is not listed</a></p>
+    <p class="govuk-body-m"><a class="govuk-link" href="{{ data.entryPage }}">Your address is not listed</a></p>
 {% endblock %}

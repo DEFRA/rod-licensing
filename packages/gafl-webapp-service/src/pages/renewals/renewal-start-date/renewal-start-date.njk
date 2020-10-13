@@ -1,14 +1,14 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'When would you like your licence renewal to start?' %}
+{% set title = 'When would you like your licence to start?' %}
 
 {%
     set errorMap = {
         'licence-start-date': {
             'date.format': { ref: '#licence-start-date-day', text: 'Not a valid date. Enter the date you want the licence to start on and include a day, month and year' },
             'date.max': { ref: '#licence-start-date-day', text: 'Your new licence must start within ' + data.advancedPurchaseMaxDays + ' days of your current licence expiring. Enter a date up to and including ' + data.maxStartDate },
-            'date.min': { ref: '#licence-start-date-day', text: 'The licence must not start in the past' }
+            'date.min': { ref: '#licence-start-date-day', text: 'The licence must not start before your current licence has expired' }
         }
     }
 %}
@@ -33,14 +33,15 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-l">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence expires</p>
+    <p class="govuk-body-m">Your current licence {% if data.hasExpired %}expired on{% else %}expires{% endif %} on {{ data.expiryTimeString }}</p>
+    <p class="govuk-body-m">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence {% if data.hasExpired %}expired{% else %}expires{% endif %}</p>
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: 'Enter a valid date that is within ' + data.advancedPurchaseMaxDays + ' days' } if error,
+      errorMessage: { text: "Enter a valid date in this range" } if error,
       hint: {
-        text: "Enter a date up to and including " + data.maxStartDate
+        text: "Enter a date between " + data.minStartDate + " and " + data.maxStartDate
       }
     }) }}
 {% endblock %}

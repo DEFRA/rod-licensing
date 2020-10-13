@@ -1,0 +1,22 @@
+{% extends "standard-form.njk" %}
+
+{% if data.reason === 'not-due' %}
+    {% set title = 'You are renewing this licence too early' %}
+{% elseif data.reason === 'expired' %}
+    {% set title =  'The licence renewal has expired' %}
+{% elseif data.reason === 'not-annual' %}
+    {% set title =  'You cannot renew an 8 day or 1 day licence' %}
+{% endif %}
+
+{% block pageContent %}
+    {% if data.reason === 'not-due' %}
+           <p class="govuk-body-l">The licence ending in {{ data.referenceNumber }} does not expire until {{ data.validTo }}</p>
+           <p class="govuk-body-l">Click continue to buy a another licence</p>
+    {% elseif data.reason === 'expired' %}
+           <p class="govuk-body-l">The licence ending in {{ data.referenceNumber }} has expired on {{ data.validTo }} and can no longer be renewed</p>
+           <p class="govuk-body-l">Click continue to buy a another licence</p>
+    {% elseif data.reason === 'not-annual' %}
+           <p class="govuk-body-l">The licence ending in {{ data.referenceNumber }} is not a 12 month licence and cannot be renewed</p>
+           <p class="govuk-body-l">Click continue to buy a another licence</p>
+    {% endif %}
+{% endblock %}

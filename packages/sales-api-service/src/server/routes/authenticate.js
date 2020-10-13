@@ -20,7 +20,10 @@ export default [
               permission: {
                 ...results[0].entity.toJSON(),
                 licensee: results[0].expanded.licensee.entity.toJSON(),
-                concessions: results[0].expanded.concessionProofs.map(c => c.entity.toJSON()),
+                concessions: results[0].expanded.concessionProofs.map(c => ({
+                  id: c.expanded.concession.entity.id,
+                  proof: c.entity.toJSON()
+                })),
                 permit: results[0].expanded.permit.entity.toJSON()
               }
             })

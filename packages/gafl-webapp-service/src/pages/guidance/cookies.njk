@@ -9,7 +9,7 @@
     <div class="govuk-grid-column-full">
         {{ govukBackLink({
           text: "Back",
-          href: "/buy",
+          href: uri.buy,
           classes: "govuk-!-margin-bottom-7"
         }) }}
 
@@ -21,9 +21,10 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>remember what notifications you’ve seen so that you’re not shown them more than once</li>
             <li>to protect the service against malicious activity</li>
+            <li>to ensure that you have a consistent experience when we make changes to the service</li>
         </ul>
 
-        <p class="govuk-body">Find out <a href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies on the Information Commissioners' website</a>.</p>
+        <p class="govuk-body">Find out <a class="govuk-link" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies on the Information Commissioners' website</a>.</p>
 
         <h2 class="govuk-heading-m">Session and security cookies</h2>
 
@@ -52,10 +53,24 @@
           ]
         }) }}
 
+        <h2 class="govuk-heading-m">Infrastructure cookies</h2>
+
+        <p class="govuk-body">These cookies ensure you have a consistent experience when we make changes to the service.</p>
+
+        {{ govukTable({
+          caption: "Infrastructure cookie details",
+          firstCellIsHeader: true,
+          head: [ { text: "Name" }, { text: "Purpose" }, { text: "Expires" } ],
+          rows: [
+            [ { text: cookie.alb }, { text: "Used to ensure you receive a consistent experience" }, { text: "3 hours after you stop using the service" } ],
+            [ { text: cookie.albcors }, { text: "Used to ensure you receive a consistent experience" }, { text: "3 hours after you stop using the service" } ]
+          ]
+        }) }}
+
         <h2 class="govuk-heading-m">Our performance survey</h2>
 
-        <p class="govuk-body">We use <a href="https://www.smartsurvey.co.uk/">SmartSurvey</a> to collect responses to the survey. If you take part, SmartSurvey will save extra cookies to your computer to track your progress through it.</p>
-        <p class="govuk-body">Please see the <a href="https://www.smartsurvey.co.uk/privacy-policy">SmartSurvey privacy information</a> and the <a href="https://www.smartsurvey.co.uk/how-we-use-cookies">SmartSurvey cookies guide</a> for more information.</p>
+        <p class="govuk-body">We use <a class="govuk-link" href="https://www.smartsurvey.co.uk/">SmartSurvey</a> to collect responses to the survey. If you take part, SmartSurvey will save extra cookies to your computer to track your progress through it.</p>
+        <p class="govuk-body">Please see the <a class="govuk-link" href="https://www.smartsurvey.co.uk/privacy-policy">SmartSurvey privacy information</a> and the <a href="https://www.smartsurvey.co.uk/how-we-use-cookies">SmartSurvey cookies guide</a> for more information.</p>
    </div>
 </div>
 {% endblock %}

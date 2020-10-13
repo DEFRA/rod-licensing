@@ -1,10 +1,7 @@
 import commander from 'commander'
-import { createPartFiles } from '../staging/create-part-files.js'
-import { deliverFulfilmentFiles } from '../staging/deliver-fulfilment-files.js'
+import { processFulfilment } from '../fulfilment-processor.js'
 
-jest.mock('fs')
-jest.mock('../staging/create-part-files.js')
-jest.mock('../staging/deliver-fulfilment-files.js')
+jest.mock('../fulfilment-processor.js')
 
 jest.mock('commander', () => {
   const commander = jest.requireActual('commander')
@@ -20,13 +17,17 @@ describe('fulfilment-job', () => {
     jest.clearAllMocks()
   })
 
-  it('exposes an execute command to the cli', async () => {
+  it('exposes an execute command to the cli', done => {
     jest.isolateModules(async () => {
       require('../fulfilment-job.js')
-      expect(commander.commands[0].name()).toBe('execute')
-      await commander.commands[0]._actionHandler([])
-      expect(createPartFiles).toHaveBeenCalled()
-      expect(deliverFulfilmentFiles).toHaveBeenCalled()
+      try {
+        expect(commander.commands[0].name()).toBe('execute')
+        commander.commands[0]._actionHandler([])
+        expect(processFulfilment).toHaveBeenCalled()
+        done()
+      } catch (e) {
+        done(e)
+      }
     })
   })
 

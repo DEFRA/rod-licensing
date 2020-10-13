@@ -1,5 +1,4 @@
 import { findUnassociatedFulfilmentRequests, findFulfilmentFiles } from '../fulfilment.queries.js'
-import { GlobalOptionSetDefinition } from '../..'
 
 describe('Fulfilment Queries', () => {
   describe('findUnassociatedFulfilmentRequests', () => {
@@ -10,10 +9,9 @@ describe('Fulfilment Queries', () => {
         expand: expect.arrayContaining([
           expect.objectContaining({
             property: 'defra_PermissionId',
-            select: expect.any(Array),
             expand: expect.arrayContaining([
-              expect.objectContaining({ property: 'defra_ContactId', select: expect.any(Array) }),
-              expect.objectContaining({ property: 'defra_PermitId', select: expect.any(Array) })
+              expect.objectContaining({ property: 'defra_ContactId' }),
+              expect.objectContaining({ property: 'defra_PermitId' })
             ])
           })
         ]),
@@ -26,11 +24,11 @@ describe('Fulfilment Queries', () => {
 
   describe('findFulfilmentFiles', () => {
     it('builds a request to run a query for fulfilment files with a given date and status', async () => {
-      const pendingFileStatus = new GlobalOptionSetDefinition('defra_fulfilmentrequestfilestatus', {
+      const pendingFileStatus = {
         id: 910400000,
         label: 'Pending',
         description: 'Pending'
-      })
+      }
       const query = findFulfilmentFiles({ date: '2020-06-18T11:47:32.982Z', status: pendingFileStatus })
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_fulfilmentrequestfiles',
@@ -50,11 +48,11 @@ describe('Fulfilment Queries', () => {
     })
 
     it('builds a request to run a query for fulfilment files with just a given status', async () => {
-      const pendingFileStatus = new GlobalOptionSetDefinition('defra_fulfilmentrequestfilestatus', {
+      const pendingFileStatus = {
         id: 910400000,
         label: 'Pending',
         description: 'Pending'
-      })
+      }
       const query = findFulfilmentFiles({ status: pendingFileStatus })
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_fulfilmentrequestfiles',

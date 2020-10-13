@@ -3,11 +3,12 @@ import {
   Concession,
   TransactionCurrency,
   PermitConcession,
+  Role,
   retrieveMultipleAsMap,
   retrieveGlobalOptionSets
 } from '@defra-fish/dynamics-lib'
 
-export const ENTITY_TYPES = [Permit, Concession, TransactionCurrency, PermitConcession]
+export const ENTITY_TYPES = [Permit, Concession, TransactionCurrency, PermitConcession, Role]
 
 export async function getReferenceData () {
   return retrieveMultipleAsMap(...ENTITY_TYPES).cached()
@@ -38,13 +39,21 @@ export async function getReferenceDataForEntityAndId (entityType, id) {
   return (items.length && items[0]) || undefined
 }
 
-export async function getGlobalOptionSets (...names) {
-  return retrieveGlobalOptionSets(...names).cached()
+/**
+ * Retrieve all global option set data
+ * @returns {Promise<*>}
+ */
+export async function getGlobalOptionSets () {
+  return retrieveGlobalOptionSets().cached()
 }
 
+/**
+ * Retrieve all options for a given global option set name
+ * @param name
+ * @returns {Promise<*>}
+ */
 export async function getGlobalOptionSet (name) {
-  const definition = await retrieveGlobalOptionSets(name).cached()
-  return definition[name]
+  return (await retrieveGlobalOptionSets().cached())[name]
 }
 
 /**
@@ -56,7 +65,7 @@ export async function getGlobalOptionSet (name) {
  */
 export async function getGlobalOptionSetValue (name, lookup) {
   const llookup = lookup && lookup.toLowerCase()
-  const definition = await retrieveGlobalOptionSets(name).cached()
+  const definition = await retrieveGlobalOptionSets().cached()
   return definition[name] && lookup
     ? Object.values(definition[name].options).find(o => o.label.toLowerCase() === llookup || o.description.toLowerCase() === llookup)
     : undefined

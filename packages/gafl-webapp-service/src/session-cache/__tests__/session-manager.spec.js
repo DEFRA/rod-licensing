@@ -1,7 +1,9 @@
-import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie } from '../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie, mockSalesApi } from '../../__mocks__/test-utils-system.js'
+import { isStaticResource, useSessionCookie } from '../session-manager.js'
+import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
   CONTROLLER,
-  LICENCE_LENGTH,
+  DATE_OF_BIRTH,
   LICENCE_TYPE,
   ORDER_COMPLETE,
   ORDER_COMPLETE_PDF,
@@ -9,25 +11,50 @@ import {
   PAYMENT_FAILED
 } from '../../uri.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+mockSalesApi()
+
+describe('isStaticResource', () => {
+  it('returns false for path which are not a static resource', () => {
+    expect(isStaticResource({ path: '/foo' })).toBeFalsy()
+  })
+
+  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too', '/robots.txt'])(
+    'returns true for paths which are static resources (%s)',
+    path => {
+      expect(isStaticResource({ path })).toBeTruthy()
+    }
+  )
+})
+
+describe('Use session cookie', () => {
+  it('path not starting with /public marked as using a session cookie', () => {
+    expect(useSessionCookie({ path: '/foo' })).toBeTruthy()
+  })
+
+  it.each(['/public/this/path/doesnt/work', '/public/nor/does/this/one', '/public/this/one/too', '/robots.txt'])(
+    "path %s doesn't require session cookie",
+    path => {
+      expect(useSessionCookie({ path })).toBeFalsy()
+    }
+  )
+})
 
 describe('The user', () => {
-  it('clearing the session cookie automatically create a new cookie and cache', async () => {
-    const data = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)
-    expect(data.statusCode).toBe(200)
+  beforeAll(d => start(d))
+  beforeAll(d => initialize(d))
+  afterAll(d => stop(d))
+
+  it('clearing the session cookie automatically creates a new cookie and cache', async () => {
+    const response = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(CONTROLLER.uri)
   })
 
   it('Clearing the session cookie will redirect to the start of the journey on a post valid response', async () => {
-    let data = await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTROLLER.uri)
-    data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
-    data = await injectWithCookies('GET', LICENCE_LENGTH.uri)
-    expect(data.statusCode).toBe(200)
+    await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    const response = await injectWithCookies('GET', CONTROLLER.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
 
   /*
@@ -36,14 +63,10 @@ describe('The user', () => {
    * cookie and reinitialize the cache. This is caught and the controller is invoked with a redirect
    */
   it('clearing the session cookie will redirect to the start of the journey on a post invalid response', async () => {
-    let data = await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, {})
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTROLLER.uri)
-    data = await injectWithCookies('GET', CONTROLLER.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
-    data = await injectWithCookies('GET', LICENCE_LENGTH.uri)
-    expect(data.statusCode).toBe(200)
+    await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, {})
+    const response = await injectWithCookies('GET', CONTROLLER.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
   })
 
   /*
@@ -55,8 +78,8 @@ describe('The user', () => {
     ['payment-failed', PAYMENT_FAILED],
     ['payment-failed', PAYMENT_CANCELLED]
   ])('redirects to the controller on attempting to access %s', async (desc, page) => {
-    const data = await injectWithoutSessionCookie('GET', page.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTROLLER.uri)
+    const response = await injectWithoutSessionCookie('GET', page.uri)
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(CONTROLLER.uri)
   })
 })

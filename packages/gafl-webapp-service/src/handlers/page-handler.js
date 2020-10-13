@@ -2,6 +2,7 @@ import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
+import journeyDefinition from '../routes/journey-definition.js'
 
 /**
  * Flattens the error structure from joi for use in the templates
@@ -17,13 +18,30 @@ export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: 
  * @param pageData
  * @returns {Promise<void>}
  */
-const getBackReference = async (request) => {
+const getBackReference = async (request, view) => {
+  const current = journeyDefinition.find(p => p.currentPage === view)
+
+  if (!current || !current.backLink) {
+    return null
+  }
+
+  if (typeof current.backLink === 'function') {
+    return current.backLink(
+      await request.cache().helpers.status.getCurrentPermission(),
+      await request.cache().helpers.transaction.getCurrentPermission()
+    )
+  } else {
+    return current.backLink
+  }
+}
+
+const clearErrorsFromOtherPages = async (request, view) => {
   const status = await request.cache().helpers.status.getCurrentPermission()
-  status.backRef = status.backRef || { current: null }
-  status.backRef.previous = status.backRef.current
-  status.backRef.current = request.path
-  await request.cache().helpers.status.setCurrentPermission(status)
-  return status.backRef.previous
+  const pagesWithError = Object.entries(status)
+    .filter(entry => entry[0] !== 'currentPage' && entry[0] !== view && entry[1] === PAGE_STATE.error)
+    .map(entry => entry[0])
+
+  await Promise.all(pagesWithError.map(async p => request.cache().helpers.page.setCurrentPermission(p, {})))
 }
 
 /**
@@ -59,8 +77,12 @@ export default (path, view, completion, getData) => ({
       }
     }
 
+    // It is necessary then using the back buttons and other indirect navigations to clear any errors
+    // from abandoned pages
+    await clearErrorsFromOtherPages(request, view)
+
     // Calculate the back reference and add to page
-    pageData.backRef = await getBackReference(request)
+    pageData.backRef = await getBackReference(request, view)
     return h.view(view, pageData)
   },
   /**
@@ -75,7 +97,12 @@ export default (path, view, completion, getData) => ({
     status.currentPage = view
     status[view] = PAGE_STATE.completed
     await request.cache().helpers.status.setCurrentPermission(status)
-    return h.redirect(completion)
+
+    if (typeof completion === 'function') {
+      return h.redirect(await completion(request))
+    } else {
+      return h.redirect(completion)
+    }
   },
   /**
    * Generic error handler for pages

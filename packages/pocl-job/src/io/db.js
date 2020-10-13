@@ -1,6 +1,6 @@
+import config from '../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
 const { docClient } = AWS()
-const STAGING_TTL_DELTA = process.env.POCL_STAGING_TTL || 60 * 60 * 168
 
 /**
  * Update the POCL file staging table to add or update the entry for the provided filename
@@ -10,15 +10,11 @@ const STAGING_TTL_DELTA = process.env.POCL_STAGING_TTL || 60 * 60 * 168
  * @returns {Promise<void>}
  */
 export const updateFileStagingTable = async ({ filename, ...entries }) => {
-  const data = { expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA, ...entries }
-  const setFieldExpression = Object.keys(data).map(k => `${k} = :${k}`)
-  const expressionAttributeValues = Object.entries(data).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
   await docClient
     .update({
-      TableName: process.env.POCL_FILE_STAGING_TABLE,
+      TableName: config.db.fileStagingTable,
       Key: { filename },
-      UpdateExpression: `SET ${setFieldExpression}`,
-      ExpressionAttributeValues: expressionAttributeValues
+      ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
     })
     .promise()
 }
@@ -32,7 +28,7 @@ export const updateFileStagingTable = async ({ filename, ...entries }) => {
 export const getFileRecords = async (...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
   return docClient.scanAllPromise({
-    TableName: process.env.POCL_FILE_STAGING_TABLE,
+    TableName: config.db.fileStagingTable,
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: stageValues,
     ConsistentRead: true
@@ -46,7 +42,7 @@ export const getFileRecords = async (...stages) => {
  * @returns {DocumentClient.AttributeMap}
  */
 export const getFileRecord = async filename => {
-  const result = await docClient.get({ TableName: process.env.POCL_FILE_STAGING_TABLE, Key: { filename }, ConsistentRead: true }).promise()
+  const result = await docClient.get({ TableName: config.db.fileStagingTable, Key: { filename }, ConsistentRead: true }).promise()
   return result.Item
 }
 
@@ -61,12 +57,12 @@ export const updateRecordStagingTable = async (filename, records) => {
   if (records.length) {
     const params = {
       RequestItems: {
-        [process.env.POCL_RECORD_STAGING_TABLE]: records.map(record => ({
-          PutRequest: { Item: { filename, expires: Math.floor(Date.now() / 1000) + STAGING_TTL_DELTA, ...record } }
+        [config.db.recordStagingTable]: records.map(record => ({
+          PutRequest: { Item: { filename, expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...record } }
         }))
       }
     }
-    await docClient.batchWrite(params).promise()
+    await docClient.batchWriteAllPromise(params)
   }
 }
 
@@ -80,7 +76,7 @@ export const updateRecordStagingTable = async (filename, records) => {
 export const getProcessedRecords = async (filename, ...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
   return docClient.queryAllPromise({
-    TableName: process.env.POCL_RECORD_STAGING_TABLE,
+    TableName: config.db.recordStagingTable,
     KeyConditionExpression: 'filename = :filename',
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: { ':filename': filename, ...stageValues },

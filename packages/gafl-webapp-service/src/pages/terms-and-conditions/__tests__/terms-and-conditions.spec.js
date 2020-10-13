@@ -1,6 +1,3 @@
-import { salesApi } from '@defra-fish/connectors-lib'
-import moment from 'moment'
-
 import {
   LICENCE_LENGTH,
   TERMS_AND_CONDITIONS,
@@ -13,18 +10,26 @@ import {
   LICENCE_TYPE,
   NEWSLETTER,
   NAME,
-  AGREED
+  AGREED,
+  NEW_TRANSACTION
 } from '../../../uri.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../__mocks__/test-utils.js'
-import mockPermits from '../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../__mocks__/data/concessions.js'
-import mockDefraCountries from '../../../__mocks__/data/defra-country.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../__mocks__/test-utils-system.js'
+import { dobHelper, ADULT_TODAY } from '../../../__mocks__/test-utils-business-rules.js'
+import { licenceToStart } from '../../licence-details/licence-to-start/update-transaction.js'
+import { licenseTypes } from '../../licence-details/licence-type/route.js'
 
+beforeAll(() => {
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+})
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+afterAll(() => {
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
+  delete process.env.ANALYTICS_XGOV_PROPERTY
+})
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
@@ -35,18 +40,7 @@ const goodAddress = {
   'country-code': 'GB'
 }
 
-const dobHelper = d => ({
-  'date-of-birth-day': d.date().toString(),
-  'date-of-birth-month': (d.month() + 1).toString(),
-  'date-of-birth-year': d.year()
-})
-
-const dob16Today = moment().add(-16, 'years')
-
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
-salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
+mockSalesApi()
 
 describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
@@ -56,26 +50,15 @@ describe('The terms and conditions page', () => {
   })
 
   it('redirects to the contact summary page if the contact name has not been set', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dob16Today))
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    await postRedirectGet(LICENCE_SUMMARY.uri)
+    await injectWithCookies('POST', LICENCE_SUMMARY.uri)
     const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
-  })
-
-  it('responds with the terms and conditions page if all data is provided', async () => {
-    await postRedirectGet(NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-    await postRedirectGet(ADDRESS_ENTRY.uri, goodAddress)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
-    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-    await postRedirectGet(CONTACT_SUMMARY.uri)
-    const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
-    expect(data.statusCode).toBe(200)
   })
 
   it('redirects back to itself on invalid response', async () => {
@@ -84,8 +67,20 @@ describe('The terms and conditions page', () => {
     expect(data.headers.location).toBe(TERMS_AND_CONDITIONS.uri)
   })
 
+  it('responds with the terms and conditions page if all data is provided', async () => {
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+    await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no', 'email-entry': 'no' })
+    await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+    await injectWithCookies('POST', CONTACT_SUMMARY.uri)
+    const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
   it('sets agreed (locked) status when submitted and causes any request to redirect to the agreed handler', async () => {
-    const data1 = await postRedirectGet(TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    const data1 = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     expect(data1.statusCode).toBe(302)
     expect(data1.headers.location).toBe(AGREED.uri)
     await injectWithCookies('GET', AGREED.uri)

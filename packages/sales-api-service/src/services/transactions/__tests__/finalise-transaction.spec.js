@@ -1,22 +1,36 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
-import { mockTransactionPayload, mockTransactionRecord } from '../../../__mocks__/test-data.js'
-import { TRANSACTIONS_STAGING_TABLE, TRANSACTIONS_QUEUE } from '../../../config.js'
+import { MOCK_END_DATE, MOCK_PERMISSION_NUMBER, mockTransactionPayload, mockStagedTransactionRecord } from '../../../__mocks__/test-data.js'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../../config.js'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 import AwsMock from 'aws-sdk'
+import { TRANSACTION_STATUS } from '../constants.js'
+
+jest.mock('../../permissions.service.js', () => ({
+  generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
+  calculateEndDate: () => MOCK_END_DATE
+}))
 
 describe('transaction service', () => {
   beforeAll(() => {
-    TRANSACTIONS_STAGING_TABLE.TableName = 'TestTable'
-    TRANSACTIONS_QUEUE.Url = 'TestQueueUrl'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    TRANSACTION_QUEUE.Url = 'TestQueueUrl'
   })
   beforeEach(AwsMock.__resetAll)
 
   describe('finaliseTransaction', () => {
-    it('enqueues a message to sqs', async () => {
-      const mockRecord = mockTransactionRecord()
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('update', { Attributes: {} })
-      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
-
+    it.each([
+      ['records with a predetermined issue and start date', mockStagedTransactionRecord],
+      [
+        'records with a null issue and start date',
+        () => {
+          const record = mockStagedTransactionRecord()
+          record.permissions = record.permissions.map(p => ({ ...p, issueDate: null, startDate: null }))
+          return record
+        }
+      ]
+    ])('finalises a transaction and enqueues a message to sqs for %s', async (description, mockRecordProducer) => {
+      const mockRecord = mockRecordProducer()
       const completionFields = {
         payment: {
           amount: 30,
@@ -25,26 +39,81 @@ describe('transaction service', () => {
           method: 'Debit card'
         }
       }
-      const setFieldExpression = Object.keys(completionFields).map(k => `${k} = :${k}`)
-      const expressionAttributeValues = Object.entries(completionFields).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+      })
+      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
+
       const result = await finaliseTransaction({ id: mockRecord.id, ...completionFields })
-      expect(result).toEqual({ messageId: 'Test_Message', status: 'queued' })
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith(
-        expect.objectContaining({
-          TableName: TRANSACTIONS_STAGING_TABLE.TableName,
-          Key: { id: mockRecord.id },
-          UpdateExpression: `SET ${setFieldExpression}`,
-          ExpressionAttributeValues: expect.objectContaining(expressionAttributeValues)
-        })
-      )
+      expect(result).toEqual({
+        ...mockRecord,
+        ...completionFields,
+        status: { id: TRANSACTION_STATUS.FINALISED, messageId: 'Test_Message' }
+      })
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { id: mockRecord.id },
+        UpdateExpression: 'SET #payment = :payment,#permissions = :permissions,#status = :status',
+        ExpressionAttributeNames: {
+          '#payment': 'payment',
+          '#permissions': 'permissions',
+          '#status': 'status'
+        },
+        ExpressionAttributeValues: {
+          ':payment': completionFields.payment,
+          ':permissions': mockRecord.permissions.map(p => ({
+            ...p,
+            issueDate: p.issueDate ?? completionFields.payment.timestamp,
+            startDate:
+              p.startDate ??
+              moment(completionFields.payment.timestamp)
+                .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
+                .toISOString(),
+            endDate: expect.any(String),
+            referenceNumber: expect.any(String)
+          })),
+          ':status': {
+            id: TRANSACTION_STATUS.FINALISED
+          }
+        },
+        ReturnValues: 'ALL_NEW'
+      })
+
       expect(AwsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
         expect.objectContaining({
-          QueueUrl: TRANSACTIONS_QUEUE.Url,
-          MessageGroupId: 'transactions',
+          QueueUrl: TRANSACTION_QUEUE.Url,
+          MessageGroupId: mockRecord.id,
           MessageDeduplicationId: mockRecord.id,
           MessageBody: JSON.stringify({ id: mockRecord.id })
         })
       )
+    })
+
+    it('throws 410 Gone if the transaction has already been finalised (and not yet staged into Dynamics)', async () => {
+      const recordData = { status: { id: 'FINALISED' } }
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: recordData })
+      try {
+        await finaliseTransaction({ id: 'already_finalised' })
+      } catch (e) {
+        expect(e.message).toEqual('The transaction has already been finalised')
+        expect(e.data).toEqual(recordData)
+        expect(e.output.statusCode).toEqual(410)
+      }
+    })
+
+    it('throws 410 Gone if the transaction has already been finalised (and staged into Dynamics)', async () => {
+      const recordData = { status: { id: 'FINALISED' } }
+      // See retrieve-transaction.js - 1st response is null on the transaction table, 2nd response is the record from the transaction history table
+      AwsMock.DynamoDB.DocumentClient.__setNextResponses('get', { Item: null }, { Item: recordData })
+
+      try {
+        await finaliseTransaction({ id: 'already_finalised' })
+      } catch (e) {
+        expect(e.message).toEqual('The transaction has already been finalised')
+        expect(e.data).toEqual(recordData)
+        expect(e.output.statusCode).toEqual(410)
+      }
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
@@ -58,7 +127,7 @@ describe('transaction service', () => {
     })
 
     it('throws 402 Payment Required error if the payment amount does not match the cost', async () => {
-      const mockRecord = mockTransactionRecord()
+      const mockRecord = mockStagedTransactionRecord()
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       try {
         const payload = {
@@ -77,7 +146,7 @@ describe('transaction service', () => {
     })
 
     it('throws 409 Conflict error if a recurring payment instruction was supplied but the transaciton does not support this', async () => {
-      const mockRecord = mockTransactionRecord({ isRecurringPaymentSupported: false })
+      const mockRecord = Object.assign(mockStagedTransactionRecord(), { isRecurringPaymentSupported: false })
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       try {
         const payload = {

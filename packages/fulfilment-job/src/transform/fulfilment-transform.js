@@ -1,3 +1,5 @@
+import pluralize from 'pluralize'
+
 /**
  * @typedef FulfilmentDataEntry
  * @property {!FulfilmentRequest} fulfilmentRequest The Fulfilment Request entity
@@ -21,8 +23,8 @@ export async function * fulfilmentDataTransformer (source) {
         type: permit.permitType.label,
         subtype: permit.permitSubtype.label,
         description: permit.description,
-        equipment: `${permit.numberOfRods} rod(s)`,
-        duration: `${permit.durationMagnitude} ${permit.durationDesignator.label}`,
+        equipment: getEquipment(permit),
+        duration: getDuration(permit),
         cost: permit.cost,
         paymentCurrency: 'GBP',
         startDateAndTime: permission.startDate,
@@ -40,7 +42,7 @@ export async function * fulfilmentDataTransformer (source) {
           ...(licensee.locality && { locality: licensee.locality }),
           town: licensee.town,
           postcode: licensee.postcode,
-          country: licensee.country.label
+          country: licensee.country?.label
         }
       }
     })
@@ -48,5 +50,8 @@ export async function * fulfilmentDataTransformer (source) {
   }
 }
 
+const durations = { D: 'day', M: 'month', Y: 'year' }
+const getDuration = permit => pluralize(durations[permit.durationDesignator.description], permit.durationMagnitude, true)
+const getEquipment = permit => (permit.numberOfRods > 1 ? `Up to ${permit.numberOfRods} rods` : `${permit.numberOfRods} rod`)
 const generateDobId = dob => getRandomInt(10, 99) + dob.replace(/-/g, '') + getRandomInt(1000, 9999)
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min

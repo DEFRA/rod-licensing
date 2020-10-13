@@ -1,7 +1,8 @@
 import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../uri.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
-
+import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
+import { onLengthChange } from '../../licence-details/licence-length/update-transaction.js'
 /**
  * Transfer the validated page object
  * @param request
@@ -14,7 +15,7 @@ export default async request => {
     year: payload['date-of-birth-year'],
     month: Number.parseInt(payload['date-of-birth-month']) - 1,
     day: payload['date-of-birth-day']
-  }).format('YYYY-MM-DD')
+  }).format(cacheDateFormat)
 
   // Work out the junior or senior concession at the point at which the licence starts
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -22,7 +23,10 @@ export default async request => {
   // Set the data of birth in the licensee object
   permission.licensee.birthDate = dateOfBirth
 
-  // Calculate the age when the licence starts
+  // Set age related concessions
   ageConcessionHelper(permission)
+  onLengthChange(permission)
+
+  // Write the permission down
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

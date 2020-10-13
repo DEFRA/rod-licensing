@@ -20,7 +20,7 @@ describe('concession proof entity', () => {
     const expectedFields = {
       id: 'ee336a19-417e-ea11-a811-000d3a64905b',
       referenceNumber: 'AB 01 02 03 CD',
-      proofType: expect.objectContaining({ id: 910400001, label: 'National Insurance Number', description: 'National Insurance Number' })
+      type: expect.objectContaining({ id: 910400001, label: 'National Insurance Number', description: 'National Insurance Number' })
     }
 
     expect(proof).toBeInstanceOf(ConcessionProof)
@@ -43,7 +43,7 @@ describe('concession proof entity', () => {
 
     const concessionProof = new ConcessionProof()
     concessionProof.referenceNumber = 'TEST'
-    concessionProof.proofType = optionSetData.defra_concessionproof.options['910400000']
+    concessionProof.type = optionSetData.defra_concessionproof.options['910400000']
     concessionProof.bindToEntity(ConcessionProof.definition.relationships.permission, permission)
     concessionProof.bindToEntity(ConcessionProof.definition.relationships.concession, concession)
 

@@ -20,45 +20,49 @@
   "scripts": {
     "postinstall": "npm run lerna:bootstrap",
     "test": "jest",
-    "test:only-changed": "jest --changedSince master",
+    "test:only-changed": "jest --changedSince develop",
+    "test:watch": "jest --watch",
     "format": "prettier-standard",
     "lerna:clean": "lerna clean --yes",
     "lerna:bootstrap": "lerna bootstrap",
+    "docker:infrastructure": "docker-compose -f docker/infrastructure.yml build && docker stack deploy -c docker/infrastructure.yml rli",
     "docker:build-dev": "TAG=dev PROJECT_DOCKERFILE=Dockerfile.dev docker-compose -f docker/services.build.yml build",
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
-    "docker:infrastructure": "docker stack deploy -c docker/infrastructure.yml rli",
     "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build",
     "docker:services": "docker stack deploy -c docker/services.yml rls"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.10.4",
-    "@types/hapi__hapi": "^19.0.3",
-    "@types/jest": "^26.0.3",
-    "aws-sdk": "^2.709.0",
-    "adal-node": "^0.2.1",
+    "@babel/preset-env": "^7.11.5",
+    "@types/hapi__hapi": "^20.0.1",
+    "@types/jest": "^26.0.14",
+    "aws-sdk": "^2.771.0",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.1.0",
-    "dynamics-web-api": "^1.6.6",
-    "husky": "^4.2.5",
-    "jest": "^26.1.0",
-    "jest-circus": "^26.1.0",
+    "babel-jest": "^26.5.2",
+    "clone-deep": "^4.0.1",
+    "dynamics-web-api": "^1.6.12",
+    "husky": "^4.3.0",
+    "jest": "^26.5.3",
+    "jest-circus": "^26.5.3",
     "lerna": "^3.22.1",
     "lerna-changelog": "^1.0.1",
     "lerna-update-wizard": "^0.17.8",
-    "lint-staged": "^10.2.11",
-    "prettier-standard": "^16.3.0",
+    "lint-staged": "^10.4.0",
+    "prettier-standard": "^16.4.1",
+    "simple-oauth2": "^4.1.0",
     "standard": "^14.3.4"
   },
   "eslintConfig": {
     "extends": "standard",
     "parser": "babel-eslint",
     "env": {
+      "es2020": true,
       "node": true,
       "jest": true
     }
   },
   "prettier": {
-    "printWidth": 140
+    "printWidth": 140,
+    "alignTernaryLines": false
   },
   "standard": {
     "env": {
@@ -68,13 +72,14 @@
   },
   "husky": {
     "hooks": {
-      "post-merge": "chmod 0600 docker/resources/infrastructure/sftp/ssh_host_* && git update-index --skip-worktree docker/env/*.secrets.env",
-      "pre-commit": "npm run test:only-changed && lint-staged"
+      "post-merge": "git update-index --skip-worktree docker/env/*.secrets.env",
+      "pre-commit": "npm run test:only-changed && lint-staged",
+      "pre-push": "prettier-standard --check --lint --since develop"
     }
   },
   "lint-staged": {
     "*": [
-      "prettier-standard --lint"
+      "prettier-standard --fix --lint"
     ]
   },
   "jest": {

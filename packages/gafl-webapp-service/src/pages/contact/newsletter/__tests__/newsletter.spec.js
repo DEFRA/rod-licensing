@@ -1,17 +1,20 @@
 import {
-  CONTROLLER,
   NEWSLETTER,
   CONTACT,
+  CONTACT_SUMMARY,
+  TEST_TRANSACTION,
   DATE_OF_BIRTH,
   LICENCE_LENGTH,
   LICENCE_TO_START,
-  CONTACT_SUMMARY,
-  TEST_TRANSACTION
+  NEW_TRANSACTION
 } from '../../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
+
+import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
+import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -19,60 +22,190 @@ afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
   it('returns success on request', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    await injectWithCookies('POST', DATE_OF_BIRTH.uri, {
-      'date-of-birth-day': '11',
-      'date-of-birth-month': '11',
-      'date-of-birth-year': '1951'
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+    const response = await injectWithCookies('GET', NEWSLETTER.uri)
+    expect(response.statusCode).toBe(200)
+  })
+
+  it('redirects to itself posting an empty response', async () => {
+    const response = await injectWithCookies('POST', NEWSLETTER.uri, {})
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(NEWSLETTER.uri)
+  })
+
+  it('redirects to itself posting an invalid email response', async () => {
+    const response = await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'foo', 'email-entry': 'yes' })
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(NEWSLETTER.uri)
+  })
+
+  describe('if the user has set the preferred method of contact to email ', async () => {
+    beforeAll(async d => {
+      await injectWithCookies('GET', NEW_TRANSACTION.uri)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+      d()
     })
-    await injectWithCookies('GET', CONTROLLER.uri)
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
 
-    const data = await injectWithCookies('GET', NEWSLETTER.uri)
-    expect(data.statusCode).toBe(200)
+    it('if posting no it sets the newsletter contact method to none and preserves the contact methods and email', async () => {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'no',
+        'email-entry': 'no'
+      })
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.none,
+          preferredMethodOfConfirmation: HOW_CONTACTED.email,
+          preferredMethodOfReminder: HOW_CONTACTED.email,
+          email: 'example@email.com'
+        })
+      )
+    })
+
+    it('if posting no it redirects to the summary page', async () => {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'no'
+      })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
+
+    it('if posting yes it sets the newsletter contact method to email and preserves the contact methods and email', async () => {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'no'
+      })
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.email,
+          preferredMethodOfConfirmation: HOW_CONTACTED.email,
+          preferredMethodOfReminder: HOW_CONTACTED.email,
+          email: 'example@email.com'
+        })
+      )
+    })
+
+    it('if posting yes and subsequently setting the preferred method of contact to text, the email is preserved', async () => {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'no'
+      })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '+447000000000' })
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.email,
+          preferredMethodOfConfirmation: HOW_CONTACTED.text,
+          preferredMethodOfReminder: HOW_CONTACTED.text,
+          email: 'example@email.com'
+        })
+      )
+    })
+
+    it('if posting yes it redirects to the summary page', async () => {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'no'
+      })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
   })
 
-  it('redirects to itself posing an empty response', async () => {
-    const data = await injectWithCookies('POST', NEWSLETTER.uri, {})
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NEWSLETTER.uri)
-  })
+  describe('if the user has set the preferred method of contact to text ', async () => {
+    beforeAll(async d => {
+      await injectWithCookies('GET', NEW_TRANSACTION.uri)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07900000000' })
+      d()
+    })
 
-  it('redirects to itself posing an invalid email response', async () => {
-    const data = await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'foo' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NEWSLETTER.uri)
-  })
+    it('if posting no it sets the newsletter contact method to none and preserves the email address', async () => {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'no',
+        'email-entry': 'yes'
+      })
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.none,
+          preferredMethodOfConfirmation: HOW_CONTACTED.text,
+          preferredMethodOfReminder: HOW_CONTACTED.text
+        })
+      )
+    })
 
-  it('when posting no it saves the newsletter response without overwriting a pre-existing email', async () => {
-    const data = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no', email: 'example2@email.com' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    it('if posting no it redirects to the summary page', async () => {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'no',
+        'email-entry': 'yes'
+      })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
 
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
-    expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
-  })
+    it('if posting yes it sets the newsletter contact method to email and sets the email address', async () => {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'yes',
+        email: 'example@email.com'
+      })
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const {
+        permissions: [{ licensee }]
+      } = JSON.parse(payload)
+      expect(licensee).toEqual(
+        expect.objectContaining({
+          preferredMethodOfNewsletter: HOW_CONTACTED.email,
+          preferredMethodOfConfirmation: HOW_CONTACTED.text,
+          preferredMethodOfReminder: HOW_CONTACTED.text,
+          email: 'example@email.com'
+        })
+      )
+    })
 
-  it('when posting yes it saves the marketing flag overwriting any pre-existing email', async () => {
-    const data = await postRedirectGet(NEWSLETTER.uri, { newsletter: 'yes', email: 'example2@email.com' })
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    it('if posting yes it redirects to the summary page', async () => {
+      const response = await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'no',
+        email: 'example@email.com'
+      })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
 
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.email)
-    expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example2@email.com')
-  })
-
-  it('with an email previously entered and the preferred method of contact is letter, when posting no - delete the email address', async () => {
-    await postRedirectGet(CONTACT.uri, { 'how-contacted': 'none', email: 'example@email.com' })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.letter)
-
-    await postRedirectGet(NEWSLETTER.uri, { newsletter: 'no' })
-
-    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload2).permissions[0].licensee.email).toBeFalsy()
+    it('if having previously posting yes and subsequently posting no, it nulls the email', async () => {
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'yes',
+        'email-entry': 'yes',
+        email: 'example@email.com'
+      })
+      await injectWithCookies('POST', NEWSLETTER.uri, {
+        newsletter: 'no',
+        'email-entry': 'no'
+      })
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
+      expect(JSON.parse(payload).permissions[0].licensee.email).not.toBeTruthy()
+    })
   })
 })

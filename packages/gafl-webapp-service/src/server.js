@@ -4,28 +4,26 @@
 
 import Hapi from '@hapi/hapi'
 import CatboxRedis from '@hapi/catbox-redis'
-import Vision from '@hapi/vision'
-import Inert from '@hapi/inert'
-import Scooter from '@hapi/scooter'
-import Crumb from '@hapi/crumb'
-import Blankie from 'blankie'
 import Nunjucks from 'nunjucks'
 import find from 'find'
 import path from 'path'
 import Dirname from '../dirname.cjs'
 import routes from './routes/routes.js'
 import {
+  CHANNEL_DEFAULT,
   CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+  FEEDBACK_URI_DEFAULT,
   REDIS_PORT_DEFAULT,
   SESSION_COOKIE_NAME_DEFAULT,
-  SESSION_TTL_MS_DEFAULT,
-  FEEDBACK_URI_DEFAULT
+  SESSION_TTL_MS_DEFAULT
 } from './constants.js'
-import { COOKIES, REFUND_POLICY, ACCESSIBILITY_STATEMENT, PRIVACY_POLICY } from './uri.js'
+import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY } from './uri.js'
 
-import sessionManager from './session-cache/session-manager.js'
+import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
+import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
+import { getPlugins } from './plugins.js'
 
 let server
 
@@ -42,7 +40,11 @@ const createServer = options => {
                 partition: 'web-app',
                 host: process.env.REDIS_HOST,
                 port: process.env.REDIS_PORT || REDIS_PORT_DEFAULT,
-                db: 0
+                db: 0,
+                ...(process.env.REDIS_PASSWORD && {
+                  password: process.env.REDIS_PASSWORD,
+                  tls: {}
+                })
               }
             }
           }
@@ -51,43 +53,16 @@ const createServer = options => {
       options
     )
   )
+  const keepAlive = Number.parseInt(process.env.HAPI_KEEP_ALIVE_TIMEOUT_MS || 60000)
+  server.listener.keepAliveTimeout = keepAlive
+  server.listener.headersTimeout = keepAlive + 5000
 }
 
 /*
  * The hapi plugins and their options which will be registered on initialization
  */
-
-// This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
-// script. It needs the quotes.
-const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
-const plugIns = [
-  Inert,
-  Vision,
-  Scooter,
-  {
-    plugin: Blankie,
-    options: {
-      /*
-       * This defines the content security policy - which is as restrictive as possible
-       * It must allow web-fonts from 'fonts.gstatic.com'
-       */
-      fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-      scriptSrc: [scriptHash],
-      generateNonces: true
-    }
-  },
-  {
-    plugin: Crumb,
-    options: {
-      key: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
-      cookieOptions: {
-        isSecure: process.env.NODE_ENV !== 'development',
-        isHttpOnly: process.env.NODE_ENV !== 'development'
-      },
-      logUnauthorized: true
-    }
-  }
-]
+const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
+export const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT
 
 /**
  * Adds the uri's used by the layout page to each relevant response
@@ -96,20 +71,37 @@ const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
     Object.assign(response.source.context, {
+      CSRF_TOKEN_NAME: getCsrfTokenCookieName(),
+      CSRF_TOKEN_VALUE: response.source.context[getCsrfTokenCookieName()],
+      TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
       _uri: {
         cookies: COOKIES.uri,
         refunds: REFUND_POLICY.uri,
         accessibility: ACCESSIBILITY_STATEMENT.uri,
         privacy: PRIVACY_POLICY.uri,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
-      }
+      },
+      credentials: request.auth.credentials
     })
   }
   return h.continue
 }
 
+// Add default headers
+const addDefaultHeaders = (request, h) => {
+  if (!isStaticResource(request)) {
+    request.response.header('X-Frame-Options', 'DENY')
+    request.response.header('Cache-Control', 'no-store')
+    request.response.header('X-XSS-Protection', '1; mode=block')
+  }
+  request.response.header('X-Content-Type-Options', 'nosniff')
+  request.response.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+
+  return h.continue
+}
+
 const init = async () => {
-  await server.register(plugIns)
+  await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
 
   server.views({
@@ -139,20 +131,20 @@ const init = async () => {
     ]
   })
 
-  const sessionCookieName = process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
-
+  const sessionCookieName = getSessionCookieName()
   const sessionCookieOptions = {
     ttl: process.env.SESSION_TTL_MS || SESSION_TTL_MS_DEFAULT, // Will be kept alive on each request
     isSecure: process.env.NODE_ENV !== 'development',
     isHttpOnly: process.env.NODE_ENV !== 'development',
     isSameSite: 'Lax', // Needed for the GOV pay redirect back into the service
-    encoding: 'base64json',
+    encoding: 'iron',
+    password: process.env.SESSION_COOKIE_PASSWORD,
     clearInvalid: true,
     strictHeader: true,
-    path: '/buy'
+    path: '/'
   }
 
-  console.debug({ sessionCookieOptions })
+  console.debug((({ password, ...o }) => o)(sessionCookieOptions))
 
   server.state(sessionCookieName, sessionCookieOptions)
 
@@ -164,6 +156,9 @@ const init = async () => {
 
   // Add the uri's required by the template to every view response
   server.ext('onPreResponse', layoutContextAmalgamation)
+
+  // Add default headers to the page responses
+  server.ext('onPreResponse', addDefaultHeaders)
 
   // Point the server plugin cache to an application cache to hold authenticated session data
   server.app.cache = server.cache({
@@ -177,11 +172,24 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
-  process.on('unhandledRejection', console.error)
+  if (process.env.CHANNEL === 'telesales') {
+    await initialiseOIDC(server)
+  }
+
   server.route(routes)
   await server.start()
 
   console.log('Server running on %s', server.info.uri)
 }
 
-export { createServer, server, init }
+const shutdownBehavior = () => {
+  const shutdown = async (code = 0) => {
+    console.log(`Server is shutdown with ${code}`)
+    await server.stop()
+    process.exit(code)
+  }
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
+}
+
+export { createServer, server, init, shutdownBehavior }

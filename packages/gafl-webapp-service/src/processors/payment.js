@@ -1,5 +1,6 @@
 import { AGREED } from '../uri.js'
 import db from 'debug'
+import { licenceTypeAndLengthDisplay } from './licence-type-display.js'
 const debug = db('webapp:payment-processors')
 
 /**
@@ -9,13 +10,13 @@ const debug = db('webapp:payment-processors')
  * @returns {{reference: *, delayed_capture: boolean, amount: number, return_url: string, description: string}}
  */
 export const preparePayment = (request, transaction) => {
-  const url = new URL(AGREED.uri, `${process.env.GOV_PAY_HTTPS_REDIRECT === 'true' ? 'https' : 'http'}:${request.info.host}`)
+  const url = new URL(AGREED.uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
 
   const result = {
     return_url: url.href,
     amount: transaction.cost * 100,
     reference: transaction.id,
-    description: transaction.permissions.length === 1 ? transaction.permissions[0].permit.description : 'Multiple permits',
+    description: transaction.permissions.length === 1 ? licenceTypeAndLengthDisplay(transaction.permissions[0]) : 'Multiple permits',
     delayed_capture: false
   }
 
@@ -35,6 +36,6 @@ export const preparePayment = (request, transaction) => {
     }
   }
 
-  debug('Creating prepared payment %O', result)
+  debug('Creating prepared payment %o', result)
   return result
 }

@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import Boom from '@hapi/boom'
 import {
   createTransaction,
@@ -59,7 +59,7 @@ export default [
     path: '/transactions/$batch',
     options: {
       handler: async (request, h) => {
-        debug('[%s] Received request to create %s transactions', request.info.id, request.payload.length)
+        debug('Received request to create %d transactions', request.payload.length)
         const responsesByIndex = {}
         const validPayloadsByIndex = {}
         for (let i = 0; i < request.payload.length; i++) {
@@ -69,8 +69,8 @@ export default [
             responsesByIndex[i] = Boom.badData(e).output.payload
           }
         }
-        debug('[%s] Finished validating %s transaction payloads', request.info.id, request.payload.length)
         const validEntries = Object.entries(validPayloadsByIndex)
+        debug('Checked %d transaction payloads and found %d were valid', request.payload.length, validEntries.length)
         if (validEntries.length) {
           const createTransactionResults = await createTransactions(validEntries.map(([, v]) => v))
           createTransactionResults.forEach((response, i) => {
@@ -124,6 +124,10 @@ export default [
             404: { description: 'A transaction for the specified identifier was not found' },
             402: { description: 'The payment amount did not match the cost of the transaction' },
             409: { description: 'The transaction does not support recurring payments but an instruction was supplied' },
+            410: {
+              description:
+                'The transaction has already been finalised.  The previously finalised transaction data will be returned under the data key.'
+            },
             422: { description: 'The transaction completion payload was invalid' }
           },
           order: 2

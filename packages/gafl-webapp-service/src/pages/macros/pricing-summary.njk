@@ -1,0 +1,53 @@
+{% macro pricingSummary(selectors, content, subHeader) %}
+<aside class="govuk-grid-column-one-third payment-summary-wrap">
+    {% for selector, load in selectors %}
+    <div id="pricing-{{ selector }}" class="payment-summary initially-hidden">
+        <h2 class="govuk-heading-m">How much will this cost?</h2>
+        <p class="govuk-body-s">{{ subHeader }}</p>
+        {% for k, v in load %}
+            {% if content[k].desc %}
+                <div class="govuk-body" id="pricing-summary-element-cost">
+                    <span/>{{content[k].desc}}</span>
+                    {% if v.cost === 0  %}
+                        <strong/>free</strong>
+                    {% else %}
+                        <strong/>£{{v.cost}}</strong>
+                    {% endif %}
+                    {% if v.concessions %}
+                        <div class="govuk-body-s" id="pricing-summary-element-concession">
+                        Concession applied
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if k === 'msg' %}
+                <div class="govuk-body-s" id="pricing-summary-element-cost">
+                    {{content[v]}}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+</aside>
+{% endmacro %}
+
+{% macro pricingSummaryScript(selectors, nonce) %}
+    <script nonce={{nonce}}>(function () {
+        {% for selector, load in selectors %}
+            if (document.getElementById('selector-{{ selector }}') && document.getElementById('selector-{{ selector }}').checked) {
+                document.getElementById('pricing-{{ selector }}').style.display = 'block'
+            } else {
+                document.getElementById('pricing-{{ selector }}').style.display = 'none'
+            }
+            document.getElementById('selector-{{ selector }}').addEventListener('click', function () {
+                {% for selector2, load in selectors %}
+                    {% if selector !== selector2 %}
+                        document.getElementById('pricing-{{ selector2 }}').style.display = 'none'
+                    {% endif %}
+                {% endfor %}
+                document.getElementById('pricing-{{ selector }}').style.display = 'block'
+            })
+        {% endfor %}
+    })()
+    </script>
+{% endmacro %}

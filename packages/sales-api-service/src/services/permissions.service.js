@@ -1,8 +1,16 @@
 import { Permission, Permit } from '@defra-fish/dynamics-lib'
 import { isJunior, isSenior } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
+import { redis } from './ioredis.service.js'
 import moment from 'moment'
-import cryptoRandomString from 'crypto-random-string'
+
+const DICTIONARIES = [
+  'ABCDEFGHJKLMNPQRSTUVWXYZ1234567890',
+  'BCDFGHJKLM256789',
+  'NPQRSTVWXZ256789',
+  'BCDFGHJKLM256789',
+  'ABCDEFGHJKLMNPQRSTUVWXYZ1234567890'
+]
 
 /**
  * Generate a new permission number
@@ -38,9 +46,10 @@ export const generatePermissionNumber = async (
   const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
   const block2 = permit.numberOfRods + channel + type + duration + age + initials
 
-  const block3 = cryptoRandomString({ length: 6, characters: 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789' })
-
-  return [block1, block2, block3].join('-')
+  const seqNo = Number(BigInt.asIntN(32, BigInt(await redis.incr('permission-seq'))))
+  const block3 = generate(seqNo, DICTIONARIES)
+  const cs = calculateLuhn(`${block1}${block2}${block3}`)
+  return `${block1}-${block2}-${block3}${cs}`
 }
 
 /**
@@ -69,7 +78,7 @@ export const calculateEndDate = async ({ permitId, startDate }) => (await calcul
  * @param issueDate The date of issue of the permission
  * @returns {string} The appropriate category code (single digit string)
  */
-function getAgeCategory (birthDate, issueDate) {
+const getAgeCategory = (birthDate, issueDate) => {
   const dob = moment(birthDate)
   const issue = moment(issueDate)
   let category = 'F' // Uncategorised
@@ -81,4 +90,46 @@ function getAgeCategory (birthDate, issueDate) {
     category = 'S'
   }
   return category
+}
+
+/**
+ * Generate a new sequence number based on the given sequence number integer and the provided dictionaries.
+ * The length of the string returned will be equal to the number of items in the dictionaries array.
+ *
+ * @param {number} seqNo the sequence number to use.
+ * @param {string[]} dictionaries an array of strings providing the allowed characters at each index of the returned sequence
+ * @returns {string} the generated sequence number
+ */
+export const generate = (seqNo, dictionaries) => {
+  const buffer = []
+  let idx = dictionaries.length - 1
+
+  // Generate the next sequence based on the given number
+  do {
+    const dict = dictionaries[idx]
+    buffer.push(dict[seqNo % dict.length])
+    seqNo = Math.floor(seqNo / dict.length)
+  } while (seqNo !== 0 && --idx > -1)
+
+  // Pad the string to the required length using the first character of the dictionaries we haven't used
+  while (buffer.length < dictionaries.length) {
+    buffer.push(dictionaries[dictionaries.length - buffer.length - 1][0])
+  }
+  return buffer.reverse().join('')
+}
+
+/**
+ * Calculate a check-digit based on the Luhn mod 10 algorithm
+ * @param {string} value the string from which to calculate the check-digit
+ * @returns {number} the check-digit value (from 0 to 9)
+ */
+export const calculateLuhn = value => {
+  let factor = 2
+  let sum = 0
+  for (let i = value.length - 1; i >= 0; i--) {
+    const addend = factor * (value[i].charCodeAt(0) - 48)
+    factor = factor === 2 ? 1 : 2
+    sum += Math.floor(addend / 10) + (addend % 10)
+  }
+  return (10 - (sum % 10)) % 10
 }

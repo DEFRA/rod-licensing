@@ -16,15 +16,17 @@ Since the job will not process the same transaction twice.
 
 ## Environment variables
 
-| name                       | description                                     | required | default             | valid                         |
-| -------------------------- | ----------------------------------------------- | :------: | ------------------- | ----------------------------- |
-| NODE_ENV                   | Node environment                                |    no    |                     | development, test, production |
-| SALES_API_URL              | The address of the sales api                    |    no    | http://0.0.0.0:4000 |                               |
-| SALES_API_TIMEOUT_MS       | The timeout in milliseconds requests to the api |    no    | 10000               |                               |
-| GOV_PAY_API_URL            | The GOV.UK Pay API base url                     |    no    | Yes                 |                               |
-| GOV_PAY_APIKEY             | GOV pay access identifier                       |    no    | Yes                 |                               |
-| GOV_PAY_REQUEST_TIMEOUT_MS | Timeout in milliseconds for API requests        |    no    | Yes                 |                               |
-| RATE_LIMIT_MS              | Rate limit for the process                      |    no    | 250                 |                               |
-| CONCURRENCY                | Concurrency for the process                     |    no    | 4                   |                               |
+| name                            | description                                                     | required | default             | valid                         |
+| ------------------------------- | --------------------------------------------------------------- | :------: | ------------------- | ----------------------------- |
+| NODE_ENV                        | Node environment                                                |    no    |                     | development, test, production |
+| SALES_API_URL                   | The address of the sales api                                    |    no    | http://0.0.0.0:4000 |                               |
+| SALES_API_TIMEOUT_MS            | The timeout in milliseconds requests to the api                 |    no    | 10000               |                               |
+| GOV_PAY_API_URL                 | The GOV.UK Pay API base url                                     |    no    | Yes                 |                               |
+| GOV_PAY_APIKEY                  | GOV pay access identifier                                       |    no    | Yes                 |                               |
+| GOV_PAY_REQUEST_TIMEOUT_MS      | Timeout in milliseconds for API requests                        |    no    | Yes                 |                               |
+| RATE_LIMIT_MS                   | Rate limit for the process                                      |    no    | 250                 |                               |
+| CONCURRENCY                     | Concurrency for the process                                     |    no    | 4                   |                               |
+| SCAN_DURATION_HOURS             | The number of hours over which the transactions will be scanned |    no    | 24                  |                               |
+| INCOMPLETE_PURCHASE_AGE_MINUTES | The age of the incomplete purchase in minutes                   |    no    | 60                  |                               |
 
 The details of the GOV.UK payment API can be found here; https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation

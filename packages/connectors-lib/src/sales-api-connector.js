@@ -1,9 +1,10 @@
 import fetch from 'node-fetch'
 import querystring from 'querystring'
+import db from 'debug'
 const SALES_API_URL_DEFAULT = 'http://0.0.0.0:4000'
 const SALES_API_TIMEOUT_MS_DEFAULT = 20000
 const urlBase = process.env.SALES_API_URL || SALES_API_URL_DEFAULT
-const headers = { 'Content-Type': 'application/json' }
+const debug = db('connectors:sales-api')
 
 /**
  * Make a request to the sales API
@@ -14,18 +15,46 @@ const headers = { 'Content-Type': 'application/json' }
  * @returns {Promise<{statusText: *, ok: *, body: *, status: *}>}
  */
 export const call = async (url, method = 'get', payload = null) => {
+  const requestTimestamp = new Date().toISOString()
   const response = await fetch(url.href, {
-    headers,
     method,
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     ...(payload && { body: JSON.stringify(payload) }),
     timeout: process.env.SALES_API_TIMEOUT_MS || SALES_API_TIMEOUT_MS_DEFAULT
   })
-
-  return {
+  const responseTimestamp = new Date().toISOString()
+  const responseData = {
     ok: response.ok,
     status: response.status,
     statusText: response.statusText,
-    body: response.status !== 204 ? await response.json() : undefined
+    body: response.status !== 204 ? await parseResponseBody(response) : undefined
+  }
+  debug(
+    'Request sent (%s): %s %s with payload %o.  Response received (%s): %o',
+    requestTimestamp,
+    method,
+    url.href,
+    payload,
+    responseTimestamp,
+    responseData
+  )
+  return responseData
+}
+
+/**
+ * Retrieve the response json, falling back to reading text on error
+ *
+ * @param response node-fetch response object
+ * @returns {Promise<{}>}
+ */
+const parseResponseBody = async response => {
+  const body = await response.text()
+  try {
+    return JSON.parse(body)
+  } catch (e) {
+    return {
+      text: body
+    }
   }
 }
 
@@ -104,7 +133,6 @@ export const createPaymentJournal = async (id, data) => exec2xxOrThrow(call(new 
  *
  * @param {string} id the identifier of the payment journal to retrieve
  * @returns {Promise<*>}
- * @throws on a non-2xx response
  */
 export const getPaymentJournal = async id => exec2xxOrNull(call(new URL(`/paymentJournals/${id}`, urlBase), 'get'))
 
@@ -126,6 +154,14 @@ export const updatePaymentJournal = async (id, data) => exec2xxOrThrow(call(new 
  * @throws on a non-2xx response
  */
 export const createStagingException = async data => exec2xxOrThrow(call(new URL('/stagingExceptions', urlBase), 'post', data))
+
+/**
+ * Retrieve details of a system user
+ *
+ * @param oid the Azure object ID pertaining to the system user
+ * @returns {Promise<*>}
+ */
+export const getSystemUser = async oid => exec2xxOrNull(call(new URL(`/systemUsers/${oid}`, urlBase), 'get'))
 
 /**
  * Supports querying of reference data from the Sales API
@@ -213,3 +249,11 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
       'get'
     )
   )
+
+/**
+ * Helper to check if an HTTP status code is classed as a system error
+ *
+ * @param {number} statusCode the HTTP status code to test
+ * @returns {boolean} true if the status code represents a system error, false otherwise
+ */
+export const isSystemError = statusCode => Math.floor(statusCode / 100) === 5

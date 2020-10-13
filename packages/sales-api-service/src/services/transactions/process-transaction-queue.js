@@ -14,7 +14,7 @@ import {
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
-import { TRANSACTIONS_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -82,10 +82,10 @@ export async function processQueue ({ id }) {
   chargeJournal.total = -totalTransactionValue
   paymentJournal.total = totalTransactionValue
 
-  debug('Persisting entities for staging id %s: %O', id, entities)
+  debug('Persisting %d entities for staging id %s', entities.length, id)
   await persist(...entities)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.delete({ TableName: TRANSACTIONS_STAGING_TABLE.TableName, Key: { id } }).promise()
+  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
   await docClient
     .put({
       TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
@@ -192,7 +192,7 @@ const createFulfilmentRequest = async permission => {
 const createConcessionProof = async (concession, permission) => {
   const proof = new ConcessionProof()
   const concessionEntity = await getReferenceDataForEntityAndId(Concession, concession.id)
-  proof.proofType = await getGlobalOptionSetValue(ConcessionProof.definition.mappings.proofType.ref, concession.proof.type)
+  proof.type = await getGlobalOptionSetValue(ConcessionProof.definition.mappings.type.ref, concession.proof.type)
   proof.referenceNumber = concession.proof.referenceNumber
   proof.bindToEntity(ConcessionProof.definition.relationships.permission, permission)
   proof.bindToEntity(ConcessionProof.definition.relationships.concession, concessionEntity)

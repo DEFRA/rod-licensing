@@ -19,17 +19,17 @@ provider.
 
 # Environment variables
 
-| name                            | description                                                                         | required | default | valid                                                                   | notes |
-| ------------------------------- | ----------------------------------------------------------------------------------- | :------: | ------- | ----------------------------------------------------------------------- | ----- |
-| NODE_ENV                        | Node environment                                                                    |    no    |         | development, test, production                                           |       |
-| FULFILMENT_FILE_SIZE            | The maximum number of records written to an aggregated fulfilment file              |   yes    |         |                                                                         |       |
-| FULFILMENT_FTP_HOST             | The hostname of the target FTP server                                               |   yes    |         |                                                                         |       |
-| FULFILMENT_FTP_PORT             | The port of the FTP service on the target server                                    |   yes    |         |                                                                         |       |
-| FULFILMENT_FTP_PATH             | The base path under which files should be written to the FTP server                 |   yes    |         |                                                                         |       |
-| FULFILMENT_FTP_USERNAME         | The username used to authenticate with the FTP server                               |   yes    |         |                                                                         |       |
-| FULFILMENT_FTP_PRIVATE_KEY_PATH | The path to the folder containing the keys used to authenticate with the FTP server |   yes    |         |                                                                         |       |
-| FULFILMENT_S3_BUCKET            | The name of the AWS S3 bucket in which to stage and aggregate fulfilment data       |   yes    |         |                                                                         |       |
-| DEBUG                           | Use to enable output of debug information to the console                            |   yes    |         | fulfilment:\*, fulfilment:staging, fulfilment:transport, fulfilment:ftp |       |
+| name                         | description                                                                               | required | default | valid                                                                   | notes |
+| ---------------------------- | ----------------------------------------------------------------------------------------- | :------: | ------- | ----------------------------------------------------------------------- | ----- |
+| NODE_ENV                     | Node environment                                                                          |    no    |         | development, test, production                                           |       |
+| FULFILMENT_FILE_SIZE         | The maximum number of records written to an aggregated fulfilment file                    |   yes    |         |                                                                         |       |
+| FULFILMENT_FTP_HOST          | The hostname of the target FTP server                                                     |   yes    |         |                                                                         |       |
+| FULFILMENT_FTP_PORT          | The port of the FTP service on the target server                                          |   yes    |         |                                                                         |       |
+| FULFILMENT_FTP_PATH          | The base path under which files should be written to the FTP server                       |   yes    |         |                                                                         |       |
+| FULFILMENT_FTP_USERNAME      | The username used to authenticate with the FTP server                                     |   yes    |         |                                                                         |       |
+| FULFILMENT_FTP_KEY_SECRET_ID | The ID of the secret in AWS secrets manager which contains the SSH key for authentication |   yes    |         |                                                                         |       |
+| FULFILMENT_S3_BUCKET         | The name of the AWS S3 bucket in which to stage and aggregate fulfilment data             |   yes    |         |                                                                         |       |
+| DEBUG                        | Use to enable output of debug information to the console                                  |   yes    |         | fulfilment:\*, fulfilment:staging, fulfilment:transport, fulfilment:ftp |       |
 
 ### See also:
 

@@ -1,7 +1,6 @@
 import {
   Contact,
   Permission,
-  GlobalOptionSetDefinition,
   persist,
   retrieveMultiple,
   findById,
@@ -16,6 +15,7 @@ import TestEntity from '../../__mocks__/TestEntity.js'
 import { v4 as uuidv4 } from 'uuid'
 import MockDynamicsWebApi from 'dynamics-web-api'
 import { PredefinedQuery } from '../../queries/predefined-query.js'
+import { BaseEntity, EntityDefinition } from '../../entities/base.entity.js'
 
 describe('entity manager', () => {
   beforeEach(async () => {
@@ -62,14 +62,28 @@ describe('entity manager', () => {
     it('throws an error object on failure', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       MockDynamicsWebApi.__throwWithErrorsOnBatchExecute()
-      await expect(persist(new TestEntity())).rejects.toThrow('Test error')
-      expect(consoleErrorSpy).toHaveBeenCalled()
+      const newEntity = Object.assign(new TestEntity(), { strVal: 'test', intVal: 0 })
+      const existingEntity = TestEntity.fromResponse(
+        {
+          '@odata.etag': 'W/"202465000"',
+          idval: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',
+          strval: 'Fester',
+          intval: 1,
+          boolval: true
+        },
+        {}
+      )
+      await expect(persist(newEntity, existingEntity)).rejects.toThrow('Test error')
+      // Expect the console error to contain details of the batch data (one createRequest, one updateRequest plus the exception object)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringMatching('Error persisting batch. Data: %j, Exception: %o'),
+        expect.arrayContaining([{ createRequest: expect.any(Object) }, { updateRequest: expect.any(Object) }]),
+        expect.any(Error)
+      )
     })
 
     it('throws an error on implementation failure', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      await expect(persist(null)).rejects.toThrow("Cannot read property 'toRequestBody' of null")
-      expect(consoleErrorSpy).toHaveBeenCalled()
+      await expect(persist(null)).rejects.toThrow("Cannot read property 'isNew' of null")
     })
   })
 
@@ -263,7 +277,7 @@ describe('entity manager', () => {
   }
 
   describe('retrieveGlobalOptionSets', () => {
-    it('retrieves a full listing when given no arguments', async () => {
+    it('retrieves a full listing', async () => {
       const result = await retrieveGlobalOptionSets().execute()
       expect(result).toMatchObject({
         defra_concessionproof: expect.objectContaining(optionSetInstance),
@@ -286,16 +300,6 @@ describe('entity manager', () => {
         defra_poclfilestatus: expect.objectContaining(optionSetInstance),
         defra_preferredcontactmethod: expect.objectContaining(optionSetInstance)
       })
-    })
-
-    it('retrieves listings for specific names', async () => {
-      const result = await retrieveGlobalOptionSets('defra_concessionproof', 'defra_country', 'defra_datasource').execute()
-      expect(result).toMatchObject({
-        defra_concessionproof: expect.objectContaining(optionSetInstance),
-        defra_country: expect.objectContaining(optionSetInstance),
-        defra_datasource: expect.objectContaining(optionSetInstance)
-      })
-      expect(Object.keys(result)).toHaveLength(3)
     })
 
     it('throws an error object on failure', async () => {
@@ -384,7 +388,7 @@ describe('entity manager', () => {
       lookup.boolVal = true
       lookup.dateVal = '1946-01-01'
       lookup.dateTimeVal = '1946-01-01T01:02:03Z'
-      lookup.optionSetVal = new GlobalOptionSetDefinition('test_globaloption', { id: 910400000, label: 'test', description: 'test' })
+      lookup.optionSetVal = { id: 910400000, label: 'test', description: 'test' }
       const expectedLookupSelect =
         "strval eq 'StringData' and intval eq 123 and decval eq 123.45 and boolval eq true and dateval eq 1946-01-01 and datetimeval eq 1946-01-01T01:02:03Z and optionsetval eq 910400000"
       const result = await findByExample(lookup)
@@ -395,6 +399,52 @@ describe('entity manager', () => {
       })
       expect(result).toHaveLength(1)
       expect(result[0]).toBeInstanceOf(TestEntity)
+    })
+
+    it('does not require the entity to define a default filter', async () => {
+      MockDynamicsWebApi.__setResponse('retrieveMultipleRequest', { value: [{}] })
+
+      class SameEntity extends BaseEntity {
+        static _definition = new EntityDefinition(() => ({
+          localName: 'sampleEntity',
+          dynamicsCollection: 'sample',
+          mappings: {
+            id: { field: 'idval', type: 'string' },
+            testVal: { field: 'testval', type: 'string' }
+          }
+        }))
+
+        /**
+         * @returns {EntityDefinition} the definition providing mappings between Dynamics entity and the local entity
+         */
+        static get definition () {
+          return SameEntity._definition
+        }
+
+        /**
+         * The testVal field
+         * @type {string}
+         */
+        get testVal () {
+          return super._getState('testVal')
+        }
+
+        set testVal (testVal) {
+          super._setState('testVal', testVal)
+        }
+      }
+
+      const lookup = new SameEntity()
+      lookup.testVal = 'StringData'
+      const expectedLookupSelect = "testval eq 'StringData'"
+      const result = await findByExample(lookup)
+      expect(MockDynamicsWebApi.prototype.retrieveMultipleRequest).toBeCalledWith({
+        collection: SameEntity.definition.dynamicsCollection,
+        select: SameEntity.definition.select,
+        filter: expect.stringMatching(`${expectedLookupSelect}`)
+      })
+      expect(result).toHaveLength(1)
+      expect(result[0]).toBeInstanceOf(SameEntity)
     })
 
     it('only serializes fields into the select statement if they are set', async () => {

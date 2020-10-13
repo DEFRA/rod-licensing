@@ -1,16 +1,18 @@
 ########################################################################################
 # Create an image suitable to building each of the fish services.
 ########################################################################################
-FROM rod-licensing/base
+FROM rod_licensing/base
 
 # The base image sets the default user to be node, for build purposes we need to use root and unset NPM_CONFIG_PREFIX
 USER root
 ENV NPM_CONFIG_PREFIX ""
 
 # Install build-specific dependencies
-RUN apk update && apk upgrade \
-    && apk add make gcc g++ python curl git rsync \
-    && rm -rf /var/cache/apk/* \
+RUN apk --no-cache -U -v add make gcc g++ python curl git \
     && mkdir -p /app
+
+# Set npm configuration for builds
+RUN npm config set loglevel error \
+    && npm config set audit false
 
 WORKDIR /app

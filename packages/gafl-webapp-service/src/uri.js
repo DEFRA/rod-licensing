@@ -3,18 +3,11 @@
  */
 export const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 export const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
-export const NUMBER_OF_RODS = { uri: '/buy/number-of-rods', page: 'number-of-rods' }
 export const LICENCE_TO_START = { uri: '/buy/start-kind', page: 'licence-to-start' }
-export const LICENCE_START_DATE = { uri: '/buy/start-date', page: 'licence-start-date' }
 export const LICENCE_START_TIME = { uri: '/buy/start-time', page: 'licence-start-time' }
 
 export const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence-required' }
-export const JUNIOR_LICENCE = { uri: '/buy/junior-licence', page: 'junior-licence' }
-
-export const BENEFIT_CHECK = { uri: '/buy/benefit-check', page: 'benefit-check' }
-export const BENEFIT_NI_NUMBER = { uri: '/buy/benefit-ni-number', page: 'benefit-ni-number' }
-export const BLUE_BADGE_CHECK = { uri: '/buy/blue-badge-check', page: 'blue-badge-check' }
-export const BLUE_BADGE_NUMBER = { uri: '/buy/blue-badge-number', page: 'blue-badge-number' }
+export const DISABILITY_CONCESSION = { uri: '/buy/disability-concession', page: 'disability-concession' }
 export const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
 
 export const NAME = { uri: '/buy/name', page: 'name' }
@@ -33,13 +26,19 @@ export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-faile
 export const TERMS_AND_CONDITIONS = { uri: '/buy/terms-conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 export const ORDER_COMPLETE_PDF = { uri: '/buy/order-complete-pdf' }
+export const ATTRIBUTION = { uri: '/buy/attribution' }
+
+export const OIDC_SIGNIN = { uri: '/oidc/signin' }
+export const OIDC_ROLE_REQUIRED = { uri: '/oidc/role-required', page: 'role-required' }
+export const OIDC_ACCOUNT_DISABLED = { uri: '/oidc/account-disabled', page: 'account-disabled' }
 
 /**
  * Renewals pages
  * @type {{uri: string}}
  */
-export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber}' }
-export const IDENTIFY = { uri: '/buy/renew/identify/{referenceNumber}', page: 'identify' }
+export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber?}' }
+export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
+export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 export const RENEWAL_START_DATE = { uri: '/buy/renew/renewal-start-date', page: 'renewal-start-date' }
 export const RENEWAL_START_VALIDATE = { uri: '/buy/renew/renewal-start-date/validate' }
@@ -55,13 +54,19 @@ export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 /**
  * These are informational static pages
  */
-export const COOKIES = { uri: '/cookies', page: 'cookies' }
-export const ACCESSIBILITY_STATEMENT = { uri: '/accessibility-statement', page: 'accessibility-statement' }
-export const PRIVACY_POLICY = { uri: '/privacy-policy', page: 'privacy-policy' }
-export const REFUND_POLICY = { uri: '/refund-policy', page: 'refund-policy' }
+export const COOKIES = { uri: '/guidance/cookies', page: 'cookies' }
+export const ACCESSIBILITY_STATEMENT = { uri: '/guidance/accessibility-statement', page: 'accessibility-statement' }
+export const PRIVACY_POLICY = { uri: '/guidance/privacy-policy', page: 'privacy-policy' }
+export const REFUND_POLICY = { uri: '/guidance/refund-policy', page: 'refund-policy' }
+export const OS_TERMS = { uri: '/guidance/os-terms', page: 'os-terms' }
 
 /**
  * These are inserted at runtime by the test framework but the session manager needs to know about them
  */
 export const TEST_STATUS = { uri: '/buy/status' }
 export const TEST_TRANSACTION = { uri: '/buy/transaction' }
+export const GET_PRICING_TYPES = { uri: '/buy/get-pricing/types' }
+export const GET_PRICING_LENGTHS = { uri: '/buy/get-pricing/lengths' }
+
+export const FRESHWATER_FISING_RULES = { uri: 'https://www.gov.uk/freshwater-rod-fishing-rules' }
+export const LOCAL_BYELAWS = { uri: 'https://www.gov.uk/government/collections/local-fishing-byelaws' }

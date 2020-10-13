@@ -1,11 +1,27 @@
-import { ADDRESS_LOOKUP, CONTROLLER, ADDRESS_ENTRY } from '../../../../uri.js'
+import { ADDRESS_LOOKUP, ADDRESS_ENTRY, OS_TERMS } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
+import * as concessionHelper from '../../../../processors/concession-helper.js'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
+import { nextPage } from '../../../../routes/next-page.js'
 
 const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
   postcode: validation.contact.createUKPostcodeValidator(Joi)
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(ADDRESS_LOOKUP.page, ADDRESS_LOOKUP.uri, validator, CONTROLLER.uri, () => ({ entryPage: ADDRESS_ENTRY.uri }))
+const getData = async request => {
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  return {
+    licenceLength: permission.licenceLength,
+    junior: concessionHelper.hasJunior(permission),
+    isPhysical: isPhysical(permission),
+    uri: {
+      entryPage: ADDRESS_ENTRY.uri,
+      osTerms: OS_TERMS.uri
+    }
+  }
+}
+
+export default pageRoute(ADDRESS_LOOKUP.page, ADDRESS_LOOKUP.uri, validator, nextPage, getData)

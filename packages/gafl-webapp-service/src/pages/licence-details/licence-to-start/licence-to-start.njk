@@ -1,32 +1,140 @@
 {% extends "standard-form.njk" %}
 
 {% from "radios/macro.njk" import govukRadios %}
+{% from "date-input/macro.njk" import govukDateInput %}
 {% set title = 'When would you like your licence to start?' %}
 
 {%
     set errorMap = {
         'licence-to-start': {
-            'any.required': { ref: '#licence-to-start', text: 'Tell us when would you like your licence to start?' }
+            'any.required': { ref: '#licence-to-start', text: "Choose when you'd like your licence to start" }
+        },
+        'licence-start-date': {
+            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want your licence to start, include a day, month and year' },
+            'date.max': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' },
+            'date.min': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' }
         }
     }
 %}
 
+{% set dateInputItems = [
+    {
+      name: "day",
+      classes: "govuk-input--width-2",
+      value: payload['licence-start-date-day'],
+      attributes: { maxlength : 2 }
+    },
+    {
+      name: "month",
+      classes: "govuk-input--width-2",
+      value: payload['licence-start-date-month'],
+      attributes: { maxlength : 2 }
+    },
+    {
+      name: "year",
+      classes: "govuk-input--width-4",
+      value: payload['licence-start-date-year'],
+      attributes: { maxlength : 4 }
+    }
+  ]
+%}
+
+{% set startDate %}
+    {% if not data.hasJunior %}
+        <p class="govuk-body-m">Enter today's date if you want a 1 or 8 day licence to start later today.</p>
+    {% endif %}
+
+    {{ govukDateInput({
+      id: "licence-start-date",
+      namePrefix: "licence-start-date",
+      items: dateInputItems,
+      errorMessage: { text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' } if error['licence-start-date'],
+      hint: {
+        text: "Enter a date up to and including " + data.maxStartDate
+      }
+    }) }}
+{% endset -%}
+
 {% block pageContent %}
+    <p class="govuk-body-m">Your licence can start today or any day within the next {{ data.advancedPurchaseMaxDays }} days.</p>
+
     {{ govukRadios({
         idPrefix: "licence-to-start",
         name: "licence-to-start",
         items: [
             {
-                text: "30 minutes after payment",
+                text: data.startAfterPaymentMinutes + " minutes after payment",
                 value: "after-payment",
                 checked: payload['licence-to-start'] === 'after-payment'
             },
             {
-                text: "Another time or date",
-                value: "another-date-or-time",
-                checked: payload['licence-to-start'] === 'another-date-or-time'
+                text: "Later",
+                value: "another-date",
+                checked: payload['licence-to-start'] === 'another-date',
+                conditional: {
+                    html: startDate
+                }
             }
         ],
-        errorMessage: { text: 'Select when you\'d like your licence to start' } if error
+        errorMessage: { text: 'Choose when you\'d like your licence to start' } if error['licence-to-start']
     }) }}
 {% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        const dataInputDiv = document.getElementById('licence-start-date')
+        const calImageDiv = document.createElement('div')
+        calImageDiv.id = 'cal-image-div'
+        const calImage = document.createElement('img')
+        calImage.src = '/public/images/icon-calendar-2x.png'
+        calImageDiv.appendChild(calImage)
+        calImageDiv.setAttribute('aria-hidden', true)
+        dataInputDiv.appendChild(calImageDiv)
+        const fpk = flatpickr(calImageDiv, {
+            dateFormat: "d m Y",
+            disableMobile: true,
+            minDate: 'today',
+            maxDate: '{{ data.maxStartDate }}',
+            position: 'below',
+            monthSelectorType: 'static',
+            showMonths: 1,
+            clickOpens: false,
+            ariaDateFormat: "",
+            onChange: function(selectedDates, dateStr, instance) {
+                var d = new Date(selectedDates[0])
+                document.getElementById('licence-start-date-day').value = d.getDate()
+                document.getElementById('licence-start-date-month').value = d.getMonth() + 1
+                document.getElementById('licence-start-date-year').value = d.getFullYear()
+            },
+            onOpen: [ function(selectedDates, dateStr, instance) {
+                if (!document.getElementById('year-read-only')) {
+                    const yearInputWrapper = document.getElementsByClassName('numInputWrapper')[0];
+                    yearInputWrapper.style.display= 'none';
+                    const currentMonthDiv = document.getElementsByClassName('flatpickr-current-month')[0];
+                    const yearReadOnly = document.createElement('span');
+                    yearReadOnly.id = 'year-read-only';
+                    yearReadOnly.innerHTML = ' ' + instance.currentYear;
+                    currentMonthDiv.appendChild(yearReadOnly);
+                }
+            } ],
+            onYearChange: function(selectedDates, dateStr, instance) {
+                const yearReadOnly = document.getElementById('year-read-only');
+                yearReadOnly.innerHTML = ' ' + instance.currentYear;
+            }
+        })
+        window.addEventListener('keydown', function (event) {
+            if (event.defaultPrevented) {
+                return;
+            }
+            if (event.key === 'Esc' || event.key === 'Escape' ) {
+                fpk.close()
+            }
+        })
+        calImageDiv.onclick = function() {
+            fpk.toggle()
+        }
+    })()</script>
+{% endblock %}
+

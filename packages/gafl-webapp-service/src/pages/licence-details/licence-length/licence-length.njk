@@ -1,15 +1,25 @@
 {% extends "standard-form.njk" %}
+{% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
 {% from "radios/macro.njk" import govukRadios %}
-{% set title = 'Which fishing licence do you want to get?' %}
+{% set title = 'How long do you want your licence for?' %}
 
 {%
     set errorMap = {
         'licence-length': {
-            'any.required': { ref: '#licence-length', text: 'You did not tell us which licence you want' }
+            'any.required': { ref: '#licence-length', text: 'Choose how long you want your licence for' }
         }
     }
 %}
+
+{% set 8day %}
+    <p class="govuk-body-m">8 day licences are valid for 8 consecutive days from the start time that you select.</p>
+{% endset -%}
+
+{% set 1day %}
+    <p class="govuk-body-m">1 day licences are valid for 24 hours from the start time that you select.</p>
+{% endset -%}
+
 
 {% block pageContent %}
     {{ govukRadios({
@@ -17,21 +27,38 @@
         name: "licence-length",
         items: [
             {
+                id: 'selector-12M',
                 text: "12 months",
                 value: "12M",
                 checked: payload['licence-length'] === '12M'
             },
             {
+                id: 'selector-8D',
                 text: "8 days",
                 value: "8D",
-                checked: payload['licence-length'] === '8D'
+                checked: payload['licence-length'] === '8D',
+                conditional: { html: 8day }
             },
             {
+                id: 'selector-1D',
                 text: "1 day",
                 value: "1D",
-                checked: payload['licence-length'] === '1D'
+                checked: payload['licence-length'] === '1D',
+                conditional: { html: 1day }
             }
         ],
-        errorMessage: { text: 'Tell us which fishing licence you want' } if error
+        errorMessage: { text: 'Choose how long you want your licence for' } if error
     }) }}
+{% endblock %}
+
+{% block pricingSummary %}
+    {{ pricingSummary(data.pricing.byLength, {
+        'total': { desc: 'Total' }
+    }, data.licenceTypeStr ) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    {{ pricingSummaryScript(data.pricing.byLength, nonce) }}
 {% endblock %}

@@ -11,6 +11,9 @@ export default [
       directory: {
         path: `${Dirname}/public/`
       }
+    },
+    options: {
+      auth: false
     }
   },
   {
@@ -20,6 +23,9 @@ export default [
       file: {
         path: `${Dirname}/public/images/favicon.ico`
       }
+    },
+    options: {
+      auth: false
     }
   },
   {
@@ -29,6 +35,9 @@ export default [
       file: {
         path: `${Dirname}/public/robots.txt`
       }
+    },
+    options: {
+      auth: false
     }
   }
 ]

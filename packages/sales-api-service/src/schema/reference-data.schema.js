@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 
 export const referenceDataItemExample = {
   id: 'f1bb733e-3b1e-ea11-a810-000d3a25c5d6',

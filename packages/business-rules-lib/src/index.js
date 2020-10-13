@@ -1,5 +1,5 @@
-import * as contactValidation from './validators/contact.js'
-import * as permissionValidation from './validators/permission.js'
+import * as contactValidation from './validators/contact.validators.js'
+import * as permissionValidation from './validators/permission.validators.js'
 export * from './util/ages.js'
 export * from './constants.js'
 

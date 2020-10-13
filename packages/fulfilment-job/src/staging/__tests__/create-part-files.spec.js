@@ -2,23 +2,22 @@ import moment from 'moment'
 import { createPartFiles } from '../create-part-files.js'
 import { writeS3PartFile } from '../../transport/s3.js'
 import config from '../../config.js'
-import {
-  FulfilmentRequestFile,
-  FulfilmentRequest,
-  executePagedQuery,
-  executeQuery,
-  persist,
-  GlobalOptionSetDefinition
-} from '@defra-fish/dynamics-lib'
+import { FulfilmentRequestFile, FulfilmentRequest, executePagedQuery, executeQuery, persist } from '@defra-fish/dynamics-lib'
 import {
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY
 } from '../../../../sales-api-service/src/__mocks__/test-data.js'
-import { FULFILMENT_FILE_STATUS_OPTIONSET, FULFILMENT_REQUEST_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
+import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
 const EXECUTION_DATE = moment()
 
-jest.mock('../../config.js', () => ({ file: { size: 1 } }))
+jest.mock('../../config.js', () => ({
+  file: {
+    size: 1,
+    partFileSize: 1
+  }
+}))
+
 jest.mock('../../transport/s3.js')
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -33,7 +32,7 @@ const mockFulfilmentRequest = Object.assign(new FulfilmentRequest(), {
   )}`,
   requestTimestamp: EXECUTION_DATE.toISOString(),
   notes: 'Initial fulfilment request created at point of sale',
-  status: new GlobalOptionSetDefinition(FULFILMENT_REQUEST_STATUS_OPTIONSET, { id: 910400000, label: 'Pending', description: 'Pending' })
+  status: { id: 910400000, label: 'Pending', description: 'Pending' }
 })
 
 const mockFulfilmentRequestQueryResult = {
@@ -57,7 +56,6 @@ describe('createPartFiles', () => {
   beforeEach(jest.clearAllMocks)
 
   it('queries dynamics for data and writes a part file', async () => {
-    config.file.size = 1
     const fulfilmentFileExpectations = expect.objectContaining({
       fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
       date: expect.anything(),
@@ -73,6 +71,47 @@ describe('createPartFiles', () => {
 
     executePagedQuery.mockImplementation(jest.fn(async (query, onPageReceived) => onPageReceived([mockFulfilmentRequestQueryResult])))
     executeQuery.mockImplementation(jest.fn(async () => []))
+    await expect(createPartFiles()).resolves.toBeUndefined()
+    expect(writeS3PartFile).toHaveBeenCalledWith(
+      fulfilmentFileExpectations,
+      0,
+      expect.arrayContaining([
+        {
+          fulfilmentRequest: fulfilmentRequestExpectations,
+          licensee: MOCK_EXISTING_CONTACT_ENTITY,
+          permission: MOCK_EXISTING_PERMISSION_ENTITY,
+          permit: MOCK_12MONTH_SENIOR_PERMIT
+        }
+      ])
+    )
+    expect(persist).toHaveBeenCalledTimes(1)
+    expect(persist).toHaveBeenCalledWith(fulfilmentFileExpectations, fulfilmentRequestExpectations)
+  })
+
+  it('calculates the next file in the sequence correctly', async () => {
+    const fulfilmentFileExpectations = expect.objectContaining({
+      fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1010.json`,
+      date: expect.anything(),
+      notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
+      numberOfRequests: 1,
+      status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
+    })
+    const fulfilmentRequestExpectations = expect.objectContaining(
+      Object.assign(mockFulfilmentRequest.toJSON(), {
+        status: expect.objectContaining({ id: 910400001, label: 'Sent', description: 'Sent' })
+      })
+    )
+
+    executePagedQuery.mockImplementation(jest.fn(async (query, onPageReceived) => onPageReceived([mockFulfilmentRequestQueryResult])))
+    executeQuery.mockImplementation(
+      jest.fn(async () => [
+        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0003.json`, status: { label: 'Delivered' } } },
+        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0002.json`, status: { label: 'Delivered' } } },
+        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1009.json`, status: { label: 'Delivered' } } },
+        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`, status: { label: 'Delivered' } } },
+        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0006.json`, status: { label: 'Delivered' } } }
+      ])
+    )
     await expect(createPartFiles()).resolves.toBeUndefined()
     expect(writeS3PartFile).toHaveBeenCalledWith(
       fulfilmentFileExpectations,

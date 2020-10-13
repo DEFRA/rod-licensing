@@ -27,7 +27,7 @@ before_install:
 
 script:
   - echo "Starting tests at $(date)"
-  - npm test
+  - jest --maxWorkers=4
   - echo "Tests completed at $(date)"
   - sonar-scanner
   - echo "Sonar analysis completed at $(date)"
@@ -42,12 +42,12 @@ before_deploy:
 
 deploy:
   - provider: script
-    script: bash scripts/travis_deploy.sh
+    script: bash scripts/travis/deploy.sh
     skip_cleanup: true
     on:
       branch: develop
   - provider: script
-    script: bash scripts/travis_deploy.sh
+    script: bash scripts/travis/deploy.sh
     skip_cleanup: true
     on:
       branch: master

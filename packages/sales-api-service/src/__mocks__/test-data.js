@@ -1,37 +1,32 @@
-import {
-  Concession,
-  ConcessionProof,
-  Contact,
-  GlobalOptionSetDefinition,
-  Permission,
-  Permit,
-  TransactionCurrency
-} from '@defra-fish/dynamics-lib'
+import { Concession, ConcessionProof, Contact, Permission, Permit, TransactionCurrency } from '@defra-fish/dynamics-lib'
 import { readFileSync } from 'fs'
 import Project from '../project.cjs'
 import Path from 'path'
-import dotProp from 'dot-prop'
+import moment from 'moment'
 
 const optionSetDataPath = Path.join(Project.root, '..', 'dynamics-lib', 'src', '__mocks__', 'option-set-data.json')
-const optionSetData = JSON.parse(readFileSync(optionSetDataPath, { encoding: 'UTF-8' }))
-  .value.map(({ Name: name, Options: options }) => ({
-    name,
-    options: options.map(o => ({
-      id: o.Value,
-      label: dotProp.get(o, 'Label.UserLocalizedLabel.Label', ''),
-      description: dotProp.get(o, 'Description.UserLocalizedLabel.Label', '')
-    }))
-  }))
-  .reduce((acc, { name, options }) => {
+const optionSetData = JSON.parse(readFileSync(optionSetDataPath, { encoding: 'UTF-8' })).value.reduce(
+  (acc, { Name: name, Options: options }) => {
     acc[name] = {
       name,
       options: options.reduce((optionSetMapping, o) => {
-        optionSetMapping[o.id] = new GlobalOptionSetDefinition(name, o)
+        const id = o.Value
+        const label = o.Label?.UserLocalizedLabel?.Label || ''
+        const description = o.Description?.UserLocalizedLabel?.Label || label
+        optionSetMapping[id] = { id, label, description }
         return optionSetMapping
       }, {})
     }
     return acc
-  }, {})
+  },
+  {}
+)
+
+const testExecutionTime = moment()
+export const MOCK_PERMISSION_NUMBER = '11100420-2WT1SFT-KPMW2C'
+export const MOCK_START_DATE = testExecutionTime.toISOString()
+export const MOCK_END_DATE = testExecutionTime.add(1, 'year').toISOString()
+export const MOCK_ISSUE_DATE = testExecutionTime.toISOString()
 
 export const mockContactPayload = () => ({
   firstName: 'Fester',
@@ -56,7 +51,7 @@ export const mockContactWithIdPayload = () => ({
 })
 
 export const mockPermissionPayload = () => ({
-  permitId: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
+  permitId: MOCK_12MONTH_DISABLED_PERMIT.id,
   licensee: mockContactPayload(),
   concessions: [
     {
@@ -67,8 +62,8 @@ export const mockPermissionPayload = () => ({
       }
     }
   ],
-  issueDate: '2020-04-09T08:51:26.825Z',
-  startDate: '2020-04-09T08:51:26.825Z'
+  issueDate: MOCK_ISSUE_DATE,
+  startDate: MOCK_START_DATE
 })
 
 export const mockTransactionPayload = () => ({
@@ -76,30 +71,36 @@ export const mockTransactionPayload = () => ({
   dataSource: 'Web Sales'
 })
 
-export const MOCK_PERMISSION_NUMBER = '11100420-2WT1SFT-KPMW2C'
-export const MOCK_END_DATE = '2020-04-10T09:52:50.609Z'
-export const mockPermissionRecord = () => ({
+export const mockFinalisedPermissionRecord = () => ({
   ...mockPermissionPayload(),
   referenceNumber: MOCK_PERMISSION_NUMBER,
   endDate: MOCK_END_DATE
 })
 
-export const mockTransactionRecord = overrides => ({
-  ...mockTransactionPayload(),
+export const mockStagedTransactionRecord = () => ({
   id: 'b364c12f-ce62-4c62-b4bd-4a06fd57e256',
   expires: 1586512428,
-  permissions: [mockPermissionRecord()],
+  ...mockTransactionPayload(),
   cost: 30,
   isRecurringPaymentSupported: true,
-  ...overrides
+  status: { id: 'STAGED' }
 })
 
-export const mockCompletedTransactionRecord = () => ({
-  ...mockTransactionRecord(),
+export const mockFinalisedTransactionRecord = () => ({
+  id: 'b364c12f-ce62-4c62-b4bd-4a06fd57e256',
+  expires: 1586512428,
+  permissions: [mockFinalisedPermissionRecord()],
+  cost: 30,
+  dataSource: 'Web Sales',
+  isRecurringPaymentSupported: true,
   payment: {
+    amount: 30,
     source: 'Gov Pay',
     method: 'Debit card',
     timestamp: new Date().toISOString()
+  },
+  status: {
+    id: 'FINALISED'
   }
 })
 

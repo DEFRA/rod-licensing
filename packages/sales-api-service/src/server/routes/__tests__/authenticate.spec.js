@@ -1,10 +1,11 @@
-import initialiseServer from '../../index.js'
+import initialiseServer from '../../server.js'
 import { executeQuery, permissionForLicensee } from '@defra-fish/dynamics-lib'
 import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
   MOCK_1DAY_SENIOR_PERMIT_ENTITY,
-  MOCK_CONCESSION_PROOF_ENTITY
+  MOCK_CONCESSION_PROOF_ENTITY,
+  MOCK_CONCESSION
 } from '../../../__mocks__/test-data.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -31,7 +32,7 @@ describe('authenticate handler', () => {
           entity: MOCK_EXISTING_PERMISSION_ENTITY,
           expanded: {
             licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-            concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: {} }],
+            concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
             permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
           }
         }
@@ -46,7 +47,12 @@ describe('authenticate handler', () => {
         permission: expect.objectContaining({
           ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
           licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
-          concessions: [MOCK_CONCESSION_PROOF_ENTITY.toJSON()],
+          concessions: [
+            {
+              id: MOCK_CONCESSION.id,
+              proof: MOCK_CONCESSION_PROOF_ENTITY.toJSON()
+            }
+          ],
           permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
         })
       })

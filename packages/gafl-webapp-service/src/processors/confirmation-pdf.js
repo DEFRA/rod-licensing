@@ -7,9 +7,9 @@ import path from 'path'
 import Dirname from '../../dirname.cjs'
 import { displayStartTime, displayEndTime } from './date-and-time-display.js'
 import * as mappings from './mapping-constants.js'
-import * as concessionHelper from './concession-helper.js'
-
-const crownImage = path.join(Dirname, 'public/images/govuk-crest.png')
+import { licenceTypeDisplay } from './licence-type-display.js'
+import { hasDisabled } from './concession-helper.js'
+const eaImage = path.join(Dirname, 'public/images/EA-logo_black.png')
 
 const style = {
   TABLE_HEADER: 'tableHeader',
@@ -40,29 +40,15 @@ const getTable = permission => {
   const tab = {
     body: [
       tableRowHelper('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`),
-      tableRowHelper('Type', permission.licenceType),
+      tableRowHelper('Type', licenceTypeDisplay(permission)),
       tableRowHelper('Length', licenceLength(permission))
     ]
   }
 
-  if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
-    tab.body.push(tableRowHelper('Number of rods', permission.numberOfRods))
-  }
-
-  if (concessionHelper.hasDisabled(permission) && concessionHelper.hasJunior(permission)) {
-    tab.body.push(tableRowHelper('Concessions', 'Junior, Disabled'))
-  } else if (concessionHelper.hasDisabled(permission) && concessionHelper.hasSenior(permission)) {
-    tab.body.push(tableRowHelper('Concessions', 'Senior, Disabled'))
-  } else if (concessionHelper.hasDisabled(permission)) {
-    tab.body.push(tableRowHelper('Concessions', 'Disabled'))
-  } else if (concessionHelper.hasJunior(permission)) {
-    tab.body.push(tableRowHelper('Concessions', 'Junior'))
-  } else if (concessionHelper.hasSenior(permission)) {
-    tab.body.push(tableRowHelper('Concessions', 'Senior'))
-  }
-
-  tab.body.push(tableRowHelper('Valid from', displayStartTime(permission)))
-  tab.body.push(tableRowHelper('Expires', displayEndTime(permission)))
+  tab.body.push(tableRowHelper('Disability concession', hasDisabled(permission) ? 'yes' : 'no'))
+  tab.body.push(tableRowHelper('Start date', displayStartTime(permission)))
+  tab.body.push(tableRowHelper('End date', displayEndTime(permission)))
+  tab.body.push(tableRowHelper('Paid', permission.permit.cost === 0 ? 'free' : `£${permission.permit.cost}`))
 
   return tab
 }
@@ -70,22 +56,17 @@ const getTable = permission => {
 const getContent = permission => {
   const content = [
     {
-      image: crownImage,
-      alignment: alignment.CENTRE
+      image: eaImage,
+      alignment: alignment.CENTRE,
+      width: 300
     },
     {
-      text: 'GOV.UK',
-      style: 'subHeader',
-      margin: [4, 6, 0, 0],
-      alignment: alignment.CENTRE
-    },
-    {
-      text: "You've bought your licence",
+      text: 'Your rod fishing licence details',
       style: style.HEADER,
       alignment: alignment.CENTRE
     },
     {
-      text: 'Your fishing licence number is:',
+      text: 'This is your licence number',
       alignment: alignment.CENTRE
     },
     {
@@ -100,34 +81,22 @@ const getContent = permission => {
     }
   ]
 
-  if (permission.licenceLength === '12M') {
-    if (concessionHelper.hasJunior(permission)) {
-      content.push({ text: "We don't send junior licences in the post", style: 'subHeader' })
-      content.push({
-        text:
-          'If our bailiffs ask to see your licence, you must show them proof of your licence. Print out this page or make a note of your licence number.',
-        style: 'para'
-      })
-    } else {
-      content.push({ text: 'Want to go fishing before your licence arrives?', style: 'subHeader' })
-      content.push({
-        text: 'Your licence will arrive in the post within 10 working days. To go fishing before you receive it, you must take:',
-        style: 'para'
-      })
-    }
-  } else {
-    content.push({ text: 'We don’t send 1-day or 8-day licences in the post', style: 'subHeader' })
-    content.push({ text: 'If our bailiffs ask to see your licence, you must show them:', style: 'para' })
-  }
+  content.push({ text: '\nOnly the named licence holder can use this licence.', style: 'para' })
 
-  if (!concessionHelper.hasJunior(permission)) {
-    content.push({
-      ol: [
-        { text: [{ text: 'proof of your licence: ', bold: true }, ' print out this page or make a note of your licence number'] },
-        { text: [{ text: 'proof of your identity, ', bold: true }, " such as your driver's licence or other photo ID"] }
-      ]
-    })
-  }
+  content.push({ text: 'Before you go fishing', style: 'subHeader' })
+  content.push({
+    text:
+      'You can go fishing before you get your licence card, but you must be able to confirm your licence details if asked by an enforcement officer.',
+    style: 'para'
+  })
+
+  content.push({
+    text: [
+      'You must follow the ',
+      { text: 'rod fishing rules and local byelaws', link: 'https://www.gov.uk/freshwater-rod-fishing-rules', decoration: 'underline' }
+    ],
+    style: 'para'
+  })
 
   if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
     content.push({ text: 'Report your yearly catch return', style: 'subHeader' })

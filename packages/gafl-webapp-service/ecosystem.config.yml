@@ -1,5 +1,6 @@
 apps:
   - script: ./src/gafl-webapp-service.js
+    interpreter_args: '--unhandled-rejections=strict'
     exec_mode: cluster
     instances: 1
     autorestart: true

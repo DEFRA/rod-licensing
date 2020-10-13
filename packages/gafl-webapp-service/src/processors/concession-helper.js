@@ -1,6 +1,6 @@
 import { CONCESSION, CONCESSION_PROOF, HOW_CONTACTED } from './mapping-constants.js'
-import moment from 'moment'
-import { isJunior, isMinor, isSenior } from '@defra-fish/business-rules-lib'
+import moment from 'moment-timezone'
+import { SERVICE_LOCAL_TIME, isJunior, isMinor, isSenior, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 
 export const clear = permission => {
   delete permission.concessions
@@ -8,9 +8,7 @@ export const clear = permission => {
 
 export const addJunior = permission => {
   if (!hasJunior(permission)) {
-    if (hasSenior(permission)) {
-      removeSenior(permission)
-    }
+    removeSenior(permission)
     if (!permission.concessions) {
       permission.concessions = []
     }
@@ -23,7 +21,7 @@ export const addJunior = permission => {
   }
 }
 
-export const hasJunior = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
+export const hasJunior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
 
 export const removeJunior = permission => {
   if (hasJunior(permission)) {
@@ -33,9 +31,7 @@ export const removeJunior = permission => {
 
 export const addSenior = permission => {
   if (!hasSenior(permission)) {
-    if (hasJunior(permission)) {
-      removeJunior(permission)
-    }
+    removeJunior(permission)
     if (!permission.concessions) {
       permission.concessions = []
     }
@@ -48,7 +44,7 @@ export const addSenior = permission => {
   }
 }
 
-export const hasSenior = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.SENIOR)
+export const hasSenior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.SENIOR)
 
 export const removeSenior = permission => {
   if (hasSenior(permission)) {
@@ -57,9 +53,7 @@ export const removeSenior = permission => {
 }
 
 export const addDisabled = (permission, concessionProof, referenceNumber) => {
-  if (hasDisabled(permission)) {
-    removeDisabled(permission)
-  }
+  removeDisabled(permission)
   if (!permission.concessions) {
     permission.concessions = []
   }
@@ -72,7 +66,7 @@ export const addDisabled = (permission, concessionProof, referenceNumber) => {
   })
 }
 
-export const hasDisabled = permission => permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED)
+export const hasDisabled = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.DISABLED)
 
 export const removeDisabled = permission => {
   if (hasDisabled(permission)) {
@@ -82,7 +76,13 @@ export const removeDisabled = permission => {
 
 export const ageConcessionHelper = permission => {
   delete permission.licensee.noLicenceRequired
-  const ageAtLicenceStartDate = moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
+  const ageAtLicenceStartDate = permission.licenceStartDate
+    ? moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
+    : moment()
+      .tz(SERVICE_LOCAL_TIME)
+      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+      .diff(moment(permission.licensee.birthDate), 'years')
+
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
     clear(permission)
@@ -91,7 +91,7 @@ export const ageConcessionHelper = permission => {
     // Juniors always get a 12 months licence
     Object.assign(permission, { licenceLength: '12M', licenceStartTime: '0' })
     addJunior(permission)
-    // Junior licences are net sent out by post so if the contact details are by letter then reset to none
+    // Junior licences are not sent out by post so if the contact details are by letter then reset to none
     if (permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.letter) {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none

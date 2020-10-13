@@ -1,13 +1,16 @@
 import * as db from '../db.js'
 import AwsMock from 'aws-sdk'
 
+jest.mock('../../config.js', () => ({
+  db: {
+    fileStagingTable: 'TestFileTable',
+    recordStagingTable: 'TestRecordTable',
+    stagingTtlDelta: 60 * 60 * 168
+  }
+}))
+
 describe('database operations', () => {
   const TEST_FILENAME = 'testfile.xml'
-
-  beforeAll(() => {
-    process.env.POCL_FILE_STAGING_TABLE = 'TestFileTable'
-    process.env.POCL_RECORD_STAGING_TABLE = 'TestRecordTable'
-  })
   beforeEach(() => {
     jest.clearAllMocks()
     AwsMock.__resetAll()
@@ -16,7 +19,7 @@ describe('database operations', () => {
     it('calls a get operation on dynamodb', async () => {
       await db.getFileRecord(TEST_FILENAME)
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toHaveBeenCalledWith({
-        TableName: process.env.POCL_FILE_STAGING_TABLE,
+        TableName: 'TestFileTable',
         Key: { filename: TEST_FILENAME },
         ConsistentRead: true
       })
@@ -28,7 +31,7 @@ describe('database operations', () => {
       await db.getFileRecords()
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
         expect.objectContaining({
-          TableName: process.env.POCL_FILE_STAGING_TABLE,
+          TableName: 'TestFileTable',
           ConsistentRead: true
         })
       )
@@ -38,7 +41,7 @@ describe('database operations', () => {
       await db.getFileRecords('STAGE 1', 'STAGE 2')
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.scan).toHaveBeenCalledWith(
         expect.objectContaining({
-          TableName: process.env.POCL_FILE_STAGING_TABLE,
+          TableName: 'TestFileTable',
           FilterExpression: 'stage IN (:stage0,:stage1)',
           ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
           ConsistentRead: true
@@ -54,7 +57,12 @@ describe('database operations', () => {
         expect.objectContaining({
           TableName: 'TestFileTable',
           Key: { filename: TEST_FILENAME },
-          UpdateExpression: 'SET expires = :expires,param1 = :param1,param2 = :param2',
+          UpdateExpression: 'SET #expires = :expires,#param1 = :param1,#param2 = :param2',
+          ExpressionAttributeNames: {
+            '#expires': 'expires',
+            '#param1': 'param1',
+            '#param2': 'param2'
+          },
           ExpressionAttributeValues: {
             ':expires': expect.any(Number),
             ':param1': 'test1',
@@ -100,7 +108,7 @@ describe('database operations', () => {
       await db.getProcessedRecords(TEST_FILENAME)
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
         expect.objectContaining({
-          TableName: process.env.POCL_RECORD_STAGING_TABLE,
+          TableName: 'TestRecordTable',
           KeyConditionExpression: 'filename = :filename',
           ExpressionAttributeValues: { ':filename': TEST_FILENAME },
           ConsistentRead: true
@@ -112,7 +120,7 @@ describe('database operations', () => {
       await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
       expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith(
         expect.objectContaining({
-          TableName: process.env.POCL_RECORD_STAGING_TABLE,
+          TableName: 'TestRecordTable',
           KeyConditionExpression: 'filename = :filename',
           FilterExpression: 'stage IN (:stage0,:stage1)',
           ExpressionAttributeValues: { ':filename': TEST_FILENAME, ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },

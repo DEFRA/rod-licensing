@@ -15,7 +15,7 @@ export class ConcessionProof extends BaseEntity {
     mappings: {
       id: { field: 'defra_concessionproofid', type: 'string' },
       referenceNumber: { field: 'defra_referencenumber', type: 'string' },
-      proofType: { field: 'defra_concessionprooftype', type: 'optionset', ref: 'defra_concessionproof' }
+      type: { field: 'defra_concessionprooftype', type: 'optionset', ref: 'defra_concessionproof' }
     },
     relationships: {
       permission: { property: 'defra_PermissionId', entity: Permission, parent: true },
@@ -47,11 +47,11 @@ export class ConcessionProof extends BaseEntity {
    * The type of the concession proof
    * @type {GlobalOptionSetDefinition}
    */
-  get proofType () {
-    return super._getState('proofType')
+  get type () {
+    return super._getState('type')
   }
 
-  set proofType (proofType) {
-    super._setState('proofType', proofType)
+  set type (type) {
+    super._setState('type', type)
   }
 }

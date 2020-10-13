@@ -1,215 +1,128 @@
-import { salesApi } from '@defra-fish/connectors-lib'
-import mockPermits from '../../../../__mocks__/data/permits.js'
-import mockPermitsConcessions from '../../../../__mocks__/data/permit-concessions.js'
-import mockConcessions from '../../../../__mocks__/data/concessions.js'
-
-import { start, stop, initialize, injectWithCookies, postRedirectGet } from '../../../../__mocks__/test-utils.js'
+import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 import {
   LICENCE_SUMMARY,
   LICENCE_LENGTH,
   LICENCE_TYPE,
-  NUMBER_OF_RODS,
   LICENCE_TO_START,
-  BENEFIT_CHECK,
-  BENEFIT_NI_NUMBER,
-  BLUE_BADGE_CHECK,
-  BLUE_BADGE_NUMBER,
-  LICENCE_START_DATE,
-  LICENCE_START_TIME,
   DATE_OF_BIRTH,
-  NAME,
+  CONTROLLER,
+  DISABILITY_CONCESSION,
   TEST_TRANSACTION
 } from '../../../../uri.js'
-import moment from 'moment'
-import { JUNIOR_MAX_AGE } from '@defra-fish/business-rules-lib'
 
-salesApi.permits.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermits)))
-salesApi.permitConcessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockPermitsConcessions)))
-salesApi.concessions.getAll = jest.fn(async () => new Promise(resolve => resolve(mockConcessions)))
+import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction.js'
+import { licenseTypes } from '../../../licence-details/licence-type/route.js'
+import { disabilityConcessionTypes } from '../../../concessions/disability/update-transaction.js'
 
-const dobHelper = d => ({
-  'date-of-birth-day': d.date().toString(),
-  'date-of-birth-month': (d.month() + 1).toString(),
-  'date-of-birth-year': d.year()
+mockSalesApi()
+
+beforeAll(() => {
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
 })
-const dobAdultToday = moment().subtract(JUNIOR_MAX_AGE + 1, 'years')
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
 afterAll(d => stop(d))
+afterAll(() => {
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
+  delete process.env.ANALYTICS_XGOV_PROPERTY
+})
 
 describe('The licence summary page', () => {
-  it('redirects to the licence length page if length is set', async () => {
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_LENGTH.uri)
+  describe('where the prerequisite are not fulfilled', async () => {
+    beforeAll(async d => {
+      await injectWithCookies('GET', CONTROLLER.uri)
+      d()
+    })
+
+    it('redirects to the date of birth page if the date of birth has been not been set', async () => {
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    })
+
+    it('redirects to the licence to start page if no licence start date has been set', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_TO_START.uri)
+    })
+
+    it('redirects to the licence type page if no licence type has been set', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+    })
+
+    it('redirects to the licence length page if no length has been set', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+    })
   })
 
-  it('redirects to the licence type page if no licence type is set', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    // // await postRedirectGet(LICENCE_LENGTH.uri,  { 'licence-length': '12M' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_TYPE.uri)
+  describe('for a full 12 month, 2 rod, trout and coarse licence', async () => {
+    beforeAll(async d => {
+      await injectWithCookies('GET', CONTROLLER.uri)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      d()
+    })
+
+    it('displays the page on request', async () => {
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(200)
+    })
+
+    it('filters the correct permit', async () => {
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 2 Rod Licence (Full)')
+    })
+
+    it('re-filters the correct permit on a material change', async () => {
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 3 Rod Licence (Full)')
+    })
   })
 
-  it('redirects to the licence type page if the number of rods is not set', async () => {
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_TYPE.uri)
-  })
+  describe('for a disabled concession 12 month, 2 rod, trout and coarse licence', async () => {
+    beforeAll(async d => {
+      await injectWithCookies('GET', CONTROLLER.uri)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+        'disability-concession': disabilityConcessionTypes.pipDla,
+        'ni-number': 'NH 34 67 44 A'
+      })
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+      d()
+    })
 
-  it('redirects to the licence start date if it is not set', async () => {
-    await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_TO_START.uri)
-  })
+    it('displays the page on request', async () => {
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(200)
+    })
 
-  it('redirects to the date of birth page if it is not set', async () => {
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
-  })
-
-  it('responds with summary page if all necessary pages have been completed', async () => {
-    await postRedirectGet(DATE_OF_BIRTH.uri, dobHelper(dobAdultToday))
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('continue causes a redirect to the name page', async () => {
-    const data = await postRedirectGet(LICENCE_SUMMARY.uri, {})
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(NAME.uri)
-  })
-
-  it('licence type amendment causes a redirect to the summary page', async () => {
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
-    const data2 = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data2.statusCode).toBe(200)
-  })
-
-  it('licence length amendment causes a redirect to the summary page', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '8D' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('licence type amendments cause an eventual redirect back to the summary page', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'salmon-and-sea-trout' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-
-    const data2 = await postRedirectGet(LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse' })
-
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(NUMBER_OF_RODS.uri)
-
-    const data3 = await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
-    expect(data3.statusCode).toBe(302)
-    expect(data3.headers.location).toBe(LICENCE_SUMMARY.uri)
-  })
-
-  it('concession (NI) amendments cause a redirect to the summary page', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
-    await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('concession (blue-badge) amendments cause a redirect to the summary page', async () => {
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
-    await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'yes' })
-    await postRedirectGet(BLUE_BADGE_NUMBER.uri, { 'blue-badge-number': '1234' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('concession (blue-badge) removal cause a redirect to the summary page', async () => {
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
-    await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('Setting the licence length to 1 day removes the disabled concession', async () => {
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'yes' })
-    await postRedirectGet(BENEFIT_NI_NUMBER.uri, { 'ni-number': '1234' })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].concessions.length).toBe(0)
-  })
-
-  it('number of rod amendments cause a redirect to the summary page', async () => {
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await postRedirectGet(NUMBER_OF_RODS.uri, { 'number-of-rods': '2' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('unsetting the start date causes a redirect back to the summary page', async () => {
-    await postRedirectGet(LICENCE_TO_START.uri, { 'licence-to-start': 'after-payment' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('changing the start date causes a redirect back to the summary page', async () => {
-    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
-    const fdate = moment().add(5, 'days')
-    const body = {
-      'licence-start-date-year': fdate.year().toString(),
-      'licence-start-date-month': (fdate.month() + 1).toString(),
-      'licence-start-date-day': fdate.date().toString()
-    }
-    await postRedirectGet(LICENCE_START_DATE.uri, body)
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('changing the start time causes an eventual redirect back to the summary page', async () => {
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
-    await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-
-    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
-    const fdate = moment().add(5, 'days')
-    const body = {
-      'licence-start-date-year': fdate.year().toString(),
-      'licence-start-date-month': (fdate.month() + 1).toString(),
-      'licence-start-date-day': fdate.date().toString()
-    }
-    await postRedirectGet(LICENCE_START_DATE.uri, body)
-    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '14' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('changing the start time to midday causes an eventual redirect back to the summary page', async () => {
-    await postRedirectGet(BENEFIT_CHECK.uri, { 'benefit-check': 'no' })
-    await postRedirectGet(BLUE_BADGE_CHECK.uri, { 'blue-badge-check': 'no' })
-    await postRedirectGet(LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-
-    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': 'another-date-or-time' })
-    const fdate = moment().add(5, 'days')
-    const body = {
-      'licence-start-date-year': fdate.year().toString(),
-      'licence-start-date-month': (fdate.month() + 1).toString(),
-      'licence-start-date-day': fdate.date().toString()
-    }
-    await postRedirectGet(LICENCE_START_DATE.uri, body)
-    await postRedirectGet(LICENCE_START_TIME.uri, { 'licence-start-time': '12' })
-    const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data.statusCode).toBe(200)
+    it('filters the correct permit', async () => {
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 2 Rod Licence (Full, Disabled)')
+    })
   })
 })

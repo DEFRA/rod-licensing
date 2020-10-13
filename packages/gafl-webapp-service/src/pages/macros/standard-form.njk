@@ -18,7 +18,7 @@
             }) }}
         {% endif %}
         {{ errorSummary(error, errorMap) }}
-        <form method="post">
+        <form method="post" novalidate>
 
             {% call govukFieldset({
               legend: {
@@ -42,6 +42,7 @@
             {{ csrf() }}
         </form>
     </div>
+    {% block pricingSummary %}{% endblock %}
 </div>
 {% endblock %}
 

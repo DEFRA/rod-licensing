@@ -1,3 +1,4 @@
+import cloneDeep from 'clone-deep'
 export const configureAwsSdkMock = (AwsSdk = jest.genMockFromModule('aws-sdk')) => {
   const configuredMocks = []
   AwsSdk.__resetAll = () => configuredMocks.forEach(c => c.__init())
@@ -22,10 +23,10 @@ export const configureAwsSdkMock = (AwsSdk = jest.genMockFromModule('aws-sdk')) 
       awsClass.expectedErrors = expectedErrors
     }
     awsClass.__setResponse = (methodName, response) => {
-      awsClass.expectedResponses[methodName] = response
+      awsClass.expectedResponses[methodName] = cloneDeep(response)
     }
     awsClass.__setNextResponses = (methodName, ...responses) => {
-      awsClass.nextResponses[methodName] = responses
+      awsClass.nextResponses[methodName] = cloneDeep(responses)
     }
     awsClass.__throwWithErrorOn = (methodName, error = new Error('Test error')) => {
       awsClass.expectedErrors[methodName] = error
@@ -66,6 +67,7 @@ export const configureAwsSdkMock = (AwsSdk = jest.genMockFromModule('aws-sdk')) 
     {}
   )
   configureMock(AwsSdk.S3, ['listObjectsV2', 'getObject', 'putObject', 'headObject', 'deleteObject', 'upload', 'listBuckets', 'headBucket'])
+  configureMock(AwsSdk.SecretsManager, ['getSecretValue'])
 
   return AwsSdk
 }

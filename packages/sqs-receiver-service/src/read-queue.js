@@ -22,12 +22,10 @@ const readQueue = async (url, visibilityTimeoutMs, waitTimeMs) => {
       VisibilityTimeout: visibilityTimeoutMs / 1000,
       WaitTimeSeconds: waitTimeMs / 1000
     }
-
     const data = await sqs.receiveMessage(params).promise()
-
-    debug({ messages: data.Messages })
-
-    return data.Messages
+    const messages = data.Messages || []
+    debug('Retrieved %d messages from %s', messages.length, url)
+    return messages
   } catch (err) {
     /*
      * If we have an http error log it.

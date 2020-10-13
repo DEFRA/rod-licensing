@@ -1,4 +1,4 @@
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
 

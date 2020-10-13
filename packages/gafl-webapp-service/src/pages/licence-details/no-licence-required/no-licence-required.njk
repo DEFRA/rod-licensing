@@ -3,6 +3,7 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "radios/macro.njk" import govukRadios %}
+{% from "back-link/macro.njk" import govukBackLink %}
 {% from "error-summary.njk" import errorSummary %}
 
 {% set title = 'You do not need a licence yet' %}
@@ -12,7 +13,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
         <form method="get">
 
             {% call govukFieldset({
@@ -22,8 +29,13 @@
                 isPageHeading: true
               }
             }) %}
+            <p class="govuk-body-m">You can go fishing without a rod licence because you're under 13. You'll need to get a licence to fish as soon as you turn 13.</p>
 
-            <p class="govuk-body-m">You can go fishing without a licence because you're under 13. You'll need to get a licence to fish as soon as you turn 13</p>
+                {{ govukButton({
+                    text: "Exit the service",
+                    classes: "govuk-!-margin-top-6",
+                    href: data.uri.servicePage
+                }) }}
 
             {% endcall %}
         </form>

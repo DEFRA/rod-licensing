@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import Path from 'path'
-import { MAX_BATCH_SIZE, RECORD_STAGE } from './constants.js'
+import { MAX_CREATE_TRANSACTION_BATCH_SIZE, RECORD_STAGE } from './constants.js'
 import { transform } from '../transform/pocl-transform-stream.js'
 import { getProcessedRecords, updateRecordStagingTable } from '../io/db.js'
 import db from 'debug'
@@ -21,7 +21,7 @@ export const createTransactions = async xmlFilePath => {
       if (!state.processedIds.has(data.id)) {
         state.processedIds.add(data.id)
         state.buffer.push(data)
-        if (state.buffer.length === MAX_BATCH_SIZE) {
+        if (state.buffer.length === MAX_CREATE_TRANSACTION_BATCH_SIZE) {
           await createTransactionsInSalesApi(filename, state)
         }
       }
@@ -71,30 +71,65 @@ const getInitialState = async filename => {
 const createTransactionsInSalesApi = async (filename, state) => {
   if (state.buffer.length) {
     const createResults = await salesApi.createTransactions(state.buffer.map(item => item.createTransactionPayload))
-    for (let idx = 0; idx < state.buffer.length; idx++) {
-      const record = state.buffer[idx]
-      const apiResponse = createResults[idx]
-      if (apiResponse.statusCode === 201) {
-        record.stage = RECORD_STAGE.TransactionCreated
-        record.createTransactionId = apiResponse.response.id
-        state.succeeded++
-      } else {
-        record.stage = RECORD_STAGE.TransactionCreationFailed
-        record.createTransactionError = apiResponse
-        state.failed++
-        await salesApi.createStagingException({
-          transactionFileException: {
-            name: `${filename}: FAILED-CREATE-${record.id}`,
-            description: JSON.stringify(apiResponse, null, 2),
-            json: JSON.stringify(record, null, 2),
-            notes: 'Failed to create the transaction in the Sales API',
-            type: 'Failure',
-            transactionFile: filename
-          }
-        })
-      }
-    }
-    await updateRecordStagingTable(filename, state.buffer)
+
+    const succeeded = []
+    const failed = []
+    state.buffer.forEach((record, idx) => {
+      const result = createResults[idx]
+      ;(result.statusCode === 201 ? succeeded : failed).push({ record, result })
+    })
+
+    await processSucceeded(filename, succeeded)
+    await processFailed(filename, failed)
+
+    state.succeeded += succeeded.length
+    state.failed += failed.length
     state.buffer = []
   }
+}
+
+/**
+ * Update the status of records which were successfully created in the sales API
+ *
+ * @param {string} filename the name of the file being processed
+ * @param {Array<Object>} succeeded An array of objects.  Each object shall contain a record key and a result key
+ * @returns {Promise<void>}
+ */
+const processSucceeded = async (filename, succeeded) => {
+  const recordUpdates = succeeded.map(({ record, result }) => {
+    record.stage = RECORD_STAGE.TransactionCreated
+    record.createTransactionId = result.response.id
+    debug('Successfully created transaction for record: %o', record)
+    return record
+  })
+  await updateRecordStagingTable(filename, recordUpdates)
+}
+
+/**
+ * Update the status of records which failed to be created in the sales API
+ *
+ * @param {string} filename the name of the file being processed
+ * @param {Array<Object>} failed An array of objects.  Each object shall contain a record key and a result key
+ * @returns {Promise<void>}
+ */
+const processFailed = async (filename, failed) => {
+  // For record data errors, update the record status to be failed and insert a staging exception into Dynamics
+  // We don't need to deal with individual 5xx system errors here as we use the batch endpoint of the sales API
+  for (const { record, result } of failed) {
+    record.stage = RECORD_STAGE.TransactionCreationFailed
+    record.createTransactionError = result
+    debug('Failed to create transaction for record: %o', record)
+    await salesApi.createStagingException({
+      transactionFileException: {
+        name: `${filename}: FAILED-CREATE-${record.id}`,
+        description: JSON.stringify(result, null, 2),
+        json: JSON.stringify(record, null, 2),
+        notes: 'Failed to create the transaction in the Sales API',
+        type: 'Failure',
+        transactionFile: filename
+      }
+    })
+  }
+  const recordUpdates = failed.map(({ record }) => record)
+  await updateRecordStagingTable(filename, recordUpdates)
 }

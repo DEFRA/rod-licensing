@@ -1,7 +1,7 @@
 ####################################################################################################################################
 # Build stage 1 - Create a distribution of the project which we can copy in the second build stage.
 ####################################################################################################################################
-FROM rod-licensing/builder AS builder
+FROM rod_licensing/builder AS builder
 WORKDIR /app
 
 # Install app dependencies
@@ -14,7 +14,7 @@ COPY packages/pocl-job/ /app
 ####################################################################################################################################
 # Build stage 2 - Using the distribution from stage 1, build the final docker image with a minimal number of layers.
 ####################################################################################################################################
-FROM rod-licensing/base
+FROM rod_licensing/base
 WORKDIR /app
 COPY --from=builder /app/ /app/
 
@@ -22,4 +22,4 @@ COPY --from=builder /app/ /app/
 VOLUME /etc/pocl/keys
 
 # Use node directly rather than pm2 for scheduled tasks
-ENTRYPOINT [ "node", "src/pocl-job.js", "execute" ]
+ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/pocl-job.js", "execute" ]

@@ -1,8 +1,9 @@
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../processors/renewals-write-cache.js'
-import { IDENTIFY, CONTROLLER } from '../uri.js'
-import { validation } from '@defra-fish/business-rules-lib'
-import Joi from '@hapi/joi'
+import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../uri.js'
+import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import Joi from 'joi'
 import { salesApi } from '@defra-fish/connectors-lib'
+import moment from 'moment-timezone'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
@@ -20,18 +21,55 @@ export default async (request, h) => {
     .createBirthDateValidator(Joi)
     .validateAsync(`${payload['date-of-birth-year']}-${payload['date-of-birth-month']}-${payload['date-of-birth-day']}`)
   const postcode = await validation.contact.createUKPostcodeValidator(Joi).validateAsync(payload.postcode)
-  const { referenceNumber } = await request.cache().helpers.status.getCurrentPermission()
+
+  const permission = await request.cache().helpers.status.getCurrentPermission()
+  const referenceNumber = payload.referenceNumber || permission.referenceNumber
 
   // Authenticate
   const authenticationResult = await salesApi.authenticate(referenceNumber, dateOfBirth, postcode)
 
+  const linkInactive = async reason => {
+    await request.cache().helpers.status.setCurrentPermission({
+      referenceNumber,
+      authentication: {
+        reason,
+        authorized: false,
+        endDate: authenticationResult.permission.endDate
+      }
+    })
+    return h.redirect(RENEWAL_INACTIVE.uri)
+  }
+
   if (!authenticationResult) {
-    await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: false } })
-    return h.redirect(IDENTIFY.uri.replace('{referenceNumber}', referenceNumber))
+    payload.referenceNumber = referenceNumber
+    await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
+    await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
+    return h.redirect(IDENTIFY.uri)
   } else {
-    await setUpCacheFromAuthenticationResult(request, authenticationResult)
-    await setUpPayloads(request)
-    await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: true } })
-    return h.redirect(CONTROLLER.uri)
+    // Test for 12 month licence
+    const daysDiff = moment(authenticationResult.permission.endDate).diff(
+      moment()
+        .tz(SERVICE_LOCAL_TIME)
+        .startOf('day'),
+      'days'
+    )
+    if (
+      authenticationResult.permission.permit.durationDesignator.description === 'M' &&
+      authenticationResult.permission.permit.durationMagnitude === 12
+    ) {
+      // Test for active renewal
+      if (daysDiff > RENEW_BEFORE_DAYS) {
+        return linkInactive('not-due')
+      } else if (daysDiff < -RENEW_AFTER_DAYS) {
+        return linkInactive('expired')
+      } else {
+        await setUpCacheFromAuthenticationResult(request, authenticationResult)
+        await setUpPayloads(request)
+        await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: true } })
+        return h.redirect(CONTROLLER.uri)
+      }
+    } else {
+      return linkInactive('not-annual')
+    }
   }
 }

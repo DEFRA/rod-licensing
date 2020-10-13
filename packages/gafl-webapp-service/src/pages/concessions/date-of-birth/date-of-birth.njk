@@ -1,14 +1,14 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'What\'s your date of birth?' %}
+{% set title = "What's your date of birth?" %}
 
 {%
     set errorMap = {
         'date-of-birth': {
             'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
             'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
-            'date.min': { ref: '#date-of-birth-day', text: 'Your date of birth is too long ago' }
+            'date.min': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' }
         }
     }
 %}
@@ -17,23 +17,26 @@
     {
       name: "day",
       classes: "govuk-input--width-2",
-      value: payload['date-of-birth-day']
+      value: payload['date-of-birth-day'],
+      attributes: { maxlength : 2 }
     },
     {
       name: "month",
       classes: "govuk-input--width-2",
-      value: payload['date-of-birth-month']
+      value: payload['date-of-birth-month'],
+      attributes: { maxlength : 2 }
     },
     {
       name: "year",
       classes: "govuk-input--width-4",
-      value: payload['date-of-birth-year']
+      value: payload['date-of-birth-year'],
+      attributes: { maxlength : 4 }
     }
   ]
 %}
 
 {% block pageContent %}
-    <p class="govuk-caption-m">We use this information to find out if you're eligible for a senior or junior concession</p>
+    <p class="govuk-body-m">If you're applying for someone else enter their date of birth.</p>
 
     {{ govukDateInput({
       id: "date-of-birth",
@@ -41,8 +44,8 @@
       items: dateInputItems,
       errorMessage: { text: 'Enter your date of birth' } if error,
       hint: {
-        text: "For example, 22 11 1970"
+        text: "For example, 23 11 1979"
       }
     }) }}
-
+    <div class="govuk-body-m">Read about <a class="govuk-link" href="{{ _uri.privacy }}">how we use personal information</a>.</div>
 {% endblock %}

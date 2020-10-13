@@ -1,10 +1,6 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
-import { GlobalOptionSetDefinition } from '../optionset/global-option-set-definition.js'
 import { escapeODataStringValue } from './util.js'
-// Note: When node14 is released we can replace dotProp with optional chaining!
-import dotProp from 'dot-prop'
 import { CacheableOperation } from './cache.js'
-
 /**
  * Persist the provided entities.  Uses a create or update request as appropriate based on the state of the entity.
  *
@@ -14,27 +10,18 @@ import { CacheableOperation } from './cache.js'
 export async function persist (...entities) {
   try {
     dynamicsClient.startBatch()
-    entities.forEach(e => {
-      const body = e.toRequestBody()
-      if (e.isNew()) {
-        dynamicsClient.createRequest({
-          entity: body,
-          collection: e.constructor.definition.dynamicsCollection,
-          contentId: e.uniqueContentId
-        })
+    entities.forEach(entity => {
+      if (entity.isNew()) {
+        dynamicsClient.createRequest(entity.toPersistRequest())
       } else {
-        dynamicsClient.updateRequest({
-          key: e.id,
-          entity: body,
-          collection: e.constructor.definition.dynamicsCollection,
-          contentId: e.uniqueContentId
-        })
+        dynamicsClient.updateRequest(entity.toPersistRequest())
       }
     })
     return await dynamicsClient.executeBatch()
   } catch (e) {
     const error = e.length ? e[0] : e
-    console.error('Unable to persist:', error)
+    const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
+    console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
     throw error
   }
 }
@@ -89,12 +76,10 @@ export function retrieveMultipleAsMap (...entityClasses) {
     async () => retrieveMultipleFetchOperation(entityClasses),
     async data => {
       const optionSetData = await retrieveGlobalOptionSets().cached()
-      return data
-        .map((result, i) => result.value.map(v => entityClasses[i].fromResponse(v, optionSetData)))
-        .reduce((acc, val, idx) => {
-          acc[entityClasses[idx].definition.localCollection] = val
-          return acc
-        }, {})
+      return data.reduce((acc, item, idx) => {
+        acc[entityClasses[idx].definition.localCollection] = item.value.map(v => entityClasses[idx].fromResponse(v, optionSetData))
+        return acc
+      }, {})
     }
   )
 }
@@ -102,42 +87,33 @@ export function retrieveMultipleAsMap (...entityClasses) {
 /**
  * Retrieve the available GlobalOptionSets from Dynamics, optionally filtered by the provided names
  *
- * @param {...string} names the names of the GlobalOptionSets to be retrieved
  * @returns {CacheableOperation}
  */
-export function retrieveGlobalOptionSets (...names) {
+export function retrieveGlobalOptionSets () {
   return new CacheableOperation(
-    'dynamics_optionsets',
+    'dynamics_optionsetmap',
     async () => {
       try {
         const data = await dynamicsClient.retrieveGlobalOptionSets('Microsoft.Dynamics.CRM.OptionSetMetadata', ['Name', 'Options'])
-        return data.value.map(({ Name: name, Options: options }) => ({
-          name,
-          options: options.map(o => {
-            const label = dotProp.get(o, 'Label.UserLocalizedLabel.Label', '')
-            const description = dotProp.get(o, 'Description.UserLocalizedLabel.Label', '')
-            return { id: o.Value, label: label, description: description || label }
-          })
-        }))
+        return data.value.reduce((acc, { Name: name, Options: options }) => {
+          acc[name] = {
+            name,
+            options: options.reduce((optionSetMapping, o) => {
+              const id = o.Value
+              const label = o.Label?.UserLocalizedLabel?.Label
+              const description = o.Description?.UserLocalizedLabel?.Label || label
+              optionSetMapping[id] = { id, label, description }
+              return optionSetMapping
+            }, {})
+          }
+          return acc
+        }, {})
       } catch (e) {
         console.error('Error attempting to retrieveGlobalOptionSets', e)
         throw e
       }
     },
-    data => {
-      return data
-        .filter(({ name }) => !names.length || names.includes(name))
-        .reduce((optionSetData, { name, options }) => {
-          optionSetData[name] = {
-            name,
-            options: options.reduce((optionSetMapping, o) => {
-              optionSetMapping[o.id] = new GlobalOptionSetDefinition(name, o)
-              return optionSetMapping
-            }, {})
-          }
-          return optionSetData
-        }, {})
-    }
+    data => data
   )
 }
 
@@ -188,7 +164,7 @@ export async function findByAlternateKey (entityType, alternateKey) {
 export async function findByExample (entity) {
   try {
     const filter = [
-      entity.constructor.definition.defaultFilter,
+      ...(entity.constructor.definition.defaultFilter ? [entity.constructor.definition.defaultFilter] : []),
       ...Object.entries(entity.constructor.definition.mappings).reduce((acc, [property, { field, type }]) => {
         let serialized = entity._toSerialized(property)
         if (serialized !== undefined) {

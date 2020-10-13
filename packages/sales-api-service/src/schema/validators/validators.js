@@ -3,8 +3,8 @@ import {
   getReferenceDataForEntity,
   getReferenceDataForEntityAndId
 } from '../../services/reference-data.service.js'
-import { findById, findByAlternateKey, PermitConcession } from '@defra-fish/dynamics-lib'
-import Joi from '@hapi/joi'
+import { findById, findByAlternateKey, PermitConcession, CacheableOperation } from '@defra-fish/dynamics-lib'
+import Joi from 'joi'
 
 export function buildJoiOptionSetValidator (optionSetName, exampleValue) {
   return Joi.string()
@@ -39,13 +39,28 @@ export function createReferenceDataEntityValidator (entityType) {
   }
 }
 
-export function createEntityIdValidator (entityType, negate = false) {
+/**
+ * Create a validator which checks if an entity exists using a primary key lookup
+ *
+ * @param {typeof BaseEntity} entityType the type of entity to check
+ * @param {boolean|number} [cache] if falsy, do not cache the result.  a positive numeric value specifies the time to cache the validation result
+ * @param {boolean} [negate] if true then validates that the entity does not exist, defaults to false
+ * @returns {function: Promise<>}
+ */
+export function createEntityIdValidator (entityType, { cache, negate } = { cache: false, negate: false }) {
   return async value => {
     if (value) {
-      const entity = await findById(entityType, value)
-      if (!negate && !entity) {
+      const check = new CacheableOperation(
+        `createEntityIdValidator-${entityType.definition.localName}-${value}`,
+        async () => !!(await findById(entityType, value)),
+        result => result,
+        result => !!result // only cache the result if the entity exists
+      )
+
+      const exists = cache ? await check.cached({ ttl: cache }) : await check.execute()
+      if (!negate && !exists) {
         throw new Error(`Unrecognised ${entityType.definition.localName} identifier`)
-      } else if (negate && entity) {
+      } else if (negate && exists) {
         throw new Error(`Entity for ${entityType.definition.localName} identifier already exists`)
       }
     }
@@ -57,20 +72,27 @@ export function createEntityIdValidator (entityType, negate = false) {
  * Create a validator which checks if an entity exists using an alternate key lookup
  *
  * @param {typeof BaseEntity} entityType the type of entity to check
- * @param {boolean} negate if true then validates that the entity does not exist, defaults to false
- * @returns {function(*=): undefined}
+ * @param {boolean|number} [cache] if falsy, do not cache the result.  a positive numeric value specifies the time to cache the validation result
+ * @param {boolean} [negate] if true then validates that the entity does not exist, defaults to false
+ * @returns {function: Promise<>}
  */
-export function createAlternateKeyValidator (entityType, negate = false) {
+export function createAlternateKeyValidator (entityType, { cache, negate } = { cache: false, negate: false }) {
   if (!entityType.definition.alternateKey) {
     throw new Error(`The entity ${entityType.name} does not support alternate key lookups`)
   }
-
   return async value => {
     if (value) {
-      const entity = await findByAlternateKey(entityType, value)
-      if (!negate && !entity) {
+      const check = new CacheableOperation(
+        `createAlternateKeyValidator-${entityType.definition.localName}-${value}`,
+        async () => !!(await findByAlternateKey(entityType, value)),
+        result => result,
+        result => !!result // only cache the result if the entity exists
+      )
+
+      const exists = cache ? await check.cached({ ttl: cache }) : await check.execute()
+      if (!negate && !exists) {
         throw new Error(`Unrecognised ${entityType.definition.localName} identifier`)
-      } else if (negate && entity) {
+      } else if (negate && exists) {
         throw new Error(`Entity for ${entityType.definition.localName} identifier already exists`)
       }
     }

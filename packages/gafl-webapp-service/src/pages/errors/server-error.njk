@@ -14,7 +14,7 @@
      }) %}
      <p class="govuk-body-m">We have logged the error and we will look into it, and make sure it doesn’t happen again. However if you keep seeing this page, please send your <a href="">feedback</a> to help us improve the service.</p>
      <h2 class="govuk-heading-m">What now?</h2>
-     <a class="govuk-link" href="{{ uri.new }}">By another licence</a>
+     <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
    {% endcall %}
 {% endmacro %}
 
@@ -33,7 +33,7 @@
                  }) %}
                     <p class="govuk-body-m">We were unable to process your payment. This may be due to current high demand for the service. Please wait a few minutes and try again by pressing the 'Try again' button below.</p>
                     <p class="govuk-body-m">If you keep seeing this page, remember that you can purchase a fishing licence at your local Post Office branch.</p>
-                    <p class="govuk-body-m">To check the opening times of your local Post Office branch visit the <a href="https://www.postoffice.co.uk/branch-finder" target="_blank">Post Office branch finder service.</a></p>
+                    <p class="govuk-body-m">To check the opening times of your local Post Office branch visit the <a class="govuk-link" href="https://www.postoffice.co.uk/branch-finder" target="_blank">Post Office branch finder service.</a></p>
                     {{ govukButton({
                         attributes: { id: "try-again" },
                         preventDoubleClick: true,
@@ -43,7 +43,7 @@
                         classes: "govuk-!-margin-top-5"
                     }) }}
                {% endcall %}
-               <a class="govuk-link" href="{{ uri.new }}">By another licence</a>
+               <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
             {% elseif serverError.origin.step === 'post-payment' %}
                {% call govukFieldset({
                    legend: {
@@ -68,7 +68,7 @@
                         classes: "govuk-!-margin-top-5"
                     }) }}
                 {% endcall %}
-                <a class="govuk-link" href="{{ uri.new }}">By another licence</a>
+                <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
             {% else %}
                 {{ standard() }}
             {% endif %}

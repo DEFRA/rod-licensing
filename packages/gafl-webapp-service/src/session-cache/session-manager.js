@@ -28,7 +28,11 @@ const protectionExemptSet = [
   TEST_STATUS.uri
 ]
 
-const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PAYMENT_FAILED.uri, PAYMENT_CANCELLED.uri]
+const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/
+const staticMatcherOidc = /^\/oidc\/.*/
+
+export const isStaticResource = request => staticMatcherPublic.test(request.path)
+export const useSessionCookie = request => !isStaticResource(request) && !staticMatcherOidc.test(request.path)
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -38,7 +42,7 @@ const forbiddenUnlessAgreedSet = [ORDER_COMPLETE.uri, ORDER_COMPLETE_PDF.uri, PA
  * @returns {function(*, *)}
  */
 const sessionManager = sessionCookieName => async (request, h) => {
-  if (request.path.startsWith('/buy')) {
+  if (useSessionCookie(request)) {
     let initialized = false
 
     if (!request.state[sessionCookieName]) {
@@ -46,7 +50,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
        * No cookie - create and initialize cache
        */
       const id = uuidv4()
-      debug(`New session cookie: ${id}`)
+      debug(`New session cookie: ${id} create on ${request.path}`)
       h.state(sessionCookieName, { id })
       request.state[sessionCookieName] = { id }
       await request.cache().initialize()
@@ -58,11 +62,11 @@ const sessionManager = sessionCookieName => async (request, h) => {
       await request.cache().initialize()
       initialized = true
     } else {
+      const { id } = request.state[sessionCookieName]
       /*
        * Keep the cookie alive so that is persists as long as the cache -
        * the cache has the TTL reset on each write
        */
-      const { id } = request.state[sessionCookieName]
       h.state(sessionCookieName, { id })
     }
 
@@ -84,11 +88,11 @@ const sessionManager = sessionCookieName => async (request, h) => {
 
     /*
      * If we have a new cookie/cache - covering the cases where the cookie expires - then any request to a page
-     * in the forbidden-unless-agreed set, is redirected to the controller. This avoids showing a 400 error
+     * is redirected to the controller.
      * if these pages are refreshed after being dormant for a long period. This can typically happen on mobile
      * devices where a browser is woken up.
      */
-    if (initialized && forbiddenUnlessAgreedSet.includes(request.path)) {
+    if (initialized) {
       return h.redirect(CONTROLLER.uri).takeover()
     }
   }

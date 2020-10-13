@@ -10,12 +10,12 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'You did not enter your building number or name' },
+            'string.empty': { ref: '#premises', text: 'Enter your building number or name' },
             'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
-            'string.pattern.base': { ref: '#postcode', text: 'Enter a valid UK postcode. If you live outside the UK, enter your address manually.' }
+            'string.empty': { ref: '#postcode', text: 'Enter your postcode' },
+            'string.pattern.base': { ref: '#postcode', text: 'Enter a UK postcode. If your address is outside the UK, enter your address manually.' }
         }
     }
 %}
@@ -32,6 +32,7 @@
         {% endif %}
         {{ errorSummary(error, errorMap) }}
         <form method="post">
+
             {% call govukFieldset({
               legend: {
                 text: 'Find your address',
@@ -40,18 +41,21 @@
               }
             }) %}
 
+                <p class="govuk-body-m">{% if data.isPhysical %}This is where we will send the licence card. {% endif %}
+                If you are buying on behalf of someone else then put their address not yours.
+                A bankside enforcement officer may ask for this information if the licence is checked.</p>
+
                 {{ govukInput({
                   label: {
-                    text: "House number or name"
+                    text: "Building number or name"
                   },
                   id: "premises",
                   name: "premises",
                   hint: { text: "For example, Flat 20A" },
                   value: payload['premises'],
                   classes: "govuk-input--width-20",
-                  autocomplete: 'given-name',
                   attributes: { maxlength: 50 },
-                  errorMessage: { text: 'Enter your house number or name' } if error['premises']
+                  errorMessage: { text: 'Enter your building number or name' } if error['premises']
                 }) }}
 
                 {{ govukInput({
@@ -72,19 +76,18 @@
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
                     name: "continue",
-                    text: "Find your address",
+                    text: "Continue",
                     classes: "govuk-!-margin-top-5"
                 }) }}
 
             {% endcall %}
             <p class="govuk-body-m">
-                <a href="{{ data.entryPage }}">Enter my address manually / I live outside the UK</a>
+                <a class="govuk-link" href="{{ data.uri.entryPage }}">Enter your address manually</a>
             </p>
             {{ csrf() }}
         </form>
-      <p class="govuk-body-s">© Crown copyright and database rights 2016 <a href="http://www.ordnancesurvey.co.uk" target="_blank">OS</a> 100024198.
-      <br>Use of this addressing  data is subject to&nbsp;the <a href="">terms and conditions</a>.</p>
+      <p class="govuk-body-s">© Crown copyright and database rights 2016 <a class="govuk-link" href="http://www.ordnancesurvey.co.uk" target="_blank">OS</a> 100024198.
+      <br>Use of this addressing data is subject to&nbsp;the <a class="govuk-link" href="{{ data.uri.osTerms }}">terms and conditions</a>.</p>
     </div>
 </div>
 {% endblock %}
-

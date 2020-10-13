@@ -1,33 +1,83 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+{% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
-{% set title = 'Which type of fishing licence do you want to get?' %}
+{% set title = 'Which type of licence do you want?' %}
 
 {%
     set errorMap = {
         'licence-type': {
-            'any.required': { ref: '#licence-type', text: 'You did not tell us which type of licence you want' }
+            'any.required': { ref: '#licence-type', text: 'Choose which type of fishing licence you want' }
         }
     }
 %}
 
+{% set troutAndCoarse2Rod %}
+    <p class="govuk-body-m">The 2 rods coarse licence is the simplest rod licence. This will cover you for all the forms of fishing with a rod and let you fish non-migratory trout and coarse fish. It will allow you to fish with 1 or 2 rods at the same time. (subject to the <a class="govuk-link" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">rod fishing rules</a> and <a target="_blank" href="{{ data.uri.localByelaws }}">local fishing byelaws</a>)</p>
+{% endset -%}
+
+{% set troutAndCoarse3Rod %}
+    <p class="govuk-body-m">You will only need a 3 rod licence if you plan to fish with 3 rods at the same time. This may be for specialist carp fishing for example. This will cover you for all the forms of fishing with a rod and let you fish non-migratory trout and coarse fish. (subject to the <a class="govuk-link" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">rod fishing rules</a> and <a class="govuk-link" target="_blank" href="{{ data.uri.localByelaws }}">local fishing byelaws</a>)</p>
+{% endset -%}
+
+{% set salmonAndSeaTrout %}
+    {% if data.hasJunior %}<p class="govuk-body-m">You'll only need this licence if you are specifically fishing for salmon or sea trout.</p>{% endif %}
+    {{ govukWarningText({
+      text: "You will need to submit an annual catch return",
+      iconFallbackText: "Warning",
+      classes: "govuk-!-margin-top-6"
+    }) }}
+    <p class="govuk-body-m">You must by law <a class="govuk-link" target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
+{% endset -%}
+
+{% set items = [
+        {
+            id: 'selector-' + data.licenseTypes.troutAndCoarse2Rod,
+            text: "Trout and coarse, up to 2 rods",
+            value: data.licenseTypes.troutAndCoarse2Rod,
+            checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse2Rod,
+            conditional: { html: troutAndCoarse2Rod }
+        },
+        {
+            id: 'selector-' + data.licenseTypes.troutAndCoarse3Rod,
+            text: "Trout and coarse, up to 3 rods",
+            value: data.licenseTypes.troutAndCoarse3Rod,
+            checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
+            conditional: { html: troutAndCoarse3Rod }
+        },
+        {
+            id: 'selector-' + data.licenseTypes.salmonAndSeaTrout,
+            text: "Salmon and sea trout",
+            value: "salmon-and-sea-trout",
+            hint: { text: "Includes trout and coarse, up to 3 rods" },
+            checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
+            conditional: { html: salmonAndSeaTrout }
+        }
+    ]
+%}
+
 {% block pageContent %}
+    <p class="govuk-body-m">Rods are for use by the licence holder only and must be attended at all times.</p>
     {{ govukRadios({
         idPrefix: "licence-type",
         name: "licence-type",
-        items: [
-            {
-                text: "Trout and coarse",
-                value: "trout-and-coarse",
-                checked: payload['licence-type'] === 'trout-and-coarse'
-            },
-            {
-                text: "Salmon and sea trout",
-                value: "salmon-and-sea-trout",
-                hint: { text: "includes trout and coarse" },
-                checked: payload['licence-type'] === 'salmon-and-sea-trout'
-            }
-        ],
-        errorMessage: { text: 'Tell us which type of fishing licence you want' } if error
+        items: items,
+        errorMessage: { text: 'Choose which type of fishing licence you want' } if error
     }) }}
- {% endblock %}
+{% endblock %}
+
+{% block pricingSummary %}
+    {{ pricingSummary(data.pricing.byType, {
+        '12M': { desc: '12 months' },
+        '8D': { desc: '8 days' },
+        '1D': { desc: '1 day' },
+        'no-short': 'Shorter lengths are not available for this licence type'
+    }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    {{ pricingSummaryScript(data.pricing.byType, nonce) }}
+{% endblock %}

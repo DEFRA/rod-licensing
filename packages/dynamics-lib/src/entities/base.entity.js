@@ -1,10 +1,16 @@
 import { v4 as uuidv4 } from 'uuid'
 import util from 'util'
-import Joi from '@hapi/joi'
-import { GlobalOptionSetDefinition } from '../optionset/global-option-set-definition.js'
+import Joi from 'joi'
 import moment from 'moment'
 import pluralize from 'pluralize'
 import { escapeODataStringValue } from '../client/util.js'
+
+/**
+ * @typedef {Object} GlobalOptionSetDefinition
+ * @property {string} id The identifier of the entry
+ * @property {string} label The label of the entry
+ * @property {string} description The description of the entry
+ */
 
 /**
  * Base class for Dynamics entities
@@ -163,8 +169,13 @@ export class BaseEntity {
    * @private
    */
   _setOptionSet (property, value) {
-    const mapping = this.constructor.definition.mappings[property]
-    if (!(value instanceof GlobalOptionSetDefinition) || value.optionSetName !== mapping.ref) {
+    if (
+      !(
+        Object.prototype.hasOwnProperty.call(value, 'id') &&
+        Object.prototype.hasOwnProperty.call(value, 'label') &&
+        Object.prototype.hasOwnProperty.call(value, 'description')
+      )
+    ) {
       throw new Error('Value is not a valid GlobalOptionSetDefinition')
     }
     this._localState[property] = value
@@ -263,8 +274,7 @@ export class BaseEntity {
    * @returns {{}} a json representation of the entity state
    */
   toJSON () {
-    // Stringify and parse to recursively call toJSON() on child objects
-    return JSON.parse(JSON.stringify(this._localState))
+    return this._localState
   }
 
   /**
@@ -272,57 +282,68 @@ export class BaseEntity {
    * @returns {{}} the JSON structure to use in a create/update query to the Dynamics ODATA Web API
    */
   toRequestBody () {
-    return Object.entries(this.constructor.definition.mappings)
-      .filter(([, { field }]) => !field.includes('@'))
-      .reduce(
-        (acc, [property, { field }]) => {
-          const serialized = this._toSerialized(property)
-          if (serialized !== undefined) {
-            acc[field] = serialized
-          }
-          return acc
-        },
-        Object.entries(this._bindings).reduce((acc, [k, v]) => {
-          if (v instanceof BaseEntity) {
-            acc[k] = v.id ? `/${v.constructor.definition.dynamicsCollection}(${v.id})` : `$${v.uniqueContentId}`
-          } else {
-            acc[k] = v
-          }
-          return acc
-        }, {})
-      )
+    return Object.entries(this.constructor.definition.mappings).reduce(
+      (acc, [property, { field }]) => {
+        const serialized = this._toSerialized(property)
+        if (serialized !== undefined) {
+          acc[field] = serialized
+        }
+        return acc
+      },
+      Object.entries(this._bindings).reduce((acc, [k, v]) => {
+        if (v instanceof BaseEntity) {
+          acc[k] = v.id ? `/${v.constructor.definition.dynamicsCollection}(${v.id})` : `$${v.uniqueContentId}`
+        } else {
+          acc[k] = v
+        }
+        return acc
+      }, {})
+    )
+  }
+
+  /**
+   * Convert the entity into the data structure required to persist via dynamics-web-api.
+   * @returns {{}} the JSON structure required by dynamics-web-api.
+   */
+  toPersistRequest () {
+    return {
+      ...(!this.isNew() && { key: this.id }),
+      collection: this.constructor.definition.dynamicsCollection,
+      contentId: this.uniqueContentId,
+      entity: this.toRequestBody()
+    }
   }
 
   /**
    * Create a new entity using the response from a query to the Dynamics ODATA Web API
    *
    * @param {string} etag the etag of the entity
-   * @param {Object} fields the fields of the entity
+   * @param {Object} entityData the data returned from Dynamics
    * @param {Object} optionSetData the global option set data used to resolve option set fields
    * @returns {BaseEntity} an instance of a BaseEntity subclass
    */
-  static fromResponse ({ '@odata.etag': etag, ...fields }, optionSetData) {
+  static fromResponse ({ '@odata.etag': etag, ...entityData }, optionSetData) {
     const instance = new this.prototype.constructor()
     instance._etag = etag
-    instance._localState = Object.entries(this.definition.mappings)
-      .filter(([property, { field }]) => fields[field] !== undefined)
-      .reduce((acc, [property, { field, type, ref }]) => {
-        let value = fields[field]
-        if (value !== null) {
-          if (type === 'integer' || type === 'decimal') {
-            value = Number(value)
-          } else if (type === 'optionset') {
-            const optionSetEntries = optionSetData[ref]
-            if (optionSetEntries) {
-              value = optionSetEntries.options[value]
-            } else {
-              throw new Error(`Unable to find optionset entries for ${ref}`)
-            }
+    instance._localState = Object.entries(this.definition.mappings).reduce((acc, [property, { field, type, ref }]) => {
+      let value = entityData[field]
+      if (value !== undefined && value !== null) {
+        if (type === 'integer' || type === 'decimal') {
+          value = Number(value)
+        } else if (type === 'optionset') {
+          const optionSetEntries = optionSetData[ref]
+          if (optionSetEntries) {
+            value = optionSetEntries.options[value]
+          } else {
+            throw new Error(`Unable to find optionset entries for ${ref}`)
           }
         }
+      }
+      if (value !== undefined) {
         acc[property] = value
-        return acc
-      }, {})
+      }
+      return acc
+    }, {})
     return instance
   }
 }

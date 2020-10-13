@@ -1,35 +1,45 @@
-import { CONTACT, CONTROLLER, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
+import { CONTACT, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import Joi from '@hapi/joi'
+import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
+import { hasJunior } from '../../../processors/concession-helper.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // We need to have set the licence length, dob and start date here to determining the contact
   // messaging
-  if (!permission.licenceLength) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
+  if (!permission.licensee.birthDate) {
+    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
 
   if (!permission.licenceStartDate) {
     throw new GetDataRedirect(LICENCE_TO_START.uri)
   }
 
-  if (!permission.licensee.birthDate) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  if (!permission.licenceLength) {
+    throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
   return {
     licensee: permission.licensee,
-    licenceLength: permission.licenceLength,
-    junior: concessionHelper.hasJunior(permission),
+    isPhysical: isPhysical(permission),
+    isJunior: hasJunior(permission),
     howContacted: HOW_CONTACTED
   }
 }
+
+// Validate UK mobile phone numbers
+export const mobilePhoneRegex = /^((\+44)(\s?)|(0))(7\d{3})(\s?)(\d{3})(\s?)(\d{3})$/
+export const mobilePhoneValidator = Joi.string()
+  .trim()
+  .pattern(mobilePhoneRegex)
+  .replace(mobilePhoneRegex, '$2$4$5$7$9')
+  .example('+44 7700 900088')
 
 const validator = Joi.object({
   'how-contacted': Joi.string()
@@ -42,9 +52,9 @@ const validator = Joi.object({
   }),
   text: Joi.alternatives().conditional('how-contacted', {
     is: 'text',
-    then: validation.contact.createMobilePhoneValidator(Joi),
+    then: mobilePhoneValidator,
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(CONTACT.page, CONTACT.uri, validator, CONTROLLER.uri, getData)
+export default pageRoute(CONTACT.page, CONTACT.uri, validator, nextPage, getData)

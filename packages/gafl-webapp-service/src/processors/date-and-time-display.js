@@ -1,6 +1,10 @@
-import moment from 'moment'
+import moment from 'moment-timezone'
+import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+export const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
+export const cacheDateFormat = 'YYYY-MM-DD'
 
-const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
+export const advancePurchaseDateMoment = permission =>
+  moment.tz(permission.licenceStartDate, cacheDateFormat, SERVICE_LOCAL_TIME).add(permission.licenceStartTime ?? 0, 'hours')
 
 /**
  * Function to convert licence start and end times to standard strings for display in the service
@@ -8,36 +12,26 @@ const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
  * @returns {string}
  */
 export const displayStartTime = permission => {
-  const startDateString = moment(permission.licenceStartDate, 'YYYY-MM-DD').format(dateDisplayFormat)
-  const timeComponent = (() => {
-    if (!permission.licenceStartTime || permission.licenceStartTime === '0') {
-      return 'Midnight'
-    } else if (permission.licenceStartTime === '12') {
-      return 'Midday'
-    } else {
-      return moment(permission.licenceStartDate, 'YYYY-MM-DD')
-        .add(permission.licenceStartTime, 'hours')
-        .format('h:mma')
-    }
-  })()
-
-  return `${timeComponent}, ${startDateString}`
+  const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
+  const timeComponent = startMoment
+    .format('h:mma')
+    .replace('12:00am', '12:00am (midnight)')
+    .replace('12:00pm', '12:00pm (midday)')
+  return `${startMoment.format(dateDisplayFormat)}, ${timeComponent}`
 }
 
-export const displayEndTime = permission => {
-  const endDateTime = moment(permission.endDate)
-  let endDateString = endDateTime.format(dateDisplayFormat)
-  const endTimeHours = endDateTime.hour()
-  let result
-
-  if (endTimeHours === 12) {
-    result = `Midday ${endDateString}`
-  } else if (endTimeHours === 0) {
-    endDateString = endDateTime.add(-1, 'days').format(dateDisplayFormat)
-    result = `11:59pm ${endDateString}`
-  } else {
-    result = `${endDateTime.hours(endTimeHours).format('h:mma')} ${endDateString}`
-  }
-
-  return result
+const endMomentStr = d => {
+  const m = moment.utc(d).tz(SERVICE_LOCAL_TIME)
+  const timeComponent = m
+    .format('h:mma')
+    .replace('12:00am', () => {
+      m.subtract(1, 'days')
+      return '11:59pm'
+    })
+    .replace('12:00pm', '12:00pm (midday)')
+  return `${m.format(dateDisplayFormat)}, ${timeComponent}`
 }
+
+// For renewals
+export const displayExpiryDate = permission => endMomentStr(permission.renewedEndDate)
+export const displayEndTime = permission => endMomentStr(permission.endDate)

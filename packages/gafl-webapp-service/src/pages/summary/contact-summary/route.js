@@ -1,38 +1,18 @@
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { countries } from '../../../processors/refdata-helper.js'
-
-import findPermit from '../find-permit.js'
-
-import {
-  CONTACT_SUMMARY,
-  LICENCE_SUMMARY,
-  CONTROLLER,
-  NAME,
-  ADDRESS_ENTRY,
-  ADDRESS_SELECT,
-  ADDRESS_LOOKUP,
-  CONTACT,
-  NEWSLETTER
-} from '../../../uri.js'
-
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
+import { nextPage } from '../../../routes/next-page.js'
+
+import { CONTACT_SUMMARY, LICENCE_SUMMARY, NAME, ADDRESS_ENTRY, ADDRESS_SELECT, ADDRESS_LOOKUP, CONTACT, NEWSLETTER } from '../../../uri.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   if (!status.renewal) {
-    /*
-     * Before we try and filter the permit it is necessary to check that the user has navigated through
-     * the journey in such a way as to have gather all the required data. They have have manipulated the
-     * journey by typing into the address bar in which case they will be redirected back to the
-     * appropriate point in the journey
-     */
-    if (!status[LICENCE_SUMMARY.page]) {
-      throw new GetDataRedirect(LICENCE_SUMMARY.uri)
-    }
-
     if (!status[NAME.page]) {
       throw new GetDataRedirect(NAME.uri)
     }
@@ -44,17 +24,20 @@ const getData = async request => {
     if (!status[CONTACT.page]) {
       throw new GetDataRedirect(CONTACT.uri)
     }
+
+    if (!status[NEWSLETTER.page]) {
+      throw new GetDataRedirect(NEWSLETTER.uri)
+    }
   }
 
-  status.fromSummary = 'contact-summary'
+  status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
-  await findPermit(permission, request)
-
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
     permission,
     countryName,
+    isPhysical: isPhysical(permission),
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     newsLetter: permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none,
     howContacted: HOW_CONTACTED,
@@ -68,4 +51,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, CONTROLLER.uri, getData)
+export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)

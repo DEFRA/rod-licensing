@@ -18,6 +18,7 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { getTrackingProductDetailsFromTransaction, getAffiliation } from '../processors/analytics.js'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -30,15 +31,6 @@ const debug = db('webapp:agreed-handler')
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
   const response = await salesApi.createTransaction(apiTransactionPayload)
-  /*
-   * Write the licence number and end dates into the cache
-   */
-  for (let i = 0; i < response.permissions.length; i++) {
-    debug(`Setting permission reference number: ${response.permissions[i].referenceNumber}`)
-    transaction.permissions[i].referenceNumber = response.permissions[i].referenceNumber
-    debug(`Setting permission end date: ${response.permissions[i].endDate}`)
-    transaction.permissions[i].endDate = response.permissions[i].endDate
-  }
   transaction.id = response.id
   transaction.cost = response.cost
   status[COMPLETION_STATUS.posted] = true
@@ -72,6 +64,11 @@ const createPayment = async (request, transaction, status) => {
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
   const paymentResponse = await sendPayment(preparedPayment)
+
+  /*
+   * Google Analytics tracking
+   */
+  await request.ga.ecommerce().checkout(getTrackingProductDetailsFromTransaction(transaction))
 
   /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
@@ -142,6 +139,10 @@ const processPayment = async (request, transaction, status) => {
     // Defer setting the completed status in the journal until after finalization
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
+
+    await request.ga
+      .ecommerce()
+      .purchase(getTrackingProductDetailsFromTransaction(transaction), transaction.payment.payment_id, getAffiliation(process.env.CHANNEL))
   } else {
     /*
      * This block deals with failed or cancelled payments
@@ -211,15 +212,34 @@ export default async (request, h) => {
     if (next) {
       return h.redirect(next)
     }
+  } else {
+    const paymentId = await request.cache().getId()
+    await request.ga
+      .ecommerce()
+      .purchase(getTrackingProductDetailsFromTransaction(transaction), paymentId, getAffiliation(process.env.CHANNEL))
   }
 
   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
     const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
     debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
-    await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+    const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+    /*
+     * Write the licence number and end dates into the cache
+     */
+    for (let i = 0; i < response.permissions.length; i++) {
+      debug(`Setting permission reference number: ${response.permissions[i].referenceNumber}`)
+      transaction.permissions[i].referenceNumber = response.permissions[i].referenceNumber
+      debug(`Setting permission issue date: ${response.permissions[i].issueDate}`)
+      transaction.permissions[i].issueDate = response.permissions[i].issueDate
+      debug(`Setting permission start date: ${response.permissions[i].startDate}`)
+      transaction.permissions[i].startDate = response.permissions[i].startDate
+      debug(`Setting permission end date: ${response.permissions[i].endDate}`)
+      transaction.permissions[i].endDate = response.permissions[i].endDate
+    }
     status[COMPLETION_STATUS.finalised] = true
     await request.cache().helpers.status.set(status)
+    await request.cache().helpers.transaction.set(transaction)
     // Set the completed status
     if (transaction.cost > 0) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })

@@ -6,7 +6,7 @@
 {% from "header/macro.njk" import govukHeader %}
 
 {% macro csrf() %}
-<div><input type="hidden" name="rlsctkn" value="{{rlsctkn}}"></div>
+<div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
 {% endmacro %}
 
 {% block head %}
@@ -18,24 +18,64 @@
 {% endblock %}
 
 {% block header %}
+    <div id="global-cookie-message" class="cookie-banner no-print" role="region" aria-label="cookie banner">
+      <div class="govuk-width-container">
+        <p class="govuk-body">
+          This website only stores the cookies that are essential to make it work. Read more about <a class="govuk-link" href="/guidance/cookies">how we use cookies</a>
+        </p>
+        <button id="close-global-cookie-message" class="govuk-button govuk-!-margin-bottom-0" type="submit">Close</button>
+      </div>
+    </div>
+    <script nonce={{nonce}} type="text/javascript">
+        function removeCookieMessage() {
+            var elem = document.getElementById('global-cookie-message')
+            if (elem.parentNode) {
+                elem.parentNode.removeChild(elem)
+            }
+        }
+        (function () {
+            'use strict'
+            var seen_cookie_message = /(^|\;)\s*seen_cookie_message=/.test(document.cookie)
+            if (seen_cookie_message) {
+                removeCookieMessage()
+            } else {
+                document.getElementById('close-global-cookie-message').addEventListener('click', function() {
+                    var expiry = new Date()
+                    expiry.setDate(expiry.getDate() + 90)
+                    document.cookie = ' seen_cookie_message=true; expires=' + expiry.toUTCString()
+                    removeCookieMessage()
+                })
+            }
+        })()
+    </script>
     {{ govukHeader({
             assetsPath: assetPath + '/images',
             homepageUrl: "https://www.gov.uk/",
             serviceUrl: "/",
             containerClasses: "govuk-width-container",
-            serviceName: "Get a rod fishing license"
+            serviceName: "Get a rod fishing licence" if not TELESALES else "Get a rod fishing licence (TELESALES)"
         })
     }}
 {% endblock %}
 
 {% block beforeContent %}
-    {{ govukPhaseBanner({
+    {% if TELESALES %}
+        {{ govukPhaseBanner({
             tag: {
-            text: "beta"
-        },
-        html: 'Your <a class="govuk-link" href="' + _uri.feedback + '" target="_blank">feedback</a> will help us improve the service (opens in another page)',
-        classes: 'no-print'
-    }) }}
+                text: "beta"
+            },
+            html: '<b>User:</b>&nbsp;&nbsp;' + credentials.name + ' (' + credentials.email + ')' if credentials else '<b>User:</b>&nbsp;&nbsp;Not logged in',
+            classes: 'no-print'
+        }) }}
+    {% else %}
+        {{ govukPhaseBanner({
+            tag: {
+                text: "beta"
+            },
+            html: 'Your <a class="govuk-link" href="' + _uri.feedback + '" target="_blank">feedback</a> will help us improve the service',
+            classes: 'no-print'
+        }) }}
+    {% endif %}
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}
@@ -44,7 +84,7 @@
     <div class="no-print">
         <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">Environment Agency Helpline: <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
         <p class="govuk-!-margin-top-0">Monday to Friday, 8am to 6pm</p>
-        <p class="govuk-!-margin-top-0"><a href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a> (opens in a new window or tab)</p>
+        <p class="govuk-!-margin-top-0"><a class="govuk-link" href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a></p>
         <ul class="govuk-footer__inline-list">
             <li class="govuk-footer__inline-list-item">
                 <a class="govuk-link" href="{{ _uri.refunds }}">
@@ -82,6 +122,6 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script nonce={{nonce}} src="/public/javascript/all-min.js"></script>
+    <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
 {% endblock %}

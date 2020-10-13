@@ -93,16 +93,23 @@ describe('validators', () => {
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
+    it('allows the validation result to be cached', async () => {
+      const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => 'success')
+      const validationFunction = createEntityIdValidator(TestEntity, { cache: 1 })
+      await expect(validationFunction('testValue')).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
+    })
+
     it('returns a validation function which skips validation if the input value is undefined', async () => {
       const spy = jest.spyOn(entityManager, 'findById')
-      const validationFunction = createEntityIdValidator(TestEntity, true)
+      const validationFunction = createEntityIdValidator(TestEntity, { negate: true })
       await expect(validationFunction(undefined)).resolves.toEqual(undefined)
       expect(spy).not.toHaveBeenCalled()
     })
 
     it('returns a validation function returning undefined when an entity is not resolved and negate is set', async () => {
       const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => null)
-      const validationFunction = createEntityIdValidator(TestEntity, true)
+      const validationFunction = createEntityIdValidator(TestEntity, { negate: true })
       await expect(validationFunction('testValue')).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
@@ -116,7 +123,7 @@ describe('validators', () => {
 
     it('returns a validation function throwing an error when an entity is found and negate is set', async () => {
       const spy = jest.spyOn(entityManager, 'findById').mockImplementation(async () => 'success')
-      const validationFunction = createEntityIdValidator(TestEntity, true)
+      const validationFunction = createEntityIdValidator(TestEntity, { negate: true })
       await expect(validationFunction('testValue')).rejects.toThrow('Entity for entityTest identifier already exists')
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
@@ -130,16 +137,23 @@ describe('validators', () => {
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
 
+    it('allows the validation result to be cached', async () => {
+      const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => 'success')
+      const validationFunction = createAlternateKeyValidator(TestEntity, { cache: 1 })
+      await expect(validationFunction('testValue')).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
+    })
+
     it('returns a validation function which skips validation if the input value is undefined', async () => {
       const spy = jest.spyOn(entityManager, 'findByAlternateKey')
-      const validationFunction = createAlternateKeyValidator(TestEntity, true)
+      const validationFunction = createAlternateKeyValidator(TestEntity, { negate: true })
       await expect(validationFunction(undefined)).resolves.toEqual(undefined)
       expect(spy).not.toHaveBeenCalled()
     })
 
     it('returns a validation function returning undefined when an entity is not resolved and negate is set', async () => {
       const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => null)
-      const validationFunction = createAlternateKeyValidator(TestEntity, true)
+      const validationFunction = createAlternateKeyValidator(TestEntity, { negate: true })
       await expect(validationFunction('testValue')).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })
@@ -153,7 +167,7 @@ describe('validators', () => {
 
     it('returns a validation function throwing an error when an entity is found and negate is set', async () => {
       const spy = jest.spyOn(entityManager, 'findByAlternateKey').mockImplementation(async () => 'success')
-      const validationFunction = createAlternateKeyValidator(TestEntity, true)
+      const validationFunction = createAlternateKeyValidator(TestEntity, { negate: true })
       await expect(validationFunction('testValue')).rejects.toThrow('Entity for entityTest identifier already exists')
       expect(spy).toHaveBeenCalledWith(TestEntity, 'testValue')
     })

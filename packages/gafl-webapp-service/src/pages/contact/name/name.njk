@@ -5,21 +5,23 @@
 
 {% set errorMap = {
         'first-name': {
-            'string.empty': { ref: '#first-name', text: 'You did not enter your first name' },
-            'string.min': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
-            'string.max': { ref: '#first-name', text: 'Your first name must be between 2 and 100 characters' },
+            'string.empty': { ref: '#first-name', text: 'Enter your first name' },
+            'string.min': { ref: '#first-name', text: 'Your first name must contain at least 2 letters' },
+            'string.max': { ref: '#first-name', text: 'Your first name must not be longer than 100 letters' },
             'string.forbidden': { ref: '#first-name', text: 'Your first name must only contain letters' }
         },
         'last-name': {
-            'string.empty': { ref: '#last-name', text: 'You did not enter your last name' },
-            'string.min': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
-            'string.max': { ref: '#last-name', text: 'Your last name must be between 2 and 100 characters' },
+            'string.empty': { ref: '#last-name', text: 'Enter your last name' },
+            'string.min': { ref: '#last-name', text: 'Your last name must contain at least 2 letters' },
+            'string.max': { ref: '#last-name', text: 'Your last name must not be longer than 100 letters' },
             'string.forbidden': { ref: '#last-name', text: 'Your last name must only contain letters' }
         }
     }
 %}
 
 {% block pageContent %}
+    <p class="govuk-body-m">If you're applying for someone else enter their name.</p>
+
     {{ govukInput({
       label: {
         text: "First name"
@@ -31,7 +33,7 @@
       classes: "govuk-input--width-20",
       autocomplete: 'given-name',
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter you first name' } if error['first-name']
+      errorMessage: { text: 'Enter your first name' } if error['first-name']
     }) }}
 
     {{ govukInput({
@@ -44,13 +46,7 @@
       autocomplete: 'family-name',
       classes: "govuk-input--width-20",
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter you last name' } if error['last-name']
+      errorMessage: { text: 'Enter your last name' } if error['last-name']
     }) }}
 
-    <p class="govuk-body-m">When you buy a fishing licence, you will need to give us some personal data such as your name, address and date of birth.</p>
-    <div class="govuk-body-m">Read about <a href="#">how we use your personal information</a>.</div>
-
 {% endblock %}
-
-
-

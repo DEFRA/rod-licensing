@@ -57,84 +57,70 @@
   ]
 %}
 
-{% if data.contactMethod === data.howContacted['none'] or data.contactMethod === data.howContacted['letter'] %}
-    {{ licenseeDetailsSummaryRows.push({
-      key: {
-        text: "Instant licence number"
-      },
-      value: {
-        text: 'Note it down after payment'
-      },
-      classes: 'no-border' if data.permission.licenceLength === '12M',
-      actions: {
-        items: [
-          {
-            href: data.uri.contact,
-            text: "Add email or text",
-            visuallyHiddenText: "contact",
-            attributes: { id: 'add-contact' }
-          }
-        ]
-      }
-    }) }}
-{% elif data.contactMethod === data.howContacted['email'] %}
-    {{ licenseeDetailsSummaryRows.push({
-      key: {
-        text: "Instant licence number"
-      },
-      value: {
-        text: 'By email: ' + data.permission.licensee.email
-      },
-      classes: 'no-border' if data.permission.licenceLength === '12M',
-      actions: {
-        items: [
-          {
-            href: data.uri.contact,
-            text: "Change",
-            visuallyHiddenText: "email",
-            attributes: { id: 'change-how-contacted' }
-          }
-        ]
-      }
-    }) }}
-{% elif data.contactMethod === data.howContacted['text'] %}
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Instant licence number"
-        },
-        value: {
-          text: 'By text: ' + data.permission.licensee.mobilePhone
-        },
-        classes: 'no-border' if data.permission.licenceLength === '12M',
-        actions: {
-          items: [
-            {
-              href: data.uri.contact,
-              text: "Change" if data.permission.licensee.mobilePhone else "Add",
-              visuallyHiddenText: "mobile",
-              attributes: { id: 'change-how-contacted' }
-            }
-          ]
-        }
-    }) }}
-{% endif %}
-
-{% if data.permission.licenceLength === '12M' %}
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "12 month reminder"
-        },
-        value: {
-          text: 'By post' if data.contactMethod === data.howContacted['letter'] else ('By email' if data.contactMethod === data.howContacted['email'] else 'By text')
-        }
-    }) }}
+{% if data.isPhysical %}
     {{ licenseeDetailsSummaryRows.push({
         key: {
           text: "Licence card"
         },
         value: {
-          text: 'By post in 4 to 10 days'
+          text: 'By post within the next 10 days'
         }
+    }) }}
+{% endif %}
+
+{% if data.isPhysical %}
+    {% if data.contactMethod === data.howContacted['letter'] %}
+        {% set contactPref = 'By post' %}
+    {% elseif data.contactMethod === data.howContacted['email'] %}
+        {% set contactPref = 'By email: ' + data.permission.licensee.email %}
+    {% elseif data.contactMethod === data.howContacted['text'] %}
+        {% set contactPref = 'By text: ' + data.permission.licensee.mobilePhone %}
+    {% endif %}
+
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Contact preference"
+        },
+        value: {
+        html: contactPref
+      },
+      actions: {
+        items: [
+          {
+            href: data.uri.contact,
+            text: "Change",
+            visuallyHiddenText: "contact",
+            attributes: { id: 'change-contact' }
+          }
+        ]
+      }
+    }) }}
+{% else %}
+    {% if data.contactMethod === data.howContacted['none'] %}
+        {% set licencePref = 'Make a note on confirmation' %}
+    {% elseif data.contactMethod === data.howContacted['email'] %}
+        {% set licencePref = 'By email: ' + data.permission.licensee.email %}
+    {% elseif data.contactMethod === data.howContacted['text'] %}
+        {% set licencePref = 'By text: ' + data.permission.licensee.mobilePhone %}
+    {% endif %}
+
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Licence details"
+        },
+        value: {
+          text: licencePref
+        },
+        actions: {
+            items: [
+              {
+                href: data.uri.contact,
+                text: "Change",
+                visuallyHiddenText: "contact",
+                attributes: { id: 'change-contact' }
+              }
+            ]
+          }
     }) }}
 {% endif %}
 
@@ -172,13 +158,13 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-            {% if backRef %}
-                {{ govukBackLink({
-                  text: "Back",
-                  href: backRef,
-                  classes: "govuk-!-margin-bottom-7"
-                }) }}
-            {% endif %}
+        {% if backRef %}
+            {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+            }) }}
+        {% endif %}
         <form method="post">
 
             {{ licenseeDetailsSummary | trim | safe }}
@@ -194,7 +180,7 @@
         </form>
 
         <p class="govuk-body-m">
-            <a href="{{ data.uri.licenceSummary }}">Review or change your licence details</a>
+            <a class="govuk-link" href="{{ data.uri.licenceSummary }}">Review or change your licence details</a>
         </p>
     </div>
 </div>

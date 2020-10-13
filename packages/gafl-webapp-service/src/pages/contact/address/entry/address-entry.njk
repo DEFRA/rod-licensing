@@ -2,6 +2,7 @@
 
 {% from "input/macro.njk" import govukInput %}
 {% from "select/macro.njk" import govukSelect %}
+{% from "inset-text/macro.njk" import govukInsetText %}
 
 {% set title = 'Enter your address' %}
 
@@ -19,24 +20,33 @@
 {%
     set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'You did not enter your building number or name' },
+            'string.empty': { ref: '#premises', text: 'Enter your building number or name' },
             'string.max': { ref: '#premises', text: 'Your building number or name must be less than 50 characters' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
+            'string.empty': { ref: '#postcode', text: 'Enter your postcode' },
             'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
         },
         'town': {
-            'string.empty': { ref: '#town', text: 'You did not enter a town or city' },
-            'string.max': { ref: '#town', text: 'The town or city must be less than 50 characters long' }
+            'string.empty': { ref: '#town', text: 'Enter your town or city' },
+            'string.max': { ref: '#town', text: 'Your town or city must be less than 50 characters long' }
         },
         'country': {
-            'string.empty': { ref: '#country', text: 'You did not select a country' }
+            'string.empty': { ref: '#country', text: 'Choose your country' }
         }
     }
 %}
 
 {% block pageContent %}
+
+    {% if data.searchTerms %}
+        {{ govukInsetText({
+          html: '<p>We could not find an address for premises <span class="govuk-!-font-weight-bold">' +
+          data.searchTerms.premises + '</span> and postcode <span class="govuk-!-font-weight-bold">' + data.searchTerms.postcode + '</span></p>' +
+            '<p>Enter your full address below</p>'
+         }) }}
+    {% endif %}
+
     {{ govukInput({
       label: {
         text: "Building number or name"
@@ -47,7 +57,7 @@
       value: payload['premises'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
-      errorMessage: { text: 'Enter a building name or number' } if error['premises']
+      errorMessage: { text: 'Enter your building number or name' } if error['premises']
     }) }}
 
     {{ govukInput({
@@ -69,6 +79,7 @@
       name: "locality",
       value: payload['locality'],
       classes: "govuk-input--width-20",
+      autocomplete: 'address-level2',
       attributes: { maxlength: 50 }
     }) }}
 
@@ -81,7 +92,8 @@
       value: payload['town'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
-      errorMessage: { text: 'Enter a town or city' } if error['town']
+      autocomplete: 'address-level1',
+      errorMessage: { text: 'Enter your town or city' } if error['town']
     }) }}
 
     {{ govukInput({
@@ -93,7 +105,8 @@
       value: payload['postcode'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 10 },
-      errorMessage: { text: 'Enter a valid UK postcode' } if error['postcode']
+      autocomplete: 'postal-code',
+      errorMessage: { text: 'Enter your postcode' } if error['postcode']
     }) }}
 
     {{ govukSelect({
@@ -103,8 +116,8 @@
         text: "Country"
       },
       items: countries,
-      errorMessage: { text: 'Select a country' } if error['country-code']
+      errorMessage: { text: 'Select your country' } if error['country-code']
     }) }}
 
-    <p class="govuk-body-m"><a href="{{ data.lookupPage }}">Find my address</a></p>
+    <p class="govuk-body-m"><a class="govuk-link" href="{{ data.lookupPage }}">Find your address</a></p>
 {% endblock %}

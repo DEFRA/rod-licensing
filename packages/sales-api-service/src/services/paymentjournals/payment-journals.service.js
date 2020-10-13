@@ -12,7 +12,7 @@ const debug = db('sales:paymentjournals')
 export async function createPaymentJournal (id, payload) {
   const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
   await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' }).promise()
-  debug('Payment journal stored with payload %O', record)
+  debug('Payment journal stored with payload %o', record)
   return record
 }
 
@@ -23,14 +23,11 @@ export async function createPaymentJournal (id, payload) {
  */
 export async function updatePaymentJournal (id, payload) {
   const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  const setFieldExpression = Object.keys(updates).map(k => `${k} = :${k}`)
-  const expressionAttributeValues = Object.entries(updates).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
   const result = await docClient
     .update({
       TableName: PAYMENTS_TABLE.TableName,
       Key: { id },
-      UpdateExpression: `SET ${setFieldExpression}`,
-      ExpressionAttributeValues: expressionAttributeValues,
+      ...docClient.createUpdateExpression(updates),
       ConditionExpression: 'attribute_exists(id)',
       ReturnValues: 'ALL_NEW'
     })

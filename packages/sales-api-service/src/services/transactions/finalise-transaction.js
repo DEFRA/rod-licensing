@@ -1,5 +1,9 @@
+import { TRANSACTION_STATUS } from './constants.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
-import { TRANSACTIONS_STAGING_TABLE, TRANSACTIONS_QUEUE } from '../../config.js'
+import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
+import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -7,8 +11,12 @@ const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
 export async function finaliseTransaction ({ id, ...payload }) {
-  debug('Received request to complete transaction %s with payload %O', id, payload)
+  debug('Finalising transaction %s', id)
   const transactionRecord = await retrieveStagedTransaction(id)
+
+  if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED) {
+    throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
+  }
   if (transactionRecord.cost !== payload.payment.amount) {
     throw Boom.paymentRequired('The payment amount did not match the cost of the transaction')
   }
@@ -16,27 +24,42 @@ export async function finaliseTransaction ({ id, ...payload }) {
     throw Boom.conflict('The transaction does not support recurring payments but an instruction was supplied')
   }
 
-  const setFieldExpression = Object.keys(payload).map(k => `${k} = :${k}`)
-  const expressionAttributeValues = Object.entries(payload).reduce((acc, [k, v]) => ({ ...acc, [`:${k}`]: v }), {})
-  await docClient
+  // Generate derived fields
+  for (const permission of transactionRecord.permissions) {
+    permission.issueDate = permission.issueDate ?? payload.payment.timestamp
+    permission.startDate =
+      permission.startDate ??
+      moment(payload.payment.timestamp)
+        .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
+        .toISOString()
+    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+    permission.endDate = await calculateEndDate(permission)
+  }
+
+  const { Attributes: updatedRecord } = await docClient
     .update({
-      TableName: TRANSACTIONS_STAGING_TABLE.TableName,
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
       Key: { id },
-      UpdateExpression: `SET ${setFieldExpression}`,
-      ExpressionAttributeValues: expressionAttributeValues
+      ...docClient.createUpdateExpression({
+        ...payload,
+        permissions: transactionRecord.permissions,
+        status: { id: TRANSACTION_STATUS.FINALISED }
+      }),
+      ReturnValues: 'ALL_NEW'
     })
     .promise()
   debug('Updated transaction record for identifier %s', id)
 
   const receipt = await sqs
     .sendMessage({
-      QueueUrl: TRANSACTIONS_QUEUE.Url,
-      MessageGroupId: 'transactions',
+      QueueUrl: TRANSACTION_QUEUE.Url,
+      MessageGroupId: id,
       MessageDeduplicationId: id,
       MessageBody: JSON.stringify({ id })
     })
     .promise()
 
   debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
-  return { status: 'queued', messageId: receipt.MessageId }
+  updatedRecord.status.messageId = receipt.MessageId
+  return updatedRecord
 }
