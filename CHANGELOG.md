@@ -1,4 +1,13 @@
 
+## v0.3.0-rc.92 (2020-10-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#426](https://github.com/DEFRA/rod-licensing/pull/426) Changes to the accessibility statement ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v0.3.0-rc.91 (2020-10-12)
 
 #### :rocket: Enhancement
