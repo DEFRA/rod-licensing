@@ -74,7 +74,7 @@ echo "Publishing latest packages to npm"
 lerna publish from-git --yes --pre-dist-tag rc
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
-if [ "${TRAVIS_BRANCH}" == "master" ] && [ ${PATCH_RELEASE} == false ]; then
+if [ "${TRAVIS_BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
   git checkout develop
   git merge -X theirs master
   git push origin develop:develop --no-verify
