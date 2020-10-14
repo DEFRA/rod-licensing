@@ -354,7 +354,7 @@ describe('validators', () => {
           ]
         })
       ).resolves.toEqual(undefined)
-      expect(spy).not.toHaveBeenCalled()
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
     })
   })
 })

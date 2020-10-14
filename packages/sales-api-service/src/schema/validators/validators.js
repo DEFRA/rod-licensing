@@ -106,9 +106,9 @@ export function createAlternateKeyValidator (entityType, { cache, negate } = { c
  */
 export function createPermitConcessionValidator () {
   return async transaction => {
-    if (transaction && transaction.dataSource !== 'Post Office Sales') {
+    if (transaction) {
       for (const permission of transaction.permissions) {
-        await validatePermissionConcession(permission)
+        await validatePermissionConcession(permission, transaction)
       }
     }
     return undefined
@@ -122,12 +122,12 @@ export function createPermitConcessionValidator () {
  * @returns {Promise<void>}
  * @throws {Error} on validation error
  */
-const validatePermissionConcession = async permission => {
+const validatePermissionConcession = async (permission, transaction) => {
   const permitConcessions = await getReferenceDataForEntity(PermitConcession)
   const concessionsRequiredForPermit = permitConcessions.filter(pc => pc.permitId === permission.permitId)
   const hasConcessionProofs = permission.concessions && permission.concessions.length
   // Check that the concession is valid for the given permitId and that if a permit requires a concession reference that one is defined
-  if (concessionsRequiredForPermit.length && !hasConcessionProofs) {
+  if (concessionsRequiredForPermit.length && !hasConcessionProofs && transaction.dataSource !== 'Post Office Sales') {
     throw new Error(`The permit '${permission.permitId}' requires proof of concession however none were supplied`)
   } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {
     throw new Error(`The permit '${permission.permitId}' does not allow concessions but concession proofs were supplied`)
