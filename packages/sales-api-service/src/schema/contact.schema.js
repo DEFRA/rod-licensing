@@ -26,11 +26,14 @@ const commonContactSchema = {
   street: validation.contact.createStreetValidator(Joi).allow(null),
   locality: validation.contact.createLocalityValidator(Joi).allow(null),
   town: validation.contact.createTownValidator(Joi),
-  postcode: Joi.alternatives().conditional('country', {
-    is: Joi.string().valid('GB', 'United Kingdom'),
-    then: validation.contact.createUKPostcodeValidator(Joi),
-    otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
-  })
+  postcode: Joi.when(Joi.ref('/dataSource'), {
+    is: Joi.string().valid('Post Office Sales'),
+    otherwise: Joi.alternatives().conditional('country', {
+      is: Joi.string().valid('GB', 'United Kingdom'),
+      then: validation.contact.createUKPostcodeValidator(Joi),
+      otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
+    })
+  }).example('AB12 3CD')
 }
 
 export const contactRequestSchema = Joi.object({
