@@ -1,4 +1,13 @@
 
+## v1.1.0-rc.0 (2020-10-14)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#430](https://github.com/DEFRA/rod-licensing/pull/430) Relax validation rules for Post Office sales ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v0.3.0-rc.93 (2020-10-13)
 
