@@ -199,10 +199,15 @@ describe('validators', () => {
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
-          permitId: 'test-1',
-          concessions: [
+          dataSource: 'Web Sales',
+          permissions: [
             {
-              id: 'test-1'
+              permitId: 'test-1',
+              concessions: [
+                {
+                  id: 'test-1'
+                }
+              ]
             }
           ]
         })
@@ -220,10 +225,15 @@ describe('validators', () => {
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
-          permitId: 'test-1',
-          concessions: [
+          dataSource: 'Web Sales',
+          permissions: [
             {
-              id: 'test-2'
+              permitId: 'test-1',
+              concessions: [
+                {
+                  id: 'test-2'
+                }
+              ]
             }
           ]
         })
@@ -236,10 +246,15 @@ describe('validators', () => {
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
-          permitId: 'test-1',
-          concessions: [
+          dataSource: 'Web Sales',
+          permissions: [
             {
-              id: 'test-2'
+              permitId: 'test-1',
+              concessions: [
+                {
+                  id: 'test-2'
+                }
+              ]
             }
           ]
         })
@@ -255,8 +270,13 @@ describe('validators', () => {
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
-          permitId: 'test-1',
-          concessions: [{ id: 'test-1' }, { id: 'test-1' }, { id: 'test-2' }, { id: 'test-2' }]
+          dataSource: 'Web Sales',
+          permissions: [
+            {
+              permitId: 'test-1',
+              concessions: [{ id: 'test-1' }, { id: 'test-1' }, { id: 'test-2' }, { id: 'test-2' }]
+            }
+          ]
         })
       ).rejects.toThrow("The concession ids 'test-1,test-2' appear more than once, duplicates are not permitted")
       expect(spy).toHaveBeenCalledWith(PermitConcession)
@@ -267,7 +287,12 @@ describe('validators', () => {
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
-          permitId: 'test-1'
+          dataSource: 'Web Sales',
+          permissions: [
+            {
+              permitId: 'test-1'
+            }
+          ]
         })
       ).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith(PermitConcession)
@@ -276,8 +301,13 @@ describe('validators', () => {
     it('returns a validation function which skips validation if the input value is undefined', async () => {
       const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
         {
-          permitId: 'test-1',
-          concessionId: 'test-1'
+          dataSource: 'Web Sales',
+          permissions: [
+            {
+              permitId: 'test-1',
+              concessionId: 'test-1'
+            }
+          ]
         }
       ])
       const validationFunction = createPermitConcessionValidator()
@@ -295,10 +325,36 @@ describe('validators', () => {
       const validationFunction = createPermitConcessionValidator()
       await expect(
         validationFunction({
-          permitId: 'test-1'
+          dataSource: 'Web Sales',
+          permissions: [
+            {
+              permitId: 'test-1'
+            }
+          ]
         })
       ).rejects.toThrow("The permit 'test-1' requires proof of concession however none were supplied")
       expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
+
+    it('returns a validation function which does not throw an error for Post Office Sales even if the permit requires a concession and none is supplied', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
+        }
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          dataSource: 'Post Office Sales',
+          permissions: [
+            {
+              permitId: 'test-1'
+            }
+          ]
+        })
+      ).resolves.toEqual(undefined)
+      expect(spy).not.toHaveBeenCalled()
     })
   })
 })
