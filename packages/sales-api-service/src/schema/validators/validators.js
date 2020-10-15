@@ -105,21 +105,34 @@ export function createAlternateKeyValidator (entityType, { cache, negate } = { c
  * @returns {function(*): undefined}
  */
 export function createPermitConcessionValidator () {
-  return async permission => {
-    if (permission) {
-      const permitConcessions = await getReferenceDataForEntity(PermitConcession)
-      const concessionsRequiredForPermit = permitConcessions.filter(pc => pc.permitId === permission.permitId)
-      const hasConcessionProofs = permission.concessions && permission.concessions.length
-      // Check that the concession is valid for the given permitId and that if a permit requires a concession reference that one is defined
-      if (concessionsRequiredForPermit.length && !hasConcessionProofs) {
-        throw new Error(`The permit '${permission.permitId}' requires proof of concession however none were supplied`)
-      } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {
-        throw new Error(`The permit '${permission.permitId}' does not allow concessions but concession proofs were supplied`)
-      } else if (permission.concessions) {
-        validateConcessionList(permission, concessionsRequiredForPermit)
+  return async transaction => {
+    if (transaction) {
+      for (const permission of transaction.permissions) {
+        await validatePermissionConcession(permission, transaction)
       }
     }
     return undefined
+  }
+}
+
+/**
+ * Validate that a permission referencing a concession contains the required concession proof
+ *
+ * @param permission the permission to be validated
+ * @returns {Promise<void>}
+ * @throws {Error} on validation error
+ */
+const validatePermissionConcession = async (permission, transaction) => {
+  const permitConcessions = await getReferenceDataForEntity(PermitConcession)
+  const concessionsRequiredForPermit = permitConcessions.filter(pc => pc.permitId === permission.permitId)
+  const hasConcessionProofs = permission.concessions && permission.concessions.length
+  // Check that the concession is valid for the given permitId and that if a permit requires a concession reference that one is defined
+  if (concessionsRequiredForPermit.length && !hasConcessionProofs && transaction.dataSource !== 'Post Office Sales') {
+    throw new Error(`The permit '${permission.permitId}' requires proof of concession however none were supplied`)
+  } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {
+    throw new Error(`The permit '${permission.permitId}' does not allow concessions but concession proofs were supplied`)
+  } else if (permission.concessions) {
+    validateConcessionList(permission, concessionsRequiredForPermit)
   }
 }
 
@@ -128,7 +141,7 @@ export function createPermitConcessionValidator () {
  *
  * @param permission the permission containing the concessions to be validated
  * @param concessionsRequiredForPermit the concessions allowed for the target permit
- * @throws on validation error
+ * @throws {Error} on validation error
  */
 const validateConcessionList = (permission, concessionsRequiredForPermit) => {
   // Check list for duplicates
