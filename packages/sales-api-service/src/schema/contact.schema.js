@@ -3,6 +3,8 @@ import { buildJoiOptionSetValidator, createEntityIdValidator } from './validator
 import { Contact } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 import { optionSetOption } from './option-set.schema.js'
+const POST_OFFICE_DATASOURCE = 'Post Office Sales'
+const DATASOURCE_REF = '/dataSource'
 
 const commonContactSchema = {
   id: Joi.string()
@@ -22,8 +24,8 @@ const commonContactSchema = {
     .optional()
     .allow(null)
     .example('Example Organisation'),
-  premises: Joi.when(Joi.ref('/dataSource'), {
-    is: Joi.string().valid('Post Office Sales'),
+  premises: Joi.when(Joi.ref(DATASOURCE_REF), {
+    is: Joi.string().valid(POST_OFFICE_DATASOURCE),
     then: validation.contact
       .createPremisesValidator(Joi)
       .optional()
@@ -32,16 +34,16 @@ const commonContactSchema = {
   }).example('Example House'),
   street: validation.contact.createStreetValidator(Joi).allow(null),
   locality: validation.contact.createLocalityValidator(Joi).allow(null),
-  town: Joi.when(Joi.ref('/dataSource'), {
-    is: Joi.string().valid('Post Office Sales'),
+  town: Joi.when(Joi.ref(DATASOURCE_REF), {
+    is: Joi.string().valid(POST_OFFICE_DATASOURCE),
     then: validation.contact
       .createTownValidator(Joi)
       .optional()
       .allow(null, ''),
     otherwise: validation.contact.createTownValidator(Joi)
   }).example('Exampleton'),
-  postcode: Joi.when(Joi.ref('/dataSource'), {
-    is: Joi.string().valid('Post Office Sales'),
+  postcode: Joi.when(Joi.ref(DATASOURCE_REF), {
+    is: Joi.string().valid(POST_OFFICE_DATASOURCE),
     then: Joi.alternatives().conditional('country', {
       is: Joi.string().valid('GB', 'United Kingdom'),
       then: validation.contact
