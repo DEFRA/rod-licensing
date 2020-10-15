@@ -1,4 +1,13 @@
 
+## v1.2.0-rc.0 (2020-10-15)
+
+#### :rocket: Enhancement
+* `pocl-job`, `sales-api-service`
+  * [#432](https://github.com/DEFRA/rod-licensing/pull/432) Relax address validation rules for P.O. and correct sales date ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v1.1.0-rc.0 (2020-10-14)
 
