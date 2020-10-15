@@ -22,12 +22,37 @@ const commonContactSchema = {
     .optional()
     .allow(null)
     .example('Example Organisation'),
-  premises: validation.contact.createPremisesValidator(Joi),
+  premises: Joi.when(Joi.ref('/dataSource'), {
+    is: Joi.string().valid('Post Office Sales'),
+    then: validation.contact
+      .createPremisesValidator(Joi)
+      .optional()
+      .allow(null, ''),
+    otherwise: validation.contact.createPremisesValidator(Joi)
+  }).example('Example House'),
   street: validation.contact.createStreetValidator(Joi).allow(null),
   locality: validation.contact.createLocalityValidator(Joi).allow(null),
-  town: validation.contact.createTownValidator(Joi),
+  town: Joi.when(Joi.ref('/dataSource'), {
+    is: Joi.string().valid('Post Office Sales'),
+    then: validation.contact
+      .createTownValidator(Joi)
+      .optional()
+      .allow(null, ''),
+    otherwise: validation.contact.createTownValidator(Joi)
+  }).example('Exampleton'),
   postcode: Joi.when(Joi.ref('/dataSource'), {
     is: Joi.string().valid('Post Office Sales'),
+    then: Joi.alternatives().conditional('country', {
+      is: Joi.string().valid('GB', 'United Kingdom'),
+      then: validation.contact
+        .createUKPostcodeValidator(Joi)
+        .optional()
+        .allow(null, ''),
+      otherwise: validation.contact
+        .createOverseasPostcodeValidator(Joi)
+        .optional()
+        .allow(null, '')
+    }),
     otherwise: Joi.alternatives().conditional('country', {
       is: Joi.string().valid('GB', 'United Kingdom'),
       then: validation.contact.createUKPostcodeValidator(Joi),
