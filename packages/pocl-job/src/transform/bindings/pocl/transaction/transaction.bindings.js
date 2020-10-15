@@ -84,10 +84,7 @@ export const Transaction = new Binding({
       contactBindings.NotifyBySms.element,
       contactBindings.NotifyByPost.element
     )
-    const preferredNewsletterMethod = getPreferredContactMethod(
-      children,
-      contactBindings.NewsletterOption.element
-    )
+    const preferredNewsletterMethod = getPreferredContactMethod(children, contactBindings.NewsletterOption.element)
 
     return {
       id: children[SerialNumber.element],
