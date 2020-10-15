@@ -16,13 +16,11 @@ describe('transaction transforms', () => {
         LICENSEE_SURNAME: { value: 'Tester' },
         DOB: { value: '12/03/1981' },
         NOTIFY_EMAIL_ADDRESS: { value: 'festerthetester123@email.com' },
-        COMMS_EMAIL_ADDRESS: { value: 'festerthetester456@email.com' },
+        NEWSLETTER_OPTION: { value: 'Y' },
+        NEWSLETTER_EMAIL_ADDRESS: { value: 'festerthetester456@email.com' },
         NOTIFY_EMAIL: { value: 'Y' },
         NOTIFY_SMS: { value: 'N' },
         NOTIFY_POST: { value: 'N' },
-        COMMS_EMAIL: { value: 'Y' },
-        COMMS_SMS: { value: 'N' },
-        COMMS_POST: { value: 'N' },
         LICENSEE_ADDRESS: {
           children: {
             POBox: { value: 'PO Box 123' },
@@ -96,15 +94,12 @@ describe('transaction transforms', () => {
         DOB: { value: '12/03/1931' },
         SENIOR_ID: { value: 'Uncancelled Passport' },
         NOTIFY_EMAIL_ADDRESS: { value: '' },
-        COMMS_EMAIL_ADDRESS: { value: '' },
+        NEWSLETTER_OPTION: { value: 'N' },
+        NEWSLETTER_EMAIL_ADDRESS: { value: '' },
         NOTIFY_SMS_NUMBER: { value: '07124567890' },
-        COMMS_SMS_NUMBER: { value: '07124567891' },
         NOTIFY_EMAIL: { value: 'N' },
         NOTIFY_SMS: { value: 'Y' },
         NOTIFY_POST: { value: 'N' },
-        COMMS_EMAIL: { value: 'N' },
-        COMMS_SMS: { value: 'Y' },
-        COMMS_POST: { value: 'N' },
         LICENSEE_ADDRESS: {
           children: {
             POBox: { value: 'PO Box 123' },
@@ -161,7 +156,7 @@ describe('transaction transforms', () => {
               postcode: 'AB123CD',
               country: 'GB',
               preferredMethodOfConfirmation: 'Text',
-              preferredMethodOfNewsletter: 'Text',
+              preferredMethodOfNewsletter: 'Prefer not to be contacted',
               preferredMethodOfReminder: 'Text'
             }
           }
@@ -189,15 +184,12 @@ describe('transaction transforms', () => {
         DISABLED_ID_1: { value: '12ABCD01234X5678' },
         DISABLED_ID_2: { value: 'QQ123456C' },
         NOTIFY_EMAIL_ADDRESS: { value: '' },
-        COMMS_EMAIL_ADDRESS: { value: '' },
+        NEWSLETTER_OPTION: { value: 'N' },
+        NEWSLETTER_EMAIL_ADDRESS: { value: '' },
         NOTIFY_SMS_NUMBER: { value: '' },
-        COMMS_SMS_NUMBER: { value: '' },
         NOTIFY_EMAIL: { value: 'N' },
         NOTIFY_SMS: { value: 'N' },
         NOTIFY_POST: { value: 'Y' },
-        COMMS_EMAIL: { value: 'N' },
-        COMMS_SMS: { value: 'N' },
-        COMMS_POST: { value: 'Y' },
         LICENSEE_ADDRESS: {
           children: {
             POBox: { value: 'PO Box 123' },
@@ -253,7 +245,7 @@ describe('transaction transforms', () => {
               postcode: 'AB123CD',
               country: 'GB',
               preferredMethodOfConfirmation: 'Letter',
-              preferredMethodOfNewsletter: 'Letter',
+              preferredMethodOfNewsletter: 'Prefer not to be contacted',
               preferredMethodOfReminder: 'Letter'
             }
           }
@@ -280,16 +272,13 @@ describe('transaction transforms', () => {
         SENIOR_ID: { value: '' },
         DISABLED_ID_1: { value: '12ABCD01234X5678' },
         DISABLED_ID_2: { value: '' },
+        NEWSLETTER_OPTION: { value: 'N' },
         NOTIFY_EMAIL_ADDRESS: { value: '' },
-        COMMS_EMAIL_ADDRESS: { value: '' },
+        NEWSLETTER_EMAIL_ADDRESS: { value: '' },
         NOTIFY_SMS_NUMBER: { value: '' },
-        COMMS_SMS_NUMBER: { value: '' },
         NOTIFY_EMAIL: { value: 'N' },
         NOTIFY_SMS: { value: 'N' },
         NOTIFY_POST: { value: 'N' },
-        COMMS_EMAIL: { value: 'N' },
-        COMMS_SMS: { value: 'N' },
-        COMMS_POST: { value: 'N' },
         LICENSEE_ADDRESS: {
           children: {
             POBox: { value: 'PO Box 123' },
@@ -372,14 +361,11 @@ describe('transaction transforms', () => {
         SENIOR_ID: { value: '' },
         DISABLED_ID_1: { value: '' },
         DISABLED_ID_2: { value: 'QQ123456C' },
-        COMMS_EMAIL_ADDRESS: { value: 'festerthetester456@email.com' },
-        COMMS_SMS_NUMBER: { value: '07124567891' },
+        NEWSLETTER_OPTION: { value: 'N' },
+        NEWSLETTER_EMAIL_ADDRESS: { value: 'festerthetester456@email.com' },
         NOTIFY_EMAIL: { value: 'N' },
         NOTIFY_SMS: { value: 'Y' },
         NOTIFY_POST: { value: 'N' },
-        COMMS_EMAIL: { value: 'Y' },
-        COMMS_SMS: { value: 'N' },
-        COMMS_POST: { value: 'N' },
         LICENSEE_ADDRESS: {
           children: {
             POBox: { value: 'PO Box 123' },
@@ -429,7 +415,6 @@ describe('transaction transforms', () => {
               lastName: 'Tester',
               birthDate: '1931-03-12',
               email: 'festerthetester456@email.com',
-              mobilePhone: '07124567891',
               premises: 'PO Box 123, Flat 5, Angling House, 123',
               street: 'Redhill Park, Redhill Lane',
               locality: 'Lower Denton, Denton',
@@ -437,7 +422,7 @@ describe('transaction transforms', () => {
               postcode: 'AB123CD',
               country: 'GB',
               preferredMethodOfConfirmation: 'Text',
-              preferredMethodOfNewsletter: 'Email',
+              preferredMethodOfNewsletter: 'Prefer not to be contacted',
               preferredMethodOfReminder: 'Text'
             }
           }

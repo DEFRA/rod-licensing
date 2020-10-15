@@ -25,22 +25,22 @@ export const BirthDate = new Binding({ element: 'DOB', transform: Binding.Transf
 export const NotifyEmail = new Binding({ element: 'NOTIFY_EMAIL_ADDRESS', transform: Binding.TransformTextOnly })
 
 /**
- * Comms email address
+ * Newsletter email address
  * @type {Binding}
  */
-export const CommsEmail = new Binding({ element: 'COMMS_EMAIL_ADDRESS', transform: Binding.TransformTextOnly })
+export const NewsletterEmail = new Binding({ element: 'NEWSLETTER_EMAIL_ADDRESS', transform: Binding.TransformTextOnly })
+
+/**
+ * Newsletter opt in
+ * @type {Binding}
+ */
+export const NewsletterOption = new Binding({ element: 'NEWSLETTER_OPTION', transform: Binding.TransformYesNo('Email') })
 
 /**
  * Notify mobile phone number
  * @type {Binding}
  */
 export const NotifyMobilePhone = new Binding({ element: 'NOTIFY_SMS_NUMBER', transform: Binding.TransformTextOnly })
-
-/**
- * Comms mobile phone number
- * @type {Binding}
- */
-export const CommsMobilePhone = new Binding({ element: 'COMMS_SMS_NUMBER', transform: Binding.TransformTextOnly })
 
 /**
  * Preferred Method for the Environment Agency to Notify you about your licence, confirm your licence number, your licence has expired,
@@ -62,23 +62,5 @@ export const NotifyByEmail = new Binding({ element: 'NOTIFY_EMAIL', transform: B
  * @type {Binding}
  */
 export const NotifyBySms = new Binding({ element: 'NOTIFY_SMS', transform: Binding.TransformYesNo('Text') })
-
-/**
- * Preferred Method for Environment Agency to Contact you about fishing information - Post
- * @type {Binding}
- */
-export const CommsByPost = new Binding({ element: 'COMMS_POST', transform: Binding.TransformYesNo('Letter') })
-
-/**
- * Preferred Method for Environment Agency to Contact you about fishing information - Email
- * @type {Binding}
- */
-export const CommsByEmail = new Binding({ element: 'COMMS_EMAIL', transform: Binding.TransformYesNo('Email') })
-
-/**
- * Preferred Method for Environment Agency to Contact you about fishing information - SMS
- * @type {Binding}
- */
-export const CommsBySms = new Binding({ element: 'COMMS_SMS', transform: Binding.TransformYesNo('Text') })
 
 export { Address } from './address/address.bindings.js'

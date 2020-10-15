@@ -50,7 +50,7 @@ export const ADULT_FULL_1_DAY_LICENCE = {
           town: 'Bristol',
           postcode: 'BS9 1HJ',
           country: 'United Kingdom',
-          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Email',
           preferredMethodOfConfirmation: 'Email',
           preferredMethodOfReminder: 'Email',
           email: 'new3@example.com'
@@ -105,7 +105,7 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
           town: 'Bristol',
           postcode: 'BS9 1HJ',
           country: 'United Kingdom',
-          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Email',
           preferredMethodOfConfirmation: 'Letter',
           preferredMethodOfReminder: 'Letter'
         },
@@ -172,7 +172,7 @@ export const SENIOR_12_MONTH_LICENCE = {
           town: 'Bristol',
           postcode: 'BS9 1HJ',
           country: 'United Kingdom',
-          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Email',
           preferredMethodOfConfirmation: 'Letter',
           preferredMethodOfReminder: 'Letter'
         },
@@ -234,7 +234,7 @@ export const JUNIOR_LICENCE = {
           town: 'Bristol',
           postcode: 'BS9 1HJ',
           country: 'United Kingdom',
-          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Email',
           preferredMethodOfConfirmation: 'Prefer not to be contacted',
           preferredMethodOfReminder: 'Prefer not to be contacted'
         },
@@ -295,7 +295,7 @@ export const JUNIOR_DISABLED_LICENCE = {
           town: 'Bristol',
           postcode: 'BS9 1HJ',
           country: 'United Kingdom',
-          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Email',
           preferredMethodOfConfirmation: 'Prefer not to be contacted',
           preferredMethodOfReminder: 'Prefer not to be contacted'
         },

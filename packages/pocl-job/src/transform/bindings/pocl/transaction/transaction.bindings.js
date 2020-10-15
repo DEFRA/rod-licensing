@@ -76,19 +76,17 @@ export const Transaction = new Binding({
       .tz(children[TransactionDate.element] + children[TransactionTime.element], 'DD/MM/YYYYHH:mm:ss', true, SERVICE_LOCAL_TIME)
       .utc()
       .toISOString()
-    const email = children[contactBindings.NotifyEmail.element] || children[contactBindings.CommsEmail.element]
-    const mobilePhone = children[contactBindings.NotifyMobilePhone.element] || children[contactBindings.CommsMobilePhone.element]
+    const email = children[contactBindings.NotifyEmail.element] || children[contactBindings.NewsletterEmail.element]
+    const mobilePhone = children[contactBindings.NotifyMobilePhone.element]
     const preferredNotifyMethod = getPreferredContactMethod(
       children,
       contactBindings.NotifyByEmail.element,
       contactBindings.NotifyBySms.element,
       contactBindings.NotifyByPost.element
     )
-    const preferredCommsMethod = getPreferredContactMethod(
+    const preferredNewsletterMethod = getPreferredContactMethod(
       children,
-      contactBindings.CommsByEmail.element,
-      contactBindings.CommsBySms.element,
-      contactBindings.CommsByPost.element
+      contactBindings.NewsletterOption.element
     )
 
     return {
@@ -105,7 +103,7 @@ export const Transaction = new Binding({
               ...(mobilePhone && { mobilePhone }),
               ...children[contactBindings.Address.element],
               preferredMethodOfConfirmation: preferredNotifyMethod,
-              preferredMethodOfNewsletter: preferredCommsMethod,
+              preferredMethodOfNewsletter: preferredNewsletterMethod,
               preferredMethodOfReminder: preferredNotifyMethod
             },
             issueDate: transactionDate,
