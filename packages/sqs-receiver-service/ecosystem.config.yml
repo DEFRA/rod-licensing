@@ -4,19 +4,19 @@ apps:
     name: 'Transactions Queue'
     env:
       RECEIVER_PREFIX: TRANSACTION_QUEUE
-    exec_mode: cluster
-    instances: 1
+    exec_mode: fork
+    kill_timeout: 180000
     autorestart: true
-    max_restarts: 5
-    restart_delay: 1000
+    max_restarts: 3
+    restart_delay: 5000
 
   - script: ./src/sqs-receiver-service.js
     interpreter_args: '--unhandled-rejections=strict'
     name: 'Transactions DLQ'
     env:
       RECEIVER_PREFIX: TRANSACTION_DLQ
-    exec_mode: cluster
-    instances: 1
+    exec_mode: fork
+    kill_timeout: 180000
     autorestart: true
-    max_restarts: 5
-    restart_delay: 1000
+    max_restarts: 3
+    restart_delay: 5000

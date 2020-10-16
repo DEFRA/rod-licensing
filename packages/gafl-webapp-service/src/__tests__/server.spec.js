@@ -1,6 +1,8 @@
 import { createServer, init, server } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 
+jest.mock('@defra-fish/connectors-lib')
+
 export const catboxOptions = {
   port: 1234,
   cache: [
@@ -50,15 +52,16 @@ describe('The server', () => {
           shutdownBehavior()
           const serverStopSpy = jest.spyOn(server, 'stop').mockImplementation(jest.fn())
           const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
-          await process.emit(signal)
-          expect(serverStopSpy).toHaveBeenCalled()
-          expect(processStopSpy).toHaveBeenCalledWith(0)
-          jest.restoreAllMocks()
-          done()
+          process.emit(signal)
+          setImmediate(async () => {
+            expect(serverStopSpy).toHaveBeenCalled()
+            expect(processStopSpy).toHaveBeenCalledWith(0)
+            jest.restoreAllMocks()
+            await server.stop()
+            done()
+          })
         } catch (e) {
           done(e)
-        } finally {
-          await server.stop()
         }
       })
     })
