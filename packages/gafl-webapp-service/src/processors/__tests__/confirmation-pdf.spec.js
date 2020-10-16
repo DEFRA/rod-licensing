@@ -11,7 +11,7 @@ const disabledPermission = {
     postcode: 'BS9 4PT',
     countryCode: 'GB',
     street: 'CROFT VIEW',
-    preferredMethodOfNewsletter: 'Email',
+    preferredMethodOfNewsletter: 'Prefer not to be contacted',
     preferredMethodOfConfirmation: 'Letter',
     preferredMethodOfReminder: 'Letter'
   },

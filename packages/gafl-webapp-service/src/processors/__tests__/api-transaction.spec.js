@@ -33,7 +33,7 @@ describe('prepareApiTransactionPayload', () => {
                     town: 'Bristol',
                     postcode: 'BS9 1HJ',
                     countryCode: 'GB',
-                    preferredMethodOfNewsletter: 'Email',
+                    preferredMethodOfNewsletter: 'Prefer not to be contacted',
                     preferredMethodOfConfirmation: 'Prefer not to be contacted',
                     preferredMethodOfReminder: 'Prefer not to be contacted'
                   },
@@ -61,7 +61,7 @@ describe('prepareApiTransactionPayload', () => {
             street: 'Eastmead Lane',
             town: 'Bristol',
             postcode: 'BS9 1HJ',
-            preferredMethodOfNewsletter: 'Email',
+            preferredMethodOfNewsletter: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Prefer not to be contacted',
             country: 'United Kingdom'
@@ -92,7 +92,7 @@ describe('prepareApiTransactionPayload', () => {
                     town: 'Bristol',
                     postcode: 'BS9 1HJ',
                     countryCode: 'GB',
-                    preferredMethodOfNewsletter: 'Email',
+                    preferredMethodOfNewsletter: 'Prefer not to be contacted',
                     preferredMethodOfConfirmation: 'Prefer not to be contacted',
                     preferredMethodOfReminder: 'Prefer not to be contacted'
                   },
@@ -122,7 +122,7 @@ describe('prepareApiTransactionPayload', () => {
             street: 'Eastmead Lane',
             town: 'Bristol',
             postcode: 'BS9 1HJ',
-            preferredMethodOfNewsletter: 'Email',
+            preferredMethodOfNewsletter: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Prefer not to be contacted',
             country: 'United Kingdom'
