@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { contactRequestSchema } from './contact.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
 import { optionSetOption } from './option-set.schema.js'
-import { createReferenceDataEntityValidator, createPermitConcessionValidator } from './validators/validators.js'
+import { createReferenceDataEntityValidator } from './validators/validators.js'
 import { Permit } from '@defra-fish/dynamics-lib'
 import { validation } from '@defra-fish/business-rules-lib'
 import { v4 as uuid } from 'uuid'
@@ -36,9 +36,7 @@ export const stagedPermissionSchema = Joi.object({
   concessions: concessionProofSchema.optional(),
   issueDate: issueDateSchema.allow(null),
   startDate: startDateSchema.allow(null)
-})
-  .external(createPermitConcessionValidator())
-  .label('staged-permission')
+}).label('staged-permission')
 
 export const finalisedPermissionSchemaContent = {
   id: Joi.string()

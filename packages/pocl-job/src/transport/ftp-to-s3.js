@@ -71,7 +71,9 @@ const retrieveAllFiles = async xmlFiles => {
         status: DYNAMICS_IMPORT_STAGE.Pending,
         dataSource: POST_OFFICE_DATASOURCE,
         fileSize: fileSize,
-        salesDate: receiptMoment.toISOString(),
+        salesDate: moment(receiptMoment)
+          .subtract(1, 'days')
+          .toISOString(),
         receiptTimestamp: receiptMoment.toISOString(),
         notes: 'Retrieved from the remote server and awaiting processing'
       })

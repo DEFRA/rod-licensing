@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { PoclFile } from '@defra-fish/dynamics-lib'
 import { finalisePermissionResponseSchema, stagedPermissionSchema } from './permission.schema.js'
 import { contactRequestSchema } from './contact.schema.js'
-import { createAlternateKeyValidator, buildJoiOptionSetValidator } from './validators/validators.js'
+import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -33,7 +33,9 @@ const createTransactionRequestSchemaContent = {
  * Schema for the create transaction request
  * @type {Joi.AnySchema}
  */
-export const createTransactionSchema = Joi.object(createTransactionRequestSchemaContent).label('create-transaction-request')
+export const createTransactionSchema = Joi.object(createTransactionRequestSchemaContent)
+  .external(createPermitConcessionValidator())
+  .label('create-transaction-request')
 
 /**
  * Validates a request to create transactions in batch.
