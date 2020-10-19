@@ -213,7 +213,7 @@ describe('The easy renewal, change start date page', () => {
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
       expect(permission.licenceStartDate).toBe(moment().format('YYYY-MM-DD'))
-      expect(permission.licenceStartTime).toBe(0)
+      expect(permission.licenceStartTime).not.toBeTruthy()
       expect(permission.licenceToStart).toBe(licenceToStart.AFTER_PAYMENT)
     })
     it('starting the licence tomorrow will start at the beginning of the day', async () => {

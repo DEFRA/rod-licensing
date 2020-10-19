@@ -67,6 +67,9 @@
             html: '<b>User:</b>&nbsp;&nbsp;' + credentials.name + ' (' + credentials.email + ')' if credentials else '<b>User:</b>&nbsp;&nbsp;Not logged in',
             classes: 'no-print'
         }) }}
+        <div class="govuk-width-container govuk-!-display-none-print">
+            <p class="govuk-body-s right-align"><a class="govuk-link" class="govuk-link" href="{{ _uri.clear }}">Clear</a></p>
+        </div>
     {% else %}
         {{ govukPhaseBanner({
             tag: {
@@ -79,6 +82,7 @@
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}
+
 
 {% set footerHtml %}
     <div class="no-print">
