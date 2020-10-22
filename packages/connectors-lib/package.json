@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.2.0",
+  "version": "1.3.0-rc.0",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
@@ -34,6 +34,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@airbrake/node": "^1.4.1",
     "aws-sdk": "^2.771.0",
     "debug": "^4.2.0",
     "ioredis": "^4.17.3",

@@ -1,4 +1,13 @@
 
+## v1.3.0-rc.0 (2020-10-22)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#439](https://github.com/DEFRA/rod-licensing/pull/439) Add airbrake support all services ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v1.2.0-rc.0 (2020-10-15)
 
