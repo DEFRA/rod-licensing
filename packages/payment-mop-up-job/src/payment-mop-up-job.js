@@ -1,11 +1,12 @@
 import { execute } from './processors/processor.js'
 import { DEFAULT_INCOMPLETE_PURCHASE_AGE_MINUTES, DEFAULT_SCAN_DURATION_HOURS } from './constants.js'
-import { DistributedLock } from '@defra-fish/connectors-lib'
+import { DistributedLock, airbrake } from '@defra-fish/connectors-lib'
 
 const incompletePurchaseAgeMinutes = Number(process.env.INCOMPLETE_PURCHASE_AGE_MINUTES || DEFAULT_INCOMPLETE_PURCHASE_AGE_MINUTES)
 const scanDurationHours = Number(process.env.SCAN_DURATION_HOURS || DEFAULT_SCAN_DURATION_HOURS)
 
 const lock = new DistributedLock('payment-mop-up-etl', 5 * 60 * 1000)
+airbrake.initialise()
 lock
   .obtainAndExecute({
     onLockObtained: async () => {
@@ -18,8 +19,10 @@ lock
     maxWaitSeconds: 0
   })
   .catch(console.error)
+  .finally(airbrake.flush)
 
 const shutdown = async () => {
+  await airbrake.flush()
   await lock.release()
   process.exit(0)
 }

@@ -24,7 +24,8 @@ import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
-
+import { airbrake } from '@defra-fish/connectors-lib'
+airbrake.initialise()
 let server
 
 const createServer = options => {
@@ -186,6 +187,7 @@ const shutdownBehavior = () => {
   const shutdown = async (code = 0) => {
     console.log(`Server is shutdown with ${code}`)
     await server.stop()
+    await airbrake.flush()
     process.exit(code)
   }
   process.on('SIGINT', shutdown)
