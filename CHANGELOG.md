@@ -1,4 +1,13 @@
 
+## v1.3.0-rc.1 (2020-10-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#438](https://github.com/DEFRA/rod-licensing/pull/438) Added telesales new customer button (#438) ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
 ## v1.3.0-rc.0 (2020-10-22)
 
 #### :rocket: Enhancement
