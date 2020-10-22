@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@airbrake/node": "^1.4.1",
-    "aws-sdk": "^2.771.0",
+    "aws-sdk": "^2.776.0",
     "debug": "^4.2.0",
     "ioredis": "^4.17.3",
     "node-fetch": "^2.6.1",
