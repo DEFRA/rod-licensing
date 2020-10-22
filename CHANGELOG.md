@@ -1,4 +1,13 @@
 
+## v1.3.0-rc.2 (2020-10-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#414](https://github.com/DEFRA/rod-licensing/pull/414) Add moto flag for telesales ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v1.3.0-rc.1 (2020-10-22)
 
 #### :rocket: Enhancement
