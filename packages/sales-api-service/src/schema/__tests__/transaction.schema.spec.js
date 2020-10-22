@@ -19,7 +19,21 @@ describe('createTransactionSchema', () => {
   it('validates successfully when issueDate and startDate are null', async () => {
     const mockPayload = mockTransactionPayload()
     mockPayload.permissions.map(p => ({ ...p, issueDate: null, startDate: null }))
-    const result = await createTransactionSchema.validateAsync(mockTransactionPayload())
+    const result = await createTransactionSchema.validateAsync(mockPayload)
+    expect(result).toBeInstanceOf(Object)
+  })
+
+  it('requires a licensee postcode for web-sales but not for post-office sales', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.permissions.forEach(p => {
+      p.licensee.postcode = ''
+    })
+    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow(
+      '"permissions[0].licensee.postcode" is not allowed to be empty'
+    )
+
+    mockPayload.dataSource = 'Post Office Sales'
+    const result = await createTransactionSchema.validateAsync(mockPayload)
     expect(result).toBeInstanceOf(Object)
   })
 })

@@ -1,7 +1,7 @@
 import { advancePurchaseDateMoment } from './date-and-time-display.js'
 import moment from 'moment'
-import * as mappings from './mapping-constants.js'
 import { TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
+import * as mappings from './mapping-constants.js'
 import * as concessionHelper from '../processors/concession-helper.js'
 import { countries } from './refdata-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'

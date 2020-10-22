@@ -34,7 +34,7 @@ const checkLicenceToStart = permission => {
     if (
       moment(permission.licenceStartDate, cacheDateFormat)
         .tz(SERVICE_LOCAL_TIME)
-        .isSame(moment(), 'day')
+        .isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')
     ) {
       permission.licenceToStart = licenceToStart.AFTER_PAYMENT
     }

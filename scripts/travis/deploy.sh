@@ -5,8 +5,14 @@
 set -e
 trap 'exit 1' INT
 
-[[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^(patch|hotfix) ]] && PATCH_RELEASE=true || PATCH_RELEASE=false
-echo "Executing deployment - TRAVIS_BRANCH=${TRAVIS_BRANCH}, TRAVIS_COMMIT_MESSAGE=${TRAVIS_COMMIT_MESSAGE}, PATCH_RELEASE=${PATCH_RELEASE}"
+if [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^(SEMVER-MAJOR) ]]; then
+  RELEASE_TYPE="major"
+elif [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^(SEMVER-PATCH|patch|hotfix) ]]; then
+  RELEASE_TYPE="patch"
+else
+  RELEASE_TYPE="minor"
+fi
+echo "Executing deployment - TRAVIS_BRANCH=${TRAVIS_BRANCH}, TRAVIS_COMMIT_MESSAGE=${TRAVIS_COMMIT_MESSAGE}, RELEASE_TYPE=${RELEASE_TYPE}"
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
@@ -29,11 +35,7 @@ if [ "${TRAVIS_BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
     PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
-    if [ ${PATCH_RELEASE} == true ]; then
-        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i patch)"
-    else
-        NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i minor)"
-    fi
+    NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
 elif [ "$TRAVIS_BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
     PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
@@ -72,7 +74,7 @@ echo "Publishing latest packages to npm"
 lerna publish from-git --yes --pre-dist-tag rc
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
-if [ "${TRAVIS_BRANCH}" == "master" ] && [ ${PATCH_RELEASE} == false ]; then
+if [ "${TRAVIS_BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
   git checkout develop
   git merge -X theirs master
   git push origin develop:develop --no-verify

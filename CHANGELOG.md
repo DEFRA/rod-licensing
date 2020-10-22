@@ -1,4 +1,69 @@
 
+
+## v1.2.0-rc.0 (2020-10-15)
+
+#### :rocket: Enhancement
+* `pocl-job`, `sales-api-service`
+  * [#432](https://github.com/DEFRA/rod-licensing/pull/432) Relax address validation rules for P.O. and correct sales date ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
+## v1.1.0-rc.0 (2020-10-14)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#430](https://github.com/DEFRA/rod-licensing/pull/430) Relax validation rules for Post Office sales ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
+## v0.3.0-rc.93 (2020-10-13)
+
+#### :bug: Bug Fix
+* [#428](https://github.com/DEFRA/rod-licensing/pull/428) Fix bug in travis deploy script ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v0.3.0-rc.92 (2020-10-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#426](https://github.com/DEFRA/rod-licensing/pull/426) Changes to the accessibility statement ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.91 (2020-10-12)
+
+#### :rocket: Enhancement
+* [#425](https://github.com/DEFRA/rod-licensing/pull/425) Improve versioning control in travis deploy script when merging to master ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
+## v0.3.0-rc.89 (2020-10-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#423](https://github.com/DEFRA/rod-licensing/pull/423) Use dates in local time for licence start date calculation/validation in the frontend. ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+#### Committers: 1
+- Graham Willis ([@graham-willis-druid](https://github.com/graham-willis-druid))
+
+## v0.3.0-rc.88 (2020-10-12)
+
+#### :rocket: Enhancement
+* `payment-mop-up-job`
+  * [#422](https://github.com/DEFRA/rod-licensing/pull/422) Reduce default time for mop-up eligibility to 60 minutes ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v0.3.0-rc.87 (2020-10-08)
 
 #### :rocket: Enhancement
