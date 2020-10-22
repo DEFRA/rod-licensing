@@ -25,10 +25,9 @@ export const errorHandler = async (request, h) => {
   } else {
     /*
      * 5xx server errors and are logged.
-     * The response stacktrace and message are hidden from the console so copy the objects
      */
-    const { stack, message, output } = request.response
-    console.error(JSON.stringify(Object.assign({}, { stack, message, output }), null, 4))
+    const requestDetail = { path: request.path, query: request.query, params: request.params, payload: request.payload }
+    console.error('Error processing request. Request: %j, Exception: %o', requestDetail, request.response)
 
     return h
       .view(SERVER_ERROR.page, {

@@ -1,5 +1,5 @@
 import config from './config.js'
-import { DistributedLock } from '@defra-fish/connectors-lib'
+import { DistributedLock, airbrake } from '@defra-fish/connectors-lib'
 import { ftpToS3 } from './transport/ftp-to-s3.js'
 import { s3ToLocal } from './transport/s3-to-local.js'
 import { getFileRecords } from './io/db.js'
@@ -24,6 +24,8 @@ const lock = new DistributedLock('pocl-etl', 5 * 60 * 1000)
  * @returns {Promise<void>}
  */
 export async function execute () {
+  airbrake.initialise()
+
   await lock.obtainAndExecute({
     onLockObtained: async () => {
       try {
@@ -45,9 +47,11 @@ export async function execute () {
     },
     maxWaitSeconds: 0
   })
+  await airbrake.flush()
 }
 
 const shutdown = async () => {
+  await airbrake.flush()
   await lock.release()
   process.exit(0)
 }
