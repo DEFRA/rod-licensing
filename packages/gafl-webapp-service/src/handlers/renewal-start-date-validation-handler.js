@@ -52,14 +52,14 @@ export default async (request, h) => {
 
     if (moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day')) {
       // If today is the day of the renewal
-      if (endDateMoment.isAfter()) {
+      if (endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))) {
         // Not yet expired - set the start time accordingly
         permission.licenceStartTime = endDateMoment.hours()
         permission.licenceToStart = licenceToStart.ANOTHER_DATE
       } else {
         // Already expired - set to 30 minutes after payment.
         permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-        permission.licenceStartTime = 0
+        permission.licenceStartTime = null
       }
     } else {
       // Renewing in advance - set the start time to midnight
