@@ -10,9 +10,16 @@ import { CommonResults } from '../constants.js'
 const defaultResultFunction = () => CommonResults.OK
 
 export const nextPage = async request => {
-  // Determine the current page
-  const currentPage = (await request.cache().helpers.status.getCurrentPermission()).currentPage || 'start'
+  const status = await request.cache().helpers.status.getCurrentPermission()
 
+  // Determine the current page
+  const currentPage = status.currentPage || 'start'
+  const routeNode = journeyDefinition.find(p => p.current.page === currentPage)
+
+  // If the current page has an error then reload it.
+  if (!status[status.currentPage] && currentPage !== 'start') {
+    return routeNode.current.uri
+  }
   // Update the transaction with the validated page details
   if (typeof updateTransactionFunctions[currentPage] === 'function') {
     await updateTransactionFunctions[currentPage](request)
@@ -22,6 +29,6 @@ export const nextPage = async request => {
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
   // Locate the next page
-  const routeNode = journeyDefinition.find(p => p.currentPage === currentPage)
-  return routeNode.nextPage[result].page
+
+  return routeNode.next[result].page.uri
 }
