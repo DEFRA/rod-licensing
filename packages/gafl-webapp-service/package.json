@@ -54,7 +54,7 @@
     "find": "^0.3.0",
     "flatpickr": "^4.6.6",
     "govuk-frontend": "^3.9.1",
-    "joi": "^17.1.1",
+    "joi": "^17.3.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.31",
     "node-fetch": "^2.6.1",
