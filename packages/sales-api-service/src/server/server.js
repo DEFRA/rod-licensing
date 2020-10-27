@@ -51,13 +51,13 @@ export default async (opts = { port: SERVER.Port }) => {
   await server.start()
   console.log('Server started at %s. Listening on %s', moment().toISOString(), server.info.uri)
 
-  const shutdown = async (code = 0) => {
+  const shutdown = async code => {
     await server.stop()
     await airbrake.flush()
     process.exit(code)
   }
 
-  process.on('SIGINT', shutdown)
-  process.on('SIGTERM', shutdown)
+  process.on('SIGINT', () => shutdown(130))
+  process.on('SIGTERM', () => shutdown(137))
   return server
 }

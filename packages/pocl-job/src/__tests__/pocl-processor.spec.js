@@ -70,12 +70,15 @@ describe('pocl-processor', () => {
     expect(processExitSpy).toHaveBeenCalledWith(0)
   })
 
-  describe.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', signal => {
-    it('exits the process with code 0', done => {
+  describe.each([
+    ['SIGINT', 130],
+    ['SIGTERM', 137]
+  ])('implements a shutdown handler to respond to the %s signal', (signal, code) => {
+    it(`exits the process with code ${code}`, done => {
       const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
       process.emit(signal)
       setImmediate(() => {
-        expect(processStopSpy).toHaveBeenCalledWith(0)
+        expect(processStopSpy).toHaveBeenCalledWith(code)
         expect(global.lockReleased).toEqual(true)
         jest.restoreAllMocks()
         done()

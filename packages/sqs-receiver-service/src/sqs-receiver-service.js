@@ -24,8 +24,8 @@ let exitCode = 0
   process.exit(exitCode)
 })()
 
-const stopService = () => {
-  exitCode = 0
+const stopService = code => {
+  exitCode = code
 }
-process.on('SIGINT', stopService)
-process.on('SIGTERM', stopService)
+process.on('SIGINT', () => stopService(130))
+process.on('SIGTERM', () => stopService(137))
