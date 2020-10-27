@@ -1,4 +1,13 @@
 
+## v1.3.0-rc.4 (2020-10-27)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#451](https://github.com/DEFRA/rod-licensing/pull/451) Fix ioredis preventing shutdown & use spec-compliant interrupt exit-code ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 ## v1.3.0-rc.2 (2020-10-22)
 
