@@ -1,4 +1,13 @@
 
+## v1.3.0-rc.5 (2020-10-27)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#454](https://github.com/DEFRA/rod-licensing/pull/454) Ensure cache manager calls disconnect on ioredis when terminating ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 ## v1.3.0-rc.4 (2020-10-27)
 
 #### :bug: Bug Fix
