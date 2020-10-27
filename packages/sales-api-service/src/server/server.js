@@ -7,8 +7,11 @@ import Routes from './routes/index.js'
 import Boom from '@hapi/boom'
 import { SERVER } from '../config.js'
 import moment from 'moment'
+import { airbrake } from '@defra-fish/connectors-lib'
 
 export default async (opts = { port: SERVER.Port }) => {
+  airbrake.initialise()
+
   const server = new Hapi.Server(
     Object.assign(
       {
@@ -48,12 +51,13 @@ export default async (opts = { port: SERVER.Port }) => {
   await server.start()
   console.log('Server started at %s. Listening on %s', moment().toISOString(), server.info.uri)
 
-  const shutdown = async (code = 0) => {
+  const shutdown = async code => {
     await server.stop()
+    await airbrake.flush()
     process.exit(code)
   }
 
-  process.on('SIGINT', shutdown)
-  process.on('SIGTERM', shutdown)
+  process.on('SIGINT', () => shutdown(130))
+  process.on('SIGTERM', () => shutdown(137))
   return server
 }

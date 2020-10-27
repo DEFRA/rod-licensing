@@ -1,7 +1,7 @@
 import config from './config.js'
 import { createPartFiles } from './staging/create-part-files.js'
 import { deliverFulfilmentFiles } from './staging/deliver-fulfilment-files.js'
-import { DistributedLock } from '@defra-fish/connectors-lib'
+import { DistributedLock, airbrake } from '@defra-fish/connectors-lib'
 import { terminateCacheManager } from '@defra-fish/dynamics-lib'
 
 /**
@@ -17,6 +17,8 @@ const lock = new DistributedLock('fulfilment-etl', 5 * 60 * 1000)
  * @returns {Promise<void>}
  */
 export const processFulfilment = async () => {
+  airbrake.initialise()
+
   try {
     await lock.obtainAndExecute({
       onLockObtained: async () => {
@@ -32,13 +34,15 @@ export const processFulfilment = async () => {
     })
   } finally {
     await terminateCacheManager()
+    await airbrake.flush()
   }
 }
 
-const shutdown = async () => {
+const shutdown = async code => {
+  await airbrake.flush()
   await lock.release()
-  process.exit(0)
+  process.exit(code)
 }
 
-process.on('SIGINT', shutdown)
-process.on('SIGTERM', shutdown)
+process.on('SIGINT', () => shutdown(130))
+process.on('SIGTERM', () => shutdown(137))

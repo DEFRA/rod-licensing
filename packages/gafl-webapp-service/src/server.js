@@ -17,14 +17,15 @@ import {
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT
 } from './constants.js'
-import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY } from './uri.js'
+import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TRANSACTION } from './uri.js'
 
 import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
-
+import { airbrake } from '@defra-fish/connectors-lib'
+airbrake.initialise()
 let server
 
 const createServer = options => {
@@ -79,7 +80,8 @@ const layoutContextAmalgamation = (request, h) => {
         refunds: REFUND_POLICY.uri,
         accessibility: ACCESSIBILITY_STATEMENT.uri,
         privacy: PRIVACY_POLICY.uri,
-        feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
+        feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
+        clear: NEW_TRANSACTION.uri
       },
       credentials: request.auth.credentials
     })
@@ -183,13 +185,14 @@ const init = async () => {
 }
 
 const shutdownBehavior = () => {
-  const shutdown = async (code = 0) => {
+  const shutdown = async code => {
     console.log(`Server is shutdown with ${code}`)
     await server.stop()
+    await airbrake.flush()
     process.exit(code)
   }
-  process.on('SIGINT', shutdown)
-  process.on('SIGTERM', shutdown)
+  process.on('SIGINT', () => shutdown(130))
+  process.on('SIGTERM', () => shutdown(137))
 }
 
 export { createServer, server, init, shutdownBehavior }

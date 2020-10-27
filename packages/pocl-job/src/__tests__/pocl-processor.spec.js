@@ -9,6 +9,10 @@ global.simulateLockError = false
 global.lockReleased = false
 jest.mock('@defra-fish/connectors-lib', () => ({
   ...jest.requireActual('@defra-fish/connectors-lib'),
+  airbrake: {
+    initialise: jest.fn(),
+    flush: jest.fn()
+  },
   DistributedLock: jest.fn().mockReturnValue({
     obtainAndExecute: jest.fn(async ({ onLockObtained, onLockError }) => {
       if (global.simulateLockError) {
@@ -66,11 +70,19 @@ describe('pocl-processor', () => {
     expect(processExitSpy).toHaveBeenCalledWith(0)
   })
 
-  it.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', async signal => {
-    const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
-    await process.emit(signal)
-    expect(processStopSpy).toHaveBeenCalledWith(0)
-    expect(global.lockReleased).toEqual(true)
-    jest.restoreAllMocks()
+  describe.each([
+    ['SIGINT', 130],
+    ['SIGTERM', 137]
+  ])('implements a shutdown handler to respond to the %s signal', (signal, code) => {
+    it(`exits the process with code ${code}`, done => {
+      const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
+      process.emit(signal)
+      setImmediate(() => {
+        expect(processStopSpy).toHaveBeenCalledWith(code)
+        expect(global.lockReleased).toEqual(true)
+        jest.restoreAllMocks()
+        done()
+      })
+    })
   })
 })

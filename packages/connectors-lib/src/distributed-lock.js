@@ -22,16 +22,15 @@ export class DistributedLock {
    * @private
    */
   async _initialiseRedlock () {
-    this._redlock = new Redlock([
-      new Redis({
-        host: process.env.REDIS_HOST || 'localhost',
-        port: process.env.REDIS_PORT || 6379,
-        ...(process.env.REDIS_PASSWORD && {
-          password: process.env.REDIS_PASSWORD,
-          tls: {}
-        })
+    this._redis = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: process.env.REDIS_PORT || 6379,
+      ...(process.env.REDIS_PASSWORD && {
+        password: process.env.REDIS_PASSWORD,
+        tls: {}
       })
-    ])
+    })
+    this._redlock = new Redlock([this._redis])
     this._redlock.on('clientError', console.error)
   }
 
@@ -109,8 +108,10 @@ export class DistributedLock {
     if (this._lock) {
       await this._lock.unlock()
       await this._redlock.quit()
+      this._redis.disconnect()
       this._lock = null
       this._redlock = null
+      this._redis = null
     }
   }
 }
