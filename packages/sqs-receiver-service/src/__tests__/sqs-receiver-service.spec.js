@@ -12,26 +12,32 @@ jest.mock('../receiver.js', () => {
 const consoleError = jest.spyOn(console, 'error').mockImplementation(jest.fn())
 const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
 describe('sqs-receiver-service', () => {
-  it('executes until interrupted', done => {
-    jest.isolateModules(() => {
-      global.throwReceiverError = false
-      require('../sqs-receiver-service.js')
-      setImmediate(() => {
-        expect(receiver).toHaveBeenCalled()
-        expect(global.receiverInitialised).toBeTruthy()
-        expect(consoleError).not.toHaveBeenCalled()
-        expect(processExitSpy).not.toHaveBeenCalled()
-
-        process.emit('SIGINT')
-
-        global.throwReceiverError = true
+  describe.each([
+    ['SIGINT', 130],
+    ['SIGTERM', 137]
+  ])('executes until interrupted with the %s signal', (signal, code) => {
+    it(`exits the process with code ${code}`, done => {
+      jest.isolateModules(() => {
+        global.throwReceiverError = false
+        require('../sqs-receiver-service.js')
         setImmediate(() => {
-          expect(processExitSpy).not.toHaveBeenCalledWith(0)
-          done()
+          expect(receiver).toHaveBeenCalled()
+          expect(global.receiverInitialised).toBeTruthy()
+          expect(consoleError).not.toHaveBeenCalled()
+          expect(processExitSpy).not.toHaveBeenCalled()
+
+          process.emit(signal)
+
+          global.throwReceiverError = true
+          setImmediate(() => {
+            expect(processExitSpy).not.toHaveBeenCalledWith(code)
+            done()
+          })
         })
       })
     })
   })
+
   it('logs and errors and exits the process', done => {
     jest.isolateModules(() => {
       global.throwReceiverError = true

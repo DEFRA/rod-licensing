@@ -93,14 +93,17 @@ describe('hapi server', () => {
       )
     })
 
-    describe.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', signal => {
+    describe.each([
+      ['SIGINT', 130],
+      ['SIGTERM', 137]
+    ])('implements a shutdown handler to respond to the %s signal', (signal, code) => {
       it('shuts down the hapi server and exits the process', done => {
         const serverStopSpy = jest.spyOn(server, 'stop').mockImplementation(jest.fn())
         const processStopSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
         process.emit(signal)
         setImmediate(async () => {
           expect(serverStopSpy).toHaveBeenCalled()
-          expect(processStopSpy).toHaveBeenCalledWith(0)
+          expect(processStopSpy).toHaveBeenCalledWith(code)
           jest.restoreAllMocks()
           await server.stop()
           done()

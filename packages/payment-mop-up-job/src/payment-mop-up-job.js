@@ -21,10 +21,11 @@ lock
   .catch(console.error)
   .finally(airbrake.flush)
 
-const shutdown = async () => {
+const shutdown = async code => {
   await airbrake.flush()
   await lock.release()
-  process.exit(0)
+  process.exit(code)
 }
-process.on('SIGINT', shutdown)
-process.on('SIGTERM', shutdown)
+
+process.on('SIGINT', () => shutdown(130))
+process.on('SIGTERM', () => shutdown(137))
