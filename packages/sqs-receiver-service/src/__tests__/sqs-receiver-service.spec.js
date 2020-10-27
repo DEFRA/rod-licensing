@@ -12,6 +12,27 @@ jest.mock('../receiver.js', () => {
 const consoleError = jest.spyOn(console, 'error').mockImplementation(jest.fn())
 const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
 describe('sqs-receiver-service', () => {
+  beforeEach(jest.clearAllMocks)
+
+  it('executes until encountering an error', done => {
+    jest.isolateModules(() => {
+      global.throwReceiverError = false
+      require('../sqs-receiver-service.js')
+      setImmediate(() => {
+        expect(receiver).toHaveBeenCalled()
+        expect(global.receiverInitialised).toBeTruthy()
+        expect(consoleError).not.toHaveBeenCalled()
+        expect(processExitSpy).not.toHaveBeenCalled()
+
+        global.throwReceiverError = true
+        setTimeout(() => {
+          expect(processExitSpy).toHaveBeenCalledWith(1)
+          done()
+        }, 100)
+      })
+    })
+  })
+
   describe.each([
     ['SIGINT', 130],
     ['SIGTERM', 137]
@@ -28,11 +49,10 @@ describe('sqs-receiver-service', () => {
 
           process.emit(signal)
 
-          global.throwReceiverError = true
-          setImmediate(() => {
-            expect(processExitSpy).not.toHaveBeenCalledWith(code)
+          setTimeout(() => {
+            expect(processExitSpy).toHaveBeenCalledWith(code)
             done()
-          })
+          }, 100)
         })
       })
     })
