@@ -1,4 +1,89 @@
-import { getTrackingProductDetailsFromTransaction, getAffiliation } from '../analytics.js'
+import { initialiseAnalyticsSessionData, getTrackingProductDetailsFromTransaction, getAffiliation } from '../analytics.js'
+
+describe('initialiseAnalyticsSessionData', () => {
+  const fakeCacheSetter = jest.fn()
+  const fakeCacheDecorator = jest.fn(() => ({ helpers: { status: { set: fakeCacheSetter } } }))
+  beforeEach(jest.clearAllMocks)
+
+  it('stores the ga client id from the query string on the session to support cross-domain tracking from the landing page', async () => {
+    const fakeRequest = {
+      query: { _ga: '2.220027162.289694522.1603877484-523510731.1602852296' },
+      cache: fakeCacheDecorator
+    }
+    await initialiseAnalyticsSessionData(fakeRequest)
+    expect(fakeCacheSetter).toHaveBeenCalledWith(
+      expect.objectContaining({
+        gaClientId: '523510731.1602852296'
+      })
+    )
+  })
+
+  it('retrieves campaign attribution from the query string parameters and stores these on the session', async () => {
+    const fakeRequest = {
+      query: {
+        utm_campaign: 'test_campaign',
+        utm_source: 'test_source',
+        utm_medium: 'test_medium',
+        utm_term: 'test_term',
+        utm_content: 'test_content'
+      },
+      cache: fakeCacheDecorator
+    }
+    await initialiseAnalyticsSessionData(fakeRequest)
+    expect(fakeCacheSetter).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attribution: {
+          utm_campaign: 'test_campaign',
+          utm_source: 'test_source',
+          utm_medium: 'test_medium',
+          utm_term: 'test_term',
+          utm_content: 'test_content'
+        }
+      })
+    )
+  })
+
+  it('retrieves the custom ga client id from the previous session and stores these on the new session', async () => {
+    const fakeRequest = { cache: fakeCacheDecorator, query: {} }
+    await initialiseAnalyticsSessionData(fakeRequest, { gaClientId: 'test123' })
+    expect(fakeCacheSetter).toHaveBeenCalledWith(
+      expect.objectContaining({
+        gaClientId: 'test123',
+        attribution: {
+          utm_campaign: undefined,
+          utm_source: undefined,
+          utm_medium: undefined,
+          utm_term: undefined,
+          utm_content: undefined
+        }
+      })
+    )
+  })
+
+  it('retrieves campaign attribution from the previous session and stores these on the new session', async () => {
+    const fakeRequest = { cache: fakeCacheDecorator, query: {} }
+    await initialiseAnalyticsSessionData(fakeRequest, {
+      attribution: {
+        utm_campaign: 'test_campaign',
+        utm_source: 'test_source',
+        utm_medium: 'test_medium',
+        utm_term: 'test_term',
+        utm_content: 'test_content'
+      }
+    })
+    expect(fakeCacheSetter).toHaveBeenCalledWith(
+      expect.objectContaining({
+        attribution: {
+          utm_campaign: 'test_campaign',
+          utm_source: 'test_source',
+          utm_medium: 'test_medium',
+          utm_term: 'test_term',
+          utm_content: 'test_content'
+        }
+      })
+    )
+  })
+})
 
 describe('tracking data transform', () => {
   it.each(['Salmon 12 day licence', 'Pike 2 year licence', 'Trout 20 second licence'])(
