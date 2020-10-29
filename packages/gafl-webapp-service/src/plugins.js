@@ -73,7 +73,14 @@ export const getPlugins = () => {
       plugin: HapiGapi,
       options: {
         propertySettings: hapiGapiPropertySettings,
-        sessionIdProducer: request => (useSessionCookie(request) ? request.cache().getId() : null),
+        sessionIdProducer: async request => {
+          let sessionId = null
+          if (useSessionCookie(request)) {
+            const { gaClientId } = await request.cache().helpers.status.get()
+            sessionId = gaClientId ?? (await request.cache().getId())
+          }
+          return sessionId
+        },
         attributionProducer: async request => {
           if (useSessionCookie(request)) {
             const { attribution } = await request.cache().helpers.status.get()

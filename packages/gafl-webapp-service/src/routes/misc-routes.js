@@ -18,6 +18,7 @@ import {
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
+import newSessionHandler from '../handlers/new-session-handler.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
@@ -71,10 +72,7 @@ export default [
   {
     method: 'GET',
     path: NEW_TRANSACTION.uri,
-    handler: async (request, h) => {
-      await request.cache().initialize()
-      return h.redirect(CONTROLLER.uri)
-    }
+    handler: newSessionHandler
   },
   {
     method: 'GET',
