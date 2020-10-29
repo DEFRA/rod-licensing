@@ -1,4 +1,13 @@
 
+## v1.4.0-rc.1 (2020-10-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#458](https://github.com/DEFRA/rod-licensing/pull/458) Enable x-domain analytics tracking & persist attribution between sessions ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
 
 
 ## v1.3.0-rc.5 (2020-10-27)
