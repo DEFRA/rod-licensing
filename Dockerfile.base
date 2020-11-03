@@ -1,12 +1,13 @@
 ########################################################################################
 # Create an image suitable to act as the base image for all fish services
 ########################################################################################
-FROM node:14-alpine
+FROM node:14.13-alpine
 
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin
 
 # Install base dependencies
+RUN node --version
 RUN apk --no-cache -U -v upgrade \
     && apk --no-cache -U -v add bash \
     && npm install pm2 -g > /dev/null 2>&1 \

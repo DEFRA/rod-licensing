@@ -22,6 +22,8 @@ to maintain state during the import process.
 | POCL_FTP_PRIVATE_KEY_PATH | The path to the folder containing the keys used to authenticate with the FTP server |   yes    |           |                                                 |       |
 | POCL_S3_BUCKET            | The name of the AWS S3 bucket in which to stage pocl data                           |   yes    |           |                                                 |       |
 | DEBUG                     | Use to enable output of debug information to the console                            |   yes    |           | pocl:\*, pocl:staging, pocl:transport, pocl:ftp |       |
+| AIRBRAKE_HOST             | URL of airbrake host                                                                |    no    |           |                                                 |       |
+| AIRBRAKE_PROJECT_KEY      | Project key for airbrake logging                                                    |    no    |           |                                                 |       |
 
 ### See also:
 
