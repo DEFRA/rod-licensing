@@ -23,7 +23,7 @@ Mono-repo for the rod licensing digital services.
 
 ## Prerequisites
 
-- Node v14+
+- Node v14.13+
 - Docker v18.06.0+
 
 ## Cloning

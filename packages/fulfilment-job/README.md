@@ -30,6 +30,8 @@ provider.
 | FULFILMENT_FTP_KEY_SECRET_ID | The ID of the secret in AWS secrets manager which contains the SSH key for authentication |   yes    |         |                                                                         |       |
 | FULFILMENT_S3_BUCKET         | The name of the AWS S3 bucket in which to stage and aggregate fulfilment data             |   yes    |         |                                                                         |       |
 | DEBUG                        | Use to enable output of debug information to the console                                  |   yes    |         | fulfilment:\*, fulfilment:staging, fulfilment:transport, fulfilment:ftp |       |
+| AIRBRAKE_HOST                | URL of airbrake host                                                                      |    no    |         |                                                                         |       |
+| AIRBRAKE_PROJECT_KEY         | Project key for airbrake logging                                                          |    no    |         |                                                                         |       |
 
 ### See also:
 
