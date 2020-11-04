@@ -3,7 +3,8 @@ import {
   MOCK_EXISTING_PERMISSION_ENTITY,
   MOCK_1DAY_FULL_PERMIT_ENTITY,
   MOCK_EXISTING_CONTACT_ENTITY,
-  MOCK_12MONTH_DISABLED_PERMIT
+  MOCK_12MONTH_DISABLED_PERMIT,
+  MOCK_MISSING_BIRTH_DATE_CONTACT_ENTITY
 } from '../../../../sales-api-service/src/__mocks__/test-data.js'
 
 describe('fulfilment-transform', () => {
@@ -109,5 +110,25 @@ describe('fulfilment-transform', () => {
         paymentCurrency: 'GBP'
       }
     })
+  })
+
+  it('logs and skips contacts without a birth date', async () => {
+    const testData = {
+      permission: MOCK_EXISTING_PERMISSION_ENTITY,
+      licensee: MOCK_MISSING_BIRTH_DATE_CONTACT_ENTITY,
+      permit: MOCK_12MONTH_DISABLED_PERMIT
+    }
+    jest.spyOn(console, 'debug')
+    const transform = await fulfilmentDataTransformer([testData])
+    let result = ''
+    let yielded = {}
+    do {
+      yielded = await transform.next()
+      if (!yielded.done) {
+        result += yielded.value
+      }
+    } while (!yielded.done)
+    expect(result).toBe('')
+    expect(console.debug).toHaveBeenCalledWith('licensee missing birth date:', MOCK_MISSING_BIRTH_DATE_CONTACT_ENTITY)
   })
 })

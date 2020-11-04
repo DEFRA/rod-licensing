@@ -246,3 +246,23 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
   },
   optionSetData
 )
+
+export const MOCK_MISSING_BIRTH_DATE_CONTACT_ENTITY = Contact.fromResponse(
+  {
+    '@odata.etag': 'W/"202465000"',
+    contactid: '1329a866-d175-ea11-a811-000d3a64905b',
+    firstname: 'Fester',
+    lastname: 'Tester',
+    birthdate: null,
+    emailaddress1: 'fester@tester.com',
+    mobilephone: '01234 567890',
+    defra_organisation: 'Test Organisation',
+    defra_premises: '1',
+    defra_street: 'Tester Avenue',
+    defra_locality: 'Testville',
+    defra_town: 'Tersterton',
+    defra_postcode: 'AB12 3CD',
+    defra_country: 910400184
+  },
+  optionSetData
+)
