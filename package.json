@@ -49,7 +49,7 @@
     "lint-staged": "^10.5.0",
     "prettier-standard": "^16.4.1",
     "simple-oauth2": "^4.1.0",
-    "standard": "^14.3.4"
+    "standard": "^16.0.1"
   },
   "eslintConfig": {
     "extends": "standard",
