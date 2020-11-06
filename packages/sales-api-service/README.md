@@ -16,6 +16,8 @@ The Rod Licensing Sales API is responsible for communication with Microsoft Dyna
 | PAYMENT_JOURNALS_TABLE_TTL            | The time to live for records in the payment journals table (in seconds)            |    no    | 168 hours |                               |       |
 | TRANSACTION_QUEUE_URL                 | The SQS queue URL used for processing transactions                                 |   yes    |           |                               |       |
 | HAPI_KEEP_ALIVE_TIMEOUT_MS            | Configure the keep-alive timeout on the server listener                            |    no    | 1 minute  |                               |       |
+| AIRBRAKE_HOST                         | URL of airbrake host                                                               |    no    |           |                               |       |
+| AIRBRAKE_PROJECT_KEY                  | Project key for airbrake logging                                                   |    no    |           |                               |       |
 
 ### See also:
 

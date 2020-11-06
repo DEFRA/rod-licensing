@@ -17,36 +17,40 @@ import pluralize from 'pluralize'
 export async function * fulfilmentDataTransformer (source) {
   let sep = '    '
   for await (const { permission, licensee, permit } of source) {
-    yield sep
-    yield JSON.stringify({
-      licence: {
-        type: permit.permitType.label,
-        subtype: permit.permitSubtype.label,
-        description: permit.description,
-        equipment: getEquipment(permit),
-        duration: getDuration(permit),
-        cost: permit.cost,
-        paymentCurrency: 'GBP',
-        startDateAndTime: permission.startDate,
-        expiryDateAndTime: permission.endDate,
-        issueDateAndTime: permission.issueDate,
-        licenceNumber: permission.referenceNumber.substring(permission.referenceNumber.indexOf('-') + 1)
-      },
-      holder: {
-        dateOfBirth: { id: generateDobId(licensee.birthDate), value: licensee.birthDate },
-        name: { firstName: licensee.firstName, surname: licensee.lastName },
-        address: {
-          ...(licensee.organisation && { organisation: licensee.organisation }),
-          premises: licensee.premises,
-          ...(licensee.street && { street: licensee.street }),
-          ...(licensee.locality && { locality: licensee.locality }),
-          town: licensee.town,
-          postcode: licensee.postcode,
-          country: licensee.country?.label
+    if (!licensee.birthDate) {
+      console.debug('licensee missing birth date:', licensee)
+    } else {
+      yield sep
+      yield JSON.stringify({
+        licence: {
+          type: permit.permitType.label,
+          subtype: permit.permitSubtype.label,
+          description: permit.description,
+          equipment: getEquipment(permit),
+          duration: getDuration(permit),
+          cost: permit.cost,
+          paymentCurrency: 'GBP',
+          startDateAndTime: permission.startDate,
+          expiryDateAndTime: permission.endDate,
+          issueDateAndTime: permission.issueDate,
+          licenceNumber: permission.referenceNumber.substring(permission.referenceNumber.indexOf('-') + 1)
+        },
+        holder: {
+          dateOfBirth: { id: generateDobId(licensee.birthDate), value: licensee.birthDate },
+          name: { firstName: licensee.firstName, surname: licensee.lastName },
+          address: {
+            ...(licensee.organisation && { organisation: licensee.organisation }),
+            premises: licensee.premises,
+            ...(licensee.street && { street: licensee.street }),
+            ...(licensee.locality && { locality: licensee.locality }),
+            town: licensee.town,
+            postcode: licensee.postcode,
+            country: licensee.country?.label
+          }
         }
-      }
-    })
-    sep = ',\n    '
+      })
+      sep = ',\n    '
+    }
   }
 }
 
