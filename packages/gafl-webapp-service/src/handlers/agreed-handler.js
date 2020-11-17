@@ -30,7 +30,14 @@ const debug = db('webapp:agreed-handler')
  */
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
-  const response = await salesApi.createTransaction(apiTransactionPayload)
+  delete apiTransactionPayload.permissions[0].licensee.birthDate
+  let response
+  try {
+    response = await salesApi.createTransaction(apiTransactionPayload)
+  } catch (e) {
+    debug('Error creating transaction', JSON.stringify(apiTransactionPayload))
+    throw e
+  }
   transaction.id = response.id
   transaction.cost = response.cost
   status[COMPLETION_STATUS.posted] = true
@@ -196,7 +203,12 @@ export default async (request, h) => {
 
   // Send the transaction to the sales API and process the response
   if (!status[COMPLETION_STATUS.posted]) {
-    await sendToSalesApi(request, transaction, status)
+    try {
+      await sendToSalesApi(request, transaction, status)
+    } catch (e) {
+      debug('Error sending transaction to Sales Api', JSON.stringify(transaction), JSON.stringify(status))
+      throw e
+    }
   }
 
   // The payment section is ignored for zero cost transactions
