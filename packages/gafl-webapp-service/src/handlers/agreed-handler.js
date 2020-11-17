@@ -30,7 +30,6 @@ const debug = db('webapp:agreed-handler')
  */
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
-  delete apiTransactionPayload.permissions[0].licensee.birthDate
   let response
   try {
     response = await salesApi.createTransaction(apiTransactionPayload)
