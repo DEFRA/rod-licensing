@@ -30,7 +30,13 @@ const debug = db('webapp:agreed-handler')
  */
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
-  const response = await salesApi.createTransaction(apiTransactionPayload)
+  let response
+  try {
+    response = await salesApi.createTransaction(apiTransactionPayload)
+  } catch (e) {
+    debug('Error creating transaction', JSON.stringify(apiTransactionPayload))
+    throw e
+  }
   transaction.id = response.id
   transaction.cost = response.cost
   status[COMPLETION_STATUS.posted] = true
@@ -179,6 +185,32 @@ const processPayment = async (request, transaction, status) => {
   return next
 }
 
+const finaliseTransaction = async (request, transaction, status) => {
+  const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
+  debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
+  const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+  /*
+   * Write the licence number and end dates into the cache
+   */
+  for (let i = 0; i < response.permissions.length; i++) {
+    debug(`Setting permission reference number: ${response.permissions[i].referenceNumber}`)
+    transaction.permissions[i].referenceNumber = response.permissions[i].referenceNumber
+    debug(`Setting permission issue date: ${response.permissions[i].issueDate}`)
+    transaction.permissions[i].issueDate = response.permissions[i].issueDate
+    debug(`Setting permission start date: ${response.permissions[i].startDate}`)
+    transaction.permissions[i].startDate = response.permissions[i].startDate
+    debug(`Setting permission end date: ${response.permissions[i].endDate}`)
+    transaction.permissions[i].endDate = response.permissions[i].endDate
+  }
+  status[COMPLETION_STATUS.finalised] = true
+  await request.cache().helpers.status.set(status)
+  await request.cache().helpers.transaction.set(transaction)
+  // Set the completed status
+  if (transaction.cost > 0) {
+    await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
+  }
+}
+
 /**
  * Agreed route handler
  * @param request
@@ -196,7 +228,12 @@ export default async (request, h) => {
 
   // Send the transaction to the sales API and process the response
   if (!status[COMPLETION_STATUS.posted]) {
-    await sendToSalesApi(request, transaction, status)
+    try {
+      await sendToSalesApi(request, transaction, status)
+    } catch (e) {
+      debug('Error sending transaction to Sales Api', JSON.stringify(transaction), JSON.stringify(status))
+      throw e
+    }
   }
 
   // The payment section is ignored for zero cost transactions
@@ -221,29 +258,7 @@ export default async (request, h) => {
 
   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
-    const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
-    debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
-    const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
-    /*
-     * Write the licence number and end dates into the cache
-     */
-    for (let i = 0; i < response.permissions.length; i++) {
-      debug(`Setting permission reference number: ${response.permissions[i].referenceNumber}`)
-      transaction.permissions[i].referenceNumber = response.permissions[i].referenceNumber
-      debug(`Setting permission issue date: ${response.permissions[i].issueDate}`)
-      transaction.permissions[i].issueDate = response.permissions[i].issueDate
-      debug(`Setting permission start date: ${response.permissions[i].startDate}`)
-      transaction.permissions[i].startDate = response.permissions[i].startDate
-      debug(`Setting permission end date: ${response.permissions[i].endDate}`)
-      transaction.permissions[i].endDate = response.permissions[i].endDate
-    }
-    status[COMPLETION_STATUS.finalised] = true
-    await request.cache().helpers.status.set(status)
-    await request.cache().helpers.transaction.set(transaction)
-    // Set the completed status
-    if (transaction.cost > 0) {
-      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
-    }
+    await finaliseTransaction(request, transaction, status)
   } else {
     debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
   }
