@@ -32,138 +32,138 @@ import { licenceLengthResults } from '../pages/licence-details/licence-length/re
 
 /**
  * The structure of each atom is as follows
- * currentPage - the current page
- * nextPage - the page the use proceeds to as a consequence of the results of result-function for the page
+ * current - the current page
+ * next - the page the use proceeds to as a consequence of the results of result-function for the page
  * backLink - the location the back link, a uri literal, a function of the current status of a function of the status and transaction
  */
 export default [
   {
-    currentPage: 'start',
-    nextPage: {
+    current: { page: 'start' },
+    next: {
       [CommonResults.OK]: {
-        page: DATE_OF_BIRTH.uri
+        page: DATE_OF_BIRTH
       }
     }
   },
 
   {
-    currentPage: DATE_OF_BIRTH.page,
-    nextPage: {
+    current: DATE_OF_BIRTH,
+    next: {
       [CommonResults.OK]: {
-        page: LICENCE_TO_START.uri
+        page: LICENCE_TO_START
       },
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
-        page: NO_LICENCE_REQUIRED.uri
+        page: NO_LICENCE_REQUIRED
       },
       [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
   },
 
   {
-    currentPage: LICENCE_TO_START.page,
-    nextPage: {
+    current: LICENCE_TO_START,
+    next: {
       [CommonResults.OK]: {
-        page: DISABILITY_CONCESSION.uri
+        page: DISABILITY_CONCESSION
       },
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
-        page: NO_LICENCE_REQUIRED.uri
+        page: NO_LICENCE_REQUIRED
       },
       [licenceToStartResults.AND_START_TIME]: {
-        page: LICENCE_START_TIME.uri
+        page: LICENCE_START_TIME
       },
       [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
   },
 
   {
-    currentPage: NO_LICENCE_REQUIRED.page,
+    current: NO_LICENCE_REQUIRED,
     backLink: DATE_OF_BIRTH.uri
   },
 
   {
-    currentPage: DISABILITY_CONCESSION.page,
-    nextPage: {
+    current: DISABILITY_CONCESSION,
+    next: {
       [CommonResults.OK]: {
-        page: LICENCE_TYPE.uri
+        page: LICENCE_TYPE
       },
       [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri)
   },
 
   {
-    currentPage: LICENCE_TYPE.page,
-    nextPage: {
+    current: LICENCE_TYPE,
+    next: {
       [licenceTypeResults.ASK_LICENCE_LENGTH]: {
-        page: LICENCE_LENGTH.uri
+        page: LICENCE_LENGTH
       },
       [licenceTypeResults.SKIP_LICENCE_LENGTH]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       },
       [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
   },
 
   {
-    currentPage: LICENCE_LENGTH.page,
-    nextPage: {
+    current: LICENCE_LENGTH,
+    next: {
       [CommonResults.OK]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       },
       [licenceLengthResults.REQUIRE_TIME]: {
-        page: LICENCE_START_TIME.uri
+        page: LICENCE_START_TIME
       },
       [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri)
   },
 
   {
-    currentPage: LICENCE_START_TIME.page,
-    nextPage: {
+    current: LICENCE_START_TIME,
+    next: {
       [CommonResults.OK]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       },
       [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri)
   },
 
   {
-    currentPage: LICENCE_SUMMARY.page,
-    nextPage: {
+    current: LICENCE_SUMMARY,
+    next: {
       [CommonResults.OK]: {
-        page: NAME.uri
+        page: NAME
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY.uri
+        page: CONTACT_SUMMARY
       }
     }
   },
 
   {
-    currentPage: NAME.page,
-    nextPage: {
+    current: NAME,
+    next: {
       [CommonResults.OK]: {
-        page: ADDRESS_LOOKUP.uri
+        page: ADDRESS_LOOKUP
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY.uri
+        page: CONTACT_SUMMARY
       }
     },
     backLink: s => {
@@ -178,72 +178,72 @@ export default [
   },
 
   {
-    currentPage: ADDRESS_LOOKUP.page,
-    nextPage: {
+    current: ADDRESS_LOOKUP,
+    next: {
       [addressLookupResults.FOUND_SOME]: {
-        page: ADDRESS_SELECT.uri
+        page: ADDRESS_SELECT
       },
       [addressLookupResults.FOUND_NONE]: {
-        page: ADDRESS_ENTRY.uri
+        page: ADDRESS_ENTRY
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : NAME.uri)
   },
 
   {
-    currentPage: ADDRESS_ENTRY.page,
-    nextPage: {
+    current: ADDRESS_ENTRY,
+    next: {
       [CommonResults.OK]: {
-        page: CONTACT.uri
+        page: CONTACT
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY.uri
+        page: CONTACT_SUMMARY
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
-    currentPage: ADDRESS_SELECT.page,
-    nextPage: {
+    current: ADDRESS_SELECT,
+    next: {
       [CommonResults.OK]: {
-        page: CONTACT.uri
+        page: CONTACT
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY.uri
+        page: CONTACT_SUMMARY
       }
     },
     backLink: ADDRESS_LOOKUP.uri
   },
 
   {
-    currentPage: CONTACT.page,
-    nextPage: {
+    current: CONTACT,
+    next: {
       [CommonResults.OK]: {
-        page: NEWSLETTER.uri
+        page: NEWSLETTER
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY.uri
+        page: CONTACT_SUMMARY
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
-    currentPage: NEWSLETTER.page,
-    nextPage: {
+    current: NEWSLETTER,
+    next: {
       [CommonResults.OK]: {
-        page: CONTACT_SUMMARY.uri
+        page: CONTACT_SUMMARY
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : CONTACT.uri)
   },
 
   {
-    currentPage: CONTACT_SUMMARY.page,
-    nextPage: {
+    current: CONTACT_SUMMARY,
+    next: {
       [CommonResults.OK]: {
-        page: TERMS_AND_CONDITIONS.uri
+        page: TERMS_AND_CONDITIONS
       }
     }
   },
@@ -251,38 +251,38 @@ export default [
   // This is the end of the journey. The rest is handled by the agreed handler
   // and the transaction is locked
   {
-    currentPage: TERMS_AND_CONDITIONS.page,
-    nextPage: {
+    current: TERMS_AND_CONDITIONS,
+    next: {
       [CommonResults.OK]: {
-        page: AGREED.uri
+        page: AGREED
       }
     },
     backLink: CONTACT_SUMMARY.uri
   },
 
   {
-    currentPage: PAYMENT_CANCELLED.page,
-    nextPage: {
+    current: PAYMENT_CANCELLED,
+    next: {
       [CommonResults.OK]: {
-        page: AGREED.uri
+        page: AGREED
       }
     }
   },
 
   {
-    currentPage: PAYMENT_FAILED.page,
-    nextPage: {
+    current: PAYMENT_FAILED,
+    next: {
       [CommonResults.OK]: {
-        page: AGREED.uri
+        page: AGREED
       }
     }
   },
 
   {
-    currentPage: RENEWAL_INACTIVE.page,
-    nextPage: {
+    current: RENEWAL_INACTIVE,
+    next: {
       [CommonResults.OK]: {
-        page: LICENCE_LENGTH.uri
+        page: LICENCE_LENGTH
       }
     },
     backLink: IDENTIFY.uri
@@ -290,17 +290,17 @@ export default [
 
   // This is the authentication journey
   {
-    currentPage: IDENTIFY.page,
-    nextPage: {
+    current: IDENTIFY,
+    next: {
       [CommonResults.OK]: {
-        page: LICENCE_SUMMARY.uri
+        page: LICENCE_SUMMARY
       }
     }
   },
 
   // The change start time is handled directly - not via the controller, as it has dynamic validation
   {
-    currentPage: RENEWAL_START_DATE.page,
+    current: RENEWAL_START_DATE,
     backLink: LICENCE_SUMMARY.uri
   }
 ]

@@ -19,7 +19,7 @@ export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: 
  * @returns {Promise<void>}
  */
 const getBackReference = async (request, view) => {
-  const current = journeyDefinition.find(p => p.currentPage === view)
+  const current = journeyDefinition.find(p => p.current.page === view)
 
   if (!current || !current.backLink) {
     return null
