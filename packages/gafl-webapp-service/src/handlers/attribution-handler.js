@@ -1,4 +1,5 @@
-import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
+import { ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
+import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
 
 /**
  * Attribution route handler
@@ -7,19 +8,6 @@ import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../constants.js'
  * @returns {Promise}
  */
 export default async (request, h) => {
-  const redirectTarget = process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT
-  const cache = request.cache()
-  if (!(request.query[UTM.CAMPAIGN] && request.query[UTM.SOURCE])) {
-    console.warn('Campaign and source values should be set in attribution')
-  }
-  await cache.helpers.status.set({
-    attribution: {
-      [UTM.CAMPAIGN]: request.query[UTM.CAMPAIGN],
-      [UTM.MEDIUM]: request.query[UTM.MEDIUM],
-      [UTM.CONTENT]: request.query[UTM.CONTENT],
-      [UTM.SOURCE]: request.query[UTM.SOURCE],
-      [UTM.TERM]: request.query[UTM.TERM]
-    }
-  })
-  return h.redirect(redirectTarget)
+  await initialiseAnalyticsSessionData(request)
+  return h.redirect(process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT)
 }

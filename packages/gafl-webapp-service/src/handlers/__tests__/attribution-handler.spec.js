@@ -49,20 +49,6 @@ describe('The attribution handler', () => {
     delete process.env.ATTRIBUTION_REDIRECT
   })
 
-  it("generates a warning if campaign or source aren't set", async () => {
-    const query = {}
-    jest.spyOn(console, 'warn')
-    await attributionHandler(generateRequestMock(query), generateResponseToolkitMock())
-    expect(console.warn).toHaveBeenCalledWith('Campaign and source values should be set in attribution')
-  })
-
-  it("doesn't generate a warning if campaign and source are set", async () => {
-    const query = { [UTM.CAMPAIGN]: 'Gallic', [UTM.SOURCE]: 'brown' }
-    jest.spyOn(console, 'warn')
-    await attributionHandler(generateRequestMock(query), generateResponseToolkitMock())
-    expect(console.warn).not.toHaveBeenCalled()
-  })
-
   const generateRequestMock = (query, status = {}) => ({
     query,
     cache: jest.fn(() => ({

@@ -1,4 +1,40 @@
 
+
+
+
+
+
+
+## v1.4.0-rc.1 (2020-10-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#458](https://github.com/DEFRA/rod-licensing/pull/458) Enable x-domain analytics tracking & persist attribution between sessions ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
+
+## v1.3.0-rc.5 (2020-10-27)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#454](https://github.com/DEFRA/rod-licensing/pull/454) Ensure cache manager calls disconnect on ioredis when terminating ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+## v1.3.0-rc.4 (2020-10-27)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#451](https://github.com/DEFRA/rod-licensing/pull/451) Fix ioredis preventing shutdown & use spec-compliant interrupt exit-code ([@sgardnerdell](https://github.com/sgardnerdell))
+
+#### Committers: 1
+- sgd ([@sgardnerdell](https://github.com/sgardnerdell))
+
+
 ## v1.3.0-rc.2 (2020-10-22)
 
 #### :rocket: Enhancement

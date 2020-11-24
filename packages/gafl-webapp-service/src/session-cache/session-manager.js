@@ -13,6 +13,7 @@ import {
   TEST_TRANSACTION,
   TEST_STATUS
 } from '../uri.js'
+import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
 
 const debug = db('webapp:session-manager')
 
@@ -93,6 +94,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
      * devices where a browser is woken up.
      */
     if (initialized) {
+      await initialiseAnalyticsSessionData(request)
       return h.redirect(CONTROLLER.uri).takeover()
     }
   }

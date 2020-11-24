@@ -58,10 +58,19 @@ describe('Server GA integration', () => {
 
   it('gets session id from cache', async () => {
     const cookieName = 'Bourbon-1272'
-    const request = generateRequestMock(undefined, { getId: () => cookieName })
+    const request = generateRequestMock({ gaClientId: undefined }, { getId: () => cookieName })
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(cookieName)
+    await expect(hapiGapiPlugin.options.sessionIdProducer(request)).resolves.toEqual(cookieName)
+  })
+
+  it('uses the gaClientId in preference to the session id if it is set', async () => {
+    const cookieName = 'Bourbon-1272'
+    const gaClientId = 'Single-Malt'
+    const request = generateRequestMock({ gaClientId: gaClientId }, { getId: () => cookieName })
+    await init()
+    const hapiGapiPlugin = getHapiGapiPlugin()
+    await expect(hapiGapiPlugin.options.sessionIdProducer(request)).resolves.toEqual(gaClientId)
   })
 
   it("sessionIdProducer returns null if we're not using a session cookie", async () => {
@@ -69,7 +78,7 @@ describe('Server GA integration', () => {
     const request = generateRequestMock()
     await init()
     const hapiGapiPlugin = getHapiGapiPlugin()
-    expect(hapiGapiPlugin.options.sessionIdProducer(request)).toBe(null)
+    await expect(hapiGapiPlugin.options.sessionIdProducer(request)).resolves.toEqual(null)
   })
 
   it('returns an empty object if attribution is empty', async () => {

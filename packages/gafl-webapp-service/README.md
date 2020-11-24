@@ -33,7 +33,9 @@ To run from this directory:
 | ANALYTICS_PRIMARY_PROPERTY | Analytics ID for tracking inc ecommerce                          |    no    |                                                           |                               |
 | ANALYTICS_XGOV_PROPERTY    | Analytics ID for page view tracking                              |    no    |                                                           |                               |
 | ATTRIBUTION_REDIRECT       | Target for redirect of attribution endpoint                      |    no    | /                                                         |                               |
-| SERVICE_PAGE               | GOV.UK service page                                              |    no    | https://www.gov.uk/fishing-licences/buy-a-fishing-licence |
+| SERVICE_PAGE               | GOV.UK service page                                              |    no    | https://www.gov.uk/fishing-licences/buy-a-fishing-licence |                               |
+| AIRBRAKE_HOST              | URL of airbrake host                                             |    no    |                                                           |                               |
+| AIRBRAKE_PROJECT_KEY       | Project key for airbrake logging                                 |    no    |                                                           |                               |
 
 ## OS Places address lookup
 

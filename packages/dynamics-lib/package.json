@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/dynamics-lib",
-  "version": "1.3.0-rc.2",
+  "version": "1.5.0-rc.2",
   "description": "Framework to support integration with dynamics",
   "type": "module",
   "engines": {
@@ -36,8 +36,8 @@
     "cache-manager": "^3.4.0",
     "cache-manager-ioredis": "^2.1.0",
     "debug": "^4.2.0",
-    "dynamics-web-api": "^1.6.12",
-    "joi": "^17.1.1",
+    "dynamics-web-api": "^1.6.13",
+    "joi": "^17.3.0",
     "moment": "^2.29.1",
     "pluralize": "^8.0.0",
     "simple-oauth2": "^4.1.0",

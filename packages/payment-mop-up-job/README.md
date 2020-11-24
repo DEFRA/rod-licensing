@@ -28,5 +28,7 @@ Since the job will not process the same transaction twice.
 | CONCURRENCY                     | Concurrency for the process                                     |    no    | 4                   |                               |
 | SCAN_DURATION_HOURS             | The number of hours over which the transactions will be scanned |    no    | 24                  |                               |
 | INCOMPLETE_PURCHASE_AGE_MINUTES | The age of the incomplete purchase in minutes                   |    no    | 60                  |                               |
+| AIRBRAKE_HOST                   | URL of airbrake host                                            |    no    |                     |                               |
+| AIRBRAKE_PROJECT_KEY            | Project key for airbrake logging                                |    no    |                     |                               |
 
 The details of the GOV.UK payment API can be found here; https://docs.payments.service.gov.uk/#gov-uk-pay-technical-documentation

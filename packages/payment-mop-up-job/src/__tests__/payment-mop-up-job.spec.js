@@ -92,8 +92,11 @@ describe('payment-mop-up-job', () => {
     })
   })
 
-  describe.each(['SIGINT', 'SIGTERM'])('implements a shutdown handler to respond to the %s signal', signal => {
-    it('which releases the lock', done => {
+  describe.each([
+    ['SIGINT', 130],
+    ['SIGTERM', 137]
+  ])('implements a shutdown handler to respond to the %s signal', (signal, code) => {
+    it(`exits the process with code ${code}`, done => {
       jest.isolateModules(() => {
         processor.execute.mockResolvedValue(undefined)
         require('../payment-mop-up-job.js')
@@ -101,7 +104,7 @@ describe('payment-mop-up-job', () => {
         process.emit(signal)
         process.nextTick(() => {
           try {
-            expect(processStopSpy).toHaveBeenCalledWith(0)
+            expect(processStopSpy).toHaveBeenCalledWith(code)
             expect(global.lockReleased).toEqual(true)
             jest.restoreAllMocks()
             done()
