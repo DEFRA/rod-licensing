@@ -5,6 +5,7 @@
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "back-link/macro.njk" import govukBackLink %}
+{% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = 'Licence conditions' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
@@ -65,6 +66,13 @@
                     }
                   ]
                 }) }}
+
+                {% if data.paymentRequired %}
+                    {{ govukWarningText({
+                      text: "Do not close the browser or use the back-button during payment",
+                      iconFallbackText: "Warning"
+                    }) }}
+                {% endif %}
 
                 {{ govukButton({
                     attributes: { id: 'continue' },
