@@ -3,13 +3,13 @@ import moment from 'moment'
 import Path from 'path'
 import fs from 'fs'
 import db from 'debug'
-import { updateFileStagingTable } from '../io/db.js'
+import md5File from 'md5-file'
+import filesize from 'filesize'
 import config from '../config.js'
 import { getTempDir } from '../io/file.js'
 import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../staging/constants.js'
 import { AWS, salesApi } from '@defra-fish/connectors-lib'
-import md5File from 'md5-file'
-import filesize from 'filesize'
+import { updateFileStagingTable } from '../io/db.js'
 const { s3 } = AWS()
 
 const debug = db('pocl:transport')
@@ -37,6 +37,21 @@ export async function ftpToS3 () {
   }
 }
 
+export async function storeS3Metadata (md5, fileSize, filename, s3Key, receiptMoment) {
+  await updateFileStagingTable({ filename, md5, fileSize, stage: FILE_STAGE.Pending, s3Key: s3Key })
+
+  await salesApi.upsertTransactionFile(filename, {
+    status: DYNAMICS_IMPORT_STAGE.Pending,
+    dataSource: POST_OFFICE_DATASOURCE,
+    fileSize: fileSize,
+    salesDate: moment(receiptMoment)
+      .subtract(1, 'days')
+      .toISOString(),
+    receiptTimestamp: receiptMoment.toISOString(),
+    notes: 'Retrieved from the remote server and awaiting processing'
+  })
+}
+
 const retrieveAllFiles = async xmlFiles => {
   const tempDir = getTempDir('ftp')
 
@@ -62,21 +77,9 @@ const retrieveAllFiles = async xmlFiles => {
         filename
       )
     } else {
-      // Record as pending to be processed
       const md5 = await md5File(localFilePath)
       const fileSize = filesize(fs.statSync(localFilePath).size)
-      await updateFileStagingTable({ filename, md5, fileSize, stage: FILE_STAGE.Pending, s3Key: s3Key })
-
-      await salesApi.upsertTransactionFile(filename, {
-        status: DYNAMICS_IMPORT_STAGE.Pending,
-        dataSource: POST_OFFICE_DATASOURCE,
-        fileSize: fileSize,
-        salesDate: moment(receiptMoment)
-          .subtract(1, 'days')
-          .toISOString(),
-        receiptTimestamp: receiptMoment.toISOString(),
-        notes: 'Retrieved from the remote server and awaiting processing'
-      })
+      await storeS3Metadata(md5, fileSize, filename, s3Key, receiptMoment)
     }
 
     // Remove from FTP server and local tmp
