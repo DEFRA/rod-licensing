@@ -42,7 +42,7 @@
                 document.getElementById('close-global-cookie-message').addEventListener('click', function() {
                     var expiry = new Date()
                     expiry.setDate(expiry.getDate() + 90)
-                    document.cookie = ' seen_cookie_message=true; expires=' + expiry.toUTCString()
+                    document.cookie = 'seen_cookie_message=true; expires=' + expiry.toUTCString() + '; path=/;'
                     removeCookieMessage()
                 })
             }
