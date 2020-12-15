@@ -6,12 +6,12 @@ import { storeS3Metadata } from '../transport/ftp-to-s3'
 import { AWS, salesApi } from '@defra-fish/connectors-lib'
 const { s3 } = AWS()
 
-const listObjectsV2 = async function(params) {
+const listObjectsV2 = async function (params) {
   try {
-    return s3.listObjectsV2(params).promise();
+    return s3.listObjectsV2(params).promise()
   } catch (e) {
     console.error(e)
-    throw e;
+    throw e
   }
 }
 
@@ -27,7 +27,7 @@ const getS3FileList = async function (token, fileList = []) {
       return getS3FileList(bucketList.NextContinuationToken, fileList)
     }
   } else {
-    console.warn(`S3 bucket contains no objects`);
+    console.warn('S3 bucket contains no objects')
   }
   return fileList
 }
@@ -47,7 +47,7 @@ export const refreshS3Metadata = async () => {
     if (!dynamicsRecord || !DYNAMICS_IMPORT_STAGE.isAlreadyProcessed(dynamicsRecord.status.description)) {
       await storeS3Metadata(file.ETag, filesize(file.Size), file.Key.split('/').pop(), file.Key, moment(new Date(file.LastModified)))
     } else {
-      console.log(`${file.Key} is already processed, skipping`);
+      console.log(`${file.Key} is already processed, skipping`)
     }
   }
 

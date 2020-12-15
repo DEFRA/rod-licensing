@@ -38,7 +38,7 @@ export async function ftpToS3() {
 }
 
 export async function storeS3Metadata(md5, fileSize, filename, s3Key, receiptMoment) {
-  console.log(`Storing metadata for ${s3Key}`);
+  console.log(`Storing metadata for ${s3Key}`)
   await updateFileStagingTable({ filename, md5, fileSize, stage: FILE_STAGE.Pending, s3Key: s3Key })
 
   await salesApi.upsertTransactionFile(filename, {
@@ -52,7 +52,7 @@ export async function storeS3Metadata(md5, fileSize, filename, s3Key, receiptMom
     notes: 'Retrieved from the remote server and awaiting processing'
   })
 
-  console.log(`Stored metadata for ${s3Key}`);
+  console.log(`Stored metadata for ${s3Key}`)
 }
 
 const retrieveAllFiles = async xmlFiles => {
