@@ -97,6 +97,59 @@ describe('s3 operations', () => {
       })
     })
 
+    it('gets a truncated list of files from S3', async () => {
+      const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
+
+      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
+        promise: () => ({
+          IsTruncated: false,
+          Contents: [{
+            Key: s3Key1,
+            LastModified: '2014-11-21T19:40:05.000Z',
+            ETag: 'example-md5',
+            Size: 1024
+          }]
+        })
+      }).mockReturnValueOnce({
+        promise: () => ({
+          IsTruncated: true,
+          NextContinuationToken: 'token',
+          Contents: [{
+            Key: s3Key1,
+            LastModified: '2014-11-21T19:40:05.000Z',
+            ETag: 'example-md5',
+            Size: 1024
+          }]
+        })
+      })
+
+      await refreshS3Metadata()
+
+      expect(AwsMock.S3.mockedMethods.listObjectsV2).toHaveBeenNthCalledWith(1, {
+        Bucket: 'testbucket',
+        ContinuationToken: undefined
+      })
+      expect(AwsMock.S3.mockedMethods.listObjectsV2).toHaveBeenNthCalledWith(2, {
+        Bucket: 'testbucket',
+        ContinuationToken: 'token'
+      })
+      expect(updateFileStagingTable).toHaveBeenNthCalledWith(1, {
+        filename: 'test1.xml',
+        md5: 'example-md5',
+        fileSize: '1 KB',
+        stage: FILE_STAGE.Pending,
+        s3Key: s3Key1
+      })
+      expect(salesApi.upsertTransactionFile).toHaveBeenNthCalledWith(1, 'test1.xml', {
+        status: DYNAMICS_IMPORT_STAGE.Pending,
+        dataSource: POST_OFFICE_DATASOURCE,
+        fileSize: '1 KB',
+        receiptTimestamp: expect.any(String),
+        salesDate: expect.any(String),
+        notes: 'Retrieved from the remote server and awaiting processing'
+      })
+    })
+
     it('skips file processing if a file has already been marked as processed in Dynamics', async () => {
       mockedFtpMethods.list.mockResolvedValue([{ name: 'test-already-processed.xml' }])
       fs.createReadStream.mockReturnValueOnce('teststream')

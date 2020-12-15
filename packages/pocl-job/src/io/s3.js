@@ -8,11 +8,17 @@ const { s3 } = AWS()
 
 const getS3FileList = async function (token, fileList = []) {
   const params = {
-    Bucket: config.s3 ? config.s3.bucket : undefined,
+    Bucket: config.s3.bucket,
     ContinuationToken: token
   }
   const bucketList = await s3.listObjectsV2(params).promise()
-  return bucketList ? bucketList.Contents : []
+  if (bucketList && bucketList.Contents) {
+    fileList = fileList.concat(bucketList.Contents)
+    if (bucketList.IsTruncated) {
+      return getS3FileList(bucketList.NextContinuationToken, fileList)
+    }
+  }
+  return fileList
 }
 
 /**
