@@ -1,1 +1,1 @@
-echo 'Hello world'
+echo "Commit $COMMIT"
