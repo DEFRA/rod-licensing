@@ -11,8 +11,8 @@ on:
       - master
 
 jobs:
-  build:
-    name: build
+  tests:
+    name: tests
     runs-on: ubuntu-18.04
     env:
       TZ: Europe/London
@@ -41,10 +41,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-#  deploy:
-#    name: deploy
-#    runs-on: ubuntu-18.04
-#    needs: sonar-scanner
-#    steps:
-#      - name: Run script
-#        run: . ./scripts/github/deploy.sh
