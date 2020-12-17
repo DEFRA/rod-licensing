@@ -29,7 +29,7 @@ jobs:
         run: npm run test
       - name: Run script
         run: . ./scripts/github/deploy.sh
- sonar-scanner:
+  sonar-scanner:
     name: sonar-scanner
     runs-on: ubuntu-18.04
     needs: tests
