@@ -36,3 +36,5 @@ docker/volumes/**/*
 
 # Ignore any hidden files/folders (starting with a .)
 **/.*
+# except the github dir...
+!.github 
