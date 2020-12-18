@@ -19,7 +19,7 @@ echo "Installing semver"
 npm i -g semver
 
 echo "Checking out target branch"
-git status
+echo $(git status)
 git checkout "${BRANCH}"
 git branch -avl
 
