@@ -8,6 +8,7 @@ import { stage } from './staging/pocl-data-staging.js'
 import { FILE_STAGE } from './staging/constants.js'
 
 import db from 'debug'
+import { refreshS3Metadata } from './io/s3.js'
 const debug = db('pocl:processor')
 /**
  * Lock for the ETL process.  Set for default 5 minute TTL unless explicitly released on completion.
@@ -32,6 +33,7 @@ export async function execute () {
         await config.initialise()
         debug('Retrieving files from FTP')
         await ftpToS3()
+        await refreshS3Metadata()
         const pendingFileRecords = await getFileRecords(FILE_STAGE.Pending, FILE_STAGE.Staging, FILE_STAGE.Finalising)
         debug('Found %s files remaining to be processed', pendingFileRecords.length)
         const localXmlFiles = await Promise.all(pendingFileRecords.map(record => s3ToLocal(record.s3Key)))
