@@ -37,6 +37,7 @@ if [ "${BRANCH}" == "master" ]; then
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
 elif [ "$BRANCH" == "develop" ]; then
+    git tag --list --sort=version:refname
     # Creating new release on the develop branch, determine latest release version on either develop or master
     PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
