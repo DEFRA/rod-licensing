@@ -1,25 +1,25 @@
 #!/bin/bash
 ###############################################################################
-#  Travis deployment script
+#  GitHub Actions deployment script
 ###############################################################################
 set -e
 trap 'exit 1' INT
 
-if [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^(SEMVER-MAJOR) ]]; then
+if [[ "${COMMIT_MESSAGE}" =~ ^(SEMVER-MAJOR) ]]; then
   RELEASE_TYPE="major"
-elif [[ "${TRAVIS_COMMIT_MESSAGE}" =~ ^(SEMVER-PATCH|patch|hotfix) ]]; then
+elif [[ "${COMMIT_MESSAGE}" =~ ^(SEMVER-PATCH|patch|hotfix) ]]; then
   RELEASE_TYPE="patch"
 else
   RELEASE_TYPE="minor"
 fi
-echo "Executing deployment - TRAVIS_BRANCH=${TRAVIS_BRANCH}, TRAVIS_COMMIT_MESSAGE=${TRAVIS_COMMIT_MESSAGE}, RELEASE_TYPE=${RELEASE_TYPE}"
+echo "Executing deployment - BRANCH=${BRANCH}, COMMIT_MESSAGE=${COMMIT_MESSAGE}, RELEASE_TYPE=${RELEASE_TYPE}"
 
 # Use the npm semver package to help determine release versions
 echo "Installing semver"
 npm i -g semver
 
 echo "Checking out target branch"
-git checkout "${TRAVIS_BRANCH}"
+git checkout "${BRANCH}"
 git branch -avl
 
 # Ensure that git will return tags with pre-releases in the correct order (e.g. 0.1.0-rc.0 occurs before 0.1.0)
@@ -31,12 +31,12 @@ git config --global --add versionsort.suffix -rc.
 
 # Calculate PREVIOUS_VERSION and NEW_VERSION based on the source and target of the merge
 echo "Determining versions for release"
-if [ "${TRAVIS_BRANCH}" == "master" ]; then
+if [ "${BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
     PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
-elif [ "$TRAVIS_BRANCH" == "develop" ]; then
+elif [ "$BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
     PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
@@ -48,7 +48,7 @@ elif [ "$TRAVIS_BRANCH" == "develop" ]; then
         NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)"
     fi
 else
-    echo "Skipping deployment for branch ${TRAVIS_BRANCH}"
+    echo "Skipping deployment for branch ${BRANCH}"
     exit 0
 fi
 
@@ -63,7 +63,7 @@ git commit -a --amend --no-edit --no-verify
 
 # Push new tag, updated changelog and package metadata to the remote
 echo "Pushing new release to the remote"
-git push origin "${TRAVIS_BRANCH}:${TRAVIS_BRANCH}" --no-verify
+git push origin "${BRANCH}:${BRANCH}" --no-verify
 
 echo "Pushing new release tag to the remote"
 git tag "${NEW_VERSION}" -m "${NEW_VERSION}" -f
@@ -74,7 +74,7 @@ echo "Publishing latest packages to npm"
 lerna publish from-git --yes --pre-dist-tag rc
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
-if [ "${TRAVIS_BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
+if [ "${BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
   git checkout develop
   git merge -X theirs master
   git push origin develop:develop --no-verify
