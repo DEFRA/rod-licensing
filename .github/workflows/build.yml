@@ -11,20 +11,6 @@ on:
       - master
 
 jobs:
-  test-script:
-    name: test-script
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14.x'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run arbitrarty script
-        run: COMMIT_MESSAGE='commit' BRANCH='develop' . ./scripts/github/test.sh
   tests:
     name: tests
     runs-on: ubuntu-18.04
