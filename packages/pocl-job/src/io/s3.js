@@ -43,9 +43,13 @@ export const refreshS3Metadata = async () => {
   console.log(`Processing ${fileList.length} S3 files`)
 
   for (const file of fileList) {
-    const dynamicsRecord = await salesApi.getTransactionFile(file.Key)
+    const filename = file.Key.split('/').pop()
+
+    console.log(`Processing ${filename}`)
+
+    const dynamicsRecord = await salesApi.getTransactionFile(filename)
     if (!dynamicsRecord || !DYNAMICS_IMPORT_STAGE.isAlreadyProcessed(dynamicsRecord.status.description)) {
-      await storeS3Metadata(file.ETag, filesize(file.Size), file.Key.split('/').pop(), file.Key, moment(new Date(file.LastModified)))
+      await storeS3Metadata(file.ETag, filesize(file.Size), filename, file.Key, moment(new Date(file.LastModified)))
     } else {
       console.log(`${file.Key} is already processed, skipping`)
     }
