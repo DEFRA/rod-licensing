@@ -20,9 +20,9 @@ npm i -g semver
 
 echo "Checking out target branch"
 echo $(git status)
+git fetch --tags
 git checkout "${BRANCH}"
 git branch -avl
-git fetch --tags
 
 # Ensure that git will return tags with pre-releases in the correct order (e.g. 0.1.0-rc.0 occurs before 0.1.0)
 echo "Removing existing git tag versionsort configuration"
