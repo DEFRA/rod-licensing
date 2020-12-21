@@ -14,7 +14,6 @@ jobs:
   tests:
     name: tests
     runs-on: ubuntu-18.04
-    needs: test-script
     env:
       TZ: Europe/London
     steps:
