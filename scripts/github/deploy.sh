@@ -24,6 +24,7 @@ git checkout "${BRANCH}"
 git branch -avl
 
 echo "Setting up git"
+git remote set-url origin "https://${GITHUB_AUTH}@github.com/DEFRA/rod-licensing.git" > /dev/null 2>&1
 git config user.name "GitHub Actions"
 git config user.email "actions@users.noreply.github.com"
 
