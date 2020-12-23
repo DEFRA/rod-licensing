@@ -24,7 +24,7 @@ git checkout "${BRANCH}"
 git branch -avl
 
 echo "Setting up npm"
-npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
+echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 npm whoami
 
 echo "Setting up git"
