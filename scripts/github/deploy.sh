@@ -23,6 +23,9 @@ git fetch --tags
 git checkout "${BRANCH}"
 git branch -avl
 
+echo "Setting up npm"
+echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+
 echo "Setting up git"
 git config user.name "GitHub Actions"
 git config user.email "actions@users.noreply.github.com"
