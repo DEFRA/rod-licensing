@@ -4,6 +4,9 @@
   ],
   "version": "1.5.0-rc.13",
   "npmClient": "npm",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "command": {
     "bootstrap": {},
     "version": {
