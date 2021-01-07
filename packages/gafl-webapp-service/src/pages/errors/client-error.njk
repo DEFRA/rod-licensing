@@ -4,7 +4,7 @@
 
 {% block pageTitle %}A problem has occurred{% endblock %}
 
-{% set title = 'A problem has occurred' %}
+{% set title = '' %}
 {% if clientError.statusCode === 400 %}
     {% set title = 'Bad request' %}
 {% elseif clientError.statusCode === 401 %}
@@ -25,7 +25,9 @@
                 isPageHeading: true
               }
             }) %}
-            <h2 class="govuk-heading-m">{{ title }}</h2>
+            {% if title|length %}
+                <h2 class="govuk-heading-m">{{ title }}</h2>
+            {% endif %}
             <p class="govuk-body-m">An unexpected error occurred. Use only the buttons and links to navigate the service and do not use the back button from the payment pages.</p>
             {% if path !== uri.agreed %}
                 {{ govukButton({
