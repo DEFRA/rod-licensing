@@ -35,13 +35,13 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/connectors-lib": "1.5.0-rc.17",
-    "@defra-fish/dynamics-lib": "1.5.0-rc.17",
-    "commander": "^6.2.0",
-    "debug": "^4.2.0",
+    "@defra-fish/connectors-lib": "^1.5.0-rc.17",
+    "@defra-fish/dynamics-lib": "^1.5.0-rc.17",
+    "commander": "^6.2.1",
+    "debug": "^4.3.1",
     "merge2": "^1.4.1",
     "moment": "^2.29.1",
     "pluralize": "^8.0.0",
-    "ssh2-sftp-client": "^5.3.1"
+    "ssh2-sftp-client": "^5.3.2"
   }
 }
