@@ -46,7 +46,7 @@
     "lerna": "^3.22.1",
     "lerna-changelog": "^1.0.1",
     "lerna-update-wizard": "^0.17.8",
-    "lint-staged": "^10.5.0",
+    "lint-staged": "^10.5.3",
     "prettier-standard": "^16.4.1",
     "simple-oauth2": "^4.2.0",
     "standard": "^16.0.3"
