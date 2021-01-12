@@ -39,7 +39,7 @@
     "@defra-fish/business-rules-lib": "1.5.0-rc.19",
     "@defra-fish/connectors-lib": "1.5.0-rc.19",
     "@defra/hapi-gapi": "^1.0.2",
-    "@hapi/boom": "^9.1.0",
+    "@hapi/boom": "^9.1.1",
     "@hapi/catbox-redis": "^6.0.2",
     "@hapi/cookie": "^11.0.2",
     "@hapi/crumb": "^8.0.1",
@@ -52,7 +52,7 @@
     "debug": "^4.3.1",
     "disinfect": "^1.1.0",
     "find": "^0.3.0",
-    "flatpickr": "^4.6.6",
+    "flatpickr": "^4.6.9",
     "govuk-frontend": "^3.10.2",
     "joi": "^17.3.0",
     "moment": "^2.29.1",
@@ -60,9 +60,9 @@
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.2",
     "openid-client": "^4.2.2",
-    "pdfmake": "^0.1.66",
-    "semver": "^7.3.2",
-    "uuid": "^8.3.1"
+    "pdfmake": "^0.1.69",
+    "semver": "^7.3.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@hapi/catbox-memory": "^5.0.0",
