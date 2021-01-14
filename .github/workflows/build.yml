@@ -34,7 +34,6 @@ jobs:
         working-directory: ./coverage
         run: |
           sed -i 's/\/home\/runner\/work\/rod-licensing\/rod-licensing\//\/github\/workspace\//g' lcov.info
-          sed -i 's/\/home\/runner\/work\/rod-licensing\/rod-licensing\//\/github\/workspace\//g' coverage.html
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
