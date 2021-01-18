@@ -32,7 +32,7 @@ describe('The attribution handler', () => {
     })
   })
 
-  it('persists undefined as attribution to status cache if campaign and source are not present', async () => {
+  it('persists undefined as attribution to status cache, if campaign and source are not present', async () => {
     const query = {
       [UTM.MEDIUM]: 'click_bait',
       [UTM.CONTENT]: 'eieioh',
