@@ -47,6 +47,11 @@ export const refreshS3Metadata = async () => {
 
     console.log(`Processing ${filename}`)
 
+    if (moment(new Date(file.LastModified)) < moment().subtract(1, 'weeks')) {
+      console.log('Skipping file older that one week')
+      continue
+    }
+
     const dynamicsRecord = await salesApi.getTransactionFile(filename)
     if (!dynamicsRecord || !DYNAMICS_IMPORT_STAGE.isAlreadyProcessed(dynamicsRecord.status.description)) {
       await storeS3Metadata(file.ETag, filesize(file.Size), filename, file.Key, moment(new Date(file.LastModified)))
