@@ -17,23 +17,43 @@ describe('The attribution handler', () => {
     jest.clearAllMocks()
   })
 
-  it.each([
-    [UTM.CAMPAIGN, 'campaign-12'],
-    [UTM.MEDIUM, 'click_bait'],
-    [UTM.CONTENT, 'eieioh'],
-    [UTM.SOURCE, 'tomato'],
-    [UTM.TERM, 'Michaelmas']
-  ])('Persists UTM values to status cache', async (utmValue, sampleValue) => {
-    const request = generateRequestMock({ [utmValue]: sampleValue })
+  it('persists all UTM values as attribution to status cache, if campaign and source are present', async () => {
+    const query = {
+      [UTM.CAMPAIGN]: 'campaign-12',
+      [UTM.MEDIUM]: 'click_bait',
+      [UTM.CONTENT]: 'eieioh',
+      [UTM.SOURCE]: 'tomato',
+      [UTM.TERM]: 'Michaelmas'
+    }
+    const request = generateRequestMock(query)
     await attributionHandler(request, generateResponseToolkitMock())
     expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
-      attribution: expect.objectContaining({ [utmValue]: sampleValue })
+      attribution: expect.objectContaining(query)
+    })
+  })
+
+  it('persists undefined as attribution to status cache if campaign and source are not present', async () => {
+    const query = {
+      [UTM.MEDIUM]: 'click_bait',
+      [UTM.CONTENT]: 'eieioh',
+      [UTM.TERM]: 'Michaelmas'
+    }
+    const request = generateRequestMock(query)
+    await attributionHandler(request, generateResponseToolkitMock())
+    expect(request.cache.mock.results[0].value.helpers.status.set).toHaveBeenCalledWith({
+      attribution: undefined
     })
   })
 
   it("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async () => {
     delete process.env.ATTRIBUTION_REDIRECT
-    const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
+    const query = {
+      [UTM.CAMPAIGN]: 'campaign-12',
+      [UTM.MEDIUM]: 'click_bait',
+      [UTM.CONTENT]: 'eieioh',
+      [UTM.SOURCE]: 'tomato',
+      [UTM.TERM]: 'Michaelmas'
+    }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
@@ -42,7 +62,13 @@ describe('The attribution handler', () => {
   it("redirects to ATTRIBUTION_REDIRECT env var if it's set", async () => {
     const attributionRedirect = '/attribution/redirect'
     process.env.ATTRIBUTION_REDIRECT = attributionRedirect
-    const query = { [UTM.CAMPAIGN]: 'campaign', [UTM.MEDIUM]: 'popup' }
+    const query = {
+      [UTM.CAMPAIGN]: 'campaign-12',
+      [UTM.MEDIUM]: 'click_bait',
+      [UTM.CONTENT]: 'eieioh',
+      [UTM.SOURCE]: 'tomato',
+      [UTM.TERM]: 'Michaelmas'
+    }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(attributionRedirect)
