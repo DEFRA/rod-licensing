@@ -7,15 +7,21 @@ export const initialiseAnalyticsSessionData = async (request, previousSessionSta
     clientId = /^.+-(?<clientId>.+)$/.exec(request.query._ga).groups.clientId
   }
   // The user may have an existing session, in which case we need to examine this for attribution and/or clientId
-  await request.cache().helpers.status.set({
-    gaClientId: previousSessionStatusData?.gaClientId || clientId,
-    attribution: previousSessionStatusData?.attribution || {
+  let attribution
+  if (previousSessionStatusData) {
+    attribution = previousSessionStatusData?.attribution
+  } else if (request.query[UTM.CAMPAIGN] && request.query[UTM.SOURCE]) {
+    attribution = {
       [UTM.CAMPAIGN]: request.query[UTM.CAMPAIGN],
       [UTM.MEDIUM]: request.query[UTM.MEDIUM],
       [UTM.CONTENT]: request.query[UTM.CONTENT],
       [UTM.SOURCE]: request.query[UTM.SOURCE],
       [UTM.TERM]: request.query[UTM.TERM]
     }
+  }
+  await request.cache().helpers.status.set({
+    gaClientId: previousSessionStatusData?.gaClientId || clientId,
+    attribution
   })
 }
 
