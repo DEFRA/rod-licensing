@@ -163,7 +163,7 @@ describe('processor', () => {
   describe('Result not present in GovPay', () => {
     const NOT_FOUND_ID = journalEntries[2].id
     const NOT_FOUND_PAYMENT_REFERENCE = journalEntries[2].paymentReference
-    const setup = () => {
+    beforeEach(() => {
       salesApi.paymentJournals.getAll.mockReturnValue(journalEntries)
       salesApi.updatePaymentJournal.mockImplementation(() => {})
       salesApi.finaliseTransaction.mockImplementation(() => {})
@@ -181,16 +181,14 @@ describe('processor', () => {
         }
         return { json: async () => govUkPayStatusEntries.find(se => se.payment_id === paymentReference) }
       })
-    }
+    })
 
     it("When one result isn't present in GovPay, no error is thrown", async () => {
-      setup()
       await expect(execute(1, 1)).resolves.toEqual(undefined)
     })
 
     it("when one result isn't present in GovPay, other results process", async () => {
-      setup()
-      await expect(execute(1, 1)).resolves.toEqual(undefined)
+      await execute(1, 1)
 
       const foundIds = journalEntries.map(j => j.id).filter(id => id !== NOT_FOUND_ID)
       for (const foundId of foundIds) {
