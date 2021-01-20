@@ -184,11 +184,11 @@ describe('processor', () => {
       })
     })
 
-    it("When one result isn't present in GovPay, no error is thrown", async () => {
-      await expect(execute(1, 1)).resolves.toEqual(undefined)
+    it("When a payment isn't present in GovPay, no error is thrown", async () => {
+      await expect(execute(1, 1)).resolves.toBeUndefined()
     })
 
-    it("when one result isn't present in GovPay, other results process", async () => {
+    it("when a payment isn't present in GovPay, other results process", async () => {
       await execute(1, 1)
 
       const foundIds = journalEntries.map(j => j.id).filter(id => id !== NOT_FOUND_ID)
@@ -197,7 +197,7 @@ describe('processor', () => {
       }
     })
 
-    it("when a result isn't present in GovPay, it's marked as expired after 3 hours", async () => {
+    it("when a payment isn't present in GovPay, it's marked as expired after 3 hours", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
       missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
       await execute(1, 1)
@@ -206,7 +206,7 @@ describe('processor', () => {
       }))
     })
 
-    it("when a result isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
+    it("when a payment isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
       missingJournalEntry.paymentTimestamp = moment().subtract(2, 'hours').toISOString()
       await execute(1, 1)
