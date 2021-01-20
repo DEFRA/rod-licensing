@@ -18,11 +18,11 @@ const limiter = new Bottleneck({
 })
 
 const processPaymentResults = async transaction => {
-  if (transaction.paymentStatus.state.status === 'error') {
+  if (transaction.paymentStatus.state?.status === 'error') {
     await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
   }
 
-  if (transaction.paymentStatus.state.status === 'success') {
+  if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalization for transaction id: ${transaction.id}`)
     await salesApi.finaliseTransaction(transaction.id, {
       payment: {
@@ -35,17 +35,17 @@ const processPaymentResults = async transaction => {
     await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
   } else {
     // The payment expired
-    if (transaction.paymentStatus.state.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
+    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired })
     }
 
     // The user cancelled the payment
-    if (transaction.paymentStatus.state.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
+    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled })
     }
 
     // The payment was rejected
-    if (transaction.paymentStatus.state.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
+    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
     }
   }
@@ -54,7 +54,7 @@ const processPaymentResults = async transaction => {
 const getStatus = async paymentReference => {
   const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference)
   const paymentStatus = await paymentStatusResponse.json()
-  if (paymentStatus.state.status === 'success') {
+  if (paymentStatus.state?.status === 'success') {
     const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference)
     const { events } = await eventsResponse.json()
     paymentStatus.transactionTimestamp = events.find(e => e.state.status === 'success')?.updated

@@ -62,7 +62,7 @@ const govUkPayStatusEntries = [
     }
   },
   {
-    payment_id: '7lufvi9sbh077rvrrmnqo63vme',
+    payment_id: '7lufvi9sbh077rvrrmnqo63vmf',
     state: {
       code: GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED,
       status: 'cancelled',
@@ -70,7 +70,7 @@ const govUkPayStatusEntries = [
     }
   },
   {
-    payment_id: '7lufvi9sbh077rvrrmnqo63vme',
+    payment_id: '7lufvi9sbh077rvrrmnqo63vmg',
     state: {
       code: GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED,
       status: 'failed',
@@ -78,6 +78,8 @@ const govUkPayStatusEntries = [
     }
   }
 ]
+
+const govUkPayStatusNotFound = { code: 'P0200', description: 'Not found' }
 
 const createPaymentEventsEntry = paymentStatus => {
   return {
@@ -155,6 +157,45 @@ describe('processor', () => {
     })
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('a0e0e5c3-1004-4271-80ba-d05eda3e8215', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+    })
+  })
+
+  describe('Result not present in GovPay', () => {
+    const NOT_FOUND_ID = journalEntries[2].id
+    const NOT_FOUND_PAYMENT_REFERENCE = journalEntries[2].paymentReference
+    const setup = () => {
+      salesApi.paymentJournals.getAll.mockReturnValue(journalEntries)
+      salesApi.updatePaymentJournal.mockImplementation(() => {})
+      salesApi.finaliseTransaction.mockImplementation(() => {})
+
+      govUkPayApi.fetchPaymentEvents.mockImplementation(paymentReference => {
+        if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
+          return { json: async () => govUkPayStatusNotFound }
+        }
+        return { json: async () => createPaymentEventsEntry(govUkPayStatusEntries.find(se => se.payment_id === paymentReference)) }
+      })
+
+      govUkPayApi.fetchPaymentStatus.mockImplementation(paymentReference => {
+        if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
+          return { json: async () => govUkPayStatusNotFound }
+        }
+        return { json: async () => govUkPayStatusEntries.find(se => se.payment_id === paymentReference) }
+      })
+    }
+
+    it("When one result isn't present in GovPay, no error is thrown", async () => {
+      setup()
+      await expect(execute(1, 1)).resolves.toEqual(undefined)
+    })
+
+    it("when one result isn't present in GovPay, other results process", async () => {
+      setup()
+      await expect(execute(1, 1)).resolves.toEqual(undefined)
+
+      const foundIds = journalEntries.map(j => j.id).filter(id => id !== NOT_FOUND_ID)
+      for (const foundId of foundIds) {
+        expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(foundId, expect.any(Object))
+      }
     })
   })
 })
