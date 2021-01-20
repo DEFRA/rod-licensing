@@ -1,6 +1,7 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { execute } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 
 jest.mock('@defra-fish/connectors-lib')
 
@@ -194,6 +195,24 @@ describe('processor', () => {
       for (const foundId of foundIds) {
         expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(foundId, expect.any(Object))
       }
+    })
+
+    it("when a result isn't present in GovPay, it's marked as expired after 3 hours", async () => {
+      const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
+      missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
+      await execute(1, 1)
+      expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(NOT_FOUND_ID, expect.objectContaining({
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+      }))
+    })
+
+    it("when a result isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
+      const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
+      missingJournalEntry.paymentTimestamp = moment().subtract(2, 'hours').toISOString()
+      await execute(1, 1)
+      expect(salesApi.updatePaymentJournal).not.toHaveBeenCalledWith(NOT_FOUND_ID, expect.objectContaining({
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+      }))
     })
   })
 })

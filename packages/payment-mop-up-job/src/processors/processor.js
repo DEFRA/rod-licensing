@@ -12,6 +12,8 @@ import db from 'debug'
 import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
 const debug = db('payment-mop-up-job:execute')
 
+const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
+
 const limiter = new Bottleneck({
   minTime: process.env.RATE_LIMIT_MS || RATE_LIMIT_MS_DEFAULT,
   maxConcurrent: process.env.CONCURRENCY || CONCURRENCY_DEFAULT
@@ -47,6 +49,11 @@ const processPaymentResults = async transaction => {
     // The payment was rejected
     if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
+    }
+
+    // The payment's not found and three hours have elapsed
+    if (transaction.paymentStatus.code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND && moment().diff(moment(transaction.paymentTimestamp), 'hours') >= MISSING_PAYMENT_EXPIRY_TIMEOUT) {
+      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired })
     }
   }
 }
