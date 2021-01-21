@@ -46,13 +46,13 @@ describe('s3 operations', () => {
           IsTruncated: false,
           Contents: [{
             Key: s3Key1,
-            LastModified: '2014-11-21T19:40:05.000Z',
+            LastModified: moment().toISOString(),
             ETag: 'example-md5',
             Size: 1024
           },
           {
             Key: s3Key2,
-            LastModified: '2014-11-21T19:40:05.000Z',
+            LastModified: moment().toISOString(),
             ETag: 'example-md5',
             Size: 2048
           }]
@@ -105,7 +105,7 @@ describe('s3 operations', () => {
           IsTruncated: false,
           Contents: [{
             Key: s3Key1,
-            LastModified: '2014-11-21T19:40:05.000Z',
+            LastModified: moment().toISOString(),
             ETag: 'example-md5',
             Size: 1024
           }]
@@ -116,7 +116,7 @@ describe('s3 operations', () => {
           NextContinuationToken: 'token',
           Contents: [{
             Key: s3Key1,
-            LastModified: '2014-11-21T19:40:05.000Z',
+            LastModified: moment().toISOString(),
             ETag: 'example-md5',
             Size: 1024
           }]
@@ -162,7 +162,39 @@ describe('s3 operations', () => {
           IsTruncated: false,
           Contents: [{
             Key: s3Key,
-            LastModified: '2014-11-21T19:40:05.000Z',
+            LastModified: moment().toISOString(),
+            ETag: 'example-md5',
+            Size: 1024
+          }]
+        })
+      })
+
+      await refreshS3Metadata()
+
+      expect(updateFileStagingTable).not.toHaveBeenCalled()
+      expect(salesApi.upsertTransactionFile).not.toHaveBeenCalled()
+    })
+
+    it('skips file processing if a file is older than one week', async () => {
+      const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
+
+      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
+        promise: () => ({
+          IsTruncated: false,
+          Contents: [{
+            Key: s3Key1,
+            LastModified: moment().subtract(2, 'weeks').toISOString(),
+            ETag: 'example-md5',
+            Size: 1024
+          }]
+        })
+      }).mockReturnValueOnce({
+        promise: () => ({
+          IsTruncated: true,
+          NextContinuationToken: 'token',
+          Contents: [{
+            Key: s3Key1,
+            LastModified: moment().subtract(2, 'weeks').toISOString(),
             ETag: 'example-md5',
             Size: 1024
           }]
