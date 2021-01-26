@@ -17,7 +17,7 @@ jest.mock('@defra-fish/connectors-lib', () => {
   return {
     AWS: actual.AWS,
     salesApi: {
-      ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => {}) }), {})
+      ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => { }) }), {})
     }
   }
 })
@@ -183,7 +183,7 @@ describe('s3 operations', () => {
           IsTruncated: false,
           Contents: [{
             Key: s3Key1,
-            LastModified: moment().subtract(2, 'weeks').toISOString(),
+            LastModified: moment().subtract(1, 'days').toISOString(),
             ETag: 'example-md5',
             Size: 1024
           }]
@@ -194,7 +194,7 @@ describe('s3 operations', () => {
           NextContinuationToken: 'token',
           Contents: [{
             Key: s3Key1,
-            LastModified: moment().subtract(2, 'weeks').toISOString(),
+            LastModified: moment().subtract(1, 'days').toISOString(),
             ETag: 'example-md5',
             Size: 1024
           }]
