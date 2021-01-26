@@ -39,7 +39,7 @@ const getS3FileList = async function (token, fileList = []) {
  */
 export const refreshS3Metadata = async () => {
   const fileList = await getS3FileList()
-  const recentFiles = fileList.filter(file => moment(new Date(file.LastModified)) > moment().subtract(1, 'weeks'))
+  const recentFiles = fileList.filter(file => moment(new Date(file.LastModified)) > moment().subtract(1, 'days'))
 
   console.log(`Processing ${recentFiles.length} S3 files`)
 
