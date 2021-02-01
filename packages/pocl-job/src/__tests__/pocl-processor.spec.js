@@ -31,7 +31,15 @@ jest.mock('@defra-fish/connectors-lib', () => ({
   })
 }))
 
-jest.mock('../config.js')
+jest.mock('../config.js', () => ({
+  initialise: jest.fn(),
+  ftp: {
+    path: '/ftpservershare/'
+  },
+  s3: {
+    bucket: 'testbucket'
+  }
+}))
 jest.mock('../transport/ftp-to-s3.js')
 jest.mock('../transport/s3-to-local.js')
 jest.mock('../io/db.js')

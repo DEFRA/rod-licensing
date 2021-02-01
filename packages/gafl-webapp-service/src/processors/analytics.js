@@ -6,17 +6,26 @@ export const initialiseAnalyticsSessionData = async (request, previousSessionSta
   if (request.query._ga) {
     clientId = /^.+-(?<clientId>.+)$/.exec(request.query._ga).groups.clientId
   }
-  // The user may have an existing session, in which case we need to examine this for attribution and/or clientId
   await request.cache().helpers.status.set({
     gaClientId: previousSessionStatusData?.gaClientId || clientId,
-    attribution: previousSessionStatusData?.attribution || {
+    attribution: getAttribution(previousSessionStatusData, request)
+  })
+}
+
+const getAttribution = (sessionData, request) => {
+  // The user may have an existing session, in which case we need to examine this for attribution and/or clientId
+  if (sessionData) {
+    return sessionData.attribution
+  } else if (request.query[UTM.CAMPAIGN] && request.query[UTM.SOURCE]) {
+    return {
       [UTM.CAMPAIGN]: request.query[UTM.CAMPAIGN],
       [UTM.MEDIUM]: request.query[UTM.MEDIUM],
       [UTM.CONTENT]: request.query[UTM.CONTENT],
       [UTM.SOURCE]: request.query[UTM.SOURCE],
       [UTM.TERM]: request.query[UTM.TERM]
     }
-  })
+  }
+  return undefined
 }
 
 export const getTrackingProductDetailsFromTransaction = ({ permissions }) =>

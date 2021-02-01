@@ -35,14 +35,16 @@ export default async (premises, postcode) => {
   debug({ results })
 
   // Map and enumerate the results
-  return results.map((r, idx) => ({
-    id: idx,
-    address: r.address,
-    premises: r.premises,
-    street: r.street_address,
-    locality: r.locality,
-    town: r.city,
-    postcode: r.postcode,
-    country: r.country
-  }))
+  return results
+    ? results.map((r, idx) => ({
+      id: idx,
+      address: r.address,
+      premises: r.premises,
+      street: r.street_address,
+      locality: r.locality,
+      town: r.city,
+      postcode: r.postcode,
+      country: r.country
+    }))
+    : []
 }

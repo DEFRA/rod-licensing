@@ -49,13 +49,7 @@ describe('initialiseAnalyticsSessionData', () => {
     expect(fakeCacheSetter).toHaveBeenCalledWith(
       expect.objectContaining({
         gaClientId: 'test123',
-        attribution: {
-          utm_campaign: undefined,
-          utm_source: undefined,
-          utm_medium: undefined,
-          utm_term: undefined,
-          utm_content: undefined
-        }
+        attribution: undefined
       })
     )
   })

@@ -1,6 +1,7 @@
 import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { execute } from '../processor.js'
 import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 
 jest.mock('@defra-fish/connectors-lib')
 
@@ -62,7 +63,7 @@ const govUkPayStatusEntries = [
     }
   },
   {
-    payment_id: '7lufvi9sbh077rvrrmnqo63vme',
+    payment_id: '7lufvi9sbh077rvrrmnqo63vmf',
     state: {
       code: GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED,
       status: 'cancelled',
@@ -70,7 +71,7 @@ const govUkPayStatusEntries = [
     }
   },
   {
-    payment_id: '7lufvi9sbh077rvrrmnqo63vme',
+    payment_id: '7lufvi9sbh077rvrrmnqo63vmg',
     state: {
       code: GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED,
       status: 'failed',
@@ -78,6 +79,8 @@ const govUkPayStatusEntries = [
     }
   }
 ]
+
+const govUkPayStatusNotFound = { code: 'P0200', description: 'Not found' }
 
 const createPaymentEventsEntry = paymentStatus => {
   return {
@@ -155,6 +158,61 @@ describe('processor', () => {
     })
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith('a0e0e5c3-1004-4271-80ba-d05eda3e8215', {
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+    })
+  })
+
+  describe('Result not present in GovPay', () => {
+    const NOT_FOUND_ID = journalEntries[2].id
+    const NOT_FOUND_PAYMENT_REFERENCE = journalEntries[2].paymentReference
+    beforeEach(() => {
+      salesApi.paymentJournals.getAll.mockReturnValue(journalEntries)
+      salesApi.updatePaymentJournal.mockImplementation(() => {})
+      salesApi.finaliseTransaction.mockImplementation(() => {})
+
+      govUkPayApi.fetchPaymentEvents.mockImplementation(paymentReference => {
+        if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
+          return { json: async () => govUkPayStatusNotFound }
+        }
+        return { json: async () => createPaymentEventsEntry(govUkPayStatusEntries.find(se => se.payment_id === paymentReference)) }
+      })
+
+      govUkPayApi.fetchPaymentStatus.mockImplementation(paymentReference => {
+        if (paymentReference === NOT_FOUND_PAYMENT_REFERENCE) {
+          return { json: async () => govUkPayStatusNotFound }
+        }
+        return { json: async () => govUkPayStatusEntries.find(se => se.payment_id === paymentReference) }
+      })
+    })
+
+    it("When a payment isn't present in GovPay, no error is thrown", async () => {
+      await expect(execute(1, 1)).resolves.toBeUndefined()
+    })
+
+    it("when a payment isn't present in GovPay, other results process", async () => {
+      await execute(1, 1)
+
+      const foundIds = journalEntries.map(j => j.id).filter(id => id !== NOT_FOUND_ID)
+      for (const foundId of foundIds) {
+        expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(foundId, expect.any(Object))
+      }
+    })
+
+    it("when a payment isn't present in GovPay, it's marked as expired after 3 hours", async () => {
+      const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
+      missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
+      await execute(1, 1)
+      expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(NOT_FOUND_ID, expect.objectContaining({
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+      }))
+    })
+
+    it("when a payment isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
+      const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
+      missingJournalEntry.paymentTimestamp = moment().subtract(2, 'hours').toISOString()
+      await execute(1, 1)
+      expect(salesApi.updatePaymentJournal).not.toHaveBeenCalledWith(NOT_FOUND_ID, expect.objectContaining({
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+      }))
     })
   })
 })

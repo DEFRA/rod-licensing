@@ -12,17 +12,19 @@ import db from 'debug'
 import { RATE_LIMIT_MS_DEFAULT, CONCURRENCY_DEFAULT } from '../constants.js'
 const debug = db('payment-mop-up-job:execute')
 
+const MISSING_PAYMENT_EXPIRY_TIMEOUT = 3 // number of hours to wait before marking a missing payment as expired
+
 const limiter = new Bottleneck({
   minTime: process.env.RATE_LIMIT_MS || RATE_LIMIT_MS_DEFAULT,
   maxConcurrent: process.env.CONCURRENCY || CONCURRENCY_DEFAULT
 })
 
 const processPaymentResults = async transaction => {
-  if (transaction.paymentStatus.state.status === 'error') {
+  if (transaction.paymentStatus.state?.status === 'error') {
     await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
   }
 
-  if (transaction.paymentStatus.state.status === 'success') {
+  if (transaction.paymentStatus.state?.status === 'success') {
     debug(`Completing mop up finalization for transaction id: ${transaction.id}`)
     await salesApi.finaliseTransaction(transaction.id, {
       payment: {
@@ -35,18 +37,26 @@ const processPaymentResults = async transaction => {
     await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed })
   } else {
     // The payment expired
-    if (transaction.paymentStatus.state.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
+    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired })
     }
 
     // The user cancelled the payment
-    if (transaction.paymentStatus.state.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
+    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Cancelled })
     }
 
     // The payment was rejected
-    if (transaction.paymentStatus.state.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
+    if (transaction.paymentStatus.state?.code === GOVUK_PAY_ERROR_STATUS_CODES.REJECTED) {
       await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Failed })
+    }
+
+    // The payment's not found and three hours have elapsed
+    if (
+      transaction.paymentStatus.code === GOVUK_PAY_ERROR_STATUS_CODES.NOT_FOUND &&
+      moment().diff(moment(transaction.paymentTimestamp), 'hours') >= MISSING_PAYMENT_EXPIRY_TIMEOUT
+    ) {
+      await salesApi.updatePaymentJournal(transaction.id, { paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired })
     }
   }
 }
@@ -54,7 +64,7 @@ const processPaymentResults = async transaction => {
 const getStatus = async paymentReference => {
   const paymentStatusResponse = await govUkPayApi.fetchPaymentStatus(paymentReference)
   const paymentStatus = await paymentStatusResponse.json()
-  if (paymentStatus.state.status === 'success') {
+  if (paymentStatus.state?.status === 'success') {
     const eventsResponse = await govUkPayApi.fetchPaymentEvents(paymentReference)
     const { events } = await eventsResponse.json()
     paymentStatus.transactionTimestamp = events.find(e => e.state.status === 'success')?.updated

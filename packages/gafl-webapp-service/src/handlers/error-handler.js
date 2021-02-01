@@ -19,7 +19,8 @@ export const errorHandler = async (request, h) => {
     return h
       .view(CLIENT_ERROR.page, {
         clientError: request.response.output.payload,
-        uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri }
+        path: request.path,
+        uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri, agreed: AGREED.uri }
       })
       .code(request.response.output.statusCode)
   } else {

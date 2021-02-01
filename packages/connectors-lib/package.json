@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.4.0",
+  "version": "1.5.0-rc.25",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
@@ -34,10 +34,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@airbrake/node": "^1.4.1",
-    "aws-sdk": "^2.779.0",
-    "debug": "^4.2.0",
-    "ioredis": "^4.19.0",
+    "@airbrake/node": "^1.4.2",
+    "aws-sdk": "^2.825.0",
+    "debug": "^4.3.1",
+    "ioredis": "^4.19.4",
     "node-fetch": "^2.6.1",
     "redlock": "^4.2.0"
   }
