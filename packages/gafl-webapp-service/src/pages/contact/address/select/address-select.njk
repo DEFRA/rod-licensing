@@ -22,7 +22,7 @@
 {% endfor %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">{{ data.addresses.length }} addresses found for {{ data.searchTerms.premises}} and {{ data.searchTerms.postcode}}&nbsp;&nbsp;<a href="{{ data.lookupPage }}">Change</a></p>
+    <p class="govuk-body-m">{{ data.addresses.length }} {{ "address" if data.addresses.length === 1 else "addresses"}} found for {{ data.searchTerms.premises}} and {{ data.searchTerms.postcode}}&nbsp;&nbsp;<a href="{{ data.lookupPage }}">Change</a></p>
     {{ govukRadios({
            idPrefix: "address",
            name: "address",

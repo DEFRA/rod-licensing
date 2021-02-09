@@ -188,10 +188,11 @@ describe('The easy renewal, change start date page', () => {
   })
 
   describe('where the the licence expired earlier today', () => {
+    const PREFERRED_HOUR = 15
     beforeEach(async () => {
       const newAuthenticationResult = Object.assign({}, authenticationResult)
       newAuthenticationResult.permission.endDate = moment()
-        .add(-2, 'hours')
+        .set(PREFERRED_HOUR - 2, 'hour') // set time to 13:00 today
         .toISOString()
       salesApi.authenticate.mockResolvedValue(newAuthenticationResult)
       await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(ADULT_TODAY)))
@@ -208,7 +209,7 @@ describe('The easy renewal, change start date page', () => {
     })
     it('starting the licence today will set after payment', async () => {
       await injectWithCookies('GET', RENEWAL_START_DATE.uri)
-      await injectWithCookies('POST', RENEWAL_START_DATE.uri, startDateHelper(moment()))
+      await injectWithCookies('POST', RENEWAL_START_DATE.uri, startDateHelper(moment().set(PREFERRED_HOUR, 'hour'))) // set time to 15:00 today
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
@@ -218,7 +219,7 @@ describe('The easy renewal, change start date page', () => {
     })
     it('starting the licence tomorrow will start at the beginning of the day', async () => {
       await injectWithCookies('GET', RENEWAL_START_DATE.uri)
-      await injectWithCookies('POST', RENEWAL_START_DATE.uri, startDateHelper(moment().add(1, 'day')))
+      await injectWithCookies('POST', RENEWAL_START_DATE.uri, startDateHelper(moment().set(PREFERRED_HOUR, 'hour').add(1, 'day'))) // set time to 15:00 tomorrow
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
