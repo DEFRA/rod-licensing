@@ -42,7 +42,8 @@ const paymentMethods = {
   2: 'Cheque',
   3: 'Stamps',
   4: 'Debit card',
-  5: 'Credit card'
+  5: 'Credit card',
+  6: 'Direct debit'
 }
 
 /**
@@ -53,6 +54,8 @@ export const MethodOfPayment = new Binding({
   element: 'MOPEX',
   transform: context => paymentMethods[Binding.TransformTextOnly(context)] || 'Other'
 })
+
+export const dataSource = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
 
 /**
  * Transaction record (the <REC> element)
@@ -94,7 +97,7 @@ export const Transaction = new Binding({
     return {
       id: children[SerialNumber.element],
       createTransactionPayload: {
-        dataSource: POST_OFFICE_DATASOURCE,
+        dataSource: children[dataSource.element] || POST_OFFICE_DATASOURCE,
         permissions: [
           {
             licensee: {
@@ -129,7 +132,7 @@ export const Transaction = new Binding({
         payment: {
           timestamp: transactionDate,
           amount: children[AmountPaid.element],
-          source: POST_OFFICE_DATASOURCE,
+          source: children[dataSource.element] || POST_OFFICE_DATASOURCE,
           channelId: children[ChannelId.element],
           method: children[MethodOfPayment.element]
         }
