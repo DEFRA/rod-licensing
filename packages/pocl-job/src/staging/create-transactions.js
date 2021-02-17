@@ -14,20 +14,25 @@ const debug = db('pocl:staging')
  */
 export const createTransactions = async xmlFilePath => {
   const filename = Path.basename(xmlFilePath)
+  console.log(`getting initial state ${filename}`)
   const state = await getInitialState(filename)
+  console.log('got initial state, beginning transform', state)
 
   await transform(xmlFilePath, async function * (source) {
     for await (const data of source) {
+      console.log('transform', data)
       if (!state.processedIds.has(data.id)) {
         state.processedIds.add(data.id)
         state.buffer.push(data)
         if (state.buffer.length === MAX_CREATE_TRANSACTION_BATCH_SIZE) {
+          console.log('Max buffer size, creating transactions')
           await createTransactionsInSalesApi(filename, state)
         }
       }
     }
   })
   // Process any remaining content of the buffer
+  console.log('process remaining content')
   await createTransactionsInSalesApi(filename, state)
   return { succeeded: state.succeeded, failed: state.failed }
 }
