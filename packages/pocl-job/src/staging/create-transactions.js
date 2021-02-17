@@ -75,7 +75,9 @@ const getInitialState = async filename => {
  */
 const createTransactionsInSalesApi = async (filename, state) => {
   if (state.buffer.length) {
+    console.log('createTransactionsInSalesApi', state)
     const createResults = await salesApi.createTransactions(state.buffer.map(item => item.createTransactionPayload))
+    console.log('createResults', createResults)
 
     const succeeded = []
     const failed = []
@@ -84,6 +86,7 @@ const createTransactionsInSalesApi = async (filename, state) => {
       ;(result.statusCode === 201 ? succeeded : failed).push({ record, result })
     })
 
+    console.log('processing...')
     await processSucceeded(filename, succeeded)
     await processFailed(filename, failed)
 
