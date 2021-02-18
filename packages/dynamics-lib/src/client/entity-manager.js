@@ -11,16 +11,12 @@ export async function persist (...entities) {
   try {
     dynamicsClient.startBatch()
     entities.forEach(entity => {
-      if (entity.isNew()) {
-        dynamicsClient.createRequest(entity.toPersistRequest())
-      } else {
-        dynamicsClient.updateRequest(entity.toPersistRequest())
-      }
+      dynamicsClient.upsertRequest(entity.toPersistRequest())
     })
     return await dynamicsClient.executeBatch()
   } catch (e) {
     const error = e.length ? e[0] : e
-    const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
+    const requestDetails = entities.map(entity => ({ upsertRequest: entity.toPersistRequest() }))
     console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
     throw error
   }
