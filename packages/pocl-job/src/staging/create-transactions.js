@@ -14,21 +14,14 @@ const debug = db('pocl:staging')
  */
 export const createTransactions = async xmlFilePath => {
   const filename = Path.basename(xmlFilePath)
-  console.log(`getting initial state ${filename}`)
   const state = await getInitialState(filename)
-  console.log('got initial state, beginning transform', state)
 
   await transform(xmlFilePath, async function * (source) {
     for await (const data of source) {
-      console.log('transform', data)
       if (!state.processedIds.has(data.id)) {
-        console.log(`processing ${data.id}`)
         state.processedIds.add(data.id)
-        console.log('pushing data to state buffer', data)
         state.buffer.push(data)
-        console.log('pushed data to state buffer')
         if (state.buffer.length === MAX_CREATE_TRANSACTION_BATCH_SIZE) {
-          console.log('Max buffer size, creating transactions')
           await createTransactionsInSalesApi(filename, state)
         }
       }
@@ -78,11 +71,7 @@ const getInitialState = async filename => {
  */
 const createTransactionsInSalesApi = async (filename, state) => {
   if (state.buffer.length) {
-    console.log('createTransactionsInSalesApi', JSON.stringify(state))
-    const transactions = state.buffer.map(item => item.createTransactionPayload)
-    console.log('transactions', JSON.stringify(transactions))
-    const createResults = await salesApi.createTransactions(transactions)
-    console.log('createResults', createResults)
+    const createResults = await salesApi.createTransactions(state.buffer.map(item => item.createTransactionPayload))
 
     const succeeded = []
     const failed = []
@@ -91,7 +80,6 @@ const createTransactionsInSalesApi = async (filename, state) => {
       ;(result.statusCode === 201 ? succeeded : failed).push({ record, result })
     })
 
-    console.log('processing...')
     await processSucceeded(filename, succeeded)
     await processFailed(filename, failed)
 

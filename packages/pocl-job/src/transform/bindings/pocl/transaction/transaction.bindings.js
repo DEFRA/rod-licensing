@@ -97,7 +97,7 @@ export const Transaction = new Binding({
     return {
       id: children[SerialNumber.element],
       createTransactionPayload: {
-        dataSource: children[dataSource.element] || POST_OFFICE_DATASOURCE,
+        dataSource: children[dataSource.element].value || POST_OFFICE_DATASOURCE,
         permissions: [
           {
             licensee: {
