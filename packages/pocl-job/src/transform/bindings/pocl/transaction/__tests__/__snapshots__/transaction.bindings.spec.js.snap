@@ -32,7 +32,7 @@ Object {
       "amount": 3.75,
       "channelId": "123456",
       "method": "Direct debit",
-      "source": "DDE File",
+      "source": "Direct Debit",
       "timestamp": "2020-01-01T15:03:17.000Z",
     },
   },

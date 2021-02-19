@@ -16,7 +16,7 @@ export const finaliseTransactions = async xmlFilePath => {
   const filename = Path.basename(xmlFilePath)
   console.log(`got basename: ${filename}, getting initial state`)
   const state = await getInitialState(filename)
-  console.log('got initial state, finalising in Sales API', state)
+  console.log('got initial state, finalising in Sales API', JSON.stringify(state))
   for (let i = 0; i < state.remainingRecords.length; i += MAX_FINALISE_TRANSACTION_BATCH_SIZE) {
     state.buffer = state.remainingRecords.slice(i, i + MAX_FINALISE_TRANSACTION_BATCH_SIZE)
     await finaliseTransactionsInSalesApi(filename, state)

@@ -94,6 +94,7 @@ export const Transaction = new Binding({
       contactBindings.CommsByPost.element
     )
     const dataSource = children[dataSourceBinding.element] ? children[dataSourceBinding.element].value : POST_OFFICE_DATASOURCE
+    const paymentSource = dataSource === 'DDE File' ? 'Direct Debit' : POST_OFFICE_DATASOURCE
 
     return {
       id: children[SerialNumber.element],
@@ -133,7 +134,7 @@ export const Transaction = new Binding({
         payment: {
           timestamp: transactionDate,
           amount: children[AmountPaid.element],
-          source: dataSource,
+          source: paymentSource,
           channelId: children[ChannelId.element],
           method: children[MethodOfPayment.element]
         }
