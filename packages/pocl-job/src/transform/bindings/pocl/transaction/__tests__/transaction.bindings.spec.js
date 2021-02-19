@@ -90,7 +90,7 @@ describe('transaction transforms', () => {
 
   it('transforms a DDE record - gmt time, no concession, email contact', async () => {
     const result = await Transaction.transform(generateInputJSON({
-      DATA_SOURCE: 'DDE File',
+      DATA_SOURCE: { value: 'DDE File' },
       MOPEX: { value: '6' }
     }))
 

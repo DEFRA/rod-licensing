@@ -55,7 +55,7 @@ export const MethodOfPayment = new Binding({
   transform: context => paymentMethods[Binding.TransformTextOnly(context)] || 'Other'
 })
 
-export const dataSource = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
+export const dataSourceBinding = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
 
 /**
  * Transaction record (the <REC> element)
@@ -93,11 +93,12 @@ export const Transaction = new Binding({
       contactBindings.CommsBySms.element,
       contactBindings.CommsByPost.element
     )
+    const dataSource = children[dataSourceBinding.element] ? children[dataSourceBinding.element].value : POST_OFFICE_DATASOURCE
 
     return {
       id: children[SerialNumber.element],
       createTransactionPayload: {
-        dataSource: children[dataSource.element].value || POST_OFFICE_DATASOURCE,
+        dataSource,
         permissions: [
           {
             licensee: {
@@ -132,7 +133,7 @@ export const Transaction = new Binding({
         payment: {
           timestamp: transactionDate,
           amount: children[AmountPaid.element],
-          source: children[dataSource.element] || POST_OFFICE_DATASOURCE,
+          source: dataSource,
           channelId: children[ChannelId.element],
           method: children[MethodOfPayment.element]
         }
