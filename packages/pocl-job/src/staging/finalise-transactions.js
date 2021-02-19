@@ -67,13 +67,19 @@ const getInitialState = async filename => {
  * @returns {Promise<*>}
  */
 const finaliseTransactionsInSalesApi = async (filename, state) => {
-  console.log('finalising results')
+  const transactionData = state.buffer.map(r => ({
+    transactionId: r.createTransactionId,
+    transactionFile: filename,
+    ...r.finaliseTransactionPayload
+  }))
+
+  console.log('finalising results', transactionData)
   const finalisationResults = await Promise.allSettled(
     state.buffer.map(r =>
       salesApi.finaliseTransaction(r.createTransactionId, { transactionFile: filename, ...r.finaliseTransactionPayload })
     )
   )
-  console.log('results finalised')
+  console.log('results finalised', finalisationResults)
   const succeeded = []
   const failed = []
   state.buffer.forEach((record, idx) => {
