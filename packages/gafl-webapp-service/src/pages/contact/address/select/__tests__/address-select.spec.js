@@ -1,5 +1,6 @@
 import {
   ADDRESS_SELECT,
+  LICENCE_FULFILMENT,
   CONTACT,
   ADDRESS_LOOKUP,
   TEST_TRANSACTION,
@@ -15,7 +16,7 @@ import {
 import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
 import searchResultsMany from '../../../../../services/address-lookup/__mocks__/data/search-results-many'
 
-import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
+import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 
@@ -44,14 +45,11 @@ describe('The address select page', () => {
     expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
   })
 
-  // TODO write test for 12 month licence
   describe('on successful submission', async () => {
     beforeEach(async d => {
       // Set up the licence details
-      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       await injectWithCookies('POST', LICENCE_SUMMARY.uri)
 
       // Set up the contact details
@@ -75,10 +73,36 @@ describe('The address select page', () => {
       d()
     })
 
-    it('redirects to the contact page', async () => {
+    it('redirects to the contact page if licence length is 1 day', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(CONTACT.uri)
+    })
+
+    it('redirects to the contact page if licence length is 8 day', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
+      const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
+    })
+
+    it('redirects to the contact page if licence length is is 12 months and junior', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
+    })
+
+    it('redirects to the licence fulfilment page if licence length is 12 months and not junior', async () => {
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
     })
 
     it('redirects to the summary page if the summary page is seen', async () => {

@@ -3,6 +3,7 @@ import mockDefraCountries from '../../../../../__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
 import {
   ADDRESS_ENTRY,
+  LICENCE_FULFILMENT,
   CONTACT,
   TEST_TRANSACTION,
   CONTACT_SUMMARY,
@@ -16,7 +17,7 @@ import {
   NEW_TRANSACTION,
   NEWSLETTER
 } from '../../../../../uri.js'
-import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
+import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 
@@ -111,20 +112,55 @@ describe('The manual address entry page', () => {
     expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
   })
 
-  it('redirects to the contact page on posting a valid UK address', async () => {
-    const addr = Object.assign({}, goodAddress)
-    const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTACT.uri)
+  describe('on successful valid UK address submission', () => {
+    it('should correctly save the address details', async () => {
+      const addr = Object.assign({}, goodAddress)
+      await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      expect(JSON.parse(payload).permissions[0].licensee).toMatchObject({
+        organisation: null,
+        premises: '14 Howecroft Court',
+        street: 'Eastmead Lane',
+        town: 'Bristol',
+        postcode: 'BS9 1HJ',
+        countryCode: 'GB'
+      })
+    })
 
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee).toEqual({
-      organisation: null,
-      premises: '14 Howecroft Court',
-      street: 'Eastmead Lane',
-      town: 'Bristol',
-      postcode: 'BS9 1HJ',
-      countryCode: 'GB'
+    it('redirects to the contact page if it is a 1 day adult licence', async () => {
+      const addr = Object.assign({}, goodAddress)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+      const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
+    })
+
+    it('redirects to the contact page if it is 8 day adult licence', async () => {
+      const addr = Object.assign({}, goodAddress)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+      const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
+    })
+
+    it('redirects to the licence fulfilment page if it is a 12 month adult licence', async () => {
+      const addr = Object.assign({}, goodAddress)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+    })
+
+    it('redirects to the contact page if it is a 12 month junior licence', async () => {
+      const addr = Object.assign({}, goodAddress)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
     })
   })
 
@@ -137,7 +173,7 @@ describe('The manual address entry page', () => {
     expect(response.headers.location).toBe(CONTACT.uri)
 
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee).toEqual({
+    expect(JSON.parse(payload).permissions[0].licensee).toMatchObject({
       organisation: null,
       premises: '14 Howecroft Court',
       street: 'Eastmead Lane',
@@ -146,8 +182,6 @@ describe('The manual address entry page', () => {
       countryCode: 'FR'
     })
   })
-
-  // TODO write test for 12 month licence
 
   it('redirects to contact summary page on posting a valid non-UK address if the contact summary has been seen', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
