@@ -48,6 +48,11 @@ export const CommonResults = {
   YES: 'yes'
 }
 
+export const allowsPhysicalLicence = {
+  YES: 'yes',
+  NO: 'no'
+}
+
 // If the user has seen the summary page these are set in the status
 export const CONTACT_SUMMARY_SEEN = 'contact-summary'
 export const LICENCE_SUMMARY_SEEN = 'licence-summary'

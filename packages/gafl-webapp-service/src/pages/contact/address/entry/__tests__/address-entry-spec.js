@@ -147,6 +147,8 @@ describe('The manual address entry page', () => {
     })
   })
 
+  // TODO write test for 12 month licence
+
   it('redirects to contact summary page on posting a valid non-UK address if the contact summary has been seen', async () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     await injectWithCookies('GET', CONTROLLER.uri)

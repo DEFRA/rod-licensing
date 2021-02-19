@@ -10,6 +10,7 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  LICENCE_FULFILMENT,
   CONTACT,
   NEWSLETTER,
   CONTACT_SUMMARY,
@@ -23,7 +24,7 @@ import {
   RENEWAL_START_DATE
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, allowsPhysicalLicence } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
@@ -193,7 +194,10 @@ export default [
   {
     current: ADDRESS_ENTRY,
     next: {
-      [CommonResults.OK]: {
+      [allowsPhysicalLicence.YES]: {
+        page: LICENCE_FULFILMENT
+      },
+      [allowsPhysicalLicence.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -206,7 +210,10 @@ export default [
   {
     current: ADDRESS_SELECT,
     next: {
-      [CommonResults.OK]: {
+      [allowsPhysicalLicence.YES]: {
+        page: LICENCE_FULFILMENT
+      },
+      [allowsPhysicalLicence.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -215,7 +222,18 @@ export default [
     },
     backLink: ADDRESS_LOOKUP.uri
   },
-
+  {
+    current: LICENCE_FULFILMENT,
+    next: {
+      [CommonResults.OK]: {
+        page: CONTACT
+      },
+      [CommonResults.SUMMARY]: {
+        page: CONTACT_SUMMARY
+      }
+    },
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+  },
   {
     current: CONTACT,
     next: {

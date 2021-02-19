@@ -44,13 +44,14 @@ describe('The address select page', () => {
     expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
   })
 
+  // TODO write test for 12 month licence
   describe('on successful submission', async () => {
     beforeEach(async d => {
       // Set up the licence details
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       await injectWithCookies('POST', LICENCE_SUMMARY.uri)
 
       // Set up the contact details
