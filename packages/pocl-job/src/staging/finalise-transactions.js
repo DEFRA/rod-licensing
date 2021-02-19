@@ -12,12 +12,16 @@ const debug = db('pocl:staging')
  * @returns {Promise<{failed: number, succeeded: number}>}
  */
 export const finaliseTransactions = async xmlFilePath => {
+  console.log('getting filename path')
   const filename = Path.basename(xmlFilePath)
+  console.log(`got basename: ${filename}, getting initial state`)
   const state = await getInitialState(filename)
+  console.log('got initial state, finalising in Sales API', state)
   for (let i = 0; i < state.remainingRecords.length; i += MAX_FINALISE_TRANSACTION_BATCH_SIZE) {
     state.buffer = state.remainingRecords.slice(i, i + MAX_FINALISE_TRANSACTION_BATCH_SIZE)
     await finaliseTransactionsInSalesApi(filename, state)
   }
+  console.log(`finalised in Sales API, ${state.succeeded} succeeded and ${state.failed} failed`)
   return { succeeded: state.succeeded, failed: state.failed }
 }
 
@@ -63,11 +67,13 @@ const getInitialState = async filename => {
  * @returns {Promise<*>}
  */
 const finaliseTransactionsInSalesApi = async (filename, state) => {
+  console.log('finalising results')
   const finalisationResults = await Promise.allSettled(
     state.buffer.map(r =>
       salesApi.finaliseTransaction(r.createTransactionId, { transactionFile: filename, ...r.finaliseTransactionPayload })
     )
   )
+  console.log('results finalised')
   const succeeded = []
   const failed = []
   state.buffer.forEach((record, idx) => {
@@ -85,9 +91,11 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       failed.push({ record, reason: result.reason })
     }
   })
+  console.log('processing successes and failures')
 
   await processSucceeded(filename, succeeded)
   await processFailed(filename, failed)
+  console.log('processed successes and failures')
 
   state.succeeded += succeeded.length
   state.failed += failed.length
@@ -102,6 +110,7 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
  * @returns {Promise<void>}
  */
 const processSucceeded = async (filename, succeeded) => {
+  console.log('processing successes')
   const recordUpdates = succeeded.map(({ record, response }) => {
     record.stage = RECORD_STAGE.TransactionFinalised
     delete record.createTransactionPayload

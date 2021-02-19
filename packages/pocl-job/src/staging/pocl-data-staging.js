@@ -68,7 +68,9 @@ export const stage = async xmlFilePath => {
   if (fileRecord.stage === FILE_STAGE.Finalising) {
     debug('Finalising all staged transactions for file %s.', filename)
     const { succeeded, failed } = await finaliseTransactions(xmlFilePath)
+    console.log('finalised, udpating staging table')
     await updateFileStagingTable({ filename, stage: FILE_STAGE.Completed, finalisationSucceeded: succeeded, finalisationFailed: failed })
+    console.log('file staging table updated')
     fileRecord.stage = FILE_STAGE.Completed
     debug('Finished finalising records for file %s. Succeeded: %s, Failed: %s', filename, succeeded, failed)
   }
