@@ -9,7 +9,6 @@ export default async request => {
     return CommonResults.SUMMARY
   } else if (isPhysical(permission)) {
     return allowsPhysicalLicence.YES
-  } else {
-    return allowsPhysicalLicence.NO
   }
+  return allowsPhysicalLicence.NO
 }
