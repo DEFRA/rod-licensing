@@ -11,6 +11,7 @@ import {
   CONTACT_SUMMARY,
   ADDRESS_LOOKUP,
   ADDRESS_ENTRY,
+  LICENCE_FULFILMENT,
   CONTACT,
   NEWSLETTER
 } from '../../uri.js'
@@ -105,6 +106,17 @@ describe('The address-entry page', () => {
     expect(n.backLink({})).toBe(ADDRESS_LOOKUP.uri)
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
+    expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  })
+})
+
+describe('The licence-fulfilment page', () => {
+  it('has a back-link to the address lookup page if the contact summary has not been seen', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
+    expect(n.backLink({})).toBe(ADDRESS_LOOKUP.uri)
+  })
+  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
   })
 })
