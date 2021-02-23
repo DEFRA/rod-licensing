@@ -52,13 +52,7 @@ export const stage = async xmlFilePath => {
   if (fileRecord.stage === FILE_STAGE.Staging) {
     debug('Staging records for file %s.', filename)
     const { succeeded, failed } = await createTransactions(xmlFilePath)
-    debug('updating file staging table')
-    try {
-      await updateFileStagingTable({ filename, stage: FILE_STAGE.Finalising, stagingSucceeded: succeeded, stagingFailed: failed })
-    } catch (e) {
-      debug('error updating file staging table:', e)
-      throw e
-    }
+    await updateFileStagingTable({ filename, stage: FILE_STAGE.Finalising, stagingSucceeded: succeeded, stagingFailed: failed })
     fileRecord.stage = FILE_STAGE.Finalising
     debug('Finished staging records for file %s. Succeeded: %s, Failed: %s', filename, succeeded, failed)
   }

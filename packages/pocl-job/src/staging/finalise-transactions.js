@@ -69,13 +69,11 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
     ...r.finaliseTransactionPayload
   }))
 
-  console.log('finalising results', transactionData)
   const finalisationResults = await Promise.allSettled(
     state.buffer.map(r =>
       salesApi.finaliseTransaction(r.createTransactionId, { transactionFile: filename, ...r.finaliseTransactionPayload })
     )
   )
-  console.log('results finalised', finalisationResults)
   const succeeded = []
   const failed = []
   state.buffer.forEach((record, idx) => {
@@ -93,11 +91,9 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
       failed.push({ record, reason: result.reason })
     }
   })
-  console.log('processing successes and failures')
 
   await processSucceeded(filename, succeeded)
   await processFailed(filename, failed)
-  console.log('processed successes and failures')
 
   state.succeeded += succeeded.length
   state.failed += failed.length
@@ -112,7 +108,6 @@ const finaliseTransactionsInSalesApi = async (filename, state) => {
  * @returns {Promise<void>}
  */
 const processSucceeded = async (filename, succeeded) => {
-  console.log('processing successes')
   const recordUpdates = succeeded.map(({ record, response }) => {
     record.stage = RECORD_STAGE.TransactionFinalised
     delete record.createTransactionPayload
