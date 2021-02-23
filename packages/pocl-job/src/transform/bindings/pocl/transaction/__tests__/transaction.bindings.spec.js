@@ -1,5 +1,5 @@
 import { Transaction } from '../transaction.bindings.js'
-import { POST_OFFICE_DATASOURCE, DDE_DATASOURCE } from '../../../../../staging/constants.js'
+import { POST_OFFICE_DATASOURCE, DIRECT_DEBIT_DATASOURCE } from '../../../../../staging/constants.js'
 
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
@@ -90,11 +90,30 @@ describe('transaction transforms', () => {
 
   it('transforms a DDE record - gmt time, no concession, email contact', async () => {
     const result = await Transaction.transform(generateInputJSON({
-      DATA_SOURCE: { value: 'DDE File' },
+      DATA_SOURCE: { value: DIRECT_DEBIT_DATASOURCE },
       MOPEX: { value: '6' }
     }))
 
     expect(result).toMatchSnapshot()
+  })
+
+  it('ignores invalid datasource', async () => {
+    const result = await Transaction.transform(generateInputJSON({
+      DATA_SOURCE: { value: 'Any old rubbish' }
+    }))
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        createTransactionPayload: expect.objectContaining({
+          dataSource: POST_OFFICE_DATASOURCE
+        }),
+        finaliseTransactionPayload: {
+          payment: expect.objectContaining({
+            source: POST_OFFICE_DATASOURCE
+          })
+        }
+      })
+    )
   })
 })
 

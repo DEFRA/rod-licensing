@@ -57,6 +57,13 @@ export const MethodOfPayment = new Binding({
 
 export const dataSourceBinding = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
 
+const getDataSource = children => {
+  if (children[dataSourceBinding.element] && children[dataSourceBinding.element].value === DIRECT_DEBIT_DATASOURCE) {
+    return DIRECT_DEBIT_DATASOURCE
+  }
+  return POST_OFFICE_DATASOURCE
+}
+
 /**
  * Transaction record (the <REC> element)
  * @type {Binding}
@@ -93,7 +100,7 @@ export const Transaction = new Binding({
       contactBindings.CommsBySms.element,
       contactBindings.CommsByPost.element
     )
-    const dataSource = children[dataSourceBinding.element] ? children[dataSourceBinding.element].value : POST_OFFICE_DATASOURCE
+    const dataSource = getDataSource(children)
     const paymentSource = dataSource === DIRECT_DEBIT_DATASOURCE ? DIRECT_DEBIT_PAYMENTSOURCE : POST_OFFICE_DATASOURCE
 
     return {
