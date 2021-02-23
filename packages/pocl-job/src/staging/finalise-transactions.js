@@ -63,12 +63,6 @@ const getInitialState = async filename => {
  * @returns {Promise<*>}
  */
 const finaliseTransactionsInSalesApi = async (filename, state) => {
-  const transactionData = state.buffer.map(r => ({
-    transactionId: r.createTransactionId,
-    transactionFile: filename,
-    ...r.finaliseTransactionPayload
-  }))
-
   const finalisationResults = await Promise.allSettled(
     state.buffer.map(r =>
       salesApi.finaliseTransaction(r.createTransactionId, { transactionFile: filename, ...r.finaliseTransactionPayload })
