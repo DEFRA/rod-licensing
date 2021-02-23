@@ -2,7 +2,7 @@ import { Binding } from '../../binding.js'
 import * as contactBindings from '../contact/contact.bindings.js'
 import * as licenceBindings from '../licence/licence.bindings.js'
 import * as concessionBindings from '../licence/concession.bindings.js'
-import { POST_OFFICE_DATASOURCE } from '../../../../staging/constants.js'
+import { POST_OFFICE_DATASOURCE, DIRECT_DEBIT_DATASOURCE, DIRECT_DEBIT_PAYMENTSOURCE } from '../../../../staging/constants.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
@@ -94,7 +94,7 @@ export const Transaction = new Binding({
       contactBindings.CommsByPost.element
     )
     const dataSource = children[dataSourceBinding.element] ? children[dataSourceBinding.element].value : POST_OFFICE_DATASOURCE
-    const paymentSource = dataSource === 'DDE File' ? 'Direct Debit' : POST_OFFICE_DATASOURCE
+    const paymentSource = dataSource === DIRECT_DEBIT_DATASOURCE ? DIRECT_DEBIT_PAYMENTSOURCE : POST_OFFICE_DATASOURCE
 
     return {
       id: children[SerialNumber.element],

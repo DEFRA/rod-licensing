@@ -28,9 +28,7 @@ export const createTransactions = async xmlFilePath => {
     }
   })
   // Process any remaining content of the buffer
-  console.log('process remaining content')
   await createTransactionsInSalesApi(filename, state)
-  console.log('processed remaining content', { succeeded: state.succeeded, failed: state.failed })
   return { succeeded: state.succeeded, failed: state.failed }
 }
 

@@ -12,16 +12,12 @@ const debug = db('pocl:staging')
  * @returns {Promise<{failed: number, succeeded: number}>}
  */
 export const finaliseTransactions = async xmlFilePath => {
-  console.log('getting filename path')
   const filename = Path.basename(xmlFilePath)
-  console.log(`got basename: ${filename}, getting initial state`)
   const state = await getInitialState(filename)
-  console.log('got initial state, finalising in Sales API', JSON.stringify(state))
   for (let i = 0; i < state.remainingRecords.length; i += MAX_FINALISE_TRANSACTION_BATCH_SIZE) {
     state.buffer = state.remainingRecords.slice(i, i + MAX_FINALISE_TRANSACTION_BATCH_SIZE)
     await finaliseTransactionsInSalesApi(filename, state)
   }
-  console.log(`finalised in Sales API, ${state.succeeded} succeeded and ${state.failed} failed`)
   return { succeeded: state.succeeded, failed: state.failed }
 }
 

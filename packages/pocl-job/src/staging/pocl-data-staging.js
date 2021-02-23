@@ -54,9 +54,7 @@ export const stage = async xmlFilePath => {
     const { succeeded, failed } = await createTransactions(xmlFilePath)
     debug('updating file staging table')
     try {
-      const ufstArgs = { filename, stage: FILE_STAGE.Finalising, stagingSucceeded: succeeded, stagingFailed: failed }
-      console.log('ufstArgs', ufstArgs)
-      await updateFileStagingTable(ufstArgs)
+      await updateFileStagingTable({ filename, stage: FILE_STAGE.Finalising, stagingSucceeded: succeeded, stagingFailed: failed })
     } catch (e) {
       debug('error updating file staging table:', e)
       throw e
@@ -68,9 +66,7 @@ export const stage = async xmlFilePath => {
   if (fileRecord.stage === FILE_STAGE.Finalising) {
     debug('Finalising all staged transactions for file %s.', filename)
     const { succeeded, failed } = await finaliseTransactions(xmlFilePath)
-    console.log('finalised, udpating staging table')
     await updateFileStagingTable({ filename, stage: FILE_STAGE.Completed, finalisationSucceeded: succeeded, finalisationFailed: failed })
-    console.log('file staging table updated')
     fileRecord.stage = FILE_STAGE.Completed
     debug('Finished finalising records for file %s. Succeeded: %s, Failed: %s', filename, succeeded, failed)
   }
