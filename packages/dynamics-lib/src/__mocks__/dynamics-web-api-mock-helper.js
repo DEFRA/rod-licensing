@@ -55,6 +55,7 @@ export const configureDynamicsWebApiMock = (DynamicsWebApi = jest.genMockFromMod
 
   DynamicsWebApi.prototype.retrieveRequest = jest.fn(async () => responseCapableMethod('retrieveRequest'))
   DynamicsWebApi.prototype.createRequest = jest.fn(async () => responseCapableMethod('createRequest'))
+  DynamicsWebApi.prototype.updateRequest = jest.fn(async () => responseCapableMethod('updateRequest'))
   DynamicsWebApi.prototype.upsertRequest = jest.fn(async () => responseCapableMethod('upsertRequest'))
   DynamicsWebApi.prototype.retrieveMultipleRequest = jest.fn(async () => responseCapableMethod('retrieveMultipleRequest'))
   DynamicsWebApi.prototype.retrieveGlobalOptionSets = jest.fn(async () => responseCapableMethod('retrieveGlobalOptionSets'))
