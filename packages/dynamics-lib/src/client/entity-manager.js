@@ -12,15 +12,17 @@ export async function persist (objects, options = {}) {
 
   try {
     dynamicsClient.startBatch()
-    entities.forEach(entity => {
+
+    for (const entity of entities) {
       if (!entity.isNew()) {
-        dynamicsClient.updateRequest(entity.toPersistRequest())
+        await dynamicsClient.updateRequest(entity.toPersistRequest())
       } else if (options.upsert) {
-        dynamicsClient.upsertRequest(entity.toPersistRequest())
+        await dynamicsClient.upsertRequest(entity.toPersistRequest())
       } else {
-        dynamicsClient.createRequest(entity.toPersistRequest())
+        await dynamicsClient.createRequest(entity.toPersistRequest())
       }
-    })
+    }
+
     return await dynamicsClient.executeBatch()
   } catch (e) {
     console.error(e)
