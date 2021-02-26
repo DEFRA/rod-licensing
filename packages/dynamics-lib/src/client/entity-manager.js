@@ -7,9 +7,7 @@ import { CacheableOperation } from './cache.js'
  * @param {...Object<BaseEntity>} entities the entities which shall be persisted
  * @returns {Promise<string[]>} resolving to the ids of the persisted entities
  */
-export async function persist (...objects) {
-  const entities = Array.isArray(objects) ? objects : [objects]
-
+export async function persist (...entities) {
   try {
     dynamicsClient.startBatch()
 
