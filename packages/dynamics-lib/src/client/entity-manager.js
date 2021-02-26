@@ -15,11 +15,11 @@ export async function persist (objects, options = {}) {
 
     for (const entity of entities) {
       if (!entity.isNew()) {
-        await dynamicsClient.updateRequest(entity.toPersistRequest())
+        dynamicsClient.updateRequest(entity.toPersistRequest())
       } else if (options.upsert) {
-        await dynamicsClient.upsertRequest(entity.toPersistRequest())
+        dynamicsClient.upsertRequest(entity.toPersistRequest())
       } else {
-        await dynamicsClient.createRequest(entity.toPersistRequest())
+        dynamicsClient.createRequest(entity.toPersistRequest())
       }
     }
 
