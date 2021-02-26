@@ -144,7 +144,7 @@ describe('transaction service', () => {
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
-        expect(persist).toBeCalledWith(entityExpectations, { upsert: true })
+        expect(persist).toBeCalledWith(...entityExpectations)
         expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
           expect.objectContaining({
             TableName: TRANSACTION_STAGING_TABLE.TableName,

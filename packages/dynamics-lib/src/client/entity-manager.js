@@ -7,16 +7,14 @@ import { CacheableOperation } from './cache.js'
  * @param {...Object<BaseEntity>} entities the entities which shall be persisted
  * @returns {Promise<string[]>} resolving to the ids of the persisted entities
  */
-export async function persist (objects, options = {}) {
-  const entities = Array.isArray(objects) ? objects : [objects]
-
+export async function persist (...entities) {
   try {
     dynamicsClient.startBatch()
 
     for (const entity of entities) {
       if (!entity.isNew()) {
         dynamicsClient.updateRequest(entity.toPersistRequest())
-      } else if (options.upsert) {
+      } else if (entity.isUpsertable()) {
         dynamicsClient.upsertRequest(entity.toPersistRequest())
       } else {
         dynamicsClient.createRequest(entity.toPersistRequest())

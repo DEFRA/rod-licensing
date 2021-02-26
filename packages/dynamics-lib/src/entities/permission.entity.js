@@ -33,6 +33,10 @@ export class Permission extends BaseEntity {
     }
   }))
 
+  isUpsertable () {
+    return true
+  }
+
   /**
    * The {@link EntityDefinition} providing mappings between Dynamics entity and the local entity
    * @type {EntityDefinition}
