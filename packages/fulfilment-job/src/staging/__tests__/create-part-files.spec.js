@@ -85,7 +85,7 @@ describe('createPartFiles', () => {
       ])
     )
     expect(persist).toHaveBeenCalledTimes(1)
-    expect(persist).toHaveBeenCalledWith([fulfilmentFileExpectations, fulfilmentRequestExpectations])
+    expect(persist).toHaveBeenCalledWith(fulfilmentFileExpectations, fulfilmentRequestExpectations)
   })
 
   it('calculates the next file in the sequence correctly', async () => {
@@ -126,7 +126,7 @@ describe('createPartFiles', () => {
       ])
     )
     expect(persist).toHaveBeenCalledTimes(1)
-    expect(persist).toHaveBeenCalledWith([fulfilmentFileExpectations, fulfilmentRequestExpectations])
+    expect(persist).toHaveBeenCalledWith(fulfilmentFileExpectations, fulfilmentRequestExpectations)
   })
 
   it('will write multiple part files as necessary', async () => {
@@ -186,7 +186,7 @@ describe('createPartFiles', () => {
         }
       ])
     )
-    expect(persist).toHaveBeenNthCalledWith(1, [
+    expect(persist).toHaveBeenNthCalledWith(1,
       expect.objectContaining({
         fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
         date: expect.anything(),
@@ -195,8 +195,8 @@ describe('createPartFiles', () => {
         status: expect.objectContaining({ id: 910400000, label: 'Pending', description: 'Pending' })
       }),
       fulfilmentRequestExpectations
-    ])
-    expect(persist).toHaveBeenNthCalledWith(2, [
+    )
+    expect(persist).toHaveBeenNthCalledWith(2,
       expect.objectContaining({
         fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
         date: expect.anything(),
@@ -205,8 +205,8 @@ describe('createPartFiles', () => {
         status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
       }),
       fulfilmentRequestExpectations
-    ])
-    expect(persist).toHaveBeenNthCalledWith(3, [
+    )
+    expect(persist).toHaveBeenNthCalledWith(3,
       expect.objectContaining({
         fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
         date: expect.anything(),
@@ -214,7 +214,7 @@ describe('createPartFiles', () => {
         numberOfRequests: 2,
         status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
       })
-    ])
+    )
   })
 })
 
