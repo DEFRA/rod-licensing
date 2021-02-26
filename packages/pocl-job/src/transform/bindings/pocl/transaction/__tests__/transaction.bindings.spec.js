@@ -16,91 +16,103 @@ describe('transaction transforms', () => {
   })
 
   it('transforms a POCL record - bst time, senior concession, sms contact', async () => {
-    const result = await Transaction.transform(generateInputJSON({
-      DOB: { value: '12/03/1931' },
-      SENIOR_ID: { value: 'Uncancelled Passport' },
-      NOTIFY_EMAIL_ADDRESS: { value: '' },
-      COMMS_EMAIL_ADDRESS: { value: '' },
-      NOTIFY_SMS_NUMBER: { value: '07124567890' },
-      COMMS_SMS_NUMBER: { value: '07124567891' },
-      NOTIFY_EMAIL: { value: 'N' },
-      NOTIFY_SMS: { value: 'Y' },
-      COMMS_EMAIL: { value: 'N' },
-      COMMS_SMS: { value: 'Y' },
-      START_DATE: { value: '01/06/2020' },
-      SYSTEM_DATE: { value: '01/06/2020' },
-      SYSTEM_TIME: { value: '09:00:00' },
-      MOPEX: { value: 'UNKNOWN' }
-    }))
+    const result = await Transaction.transform(
+      generateInputJSON({
+        DOB: { value: '12/03/1931' },
+        SENIOR_ID: { value: 'Uncancelled Passport' },
+        NOTIFY_EMAIL_ADDRESS: { value: '' },
+        COMMS_EMAIL_ADDRESS: { value: '' },
+        NOTIFY_SMS_NUMBER: { value: '07124567890' },
+        COMMS_SMS_NUMBER: { value: '07124567891' },
+        NOTIFY_EMAIL: { value: 'N' },
+        NOTIFY_SMS: { value: 'Y' },
+        COMMS_EMAIL: { value: 'N' },
+        COMMS_SMS: { value: 'Y' },
+        START_DATE: { value: '01/06/2020' },
+        SYSTEM_DATE: { value: '01/06/2020' },
+        SYSTEM_TIME: { value: '09:00:00' },
+        MOPEX: { value: 'UNKNOWN' }
+      })
+    )
 
     expect(result).toMatchSnapshot()
   })
 
   it('transforms a POCL record - disabled concession (both), letter contact', async () => {
-    const result = await Transaction.transform(generateInputJSON({
-      DOB: { value: '12/03/1931' },
-      SENIOR_ID: { value: '' },
-      DISABLED_ID_1: { value: '12ABCD01234X5678' },
-      DISABLED_ID_2: { value: 'QQ123456C' },
-      NOTIFY_EMAIL_ADDRESS: { value: '' },
-      COMMS_EMAIL_ADDRESS: { value: '' },
-      NOTIFY_SMS_NUMBER: { value: '' },
-      COMMS_SMS_NUMBER: { value: '' },
-      NOTIFY_EMAIL: { value: 'N' },
-      NOTIFY_POST: { value: 'Y' },
-      COMMS_EMAIL: { value: 'N' },
-      COMMS_POST: { value: 'Y' }
-    }))
+    const result = await Transaction.transform(
+      generateInputJSON({
+        DOB: { value: '12/03/1931' },
+        SENIOR_ID: { value: '' },
+        DISABLED_ID_1: { value: '12ABCD01234X5678' },
+        DISABLED_ID_2: { value: 'QQ123456C' },
+        NOTIFY_EMAIL_ADDRESS: { value: '' },
+        COMMS_EMAIL_ADDRESS: { value: '' },
+        NOTIFY_SMS_NUMBER: { value: '' },
+        COMMS_SMS_NUMBER: { value: '' },
+        NOTIFY_EMAIL: { value: 'N' },
+        NOTIFY_POST: { value: 'Y' },
+        COMMS_EMAIL: { value: 'N' },
+        COMMS_POST: { value: 'Y' }
+      })
+    )
 
     expect(result).toMatchSnapshot()
   })
 
   it('transforms a POCL record - disabled concession (blue badge only), no contact', async () => {
-    const result = await Transaction.transform(generateInputJSON({
-      DOB: { value: '12/03/1931' },
-      SENIOR_ID: { value: '' },
-      DISABLED_ID_1: { value: '12ABCD01234X5678' },
-      DISABLED_ID_2: { value: '' },
-      NOTIFY_EMAIL_ADDRESS: { value: '' },
-      COMMS_EMAIL_ADDRESS: { value: '' },
-      NOTIFY_SMS_NUMBER: { value: '' },
-      COMMS_SMS_NUMBER: { value: '' },
-      NOTIFY_EMAIL: { value: 'N' },
-      COMMS_EMAIL: { value: 'N' }
-    }))
+    const result = await Transaction.transform(
+      generateInputJSON({
+        DOB: { value: '12/03/1931' },
+        SENIOR_ID: { value: '' },
+        DISABLED_ID_1: { value: '12ABCD01234X5678' },
+        DISABLED_ID_2: { value: '' },
+        NOTIFY_EMAIL_ADDRESS: { value: '' },
+        COMMS_EMAIL_ADDRESS: { value: '' },
+        NOTIFY_SMS_NUMBER: { value: '' },
+        COMMS_SMS_NUMBER: { value: '' },
+        NOTIFY_EMAIL: { value: 'N' },
+        COMMS_EMAIL: { value: 'N' }
+      })
+    )
 
     expect(result).toMatchSnapshot()
   })
 
   it('transforms a POCL record - disabled concession (pip only), multiple contact', async () => {
-    const result = await Transaction.transform(generateInputJSON({
-      DOB: { value: '12/03/1931' },
-      SENIOR_ID: { value: '' },
-      DISABLED_ID_1: { value: '' },
-      DISABLED_ID_2: { value: 'QQ123456C' },
-      NOTIFY_EMAIL_ADDRESS: { value: '' },
-      COMMS_EMAIL_ADDRESS: { value: 'festerthetester456@email.com' },
-      COMMS_SMS_NUMBER: { value: '07124567891' },
-      NOTIFY_EMAIL: { value: 'N' },
-      NOTIFY_SMS: { value: 'Y' }
-    }))
+    const result = await Transaction.transform(
+      generateInputJSON({
+        DOB: { value: '12/03/1931' },
+        SENIOR_ID: { value: '' },
+        DISABLED_ID_1: { value: '' },
+        DISABLED_ID_2: { value: 'QQ123456C' },
+        NOTIFY_EMAIL_ADDRESS: { value: '' },
+        COMMS_EMAIL_ADDRESS: { value: 'festerthetester456@email.com' },
+        COMMS_SMS_NUMBER: { value: '07124567891' },
+        NOTIFY_EMAIL: { value: 'N' },
+        NOTIFY_SMS: { value: 'Y' }
+      })
+    )
 
     expect(result).toMatchSnapshot()
   })
 
   it('transforms a DDE record - gmt time, no concession, email contact', async () => {
-    const result = await Transaction.transform(generateInputJSON({
-      DATA_SOURCE: { value: DIRECT_DEBIT_DATASOURCE },
-      MOPEX: { value: '6' }
-    }))
+    const result = await Transaction.transform(
+      generateInputJSON({
+        DATA_SOURCE: { value: DIRECT_DEBIT_DATASOURCE },
+        MOPEX: { value: '6' }
+      })
+    )
 
     expect(result).toMatchSnapshot()
   })
 
   it('ignores invalid datasource', async () => {
-    const result = await Transaction.transform(generateInputJSON({
-      DATA_SOURCE: { value: 'Any old rubbish' }
-    }))
+    const result = await Transaction.transform(
+      generateInputJSON({
+        DATA_SOURCE: { value: 'Any old rubbish' }
+      })
+    )
 
     expect(result).toEqual(
       expect.objectContaining({

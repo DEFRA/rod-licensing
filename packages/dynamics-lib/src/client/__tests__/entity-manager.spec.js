@@ -33,7 +33,7 @@ describe('entity manager', () => {
       t.boolVal = true
 
       const result = await persist(t)
-      expect(MockDynamicsWebApi.prototype.upsertRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.createRequest).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
@@ -54,7 +54,7 @@ describe('entity manager', () => {
       )
 
       const result = await persist(t)
-      expect(MockDynamicsWebApi.prototype.upsertRequest).toHaveBeenCalled()
+      expect(MockDynamicsWebApi.prototype.updateRequest).toHaveBeenCalled()
       expect(result).toHaveLength(1)
       expect(result[0]).toEqual(resultUuid)
     })
@@ -74,10 +74,10 @@ describe('entity manager', () => {
         {}
       )
       await expect(persist(newEntity, existingEntity)).rejects.toThrow('Test error')
-      // Expect the console error to contain details of the batch data (two upsertRequests plus the exception object)
+      // Expect the console error to contain details of the batch data (one createRequest and one updateRequest plus the exception object)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringMatching('Error persisting batch. Data: %j, Exception: %o'),
-        expect.arrayContaining([{ upsertRequest: expect.any(Object) }, { upsertRequest: expect.any(Object) }]),
+        expect.arrayContaining([{ request: expect.any(Object) }, { request: expect.any(Object) }]),
         expect.any(Error)
       )
     })

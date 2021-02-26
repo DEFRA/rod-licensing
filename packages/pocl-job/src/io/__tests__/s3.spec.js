@@ -17,7 +17,7 @@ jest.mock('@defra-fish/connectors-lib', () => {
   return {
     AWS: actual.AWS,
     salesApi: {
-      ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => { }) }), {})
+      ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => {}) }), {})
     }
   }
 })
@@ -44,18 +44,20 @@ describe('s3 operations', () => {
       AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValueOnce({
         promise: () => ({
           IsTruncated: false,
-          Contents: [{
-            Key: s3Key1,
-            LastModified: moment().toISOString(),
-            ETag: 'example-md5',
-            Size: 1024
-          },
-          {
-            Key: s3Key2,
-            LastModified: moment().toISOString(),
-            ETag: 'example-md5',
-            Size: 2048
-          }]
+          Contents: [
+            {
+              Key: s3Key1,
+              LastModified: moment().toISOString(),
+              ETag: 'example-md5',
+              Size: 1024
+            },
+            {
+              Key: s3Key2,
+              LastModified: moment().toISOString(),
+              ETag: 'example-md5',
+              Size: 2048
+            }
+          ]
         })
       })
 
@@ -100,28 +102,34 @@ describe('s3 operations', () => {
     it('gets a truncated list of files from S3', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
-      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
-        promise: () => ({
-          IsTruncated: false,
-          Contents: [{
-            Key: s3Key1,
-            LastModified: moment().toISOString(),
-            ETag: 'example-md5',
-            Size: 1024
-          }]
+      AwsMock.S3.mockedMethods.listObjectsV2
+        .mockReturnValue({
+          promise: () => ({
+            IsTruncated: false,
+            Contents: [
+              {
+                Key: s3Key1,
+                LastModified: moment().toISOString(),
+                ETag: 'example-md5',
+                Size: 1024
+              }
+            ]
+          })
         })
-      }).mockReturnValueOnce({
-        promise: () => ({
-          IsTruncated: true,
-          NextContinuationToken: 'token',
-          Contents: [{
-            Key: s3Key1,
-            LastModified: moment().toISOString(),
-            ETag: 'example-md5',
-            Size: 1024
-          }]
+        .mockReturnValueOnce({
+          promise: () => ({
+            IsTruncated: true,
+            NextContinuationToken: 'token',
+            Contents: [
+              {
+                Key: s3Key1,
+                LastModified: moment().toISOString(),
+                ETag: 'example-md5',
+                Size: 1024
+              }
+            ]
+          })
         })
-      })
 
       await refreshS3Metadata()
 
@@ -160,12 +168,14 @@ describe('s3 operations', () => {
       AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValueOnce({
         promise: () => ({
           IsTruncated: false,
-          Contents: [{
-            Key: s3Key,
-            LastModified: moment().toISOString(),
-            ETag: 'example-md5',
-            Size: 1024
-          }]
+          Contents: [
+            {
+              Key: s3Key,
+              LastModified: moment().toISOString(),
+              ETag: 'example-md5',
+              Size: 1024
+            }
+          ]
         })
       })
 
@@ -178,28 +188,38 @@ describe('s3 operations', () => {
     it('skips file processing if a file is older than one week', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
-      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
-        promise: () => ({
-          IsTruncated: false,
-          Contents: [{
-            Key: s3Key1,
-            LastModified: moment().subtract(1, 'days').toISOString(),
-            ETag: 'example-md5',
-            Size: 1024
-          }]
+      AwsMock.S3.mockedMethods.listObjectsV2
+        .mockReturnValue({
+          promise: () => ({
+            IsTruncated: false,
+            Contents: [
+              {
+                Key: s3Key1,
+                LastModified: moment()
+                  .subtract(1, 'days')
+                  .toISOString(),
+                ETag: 'example-md5',
+                Size: 1024
+              }
+            ]
+          })
         })
-      }).mockReturnValueOnce({
-        promise: () => ({
-          IsTruncated: true,
-          NextContinuationToken: 'token',
-          Contents: [{
-            Key: s3Key1,
-            LastModified: moment().subtract(1, 'days').toISOString(),
-            ETag: 'example-md5',
-            Size: 1024
-          }]
+        .mockReturnValueOnce({
+          promise: () => ({
+            IsTruncated: true,
+            NextContinuationToken: 'token',
+            Contents: [
+              {
+                Key: s3Key1,
+                LastModified: moment()
+                  .subtract(1, 'days')
+                  .toISOString(),
+                ETag: 'example-md5',
+                Size: 1024
+              }
+            ]
+          })
         })
-      })
 
       await refreshS3Metadata()
 
