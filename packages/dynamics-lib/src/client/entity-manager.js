@@ -25,6 +25,7 @@ export async function persist (objects, options = {}) {
 
     return await dynamicsClient.executeBatch()
   } catch (e) {
+    console.error(e)
     const error = e.length ? e[0] : e
     const requestDetails = entities.map(entity => ({ request: entity.toPersistRequest() }))
     console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
