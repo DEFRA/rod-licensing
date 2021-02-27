@@ -14,8 +14,6 @@ export async function persist (...entities) {
     for (const entity of entities) {
       if (!entity.isNew()) {
         dynamicsClient.updateRequest(entity.toPersistRequest())
-      } else if (entity.isUpsertable()) {
-        dynamicsClient.upsertRequest(entity.toPersistRequest())
       } else {
         dynamicsClient.createRequest(entity.toPersistRequest())
       }
