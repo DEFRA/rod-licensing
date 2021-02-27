@@ -45,15 +45,6 @@ export class BaseEntity {
   }
 
   /**
-   * Indicates whether the entity is upsertable (true) or not (false)
-   *
-   * @returns {boolean} true if the entity can be upserted, false otherwise
-   */
-  isUpsertable () {
-    return false
-  }
-
-  /**
    * the etag of the entity or null if not yet persisted
    * @readonly
    * @returns {string}
