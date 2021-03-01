@@ -59,7 +59,7 @@
     "moment-timezone": "^0.5.32",
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.2",
-    "openid-client": "^4.2.2",
+    "openid-client": "^4.4.1",
     "pdfmake": "^0.1.69",
     "semver": "^7.3.4",
     "uuid": "^8.3.2"
