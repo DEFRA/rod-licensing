@@ -2,6 +2,8 @@ export const MAX_CREATE_TRANSACTION_BATCH_SIZE = 25
 export const MAX_FINALISE_TRANSACTION_BATCH_SIZE = 10
 
 export const POST_OFFICE_DATASOURCE = 'Post Office Sales'
+export const DIRECT_DEBIT_DATASOURCE = 'DDE File'
+export const DIRECT_DEBIT_PAYMENTSOURCE = 'Direct Debit'
 
 export const FILE_STAGE = {
   Pending: 'Received and Pending',

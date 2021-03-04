@@ -186,8 +186,7 @@ describe('createPartFiles', () => {
         }
       ])
     )
-    expect(persist).toHaveBeenNthCalledWith(
-      1,
+    expect(persist).toHaveBeenNthCalledWith(1,
       expect.objectContaining({
         fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
         date: expect.anything(),
@@ -197,8 +196,7 @@ describe('createPartFiles', () => {
       }),
       fulfilmentRequestExpectations
     )
-    expect(persist).toHaveBeenNthCalledWith(
-      2,
+    expect(persist).toHaveBeenNthCalledWith(2,
       expect.objectContaining({
         fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
         date: expect.anything(),
@@ -208,8 +206,7 @@ describe('createPartFiles', () => {
       }),
       fulfilmentRequestExpectations
     )
-    expect(persist).toHaveBeenNthCalledWith(
-      3,
+    expect(persist).toHaveBeenNthCalledWith(3,
       expect.objectContaining({
         fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
         date: expect.anything(),

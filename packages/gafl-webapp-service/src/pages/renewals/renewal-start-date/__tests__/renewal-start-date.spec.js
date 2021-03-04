@@ -219,7 +219,15 @@ describe('The easy renewal, change start date page', () => {
     })
     it('starting the licence tomorrow will start at the beginning of the day', async () => {
       await injectWithCookies('GET', RENEWAL_START_DATE.uri)
-      await injectWithCookies('POST', RENEWAL_START_DATE.uri, startDateHelper(moment().set(PREFERRED_HOUR, 'hour').add(1, 'day'))) // set time to 15:00 tomorrow
+      await injectWithCookies(
+        'POST',
+        RENEWAL_START_DATE.uri,
+        startDateHelper(
+          moment()
+            .set(PREFERRED_HOUR, 'hour')
+            .add(1, 'day')
+        )
+      ) // set time to 15:00 tomorrow
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]

@@ -10,13 +10,20 @@ import { CacheableOperation } from './cache.js'
 export async function persist (...entities) {
   try {
     dynamicsClient.startBatch()
-    entities.forEach(entity => {
-      dynamicsClient.upsertRequest(entity.toPersistRequest())
-    })
+
+    for (const entity of entities) {
+      if (!entity.isNew()) {
+        dynamicsClient.updateRequest(entity.toPersistRequest())
+      } else {
+        dynamicsClient.createRequest(entity.toPersistRequest())
+      }
+    }
+
     return await dynamicsClient.executeBatch()
   } catch (e) {
+    console.error(e)
     const error = e.length ? e[0] : e
-    const requestDetails = entities.map(entity => ({ upsertRequest: entity.toPersistRequest() }))
+    const requestDetails = entities.map(entity => ({ request: entity.toPersistRequest() }))
     console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
     throw error
   }
