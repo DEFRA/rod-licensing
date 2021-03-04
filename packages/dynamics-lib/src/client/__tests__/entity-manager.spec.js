@@ -74,16 +74,16 @@ describe('entity manager', () => {
         {}
       )
       await expect(persist(newEntity, existingEntity)).rejects.toThrow('Test error')
-      // Expect the console error to contain details of the batch data (one createRequest and one updateRequest plus the exception object)
+      // Expect the console error to contain details of the batch data (one createRequest, one updateRequest plus the exception object)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         expect.stringMatching('Error persisting batch. Data: %j, Exception: %o'),
-        expect.arrayContaining([{ request: expect.any(Object) }, { request: expect.any(Object) }]),
+        expect.arrayContaining([{ createRequest: expect.any(Object) }, { updateRequest: expect.any(Object) }]),
         expect.any(Error)
       )
     })
 
     it('throws an error on implementation failure', async () => {
-      await expect(persist(null)).rejects.toThrow("Cannot read property 'toPersistRequest' of null")
+      await expect(persist(null)).rejects.toThrow("Cannot read property 'isNew' of null")
     })
   })
 

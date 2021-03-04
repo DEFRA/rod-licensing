@@ -36,6 +36,20 @@ describe('createTransactionSchema', () => {
     const result = await createTransactionSchema.validateAsync(mockPayload)
     expect(result).toBeInstanceOf(Object)
   })
+
+  it('requires a licensee postcode for web-sales but not for dde sales', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.permissions.forEach(p => {
+      p.licensee.postcode = ''
+    })
+    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow(
+      '"permissions[0].licensee.postcode" is not allowed to be empty'
+    )
+
+    mockPayload.dataSource = 'DDE File'
+    const result = await createTransactionSchema.validateAsync(mockPayload)
+    expect(result).toBeInstanceOf(Object)
+  })
 })
 
 describe('createTransactionResponseSchema', () => {
