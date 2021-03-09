@@ -1,6 +1,7 @@
 import {
   ADDRESS_ENTRY,
   LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
@@ -33,10 +34,10 @@ describe('The licence fulfilment page', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  it('redirects to contact page on successful submission', async () => {
+  it('redirects to licence confirmation method page on successful submission', async () => {
     const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTACT.uri)
+    expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
   })
 
   it('redirects to the summary page if the summary page is seen', async () => {
