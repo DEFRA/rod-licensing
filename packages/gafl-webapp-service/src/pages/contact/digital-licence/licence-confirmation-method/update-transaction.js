@@ -21,7 +21,6 @@ export default async request => {
 
       default:
     }
-    console.log(licensee)
   }
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }
