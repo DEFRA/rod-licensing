@@ -15,6 +15,7 @@ import addressLookup from '../pages/contact/address/lookup/route.js'
 import addressSelect from '../pages/contact/address/select/route.js'
 import addressEntry from '../pages/contact/address/entry/route.js'
 import licenceFulfilment from '../pages/contact/digital-licence/licence-fulfilment/route.js'
+import licenceConfirmationMethod from '../pages/contact/digital-licence/licence-confirmation-method/route.js'
 import contact from '../pages/contact/contact/route.js'
 import newsletter from '../pages/contact/newsletter/route.js'
 
@@ -47,6 +48,7 @@ const routes = [
   ...addressSelect,
   ...addressEntry,
   ...licenceFulfilment,
+  ...licenceConfirmationMethod,
   ...contact,
   ...newsletter,
   ...contactSummary,

@@ -1,0 +1,148 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "input/macro.njk" import govukInput %}
+
+{% set title = "Where should we send your licence?" %}
+
+{% set title = 'How should we send you the licence?' %}
+{% set errorMsg = 'Choose how we should send you the licence details' %}
+{% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
+{% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
+
+{% set errorMap = {
+        'licence-confirmation-method': {
+            'any.required': { ref: '#licence-confirmation-method', text: errorMsg }
+        },
+        'email': {
+            'string.empty': { ref: '#email', text: emailError },
+            'string.email': { ref: '#email', text: emailError },
+            'string.max': { ref: '#email', text: emailError }
+        },
+        'text': {
+            'string.empty': { ref: '#email', text: mobileError },
+            'string.pattern.base': { ref: '#email', text: mobileError },
+            'string.max': { ref: '#email', text: mobileError }
+        }
+    }
+%}
+
+{% set emailHtml %}
+    <div id="email-rw" class="govuk-body-m">
+        {{ govukInput({
+          id: "email",
+          name: "email",
+          type: "email",
+          classes: "govuk-!-width-two-thirds",
+          autocomplete: "email",
+          errorMessage: { text: 'Enter your email address in the correct format' } if error['email'],
+          label: {
+            text: "Email address"
+          },
+          hint: {
+              text: "For example name@example.com"
+          },
+          attributes: {
+            spellcheck: "false",
+            maxlength: "50"
+          },
+          value: payload.email if payload['licence-confirmation-method'] === 'email' else ''
+        }) }}
+    </div>
+    <div id="email-ro" class="govuk-body-m initially-hidden">
+        Email address</br>
+        <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
+            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">Change</a>
+        </span>
+    </div>
+{% endset -%}
+
+{% set textMessageHtml %}
+    <div id="text-rw" class="govuk-body-m">
+        {{ govukInput({
+          id: "text",
+          name: "text",
+          type: "tel",
+          autocomplete: "tel",
+          classes: "govuk-!-width-two-thirds",
+          errorMessage: { text: 'Enter your UK mobile phone number' } if error['text'],
+          label: {
+            text: "UK mobile phone number"
+          },
+          hint: {
+              text: "For example 07700 900 900"
+          },
+          attributes: {
+            maxlength: "16"
+          },
+          value: payload.text if payload['licence-confirmation-method'] === 'text' else ''
+        }) }}
+     </div>
+     <div id="text-ro" class="govuk-body-m initially-hidden">
+         Mobile phone number</br>
+         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
+             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">Change</a>
+         </span>
+     </div>
+{% endset -%}
+
+{% block pageContent %}
+    <p class="govuk-body">This is where we will send the licence after payment.</p>
+    {{ govukRadios({
+        idPrefix: "licence-confirmation-method",
+        name: "licence-confirmation-method",
+        hint: {
+          text: "You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.",
+          classes: "govuk-inset-text"
+        },
+        errorMessage: { text: errorMsg } if error['licence-confirmation-method'],
+        items: [
+            {
+                value: "email",
+                text: "Email",
+                checked: payload['licence-confirmation-method'] === 'email',
+                conditional: {
+                    html: emailHtml
+                }
+            },
+            {
+                value: "text",
+                text: "Text",
+                checked: payload['licence-confirmation-method'] === 'text',
+                conditional: {
+                    html: textMessageHtml
+                }
+            }
+        ]
+    }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' && !'{{ error.email }}' ) {
+            document.getElementById("email-ro").style.display = "block"
+            document.getElementById("email-rw").style.display = "none"
+        } else {
+            document.getElementById("email-ro").style.display = "none"
+            document.getElementById("email-rw").style.display = "block"
+        }
+        document.getElementById("change-email").addEventListener("click", function () {
+            document.getElementById("email-ro").style.display = "none"
+            document.getElementById("email-rw").style.display = "block"
+        })
+    })()</script>
+    <script nonce={{nonce}}>(function () {
+        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}' && !'{{ error.text }}' ) {
+            document.getElementById("text-ro").style.display = "block"
+            document.getElementById("text-rw").style.display = "none"
+        } else {
+            document.getElementById("text-ro").style.display = "none"
+            document.getElementById("text-rw").style.display = "block"
+        }
+        document.getElementById("change-text").addEventListener("click", function () {
+            document.getElementById("text-ro").style.display = "none"
+            document.getElementById("text-rw").style.display = "block"
+        })
+    })()</script>
+{% endblock %}
