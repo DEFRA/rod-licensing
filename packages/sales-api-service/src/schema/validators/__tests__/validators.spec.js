@@ -174,7 +174,7 @@ describe('validators', () => {
 
     it('throws if attempting to create an alternate key validator using an object which does not support it', async () => {
       class TestNonAlternateKeyEntity extends BaseEntity {
-        static get definition () {
+        static get definition() {
           return new EntityDefinition(() => ({
             localName: 'TestNonAlternateKeyEntity',
             dynamicsCollection: 'TestNonAlternateKeyEntity',
@@ -347,6 +347,27 @@ describe('validators', () => {
       await expect(
         validationFunction({
           dataSource: 'Post Office Sales',
+          permissions: [
+            {
+              permitId: 'test-1'
+            }
+          ]
+        })
+      ).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
+
+    it('returns a validation function which does not throw an error for DDE File even if the permit requires a concession and none is supplied', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
+        }
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          dataSource: 'DDE File',
           permissions: [
             {
               permitId: 'test-1'

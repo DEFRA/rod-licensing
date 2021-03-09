@@ -2,7 +2,7 @@ import { Binding } from '../../binding.js'
 import * as contactBindings from '../contact/contact.bindings.js'
 import * as licenceBindings from '../licence/licence.bindings.js'
 import * as concessionBindings from '../licence/concession.bindings.js'
-import { POST_OFFICE_DATASOURCE } from '../../../../staging/constants.js'
+import { POST_OFFICE_DATASOURCE, DIRECT_DEBIT_DATASOURCE, DIRECT_DEBIT_PAYMENTSOURCE } from '../../../../staging/constants.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
@@ -42,7 +42,8 @@ const paymentMethods = {
   2: 'Cheque',
   3: 'Stamps',
   4: 'Debit card',
-  5: 'Credit card'
+  5: 'Credit card',
+  6: 'Direct debit'
 }
 
 /**
@@ -53,6 +54,15 @@ export const MethodOfPayment = new Binding({
   element: 'MOPEX',
   transform: context => paymentMethods[Binding.TransformTextOnly(context)] || 'Other'
 })
+
+export const dataSourceBinding = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
+
+const getDataSource = children => {
+  if (children[dataSourceBinding.element] && children[dataSourceBinding.element].value === DIRECT_DEBIT_DATASOURCE) {
+    return DIRECT_DEBIT_DATASOURCE
+  }
+  return POST_OFFICE_DATASOURCE
+}
 
 /**
  * Transaction record (the <REC> element)
@@ -90,11 +100,13 @@ export const Transaction = new Binding({
       contactBindings.CommsBySms.element,
       contactBindings.CommsByPost.element
     )
+    const dataSource = getDataSource(children)
+    const paymentSource = dataSource === DIRECT_DEBIT_DATASOURCE ? DIRECT_DEBIT_PAYMENTSOURCE : POST_OFFICE_DATASOURCE
 
     return {
       id: children[SerialNumber.element],
       createTransactionPayload: {
-        dataSource: POST_OFFICE_DATASOURCE,
+        dataSource,
         permissions: [
           {
             licensee: {
@@ -129,7 +141,7 @@ export const Transaction = new Binding({
         payment: {
           timestamp: transactionDate,
           amount: children[AmountPaid.element],
-          source: POST_OFFICE_DATASOURCE,
+          source: paymentSource,
           channelId: children[ChannelId.element],
           method: children[MethodOfPayment.element]
         }

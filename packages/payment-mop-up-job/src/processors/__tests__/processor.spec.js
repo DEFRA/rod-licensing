@@ -199,20 +199,30 @@ describe('processor', () => {
 
     it("when a payment isn't present in GovPay, it's marked as expired after 3 hours", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
-      missingJournalEntry.paymentTimestamp = moment().subtract(3, 'hours').toISOString()
+      missingJournalEntry.paymentTimestamp = moment()
+        .subtract(3, 'hours')
+        .toISOString()
       await execute(1, 1)
-      expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(NOT_FOUND_ID, expect.objectContaining({
-        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
-      }))
+      expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(
+        NOT_FOUND_ID,
+        expect.objectContaining({
+          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+        })
+      )
     })
 
     it("when a payment isn't present in GovPay, it's not marked as expired if 3 hours haven't passed", async () => {
       const missingJournalEntry = journalEntries.find(je => je.id === NOT_FOUND_ID)
-      missingJournalEntry.paymentTimestamp = moment().subtract(2, 'hours').toISOString()
+      missingJournalEntry.paymentTimestamp = moment()
+        .subtract(2, 'hours')
+        .toISOString()
       await execute(1, 1)
-      expect(salesApi.updatePaymentJournal).not.toHaveBeenCalledWith(NOT_FOUND_ID, expect.objectContaining({
-        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
-      }))
+      expect(salesApi.updatePaymentJournal).not.toHaveBeenCalledWith(
+        NOT_FOUND_ID,
+        expect.objectContaining({
+          paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Expired
+        })
+      )
     })
   })
 })
