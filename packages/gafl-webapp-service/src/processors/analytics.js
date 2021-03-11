@@ -1,11 +1,14 @@
 import { UTM } from '../constants.js'
 
-export const initialiseAnalyticsSessionData = async (request, previousSessionStatusData) => {
-  let clientId
-  // When redirecting from the landing page (which uses client side analytics) we need to establish the session identifier using the linker parameter
-  if (request.query._ga) {
-    clientId = /^.+-(?<clientId>.+)$/.exec(request.query._ga).groups.clientId
+const getClientIdFromGACookie = (query) => {
+  if (query._ga) {
+    return query._ga.split('.')[2]
   }
+}
+
+export const initialiseAnalyticsSessionData = async (request, previousSessionStatusData) => {
+  // When redirecting from the landing page (which uses client side analytics) we need to establish the session identifier using the linker parameter
+  const clientId = getClientIdFromGACookie(request.query)
   await request.cache().helpers.status.set({
     gaClientId: previousSessionStatusData?.gaClientId || clientId,
     attribution: getAttribution(previousSessionStatusData, request)
