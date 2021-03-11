@@ -1,8 +1,14 @@
 import { UTM } from '../constants.js'
+import db from 'debug'
+const debug = db('webapp:analytics-processor')
 
 const getClientIdFromGACookie = query => {
   if (query._ga) {
-    return query._ga.split('.')[2]
+    const clientId = query._ga.split('.')[2]
+    if (!clientId) {
+      debug(`Unexpected _ga cookie value: ${query._ga}`)
+    }
+    return clientId
   }
   return undefined
 }
