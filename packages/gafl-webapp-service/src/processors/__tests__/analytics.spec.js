@@ -38,7 +38,7 @@ describe('initialiseAnalyticsSessionData', () => {
     })
 
   it.each([
-    '!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678'
+    '!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731.1602852296'
   ])('unexpected _ga formats fail gracefully', async _ga => {
     const fakeRequest = {
       query: { _ga },
@@ -54,7 +54,7 @@ describe('initialiseAnalyticsSessionData', () => {
   })
 
   it.each([
-    '!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678'
+    '!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731.1602852296'
   ])('unexpected _ga formats are logged', async _ga => {
     const fakeRequest = {
       query: { _ga },
