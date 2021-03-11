@@ -1,9 +1,10 @@
 import { UTM } from '../constants.js'
 
-const getClientIdFromGACookie = (query) => {
+const getClientIdFromGACookie = query => {
   if (query._ga) {
     return query._ga.split('.')[2]
   }
+  return undefined
 }
 
 export const initialiseAnalyticsSessionData = async (request, previousSessionStatusData) => {
