@@ -2,12 +2,9 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 
-{% set title = "Where should we send your licence?" %}
-
-{% set title = 'How should we send you the licence?' %}
-{% set errorMsg = 'Choose how we should send you the licence details' %}
-{% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
-{% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
+{% set errorMsg = 'Choose how you would like to receive the licence' %}
+{% set emailError = 'Enter an email address in the correct format' %}
+{% set mobileError = 'Enter your UK mobile phone number' %}
 
 {% set errorMap = {
         'licence-confirmation-method': {
@@ -34,7 +31,7 @@
           type: "email",
           classes: "govuk-!-width-two-thirds",
           autocomplete: "email",
-          errorMessage: { text: 'Enter your email address in the correct format' } if error['email'],
+          errorMessage: { text: emailError } if error['email'],
           label: {
             text: "Email address"
           },
@@ -63,8 +60,8 @@
           name: "text",
           type: "tel",
           autocomplete: "tel",
-          classes: "govuk-!-width-two-thirds",
-          errorMessage: { text: 'Enter your UK mobile phone number' } if error['text'],
+          classes: "govuk-!-width-one-third",
+          errorMessage: { text: mobileError } if error['text'],
           label: {
             text: "UK mobile phone number"
           },
@@ -85,34 +82,52 @@
      </div>
 {% endset -%}
 
+{% set itemsArray = [
+    {
+        value: "email",
+        text: "Email",
+        checked: payload['licence-confirmation-method'] === 'email',
+        conditional: {
+            html: emailHtml
+        }
+    },
+    {
+        value: "text",
+        text: "Text",
+        checked: payload['licence-confirmation-method'] === 'text',
+        conditional: {
+            html: textMessageHtml
+        }
+    }
+] %}
+
+{% if data.postalFulfilment === 'Yes' %}
+    {% set title = 'How do you want your fishing licence confirmation?' %}
+    {% set bodyText = 'This is where we will send confirmation of your fishing licence' %}
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "none",
+            text: "Make a note of the licence number",
+            checked: payload['licence-confirmation-method'] === 'none'
+        }), itemsArray) 
+    %}
+{% else %}
+    {% set title = 'Where should we send your licence?' %}
+    {% set bodyText = 'This is where we will send the licence after payment.' %}
+    {% set hintText = 'You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.' %}
+{% endif %}
+
 {% block pageContent %}
-    <p class="govuk-body">This is where we will send the licence after payment.</p>
+    <p class="govuk-body">{{ bodyText }}</p>
     {{ govukRadios({
         idPrefix: "licence-confirmation-method",
         name: "licence-confirmation-method",
         hint: {
-          text: "You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.",
-          classes: "govuk-inset-text"
+          text: hintText,
+          classes: 'govuk-inset-text' if hintText
         },
         errorMessage: { text: errorMsg } if error['licence-confirmation-method'],
-        items: [
-            {
-                value: "email",
-                text: "Email",
-                checked: payload['licence-confirmation-method'] === 'email',
-                conditional: {
-                    html: emailHtml
-                }
-            },
-            {
-                value: "text",
-                text: "Text",
-                checked: payload['licence-confirmation-method'] === 'text',
-                conditional: {
-                    html: textMessageHtml
-                }
-            }
-        ]
+        items: itemsArray
     }) }}
 {% endblock %}
 

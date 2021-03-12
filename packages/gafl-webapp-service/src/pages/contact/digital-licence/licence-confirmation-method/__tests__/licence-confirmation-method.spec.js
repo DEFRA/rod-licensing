@@ -1,6 +1,5 @@
 import {
   LICENCE_LENGTH,
-  CONTROLLER,
   DATE_OF_BIRTH,
   ADDRESS_ENTRY,
   LICENCE_CONFIRMATION_METHOD,
@@ -35,34 +34,6 @@ const goodAddress = {
 }
 
 describe('The licence confirmation method page', () => {
-  describe('where the prerequisite are not fulfilled', () => {
-    beforeAll(async d => {
-      await injectWithCookies('GET', CONTROLLER.uri)
-      d()
-    })
-
-    it('redirects to the date-of-birth page if no date of birth has been set', async () => {
-      const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri)
-      expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
-    })
-
-    it('redirects to the licence to start page if no licence start date has been set has been set', async () => {
-      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri)
-      expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_TO_START.uri)
-    })
-
-    it('redirects to the licence length page if no length has been set', async () => {
-      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri)
-      expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
-    })
-  })
-
   describe('for a full 12 month licence, adult', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
@@ -151,6 +122,22 @@ describe('The licence confirmation method page', () => {
         expect(JSON.parse(payload).permissions[0].licensee.mobilePhone).toEqual(mobileNumbero)
       }
     )
+  })
+
+  describe('for 1 day licence', () => {
+    beforeAll(async d => {
+      await injectWithCookies('GET', NEW_TRANSACTION.uri)
+      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+      d()
+    })
+
+    it('redirects to the contact page', async () => {
+      const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
+    })
   })
 
   describe('if the contact summary has been seen', () => {
