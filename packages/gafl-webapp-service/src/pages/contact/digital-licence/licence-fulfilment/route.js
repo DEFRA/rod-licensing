@@ -4,7 +4,7 @@ import { nextPage } from '../../../../routes/next-page.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 
-const getData = async request => {
+const isPhysicalPermission = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // page is only permitted for physical licences
@@ -13,4 +13,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(LICENCE_FULFILMENT.page, LICENCE_FULFILMENT.uri, undefined, nextPage, getData)
+export default pageRoute(LICENCE_FULFILMENT.page, LICENCE_FULFILMENT.uri, undefined, nextPage, isPhysicalPermission)
