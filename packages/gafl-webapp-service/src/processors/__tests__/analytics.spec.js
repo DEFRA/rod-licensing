@@ -1,20 +1,69 @@
 import { initialiseAnalyticsSessionData, getTrackingProductDetailsFromTransaction, getAffiliation } from '../analytics.js'
+import db from 'debug'
+
+const mockDebug = jest.fn()
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 describe('initialiseAnalyticsSessionData', () => {
   const fakeCacheSetter = jest.fn()
   const fakeCacheDecorator = jest.fn(() => ({ helpers: { status: { set: fakeCacheSetter } } }))
+  let fakeDebug, firstDbCall
+  beforeAll(() => {
+    [[firstDbCall]] = db.mock.calls
+    fakeDebug = db.mock.results[0].value
+    console.log('fakeDebug', fakeDebug)
+  })
   beforeEach(jest.clearAllMocks)
 
-  it('stores the ga client id from the query string on the session to support cross-domain tracking from the landing page', async () => {
+  it('initialises debug', () => {
+    expect(firstDbCall).toEqual('webapp:analytics-processor')
+  })
+
+  it.each([
+    { _ga: 'GA1.2.1234567890.10234567890', gaClientId: '1234567890' },
+    { _ga: 'GA2.1-3.220027162.1602852296', gaClientId: '220027162' }
+  ])(
+    'stores the ga client id from the query string on the session to support cross-domain tracking from the landing page',
+    async ({ _ga, gaClientId }) => {
+      const fakeRequest = {
+        query: { _ga },
+        cache: fakeCacheDecorator
+      }
+      await initialiseAnalyticsSessionData(fakeRequest)
+      expect(fakeCacheSetter).toHaveBeenCalledWith(
+        expect.objectContaining({
+          gaClientId
+        })
+      )
+    })
+
+  it.each([
+    '!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731.1602852296'
+  ])('unexpected _ga formats fail gracefully', async _ga => {
     const fakeRequest = {
-      query: { _ga: '2.220027162.289694522.1603877484-523510731.1602852296' },
+      query: { _ga },
       cache: fakeCacheDecorator
     }
+    let err
+    try {
+      await initialiseAnalyticsSessionData(fakeRequest)
+    } catch (e) {
+      err = e
+    }
+    expect(err).toBeUndefined()
+  })
+
+  it.each([
+    '!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731.1602852296'
+  ])('unexpected _ga formats are logged', async _ga => {
+    const fakeRequest = {
+      query: { _ga },
+      cache: fakeCacheDecorator
+    }
+
     await initialiseAnalyticsSessionData(fakeRequest)
-    expect(fakeCacheSetter).toHaveBeenCalledWith(
-      expect.objectContaining({
-        gaClientId: '523510731.1602852296'
-      })
+    expect(fakeDebug).toHaveBeenCalledWith(
+      expect.stringContaining(_ga)
     )
   })
 
