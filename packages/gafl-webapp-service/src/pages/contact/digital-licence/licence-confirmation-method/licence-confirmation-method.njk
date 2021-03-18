@@ -42,7 +42,7 @@
             spellcheck: "false",
             maxlength: "50"
           },
-          value: payload.email if payload['licence-confirmation-method'] === 'email' else ''
+          value: payload.email
         }) }}
     </div>
     <div id="email-ro" class="govuk-body-m initially-hidden">
@@ -71,7 +71,7 @@
           attributes: {
             maxlength: "16"
           },
-          value: payload.text if payload['licence-confirmation-method'] === 'text' else ''
+          value: payload.text
         }) }}
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
@@ -135,7 +135,7 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' && !'{{ error.email }}' ) {
+        if ('{{ data.licensee.email }}' && !'{{ error.email }}' ) {
             document.getElementById("email-ro").style.display = "block"
             document.getElementById("email-rw").style.display = "none"
         } else {
@@ -148,7 +148,7 @@
         })
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}' && !'{{ error.text }}' ) {
+        if ('{{ data.licensee.mobilePhone }}' && !'{{ error.text }}' ) {
             document.getElementById("text-ro").style.display = "block"
             document.getElementById("text-rw").style.display = "none"
         } else {

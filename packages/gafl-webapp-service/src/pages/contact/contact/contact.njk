@@ -3,8 +3,8 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'How should we contact you?' if data.isPhysical else 'How should we send you the licence?' %}
-{% set errorMsg = 'Choose how you would like to be contacted' if data.isPhysical else 'Choose how you would like to receive the licence details' %}
+{% set title = 'How should we contact you?' %}
+{% set errorMsg = 'Choose how you would like to be contacted' %}
 {% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
 {% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
 
@@ -46,7 +46,7 @@
             spellcheck: "false",
             maxlength: "50"
           },
-          value: payload.email if payload['how-contacted'] === 'email' else ''
+          value: payload.email
         }) }}
     </div>
     <div id="email-ro" class="govuk-body-m initially-hidden">
@@ -64,7 +64,7 @@
           name: "text",
           type: "tel",
           autocomplete: "tel",
-          classes: "govuk-!-width-two-thirds",
+          classes: "govuk-!-width-one-third",
           errorMessage: { text: 'Enter your UK mobile phone number' } if error['text'],
           label: {
             text: "UK mobile phone number"
@@ -75,7 +75,7 @@
           attributes: {
             maxlength: "16"
           },
-          value: payload.text if payload['how-contacted'] === 'text' else ''
+          value: payload.text
         }) }}
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
@@ -94,11 +94,51 @@
     <p class="govuk-body-m">We will show you the licence number on confirmation.</p>
 {% endset -%}
 
+{% set itemsArray = [
+    {
+        value: "email",
+        text: "Email",
+        checked: payload['how-contacted'] === 'email',
+        conditional: {
+            html: emailHtml
+        }
+    },
+    {
+        value: "text",
+        text: "Text message",
+        checked: payload['how-contacted'] === 'text',
+        conditional: {
+            html: textMessageHtml
+        }
+    }
+] %}
+
+{% if data.isPhysical %}
+    {% if data.postalFulfilment === 'Yes' %}
+        {% set itemsArray = (itemsArray.push(
+            {
+                value: "none",
+                text: "Post",
+                checked: payload['how-contacted'] === 'post'
+            }), itemsArray) 
+        %}
+    {% endif %}
+{% else %}    
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "none",
+            text: "Make a note of the licence number",
+            checked: payload['how-contacted'] === 'none',
+            conditional: {
+                html: noneMessageHtml
+            }
+        }), itemsArray) 
+    %}
+{% endif %}
+
 {% block pageContent %}
     {% if data.isPhysical %}
-        <p class="govuk-body-m">You will receive the licence card in the post within 15 working days.
-        If you provide an email or mobile number we'll send you a confirmation message with the licence details.
-        You will also receive renewal reminders when your licence is expiring.</p>
+        <p class="govuk-body-m">This is where we will send important updates and renewal reminders when your licence is expiring.</p>
     {% else %}
         {% if data.isJunior %}
             <p class="govuk-body-m">We don't provide physical cards for junior licences.</p>
@@ -120,32 +160,7 @@
           classes: "govuk-body-m"
         }
       },
-      items: [
-        {
-          value: "email",
-          text: "Email",
-          checked: payload['how-contacted'] === 'email',
-          conditional: {
-            html: emailHtml
-          }
-        },
-        {
-          value: "text",
-          text: "Text message",
-          checked: payload['how-contacted'] === 'text',
-          conditional: {
-            html: textMessageHtml
-          }
-        },
-        {
-          value: "none",
-          text: 'Post' if data.isPhysical else 'Make a note of the licence number',
-          checked: payload['how-contacted'] === 'none',
-          conditional: {
-            html: postMessageHtml if data.isPhysical else noneMessageHtml
-          }
-        }
-      ]
+      items: itemsArray
     }) }}
 
 {% endblock %}
@@ -154,7 +169,7 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' && !'{{ error.email }}' ) {
+        if (('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' || '{{ data.licensee.preferredMethodOfReminder }}' === '{{data.howContacted.email}}') && !'{{ error.email }}' ) {
             document.getElementById("email-ro").style.display = "block"
             document.getElementById("email-rw").style.display = "none"
         } else {
@@ -167,7 +182,7 @@
         })
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}' && !'{{ error.text }}' ) {
+        if (('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}' || '{{ data.licensee.preferredMethodOfReminder }}' === '{{data.howContacted.text}}') && !'{{ error.text }}' ) {
             document.getElementById("text-ro").style.display = "block"
             document.getElementById("text-rw").style.display = "none"
         } else {
