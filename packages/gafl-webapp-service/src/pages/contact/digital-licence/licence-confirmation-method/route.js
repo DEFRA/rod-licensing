@@ -17,11 +17,9 @@ const getData = async request => {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
-  const { licensee } = permission
   return {
     licensee: permission.licensee,
     howContacted: HOW_CONTACTED,
-    postalFulfilment: licensee.postalFulfilment
   }
 }
 

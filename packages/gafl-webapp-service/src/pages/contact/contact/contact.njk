@@ -114,7 +114,7 @@
 ] %}
 
 {% if data.isPhysical %}
-    {% if data.postalFulfilment === 'Yes' %}
+    {% if data.licensee.postalFulfilment === 'Yes' %}
         {% set itemsArray = (itemsArray.push(
             {
                 value: "none",
@@ -169,7 +169,7 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if (('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' || '{{ data.licensee.preferredMethodOfReminder }}' === '{{data.howContacted.email}}') && !'{{ error.email }}' ) {
+        if (('{{ data.licensee.email }}') && !'{{ error.email }}' ) {
             document.getElementById("email-ro").style.display = "block"
             document.getElementById("email-rw").style.display = "none"
         } else {
@@ -182,7 +182,7 @@
         })
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if (('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}' || '{{ data.licensee.preferredMethodOfReminder }}' === '{{data.howContacted.text}}') && !'{{ error.text }}' ) {
+        if (('{{ data.licensee.mobilePhone }}') && !'{{ error.text }}' ) {
             document.getElementById("text-ro").style.display = "block"
             document.getElementById("text-rw").style.display = "none"
         } else {
