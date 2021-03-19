@@ -41,10 +41,10 @@ describe('contact > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           licenceLength: '12M',
-          licensee: {
+          licensee: expect.objectContaining({
             email: 'example@example.com',
             preferredMethodOfReminder: 'Email'
-          }
+          })
         })
       )
     })
@@ -62,10 +62,10 @@ describe('contact > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           licenceLength: '12M',
-          licensee: {
+          licensee: expect.objectContaining({
             mobilePhone: '07700900088',
             preferredMethodOfReminder: 'Text'
-          }
+          })
         })
       )
     })
@@ -82,9 +82,9 @@ describe('contact > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           licenceLength: '12M',
-          licensee: {
+          licensee: expect.objectContaining({
             preferredMethodOfReminder: 'Letter'
-          }
+          })
         })
       )
     })
@@ -112,11 +112,11 @@ describe('contact > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           licenceLength: '1D',
-          licensee: {
+          licensee: expect.objectContaining({
             email: 'example@example.com',
             preferredMethodOfReminder: 'Email',
             preferredMethodOfConfirmation: 'Email'
-          }
+          })
         })
       )
     })
@@ -134,11 +134,11 @@ describe('contact > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           licenceLength: '1D',
-          licensee: {
+          licensee: expect.objectContaining({
             mobilePhone: '07700900088',
             preferredMethodOfReminder: 'Text',
             preferredMethodOfConfirmation: 'Text'
-          }
+          })
         })
       )
     })
@@ -155,10 +155,10 @@ describe('contact > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           licenceLength: '1D',
-          licensee: {
+          licensee: expect.objectContaining({
             preferredMethodOfReminder: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted'
-          }
+          })
         })
       )
     })
