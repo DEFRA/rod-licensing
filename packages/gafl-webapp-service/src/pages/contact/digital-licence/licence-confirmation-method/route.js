@@ -19,7 +19,7 @@ const getData = async request => {
 
   return {
     licensee: permission.licensee,
-    howContacted: HOW_CONTACTED,
+    howContacted: HOW_CONTACTED
   }
 }
 
