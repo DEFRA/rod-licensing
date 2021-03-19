@@ -40,7 +40,7 @@ describe('The newsletter page', () => {
   })
 
   describe('if the user has set the preferred method of contact to email ', async () => {
-    beforeAll(async d => {
+    beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
@@ -124,7 +124,7 @@ describe('The newsletter page', () => {
   })
 
   describe('if the user has set the preferred method of contact to text ', async () => {
-    beforeAll(async d => {
+    beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })

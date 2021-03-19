@@ -39,7 +39,13 @@ describe('contact > update-transaction', () => {
       await updateTransaction(mockRequest)
 
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-        expect.objectContaining({ licensee: { email: 'example@example.com', preferredMethodOfReminder: 'Email' } })
+        expect.objectContaining({
+          licenceLength: '12M',
+          licensee: {
+            email: 'example@example.com',
+            preferredMethodOfReminder: 'Email'
+          }
+        })
       )
     })
 
@@ -54,7 +60,13 @@ describe('contact > update-transaction', () => {
       await updateTransaction(mockRequest)
 
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-        expect.objectContaining({ licensee: { mobilePhone: '07700900088', preferredMethodOfReminder: 'Text' } })
+        expect.objectContaining({
+          licenceLength: '12M',
+          licensee: {
+            mobilePhone: '07700900088',
+            preferredMethodOfReminder: 'Text'
+          }
+        })
       )
     })
 
@@ -67,7 +79,14 @@ describe('contact > update-transaction', () => {
 
       await updateTransaction(mockRequest)
 
-      expect(mockTransactionCacheSet).toHaveBeenCalledWith(expect.objectContaining({ licensee: { preferredMethodOfReminder: 'Letter' } }))
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          licenceLength: '12M',
+          licensee: {
+            preferredMethodOfReminder: 'Letter'
+          }
+        })
+      )
     })
   })
 
@@ -92,6 +111,7 @@ describe('contact > update-transaction', () => {
 
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
+          licenceLength: '1D',
           licensee: {
             email: 'example@example.com',
             preferredMethodOfReminder: 'Email',
@@ -113,6 +133,7 @@ describe('contact > update-transaction', () => {
 
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
+          licenceLength: '1D',
           licensee: {
             mobilePhone: '07700900088',
             preferredMethodOfReminder: 'Text',
@@ -133,6 +154,7 @@ describe('contact > update-transaction', () => {
 
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
+          licenceLength: '1D',
           licensee: {
             preferredMethodOfReminder: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted'

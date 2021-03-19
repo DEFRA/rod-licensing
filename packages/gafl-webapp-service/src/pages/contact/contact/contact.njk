@@ -46,7 +46,7 @@
             spellcheck: "false",
             maxlength: "50"
           },
-          value: payload.email
+          value: data.licensee.email if (data.licensee.email and not error['email']) else payload.email
         }) }}
     </div>
     <div id="email-ro" class="govuk-body-m initially-hidden">
@@ -75,7 +75,7 @@
           attributes: {
             maxlength: "16"
           },
-          value: payload.text
+          value: data.licensee.mobilePhone if (data.licensee.mobilePhone and not error['text']) else payload.text
         }) }}
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
