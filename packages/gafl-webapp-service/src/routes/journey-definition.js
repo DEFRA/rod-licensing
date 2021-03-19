@@ -258,11 +258,10 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    //backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
-    backLink: (s,t) => {
+    backLink: (s, t) => {
       if (s.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
-      } else if(isPhysical(t)) {
+      } else if (isPhysical(t)) {
         return LICENCE_CONFIRMATION_METHOD.uri
       } else {
         return ADDRESS_LOOKUP.uri
