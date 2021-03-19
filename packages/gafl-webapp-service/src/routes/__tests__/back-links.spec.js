@@ -112,12 +112,23 @@ describe('The address-entry page', () => {
 })
 
 describe('The licence-fulfilment page', () => {
-  it('has a back-link to the address lookup page if the contact summary has not been seen', () => {
+  it('has a back-link to the address-lookup page if the contact summary has not been seen', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
     expect(n.backLink({})).toBe(ADDRESS_LOOKUP.uri)
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
+    expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  })
+})
+
+describe('The licence-confirmation page', () => {
+  it('has a back-link to the licence-fulfilment page if the contact summary has not been seen', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
+    expect(n.backLink({})).toBe(LICENCE_FULFILMENT.uri)
+  })
+  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
   })
 })
