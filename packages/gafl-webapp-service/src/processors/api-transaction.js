@@ -58,7 +58,8 @@ export const prepareApiTransactionPayload = async request => {
       }
 
       return permission
-    })
+    }),
+    createdBy: request.state && request.state.oidc ? request.state.oidc.oid : undefined
   }
 }
 
