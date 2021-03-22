@@ -33,7 +33,7 @@ export const createPartFiles = async () => {
       fulfilmentFile.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
       fulfilmentFile.notes = `The fulfilment file finished exporting at ${moment().toISOString()}`
     }
-    await persist(...toMarkAsExported)
+    await persist(toMarkAsExported)
   }
 }
 
@@ -70,7 +70,7 @@ const processQueryPage = async page => {
       return item.fulfilmentRequest
     })
     debug('Persisting updates to Dynamics')
-    await persist(fulfilmentFile, ...fulfilmentRequestUpdates)
+    await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
   }
 }
 

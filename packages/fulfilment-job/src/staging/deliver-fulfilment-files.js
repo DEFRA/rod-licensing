@@ -26,7 +26,7 @@ export const deliverFulfilmentFiles = async () => {
     file.deliveryTimestamp = moment().toISOString()
     file.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Delivered')
     file.notes = `The fulfilment file was successfully delivered at ${file.deliveryTimestamp}`
-    await persist(file)
+    await persist([file])
   }
 }
 

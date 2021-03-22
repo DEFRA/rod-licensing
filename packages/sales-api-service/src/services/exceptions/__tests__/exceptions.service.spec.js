@@ -7,7 +7,7 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 }))
 
 expect.extend({
-  jsonMatching (received, ...matchers) {
+  jsonMatching(received, ...matchers) {
     try {
       const obj = JSON.parse(received)
       for (const matcher of matchers) {
@@ -40,7 +40,7 @@ describe('payment-journals service', () => {
         exceptionJson: 'string'
       }
       const result = await createStagingException(stagingException)
-      expect(persist).toHaveBeenCalledWith(expect.objectContaining(stagingException))
+      expect(persist).toHaveBeenCalledWith([expect.objectContaining(stagingException)])
       expect(result).toBeInstanceOf(StagingException)
     })
   })
@@ -52,16 +52,18 @@ describe('payment-journals service', () => {
       const testTransaction = { some: 'data' }
       const result = await createStagingExceptionFromError('testStagingId', testError, testTransaction)
       expect(persist).toHaveBeenCalledWith(
-        expect.objectContaining({
-          stagingId: 'testStagingId',
-          description: expectedErrorMessage,
-          transactionJson: expect.jsonMatching(expect.objectContaining(testTransaction)),
-          exceptionJson: expect.jsonMatching(
-            expect.objectContaining({
-              stack: expect.arrayContaining([expectedErrorMessage, ...testError.stack.split('\n')])
-            })
-          )
-        })
+        [
+          expect.objectContaining({
+            stagingId: 'testStagingId',
+            description: expectedErrorMessage,
+            transactionJson: expect.jsonMatching(expect.objectContaining(testTransaction)),
+            exceptionJson: expect.jsonMatching(
+              expect.objectContaining({
+                stack: expect.arrayContaining([expectedErrorMessage, ...testError.stack.split('\n')])
+              })
+            )
+          })
+        ]
       )
       expect(result).toBeInstanceOf(StagingException)
     })
@@ -71,7 +73,7 @@ describe('payment-journals service', () => {
       const testError = Object.assign(new Error(), { error: { message: expectedErrorMessage } })
       const testTransaction = { some: 'data' }
       const result = await createStagingExceptionFromError('testStagingId', testError, testTransaction)
-      expect(persist).toHaveBeenCalledWith(
+      expect(persist).toHaveBeenCalledWith([
         expect.objectContaining({
           stagingId: 'testStagingId',
           description: expectedErrorMessage,
@@ -83,6 +85,7 @@ describe('payment-journals service', () => {
             })
           )
         })
+      ]
       )
       expect(result).toBeInstanceOf(StagingException)
     })
@@ -100,12 +103,13 @@ describe('payment-journals service', () => {
         permissionId: 'string'
       }
       const result = await createTransactionFileException(transactionFileException)
-      expect(persist).toHaveBeenCalledWith(
+      expect(persist).toHaveBeenCalledWith([
         expect.objectContaining({
           ...transactionFileException,
           type: expect.objectContaining({ id: 910400001, label: 'Failure', description: 'Failure' }),
           status: expect.objectContaining({ id: 910400000, label: 'Open', description: 'Open' })
         })
+      ]
       )
       expect(result).toBeInstanceOf(PoclStagingException)
     })
