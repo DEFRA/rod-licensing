@@ -9,50 +9,56 @@ export default async request => {
 
   licensee.preferredMethodOfNewsletter = licensee.preferredMethodOfNewsletter || HOW_CONTACTED.none
 
-  if (isPhysical(permission)) {
-    getPhysicalConfirmationsAndReminders(licensee, payload)
-  } else {
-    getDigitalConfirmationsAndReminders(licensee, payload)
+  const howContacted = payload['how-contacted']
+  const isPhysicalLicence = isPhysical(permission)
+
+  licensee.preferredMethodOfReminder = getContactMethod(howContacted, isPhysicalLicence)
+
+  // preferredMethodOfConfirmation is set on licence-confirmation-method screen for physical licences
+  if (!isPhysicalLicence) {
+    licensee.preferredMethodOfConfirmation = getContactMethod(howContacted, isPhysicalLicence)
   }
+  licensee.email = getEmail(payload, licensee)
+  licensee.mobilePhone = getText(payload, licensee)
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }
 
-const getPhysicalConfirmationsAndReminders = (licensee, payload) => {
-  switch (payload['how-contacted']) {
+const getContactMethod = (howContacted, isPhysicalLicence) => {
+  switch (howContacted) {
     case 'email':
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.email
-      licensee.email = payload.email
-      break
+      return HOW_CONTACTED.email
     case 'text':
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.text
-      licensee.mobilePhone = payload.text
-      break
+      return HOW_CONTACTED.text
     default:
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
+      return isPhysicalLicence ? HOW_CONTACTED.letter : HOW_CONTACTED.none
   }
 }
 
-const getDigitalConfirmationsAndReminders = (licensee, payload) => {
-  switch (payload['how-contacted']) {
-    case 'email':
-      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.email
-      licensee.email = payload.email
-      licensee.mobilePhone = null
-      break
-
-    case 'text':
-      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.text
-      licensee.mobilePhone = payload.text
-      licensee.email = licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
-      break
-
-    default:
-      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.none
-      licensee.mobilePhone = null
-      licensee.email = licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
+const getEmail = (payload, licensee) => {
+  if (hasCommunicationMethod(licensee, HOW_CONTACTED.email)) {
+    return payload.email
+  } if (hasNewsletterEmail(licensee)) {
+    return licensee.email
   }
+  return null
 }
+
+const getText = (payload, licensee) => {
+  if (hasCommunicationMethod(licensee, HOW_CONTACTED.text)) {
+    return payload.text
+  } if (hasNewsletterEmail(licensee)) {
+    return licensee.email
+  }
+  return null
+}
+
+const hasCommunicationMethod = (licensee, communicationMethod) => {
+  if (licensee.preferredMethodOfConfirmation === communicationMethod
+    || licensee.preferredMethodOfReminder === communicationMethod) {
+    return true
+  }
+  return false
+}
+
+const hasNewsletterEmail = licensee => licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email
