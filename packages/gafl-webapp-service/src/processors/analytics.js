@@ -1,11 +1,21 @@
 import { UTM } from '../constants.js'
+import db from 'debug'
+const debug = db('webapp:analytics-processor')
+
+const getClientIdFromGACookie = query => {
+  if (query._ga) {
+    const clientId = query._ga.split('.')[2]
+    if (!clientId) {
+      debug(`Unexpected _ga cookie value: ${query._ga}`)
+    }
+    return clientId
+  }
+  return undefined
+}
 
 export const initialiseAnalyticsSessionData = async (request, previousSessionStatusData) => {
-  let clientId
   // When redirecting from the landing page (which uses client side analytics) we need to establish the session identifier using the linker parameter
-  if (request.query._ga) {
-    clientId = /^.+-(?<clientId>.+)$/.exec(request.query._ga).groups.clientId
-  }
+  const clientId = getClientIdFromGACookie(request.query)
   await request.cache().helpers.status.set({
     gaClientId: previousSessionStatusData?.gaClientId || clientId,
     attribution: getAttribution(previousSessionStatusData, request)
