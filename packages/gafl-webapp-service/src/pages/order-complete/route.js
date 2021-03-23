@@ -43,6 +43,7 @@ const getData = async request => {
     hasSenior: concessionHelper.hasSenior(permission),
     licenceTypeStr: licenceTypeDisplay(permission),
     isPhysical: isPhysical(permission),
+    isPostalFulfilment: permission.licensee.postalFulfilment, 
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     howContacted: mappings.HOW_CONTACTED,
     uri: {
