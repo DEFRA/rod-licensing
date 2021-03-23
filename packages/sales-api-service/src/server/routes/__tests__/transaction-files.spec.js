@@ -65,11 +65,13 @@ describe('transaction files handler', () => {
         fileSize: '5 KB'
       })
       expect(persist).toHaveBeenCalledWith(
-        expect.objectContaining({
-          fileName: 'testnew.xml',
-          fileSize: '5 KB',
-          status: expect.objectContaining(await getGlobalOptionSetValue(PoclFile.definition.mappings.status.ref, 'Received and Pending'))
-        })
+        [
+          expect.objectContaining({
+            fileName: 'testnew.xml',
+            fileSize: '5 KB',
+            status: expect.objectContaining(await getGlobalOptionSetValue(PoclFile.definition.mappings.status.ref, 'Received and Pending'))
+          })
+        ]
       )
     })
 
@@ -84,7 +86,7 @@ describe('transaction files handler', () => {
         fileName: 'test.xml',
         fileSize: '5 KB'
       })
-      expect(persist).toHaveBeenCalledWith(testPoclFile)
+      expect(persist).toHaveBeenCalledWith([testPoclFile])
     })
 
     it('throws 422 errors if the payload was invalid', async () => {

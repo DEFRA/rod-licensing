@@ -54,7 +54,7 @@ export default [
         payload.status = await getGlobalOptionSetValue(PoclFile.definition.mappings.status.ref, payload.status)
 
         const transactionFile = Object.assign(file, payload, { fileName: request.params.fileName })
-        await persist(transactionFile)
+        await persist([transactionFile])
         return h.response(transactionFile).code(200)
       },
       description: 'Create or update an transaction file header with the given identifier',

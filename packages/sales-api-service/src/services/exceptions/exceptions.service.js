@@ -18,7 +18,7 @@ const debug = db('sales:exceptions')
 export const createStagingException = async exceptionData => {
   debug('Adding staging exception: %o', exceptionData)
   const exception = Object.assign(new StagingException(), exceptionData)
-  await persist(exception)
+  await persist([exception])
   return exception
 }
 
@@ -59,6 +59,6 @@ export const createTransactionFileException = async transactionFileError => {
     status: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.status.ref, 'Open')
   })
   stagingException.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, transactionFileError.transactionFile)
-  await persist(stagingException)
+  await persist([stagingException])
   return stagingException
 }
