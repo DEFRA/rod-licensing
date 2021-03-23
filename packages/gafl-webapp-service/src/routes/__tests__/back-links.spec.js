@@ -12,6 +12,7 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_ENTRY,
   LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   NEWSLETTER
 } from '../../uri.js'
@@ -111,7 +112,7 @@ describe('The address-entry page', () => {
 })
 
 describe('The licence-fulfilment page', () => {
-  it('has a back-link to the address lookup page if the contact summary has not been seen', () => {
+  it('has a back-link to the address-lookup page if the contact summary has not been seen', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
     expect(n.backLink({})).toBe(ADDRESS_LOOKUP.uri)
   })
@@ -121,10 +122,24 @@ describe('The licence-fulfilment page', () => {
   })
 })
 
+describe('The licence-confirmation page', () => {
+  it('has a back-link to the licence-fulfilment page if the contact summary has not been seen', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
+    expect(n.backLink({})).toBe(LICENCE_FULFILMENT.uri)
+  })
+  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
+    expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  })
+})
+
 describe('The contact page', () => {
   const n = journeyDefinition.find(n => n.current.page === CONTACT.page)
-  it('has a back-link to the address-lookup page if the contact summary has not been seen', () => {
-    expect(n.backLink({})).toBe(ADDRESS_LOOKUP.uri)
+  it('has a back-link to the address-lookup page if the contact summary has not been seen and is not a physical licence', () => {
+    expect(n.backLink({}, {})).toBe(ADDRESS_LOOKUP.uri)
+  })
+  it('has a back-link to the licence confirmation method page if the contact summary has not been seen and is a physical licence', () => {
+    expect(n.backLink({}, { licenceLength: '12M' })).toBe(LICENCE_CONFIRMATION_METHOD.uri)
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)

@@ -40,7 +40,7 @@ describe('The newsletter page', () => {
   })
 
   describe('if the user has set the preferred method of contact to email ', async () => {
-    beforeAll(async d => {
+    beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
@@ -61,7 +61,6 @@ describe('The newsletter page', () => {
       expect(licensee).toEqual(
         expect.objectContaining({
           preferredMethodOfNewsletter: HOW_CONTACTED.none,
-          preferredMethodOfConfirmation: HOW_CONTACTED.email,
           preferredMethodOfReminder: HOW_CONTACTED.email,
           email: 'example@email.com'
         })
@@ -89,7 +88,6 @@ describe('The newsletter page', () => {
       expect(licensee).toEqual(
         expect.objectContaining({
           preferredMethodOfNewsletter: HOW_CONTACTED.email,
-          preferredMethodOfConfirmation: HOW_CONTACTED.email,
           preferredMethodOfReminder: HOW_CONTACTED.email,
           email: 'example@email.com'
         })
@@ -109,7 +107,6 @@ describe('The newsletter page', () => {
       expect(licensee).toEqual(
         expect.objectContaining({
           preferredMethodOfNewsletter: HOW_CONTACTED.email,
-          preferredMethodOfConfirmation: HOW_CONTACTED.text,
           preferredMethodOfReminder: HOW_CONTACTED.text,
           email: 'example@email.com'
         })
@@ -127,7 +124,7 @@ describe('The newsletter page', () => {
   })
 
   describe('if the user has set the preferred method of contact to text ', async () => {
-    beforeAll(async d => {
+    beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
@@ -148,7 +145,6 @@ describe('The newsletter page', () => {
       expect(licensee).toEqual(
         expect.objectContaining({
           preferredMethodOfNewsletter: HOW_CONTACTED.none,
-          preferredMethodOfConfirmation: HOW_CONTACTED.text,
           preferredMethodOfReminder: HOW_CONTACTED.text
         })
       )
@@ -176,7 +172,6 @@ describe('The newsletter page', () => {
       expect(licensee).toEqual(
         expect.objectContaining({
           preferredMethodOfNewsletter: HOW_CONTACTED.email,
-          preferredMethodOfConfirmation: HOW_CONTACTED.text,
           preferredMethodOfReminder: HOW_CONTACTED.text,
           email: 'example@email.com'
         })
@@ -193,7 +188,7 @@ describe('The newsletter page', () => {
       expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
     })
 
-    it('if having previously posting yes and subsequently posting no, it nulls the email', async () => {
+    it('if having previously posting yes and subsequently posting no, it sets the email', async () => {
       await injectWithCookies('POST', NEWSLETTER.uri, {
         newsletter: 'yes',
         'email-entry': 'yes',
@@ -205,7 +200,7 @@ describe('The newsletter page', () => {
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfNewsletter).toBe(HOW_CONTACTED.none)
-      expect(JSON.parse(payload).permissions[0].licensee.email).not.toBeTruthy()
+      expect(JSON.parse(payload).permissions[0].licensee.email).toBe('example@email.com')
     })
   })
 })

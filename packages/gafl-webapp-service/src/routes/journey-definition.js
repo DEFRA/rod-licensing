@@ -31,6 +31,7 @@ import { licenceToStartResults } from '../pages/licence-details/licence-to-start
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
+import { isPhysical } from '../processors/licence-type-display.js'
 
 /**
  * The structure of each atom is as follows
@@ -257,7 +258,15 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: (status, transaction) => {
+      if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+        return CONTACT_SUMMARY.uri
+      } else if (isPhysical(transaction)) {
+        return LICENCE_CONFIRMATION_METHOD.uri
+      } else {
+        return ADDRESS_LOOKUP.uri
+      }
+    }
   },
 
   {

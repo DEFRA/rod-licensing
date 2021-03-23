@@ -5,37 +5,60 @@ import { isPhysical } from '../../../processors/licence-type-display.js'
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const { licensee } = permission
 
-  licensee.preferredMethodOfNewsletter = licensee.preferredMethodOfNewsletter || HOW_CONTACTED.none
-
-  switch (payload['how-contacted']) {
-    case 'email':
-      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.email
-      licensee.email = payload.email
-      licensee.mobilePhone = null
-      break
-
-    case 'text':
-      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.text
-      licensee.mobilePhone = payload.text
-      licensee.email = licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
-      break
-
-    default:
-      if (isPhysical(permission)) {
-        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.letter
-        licensee.preferredMethodOfReminder = HOW_CONTACTED.letter
-      } else {
-        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
-        licensee.preferredMethodOfReminder = HOW_CONTACTED.none
-      }
-
-      licensee.mobilePhone = null
-      licensee.email = licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
+  permission.licensee = {
+    preferredMethodOfNewsletter: HOW_CONTACTED.none,
+    ...permission.licensee, 
+    ...isPhysical(permission) ? getPhysicalReminders(permission.licensee, payload) :
+      getDigitalConfirmationsAndReminders(permission.licensee, payload)
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
+}
+
+const getPhysicalReminders = (licensee, payload) => {
+  switch (payload['how-contacted']) {
+    case 'email':
+      licensee.preferredMethodOfReminder = HOW_CONTACTED.email
+      licensee.email = payload.email
+      return {
+        email: payload.email,
+        preferredMethodOfReminder: HOW_CONTACTED.email
+      }
+    case 'text':
+      return {
+        preferredMethodOfReminder: HOW_CONTACTED.text,
+        mobilePhone: payload.text
+      }
+    default:
+      return {
+        preferredMethodOfReminder: HOW_CONTACTED.letter
+      }
+  }
+}
+
+const getDigitalConfirmationsAndReminders = (licensee, payload) => {
+  switch (payload['how-contacted']) {
+    case 'email':
+      return {
+        preferredMethodOfConfirmation: HOW_CONTACTED.email,
+        preferredMethodOfReminder: HOW_CONTACTED.email,
+        email: payload.email,
+        mobilePhone: null
+      }
+    case 'text':
+      return {
+        preferredMethodOfConfirmation: HOW_CONTACTED.text,
+        preferredMethodOfReminder: HOW_CONTACTED.text,
+        mobilePhone: payload.text,
+        email: licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
+      }
+    default:
+      return {
+        preferredMethodOfConfirmation: HOW_CONTACTED.none,
+        preferredMethodOfReminder: HOW_CONTACTED.none,
+        mobilePhone: null,
+        email: licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
+      }
+  }
 }

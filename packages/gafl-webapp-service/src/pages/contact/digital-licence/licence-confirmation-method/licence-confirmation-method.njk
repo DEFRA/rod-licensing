@@ -42,7 +42,7 @@
             spellcheck: "false",
             maxlength: "50"
           },
-          value: payload.email if payload['licence-confirmation-method'] === 'email' else ''
+          value: data.licensee.email if data.licensee.email and not error['email'] else payload.email
         }) }}
     </div>
     <div id="email-ro" class="govuk-body-m initially-hidden">
@@ -71,7 +71,7 @@
           attributes: {
             maxlength: "16"
           },
-          value: payload.text if payload['licence-confirmation-method'] === 'text' else ''
+          value: data.licensee.mobilePhone if data.licensee.mobilePhone and not error['text'] else payload.text
         }) }}
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
@@ -93,7 +93,7 @@
     },
     {
         value: "text",
-        text: "Text",
+        text: "Text message",
         checked: payload['licence-confirmation-method'] === 'text',
         conditional: {
             html: textMessageHtml
@@ -101,18 +101,18 @@
     }
 ] %}
 
-{% if data.postalFulfilment === 'Yes' %}
+{% if data.licensee.postalFulfilment === 'Yes' %}
     {% set title = 'How do you want your fishing licence confirmation?' %}
     {% set bodyText = 'This is where we will send confirmation of your fishing licence' %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "none",
-            text: "Make a note of the licence number",
+            text: "I will make a note of my licence number",
             checked: payload['licence-confirmation-method'] === 'none'
         }), itemsArray) 
     %}
 {% else %}
-    {% set title = 'Where should we send your licence?' %}
+    {% set title = 'Where should we send your fishing licence?' %}
     {% set bodyText = 'This is where we will send the licence after payment.' %}
     {% set hintText = 'You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.' %}
 {% endif %}
@@ -135,7 +135,7 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.email}}' && !'{{ error.email }}' ) {
+        if ('{{ data.licensee.email }}' && !'{{ error.email }}' ) {
             document.getElementById("email-ro").style.display = "block"
             document.getElementById("email-rw").style.display = "none"
         } else {
@@ -148,7 +148,7 @@
         })
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.preferredMethodOfConfirmation }}' === '{{data.howContacted.text}}' && !'{{ error.text }}' ) {
+        if ('{{ data.licensee.mobilePhone }}' && !'{{ error.text }}' ) {
             document.getElementById("text-ro").style.display = "block"
             document.getElementById("text-rw").style.display = "none"
         } else {
