@@ -6,9 +6,8 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  permission.licensee.preferredMethodOfNewsletter = permission.licensee.preferredMethodOfNewsletter || HOW_CONTACTED.none
-
   permission.licensee = {
+    preferredMethodOfNewsletter: HOW_CONTACTED.none,
     ...permission.licensee, 
     ...isPhysical(permission) ? getPhysicalReminders(permission.licensee, payload) :
       getDigitalConfirmationsAndReminders(permission.licensee, payload)
