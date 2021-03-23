@@ -5,19 +5,13 @@ import { isPhysical } from '../../../processors/licence-type-display.js'
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  //const { licensee } = permission
 
   permission.licensee.preferredMethodOfNewsletter = permission.licensee.preferredMethodOfNewsletter || HOW_CONTACTED.none
 
-  let confirmationAndReminders
-  if (isPhysical(permission)) {
-    confirmationAndReminders = getPhysicalReminders(permission.licensee, payload)
-  } else {
-    confirmationAndReminders = getDigitalConfirmationsAndReminders(permission.licensee, payload)
-  }
-
   permission.licensee = {
-    ...permission.licensee, ...confirmationAndReminders
+    ...permission.licensee, 
+    ...isPhysical(permission) ? getPhysicalReminders(permission.licensee, payload) :
+      getDigitalConfirmationsAndReminders(permission.licensee, payload)
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
