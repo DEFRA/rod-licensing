@@ -22,13 +22,14 @@ describe('contact > update-transaction', () => {
   describe('for a 12 month licence (physical)', () => {
     beforeEach(() => {
       jest.clearAllMocks()
+    })
+
+    it('should set email and preferredMethodOfReminder in cache, when how-contacted is email', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
         licensee: {}
       }))
-    })
 
-    it('should set email and preferredMethodOfReminder in cache, when how-contacted is email', async () => {
       mockPageCacheGet.mockImplementationOnce(() => ({
         payload: {
           'how-contacted': 'email',
@@ -38,18 +39,23 @@ describe('contact > update-transaction', () => {
 
       await updateTransaction(mockRequest)
 
-      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          licenceLength: '12M',
-          licensee: expect.objectContaining({
-            email: 'example@example.com',
-            preferredMethodOfReminder: 'Email'
-          })
+      const method = mockTransactionCacheSet.mock.calls[0]
+      expect(method[0]).toMatchObject({
+        licenceLength: '12M',
+        licensee: expect.objectContaining({
+          email: 'example@example.com',
+          preferredMethodOfReminder: 'Email'
         })
-      )
+      });
+      expect(method[0]).not.toHaveProperty('licensee.preferredMethodOfConfirmation')
     })
 
     it('should set mobilePhone and preferredMethodOfReminder in cache, when how-contacted is test', async () => {
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        licensee: {}
+      }))
+
       mockPageCacheGet.mockImplementationOnce(() => ({
         payload: {
           'how-contacted': 'text',
@@ -59,18 +65,24 @@ describe('contact > update-transaction', () => {
 
       await updateTransaction(mockRequest)
 
-      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          licenceLength: '12M',
-          licensee: expect.objectContaining({
-            mobilePhone: '07700900088',
-            preferredMethodOfReminder: 'Text'
-          })
+      const method = mockTransactionCacheSet.mock.calls[0]
+      expect(method[0]).toMatchObject({
+        licenceLength: '12M',
+        licensee: expect.objectContaining({
+          mobilePhone: '07700900088',
+          preferredMethodOfReminder: 'Text'
         })
-      )
+      })
+      expect(method[0]).not.toHaveProperty('licensee.preferredMethodOfConfirmation')
+      
     })
 
     it('should set preferredMethodOfReminder in cache, when how-contacted is none', async () => {
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        licensee: {}
+      }))
+
       mockPageCacheGet.mockImplementationOnce(() => ({
         payload: {
           'how-contacted': 'none'
@@ -79,15 +91,101 @@ describe('contact > update-transaction', () => {
 
       await updateTransaction(mockRequest)
 
-      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          licenceLength: '12M',
-          licensee: expect.objectContaining({
-            preferredMethodOfReminder: 'Letter'
-          })
+      const method = mockTransactionCacheSet.mock.calls[0]
+      expect(method[0]).toMatchObject({
+        licenceLength: '12M',
+        licensee: expect.objectContaining({
+          preferredMethodOfReminder: 'Letter'
         })
-      )
+      });
+      expect(method[0]).not.toHaveProperty('licensee.preferredMethodOfConfirmation')
     })
+
+    it('should preserve the email and set preferredMethodOfReminder to text, when how-contacted is text', async () => {
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        licensee: {
+          email: 'example@example.com'
+        }
+      }))
+
+      mockPageCacheGet.mockImplementationOnce(() => ({
+        payload: {
+          'how-contacted': 'text',
+          text: '07700900088'
+        }
+      }))
+
+      await updateTransaction(mockRequest)
+
+      const method = mockTransactionCacheSet.mock.calls[0]
+      expect(method[0]).toMatchObject({
+        licenceLength: '12M',
+        licensee: expect.objectContaining({
+          mobilePhone: '07700900088',
+          preferredMethodOfReminder: 'Text',
+          email: 'example@example.com'
+        })
+      })
+    })
+
+    it('should preserve mobilePhone and set preferredMethodOfReminder to email, when how-contacted is email', async () => {
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        licensee: {
+          mobilePhone: '07700900088'
+        }
+      }))
+
+      mockPageCacheGet.mockImplementationOnce(() => ({
+        payload: {
+          'how-contacted': 'email',
+          email: 'example@example.com'
+        }
+      }))
+
+      await updateTransaction(mockRequest)
+
+      const method = mockTransactionCacheSet.mock.calls[0]
+      expect(method[0]).toMatchObject({
+        licenceLength: '12M',
+        licensee: expect.objectContaining({
+          mobilePhone: '07700900088',
+          preferredMethodOfReminder: 'Email',
+          email: 'example@example.com'
+        })
+      })
+    })
+
+    it('should preserve the original email and set preferredMethodOfReminder to text, when how-contacted is text and when an email is passed in', async () => {
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        licensee: {
+          email: 'example@example.com'
+        }
+      }))
+
+      mockPageCacheGet.mockImplementationOnce(() => ({
+        payload: {
+          'how-contacted': 'text',
+          text: '07700900088',
+          email: 'somone@example.com'
+        }
+      }))
+
+      await updateTransaction(mockRequest)
+
+      const method = mockTransactionCacheSet.mock.calls[0]
+      expect(method[0]).toMatchObject({
+        licenceLength: '12M',
+        licensee: expect.objectContaining({
+          mobilePhone: '07700900088',
+          preferredMethodOfReminder: 'Text',
+          email: 'example@example.com'
+        })
+      })
+    })
+
   })
 
   describe('for a 1 day licence (non-physical)', () => {
@@ -141,6 +239,7 @@ describe('contact > update-transaction', () => {
           })
         })
       )
+      
     })
 
     it('should set preferredMethodOfReminder and preferredMethodOfConfirmation in cache, when how-contacted is none', async () => {
