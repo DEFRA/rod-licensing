@@ -89,7 +89,7 @@ describe('The licence fulfilment page', () => {
   })
 
   describe('if the contact summary has been seen', () => {
-    it('redirects to the summary page', async () => {
+    it('redirects to the confirmation method page', async () => {
       // Set up the licence details
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -104,7 +104,7 @@ describe('The licence fulfilment page', () => {
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+      expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
     })
   })
 })

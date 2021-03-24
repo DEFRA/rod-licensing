@@ -58,31 +58,73 @@
 %}
 
 {% if data.isPhysical %}
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Licence card"
-        },
-        value: {
-          text: 'By post within the next 15 working days'
-        }
-    }) }}
-{% endif %}
-
-{% if data.isPhysical %}
-    {% if data.contactMethod === data.howContacted['letter'] %}
-        {% set contactPref = 'By post' %}
-    {% elseif data.contactMethod === data.howContacted['email'] %}
-        {% set contactPref = 'By email: ' + data.permission.licensee.email %}
-    {% elseif data.contactMethod === data.howContacted['text'] %}
-        {% set contactPref = 'By text: ' + data.permission.licensee.mobilePhone %}
+    {% if data.isPostalFulfilment === 'Yes' %}
+        {{ licenseeDetailsSummaryRows.push({
+            key: {
+                text: "Licence"
+            },
+            value: {
+                text: 'By post'
+            },
+            actions: {
+                items: [
+                    {
+                        href: data.uri.fulfilment,
+                        text: "Change",
+                        visuallyHiddenText: "licence option",
+                        attributes: { id: 'licence-option' }
+                    }
+                ]
+            }
+        }) }}
+        {% set licenceTitle = 'Licence Confirmation' %}
+    {% else %}
+        {% set licenceTitle = 'Licence' %}
+    {% endif %}
+       
+    {% if data.confirmationMethod === data.howContacted['email'] %}
+        {% set confirmationPref = 'Email to ' + data.permission.licensee.email %}
+    {% elseif data.confirmationMethod === data.howContacted['text'] %}
+        {% set confirmationPref = 'Text message to ' + data.permission.licensee.mobilePhone %}
+    {% else %}
+        {% set confirmationPref = 'Note of licence' %}
     {% endif %}
 
     {{ licenseeDetailsSummaryRows.push({
         key: {
-          text: "Contact preference"
+          text: licenceTitle
         },
         value: {
-        html: contactPref
+          text: confirmationPref
+        },
+        actions: {
+                items: [
+                    {
+                        href: data.uri.confirmationMethod,
+                        text: "Change",
+                        visuallyHiddenText: "licence confirmation option",
+                        attributes: { id: 'licence-confirmation-option' }
+                    }
+                ]
+            }
+    }) }}
+{% endif %}
+
+{% if data.isPhysical %}
+    {% if data.reminderMethod === data.howContacted['letter'] %}
+        {% set reminderPref = 'By post' %}
+    {% elseif data.reminderMethod === data.howContacted['email'] %}
+        {% set reminderPref = 'Email to ' + data.permission.licensee.email %}
+    {% elseif data.reminderMethod === data.howContacted['text'] %}
+        {% set reminderPref = 'Text messages to ' + data.permission.licensee.mobilePhone %}
+    {% endif %}
+
+    {{ licenseeDetailsSummaryRows.push({
+        key: {
+          text: "Contact"
+        },
+        value: {
+        html: reminderPref
       },
       actions: {
         items: [
@@ -96,12 +138,12 @@
       }
     }) }}
 {% else %}
-    {% if data.contactMethod === data.howContacted['none'] %}
+    {% if data.confirmationMethod === data.howContacted['none'] %}
         {% set licencePref = 'Make a note on confirmation' %}
-    {% elseif data.contactMethod === data.howContacted['email'] %}
-        {% set licencePref = 'By email: ' + data.permission.licensee.email %}
-    {% elseif data.contactMethod === data.howContacted['text'] %}
-        {% set licencePref = 'By text: ' + data.permission.licensee.mobilePhone %}
+    {% elseif data.confirmationMethod === data.howContacted['email'] %}
+        {% set licencePref = 'Email to ' + data.permission.licensee.email %}
+    {% elseif data.confirmationMethod === data.howContacted['text'] %}
+        {% set licencePref = 'Text messages to ' + data.permission.licensee.mobilePhone %}
     {% endif %}
 
     {{ licenseeDetailsSummaryRows.push({

@@ -6,7 +6,8 @@ import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 
-import { CONTACT_SUMMARY, LICENCE_SUMMARY, NAME, ADDRESS_ENTRY, ADDRESS_SELECT, ADDRESS_LOOKUP, CONTACT, NEWSLETTER } from '../../../uri.js'
+import { CONTACT_SUMMARY, LICENCE_SUMMARY, NAME, ADDRESS_ENTRY, ADDRESS_SELECT, 
+  ADDRESS_LOOKUP, CONTACT, NEWSLETTER, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../../uri.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -38,12 +39,16 @@ const getData = async request => {
     permission,
     countryName,
     isPhysical: isPhysical(permission),
-    contactMethod: permission.licensee.preferredMethodOfConfirmation,
+    isPostalFulfilment: permission.licensee.postalFulfilment,
+    confirmationMethod: permission.licensee.preferredMethodOfConfirmation,
+    reminderMethod: permission.licensee.preferredMethodOfReminder,
     newsLetter: permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none,
     howContacted: HOW_CONTACTED,
     uri: {
       name: NAME.uri,
       address: ADDRESS_LOOKUP.uri, // Encourage the address lookup on an amendment
+      fulfilment: LICENCE_FULFILMENT.uri,
+      confirmationMethod: LICENCE_CONFIRMATION_METHOD.uri,
       contact: CONTACT.uri,
       newsletter: NEWSLETTER.uri,
       licenceSummary: LICENCE_SUMMARY.uri
