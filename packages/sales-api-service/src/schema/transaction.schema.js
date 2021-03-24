@@ -26,7 +26,9 @@ const createTransactionRequestSchemaContent = {
     .items(stagedPermissionSchema)
     .required()
     .label('create-transaction-request-permissions'),
-  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales')
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
+  createdBy: Joi.string().optional(),
+
 }
 
 /**
@@ -72,7 +74,7 @@ const createTransactionResponseSchemaContent = {
   status: Joi.object({
     id: Joi.string()
       .valid('STAGED')
-      .required()
+      .required(),
   })
     .label('create-transaction-status')
     .required()

@@ -86,34 +86,38 @@ describe('deliverFulfilmentFiles', () => {
     // Persist to dynamics for file 1
     expect(persist).toHaveBeenNthCalledWith(
       1,
-      expect.objectContaining({
-        fileName: 'EAFF202006180001.json',
-        date: '2020-06-18T11:47:32.982Z',
-        deliveryTimestamp: expect.any(String),
-        notes: expect.stringMatching(/The fulfilment file was successfully delivered at .+/),
-        numberOfRequests: 2,
-        status: expect.objectContaining({
-          description: 'Delivered',
-          id: 910400001,
-          label: 'Delivered'
+      [
+        expect.objectContaining({
+          fileName: 'EAFF202006180001.json',
+          date: '2020-06-18T11:47:32.982Z',
+          deliveryTimestamp: expect.any(String),
+          notes: expect.stringMatching(/The fulfilment file was successfully delivered at .+/),
+          numberOfRequests: 2,
+          status: expect.objectContaining({
+            description: 'Delivered',
+            id: 910400001,
+            label: 'Delivered'
+          })
         })
-      })
+      ]
     )
     // Persist to dynamics for file 2
     expect(persist).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({
-        fileName: 'EAFF202006180002.json',
-        date: '2020-06-18T11:47:33.982Z',
-        deliveryTimestamp: expect.any(String),
-        notes: expect.stringMatching(/The fulfilment file was successfully delivered at .+/),
-        numberOfRequests: 2,
-        status: expect.objectContaining({
-          description: 'Delivered',
-          id: 910400001,
-          label: 'Delivered'
+      [
+        expect.objectContaining({
+          fileName: 'EAFF202006180002.json',
+          date: '2020-06-18T11:47:33.982Z',
+          deliveryTimestamp: expect.any(String),
+          notes: expect.stringMatching(/The fulfilment file was successfully delivered at .+/),
+          numberOfRequests: 2,
+          status: expect.objectContaining({
+            description: 'Delivered',
+            id: 910400001,
+            label: 'Delivered'
+          })
         })
-      })
+      ]
     )
   })
 })

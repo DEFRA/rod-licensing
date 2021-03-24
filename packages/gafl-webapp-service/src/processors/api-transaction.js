@@ -58,7 +58,8 @@ export const prepareApiTransactionPayload = async request => {
       }
 
       return permission
-    })
+    }),
+    createdBy: request.state && request.state[process.env.OIDC_SESSION_COOKIE_NAME] ? request.state[process.env.OIDC_SESSION_COOKIE_NAME].oid : undefined
   }
 }
 

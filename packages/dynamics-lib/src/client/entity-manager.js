@@ -4,10 +4,12 @@ import { CacheableOperation } from './cache.js'
 /**
  * Persist the provided entities.  Uses a create or update request as appropriate based on the state of the entity.
  *
- * @param {...Object<BaseEntity>} entities the entities which shall be persisted
+ * @param {Object<BaseEntity[]>} entities the entities which shall be persisted
+ * @param {string} createdBy the oid of the active directory user that is creating the entities
  * @returns {Promise<string[]>} resolving to the ids of the persisted entities
  */
-export async function persist (...entities) {
+export async function persist(entities, createdBy) {
+
   try {
     dynamicsClient.startBatch()
     entities.forEach(entity => {
@@ -17,7 +19,9 @@ export async function persist (...entities) {
         dynamicsClient.updateRequest(entity.toPersistRequest())
       }
     })
-    return await dynamicsClient.executeBatch()
+    return await dynamicsClient.executeBatch({
+      impersonateAAD: createdBy
+    })
   } catch (e) {
     const error = e.length ? e[0] : e
     const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
@@ -48,7 +52,7 @@ const retrieveMultipleFetchOperation = async entityClasses => {
  * @param {typeof BaseEntity} entityClasses the entity classes to perform a retrieve operation on
  * @returns {CacheableOperation}
  */
-export function retrieveMultiple (...entityClasses) {
+export function retrieveMultiple(...entityClasses) {
   const entityClsKeys = entityClasses.map(e => e.definition.localCollection).join('_')
   return new CacheableOperation(
     `dynamics_${entityClsKeys}`,
@@ -69,7 +73,7 @@ export function retrieveMultiple (...entityClasses) {
  * @param {typeof BaseEntity} entityClasses the entity classes to perform a retrieve operation on
  * @returns {CacheableOperation}
  */
-export function retrieveMultipleAsMap (...entityClasses) {
+export function retrieveMultipleAsMap(...entityClasses) {
   const entityClsKeys = entityClasses.map(e => e.definition.localCollection).join('_')
   return new CacheableOperation(
     `dynamics_${entityClsKeys}`,
@@ -89,7 +93,7 @@ export function retrieveMultipleAsMap (...entityClasses) {
  *
  * @returns {CacheableOperation}
  */
-export function retrieveGlobalOptionSets () {
+export function retrieveGlobalOptionSets() {
   return new CacheableOperation(
     'dynamics_optionsetmap',
     async () => {
@@ -126,7 +130,7 @@ export function retrieveGlobalOptionSets () {
  * @param {string} key the ID of the record to retrieve
  * @returns {Promise<T>} the record matching the given id or null if not found
  */
-export async function findById (entityType, key) {
+export async function findById(entityType, key) {
   try {
     const record = await dynamicsClient.retrieveRequest({ key: key, ...entityType.definition.toRetrieveRequest(null) })
     const optionSetData = await retrieveGlobalOptionSets().cached()
@@ -149,7 +153,7 @@ export async function findById (entityType, key) {
  * @param {string} alternateKey the alternate key value to use to retrieve the corresponding entity
  * @returns {Promise<T>} the record matching the given id or null if not found
  */
-export async function findByAlternateKey (entityType, alternateKey) {
+export async function findByAlternateKey(entityType, alternateKey) {
   return findById(entityType, `${entityType.definition.alternateKey}='${escapeODataStringValue(alternateKey)}'`)
 }
 
@@ -161,7 +165,7 @@ export async function findByAlternateKey (entityType, alternateKey) {
  * @param {T} entity the example entity to construct a query from
  * @returns {Promise<Array<T>>} an array of matching records
  */
-export async function findByExample (entity) {
+export async function findByExample(entity) {
   try {
     const filter = [
       ...(entity.constructor.definition.defaultFilter ? [entity.constructor.definition.defaultFilter] : []),
@@ -193,7 +197,7 @@ export async function findByExample (entity) {
  *
  * @template {!BaseEntity} T
  */
-export async function executeQuery (query) {
+export async function executeQuery(query) {
   try {
     const response = await dynamicsClient.retrieveMultipleRequest(query.toRetrieveRequest())
     const optionSetData = await retrieveGlobalOptionSets().cached()
@@ -216,7 +220,7 @@ export async function executeQuery (query) {
  * @param {number} [maxPages} limit the number of pages that will be retrieved
  * @returns {Promise<number>} the count of records that were processed
  */
-export async function executePagedQuery (query, onPageReceived, maxPages) {
+export async function executePagedQuery(query, onPageReceived, maxPages) {
   let processed = 0
   try {
     const optionSetData = await retrieveGlobalOptionSets().cached()

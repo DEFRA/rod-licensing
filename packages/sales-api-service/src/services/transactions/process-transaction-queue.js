@@ -29,7 +29,7 @@ const debug = db('sales:transactions')
  * @param id
  * @returns {Promise<void>}
  */
-export async function processQueue ({ id }) {
+export async function processQueue({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
@@ -83,7 +83,7 @@ export async function processQueue ({ id }) {
   paymentJournal.total = totalTransactionValue
 
   debug('Persisting %d entities for staging id %s', entities.length, id)
-  await persist(...entities)
+  await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
   await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
   await docClient
