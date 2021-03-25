@@ -218,6 +218,7 @@
                 text: "Continue",
                 classes: "govuk-!-margin-top-5"
             }) }}
+            {{ govukSummaryList({ rows: data.summary }) }}
             {{ csrf() }}
         </form>
 
