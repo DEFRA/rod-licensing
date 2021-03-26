@@ -106,7 +106,8 @@ const getContactDetails = permission => {
   }
 }
 
-const getAddressText = (licensee, countryName) => [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()].filter(Boolean).join(', ')
+const getAddressText = (licensee, countryName) => [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+  .filter(Boolean).join(', ')
 
 
 const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
