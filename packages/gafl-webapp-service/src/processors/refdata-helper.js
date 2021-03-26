@@ -10,8 +10,7 @@ const local = {}
 
 const fetch = async () =>
   optionProc(await salesApi.countries.getAll())
-    .filter(c => !['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR'].includes(c.code))
-    .sort(a => (a.code === 'GB' ? -1 : 0))
+    .sort(a => (a.code.startsWith('GB') ? -1 : 0))
 
 // Process the country code option set into a useful form - once
 export const countries = {
