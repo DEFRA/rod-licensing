@@ -8,183 +8,6 @@
 {% set title = 'Check your contact details' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
-{% macro addressLine(line, term) %}
-    {% if line %}{{ line }}{% if not term %},{% endif %} {% endif %}
-{% endmacro %}
-
-{% set licenseeDetailsSummaryRows = [
-    {
-      key: {
-        text: "Name"
-      },
-      value: {
-        text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.name,
-            text: "Change",
-            visuallyHiddenText: "name",
-            attributes: { id: 'change-name' }
-          }
-        ]
-      }
-    },
-    {
-      key: {
-        text: "Address"
-      },
-      value: {
-        html: addressLine(data.permission.licensee.premises)
-        + addressLine(data.permission.licensee.street)
-        + addressLine(data.permission.licensee.locality)
-        + addressLine(data.permission.licensee.town)
-        + addressLine(data.permission.licensee.postcode)
-        + addressLine(data.countryName | upper, true)
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.address,
-            text: "Change",
-            visuallyHiddenText: "address",
-            attributes: { id: 'change-address' }
-          }
-        ]
-      }
-    }
-  ]
-%}
-
-{% if data.isPhysical %}
-    {% if data.isPostalFulfilment === 'Yes' %}
-        {{ licenseeDetailsSummaryRows.push({
-            key: {
-                text: "Licence"
-            },
-            value: {
-                text: 'By post'
-            },
-            actions: {
-                items: [
-                    {
-                        href: data.uri.fulfilment,
-                        text: "Change",
-                        visuallyHiddenText: "licence option",
-                        attributes: { id: 'licence-option' }
-                    }
-                ]
-            }
-        }) }}
-        {% set licenceTitle = 'Licence Confirmation' %}
-    {% else %}
-        {% set licenceTitle = 'Licence' %}
-    {% endif %}
-       
-    {% if data.confirmationMethod === data.howContacted['email'] %}
-        {% set confirmationPref = 'Email to ' + data.permission.licensee.email %}
-    {% elseif data.confirmationMethod === data.howContacted['text'] %}
-        {% set confirmationPref = 'Text message to ' + data.permission.licensee.mobilePhone %}
-    {% else %}
-        {% set confirmationPref = 'Note of licence' %}
-    {% endif %}
-
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: licenceTitle
-        },
-        value: {
-          text: confirmationPref
-        },
-        actions: {
-                items: [
-                    {
-                        href: data.uri.confirmationMethod,
-                        text: "Change",
-                        visuallyHiddenText: "licence confirmation option",
-                        attributes: { id: 'licence-confirmation-option' }
-                    }
-                ]
-            }
-    }) }}
-{% endif %}
-
-{% if data.isPhysical %}
-    {% if data.reminderMethod === data.howContacted['letter'] %}
-        {% set reminderPref = 'By post' %}
-    {% elseif data.reminderMethod === data.howContacted['email'] %}
-        {% set reminderPref = 'Email to ' + data.permission.licensee.email %}
-    {% elseif data.reminderMethod === data.howContacted['text'] %}
-        {% set reminderPref = 'Text messages to ' + data.permission.licensee.mobilePhone %}
-    {% endif %}
-
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Contact"
-        },
-        value: {
-        html: reminderPref
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.contact,
-            text: "Change",
-            visuallyHiddenText: "contact",
-            attributes: { id: 'change-contact' }
-          }
-        ]
-      }
-    }) }}
-{% else %}
-    {% if data.confirmationMethod === data.howContacted['none'] %}
-        {% set licencePref = 'Make a note on confirmation' %}
-    {% elseif data.confirmationMethod === data.howContacted['email'] %}
-        {% set licencePref = 'Email to ' + data.permission.licensee.email %}
-    {% elseif data.confirmationMethod === data.howContacted['text'] %}
-        {% set licencePref = 'Text messages to ' + data.permission.licensee.mobilePhone %}
-    {% endif %}
-
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Licence details"
-        },
-        value: {
-          text: licencePref
-        },
-        actions: {
-            items: [
-              {
-                href: data.uri.contact,
-                text: "Change",
-                visuallyHiddenText: "contact",
-                attributes: { id: 'change-contact' }
-              }
-            ]
-          }
-    }) }}
-{% endif %}
-
-{{ licenseeDetailsSummaryRows.push({
-    key: {
-      text: "Newsletter"
-    },
-    value: {
-      text: 'Yes' if data.newsLetter else 'No'
-    },
-    actions: {
-      items: [
-        {
-          href: data.uri.newsletter,
-          text: "Change",
-          visuallyHiddenText: "newsletter",
-          attributes: { id: 'change-newsletter' }
-        }
-      ]
-    }
-}) }}
-
 {% set licenseeDetailsSummary %}
     {% call govukFieldset({
       legend: {
@@ -193,7 +16,7 @@
         isPageHeading: true
       }
     }) %}
-        {{ govukSummaryList({ rows: licenseeDetailsSummaryRows }) }}
+        {{ govukSummaryList({ rows: data.summaryTable }) }}
     {% endcall %}
 {% endset -%}
 
@@ -218,7 +41,7 @@
                 text: "Continue",
                 classes: "govuk-!-margin-top-5"
             }) }}
-            {{ govukSummaryList({ rows: data.summary }) }}
+
             {{ csrf() }}
         </form>
 

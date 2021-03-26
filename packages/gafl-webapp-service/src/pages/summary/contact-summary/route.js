@@ -38,22 +38,8 @@ const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
-    permission,
-    countryName,
-    isPhysical: isPhysical(permission),
-    isPostalFulfilment: permission.licensee.postalFulfilment,
-    confirmationMethod: permission.licensee.preferredMethodOfConfirmation,
-    reminderMethod: permission.licensee.preferredMethodOfReminder,
-    newsLetter: permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none,
-    howContacted: HOW_CONTACTED,
-    summary: getLicenseeDetailsSummaryRows(permission, countryName),
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
     uri: {
-      name: NAME.uri,
-      address: ADDRESS_LOOKUP.uri, // Encourage the address lookup on an amendment
-      fulfilment: LICENCE_FULFILMENT.uri,
-      confirmationMethod: LICENCE_CONFIRMATION_METHOD.uri,
-      contact: CONTACT.uri,
-      newsletter: NEWSLETTER.uri,
       licenceSummary: LICENCE_SUMMARY.uri
     }
   }
@@ -61,21 +47,23 @@ const getData = async request => {
 
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
-const getLicenseeDetailsSummaryRows = (permission, countryName) => {
+export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
   return [
     getRow('Name', permission.licensee.firstName + ' ' + permission.licensee.lastName, NAME.uri, 'name', 'change-name'),
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
     ...getContactDetails(permission),
-    getRow('Newsletter', permission.licensee.preferredMethodOfNewsletter === HOW_CONTACTED.none ? 'No' : 'Yes', NEWSLETTER.uri, 'newsletter', 'change-newsletter')
+    getRow('Newsletter', permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No', NEWSLETTER.uri, 'newsletter', 'change-newsletter')
   ]
 }
 
 const getContactDetails = (permission) => {
   if (isPhysical(permission) && permission.licensee.postalFulfilment === 'Yes') {
     return [
+      getRow('Licence', 'By post',
+        LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-confirmation-option'),
       getRow('Licence Confirmation',
         getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-        LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'licence-confirmation-option'),
+        LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'change-licence-confirmation-option'),
       getRow('Contact',
         getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, 'By post', 'Text messages to '),
         CONTACT.uri, 'contact', 'change-contact')
@@ -84,7 +72,7 @@ const getContactDetails = (permission) => {
     return [
       getRow('Licence',
         getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-        LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'licence-confirmation-option'),
+        LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'change-licence-confirmation-option'),
       getRow('Contact',
         getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, 'By post', 'Text messages to '),
         CONTACT.uri, 'contact', 'change-contact')
@@ -99,7 +87,7 @@ const getContactDetails = (permission) => {
 }
 
 const getAddressText = (licensee, countryName) => {
-  return `${licensee.premises}, ${licensee.street}, ${licensee.locality}, ${licensee.town}, ${licensee.postcode} ${countryName.toUpperCase()}`
+  return [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()].filter(Boolean).join(', ')
 }
 
 const getContactText = (contactMethod, licensee, defaultMessage = 'Note of licence', textMessage = 'Text message to ') => {
