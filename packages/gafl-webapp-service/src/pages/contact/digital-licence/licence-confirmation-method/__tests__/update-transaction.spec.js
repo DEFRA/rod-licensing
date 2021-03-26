@@ -52,4 +52,18 @@ describe('licence-confirmation-method > update-transaction', () => {
       expect.objectContaining({ licensee: { mobilePhone: '07700900088', preferredMethodOfConfirmation: 'Text' } })
     )
   })
+
+  it('should set none in cache, when licence confirmation method is none', async () => {
+    mockPageCacheGet.mockImplementationOnce(() => ({
+      payload: {
+        'licence-confirmation-method': 'none',
+      }
+    }))
+
+    await updateTransaction(mockRequest)
+
+    expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+      expect.objectContaining({ licensee: { preferredMethodOfConfirmation: 'Prefer not to be contacted' } })
+    )
+  })
 })

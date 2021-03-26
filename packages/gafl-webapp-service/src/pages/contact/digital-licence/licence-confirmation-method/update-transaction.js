@@ -6,14 +6,18 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { licensee } = permission
 
-  const licenceConfirmationMethod = payload['licence-confirmation-method']
-  if (licenceConfirmationMethod === 'email') {
-    licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
-    licensee.email = payload.email
-  }
-  if (licenceConfirmationMethod === 'text') {
-    licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
-    licensee.mobilePhone = payload.text
+  switch(payload['licence-confirmation-method']) {
+    case 'email':
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
+      licensee.email = payload.email
+      break
+    case 'text':
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
+      licensee.mobilePhone = payload.text
+      break
+    default:
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
+      break
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

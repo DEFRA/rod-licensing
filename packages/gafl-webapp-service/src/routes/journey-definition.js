@@ -231,7 +231,7 @@ export default [
         page: LICENCE_CONFIRMATION_METHOD
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY
+        page: LICENCE_CONFIRMATION_METHOD
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
@@ -243,7 +243,7 @@ export default [
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY
+        page: CONTACT
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_FULFILMENT.uri)
