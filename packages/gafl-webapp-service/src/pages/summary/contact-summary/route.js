@@ -56,17 +56,38 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
   ]
 }
 
+const CONTACT_TEXT_DEFAULT = {
+  EMAIL: 'Email to ',
+  TEXT: 'Text message to ',
+  DEFAULT: 'Note of licence'
+}
+
+const CONTACT_TEXT_NON_PHYSICAL = {
+  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+  TEXT: 'Text messages to ',
+  DEFAULT: 'Make a note on confirmation'
+}
+
+const CONTACT_TEXT_PHYSICAL = {
+  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+  TEXT: 'Text messages to ',
+  DEFAULT: 'By post'
+}
+
+const CHANGE_CONTACT = 'change-contact'
+
 const getContactDetails = (permission) => {
+  
   if (isPhysical(permission) && permission.licensee.postalFulfilment === 'Yes') {
     return [
       getRow('Licence', 'By post',
-        LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-confirmation-option'),
+        LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
       getRow('Licence Confirmation',
         getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
         LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'change-licence-confirmation-option'),
       getRow('Contact',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, 'By post', 'Text messages to '),
-        CONTACT.uri, 'contact', 'change-contact')
+        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+        CONTACT.uri, 'contact', CHANGE_CONTACT)
     ]
   } else if (isPhysical(permission) && permission.licensee.postalFulfilment === 'No') {
     return [
@@ -74,14 +95,14 @@ const getContactDetails = (permission) => {
         getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
         LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'change-licence-confirmation-option'),
       getRow('Contact',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, 'By post', 'Text messages to '),
-        CONTACT.uri, 'contact', 'change-contact')
+        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+        CONTACT.uri, 'contact', CHANGE_CONTACT)
     ]
   } else {
     return [
       getRow('Licence details',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, 'Make a note on confirmation', 'Text messages to '),
-        CONTACT.uri, 'contact', 'change-contact')
+        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
+        CONTACT.uri, 'contact', CHANGE_CONTACT)
     ]
   }
 }
@@ -90,14 +111,14 @@ const getAddressText = (licensee, countryName) => {
   return [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()].filter(Boolean).join(', ')
 }
 
-const getContactText = (contactMethod, licensee, defaultMessage = 'Note of licence', textMessage = 'Text message to ') => {
+const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
   switch (contactMethod) {
     case HOW_CONTACTED.email:
-      return 'Email to ' + licensee.email
+      return contactText.EMAIL + licensee.email
     case HOW_CONTACTED.text:
-      return textMessage + licensee.mobilePhone
+      return contactText.TEXT + licensee.mobilePhone
     default:
-      return defaultMessage
+      return contactText.DEFAULT
   }
 }
 

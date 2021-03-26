@@ -302,7 +302,7 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
-            "id": "change-licence-confirmation-option",
+            "id": "change-licence-fulfilment-option",
           },
           "href": "/buy/fulfilment",
           "text": "Change",
@@ -427,7 +427,7 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
-            "id": "change-licence-confirmation-option",
+            "id": "change-licence-fulfilment-option",
           },
           "href": "/buy/fulfilment",
           "text": "Change",
@@ -552,7 +552,7 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
-            "id": "change-licence-confirmation-option",
+            "id": "change-licence-fulfilment-option",
           },
           "href": "/buy/fulfilment",
           "text": "Change",
