@@ -49,7 +49,7 @@ export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPa
 
 export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
   return [
-    getRow('Name', permission.licensee.firstName + ' ' + permission.licensee.lastName, NAME.uri, 'name', 'change-name'),
+    getRow('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`, NAME.uri, 'name', 'change-name'),
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
     ...getContactDetails(permission),
     getRow('Newsletter', permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No', NEWSLETTER.uri, 'newsletter', 'change-newsletter')
@@ -76,8 +76,7 @@ const CONTACT_TEXT_PHYSICAL = {
 
 const CHANGE_CONTACT = 'change-contact'
 
-const getContactDetails = (permission) => {
-  
+const getContactDetails = permission => {
   if (isPhysical(permission) && permission.licensee.postalFulfilment === 'Yes') {
     return [
       getRow('Licence', 'By post',
@@ -107,9 +106,8 @@ const getContactDetails = (permission) => {
   }
 }
 
-const getAddressText = (licensee, countryName) => {
-  return [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()].filter(Boolean).join(', ')
-}
+const getAddressText = (licensee, countryName) => [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()].filter(Boolean).join(', ')
+
 
 const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
   switch (contactMethod) {
