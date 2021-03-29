@@ -10,9 +10,8 @@ const local = {}
 
 const fetch = async () =>
   optionProc(await salesApi.countries.getAll())
-    .filter(c => c.code !== 'GB')
     .sort((a, b) => {
-      const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR']
+      const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'GB']
       if (a.code.startsWith('GB')) {
         if (b.code.startsWith('GB')) {
           return order.indexOf(a.code) - order.indexOf(b.code)
@@ -29,6 +28,7 @@ export const countries = {
     return local.countries
   },
   nameFromCode: async code => {
+    console.log('nameFromCode', code)
     local.countries = local.countries || (await fetch())
     return local.countries.find(c => c.code === code).name
   }
