@@ -11,7 +11,7 @@ const validator = Joi.object({
   locality: validation.contact.createLocalityValidator(Joi),
   town: validation.contact.createTownValidator(Joi),
   postcode: Joi.alternatives().conditional('country-code', {
-    is: 'GB',
+    is: Joi.string().pattern(/^GB/),
     then: validation.contact.createUKPostcodeValidator(Joi),
     otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
   }),
