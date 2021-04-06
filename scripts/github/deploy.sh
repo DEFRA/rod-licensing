@@ -32,6 +32,9 @@ echo "Setting up git"
 git config user.name "GitHub Actions"
 git config user.email "actions@users.noreply.github.com"
 
+echo "tags before"
+git describe --tags
+
 # Ensure that git will return tags with pre-releases in the correct order (e.g. 0.1.0-rc.0 occurs before 0.1.0)
 echo "Removing existing git tag versionsort configuration"
 git config --global --unset-all versionsort.suffix || echo "No existing versionsort.suffix found it git configuration."
@@ -41,6 +44,8 @@ git config --global --add versionsort.suffix -rc.
 
 # Calculate PREVIOUS_VERSION and NEW_VERSION based on the source and target of the merge
 echo "Determining versions for release"
+echo "tags after"
+git describe --tags
 PREVIOUS_VERSION=$(git describe --tags)
 echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
 
