@@ -19,6 +19,7 @@ echo "Installing semver"
 npm i -g semver lerna lerna-changelog 
 
 echo "Checking out target branch"
+git fetch --unshallow
 git fetch --tags
 git checkout "${BRANCH}"
 git pull
