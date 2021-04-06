@@ -7,7 +7,8 @@ on:
       - master
   push:
     branches:
-      - IWTF-1971-version-script-single-quote
+      - develop
+      - master
 
 jobs:
   tests:
