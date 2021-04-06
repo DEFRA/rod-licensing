@@ -28,7 +28,7 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
       - name: Run versioning script
-        run: "COMMIT_MESSAGE=$COMMIT_MESSAGE BRANCH=$BRANCH . ./scripts/github/deploy.sh"
+        run: "./scripts/github/deploy.sh"
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
