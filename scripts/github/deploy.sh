@@ -48,7 +48,7 @@ echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
 if [ "${BRANCH}" == "master" ]; then
     # Creating new release on the master branch
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
-elif [ "$BRANCH" == "develop" ]; then
+elif [ "$BRANCH" == "IWTF-1971-increment-version-script" ]; then
     # Creating new release on the develop branch
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Most recent version is a production release on master, start a new prerelease on develop
