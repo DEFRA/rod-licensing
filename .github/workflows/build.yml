@@ -41,8 +41,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   new-version:
     name: new-version
-    needs: test
     runs-on: ubuntu-18.04
+    needs: test
     if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout repository
