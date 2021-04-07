@@ -13,7 +13,6 @@ jobs:
   new-version:
     name: new-version
     runs-on: ubuntu-18.04
-    needs: tests
     if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout repository
