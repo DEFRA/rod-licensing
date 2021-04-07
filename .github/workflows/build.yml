@@ -7,11 +7,41 @@ on:
       - master
   push:
     branches:
-      - IWTF-1971-increment-version-script
+      - develop
+      - master
 
 jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-18.04
+    env:
+      TZ: Europe/London
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test
+      - name: Fix code coverage paths
+        working-directory: ./coverage
+        run: |
+          sed -i 's/\/home\/runner\/work\/rod-licensing\/rod-licensing\//\/github\/workspace\//g' lcov.info
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   new-version:
     name: new-version
+    needs: test
     runs-on: ubuntu-18.04
     if: ${{ github.event_name == 'push' }}
     steps:
