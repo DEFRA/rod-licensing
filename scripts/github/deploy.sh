@@ -42,14 +42,15 @@ git config --global --add versionsort.suffix -rc.
 
 # Calculate PREVIOUS_VERSION and NEW_VERSION based on the source and target of the merge
 echo "Determining versions for release"
-PREVIOUS_VERSION=$(git describe --tags)
-echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
-
 if [ "${BRANCH}" == "master" ]; then
-    # Creating new release on the master branch
+    # Creating new release on the master branch, determine latest release version on master branch only
+    PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
+    echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
 elif [ "$BRANCH" == "develop" ]; then
-    # Creating new release on the develop branch
+    # Creating new release on the develop branch, determine latest release version on either develop or master
+    PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
+    echo "Latest build in the repository is ${PREVIOUS_VERSION}"
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Most recent version is a production release on master, start a new prerelease on develop
         NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i preminor --preid rc)"
