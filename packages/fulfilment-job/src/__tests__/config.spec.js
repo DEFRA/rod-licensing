@@ -1,5 +1,7 @@
 import AwsMock from 'aws-sdk'
 import config from '../config.js'
+import { AWS } from '@defra-fish/connectors-lib'
+const { secretsManager } = AWS()
 
 const setEnvVars = () => {
   for (const envVar in envVars) {
@@ -20,7 +22,8 @@ const envVars = Object.freeze({
   FULFILMENT_FTP_PATH: '/remote/share',
   FULFILMENT_FTP_USERNAME: 'test-user',
   FULFILMENT_FTP_KEY_SECRET_ID: 'test-secret-id',
-  FULFILMENT_S3_BUCKET: 'test-bucket'
+  FULFILMENT_S3_BUCKET: 'test-bucket',
+  PGP_PUBLIC_KEY_SECRET_ID: 'pgp-key-secret-id'
 })
 
 describe('config', () => {
@@ -71,31 +74,42 @@ describe('config', () => {
       expect(config.s3.bucket).toEqual('test-bucket')
     })
   })
-
-  describe('pgp', () => {
-    it('pgp key obtained from aws secrets manager', () => {
-
-    })
-  })
 })
 
 describe('pgp config', () => {
   const pgpKey = 'public-pgp-key'
+  const init = async (samplePublicKey = 'sample-pgp-key') => {
+    AwsMock.SecretsManager.__setNextResponses(
+      'getSecretValue',
+      { SecretString: 'test-ssh-key' },
+      { SecretString: samplePublicKey }
+    )
+    await config.initialise()
+  }
   beforeAll(setEnvVars)
   beforeEach(jest.clearAllMocks)
   afterAll(clearEnvVars)
 
   ;[
-    'sample-pgp-key',
+    'public-pgp-key',
     'paragon-sample-key',
     'keep-me-secret'
   ].forEach(sampleKey => it(`gets pgp key (${sampleKey}) from secrets manager`, async () => {
-    AwsMock.SecretsManager.__setNextResponses(
-      'getSecretValue',
-      { SecretString: 'test-ssh-key' },
-      { SecretString: sampleKey }
-    )
-    await config.initialise()
+    await init(sampleKey)
     expect(config.pgp.publicKey).toEqual(sampleKey)
+  }))
+
+  ;[
+    'secret-id-abc',
+    'pgp-public-key-secret-id',
+    '123-secret-id'
+  ].forEach(SecretId => it(`pgp key obtained from aws secrets manager (${SecretId})`, async () => {
+    process.env.PGP_PUBLIC_KEY_SECRET_ID = SecretId
+    await init()
+    expect(secretsManager.getSecretValue).toHaveBeenCalledWith(
+      expect.objectContaining({
+        SecretId
+      })
+    )
   }))
 })

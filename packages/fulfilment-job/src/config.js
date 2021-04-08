@@ -75,8 +75,9 @@ class Config {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
     this._pgp = {
-      publicKey: (await secretsManager.getSecretValue().promise()).SecretString
+      publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.PGP_PUBLIC_KEY_SECRET_ID }).promise()).SecretString
     }
+    console.log('secretsManager.getSecretValue.mock', secretsManager.getSecretValue.mock)
   }
 
   /**
