@@ -23,7 +23,7 @@ const envVars = Object.freeze({
   FULFILMENT_FTP_USERNAME: 'test-user',
   FULFILMENT_FTP_KEY_SECRET_ID: 'test-secret-id',
   FULFILMENT_S3_BUCKET: 'test-bucket',
-  PGP_PUBLIC_KEY_SECRET_ID: 'pgp-key-secret-id'
+  FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID: 'pgp-key-secret-id'
 })
 
 describe('config', () => {
@@ -104,12 +104,26 @@ describe('pgp config', () => {
     'pgp-public-key-secret-id',
     '123-secret-id'
   ].forEach(SecretId => it(`pgp key obtained from aws secrets manager (${SecretId})`, async () => {
-    process.env.PGP_PUBLIC_KEY_SECRET_ID = SecretId
+    process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID = SecretId
     await init()
     expect(secretsManager.getSecretValue).toHaveBeenCalledWith(
       expect.objectContaining({
         SecretId
       })
     )
+  }))
+
+  ;[
+    ['true', true],
+    ['false', false],
+    ['TrUe', true],
+    ['fAlSe', false],
+    [1, true],
+    [0, false],
+    [111, true]
+  ].forEach(([env, flag]) => it(`PGP send unencrypted file flag is ${env}, evaluates to ${flag}`, async () => {
+    process.env.FULFILMENT_SEND_UNENCRYPTED_FILE = env
+    await init()
+    expect(config._pgp.sendUnencryptedFile).toEqual(flag)
   }))
 })
