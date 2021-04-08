@@ -45,6 +45,7 @@ class Config {
   _file
   _ftp
   _s3
+  _pgp
 
   async initialise () {
     this.file = {
@@ -72,6 +73,9 @@ class Config {
     }
     this.s3 = {
       bucket: process.env.FULFILMENT_S3_BUCKET
+    }
+    this._pgp = {
+      publicKey: (await secretsManager.getSecretValue().promise()).SecretString
     }
   }
 
@@ -109,6 +113,10 @@ class Config {
 
   set s3 (cfg) {
     this._s3 = cfg
+  }
+
+  get pgp () {
+    return this._pgp
   }
 }
 export default new Config()
