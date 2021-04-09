@@ -23,7 +23,8 @@ const envVars = Object.freeze({
   FULFILMENT_FTP_USERNAME: 'test-user',
   FULFILMENT_FTP_KEY_SECRET_ID: 'test-secret-id',
   FULFILMENT_S3_BUCKET: 'test-bucket',
-  FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID: 'pgp-key-secret-id'
+  FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID: 'pgp-key-secret-id',
+  FULFILMENT_SEND_UNENCRYPTED_FILE: 'false'
 })
 
 describe('config', () => {
