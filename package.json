@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.12.11",
-    "@types/hapi__hapi": "^20.0.3",
+    "@types/hapi__hapi": "^20.0.7",
     "@types/jest": "^26.0.20",
     "aws-sdk": "^2.825.0",
     "babel-eslint": "^10.1.0",
