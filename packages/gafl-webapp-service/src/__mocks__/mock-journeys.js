@@ -28,7 +28,7 @@ const goodAddress = {
   locality: '',
   town: 'BRISTOL',
   postcode: 'BS9 1HJ',
-  'country-code': 'GB'
+  'country-code': 'GB-ENG'
 }
 
 mockSalesApi()
@@ -49,7 +49,7 @@ export const ADULT_FULL_1_DAY_LICENCE = {
           street: 'Eastmead Lane',
           town: 'Bristol',
           postcode: 'BS9 1HJ',
-          country: 'United Kingdom',
+          country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Email',
           preferredMethodOfReminder: 'Email',
@@ -104,7 +104,7 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
           street: 'Eastmead Lane',
           town: 'Bristol',
           postcode: 'BS9 1HJ',
-          country: 'United Kingdom',
+          country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Letter',
           preferredMethodOfReminder: 'Letter'
@@ -171,7 +171,7 @@ export const SENIOR_12_MONTH_LICENCE = {
           street: 'Eastmead Lane',
           town: 'Bristol',
           postcode: 'BS9 1HJ',
-          country: 'United Kingdom',
+          country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Letter',
           preferredMethodOfReminder: 'Letter'
@@ -233,7 +233,7 @@ export const JUNIOR_LICENCE = {
           street: 'Eastmead Lane',
           town: 'Bristol',
           postcode: 'BS9 1HJ',
-          country: 'United Kingdom',
+          country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Prefer not to be contacted',
           preferredMethodOfReminder: 'Prefer not to be contacted'
@@ -294,7 +294,7 @@ export const JUNIOR_DISABLED_LICENCE = {
           street: 'Eastmead Lane',
           town: 'Bristol',
           postcode: 'BS9 1HJ',
-          country: 'United Kingdom',
+          country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Prefer not to be contacted',
           preferredMethodOfReminder: 'Prefer not to be contacted'

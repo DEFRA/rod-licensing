@@ -8,10 +8,11 @@ const optionProc = c =>
 
 const local = {}
 
-const fetch = async () =>
-  optionProc(await salesApi.countries.getAll())
+const fetch = async () =>{
+  // Returns all countries from Dynamics
+  const countries = optionProc(await salesApi.countries.getAll())
     .sort((a, b) => {
-      const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'GB']
+      const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR']
       if (a.code.startsWith('GB')) {
         if (b.code.startsWith('GB')) {
           return order.indexOf(a.code) - order.indexOf(b.code)
@@ -20,6 +21,10 @@ const fetch = async () =>
       }
       return 0
     })
+
+    // Remove United Kingdom
+    return countries.filter(country => country.code !== 'GB');
+}
 
 // Process the country code option set into a useful form - once
 export const countries = {

@@ -28,14 +28,13 @@ describe('Countries list', () => {
       expect.objectContaining({ code: 'GB-ENG', name: 'England' }),
       expect.objectContaining({ code: 'GB-WLS', name: 'Wales' }),
       expect.objectContaining({ code: 'GB-SCT', name: 'Scotland' }),
-      expect.objectContaining({ code: 'GB-NIR', name: 'Northern Ireland' }),
-      expect.objectContaining({ code: 'GB', name: 'United Kingdom' })
+      expect.objectContaining({ code: 'GB-NIR', name: 'Northern Ireland' })
     ]
     expect(c).toEqual(expect.arrayContaining(homeNations))
   })
 
   it('Lists countries in correct order', async () => {
-    const [first, second, third, fourth, fifth] = await countries.getAll()
+    const [first, second, third, fourth] = await countries.getAll()
     expect(first).toEqual(
       expect.objectContaining({ code: 'GB-ENG', name: 'England' })
     )
@@ -47,9 +46,6 @@ describe('Countries list', () => {
     )
     expect(fourth).toEqual(
       expect.objectContaining({ code: 'GB-NIR', name: 'Northern Ireland' })
-    )
-    expect(fifth).toEqual(
-      expect.objectContaining({ code: 'GB', name: 'United Kingdom' })
     )
   })
 })
