@@ -30,7 +30,7 @@ export const countries = {
     return local.countries
   },
   nameFromCode: async code => {
-    local.countries = local.countries || (await fetch()) 
+    local.countries = local.countries || (await fetch())
     return local.countries.find(c => c.code === code).name
   }
 }
