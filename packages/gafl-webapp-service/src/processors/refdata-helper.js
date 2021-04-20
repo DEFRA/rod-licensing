@@ -10,9 +10,9 @@ const local = {}
 
 const fetch = async () =>{
   // Returns all countries from Dynamics
-  const countries = optionProc(await salesApi.countries.getAll())
+  return optionProc(await salesApi.countries.getAll())
     .sort((a, b) => {
-      const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR']
+      const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'GB']
       if (a.code.startsWith('GB')) {
         if (b.code.startsWith('GB')) {
           return order.indexOf(a.code) - order.indexOf(b.code)
@@ -21,9 +21,6 @@ const fetch = async () =>{
       }
       return 0
     })
-
-    // Remove United Kingdom
-    return countries.filter(country => country.code !== 'GB');
 }
 
 // Process the country code option set into a useful form - once
@@ -33,7 +30,7 @@ export const countries = {
     return local.countries
   },
   nameFromCode: async code => {
-    local.countries = local.countries || (await fetch())
+    local.countries = local.countries || (await fetch()) 
     return local.countries.find(c => c.code === code).name
   }
 }
