@@ -39,7 +39,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
       authenticationResult.permission.licensee
     ),
     {
-      countryCode: 'GB'
+      countryCode: authenticationResult.permission.licensee.country.description
     }
   )
 

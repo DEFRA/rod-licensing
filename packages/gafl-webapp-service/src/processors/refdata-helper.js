@@ -8,8 +8,9 @@ const optionProc = c =>
 
 const local = {}
 
-const fetch = async () =>
-  optionProc(await salesApi.countries.getAll())
+const fetch = async () =>{
+  // Returns all countries from Dynamics
+  return optionProc(await salesApi.countries.getAll())
     .sort((a, b) => {
       const order = ['GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'GB']
       if (a.code.startsWith('GB')) {
@@ -20,6 +21,7 @@ const fetch = async () =>
       }
       return 0
     })
+}
 
 // Process the country code option set into a useful form - once
 export const countries = {

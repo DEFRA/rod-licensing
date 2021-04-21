@@ -19,6 +19,7 @@ import {
 import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
+import { getCountryDropDownOptions} from '../route'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -30,7 +31,7 @@ const goodAddress = {
   locality: '',
   town: 'BRISTOL',
   postcode: 'BS9 1HJ',
-  'country-code': 'GB'
+  'country-code': 'GB-ENG'
 }
 
 salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
@@ -39,6 +40,11 @@ describe('The manual address entry page', () => {
   it('returns success on requesting', async () => {
     const response = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
     expect(response.statusCode).toBe(200)
+  })
+
+  it('.getCountryDropDownOptions returns country list excluding "United Kingdom"', async () => {
+    const countries = await getCountryDropDownOptions()
+    expect(countries).toEqual(expect.not.objectContaining({ description: 'GB', label: 'United Kingdom' }))
   })
 
   it('redirects back to itself on posting no response', async () => {
@@ -124,7 +130,7 @@ describe('The manual address entry page', () => {
       street: 'Eastmead Lane',
       town: 'Bristol',
       postcode: 'BS9 1HJ',
-      countryCode: 'GB'
+      countryCode: 'GB-ENG'
     })
   })
 
