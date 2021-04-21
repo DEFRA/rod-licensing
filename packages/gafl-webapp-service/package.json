@@ -53,7 +53,7 @@
     "disinfect": "^1.1.0",
     "find": "^0.3.0",
     "flatpickr": "^4.6.9",
-    "govuk-frontend": "^3.10.2",
+    "govuk-frontend": "^3.11.0",
     "joi": "^17.3.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.32",
