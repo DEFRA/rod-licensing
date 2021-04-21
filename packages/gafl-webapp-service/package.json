@@ -56,7 +56,7 @@
     "govuk-frontend": "^3.10.2",
     "joi": "^17.3.0",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.32",
+    "moment-timezone": "^0.5.33",
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.2",
     "openid-client": "^4.2.2",
