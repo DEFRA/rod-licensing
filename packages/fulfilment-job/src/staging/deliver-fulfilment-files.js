@@ -8,6 +8,9 @@ import { createS3WriteStream, readS3PartFiles } from '../transport/s3.js'
 import { createFtpWriteStream } from '../transport/ftp.js'
 import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from './staging-common.js'
 import db from 'debug'
+import openpgp from 'openpgp'
+import config from '../config.js'
+
 const debug = db('fulfilment:staging')
 const pipelinePromise = promisify(pipeline)
 
@@ -22,6 +25,8 @@ export const deliverFulfilmentFiles = async () => {
   results.sort((a, b) => a.entity.fileName.localeCompare(b.entity.fileName))
   for (const { entity: file } of results) {
     await deliver(file.fileName, await createDataReadStream(file))
+    // await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
+    await deliver(`${file.fileName}.enc`, await createDataReadStream(file))
     await deliver(`${file.fileName}.sha256`, await createDataReadStream(file), createHash('sha256').setEncoding('hex'))
     file.deliveryTimestamp = moment().toISOString()
     file.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Delivered')
@@ -41,6 +46,17 @@ const createDataReadStream = async file => {
   // Each part file stream must be separated with a comma, insert a new readable stream yielding a comma between each part file stream
   const mergeStreams = pfStreams.flatMap((pfs, idx, arr) => (idx !== arr.length - 1 ? [pfs, Readable.from([',\n'])] : pfs))
   return merge2(Readable.from(['{\n  "licences": [\n']), ...mergeStreams, Readable.from(['\n  ]\n}\n']))
+}
+
+const getPGPKeyFromAWSSecrets = async () => 'PGP KEY'
+
+const createEncryptedDataReadStream = async file => {
+  const readableStream = await createDataReadStream(file)
+  const publicKeyArmoured = await getPGPKeyFromAWSSecrets()
+  return openpgp.encrypt({
+    message: openpgp.Message.fromText(readableStream),
+    publicKeys: (await openpgp.key.readArmored(publicKeyArmoured)).keys
+  })
 }
 
 /**
