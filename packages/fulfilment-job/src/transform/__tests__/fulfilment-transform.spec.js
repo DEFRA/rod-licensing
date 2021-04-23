@@ -32,7 +32,7 @@ describe('fulfilment-transform', () => {
           locality: 'Testville',
           town: 'Tersterton',
           postcode: 'AB12 3CD',
-          country: 'United Kingdom'
+          country: 'England'
         },
         dateOfBirth: {
           id: expect.any(String),
@@ -84,7 +84,7 @@ describe('fulfilment-transform', () => {
           locality: 'Testville',
           town: 'Tersterton',
           postcode: 'AB12 3CD',
-          country: 'United Kingdom'
+          country: 'England'
         },
         dateOfBirth: {
           id: expect.any(String),

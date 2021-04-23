@@ -39,7 +39,7 @@ export const mockContactPayload = () => ({
   locality: 'Near Sample',
   town: 'Exampleton',
   postcode: 'AB12 3CD',
-  country: 'GB',
+  country: 'GB-ENG',
   preferredMethodOfConfirmation: 'Text',
   preferredMethodOfNewsletter: 'Email',
   preferredMethodOfReminder: 'Letter'
@@ -242,7 +242,7 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
     defra_locality: 'Testville',
     defra_town: 'Tersterton',
     defra_postcode: 'AB12 3CD',
-    defra_country: 910400184
+    defra_country: 910400195
   },
   optionSetData
 )
