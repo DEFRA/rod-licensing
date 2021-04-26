@@ -34,7 +34,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.16",
     "@babel/eslint-parser": "^7.13.14",
-    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-env": "^7.13.15",
     "@types/hapi__hapi": "^20.0.3",
     "@types/jest": "^26.0.20",
     "aws-sdk": "^2.825.0",
