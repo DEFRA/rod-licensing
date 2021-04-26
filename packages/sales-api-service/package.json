@@ -46,7 +46,7 @@
     "dot-prop": "^6.0.1",
     "hapi-and-healthy": "^7.0.7",
     "hapi-swagger": "^14.1.0",
-    "ioredis": "^4.19.4",
+    "ioredis": "^4.27.1",
     "joi": "^17.3.0",
     "moment": "^2.29.1",
     "uuid": "^8.3.2"
