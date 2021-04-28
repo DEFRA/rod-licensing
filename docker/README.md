@@ -165,3 +165,7 @@ sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.key
 Alternatively the graphical application `Key Chain access app` may be used. There are analogous processes available for Windows; "Credential Manager" that can be found in "Control Panel" and "update-ca-certificates" for Ubuntu.
 
 This procedure will not work if the user is using Firefox. Firefox uses Mozilla's proprietary root certificate store NSS.
+
+## Logs
+
+To get the logs do `docker stack ps rls`, get the container id of the service you’re interested in, then do `docker service logs <id>`

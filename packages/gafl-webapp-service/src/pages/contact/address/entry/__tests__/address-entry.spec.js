@@ -20,6 +20,7 @@ import {
 import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
+import { getCountryDropDownOptions } from '../route'
 
 beforeAll(d => start(d))
 beforeAll(d => initialize(d))
@@ -31,7 +32,7 @@ const goodAddress = {
   locality: '',
   town: 'BRISTOL',
   postcode: 'BS9 1HJ',
-  'country-code': 'GB'
+  'country-code': 'GB-ENG'
 }
 
 salesApi.countries.getAll = jest.fn(async () => new Promise(resolve => resolve(mockDefraCountries)))
@@ -40,6 +41,11 @@ describe('The manual address entry page', () => {
   it('returns success on requesting', async () => {
     const response = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
     expect(response.statusCode).toBe(200)
+  })
+
+  it('.getCountryDropDownOptions returns country list excluding "United Kingdom"', async () => {
+    const countries = await getCountryDropDownOptions()
+    expect(countries).toEqual(expect.not.objectContaining({ description: 'GB', label: 'United Kingdom' }))
   })
 
   it('redirects back to itself on posting no response', async () => {
@@ -113,17 +119,20 @@ describe('The manual address entry page', () => {
   })
 
   describe('on successful valid UK address submission', () => {
-    it('should correctly save the address details', async () => {
+    it('redirects to the contact page on posting a valid UK address', async () => {
       const addr = Object.assign({}, goodAddress)
-      await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT.uri)
+
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee).toMatchObject({
+      expect(JSON.parse(payload).permissions[0].licensee).toEqual({
         organisation: null,
         premises: '14 Howecroft Court',
         street: 'Eastmead Lane',
         town: 'Bristol',
         postcode: 'BS9 1HJ',
-        countryCode: 'GB'
+        countryCode: 'GB-ENG'
       })
     })
 
@@ -154,7 +163,7 @@ describe('The manual address entry page', () => {
       expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
     })
 
-    it('redirects to the contact page if it is a 12 month junior licence', async () => {
+    it('redirects to the contact page if it is a 12 month junior licence on posting a valid UK address', async () => {
       const addr = Object.assign({}, goodAddress)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })

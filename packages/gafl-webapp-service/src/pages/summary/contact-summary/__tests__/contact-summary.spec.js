@@ -45,7 +45,7 @@ const goodAddress = {
   locality: '',
   town: 'BRISTOL',
   postcode: 'BS9 1HJ',
-  'country-code': 'GB'
+  'country-code': 'GB-ENG'
 }
 
 describe('The contact summary page', () => {
