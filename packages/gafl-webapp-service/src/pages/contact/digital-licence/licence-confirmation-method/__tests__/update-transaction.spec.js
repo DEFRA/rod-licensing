@@ -56,7 +56,7 @@ describe('licence-confirmation-method > update-transaction', () => {
   it('should set none in cache, when licence confirmation method is none', async () => {
     mockPageCacheGet.mockImplementationOnce(() => ({
       payload: {
-        'licence-confirmation-method': 'none',
+        'licence-confirmation-method': 'none'
       }
     }))
 

@@ -9,8 +9,9 @@ export default async request => {
   permission.licensee = {
     preferredMethodOfNewsletter: HOW_CONTACTED.none,
     ...permission.licensee,
-    ...isPhysical(permission) ? getPhysicalReminders(permission.licensee, payload) :
-      getDigitalConfirmationsAndReminders(permission.licensee, payload)
+    ...(isPhysical(permission)
+      ? getPhysicalReminders(permission.licensee, payload)
+      : getDigitalConfirmationsAndReminders(permission.licensee, payload))
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

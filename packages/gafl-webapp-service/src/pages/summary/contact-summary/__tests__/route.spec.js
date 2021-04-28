@@ -1,12 +1,12 @@
 import { getLicenseeDetailsSummaryRows } from '../route'
 
 const address = {
-    firstName: 'Fester',
-    lastName: 'Tester',
-    premises: '14 Howecroft Court',
-    street: 'Eastmead Lane',
-    town: 'Bristol',
-    postcode: 'BS9 1HJ'
+  firstName: 'Fester',
+  lastName: 'Tester',
+  premises: '14 Howecroft Court',
+  street: 'Eastmead Lane',
+  town: 'Bristol',
+  postcode: 'BS9 1HJ'
 }
 
 describe('contact-summary > route', () => {
@@ -21,7 +21,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Email',
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
-            preferredMethodOfNewsletter: 'Prefer not to be contacted',
+            preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
@@ -37,7 +37,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
-            preferredMethodOfNewsletter: 'Yes',
+            preferredMethodOfNewsletter: 'Yes'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
@@ -69,7 +69,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Email',
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
-            preferredMethodOfNewsletter: 'Prefer not to be contacted',
+            preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
@@ -85,7 +85,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
-            preferredMethodOfNewsletter: 'Yes',
+            preferredMethodOfNewsletter: 'Yes'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
@@ -102,7 +102,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Email',
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
-            preferredMethodOfNewsletter: 'Prefer not to be contacted',
+            preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
@@ -118,7 +118,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
-            preferredMethodOfNewsletter: 'Yes',
+            preferredMethodOfNewsletter: 'Yes'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
@@ -133,13 +133,12 @@ describe('contact-summary > route', () => {
             postalFulfilment: 'No',
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Prefer not to be contacted',
-            preferredMethodOfNewsletter: 'Yes',
+            preferredMethodOfNewsletter: 'Yes'
           }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
       })
-      
     })
   })
 })

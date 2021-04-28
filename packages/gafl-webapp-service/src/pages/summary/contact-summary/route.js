@@ -7,8 +7,16 @@ import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 
 import {
-  CONTACT_SUMMARY, LICENCE_SUMMARY, NAME, ADDRESS_ENTRY, ADDRESS_SELECT,
-  ADDRESS_LOOKUP, CONTACT, NEWSLETTER, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD
+  CONTACT_SUMMARY,
+  LICENCE_SUMMARY,
+  NAME,
+  ADDRESS_ENTRY,
+  ADDRESS_SELECT,
+  ADDRESS_LOOKUP,
+  CONTACT,
+  NEWSLETTER,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
 const getData = async request => {
@@ -52,7 +60,13 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
     getRow('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`, NAME.uri, 'name', 'change-name'),
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
     ...getContactDetails(permission),
-    getRow('Newsletter', permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No', NEWSLETTER.uri, 'newsletter', 'change-newsletter')
+    getRow(
+      'Newsletter',
+      permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
+      NEWSLETTER.uri,
+      'newsletter',
+      'change-newsletter'
+    )
   ]
 }
 
@@ -79,36 +93,56 @@ const CHANGE_CONTACT = 'change-contact'
 const getContactDetails = permission => {
   if (isPhysical(permission) && permission.licensee.postalFulfilment === 'Yes') {
     return [
-      getRow('Licence', 'By post',
-        LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
-      getRow('Licence Confirmation',
+      getRow('Licence', 'By post', LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
+      getRow(
+        'Licence Confirmation',
         getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-        LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'change-licence-confirmation-option'),
-      getRow('Contact',
+        LICENCE_CONFIRMATION_METHOD.uri,
+        'licence confirmation option',
+        'change-licence-confirmation-option'
+      ),
+      getRow(
+        'Contact',
         getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-        CONTACT.uri, 'contact', CHANGE_CONTACT)
+        CONTACT.uri,
+        'contact',
+        CHANGE_CONTACT
+      )
     ]
   } else if (isPhysical(permission) && permission.licensee.postalFulfilment === 'No') {
     return [
-      getRow('Licence',
+      getRow(
+        'Licence',
         getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-        LICENCE_CONFIRMATION_METHOD.uri, 'licence confirmation option', 'change-licence-confirmation-option'),
-      getRow('Contact',
+        LICENCE_CONFIRMATION_METHOD.uri,
+        'licence confirmation option',
+        'change-licence-confirmation-option'
+      ),
+      getRow(
+        'Contact',
         getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-        CONTACT.uri, 'contact', CHANGE_CONTACT)
+        CONTACT.uri,
+        'contact',
+        CHANGE_CONTACT
+      )
     ]
   } else {
     return [
-      getRow('Licence details',
+      getRow(
+        'Licence details',
         getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
-        CONTACT.uri, 'contact', CHANGE_CONTACT)
+        CONTACT.uri,
+        'contact',
+        CHANGE_CONTACT
+      )
     ]
   }
 }
 
-const getAddressText = (licensee, countryName) => [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
-  .filter(Boolean).join(', ')
-
+const getAddressText = (licensee, countryName) =>
+  [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+    .filter(Boolean)
+    .join(', ')
 
 const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
   switch (contactMethod) {
@@ -129,7 +163,7 @@ const getRow = (label, text, href, visuallyHiddenText, id) => {
     value: {
       text
     },
-    ...(href) && {
+    ...(href && {
       actions: {
         items: [
           {
@@ -140,6 +174,6 @@ const getRow = (label, text, href, visuallyHiddenText, id) => {
           }
         ]
       }
-    }
+    })
   }
 }

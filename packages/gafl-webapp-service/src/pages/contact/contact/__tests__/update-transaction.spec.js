@@ -46,7 +46,7 @@ describe('contact > update-transaction', () => {
           email: 'example@example.com',
           preferredMethodOfReminder: 'Email'
         })
-      });
+      })
       expect(method[0]).not.toHaveProperty('licensee.preferredMethodOfConfirmation')
     })
 
@@ -74,7 +74,6 @@ describe('contact > update-transaction', () => {
         })
       })
       expect(method[0]).not.toHaveProperty('licensee.preferredMethodOfConfirmation')
-      
     })
 
     it('should set preferredMethodOfReminder in cache, when how-contacted is none', async () => {
@@ -97,7 +96,7 @@ describe('contact > update-transaction', () => {
         licensee: expect.objectContaining({
           preferredMethodOfReminder: 'Letter'
         })
-      });
+      })
       expect(method[0]).not.toHaveProperty('licensee.preferredMethodOfConfirmation')
     })
 
@@ -185,7 +184,6 @@ describe('contact > update-transaction', () => {
         })
       })
     })
-
   })
 
   describe('for a 1 day licence (non-physical)', () => {
@@ -239,7 +237,6 @@ describe('contact > update-transaction', () => {
           })
         })
       )
-      
     })
 
     it('should set preferredMethodOfReminder and preferredMethodOfConfirmation in cache, when how-contacted is none', async () => {
