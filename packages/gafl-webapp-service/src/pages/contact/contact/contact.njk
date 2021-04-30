@@ -114,7 +114,7 @@
 ] %}
 
 {% if data.isPhysical %}
-    {% if data.licensee.postalFulfilment === 'Yes' %}
+    {% if data.licensee.postalFulfilment %}
         {% set itemsArray = (itemsArray.push(
             {
                 value: "none",

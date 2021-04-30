@@ -42,7 +42,8 @@ export const mockContactPayload = () => ({
   country: 'GB-ENG',
   preferredMethodOfConfirmation: 'Text',
   preferredMethodOfNewsletter: 'Email',
-  preferredMethodOfReminder: 'Letter'
+  preferredMethodOfReminder: 'Letter',
+  postalFulfilment: false
 })
 
 export const mockContactWithIdPayload = () => ({

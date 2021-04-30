@@ -101,7 +101,7 @@
     }
 ] %}
 
-{% if data.licensee.postalFulfilment === 'Yes' %}
+{% if data.licensee.postalFulfilment %}
     {% set title = 'How do you want your fishing licence confirmation?' %}
     {% set bodyText = 'This is where we will send confirmation of your fishing licence' %}
     {% set itemsArray = (itemsArray.push(

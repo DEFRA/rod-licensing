@@ -9,19 +9,15 @@ export default async request => {
   permission.licensee = {
     preferredMethodOfNewsletter: HOW_CONTACTED.none,
     ...permission.licensee,
-    ...(isPhysical(permission)
-      ? getPhysicalReminders(permission.licensee, payload)
-      : getDigitalConfirmationsAndReminders(permission.licensee, payload))
+    ...(isPhysical(permission) ? getPhysicalReminders(payload) : getDigitalConfirmationsAndReminders(permission.licensee, payload))
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }
 
-const getPhysicalReminders = (licensee, payload) => {
+const getPhysicalReminders = payload => {
   switch (payload['how-contacted']) {
     case 'email':
-      licensee.preferredMethodOfReminder = HOW_CONTACTED.email
-      licensee.email = payload.email
       return {
         email: payload.email,
         preferredMethodOfReminder: HOW_CONTACTED.email
@@ -42,6 +38,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
   switch (payload['how-contacted']) {
     case 'email':
       return {
+        postalFulfilment: false,
         preferredMethodOfConfirmation: HOW_CONTACTED.email,
         preferredMethodOfReminder: HOW_CONTACTED.email,
         email: payload.email,
@@ -49,6 +46,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
       }
     case 'text':
       return {
+        postalFulfilment: false,
         preferredMethodOfConfirmation: HOW_CONTACTED.text,
         preferredMethodOfReminder: HOW_CONTACTED.text,
         mobilePhone: payload.text,
@@ -56,6 +54,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
       }
     default:
       return {
+        postalFulfilment: false,
         preferredMethodOfConfirmation: HOW_CONTACTED.none,
         preferredMethodOfReminder: HOW_CONTACTED.none,
         mobilePhone: null,

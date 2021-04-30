@@ -1,5 +1,4 @@
 import { LICENCE_FULFILMENT } from '../../../../uri.js'
-import { POSTAL_FULFILMENT } from '../../../../processors/mapping-constants.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_FULFILMENT.page)
@@ -8,10 +7,10 @@ export default async request => {
 
   const licenceOption = payload['licence-option']
   if (licenceOption === 'digital') {
-    licensee.postalFulfilment = POSTAL_FULFILMENT.no
+    licensee.postalFulfilment = false
   }
   if (licenceOption === 'paper-licence') {
-    licensee.postalFulfilment = POSTAL_FULFILMENT.yes
+    licensee.postalFulfilment = true
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

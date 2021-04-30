@@ -15,7 +15,6 @@ import {
   TEST_TRANSACTION
 } from '../../../../../uri.js'
 
-import { POSTAL_FULFILMENT } from '../../../../../processors/mapping-constants.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
 import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
@@ -60,7 +59,7 @@ describe('The licence fulfilment page', () => {
         'licence-option': 'digital'
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.postalFulfilment).toEqual(POSTAL_FULFILMENT.no)
+      expect(JSON.parse(payload).permissions[0].licensee.postalFulfilment).toEqual(false)
     })
 
     it('post response paper-licence sets postalFulfilment - yes, in the cache', async () => {
@@ -68,7 +67,7 @@ describe('The licence fulfilment page', () => {
         'licence-option': 'paper-licence'
       })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.postalFulfilment).toEqual(POSTAL_FULFILMENT.yes)
+      expect(JSON.parse(payload).permissions[0].licensee.postalFulfilment).toEqual(true)
     })
   })
 
