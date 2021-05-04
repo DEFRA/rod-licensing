@@ -17,7 +17,7 @@ describe('contact-summary > route', () => {
           licenceLength: '12M',
           licensee: {
             ...address,
-            postalFulfilment: 'Yes',
+            postalFulfilment: true,
             preferredMethodOfConfirmation: 'Email',
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
@@ -33,7 +33,7 @@ describe('contact-summary > route', () => {
           licenceLength: '12M',
           licensee: {
             ...address,
-            postalFulfilment: 'Yes',
+            postalFulfilment: true,
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
@@ -49,7 +49,7 @@ describe('contact-summary > route', () => {
           licenceLength: '12M',
           licensee: {
             ...address,
-            postalFulfilment: 'Yes',
+            postalFulfilment: true,
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Letter'
           }
@@ -65,7 +65,7 @@ describe('contact-summary > route', () => {
           licenceLength: '12M',
           licensee: {
             ...address,
-            postalFulfilment: 'No',
+            postalFulfilment: false,
             preferredMethodOfConfirmation: 'Email',
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
@@ -81,7 +81,7 @@ describe('contact-summary > route', () => {
           licenceLength: '12M',
           licensee: {
             ...address,
-            postalFulfilment: 'No',
+            postalFulfilment: false,
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
@@ -114,7 +114,7 @@ describe('contact-summary > route', () => {
           licenceLength: '1D',
           licensee: {
             ...address,
-            postalFulfilment: 'No',
+            postalFulfilment: false,
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
@@ -130,7 +130,7 @@ describe('contact-summary > route', () => {
           licenceLength: '1D',
           licensee: {
             ...address,
-            postalFulfilment: 'No',
+            postalFulfilment: false,
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Prefer not to be contacted',
             preferredMethodOfNewsletter: 'Yes'

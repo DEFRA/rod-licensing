@@ -23,7 +23,7 @@ describe('licence-fulfilment > update-transaction', () => {
     jest.clearAllMocks()
   })
 
-  it('should set postalFulfilment to no in cache, when licence-option is digital', async () => {
+  it('should set postalFulfilment to false in cache, when licence-option is digital', async () => {
     mockPageCacheGet.mockImplementationOnce(() => ({
       payload: {
         'licence-option': 'digital'
@@ -32,10 +32,10 @@ describe('licence-fulfilment > update-transaction', () => {
 
     await updateTransaction(mockRequest)
 
-    expect(mockTransactionCacheSet).toHaveBeenCalledWith(expect.objectContaining({ licensee: { postalFulfilment: 'No' } }))
+    expect(mockTransactionCacheSet).toHaveBeenCalledWith(expect.objectContaining({ licensee: { postalFulfilment: false } }))
   })
 
-  it('should set postalFulfilment to yes in cache, when licence-option is paper-licence', async () => {
+  it('should set postalFulfilment to true in cache, when licence-option is paper-licence', async () => {
     mockPageCacheGet.mockImplementationOnce(() => ({
       payload: {
         'licence-option': 'paper-licence'
@@ -44,6 +44,6 @@ describe('licence-fulfilment > update-transaction', () => {
 
     await updateTransaction(mockRequest)
 
-    expect(mockTransactionCacheSet).toHaveBeenCalledWith(expect.objectContaining({ licensee: { postalFulfilment: 'Yes' } }))
+    expect(mockTransactionCacheSet).toHaveBeenCalledWith(expect.objectContaining({ licensee: { postalFulfilment: true } }))
   })
 })

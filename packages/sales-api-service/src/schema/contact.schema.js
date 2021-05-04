@@ -62,12 +62,10 @@ const commonContactSchema = {
       otherwise: validation.contact.createOverseasPostcodeValidator(Joi)
     })
   }).example('AB12 3CD'),
-  postalFulfilment: Joi.string()
-    .trim()
-    .min(1)
+  postalFulfilment: Joi.boolean()
     .optional()
     .allow(null)
-    .example('No')
+    .example('true')
 }
 
 export const contactRequestSchema = Joi.object({

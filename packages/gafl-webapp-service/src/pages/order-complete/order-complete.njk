@@ -48,7 +48,7 @@
         <div class="govuk-!-margin-top-8 no-print">
             <h2 class="govuk-heading-m">What happens next</h2>
             <ul class="govuk-list govuk-list--bullet"">
-            {% if data.isPostalFulfilment === 'Yes' %}
+            {% if data.isPostalFulfilment %}
                 <li class="govuk-body">We’ll send your <span class="govuk-!-font-weight-bold">licence card</span> by post. You should get it within 15 working days.</li>
             {% endif %}
             {% if data.contactMethod === data.howContacted['email'] %}
@@ -65,7 +65,7 @@
 
         <div class="govuk-!-margin-top-8 no-print">
             <h2 class="govuk-heading-m">Before you go fishing</h2>
-            {% if data.isPostalFulfilment === 'Yes' %}
+            {% if data.isPostalFulfilment %}
                 <p class="govuk-body">You can go fishing before you get your licence card. You must be able to give your licence details if asked by an enforcement officer.</p>
             {% else %}
                 <p class="govuk-body">You can go fishing as soon as your licence starts. You must be able to give your licence details if asked by an enforcement officer.</p>

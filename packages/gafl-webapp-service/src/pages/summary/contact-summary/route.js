@@ -91,41 +91,43 @@ const CONTACT_TEXT_PHYSICAL = {
 const CHANGE_CONTACT = 'change-contact'
 
 const getContactDetails = permission => {
-  if (isPhysical(permission) && permission.licensee.postalFulfilment === 'Yes') {
-    return [
-      getRow('Licence', 'By post', LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
-      getRow(
-        'Licence Confirmation',
-        getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-        LICENCE_CONFIRMATION_METHOD.uri,
-        'licence confirmation option',
-        'change-licence-confirmation-option'
-      ),
-      getRow(
-        'Contact',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-        CONTACT.uri,
-        'contact',
-        CHANGE_CONTACT
-      )
-    ]
-  } else if (isPhysical(permission) && permission.licensee.postalFulfilment === 'No') {
-    return [
-      getRow(
-        'Licence',
-        getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-        LICENCE_CONFIRMATION_METHOD.uri,
-        'licence confirmation option',
-        'change-licence-confirmation-option'
-      ),
-      getRow(
-        'Contact',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-        CONTACT.uri,
-        'contact',
-        CHANGE_CONTACT
-      )
-    ]
+  if (isPhysical(permission)) {
+    if (permission.licensee.postalFulfilment) {
+      return [
+        getRow('Licence', 'By post', LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
+        getRow(
+          'Licence Confirmation',
+          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          LICENCE_CONFIRMATION_METHOD.uri,
+          'licence confirmation option',
+          'change-licence-confirmation-option'
+        ),
+        getRow(
+          'Contact',
+          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          CONTACT.uri,
+          'contact',
+          CHANGE_CONTACT
+        )
+      ]
+    } else {
+      return [
+        getRow(
+          'Licence',
+          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          LICENCE_CONFIRMATION_METHOD.uri,
+          'licence confirmation option',
+          'change-licence-confirmation-option'
+        ),
+        getRow(
+          'Contact',
+          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          CONTACT.uri,
+          'contact',
+          CHANGE_CONTACT
+        )
+      ]
+    }
   } else {
     return [
       getRow(

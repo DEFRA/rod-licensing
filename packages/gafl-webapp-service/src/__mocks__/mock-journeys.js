@@ -53,7 +53,8 @@ export const ADULT_FULL_1_DAY_LICENCE = {
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Email',
           preferredMethodOfReminder: 'Email',
-          email: 'new3@example.com'
+          email: 'new3@example.com',
+          postalFulfilment: false
         },
         issueDate: '2020-04-29T14:11:47.855Z',
         startDate: '2020-04-28T23:00:00.000Z',
@@ -107,7 +108,8 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
           country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Letter',
-          preferredMethodOfReminder: 'Letter'
+          preferredMethodOfReminder: 'Letter',
+          postalFulfilment: false
         },
         issueDate: '2020-04-30T08:36:12.195Z',
         startDate: '2020-04-29T23:00:00.000Z',
@@ -174,7 +176,8 @@ export const SENIOR_12_MONTH_LICENCE = {
           country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Letter',
-          preferredMethodOfReminder: 'Letter'
+          preferredMethodOfReminder: 'Letter',
+          postalFulfilment: false
         },
         issueDate: '2020-04-30T09:16:58.635Z',
         startDate: '2020-04-29T23:00:00.000Z',
@@ -236,7 +239,8 @@ export const JUNIOR_LICENCE = {
           country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Prefer not to be contacted',
-          preferredMethodOfReminder: 'Prefer not to be contacted'
+          preferredMethodOfReminder: 'Prefer not to be contacted',
+          postalFulfilment: false
         },
         issueDate: '2020-04-30T09:35:28.014Z',
         startDate: '2020-04-29T23:00:00.000Z',
@@ -297,7 +301,8 @@ export const JUNIOR_DISABLED_LICENCE = {
           country: 'England',
           preferredMethodOfNewsletter: 'Prefer not to be contacted',
           preferredMethodOfConfirmation: 'Prefer not to be contacted',
-          preferredMethodOfReminder: 'Prefer not to be contacted'
+          preferredMethodOfReminder: 'Prefer not to be contacted',
+          postalFulfilment: false
         },
         issueDate: '2020-04-30T09:35:28.014Z',
         startDate: '2020-04-29T23:00:00.000Z',
