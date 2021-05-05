@@ -155,7 +155,8 @@ const createTransactionEntities = async transactionRecord => {
  */
 const createTransactionJournal = async (transactionRecord, transactionEntity, type, currency) => {
   const journal = new TransactionJournal()
-  journal.referenceNumber = transactionRecord.id
+  debug({transactionRecord})
+  journal.referenceNumber = type === 'Payment' ? transactionRecord.serialNumber : transactionRecord.id
   journal.description = `${type} for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
   journal.timestamp = transactionRecord.payment.timestamp
   journal.type = await getGlobalOptionSetValue(TransactionJournal.definition.mappings.type.ref, type)
