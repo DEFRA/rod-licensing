@@ -118,7 +118,8 @@ export const Transaction = new Binding({
               ...children[contactBindings.Address.element],
               preferredMethodOfConfirmation: preferredNotifyMethod,
               preferredMethodOfNewsletter: preferredCommsMethod,
-              preferredMethodOfReminder: preferredNotifyMethod
+              preferredMethodOfReminder: preferredNotifyMethod,
+              postalFulfilment: true
             },
             issueDate: transactionDate,
             startDate: moment
