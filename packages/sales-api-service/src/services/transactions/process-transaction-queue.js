@@ -144,7 +144,8 @@ const createTransactionEntities = async transactionRecord => {
   return { transaction, chargeJournal, paymentJournal }
 }
 
-const getTransactionJournalRefNumber = (transactionRecord, type) => {
+export const getTransactionJournalRefNumber = (transactionRecord, type) => {
+  debug({transactionRecord})
   if (type === 'Payment' && !!transactionRecord.serialNumber) {
     return transactionRecord.serialNumber
   }
