@@ -144,6 +144,13 @@ const createTransactionEntities = async transactionRecord => {
   return { transaction, chargeJournal, paymentJournal }
 }
 
+const getTransactionJournalRefNumber = (transactionRecord, type) => {
+  if (type === 'Payment' && !!transactionRecord.serialNumber) {
+    return transactionRecord.serialNumber
+  }
+  return transactionRecord.id
+}
+
 /**
  * Create a TransactionJournal entity for the given parameters
  *
@@ -155,8 +162,7 @@ const createTransactionEntities = async transactionRecord => {
  */
 const createTransactionJournal = async (transactionRecord, transactionEntity, type, currency) => {
   const journal = new TransactionJournal()
-  debug({transactionRecord})
-  journal.referenceNumber = type === 'Payment' ? transactionRecord.serialNumber : transactionRecord.id
+  journal.referenceNumber = getTransactionJournalRefNumber(transactionRecord, type)
   journal.description = `${type} for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
   journal.timestamp = transactionRecord.payment.timestamp
   journal.type = await getGlobalOptionSetValue(TransactionJournal.definition.mappings.type.ref, type)
