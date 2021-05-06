@@ -43,7 +43,7 @@ export const mockContactPayload = () => ({
   preferredMethodOfConfirmation: 'Text',
   preferredMethodOfNewsletter: 'Email',
   preferredMethodOfReminder: 'Letter',
-  postalFulfilment: false
+  postalFulfilment: true
 })
 
 export const mockContactWithIdPayload = () => ({
@@ -243,7 +243,8 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
     defra_locality: 'Testville',
     defra_town: 'Tersterton',
     defra_postcode: 'AB12 3CD',
-    defra_country: 910400195
+    defra_country: 910400195,
+    defra_postalfulfilment: true
   },
   optionSetData
 )
