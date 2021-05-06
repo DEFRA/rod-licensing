@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { PoclFile } from '@defra-fish/dynamics-lib'
 import { finalisePermissionResponseSchema, stagedPermissionSchema } from './permission.schema.js'
 import { contactRequestSchema } from './contact.schema.js'
-import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
+import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator, serialNumberValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -27,9 +27,7 @@ const createTransactionRequestSchemaContent = {
     .required()
     .label('create-transaction-request-permissions'),
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
-  serialNumber: Joi.string()
-    .trim()
-    .required(),
+  serialNumber: serialNumberValidator,
   createdBy: Joi.string().optional()
 }
 
