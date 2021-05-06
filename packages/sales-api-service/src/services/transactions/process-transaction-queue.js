@@ -146,8 +146,8 @@ const createTransactionEntities = async transactionRecord => {
 
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
   debug({transactionRecord})
-  if (type === 'Payment' && !!transactionRecord.serialNumber) {
-    return transactionRecord.serialNumber
+  if (type === 'Payment') {
+    return transactionRecord.serialNumber || transactionRecord.id
   }
   return transactionRecord.id
 }
