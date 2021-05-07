@@ -163,12 +163,3 @@ const validateConcessionList = (permission, concessionsRequiredForPermit) => {
     }
   })
 }
-
-export function serialNumberValidator () {
-  return Joi.when('dataSource', {
-  is: Joi.valid('Post Office Sales', 'DDE File'),
-  then: Joi.string()
-    .trim()
-    .pattern(/^\w{6}-\w-\w{7}$/)
-    .required()
-})}
