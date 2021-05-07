@@ -41,6 +41,11 @@ export const TRANSACTION_SOURCE = { govPay: 'Gov Pay', telesales: 'Telesales' }
 export const PAYMENT_TYPE = { debit: 'Debit card' }
 
 /**
+ * Data sources associated with POCL transactions
+ */
+export const POCL_TRANSACTION_SOURCES = ['Post Office Sales', 'DDE File']
+
+/**
  * Describes the lifetime of the renewal link.
  */
 export const RENEW_BEFORE_DAYS = 60 // The number of days before licence expiry the link is active
