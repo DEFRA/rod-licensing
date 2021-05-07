@@ -11,7 +11,7 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
-import { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+// import { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
@@ -146,7 +146,7 @@ const createTransactionEntities = async transactionRecord => {
 }
 
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
-  if (POCL_TRANSACTION_SOURCES.includes(transactionRecord.dataSource) && type === 'Payment') {
+  if (['Post Office Sales', 'DDE File'].includes(transactionRecord.dataSource) && type === 'Payment') {
     return transactionRecord.serialNumber
   }
   return transactionRecord.id
