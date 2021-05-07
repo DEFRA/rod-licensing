@@ -27,7 +27,13 @@ const createTransactionRequestSchemaContent = {
     .required()
     .label('create-transaction-request-permissions'),
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
-  serialNumber: serialNumberValidator,
+  serialNumber: Joi.when('dataSource', {
+    is: Joi.valid('Post Office Sales', 'DDE File'),
+    then: Joi.string()
+      .trim()
+      .pattern(/^\w{6}-\w-\w{7}$/)
+      .required()
+  }),
   createdBy: Joi.string().optional()
 }
 
