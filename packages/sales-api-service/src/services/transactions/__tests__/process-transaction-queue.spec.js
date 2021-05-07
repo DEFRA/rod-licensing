@@ -204,7 +204,7 @@ describe('transaction service', () => {
     beforeAll(() => {
       mockRecord = mockFinalisedTransactionRecord()
       mockRecord.dataSource = 'Post Office Sales'
-    }) 
+    })
     describe('when the transaction type is "Payment"', () => {
       it('and the serial number is present, returns serial number', () => {
         const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')

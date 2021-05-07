@@ -71,7 +71,7 @@ const getInitialState = async filename => {
 const createTransactionsInSalesApi = async (filename, state) => {
   if (state.buffer.length) {
     const createResults = await salesApi.createTransactions(state.buffer.map(item => item.createTransactionPayload))
-    
+
     const succeeded = []
     const failed = []
     state.buffer.forEach((record, idx) => {
