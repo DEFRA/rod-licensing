@@ -75,7 +75,10 @@ export async function processQueue ({ id }) {
     for (const concession of concessions || []) {
       entities.push(await createConcessionProof(concession, permission))
     }
-    permit.isForFulfilment && entities.push(await createFulfilmentRequest(permission))
+
+    if (permit.isForFulfilment && contact.postalFulfilment) {
+      entities.push(await createFulfilmentRequest(permission))
+    }
   }
 
   transaction.total = totalTransactionValue
