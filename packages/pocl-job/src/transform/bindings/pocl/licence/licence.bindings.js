@@ -2,9 +2,9 @@ import { Binding } from '../../binding.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
 const permitIds = {}
-const getPermitId = async itemId => {
+const getPermitById = async itemId => {
   if (!permitIds[itemId]) {
-    permitIds[itemId] = (await salesApi.permits.find({ itemId: itemId }))?.id
+    permitIds[itemId] = await salesApi.permits.find({ itemId: itemId })
   }
   return permitIds[itemId]
 }
@@ -13,14 +13,14 @@ const getPermitId = async itemId => {
  * Licence item identifier
  * @type {Binding}
  */
-export const ItemId = new Binding({
+export const Permit = new Binding({
   element: 'ITEM_ID',
   transform: async context => {
-    let permitId
+    let permit
     if (context.value) {
-      permitId = await getPermitId(context.value)
+      permit = await getPermitById(context.value)
     }
-    return permitId
+    return permit
   }
 })
 
