@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { PoclFile } from '@defra-fish/dynamics-lib'
 import { finalisePermissionResponseSchema, stagedPermissionSchema } from './permission.schema.js'
 import { contactRequestSchema } from './contact.schema.js'
-import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator, serialNumberValidator } from './validators/validators.js'
+import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -28,7 +28,7 @@ const createTransactionRequestSchemaContent = {
     .label('create-transaction-request-permissions'),
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
   serialNumber: Joi.when('dataSource', {
-    is: Joi.valid('Post Office Sales', 'DDE File'),
+    is: Joi.valid(...['Post Office Sales', 'DDE File']),
     then: Joi.string()
       .trim()
       .pattern(/^\w{6}-\w-\w{7}$/)
