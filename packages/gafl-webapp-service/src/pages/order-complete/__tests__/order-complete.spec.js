@@ -2,7 +2,16 @@ import { salesApi } from '@defra-fish/connectors-lib'
 
 import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../__mocks__/mock-journeys.js'
-import { AGREED, ORDER_COMPLETE, TERMS_AND_CONDITIONS, ORDER_COMPLETE_PDF } from '../../../uri.js'
+import {
+  AGREED,
+  ORDER_COMPLETE,
+  TERMS_AND_CONDITIONS,
+  ORDER_COMPLETE_PDF,
+  COOKIES,
+  ACCESSIBILITY_STATEMENT,
+  PRIVACY_POLICY,
+  REFUND_POLICY
+} from '../../../uri.js'
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
@@ -61,6 +70,23 @@ describe('The order completion handler', () => {
     await injectWithCookies('GET', AGREED.uri)
     await injectWithCookies('GET', ORDER_COMPLETE.uri)
     const data = await injectWithCookies('GET', ORDER_COMPLETE_PDF.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it.each([
+    [COOKIES.page, COOKIES.uri],
+    [ACCESSIBILITY_STATEMENT.page, ACCESSIBILITY_STATEMENT.uri],
+    [PRIVACY_POLICY.page, PRIVACY_POLICY.uri],
+    [REFUND_POLICY.page, REFUND_POLICY.uri]
+  ])('succesfully navigates to %s when on the order complete page', async (page, uri) => {
+    await JUNIOR_LICENCE.setup()
+    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+
+    await injectWithCookies('GET', AGREED.uri)
+    await injectWithCookies('GET', ORDER_COMPLETE.uri)
+
+    const data = await injectWithCookies('GET', uri)
     expect(data.statusCode).toBe(200)
   })
 })
