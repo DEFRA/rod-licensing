@@ -26,6 +26,7 @@ Object {
         "startDate": "2020-01-01T00:01:00.000Z",
       },
     ],
+    "serialNumber": "559136-2-27950",
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
@@ -75,6 +76,7 @@ Object {
         "startDate": "2020-05-31T23:01:00.000Z",
       },
     ],
+    "serialNumber": "559136-2-27950",
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
@@ -123,6 +125,7 @@ Object {
         "startDate": "2020-01-01T00:01:00.000Z",
       },
     ],
+    "serialNumber": "559136-2-27950",
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
@@ -171,6 +174,7 @@ Object {
         "startDate": "2020-01-01T00:01:00.000Z",
       },
     ],
+    "serialNumber": "559136-2-27950",
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
@@ -221,6 +225,7 @@ Object {
         "startDate": "2020-01-01T00:01:00.000Z",
       },
     ],
+    "serialNumber": "559136-2-27950",
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
@@ -261,6 +266,7 @@ Object {
         "startDate": "2020-01-01T00:01:00.000Z",
       },
     ],
+    "serialNumber": "559136-2-27950",
   },
   "finaliseTransactionPayload": Object {
     "payment": Object {
