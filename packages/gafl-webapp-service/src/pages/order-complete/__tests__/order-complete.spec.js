@@ -62,6 +62,17 @@ describe('The order completion handler', () => {
     expect(data.statusCode).toBe(200)
   })
 
+  it('sets the currentPage to order-complete in the cache', async () => {
+    await JUNIOR_LICENCE.setup()
+    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+
+    await injectWithCookies('GET', AGREED.uri)
+    const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+    const permission = await data.request.cache().helpers.status.getCurrentPermission()
+    expect(permission.currentPage).toBe(ORDER_COMPLETE.page)
+  })
+
   it('responds with the order completed pdf when requested', async () => {
     await JUNIOR_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
