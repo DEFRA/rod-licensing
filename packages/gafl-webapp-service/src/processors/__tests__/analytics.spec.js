@@ -19,8 +19,10 @@ describe('initialiseAnalyticsSessionData', () => {
   })
 
   it.each([
-    { _ga: 'GA1.2.1234567890.10234567890', gaClientId: '1234567890' },
-    { _ga: 'GA2.1-3.220027162.1602852296', gaClientId: '220027162' }
+    { _ga: 'GA1.2.1234567890.10234567890', gaClientId: '1234567890.10234567890' },
+    { _ga: 'GA2.1-3.220027162.1602852296', gaClientId: '220027162.1602852296' },
+    { _ga: '5c654e56-bd36-4ac9-b300-9a824b2bcf11', gaClientId: '9a824b2bcf11'},
+    { _ga: 'a25c03b-31b0-4511-1b7e794e1d8', gaClientId: '1b7e794e1d8'}
   ])(
     'stores the ga client id from the query string on the session to support cross-domain tracking from the landing page',
     async ({ _ga, gaClientId }) => {
@@ -37,7 +39,7 @@ describe('initialiseAnalyticsSessionData', () => {
     }
   )
 
-  it.each(['!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731.1602852296'])(
+  it.each(['!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731_1602852296'])(
     'unexpected _ga formats fail gracefully',
     async _ga => {
       const fakeRequest = {
@@ -54,7 +56,7 @@ describe('initialiseAnalyticsSessionData', () => {
     }
   )
 
-  it.each(['!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731.1602852296'])(
+  it.each(['!@£$%^&*()œ∑´®†¥¨^øåß∂ƒ©˙∆˚', '¡€#¢∞§¶•ªø^¨¥©˙∆˚˙©†ƒ®', '1$2$345$678', '1,2,345,678', '523510731_1602852296'])(
     'unexpected _ga formats are logged',
     async _ga => {
       const fakeRequest = {
