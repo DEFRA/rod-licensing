@@ -2,9 +2,22 @@ import { UTM } from '../constants.js'
 import db from 'debug'
 const debug = db('webapp:analytics-processor')
 
+const isDelimitedBy = (id, delimiter) => id.includes(delimiter)
+
+const getClientId = gaId => {
+  if (isDelimitedBy(gaId, '.')) {
+    const parts = gaId.split('.')
+    return [parts[2], parts[3]].join('.')
+  }
+  if (isDelimitedBy(gaId, '-')) {
+    return gaId.split('-').pop()
+  }
+  return undefined
+}
+
 const getClientIdFromGACookie = query => {
   if (query._ga) {
-    const clientId = query._ga.split('.')[2]
+    const clientId = getClientId(query._ga)
     if (!clientId) {
       debug(`Unexpected _ga cookie value: ${query._ga}`)
     }
