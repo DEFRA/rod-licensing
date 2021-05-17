@@ -12,6 +12,7 @@ const getClientId = gaId => {
   if (isDelimitedBy(gaId, '-')) {
     return gaId.split('-').pop()
   }
+  return undefined
 }
 
 const getClientIdFromGACookie = query => {
