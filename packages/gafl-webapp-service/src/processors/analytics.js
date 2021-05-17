@@ -14,12 +14,9 @@ const getClientId = gaId => {
   }
 }
 
-
-
 const getClientIdFromGACookie = query => {
   if (query._ga) {
-    let clientId
-    clientId = getClientId(query._ga)
+    const clientId = getClientId(query._ga)
     if (!clientId) {
       debug(`Unexpected _ga cookie value: ${query._ga}`)
     }
