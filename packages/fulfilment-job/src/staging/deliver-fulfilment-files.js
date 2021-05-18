@@ -1,5 +1,4 @@
-import { promisify } from 'util'
-import { Readable, pipeline } from 'stream'
+import { Readable } from 'stream'
 import { createHash } from 'crypto'
 import merge2 from 'merge2'
 import moment from 'moment'
@@ -10,9 +9,9 @@ import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from './staging-c
 import db from 'debug'
 import openpgp from 'openpgp'
 import config from '../config.js'
+import streamHelper from './streamHelper.js'
 
 const debug = db('fulfilment:staging')
-const pipelinePromise = promisify(pipeline)
 
 /**
  * Deliver any fulfilment files previously staged in S3 and recorded in Dynamics with the 'Exported' status
@@ -25,8 +24,7 @@ export const deliverFulfilmentFiles = async () => {
   results.sort((a, b) => a.entity.fileName.localeCompare(b.entity.fileName))
   for (const { entity: file } of results) {
     await deliver(file.fileName, await createDataReadStream(file))
-    // await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
-    await deliver(`${file.fileName}.enc`, await createDataReadStream(file))
+    await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
     await deliver(`${file.fileName}.sha256`, await createDataReadStream(file), createHash('sha256').setEncoding('hex'))
     file.deliveryTimestamp = moment().toISOString()
     file.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Delivered')
@@ -52,11 +50,14 @@ const getPGPKeyFromAWSSecrets = async () => 'PGP KEY'
 
 const createEncryptedDataReadStream = async file => {
   const readableStream = await createDataReadStream(file)
-  const publicKeyArmoured = await getPGPKeyFromAWSSecrets()
-  return openpgp.encrypt({
-    message: openpgp.Message.fromText(readableStream),
-    publicKeys: (await openpgp.key.readArmored(publicKeyArmoured)).keys
+  const publicKeys = await openpgp.readKey({
+    armoredKey: await getPGPKeyFromAWSSecrets()
   })
+  const encstream = await openpgp.encrypt({
+    message: openpgp.Message.fromText(readableStream),
+    publicKeys
+  })
+  return encstream
 }
 
 /**
@@ -70,8 +71,9 @@ const createEncryptedDataReadStream = async file => {
 const deliver = async (targetFileName, readableStream, ...transforms) => {
   const { s3WriteStream: s3DataStream, managedUpload: s3DataManagedUpload } = createS3WriteStream(targetFileName)
   const { ftpWriteStream: ftpDataStream, managedUpload: ftpDataManagedUpload } = createFtpWriteStream(targetFileName)
+
   await Promise.all([
-    pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
+    streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
     s3DataManagedUpload,
     ftpDataManagedUpload
   ])
