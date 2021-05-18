@@ -30,15 +30,15 @@
 
                 {% block pageContent %}{% endblock %}
 
-                {{ govukButton({
-                    attributes: { id: 'continue' },
-                    preventDoubleClick: true,
-                    name: "continue",
-                    text: "Continue",
-                    classes: "govuk-!-margin-top-5"
-                }) }}
-
             {% endcall %}
+            
+            {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: "Continue",
+                classes: "govuk-!-margin-top-5"
+            }) }}
             {{ csrf() }}
         </form>
     </div>

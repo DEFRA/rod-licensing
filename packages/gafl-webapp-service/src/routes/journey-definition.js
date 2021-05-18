@@ -18,6 +18,7 @@ import {
   AGREED,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
+  ORDER_COMPLETE,
   IDENTIFY,
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE
@@ -286,6 +287,11 @@ export default [
       }
     },
     backLink: IDENTIFY.uri
+  },
+
+  {
+    current: ORDER_COMPLETE,
+    backLink: ORDER_COMPLETE.uri
   },
 
   // This is the authentication journey

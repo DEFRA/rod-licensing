@@ -11,7 +11,11 @@ import {
   PAYMENT_FAILED,
   PAYMENT_CANCELLED,
   TEST_TRANSACTION,
-  TEST_STATUS
+  TEST_STATUS,
+  REFUND_POLICY,
+  PRIVACY_POLICY,
+  ACCESSIBILITY_STATEMENT,
+  COOKIES
 } from '../uri.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
 
@@ -26,7 +30,11 @@ const protectionExemptSet = [
   PAYMENT_FAILED.uri,
   PAYMENT_CANCELLED.uri,
   TEST_TRANSACTION.uri,
-  TEST_STATUS.uri
+  TEST_STATUS.uri,
+  REFUND_POLICY.uri,
+  PRIVACY_POLICY.uri,
+  ACCESSIBILITY_STATEMENT.uri,
+  COOKIES.uri
 ]
 
 const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/

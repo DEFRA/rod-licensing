@@ -68,6 +68,7 @@ export const mockPermissionPayload = () => ({
 
 export const mockTransactionPayload = () => ({
   permissions: [mockPermissionPayload()],
+  serialNumber: '559136-2-27950',
   dataSource: 'Web Sales'
 })
 
@@ -88,6 +89,7 @@ export const mockStagedTransactionRecord = () => ({
 
 export const mockFinalisedTransactionRecord = () => ({
   id: 'b364c12f-ce62-4c62-b4bd-4a06fd57e256',
+  serialNumber: '559136-2-27950',
   expires: 1586512428,
   permissions: [mockFinalisedPermissionRecord()],
   cost: 30,
