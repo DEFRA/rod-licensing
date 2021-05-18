@@ -1,63 +1,12 @@
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-
-
-
-
-
-
-
-
-
-
+## v1.10.0
+* Updates Accessibility Statement headings to use correct semantics
+* Use serial number as Payment id for POCL transactions
+* Text changes on licence type and name screen
+* Change calendar icon to have better colour contrast
+* Move continue button out of fieldset for forms
+* Makes cost summary panel screen reader friendly
+* Fix broken footer links
+* Handle new and old GA client id formats
 
 
 ## v1.4.0-rc.1 (2020-10-29)
