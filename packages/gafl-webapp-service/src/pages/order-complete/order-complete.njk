@@ -72,18 +72,18 @@
               classes: "govuk-!-margin-top-6"
             }) }}
             <p class="govuk-body" class="no-print">Get a <a class="govuk-link" href="{{ data.uri.pdf }}">PDF copy of your licence details</a>. If you gave us your email address, you’ll get a confirmation message that includes your licence number.</p>
-            <p class="govuk-body">You must follow the <a class="govuk-link" target="_blank" href="https://www.gov.uk/freshwater-rod-fishing-rules">rod fishing rules</a> and <a target="_blank" href="https://www.gov.uk/government/collections/local-fishing-byelaws">local fishing byelaws</a>.</p>
+            <p class="govuk-body">You must follow the <a class="govuk-link" target="_blank" href="https://www.gov.uk/freshwater-rod-fishing-rules">rod fishing rules (opens in a new tab)</a> and <a target="_blank" href="https://www.gov.uk/government/collections/local-fishing-byelaws">local fishing byelaws (opens in a new tab)</a>.</p>
          </div>
 
         {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
             <div class="govuk-!-margin-top-8">
                 <h2 class="govuk-heading-m">Report your yearly catch return</h2>
-                <p class="govuk-body no-print">You must by law <span class="no-print"><a class="govuk-link" target="_blank" href="https://www.gov.uk/catch-return">report a catch return</a> (opens in a new window or tab) </span><span class="print-area">report a catch return</span> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
+                <p class="govuk-body no-print">You must by law <span class="no-print"><a class="govuk-link" target="_blank" href="https://www.gov.uk/catch-return">report a catch return (opens in a new tab)</a> </span><span class="print-area">report a catch return</span> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
                 <p class="govuk-body print-area">You must by law report a catch return of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
             </div>
         {% endif %}
 
-        <p class="govuk-body"><a class="govuk-link" target="_blank" href="{{ data.uri.feedback }}">What did you think of the service</a> (takes 30 seconds)</p>
+        <p class="govuk-body"><a class="govuk-link" target="_blank" href="{{ data.uri.feedback }}">What did you think of the service (opens in a new tab)</a> (takes 30 seconds)</p>
 
         {{ govukButton({
             href: data.uri.new,
