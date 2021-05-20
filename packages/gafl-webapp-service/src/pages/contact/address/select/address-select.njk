@@ -22,13 +22,23 @@
 {% endfor %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">{{ data.addresses.length }} {{ "address" if data.addresses.length === 1 else "addresses"}} found for {{ data.searchTerms.premises}} and {{ data.searchTerms.postcode}}&nbsp;&nbsp;<a href="{{ data.lookupPage }}">Change</a></p>
+    <p class="govuk-body-m">
+        {{ data.addresses.length }} {{ "address" if data.addresses.length === 1 else "addresses"}} found for 
+        {{ data.searchTerms.premises}} and {{ data.searchTerms.postcode}}&nbsp;&nbsp;
+        <a href="{{ data.lookupPage }}">
+            Change<span class="govuk-visually-hidden"> Address</span>
+        </a>
+    </p>
+
     {{ govukRadios({
-           idPrefix: "address",
-           name: "address",
-           items: addressItems,
-           errorMessage: { text: 'Choose your address' } if error
-       })
+        idPrefix: "address",
+        name: "address",
+        items: addressItems,
+        errorMessage: { text: 'Choose your address' } if error
+    })
     }}
-    <p class="govuk-body-m"><a class="govuk-link" href="{{ data.entryPage }}">Your address is not listed</a></p>
+
+    <p class="govuk-body-m">
+        <a class="govuk-link" href="{{ data.entryPage }}">Your address is not listed</a>
+    </p>
 {% endblock %}
