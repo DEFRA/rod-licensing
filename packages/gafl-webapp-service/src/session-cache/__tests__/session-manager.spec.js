@@ -101,7 +101,7 @@ describe('The user', () => {
     expect(response.headers.location).toBe(CONTROLLER.uri)
   })
 
-  it('returns 200 when attempting to access ' + IDENTIFY.uri, async () => {
+  it(`returns 200 when attempting to access ${IDENTIFY.uri}`, async () => {
     const response = await injectWithoutSessionCookie('GET', IDENTIFY.uri)
     expect(response.statusCode).toBe(200)
   })
