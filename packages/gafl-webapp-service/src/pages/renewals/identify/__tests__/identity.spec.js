@@ -115,6 +115,7 @@ describe('The easy renewal identification page', () => {
     )
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(AUTHENTICATE.uri)
+
     const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(CONTROLLER.uri)

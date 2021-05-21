@@ -39,7 +39,7 @@ export const mockContactPayload = () => ({
   locality: 'Near Sample',
   town: 'Exampleton',
   postcode: 'AB12 3CD',
-  country: 'GB',
+  country: 'GB-ENG',
   preferredMethodOfConfirmation: 'Text',
   preferredMethodOfNewsletter: 'Email',
   preferredMethodOfReminder: 'Letter'
@@ -68,6 +68,7 @@ export const mockPermissionPayload = () => ({
 
 export const mockTransactionPayload = () => ({
   permissions: [mockPermissionPayload()],
+  serialNumber: '559136-2-27950',
   dataSource: 'Web Sales'
 })
 
@@ -88,6 +89,7 @@ export const mockStagedTransactionRecord = () => ({
 
 export const mockFinalisedTransactionRecord = () => ({
   id: 'b364c12f-ce62-4c62-b4bd-4a06fd57e256',
+  serialNumber: '559136-2-27950',
   expires: 1586512428,
   permissions: [mockFinalisedPermissionRecord()],
   cost: 30,
@@ -242,7 +244,7 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
     defra_locality: 'Testville',
     defra_town: 'Tersterton',
     defra_postcode: 'AB12 3CD',
-    defra_country: 910400184
+    defra_country: 910400195
   },
   optionSetData
 )

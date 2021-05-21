@@ -3,7 +3,7 @@ import { PoclFile } from '@defra-fish/dynamics-lib'
 import { finalisePermissionResponseSchema, stagedPermissionSchema } from './permission.schema.js'
 import { contactRequestSchema } from './contact.schema.js'
 import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
-import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
+import { MAX_PERMISSIONS_PER_TRANSACTION, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 
 import { v4 as uuidv4 } from 'uuid'
 
@@ -27,8 +27,14 @@ const createTransactionRequestSchemaContent = {
     .required()
     .label('create-transaction-request-permissions'),
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
-  createdBy: Joi.string().optional(),
-
+  serialNumber: Joi.when('dataSource', {
+    is: Joi.valid(...POCL_TRANSACTION_SOURCES),
+    then: Joi.string()
+      .trim()
+      .min(1)
+      .required()
+  }),
+  createdBy: Joi.string().optional()
 }
 
 /**
@@ -74,7 +80,7 @@ const createTransactionResponseSchemaContent = {
   status: Joi.object({
     id: Joi.string()
       .valid('STAGED')
-      .required(),
+      .required()
   })
     .label('create-transaction-status')
     .required()
