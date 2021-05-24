@@ -22,7 +22,7 @@
           {
             href: data.uri.licenceType,
             text: "Change",
-            visuallyHiddenText: "Type",
+            visuallyHiddenText: "type",
             attributes: { id: 'change-licence-type' }
           }
         ]
@@ -43,7 +43,7 @@
       {
         href: data.uri.licenceLength,
         text: "Change",
-        visuallyHiddenText: "Length",
+        visuallyHiddenText: "length",
         attributes: { id: 'change-licence-length' }
       }
     ] if not data.hasJunior and not data.isRenewal
@@ -63,7 +63,7 @@
           {
             href: data.uri.dateOfBirth,
             text: "Change",
-            visuallyHiddenText: "Date of birth",
+            visuallyHiddenText: "date of birth",
             attributes: { id: 'change-birth-date' }
           }
         ]
@@ -84,7 +84,7 @@
           {
             href:  data.uri.licenceStartDate if data.isRenewal else data.uri.licenceToStart,
             text: "Change",
-            visuallyHiddenText: "Start date",
+            visuallyHiddenText: "start date",
             attributes: { id: 'change-licence-to-start' }
           }
         ]
@@ -92,7 +92,7 @@
 }) }}
 
 {% if data.permission.licenceLength === '12M' %}
-    {% set concessionText = 'Blue Badge Number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance Number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession') %}
+    {% set concessionText = 'Blue Badge number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession') %}
     {{ licenseDetailsSummaryRows.push({
       key: {
         text: concessionText
