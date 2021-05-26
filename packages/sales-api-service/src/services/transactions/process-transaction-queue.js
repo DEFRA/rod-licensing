@@ -11,6 +11,7 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
+import { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
@@ -147,6 +148,13 @@ const createTransactionEntities = async transactionRecord => {
   return { transaction, chargeJournal, paymentJournal }
 }
 
+export const getTransactionJournalRefNumber = (transactionRecord, type) => {
+  if (POCL_TRANSACTION_SOURCES.includes(transactionRecord.dataSource) && type === 'Payment') {
+    return transactionRecord.serialNumber || transactionRecord.id
+  }
+  return transactionRecord.id
+}
+
 /**
  * Create a TransactionJournal entity for the given parameters
  *
@@ -158,7 +166,7 @@ const createTransactionEntities = async transactionRecord => {
  */
 const createTransactionJournal = async (transactionRecord, transactionEntity, type, currency) => {
   const journal = new TransactionJournal()
-  journal.referenceNumber = transactionRecord.id
+  journal.referenceNumber = getTransactionJournalRefNumber(transactionRecord, type)
   journal.description = `${type} for ${transactionRecord.permissions.length} permission(s) recorded on ${transactionRecord.payment.timestamp}`
   journal.timestamp = transactionRecord.payment.timestamp
   journal.type = await getGlobalOptionSetValue(TransactionJournal.definition.mappings.type.ref, type)

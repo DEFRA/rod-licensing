@@ -11,13 +11,17 @@ import {
   PAYMENT_FAILED,
   PAYMENT_CANCELLED,
   TEST_TRANSACTION,
-  TEST_STATUS
+  TEST_STATUS,
+  REFUND_POLICY,
+  PRIVACY_POLICY,
+  ACCESSIBILITY_STATEMENT,
+  COOKIES
 } from '../uri.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
 
 const debug = db('webapp:session-manager')
 
-const protectionExemptSet = [
+const agreedHandlerProtectionExemptSet = [
   NEW_TRANSACTION.uri,
   CONTROLLER.uri,
   AGREED.uri,
@@ -26,14 +30,25 @@ const protectionExemptSet = [
   PAYMENT_FAILED.uri,
   PAYMENT_CANCELLED.uri,
   TEST_TRANSACTION.uri,
-  TEST_STATUS.uri
+  TEST_STATUS.uri,
+  REFUND_POLICY.uri,
+  PRIVACY_POLICY.uri,
+  ACCESSIBILITY_STATEMENT.uri,
+  COOKIES.uri
 ]
+
+// regex for /renew/{referenceNumber?} and /buy/renew/identify
+const startProtectionExemptSet = [/^\/renew\/[a-zA-Z0-9]{6}$/, /^\/buy\/renew\/identify$/]
 
 const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/
 const staticMatcherOidc = /^\/oidc\/.*/
 
 export const isStaticResource = request => staticMatcherPublic.test(request.path)
 export const useSessionCookie = request => !isStaticResource(request) && !staticMatcherOidc.test(request.path)
+
+export const includesRegex = (str, regexArray) => {
+  return regexArray.some(regex => regex.test(str))
+}
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
@@ -76,7 +91,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
      * except for the set in the array which includes the order-complete and new transaction pages and the agreed handler itself.
      */
     const status = await request.cache().helpers.status.get()
-    if (status.agreed && !protectionExemptSet.includes(request.path)) {
+    if (status.agreed && !agreedHandlerProtectionExemptSet.includes(request.path)) {
       return h.redirect(AGREED.uri).takeover()
     }
 
@@ -95,7 +110,9 @@ const sessionManager = sessionCookieName => async (request, h) => {
      */
     if (initialized) {
       await initialiseAnalyticsSessionData(request)
-      return h.redirect(CONTROLLER.uri).takeover()
+      if (!includesRegex(request.path, startProtectionExemptSet)) {
+        return h.redirect(CONTROLLER.uri).takeover()
+      }
     }
   }
 

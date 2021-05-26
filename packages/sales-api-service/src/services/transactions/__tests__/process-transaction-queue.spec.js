@@ -1,4 +1,4 @@
-import { processQueue } from '../process-transaction-queue.js'
+import { processQueue, getTransactionJournalRefNumber } from '../process-transaction-queue.js'
 import {
   persist,
   findById,
@@ -197,6 +197,37 @@ describe('transaction service', () => {
         expect(e.message).toEqual('A transaction for the specified identifier was not found')
         expect(e.output.statusCode).toEqual(404)
       }
+    })
+  })
+
+  describe('.getTransactionJournalRefNumber', () => {
+    let mockRecord
+    beforeAll(() => {
+      mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.dataSource = 'Post Office Sales'
+    })
+    describe('when the transaction type is "Payment"', () => {
+      it('and the serial number is present, returns serial number', () => {
+        const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')
+        expect(refNumber).toBe(mockRecord.serialNumber)
+      })
+
+      it('and the serial number is not present, returns id', () => {
+        const refNumber = getTransactionJournalRefNumber({ ...mockRecord, serialNumber: null }, 'Payment')
+        expect(refNumber).toBe(mockRecord.id)
+      })
+    })
+
+    describe('when the transaction type is "Charge"', () => {
+      it('and the serial number is present, returns id', () => {
+        const refNumber = getTransactionJournalRefNumber(mockRecord, 'Charge')
+        expect(refNumber).toBe(mockRecord.id)
+      })
+
+      it('and the serial number is not present, returns id', () => {
+        const refNumber = getTransactionJournalRefNumber({ ...mockRecord, serialNumber: null }, 'Charge')
+        expect(refNumber).toBe(mockRecord.id)
+      })
     })
   })
 })
