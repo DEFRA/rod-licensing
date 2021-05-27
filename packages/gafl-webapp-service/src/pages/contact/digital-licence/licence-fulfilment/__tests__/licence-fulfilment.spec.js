@@ -48,10 +48,12 @@ describe('The licence fulfilment page', () => {
       expect(response.statusCode).toBe(200)
     })
 
-    it('redirects to licence confirmation method page on successful submission', async () => {
-      const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri, {})
+    it('redirects to licence fulfilment page on unsuccessful submission', async () => {
+      const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri, {
+        'licence-option': 'none'
+      })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
     })
 
     it('post response digital sets postalFulfilment - no, in the cache', async () => {
@@ -101,7 +103,7 @@ describe('The licence fulfilment page', () => {
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
 
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-      const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri)
+      const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
     })

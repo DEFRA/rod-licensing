@@ -3,6 +3,15 @@
 
 {% set title = "Do you want to go paperless?" %}
 
+{% set errorMsg = 'Choose if you would like to go paperless' %}
+
+{% set errorMap = {
+        'licence-option': {
+            'any.required': { ref: '#licence-option', text: errorMsg }
+        }
+    }
+%}
+
 {% block pageContent %}
     <p class="govuk-body">If you get your licence by email or text message you'll:</p>
     {{ govukRadios({
@@ -28,7 +37,8 @@
                     html: '<ul class="govuk-list govuk-list--bullet"><li>you\'ll get your rod licence card within 15 working days</li><li>if you give us your email address or text message, we\'ll send you a copy of your licence details</li></ul>'
                 }
             }
-        ]
+        ],
+        errorMessage: { text: errorMsg } if error['licence-option']
     }) }}
 {% endblock %}
 
