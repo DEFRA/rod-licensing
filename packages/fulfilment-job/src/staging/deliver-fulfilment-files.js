@@ -46,18 +46,15 @@ const createDataReadStream = async file => {
   return merge2(Readable.from(['{\n  "licences": [\n']), ...mergeStreams, Readable.from(['\n  ]\n}\n']))
 }
 
-const getPGPKeyFromAWSSecrets = async () => 'PGP KEY'
-
 const createEncryptedDataReadStream = async file => {
   const readableStream = await createDataReadStream(file)
   const publicKeys = await openpgp.readKey({
-    armoredKey: await getPGPKeyFromAWSSecrets()
+    armoredKey: config.pgp.publicKey
   })
-  const encstream = await openpgp.encrypt({
-    message: openpgp.Message.fromText(readableStream),
+  return openpgp.encrypt({
+    message: await openpgp.Message.fromText(readableStream),
     publicKeys
   })
-  return encstream
 }
 
 /**

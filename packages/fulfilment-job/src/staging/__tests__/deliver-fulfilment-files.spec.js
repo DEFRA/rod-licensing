@@ -8,6 +8,7 @@ import util from 'util'
 import openpgp, { stream } from 'openpgp'
 import config from '../../config.js'
 import streamHelper from '../streamHelper.js'
+import merge2 from 'merge2'
 
 jest.mock('../../config.js')
 jest.mock('../../transport/s3.js')
@@ -30,6 +31,9 @@ jest.mock('../../config.js', () => ({
   }
 }))
 jest.spyOn(streamHelper, 'pipelinePromise')
+jest.mock('merge2', () => jest.fn((...args) => jest.requireActual('merge2')(...args)))
+// Part file data for all files
+readS3PartFiles.mockImplementation(async () => [Readable.from(['{"part": 0}']), Readable.from(['{"part": 1}'])])
 
 describe('deliverFulfilmentFiles', () => {
   beforeEach(jest.clearAllMocks)
@@ -41,9 +45,6 @@ describe('deliverFulfilmentFiles', () => {
 
     // Reverse order to ensure files are sent in ascending order according to their sequence number
     executeQuery.mockResolvedValue([{ entity: mockFulfilmentRequestFile2 }, { entity: mockFulfilmentRequestFile1 }])
-
-    // Part file data for all files
-    readS3PartFiles.mockImplementation(jest.fn(async () => [Readable.from(['{"part": 0}']), Readable.from(['{"part": 1}'])]))
 
     // Streams for file1
     const {
@@ -120,9 +121,7 @@ describe('deliverFulfilmentFiles', () => {
 
   it('delivers a fulfilment file with the .enc extension', async () => {
     const filename = 'EAFF202104190001.json'
-    const mockFulfilmentRequestFile = await createMockFulfilmentRequestFile(filename, '2021-04-19T11:47:32.982Z')
-    executeQuery.mockResolvedValue([{ entity: mockFulfilmentRequestFile }])
-    readS3PartFiles.mockImplementation(jest.fn(async () => [Readable.from(['{"part": 0}']), Readable.from(['{"part": 1}'])]))
+    await mockExecuteQuery(filename)
     createMockFileStreams()
 
     await deliverFulfilmentFiles()
@@ -132,10 +131,7 @@ describe('deliverFulfilmentFiles', () => {
 
   it('encrypts the enc file', async () => {
     const encryptStream = Readable.from('secret-squirrel')
-    const filename = 'EAFF202104190001.json'
-    const mockFulfilmentRequestFile = await createMockFulfilmentRequestFile(filename, '2021-04-19T11:47:32.982Z')
-    executeQuery.mockResolvedValue([{ entity: mockFulfilmentRequestFile }])
-    readS3PartFiles.mockImplementation(jest.fn(async () => [Readable.from(['{"part": 0}']), Readable.from(['{"part": 1}'])]))
+    await mockExecuteQuery()
     openpgp.encrypt.mockResolvedValueOnce(encryptStream)
     createMockFileStreams()
 
@@ -149,7 +145,66 @@ describe('deliverFulfilmentFiles', () => {
       ])
     )
   })
+
+  it('Passes message object created from fulfilment readable stream', async () => {
+    const s = createTestableStream()
+    streamHelper.pipelinePromise.mockResolvedValue()
+    merge2.mockResolvedValue(s)
+    await mockExecuteQuery()
+    createMockFileStreams()
+    await deliverFulfilmentFiles()
+    expect(openpgp.Message.fromText).toHaveBeenCalledWith(s)
+  })
+
+  it('Uses message reading to encrypt', async () => {
+    const s = createTestableStream()
+    streamHelper.pipelinePromise.mockResolvedValue()
+    openpgp.Message.fromText.mockResolvedValue(s)
+    await mockExecuteQuery()
+    createMockFileStreams()
+    await deliverFulfilmentFiles()
+    expect(openpgp.encrypt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: s
+      })
+    )
+  })
+
+  it('encrypts using public key', async () => {
+    const publicKeys = { type: 'skeleton' }
+    openpgp.readKey.mockResolvedValue(publicKeys)
+    await mockExecuteQuery()
+    createMockFileStreams()
+    await deliverFulfilmentFiles()
+    expect(openpgp.encrypt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publicKeys
+      })
+    )
+  })
+
+  ;[
+    'secret-squirrel',
+    'obfuscated-orangutang',
+    'hidden-horse'
+  ].forEach(key => it(`reads key '${key}' from config`, async () => {
+    config.pgp.publicKey = key
+    await mockExecuteQuery()
+    createMockFileStreams()
+    await deliverFulfilmentFiles()
+    expect(openpgp.readKey).toHaveBeenCalledWith(
+      expect.objectContaining({
+        armoredKey: key
+      })
+    )
+  }))
 })
+
+const mockExecuteQuery = async (filename = 'EAFF202104190001.json') => {
+  const mockFulfilmentRequestFile = await createMockFulfilmentRequestFile(filename, '2021-04-19T11:47:32.982Z')
+  executeQuery.mockResolvedValue([{ entity: mockFulfilmentRequestFile }])
+  return mockFulfilmentRequestFile
+}
 
 const createMockFulfilmentRequestFile = async (fileName, date) => Object.assign(new FulfilmentRequestFile(), {
   fileName,
