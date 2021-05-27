@@ -10,7 +10,6 @@ import config from '../../config.js'
 import streamHelper from '../streamHelper.js'
 import merge2 from 'merge2'
 
-jest.mock('../../config.js')
 jest.mock('../../transport/s3.js')
 jest.mock('../../transport/ftp.js')
 jest.mock('openpgp', () => ({
@@ -27,7 +26,8 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 }))
 jest.mock('../../config.js', () => ({
   pgp: {
-    publicKey: '--- START ENCRYPTION KEY ---\nsecr3tSqu1rr3l\n--- END ENCRYPTION KEY ---'
+    publicKey: '--- START ENCRYPTION KEY ---\nsecr3tSqu1rr3l\n--- END ENCRYPTION KEY ---',
+    sendUnencryptedFile: true
   }
 }))
 jest.spyOn(streamHelper, 'pipelinePromise')
@@ -198,6 +198,24 @@ describe('deliverFulfilmentFiles', () => {
       })
     )
   }))
+
+  it('doesn\'t send unencrypted file if sendUnencryptedFile is false', async () => {
+    config.pgp.sendUnencryptedFile = false
+    const s1 = createTestableStream()
+    const s2 = createTestableStream()
+    const s3 = createTestableStream()
+    streamHelper.pipelinePromise.mockResolvedValue()
+    openpgp.encrypt.mockResolvedValue(s2)
+    merge2.mockReturnValueOnce(s1).mockReturnValueOnce(s2).mockReturnValueOnce(s3)
+    await mockExecuteQuery()
+    createMockFileStreams()
+
+    await deliverFulfilmentFiles()
+
+    expect(streamHelper.pipelinePromise).not.toHaveBeenCalledWith(
+      expect.arrayContaining([s1])
+    )
+  })
 })
 
 const mockExecuteQuery = async (filename = 'EAFF202104190001.json') => {
@@ -240,9 +258,10 @@ const createMockFileStreams = () => {
   }
 }
 
-const createTestableStream = () => {
+const createTestableStream = (tag = '') => {
   const testableStream = new PassThrough()
   testableStream.dataProcessed = ''
+  testableStream.tag = tag
   testableStream.on('data', data => {
     testableStream.dataProcessed += data
   })

@@ -23,7 +23,9 @@ export const deliverFulfilmentFiles = async () => {
   const results = await executeQuery(findFulfilmentFiles({ status: await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported') }))
   results.sort((a, b) => a.entity.fileName.localeCompare(b.entity.fileName))
   for (const { entity: file } of results) {
-    await deliver(file.fileName, await createDataReadStream(file))
+    if (config.pgp.sendUnencryptedFile) {
+      await deliver(file.fileName, await createDataReadStream(file))
+    }
     await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
     await deliver(`${file.fileName}.sha256`, await createDataReadStream(file), createHash('sha256').setEncoding('hex'))
     file.deliveryTimestamp = moment().toISOString()
