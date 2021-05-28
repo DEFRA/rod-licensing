@@ -69,7 +69,6 @@ class Config {
        */
       partFileSize: Math.min(Number.parseInt(process.env.FULFILMENT_FILE_SIZE), 999)
     }
-    console.log('set file', this.file)
     this.ftp = {
       host: process.env.FULFILMENT_FTP_HOST,
       port: process.env.FULFILMENT_FTP_PORT || '22',
@@ -84,11 +83,11 @@ class Config {
       retry_minTimeout: 12000,
       debug: db('fulfilment:ftp')
     }
-    console.log('set ftp', this.ftp)
     this.s3 = {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
-    console.log('set s3', this.s3)
+    console.log('FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID', process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID)
+    console.log('FULFILMENT_SEND_UNENCRYPTED_FILE', process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     this._pgp = {
       publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID }).promise()).SecretString,
       sendUnencryptedFile: toBoolean(process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
