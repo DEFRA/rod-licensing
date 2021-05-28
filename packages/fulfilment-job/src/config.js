@@ -1,4 +1,5 @@
 import { AWS } from '@defra-fish/connectors-lib'
+import { config } from '@defra-fish/dynamics-lib/src/client/dynamics-client'
 import db from 'debug'
 const { secretsManager } = AWS()
 
@@ -59,6 +60,7 @@ class Config {
   _pgp
 
   async initialise () {
+    console.log('initialising config')
     this.file = {
       size: Number.parseInt(process.env.FULFILMENT_FILE_SIZE),
       /**
@@ -68,6 +70,7 @@ class Config {
        */
       partFileSize: Math.min(Number.parseInt(process.env.FULFILMENT_FILE_SIZE), 999)
     }
+    console.log('set file', this.file)
     this.ftp = {
       host: process.env.FULFILMENT_FTP_HOST,
       port: process.env.FULFILMENT_FTP_PORT || '22',
@@ -82,13 +85,16 @@ class Config {
       retry_minTimeout: 12000,
       debug: db('fulfilment:ftp')
     }
+    console.log('set ftp', this.ftp)
     this.s3 = {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
+    console.log('set s3', this.s3)
     this._pgp = {
       publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID }).promise()).SecretString,
       sendUnencryptedFile: toBoolean(process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     }
+    console.log('set pgp', this._pgp)
   }
 
   /**
