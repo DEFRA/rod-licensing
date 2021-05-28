@@ -59,7 +59,6 @@ class Config {
   _pgp
 
   async initialise () {
-    console.log('initialising config')
     this.file = {
       size: Number.parseInt(process.env.FULFILMENT_FILE_SIZE),
       /**
@@ -86,13 +85,10 @@ class Config {
     this.s3 = {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
-    console.log('FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID', process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID)
-    console.log('FULFILMENT_SEND_UNENCRYPTED_FILE', process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     this._pgp = {
       publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID }).promise()).SecretString,
       sendUnencryptedFile: toBoolean(process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     }
-    console.log('set pgp', this._pgp)
   }
 
   /**
