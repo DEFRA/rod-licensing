@@ -58,8 +58,6 @@ export const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
   const startTimeString = displayStartTime(permission)
-  const transaction = await request.cache().helpers.transaction.get()
-  await request.ga.ecommerce().detail(getTrackingProductDetailsFromTransaction(transaction))
 
   return {
     permission,

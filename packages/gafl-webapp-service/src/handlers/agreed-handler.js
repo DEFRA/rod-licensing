@@ -72,11 +72,6 @@ const createPayment = async (request, transaction, status) => {
   const paymentResponse = await sendPayment(preparedPayment)
 
   /*
-   * Google Analytics tracking
-   */
-  await request.ga.ecommerce().checkout(getTrackingProductDetailsFromTransaction(transaction))
-
-  /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
    * it maybe updated multiple times with a new payment id and creation date if the payment is cancelled and retried
    */
@@ -145,10 +140,6 @@ const processPayment = async (request, transaction, status) => {
     // Defer setting the completed status in the journal until after finalization
     status[COMPLETION_STATUS.paymentCompleted] = true
     await request.cache().helpers.status.set(status)
-    console.log('transaction payment id', transaction.payment.payment_id)
-    await request.ga
-      .ecommerce()
-      .purchase(getTrackingProductDetailsFromTransaction(transaction), transaction.payment.payment_id, getAffiliation(process.env.CHANNEL))
   } else {
     /*
      * This block deals with failed or cancelled payments
@@ -249,12 +240,6 @@ export default async (request, h) => {
     if (next) {
       return h.redirect(next)
     }
-  } else {
-    const paymentId = await request.cache().getId()
-    console.log('transaction paymentId', paymentId)
-    await request.ga
-      .ecommerce()
-      .purchase(getTrackingProductDetailsFromTransaction(transaction), paymentId, getAffiliation(process.env.CHANNEL))
   }
 
   // If the transaction has already been finalised then redirect to the order completed page
