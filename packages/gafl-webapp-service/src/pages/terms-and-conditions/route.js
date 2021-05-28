@@ -18,9 +18,6 @@ export const getData = async request => {
     throw new GetDataRedirect(CONTACT_SUMMARY.uri)
   }
 
-  const transaction = await request.cache().helpers.transaction.get()
-  await request.ga.ecommerce().add(getTrackingProductDetailsFromTransaction(transaction))
-
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   return {
     isSalmonAndSeaTrout: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
