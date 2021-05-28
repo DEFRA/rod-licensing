@@ -1,5 +1,4 @@
 import { AWS } from '@defra-fish/connectors-lib'
-import { config } from '@defra-fish/dynamics-lib/src/client/dynamics-client'
 import db from 'debug'
 const { secretsManager } = AWS()
 
