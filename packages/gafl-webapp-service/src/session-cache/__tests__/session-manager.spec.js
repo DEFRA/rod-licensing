@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie, mockSalesApi } from '../../__mocks__/test-utils-system.js'
-import { isStaticResource, useSessionCookie } from '../session-manager.js'
+import { isStaticResource, useSessionCookie, includesRegex } from '../session-manager.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
   CONTROLLER,
@@ -8,7 +8,8 @@ import {
   ORDER_COMPLETE,
   ORDER_COMPLETE_PDF,
   PAYMENT_CANCELLED,
-  PAYMENT_FAILED
+  PAYMENT_FAILED,
+  IDENTIFY
 } from '../../uri.js'
 
 mockSalesApi()
@@ -22,6 +23,23 @@ describe('isStaticResource', () => {
     'returns true for paths which are static resources (%s)',
     path => {
       expect(isStaticResource({ path })).toBeTruthy()
+    }
+  )
+})
+
+describe('includesRegex', () => {
+  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/[a-zA-Z0-9]{6}$/]
+  it.each(['/buy/renew/identify', '/renew/ABC123', '/renew/123123', '/renew/ABCDEF'])(
+    'returns true if one of the regexes is matched %s',
+    async path => {
+      expect(includesRegex(path, regexArray)).toBeTruthy()
+    }
+  )
+
+  it.each(['/buy/renew', '/buy', '/renew/123', '/buy/order-complete'])(
+    'returns false if one of the regexes is not matched %s',
+    async path => {
+      expect(includesRegex(path, regexArray)).toBeFalsy()
     }
   )
 })
@@ -81,5 +99,16 @@ describe('The user', () => {
     const response = await injectWithoutSessionCookie('GET', page.uri)
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(CONTROLLER.uri)
+  })
+
+  it(`returns 200 when attempting to access ${IDENTIFY.uri}`, async () => {
+    const response = await injectWithoutSessionCookie('GET', IDENTIFY.uri)
+    expect(response.statusCode).toBe(200)
+  })
+
+  it('redirects to /buy/renew/identify when attempting to access /renew/ABC123', async () => {
+    const response = await injectWithoutSessionCookie('GET', '/renew/ABC123')
+    expect(response.statusCode).toBe(302)
+    expect(response.headers.location).toBe(IDENTIFY.uri)
   })
 })
