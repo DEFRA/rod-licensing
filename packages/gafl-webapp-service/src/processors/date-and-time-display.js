@@ -1,6 +1,7 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 export const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
+export const titleDateDisplayFormat = 'MMMM Do YYYY'
 export const cacheDateFormat = 'YYYY-MM-DD'
 
 export const advancePurchaseDateMoment = permission =>
@@ -11,13 +12,24 @@ export const advancePurchaseDateMoment = permission =>
  * @param permission
  * @returns {string}
  */
-export const displayStartTime = permission => {
+export const displayStartTime = (permission, displayTimeFirst) => {
   const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
   const timeComponent = startMoment
     .format('h:mma')
     .replace('12:00am', '12:00am (midnight)')
     .replace('12:00pm', '12:00pm (midday)')
-  return `${startMoment.format(dateDisplayFormat)}, ${timeComponent}`
+  return displayTimeFirst
+    ? `${timeComponent}, ${startMoment.format(titleDateDisplayFormat)}`
+    : `${startMoment.format(dateDisplayFormat)}, ${timeComponent}`
+}
+
+export const displayStartTimeTitle = permission => {
+  const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
+  const timeComponent = startMoment
+    .format('h:mma')
+    .replace('12:00am', '12:00am (midnight)')
+    .replace('12:00pm', '12:00pm (midday)')
+  return `${timeComponent}, ${startMoment.format(titleDateDisplayFormat)}`
 }
 
 const endMomentStr = d => {
