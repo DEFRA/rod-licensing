@@ -23,15 +23,6 @@ export const displayStartTime = (permission, displayTimeFirst) => {
     : `${startMoment.format(dateDisplayFormat)}, ${timeComponent}`
 }
 
-export const displayStartTimeTitle = permission => {
-  const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
-  const timeComponent = startMoment
-    .format('h:mma')
-    .replace('12:00am', '12:00am (midnight)')
-    .replace('12:00pm', '12:00pm (midday)')
-  return `${timeComponent}, ${startMoment.format(titleDateDisplayFormat)}`
-}
-
 const endMomentStr = d => {
   const m = moment.utc(d).tz(SERVICE_LOCAL_TIME)
   const timeComponent = m
