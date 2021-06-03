@@ -86,7 +86,8 @@ class Config {
       bucket: process.env.FULFILMENT_S3_BUCKET
     }
     this._pgp = {
-      publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID }).promise()).SecretString,
+      publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID }).promise())
+        .SecretString,
       sendUnencryptedFile: toBoolean(process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     }
   }
