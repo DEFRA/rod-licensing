@@ -4,8 +4,7 @@ import { createS3WriteStream, readS3PartFiles } from '../../transport/s3.js'
 import { createFtpWriteStream } from '../../transport/ftp.js'
 import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
 import { FulfilmentRequestFile, executeQuery, persist } from '@defra-fish/dynamics-lib'
-import util from 'util'
-import openpgp, { stream } from 'openpgp'
+import openpgp from 'openpgp'
 import config from '../../config.js'
 import streamHelper from '../streamHelper.js'
 import merge2 from 'merge2'
@@ -77,7 +76,7 @@ describe('deliverFulfilmentFiles', () => {
     expect(s3HashStreamFile1.dataProcessed).toEqual(fileShaHash) // validated
     expect(ftpHashStreamFile1.dataProcessed).toEqual(fileShaHash) // validated
 
-    // // File 2 expectations
+    // File 2 expectations
     expect(createS3WriteStream).toHaveBeenNthCalledWith(4, 'EAFF202006180002.json')
     expect(createS3WriteStream).toHaveBeenNthCalledWith(6, 'EAFF202006180002.json.sha256')
     expect(createFtpWriteStream).toHaveBeenNthCalledWith(4, 'EAFF202006180002.json')
@@ -138,11 +137,7 @@ describe('deliverFulfilmentFiles', () => {
     await deliverFulfilmentFiles()
 
     expect(streamHelper.pipelinePromise).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        encryptStream,
-        expect.any(Writable),
-        expect.any(Writable)
-      ])
+      expect.arrayContaining([encryptStream, expect.any(Writable), expect.any(Writable)])
     )
   })
 
@@ -182,39 +177,37 @@ describe('deliverFulfilmentFiles', () => {
       })
     )
   })
+  ;['secret-squirrel', 'obfuscated-orangutang', 'hidden-horse'].forEach(key =>
+    it(`reads key '${key}' from config`, async () => {
+      config.pgp.publicKey = key
+      await mockExecuteQuery()
+      createMockFileStreams()
+      await deliverFulfilmentFiles()
+      expect(openpgp.readKey).toHaveBeenCalledWith(
+        expect.objectContaining({
+          armoredKey: key
+        })
+      )
+    })
+  )
 
-  ;[
-    'secret-squirrel',
-    'obfuscated-orangutang',
-    'hidden-horse'
-  ].forEach(key => it(`reads key '${key}' from config`, async () => {
-    config.pgp.publicKey = key
-    await mockExecuteQuery()
-    createMockFileStreams()
-    await deliverFulfilmentFiles()
-    expect(openpgp.readKey).toHaveBeenCalledWith(
-      expect.objectContaining({
-        armoredKey: key
-      })
-    )
-  }))
-
-  it('doesn\'t send unencrypted file if sendUnencryptedFile is false', async () => {
+  it("doesn't send unencrypted file if sendUnencryptedFile is false", async () => {
     config.pgp.sendUnencryptedFile = false
     const s1 = createTestableStream()
     const s2 = createTestableStream()
     const s3 = createTestableStream()
     streamHelper.pipelinePromise.mockResolvedValue()
     openpgp.encrypt.mockResolvedValue(s2)
-    merge2.mockReturnValueOnce(s1).mockReturnValueOnce(s2).mockReturnValueOnce(s3)
+    merge2
+      .mockReturnValueOnce(s1)
+      .mockReturnValueOnce(s2)
+      .mockReturnValueOnce(s3)
     await mockExecuteQuery()
     createMockFileStreams()
 
     await deliverFulfilmentFiles()
 
-    expect(streamHelper.pipelinePromise).not.toHaveBeenCalledWith(
-      expect.arrayContaining([s1])
-    )
+    expect(streamHelper.pipelinePromise).not.toHaveBeenCalledWith(expect.arrayContaining([s1]))
   })
 })
 
@@ -224,13 +217,14 @@ const mockExecuteQuery = async (filename = 'EAFF202104190001.json') => {
   return mockFulfilmentRequestFile
 }
 
-const createMockFulfilmentRequestFile = async (fileName, date) => Object.assign(new FulfilmentRequestFile(), {
-  fileName,
-  date,
-  notes: `The fulfilment file finished exporting at ${date}`,
-  numberOfRequests: 2,
-  status: await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
-})
+const createMockFulfilmentRequestFile = async (fileName, date) =>
+  Object.assign(new FulfilmentRequestFile(), {
+    fileName,
+    date,
+    notes: `The fulfilment file finished exporting at ${date}`,
+    numberOfRequests: 2,
+    status: await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
+  })
 
 const createMockFileStreams = () => {
   const s3DataStreamFile = createTestableStream()

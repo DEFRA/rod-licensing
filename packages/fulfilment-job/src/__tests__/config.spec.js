@@ -78,42 +78,30 @@ describe('config', () => {
 })
 
 describe('pgp config', () => {
-  const pgpKey = 'public-pgp-key'
   const init = async (samplePublicKey = 'sample-pgp-key') => {
-    AwsMock.SecretsManager.__setNextResponses(
-      'getSecretValue',
-      { SecretString: 'test-ssh-key' },
-      { SecretString: samplePublicKey }
-    )
+    AwsMock.SecretsManager.__setNextResponses('getSecretValue', { SecretString: 'test-ssh-key' }, { SecretString: samplePublicKey })
     await config.initialise()
   }
   beforeAll(setEnvVars)
   beforeEach(jest.clearAllMocks)
   afterAll(clearEnvVars)
-
-  ;[
-    'public-pgp-key',
-    'paragon-sample-key',
-    'keep-me-secret'
-  ].forEach(sampleKey => it(`gets pgp key (${sampleKey}) from secrets manager`, async () => {
-    await init(sampleKey)
-    expect(config.pgp.publicKey).toEqual(sampleKey)
-  }))
-
-  ;[
-    'secret-id-abc',
-    'pgp-public-key-secret-id',
-    '123-secret-id'
-  ].forEach(SecretId => it(`pgp key obtained from aws secrets manager (${SecretId})`, async () => {
-    process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID = SecretId
-    await init()
-    expect(secretsManager.getSecretValue).toHaveBeenCalledWith(
-      expect.objectContaining({
-        SecretId
-      })
-    )
-  }))
-
+  ;['public-pgp-key', 'paragon-sample-key', 'keep-me-secret'].forEach(sampleKey =>
+    it(`gets pgp key (${sampleKey}) from secrets manager`, async () => {
+      await init(sampleKey)
+      expect(config.pgp.publicKey).toEqual(sampleKey)
+    })
+  )
+  ;['secret-id-abc', 'pgp-public-key-secret-id', '123-secret-id'].forEach(SecretId =>
+    it(`pgp key obtained from aws secrets manager (${SecretId})`, async () => {
+      process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID = SecretId
+      await init()
+      expect(secretsManager.getSecretValue).toHaveBeenCalledWith(
+        expect.objectContaining({
+          SecretId
+        })
+      )
+    })
+  )
   ;[
     ['true', true],
     ['false', false],
@@ -122,9 +110,11 @@ describe('pgp config', () => {
     [1, true],
     [0, false],
     [111, true]
-  ].forEach(([env, flag]) => it(`PGP send unencrypted file flag is ${env}, evaluates to ${flag}`, async () => {
-    process.env.FULFILMENT_SEND_UNENCRYPTED_FILE = env
-    await init()
-    expect(config._pgp.sendUnencryptedFile).toEqual(flag)
-  }))
+  ].forEach(([env, flag]) =>
+    it(`PGP send unencrypted file flag is ${env}, evaluates to ${flag}`, async () => {
+      process.env.FULFILMENT_SEND_UNENCRYPTED_FILE = env
+      await init()
+      expect(config._pgp.sendUnencryptedFile).toEqual(flag)
+    })
+  )
 })
