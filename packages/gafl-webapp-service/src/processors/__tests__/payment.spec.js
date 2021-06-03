@@ -4,12 +4,10 @@ import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 jest.mock('../licence-type-display.js');
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
 
-const createRequest = () => ({
-  headers: {
-    'x-forwarded-proto': 'https'
-  },
-  info: { host: 'localhost:1234' },
-  server: { info: { protocol: 'http' } },
+const createRequest = (opts = {}) => ({
+  headers: opts.headers || { 'x-forwarded-proto': 'https' },
+  info: { host: opts.host || 'localhost:1234' },
+  server: { info: { protocol: opts.protocol || '' } },
 })
 
 const createTransaction = () => ({
@@ -37,16 +35,23 @@ describe('preparePayment', () => {
     transaction = createTransaction()
     result = preparePayment(request, transaction)
   })
+
   describe('provides the correct return url', () => {
-    it('when the "x-forwarded-proto" header is present', () => {
-      expect(result.return_url).toBe('https://localhost:1234/buy/agreed')
-    })
-    
-    it('when the "x-forwarded-proto" header is not present', () => {
-      request.headers = {}
-      const result = preparePayment(request, transaction)
-      expect(result.return_url).toBe('http://localhost:1234/buy/agreed')
-    })
+    it.each(['http', 'https'])(`uses SSL when 'x-forwarded-proto' header is present, proto '%s'`, (proto) => {
+        const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
+        result = preparePayment(request, transaction)
+        expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
+     })
+
+    it.each([
+      ['http', 'localhost:4321'], 
+      ['https', 'otherhost:8888'], 
+      ['http', 'samplehost:4444']
+    ])(`uses request data when 'x-forwarded-proto' header is not present, protocol '%s', host '%s'`, (protocol, host) => {
+        const request = createRequest({ headers: {}, protocol, host })
+        result = preparePayment(request, transaction)
+        expect(result.return_url).toBe(`${protocol}://${host}/buy/agreed`)
+      })
   })
   
   it('provides the correct transaction amount', () => {
