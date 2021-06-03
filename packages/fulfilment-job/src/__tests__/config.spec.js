@@ -109,7 +109,9 @@ describe('pgp config', () => {
     ['fAlSe', false],
     [1, true],
     [0, false],
-    [111, true]
+    [111, true],
+    ['yes', true],
+    ['no', true]
   ].forEach(([env, flag]) =>
     it(`PGP send unencrypted file flag is ${env}, evaluates to ${flag}`, async () => {
       process.env.FULFILMENT_SEND_UNENCRYPTED_FILE = env
