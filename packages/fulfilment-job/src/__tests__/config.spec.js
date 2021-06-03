@@ -85,14 +85,15 @@ describe('pgp config', () => {
   beforeAll(setEnvVars)
   beforeEach(jest.clearAllMocks)
   afterAll(clearEnvVars)
-  ;['public-pgp-key', 'paragon-sample-key', 'keep-me-secret'].forEach(sampleKey =>
-    it(`gets pgp key (${sampleKey}) from secrets manager`, async () => {
-      await init(sampleKey)
-      expect(config.pgp.publicKey).toEqual(sampleKey)
-    })
-  )
-  ;['secret-id-abc', 'pgp-public-key-secret-id', '123-secret-id'].forEach(SecretId =>
-    it(`pgp key obtained from aws secrets manager (${SecretId})`, async () => {
+
+  it.each(['public-pgp-key', 'paragon-sample-key', 'keep-me-secret'])('gets pgp key (%s) from secrets manager', async sampleKey => {
+    await init(sampleKey)
+    expect(config.pgp.publicKey).toEqual(sampleKey)
+  })
+
+  it.each(['secret-id-abc', 'pgp-public-key-secret-id', '123-secret-id'])(
+    'pgp key obtained from aws secrets manager (%s)',
+    async SecretId => {
       process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID = SecretId
       await init()
       expect(secretsManager.getSecretValue).toHaveBeenCalledWith(
@@ -100,9 +101,10 @@ describe('pgp config', () => {
           SecretId
         })
       )
-    })
+    }
   )
-  ;[
+
+  it.each([
     ['true', true],
     ['false', false],
     ['TrUe', true],
@@ -112,11 +114,9 @@ describe('pgp config', () => {
     [111, true],
     ['yes', true],
     ['no', true]
-  ].forEach(([env, flag]) =>
-    it(`PGP send unencrypted file flag is ${env}, evaluates to ${flag}`, async () => {
-      process.env.FULFILMENT_SEND_UNENCRYPTED_FILE = env
-      await init()
-      expect(config._pgp.sendUnencryptedFile).toEqual(flag)
-    })
-  )
+  ])('PGP send unencrypted file flag is %s, evaluates to $s', async (env, flag) => {
+    process.env.FULFILMENT_SEND_UNENCRYPTED_FILE = env
+    await init()
+    expect(config._pgp.sendUnencryptedFile).toEqual(flag)
+  })
 })
