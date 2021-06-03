@@ -177,19 +177,18 @@ describe('deliverFulfilmentFiles', () => {
       })
     )
   })
-  ;['secret-squirrel', 'obfuscated-orangutang', 'hidden-horse'].forEach(key =>
-    it(`reads key '${key}' from config`, async () => {
-      config.pgp.publicKey = key
-      await mockExecuteQuery()
-      createMockFileStreams()
-      await deliverFulfilmentFiles()
-      expect(openpgp.readKey).toHaveBeenCalledWith(
-        expect.objectContaining({
-          armoredKey: key
-        })
-      )
-    })
-  )
+
+  it.each(['secret-squirrel', 'obfuscated-orangutang', 'hidden-horse'])("reads key '%s' from config", async key => {
+    config.pgp.publicKey = key
+    await mockExecuteQuery()
+    createMockFileStreams()
+    await deliverFulfilmentFiles()
+    expect(openpgp.readKey).toHaveBeenCalledWith(
+      expect.objectContaining({
+        armoredKey: key
+      })
+    )
+  })
 
   it("doesn't send unencrypted file if sendUnencryptedFile is false", async () => {
     config.pgp.sendUnencryptedFile = false
