@@ -4,6 +4,16 @@ import { licenceTypeAndLengthDisplay } from './licence-type-display.js'
 const debug = db('webapp:payment-processors')
 
 /**
+ * Only include street if a value is provided
+ * @param {Object} licensee 
+ * @returns {String}
+ */
+const getAddressLine1 = licensee => 
+  licensee.street
+    ? `${licensee.premises} ${licensee.street}`
+    : `${licensee.premises}`
+
+/**
  * Create the payload for the payment creation post request
  * @param transaction
  * @param request
@@ -26,7 +36,7 @@ export const preparePayment = (request, transaction) => {
     result.prefilled_cardholder_details = {
       cardholder_name: `${transaction.permissions[0].licensee.firstName} ${transaction.permissions[0].licensee.lastName}`,
       billing_address: {
-        line1: `${transaction.permissions[0].licensee.premises} ${transaction.permissions[0].licensee.street}`,
+        line1: getAddressLine1(transaction.permissions[0].licensee),
         postcode: transaction.permissions[0].licensee.postcode,
         city: transaction.permissions[0].licensee.town,
         country: transaction.permissions[0].licensee.countryCode
