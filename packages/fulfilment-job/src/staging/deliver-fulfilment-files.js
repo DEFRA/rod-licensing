@@ -1,5 +1,4 @@
-import { promisify } from 'util'
-import { Readable, pipeline } from 'stream'
+import { Readable } from 'stream'
 import { createHash } from 'crypto'
 import merge2 from 'merge2'
 import moment from 'moment'
@@ -8,8 +7,11 @@ import { createS3WriteStream, readS3PartFiles } from '../transport/s3.js'
 import { createFtpWriteStream } from '../transport/ftp.js'
 import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from './staging-common.js'
 import db from 'debug'
+import openpgp from 'openpgp'
+import config from '../config.js'
+import streamHelper from './streamHelper.js'
+
 const debug = db('fulfilment:staging')
-const pipelinePromise = promisify(pipeline)
 
 /**
  * Deliver any fulfilment files previously staged in S3 and recorded in Dynamics with the 'Exported' status
@@ -21,7 +23,10 @@ export const deliverFulfilmentFiles = async () => {
   const results = await executeQuery(findFulfilmentFiles({ status: await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported') }))
   results.sort((a, b) => a.entity.fileName.localeCompare(b.entity.fileName))
   for (const { entity: file } of results) {
-    await deliver(file.fileName, await createDataReadStream(file))
+    if (config.pgp.sendUnencryptedFile) {
+      await deliver(file.fileName, await createDataReadStream(file))
+    }
+    await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
     await deliver(`${file.fileName}.sha256`, await createDataReadStream(file), createHash('sha256').setEncoding('hex'))
     file.deliveryTimestamp = moment().toISOString()
     file.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Delivered')
@@ -43,6 +48,17 @@ const createDataReadStream = async file => {
   return merge2(Readable.from(['{\n  "licences": [\n']), ...mergeStreams, Readable.from(['\n  ]\n}\n']))
 }
 
+const createEncryptedDataReadStream = async file => {
+  const readableStream = await createDataReadStream(file)
+  const publicKeys = await openpgp.readKey({
+    armoredKey: config.pgp.publicKey
+  })
+  return openpgp.encrypt({
+    message: await openpgp.Message.fromText(readableStream),
+    publicKeys
+  })
+}
+
 /**
  * Deliver the data provided in the readable stream to S3 and FTP under the given targetFileName, optionally applying any supplied transforms
  *
@@ -54,8 +70,9 @@ const createDataReadStream = async file => {
 const deliver = async (targetFileName, readableStream, ...transforms) => {
   const { s3WriteStream: s3DataStream, managedUpload: s3DataManagedUpload } = createS3WriteStream(targetFileName)
   const { ftpWriteStream: ftpDataStream, managedUpload: ftpDataManagedUpload } = createFtpWriteStream(targetFileName)
+
   await Promise.all([
-    pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
+    streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
     s3DataManagedUpload,
     ftpDataManagedUpload
   ])
