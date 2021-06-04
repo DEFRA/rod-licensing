@@ -10,9 +10,10 @@ export const advancePurchaseDateMoment = permission =>
 /**
  * Function to convert licence start and end times to standard strings for display in the service
  * @param permission
+ * @param displayTimeFirst - whether to display the time before the date, default is false
  * @returns {string}
  */
-export const displayStartTime = (permission, displayTimeFirst) => {
+export const displayStartTime = (permission, displayTimeFirst = false) => {
   const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
   const timeComponent = startMoment
     .format('h:mma')
