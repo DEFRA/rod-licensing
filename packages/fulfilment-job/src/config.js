@@ -40,11 +40,23 @@ export const SFTP_CIPHERS = [
   '3des-cbc',
   'cast128-cbc'
 ]
+const falseRegEx = /(false|0)/i
+const trueRegEx = /(true|1)/i
+const toBoolean = val => {
+  if (falseRegEx.test(val)) {
+    return false
+  }
+  if (trueRegEx.test(val)) {
+    return true
+  }
+  return !!val
+}
 
 class Config {
   _file
   _ftp
   _s3
+  _pgp
 
   async initialise () {
     this.file = {
@@ -72,6 +84,11 @@ class Config {
     }
     this.s3 = {
       bucket: process.env.FULFILMENT_S3_BUCKET
+    }
+    this._pgp = {
+      publicKey: (await secretsManager.getSecretValue({ SecretId: process.env.FULFILMENT_PGP_PUBLIC_KEY_SECRET_ID }).promise())
+        .SecretString,
+      sendUnencryptedFile: toBoolean(process.env.FULFILMENT_SEND_UNENCRYPTED_FILE)
     }
   }
 
@@ -109,6 +126,10 @@ class Config {
 
   set s3 (cfg) {
     this._s3 = cfg
+  }
+
+  get pgp () {
+    return this._pgp
   }
 }
 export default new Config()
