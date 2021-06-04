@@ -2,7 +2,7 @@ import pageRoute from '../../routes/page-route.js'
 
 import Boom from '@hapi/boom'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../constants.js'
-import { ORDER_COMPLETE } from '../../uri.js'
+import { ORDER_COMPLETE, NEW_TRANSACTION } from '../../uri.js'
 import { displayStartTime } from '../../processors/date-and-time-display.js'
 import * as mappings from '../../processors/mapping-constants.js'
 import { nextPage } from '../../routes/next-page.js'
@@ -36,6 +36,7 @@ const getData = async request => {
     licenceTypes: mappings.LICENCE_TYPE,
     isPostalFulfilment: permission.licensee.postalFulfilment,
     uri: {
+      new: NEW_TRANSACTION.uri,
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT
     }
   }
