@@ -3,98 +3,84 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
-{% from "table/macro.njk" import govukTable %}
-{% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = 'Application complete' if data.permission.permit.cost === 0 else 'Payment complete' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
-{% if data.permission.licenceLength === '1D' %}
-    {% set lengthText = '1 day' %}
-{% elseif data.permission.licenceLength === '8D' %}
-    {% set lengthText = '8 days' %}
-{% else %}
-    {% set lengthText = '12 months' %}
-{% endif %}
-
-{% set licenseDetailsSummaryRows = [] %}
-{{ licenseDetailsSummaryRows.push([ { text: 'Name' }, { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.licenceTypeStr } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: lengthText } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Disability concession' }, { text: 'yes' if data.disabled else 'no' } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Start date' }, { text: data.startTimeString } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'End date' }, { text: data.endTimeString } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Paid' }, { text: "£" + data.permission.permit.cost if data.permission.permit.cost else "free" } ]) }}
-
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-two-thirds">
 
         {{ govukPanel({
           titleText: title,
-          html: 'This is your licence number<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span>'
+          html: 'Your licence number is<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />Valid from <br />' + data.startTimeStringTitle
         }) }}
 
-        {{ govukTable({
-          caption: "Your rod fishing licence",
-          captionClasses: "govuk-heading-m",
-          firstCellIsHeader: true,
-          rows: licenseDetailsSummaryRows,
-          classes: "govuk-!-margin-top-8"
-        }) }}
-
-        <p class="govuk-body">Only the named licence holder can use this licence.</p>
-
-        <div class="govuk-!-margin-top-8 no-print">
-            <h2 class="govuk-heading-m">What happens next</h2>
-            <ul class="govuk-list govuk-list--bullet"">
-            {% if data.isPostalFulfilment %}
-                <li class="govuk-body">We’ll send your <span class="govuk-!-font-weight-bold">licence card</span> by post. You should get it within 15 working days.</li>
-            {% endif %}
-            {% if data.contactMethod === data.howContacted['email'] %}
-                <li class="govuk-body">You should have received an email with your licence details.</li>
-            {% endif %}
-            {% if data.contactMethod === data.howContacted['text'] %}
-                <li class="govuk-body">You should have received a text message with your licence details.</li>
-            {% endif %}
-            {% if data.contactMethod === data.howContacted['none'] %}
-                <li class="govuk-body">Make a note of your licence number and you take it with you when you go fishing.</li>
-            {% endif %}
-            </ul>
-        </div>
-
-        <div class="govuk-!-margin-top-8 no-print">
-            <h2 class="govuk-heading-m">Before you go fishing</h2>
-            {% if data.isPostalFulfilment %}
-                <p class="govuk-body">You can go fishing before you get your licence card. You must be able to give your licence details if asked by an enforcement officer.</p>
-            {% else %}
-                <p class="govuk-body">You can go fishing as soon as your licence starts. You must be able to give your licence details if asked by an enforcement officer.</p>
-            {% endif %}
-            {{ govukWarningText({
-              text: "Make a record of your licence number",
-              iconFallbackText: "Warning",
-              classes: "govuk-!-margin-top-6"
-            }) }}
-            <p class="govuk-body" class="no-print">Get a <a class="govuk-link" href="{{ data.uri.pdf }}">PDF copy of your licence details</a>. If you gave us your email address, you’ll get a confirmation message that includes your licence number.</p>
-            <p class="govuk-body">You must follow the <a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules">rod fishing rules</a> and <a href="https://www.gov.uk/government/collections/local-fishing-byelaws">local fishing byelaws</a>.</p>
-         </div>
-
-        {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
-            <div class="govuk-!-margin-top-8">
-                <h2 class="govuk-heading-m">Report your yearly catch return</h2>
-                <p class="govuk-body no-print">You must by law <span class="no-print"><a class="govuk-link" href="https://www.gov.uk/catch-return">report a catch return</a> </span><span class="print-area">report a catch return</span> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
-                <p class="govuk-body print-area">You must by law report a catch return of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
-            </div>
+        {% if data.isPostalFulfilment %}
+            <p class="govuk-body">
+                You can fish from the time and date your licence starts. You do not need to wait to get your licence card.
+            </p>
+        {% else %}
+            <p class="govuk-body">
+                You can fish from the time and date your licence starts.
+            </p>
+            <p class="govuk-body">
+                We’ve sent your licence by email or text message.
+            </p>
         {% endif %}
 
-        <p class="govuk-body"><a class="govuk-link" href="{{ data.uri.feedback }}">Tell us what you think of this service</a> (takes 30 seconds).</p>
+        <div class="govuk-!-margin-bottom-9 no-print">
+            <h2 class="govuk-heading-l">Before you go fishing</h2>
+
+            <p class="govuk-body">
+                It’s important you know your licence number. You can take a screenshot or print out your licence information.
+            </p>
+
+            <form action="licence-information">
+                {{ govukButton({
+                    text: "View your licence information",
+                    classes: "govuk-button--secondary"
+                }) }}
+            </form>
+
+            {% if data.isPostalFulfilment %}
+                <p class="govuk-body">
+                    If you gave us your email address, you’ll get a message that includes your licence information.
+                </p>
+                <div class="govuk-inset-text">
+                    Make a record of your licence number.
+                </div>
+            {% endif %}
+
+            <p class="govuk-body">
+                If an enforcement officer asks to see your licence, you'll need to give them these details.
+            </p>
+
+            <p class="govuk-body">
+                You must follow the <a class="govuk-link" rel="noreferrer noopener" href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" target="_blank">rod fishing byelaws (opens in a new tab)</a>.
+            </p>
+
+        </div>
+        {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
+            <div class="govuk-!-margin-bottom-9">
+                <h2 class="govuk-heading-l">Report your yearly catch return</h2>
+                <p class="govuk-body no-print">
+                    You must by law <span><a class="govuk-link" href="https://www.gov.uk/catch-return">report a catch return</a> </span>report a catch return of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.
+                </p>
+                <p class="govuk-body print-area">
+                    You must by law report a catch return of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.
+                </p>
+            </div>
+        {% endif %}
+        <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.feedback }}">Tell us what you think of this service</a> (takes 30 seconds).</p>
 
         {{ govukButton({
             href: data.uri.new,
             attributes: { id: 'continue' },
             text: "Buy another licence",
-            classes: "govuk-!-margin-top-9 no-print"
+            classes: "govuk-!-margin-top-4 no-print govuk-button--secondary"
         }) }}
+
     </div>
 </div>
 {% endblock %}
