@@ -6,7 +6,7 @@ import {
   AGREED,
   ORDER_COMPLETE,
   TERMS_AND_CONDITIONS,
-  ORDER_COMPLETE_PDF,
+  LICENCE_INFORMATION,
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
@@ -73,14 +73,14 @@ describe('The order completion handler', () => {
     expect(permission.currentPage).toBe(ORDER_COMPLETE.page)
   })
 
-  it('responds with the order completed pdf when requested', async () => {
+  it('responds with the licence information page when requested', async () => {
     await JUNIOR_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
 
     await injectWithCookies('GET', AGREED.uri)
     await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    const data = await injectWithCookies('GET', ORDER_COMPLETE_PDF.uri)
+    const data = await injectWithCookies('GET', LICENCE_INFORMATION.uri)
     expect(data.statusCode).toBe(200)
   })
 

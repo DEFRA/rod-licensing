@@ -8,7 +8,6 @@ export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const PORT_DEFAULT = 3000
 export const REDIS_PORT_DEFAULT = 6379
 export const PAGE_STATE = { completed: true, error: false }
-export const PDF_FILENAME = 'fishing-licence-confirmation.pdf'
 export const SESSION_COOKIE_NAME_DEFAULT = 'sid'
 export const CSRF_TOKEN_COOKIE_NAME_DEFAULT = 'rlsctkn'
 export const FEEDBACK_URI_DEFAULT = '#'

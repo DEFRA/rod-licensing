@@ -22,7 +22,6 @@ import newsletter from '../pages/contact/newsletter/route.js'
 import termsAndConditions from '../pages/terms-and-conditions/route.js'
 import orderComplete from '../pages/order-complete/route.js'
 import licenceInformation from '../pages/order-complete/licence-information/route.js'
-import orderCompletePdf from '../pages/order-complete/pdf-route.js'
 import paymentCancelled from '../pages/payment/cancelled/route.js'
 import paymentFailed from '../pages/payment/failed/route.js'
 
@@ -61,8 +60,7 @@ const routes = [
   ...licenceInformation,
   ...identify,
   ...invalidLink,
-  ...renewalStartDate,
-  orderCompletePdf
+  ...renewalStartDate
 ]
 
 if (process.env.CHANNEL === 'telesales') {
