@@ -1,11 +1,11 @@
-import pageRoute from '../../routes/page-route.js'
+import pageRoute from '../../../routes/page-route.js'
 
 import Boom from '@hapi/boom'
-import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../constants.js'
-import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_INFORMATION } from '../../uri.js'
-import { displayStartTime } from '../../processors/date-and-time-display.js'
-import * as mappings from '../../processors/mapping-constants.js'
-import { nextPage } from '../../routes/next-page.js'
+import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../constants.js'
+import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_INFORMATION } from '../../../uri.js'
+import { displayStartTime } from '../../../processors/date-and-time-display.js'
+import * as mappings from '../../../processors/mapping-constants.js'
+import { nextPage } from '../../../routes/next-page.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.get()

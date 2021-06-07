@@ -1,7 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../__mocks__/test-utils-system'
-import { JUNIOR_LICENCE } from '../../../__mocks__/mock-journeys.js'
+import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
+import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
 import {
   AGREED,
   ORDER_COMPLETE,
@@ -11,7 +11,7 @@ import {
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
   REFUND_POLICY
-} from '../../../uri.js'
+} from '../../../../uri.js'
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
