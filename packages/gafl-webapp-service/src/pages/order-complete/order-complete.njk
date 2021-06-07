@@ -36,12 +36,13 @@
                 It’s important you know your licence number. You can take a screenshot or print out your licence information.
             </p>
 
-            <form action="licence-information">
-                {{ govukButton({
-                    text: "View your licence information",
-                    classes: "govuk-button--secondary"
-                }) }}
-            </form>
+            
+            {{ govukButton({
+                href: data.uri.licenceInformation,
+                text: "View your licence information",
+                classes: "govuk-button--secondary"
+            }) }}
+            
 
             {% if data.isPostalFulfilment %}
                 <p class="govuk-body">

@@ -21,6 +21,7 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
   ORDER_COMPLETE,
+  LICENCE_INFORMATION,
   IDENTIFY,
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE
@@ -331,6 +332,11 @@ export default [
 
   {
     current: ORDER_COMPLETE,
+    backLink: ORDER_COMPLETE.uri
+  },
+
+  {
+    current: LICENCE_INFORMATION,
     backLink: ORDER_COMPLETE.uri
   },
 

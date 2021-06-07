@@ -4,6 +4,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "inset-text/macro.njk" import govukInsetText %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = "Licence number " + data.permission.referenceNumber %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
@@ -19,15 +20,19 @@
 {% set licenseDetailsSummaryRows = [] %}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Name' }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Type' }, value: { text: data.licenceTypeStr } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Valid for' }, value: { text: lengthText } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Valid from' }, value: { text: data.startTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Valid to' }, value: { text: data.endTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Disability concession' }, value: { text: 'Yes' if data.disabled else 'None' } }) }}
-
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Length' }, value: { text: lengthText } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Starts' }, value: { text: data.startTimeString } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Ends' }, value: { text: data.endTimeString } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Disability concession' }, value: { text: 'Yes' } }) if data.disabled }}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+        }) }}
         <span class="govuk-caption-xl">Licence number</span>
         <h1 class="govuk-heading-xl">{{ data.permission.referenceNumber }}</h1>
 
@@ -52,6 +57,7 @@
             iconFallbackText: "Warning",
             classes: "govuk-!-margin-top-6"
         }) }}
+
     </div>
 </div>
 {% endblock %}

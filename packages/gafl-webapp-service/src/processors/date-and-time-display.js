@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-export const dateDisplayFormat = 'MMMM Do YYYY'
+export const dateDisplayFormat = 'D MMMM YYYY'
 export const cacheDateFormat = 'YYYY-MM-DD'
 
 export const advancePurchaseDateMoment = permission =>
@@ -12,13 +12,13 @@ export const advancePurchaseDateMoment = permission =>
  * @param displayTimeFirst - whether to display the time before the date, default is false
  * @returns {string}
  */
-export const displayStartTime = (permission) => {
+export const displayStartTime = permission => {
   const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
   const timeComponent = startMoment
     .format('h:mma')
     .replace('12:00am', '12:00am (midnight)')
     .replace('12:00pm', '12:00pm (midday)')
-  return `${timeComponent}, ${startMoment.format(dateDisplayFormat)}`
+  return `${timeComponent} on ${startMoment.format(dateDisplayFormat)}`
 }
 
 const endMomentStr = d => {
@@ -30,7 +30,7 @@ const endMomentStr = d => {
       return '11:59pm'
     })
     .replace('12:00pm', '12:00pm (midday)')
-  return `${timeComponent}, ${m.format(dateDisplayFormat)}`
+  return `${timeComponent} on ${m.format(dateDisplayFormat)}`
 }
 
 // For renewals

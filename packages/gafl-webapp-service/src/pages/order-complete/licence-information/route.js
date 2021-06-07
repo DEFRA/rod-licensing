@@ -4,6 +4,7 @@ import { LICENCE_INFORMATION } from '../../../uri.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
+import * as concessionHelper from '../../../processors/concession-helper.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -15,7 +16,8 @@ const getData = async request => {
     permission,
     startTimeString,
     endTimeString,
-    licenceTypeStr: licenceTypeDisplay(permission),  
+    disabled: concessionHelper.hasDisabled(permission),
+    licenceTypeStr: licenceTypeDisplay(permission)
   }
 }
 
