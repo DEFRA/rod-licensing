@@ -1,0 +1,63 @@
+{% extends "layout.njk" %}
+
+{% from "table/macro.njk" import govukTable %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+{% from "inset-text/macro.njk" import govukInsetText %}
+{% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% set title = "Licence number " + data.permission.referenceNumber %}
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% if data.permission.licenceLength === '1D' %}
+    {% set lengthText = '1 day' %}
+{% elseif data.permission.licenceLength === '8D' %}
+    {% set lengthText = '8 days' %}
+{% else %}
+    {% set lengthText = '12 months' %}
+{% endif %}
+
+{% set licenseDetailsSummaryRows = [] %}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Name' }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Type' }, value: { text: data.licenceTypeStr } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Length' }, value: { text: lengthText } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Starts' }, value: { text: data.startTimeString } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Ends' }, value: { text: data.endTimeString } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Disability concession' }, value: { text: 'Yes' } }) if data.disabled }}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ govukBackLink({
+              text: "Back",
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7"
+        }) }}
+        <span class="govuk-caption-xl">Licence number</span>
+        <h1 class="govuk-heading-xl">{{ data.permission.referenceNumber }}</h1>
+
+        <p class="govuk-body-l">
+            This is proof of your fishing licence. You might find it useful to take a screenshot or print out this page.
+        </p>
+
+        <p class="govuk-body">
+            If you gave us your email address, you’ll get a message that includes your licence information.
+        </p>
+
+        {{ govukSummaryList({
+          rows: licenseDetailsSummaryRows
+        }) }}
+
+        {{ govukInsetText({
+          html: 'You must follow the rod fishing byelaws.<br/>Search for <a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link">rod fishing byelaws</a> on GOV.UK.'
+        }) }}
+
+        {{ govukWarningText({
+            html: "Report an environmental incident on 0800 80 70 60.<br />This is a 24-hour service.",
+            iconFallbackText: "Warning",
+            classes: "govuk-!-margin-top-6"
+        }) }}
+
+    </div>
+</div>
+{% endblock %}
