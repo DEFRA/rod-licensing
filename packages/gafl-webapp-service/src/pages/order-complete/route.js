@@ -6,7 +6,7 @@ import { ORDER_COMPLETE, NEW_TRANSACTION, REFUND_POLICY, ORDER_COMPLETE_PDF } fr
 import { displayStartTime, displayEndTime } from '../../processors/date-and-time-display.js'
 import * as mappings from '../../processors/mapping-constants.js'
 import * as concessionHelper from '../../processors/concession-helper.js'
-import { licenceTypeDisplay, isPhysical } from '../../processors/licence-type-display.js'
+import { licenceTypeDisplay, licenceLengthDisplay, isPhysical } from '../../processors/licence-type-display.js'
 import { nextPage } from '../../routes/next-page.js'
 
 const getData = async request => {
@@ -43,6 +43,7 @@ const getData = async request => {
     hasJunior: concessionHelper.hasJunior(permission),
     hasSenior: concessionHelper.hasSenior(permission),
     licenceTypeStr: licenceTypeDisplay(permission),
+    licenceLengthStr: licenceLengthDisplay(permission),
     isPhysical: isPhysical(permission),
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     howContacted: mappings.HOW_CONTACTED,

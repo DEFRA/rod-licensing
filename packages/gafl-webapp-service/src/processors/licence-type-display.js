@@ -20,15 +20,9 @@ export const licenceTypeDisplay = permission => {
   return typesStrArr.join(', ')
 }
 
-export const licenceTypeAndLengthDisplay = permission => {
-  switch (permission.licenceLength) {
-    case '12M':
-      return `${licenceTypeDisplay(permission)}, 12 months`
-    case '8D':
-      return `${licenceTypeDisplay(permission)}, 8 days`
-    default:
-      return `${licenceTypeDisplay(permission)}, 1 day`
-  }
-}
+export const licenceLengthDisplay = permission => mappings.LICENCE_LENGTH[permission.licenceLength]
+
+export const licenceTypeAndLengthDisplay = permission => 
+  `${licenceTypeDisplay(permission)}, ${licenceLengthDisplay(permission)}`
 
 export const isPhysical = permission => permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission)

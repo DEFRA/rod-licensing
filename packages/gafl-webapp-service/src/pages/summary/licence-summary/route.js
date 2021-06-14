@@ -4,7 +4,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
 import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { licenceTypeDisplay, licenceLengthDisplay } from '../../../processors/licence-type-display.js'
 import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
 import {
   LICENCE_SUMMARY,
@@ -64,6 +64,7 @@ export const getData = async request => {
     startTimeString,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
     licenceTypeStr: licenceTypeDisplay(permission),
+    licenceLengthStr: licenceLengthDisplay(permission),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),

@@ -36,7 +36,7 @@
     text: "Length"
   },
   value: {
-    text: '12 months' if data.permission.licenceLength === '12M' else ('8 days' if data.permission.licenceLength === '8D' else '1 day')
+    text: data.licenceLengthStr
   },
   actions: {
     items: [

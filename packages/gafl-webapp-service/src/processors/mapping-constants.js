@@ -6,5 +6,6 @@ const CONCESSION = { SENIOR: 'Senior', JUNIOR: 'Junior', DISABLED: 'Disabled' }
 const CONCESSION_PROOF = { none: 'No Proof', blueBadge: 'Blue Badge', NI: 'National Insurance Number' }
 const LICENCE_TYPE = { 'trout-and-coarse': 'Trout and coarse', 'salmon-and-sea-trout': 'Salmon and sea trout' }
 const DATA_SOURCE = { web: 'Web Sales', telesales: 'Telesales' }
+const LICENCE_LENGTH = { '1D': '1 day', '8D': '8 days', '12M': '12 months' }
 
-export { HOW_CONTACTED, CONCESSION, CONCESSION_PROOF, LICENCE_TYPE, DATA_SOURCE }
+export { HOW_CONTACTED, CONCESSION, CONCESSION_PROOF, LICENCE_TYPE, DATA_SOURCE, LICENCE_LENGTH }

@@ -2,7 +2,7 @@ import { preparePayment } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 
 jest.mock('../licence-type-display.js');
-licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
+licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 days')
 
 const createRequest = (opts = {}) => ({
   headers: opts.headers || { 'x-forwarded-proto': 'https' },
@@ -64,7 +64,7 @@ describe('preparePayment', () => {
 
   describe('provides the correct description', () => {
     it('when there is only 1 permission', () => {
-      expect(result.description).toBe('Trout and coarse, up to 2 rods, 8 day')
+      expect(result.description).toBe('Trout and coarse, up to 2 rods, 8 days')
     })
 
     it('when there are multiple permissions', () => {

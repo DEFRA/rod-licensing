@@ -9,18 +9,10 @@
 {% set title = 'Application complete' if data.permission.permit.cost === 0 else 'Payment complete' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
-{% if data.permission.licenceLength === '1D' %}
-    {% set lengthText = '1 day' %}
-{% elseif data.permission.licenceLength === '8D' %}
-    {% set lengthText = '8 days' %}
-{% else %}
-    {% set lengthText = '12 months' %}
-{% endif %}
-
 {% set licenseDetailsSummaryRows = [] %}
 {{ licenseDetailsSummaryRows.push([ { text: 'Name' }, { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Type' }, { text: data.licenceTypeStr } ]) }}
-{{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: lengthText } ]) }}
+{{ licenseDetailsSummaryRows.push([ { text: 'Length' }, { text: data.licenceLengthStr  } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Disability concession' }, { text: 'yes' if data.disabled else 'no' } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'Start date' }, { text: data.startTimeString } ]) }}
 {{ licenseDetailsSummaryRows.push([ { text: 'End date' }, { text: data.endTimeString } ]) }}
