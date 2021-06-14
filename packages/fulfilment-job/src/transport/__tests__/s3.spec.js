@@ -43,19 +43,17 @@ describe('s3', () => {
 
   describe('readS3PartFiles', () => {
     it('reads all part files for a given file and returns a stream for each', async () => {
-      const mockCreateReadStream1 = createMockReadStream()
-      const mockCreateReadStream2 = createMockReadStream()
+      const mockCreateReadStream = createMockReadStream()
       AwsMock.S3.__setResponse('listObjectsV2', {
         Contents: [{ Key: '/example.json/part0' }, { Key: '/example.json/part1' }]
       })
-      AwsMock.S3.mockedMethods.getObject.mockImplementationOnce(() => ({ createReadStream: mockCreateReadStream1 }))
-      AwsMock.S3.mockedMethods.getObject.mockImplementationOnce(() => ({ createReadStream: mockCreateReadStream2 }))
+      AwsMock.S3.mockedMethods.getObject.mockImplementation(() => ({ createReadStream: mockCreateReadStream }))
 
       const testFile = Object.assign(new FulfilmentRequestFile(), { fileName: 'example.json' })
       const [stream1, stream2] = await readS3PartFiles(testFile)
 
-      expect(mockCreateReadStream1.mock.results[0].value).toBe(stream1)
-      expect(mockCreateReadStream2.mock.results[0].value).toBe(stream2)
+      expect(mockCreateReadStream.mock.results[0].value).toBe(stream1)
+      expect(mockCreateReadStream.mock.results[1].value).toBe(stream2)
       expect(AwsMock.S3.mockedMethods.getObject).toHaveBeenNthCalledWith(1, { Bucket: 'testbucket', Key: '/example.json/part0' })
       expect(AwsMock.S3.mockedMethods.getObject).toHaveBeenNthCalledWith(2, { Bucket: 'testbucket', Key: '/example.json/part1' })
     })
@@ -65,7 +63,7 @@ describe('s3', () => {
       AwsMock.S3.__setResponse('listObjectsV2', {
         Contents: [{ Key: '/example.json/part0' }]
       })
-      AwsMock.S3.mockedMethods.getObject.mockImplementationOnce(() => ({ createReadStream: mockCreateReadStream }))
+      AwsMock.S3.mockedMethods.getObject.mockImplementation(() => ({ createReadStream: mockCreateReadStream }))
       const testFile = Object.assign(new FulfilmentRequestFile(), { fileName: 'example.json' })
       const [readStream] = await readS3PartFiles(testFile)
       expect(readStream.setEncoding).toHaveBeenCalledWith('utf8')
