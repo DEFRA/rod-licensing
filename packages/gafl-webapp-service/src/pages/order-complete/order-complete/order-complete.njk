@@ -21,12 +21,16 @@
                 You can fish from the time and date your licence starts. You do not need to wait to get your licence card.
             </p>
         {% else %}
-            <p class="govuk-body">
-                You can fish from the time and date your licence starts.
-            </p>
-            <p class="govuk-body">
-                We’ve sent your licence by email or text message.
-            </p>
+            <p class="govuk-body">You can fish from the time and date your licence starts.</p>
+            {% if data.contactMethod === data.howContacted['email'] %}
+                <p class="govuk-body">We’ve sent your licence by email.</p>
+            {% endif %}
+            {% if data.contactMethod === data.howContacted['text'] %}
+                <p class="govuk-body">We’ve sent your licence by text message.</p>
+            {% endif %}
+            {% if data.contactMethod === data.howContacted['none'] %}
+                <p class="govuk-body">Make a note of your licence number and you take it with you when you go fishing.</p>
+            {% endif %}
         {% endif %}
 
         <div class="govuk-!-margin-bottom-9 no-print">
@@ -45,9 +49,12 @@
             
 
             {% if data.isPostalFulfilment %}
-                <p class="govuk-body">
-                    If you gave us your email address, you’ll get a message that includes your licence information.
-                </p>
+                {% if data.contactMethod === data.howContacted['email'] %}
+                    <p class="govuk-body">You’ll get an email that includes your licence information.</p>
+                {% endif %}
+                {% if data.contactMethod === data.howContacted['text'] %}
+                    <p class="govuk-body">You’ll get a text message that includes your licence information.</p>
+                {% endif %}
                 <div class="govuk-inset-text">
                     Make a record of your licence number.
                 </div>
@@ -66,7 +73,7 @@
             <div class="govuk-!-margin-bottom-9">
                 <h2 class="govuk-heading-l">Report your yearly catch return</h2>
                 <p class="govuk-body no-print">
-                    You must by law <span><a class="govuk-link" href="https://www.gov.uk/catch-return">report a catch return</a> </span>report a catch return of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.
+                    You must by law <span><a class="govuk-link" href="https://www.gov.uk/catch-return">report a catch return</a></span> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.
                 </p>
                 <p class="govuk-body print-area">
                     You must by law report a catch return of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.

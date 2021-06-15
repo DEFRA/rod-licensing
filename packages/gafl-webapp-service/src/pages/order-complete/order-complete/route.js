@@ -35,6 +35,8 @@ const getData = async request => {
     startTimeStringTitle,
     licenceTypes: mappings.LICENCE_TYPE,
     isPostalFulfilment: permission.licensee.postalFulfilment,
+    contactMethod: permission.licensee.preferredMethodOfConfirmation,
+    howContacted: mappings.HOW_CONTACTED,
     uri: {
       new: NEW_TRANSACTION.uri,
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
