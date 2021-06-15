@@ -14,6 +14,7 @@ import {
   NEWSLETTER,
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
+  ADD_ANOTHER_LICENCE,
   TERMS_AND_CONDITIONS,
   AGREED,
   PAYMENT_CANCELLED,
@@ -21,7 +22,8 @@ import {
   ORDER_COMPLETE,
   IDENTIFY,
   RENEWAL_INACTIVE,
-  RENEWAL_START_DATE
+  RENEWAL_START_DATE,
+  ADD_PERMISSION
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
@@ -244,6 +246,18 @@ export default [
     current: CONTACT_SUMMARY,
     next: {
       [CommonResults.OK]: {
+        page: ADD_ANOTHER_LICENCE
+      }
+    }
+  },
+
+  {
+    current: ADD_ANOTHER_LICENCE,
+    next: {
+      [CommonResults.YES]: {
+        page: ADD_PERMISSION
+      },
+      [CommonResults.NO]: {
         page: TERMS_AND_CONDITIONS
       }
     }
