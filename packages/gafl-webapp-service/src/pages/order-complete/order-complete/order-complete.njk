@@ -4,7 +4,13 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 
-{% set title = 'Application complete' if data.permission.permit.cost === 0 else 'Payment complete' %}
+{% if data.permission.permit.cost === 0 %}
+    {% set title = 'Application complete' %}
+    {% set titleHtml = title %}
+{% else %}
+    {% set title = 'Payment complete' %}
+    {% set titleHtml = '£' + data.permission.permit.cost + '<br />' + title %}
+{% endif %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% block content %}
@@ -12,8 +18,8 @@
     <div class="govuk-grid-column-two-thirds">
 
         {{ govukPanel({
-          titleText: title,
-          html: 'Your licence number is<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />Valid from <br />' + data.startTimeStringTitle
+          titleHtml: titleHtml,
+          html: 'Your licence number is<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />Starts from <br />' + data.startTimeStringTitle
         }) }}
 
         {% if data.isPostalFulfilment %}

@@ -6,7 +6,7 @@
 {% from "summary-list/macro.njk" import govukSummaryList %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set title = "Licence number " + data.permission.referenceNumber %}
+{% set title = "Licence Information " %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% if data.permission.licenceLength === '1D' %}
@@ -33,8 +33,7 @@
               href: backRef,
               classes: "govuk-!-margin-bottom-7"
         }) }}
-        <span class="govuk-caption-xl">Licence number</span>
-        <h1 class="govuk-heading-xl">{{ data.permission.referenceNumber }}</h1>
+        <h1 class="govuk-heading-xl">{{ title }}</h1>
 
         <p class="govuk-body-l">
             This is proof of your fishing licence. You might find it useful to take a screenshot or print out this page.
@@ -43,6 +42,8 @@
         <p class="govuk-body">
             If you gave us your email address, you’ll get a message that includes your licence information.
         </p>
+
+        <h2 class="govuk-heading-l">{{ data.permission.referenceNumber }}</h2>
 
         {{ govukSummaryList({
           rows: licenseDetailsSummaryRows
