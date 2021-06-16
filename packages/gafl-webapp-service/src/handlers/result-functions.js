@@ -13,7 +13,8 @@ import {
   ADDRESS_ENTRY,
   CONTACT,
   LICENCE_SUMMARY,
-  NAME
+  NAME,
+  ADD_LICENCE
 } from '../uri.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
@@ -28,6 +29,7 @@ import addressLookup from '../pages/contact/address/lookup/result-function.js'
 import addressSelect from '../pages/contact/address/select/result-function.js'
 import addressEntry from '../pages/contact/address/entry/result-function.js'
 import licenceSummary from '../pages/summary/licence-summary/result-function.js'
+import addLicence from '../pages/multibuy/add-licence/result-function.js'
 
 /**
  * The result function determines the navigation in the route definition
@@ -44,5 +46,6 @@ export default {
   [ADDRESS_SELECT.page]: addressSelect,
   [CONTACT.page]: contact,
   [NAME.page]: name,
-  [LICENCE_SUMMARY.page]: licenceSummary
+  [LICENCE_SUMMARY.page]: licenceSummary,
+  [ADD_LICENCE.page]: addLicence
 }

@@ -14,7 +14,7 @@ import {
   NEWSLETTER,
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
-  ADD_ANOTHER_LICENCE,
+  ADD_LICENCE,
   TERMS_AND_CONDITIONS,
   AGREED,
   PAYMENT_CANCELLED,
@@ -247,13 +247,13 @@ export default [
     current: CONTACT_SUMMARY,
     next: {
       [CommonResults.OK]: {
-        page: ADD_ANOTHER_LICENCE
+        page: ADD_LICENCE
       }
     }
   },
 
   {
-    current: ADD_ANOTHER_LICENCE,
+    current: ADD_LICENCE,
     next: {
       [CommonResults.YES]: {
         page: ADD_PERMISSION

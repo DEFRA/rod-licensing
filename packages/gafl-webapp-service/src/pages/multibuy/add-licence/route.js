@@ -1,6 +1,6 @@
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
-import { ADD_ANOTHER_LICENCE, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../../uri.js'
+import { ADD_LICENCE, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../../uri.js'
 import { nextPage } from '../../../routes/next-page.js'
 
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
@@ -22,9 +22,9 @@ const getData = async request => {
 }
 
 const validator = Joi.object({
-  agree: Joi.string()
+  'add-licence': Joi.string()
     .valid('yes', 'no')
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(ADD_ANOTHER_LICENCE.page, ADD_ANOTHER_LICENCE.uri, validator, nextPage, getData)
+export default pageRoute(ADD_LICENCE.page, ADD_LICENCE.uri, validator, nextPage, getData)
