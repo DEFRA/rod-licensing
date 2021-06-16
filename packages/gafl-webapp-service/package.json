@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "1.12.0",
+  "version": "1.13.0-rc.8",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -36,36 +36,36 @@
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "1.12.0",
-    "@defra-fish/connectors-lib": "1.12.0",
-    "@defra/hapi-gapi": "^1.0.2",
-    "@hapi/boom": "^9.1.1",
+    "@defra-fish/business-rules-lib": "1.13.0-rc.8",
+    "@defra-fish/connectors-lib": "1.13.0-rc.8",
+    "@defra/hapi-gapi": "^1.1.0",
+    "@hapi/boom": "^9.1.2",
     "@hapi/catbox-redis": "^6.0.2",
     "@hapi/cookie": "^11.0.2",
     "@hapi/crumb": "^8.0.1",
-    "@hapi/hapi": "^20.0.3",
+    "@hapi/hapi": "^20.1.3",
     "@hapi/inert": "^6.0.3",
     "@hapi/joi-date": "^2.0.1",
     "@hapi/scooter": "^6.0.1",
-    "@hapi/vision": "^6.0.1",
+    "@hapi/vision": "^6.1.0",
     "blankie": "^5.0.0",
     "debug": "^4.3.1",
     "disinfect": "^1.1.0",
     "find": "^0.3.0",
     "flatpickr": "^4.6.9",
-    "govuk-frontend": "^3.10.2",
-    "joi": "^17.3.0",
+    "govuk-frontend": "^3.12.0",
+    "joi": "^17.4.0",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.32",
+    "moment-timezone": "^0.5.33",
     "node-fetch": "^2.6.1",
-    "nunjucks": "^3.2.2",
-    "openid-client": "^4.2.2",
-    "pdfmake": "^0.1.69",
-    "semver": "^7.3.4",
+    "nunjucks": "^3.2.3",
+    "openid-client": "^4.7.4",
+    "pdfmake": "^0.1.71",
+    "semver": "^7.3.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@hapi/catbox-memory": "^5.0.0",
+    "@hapi/catbox-memory": "^5.0.1",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
@@ -73,6 +73,6 @@
     "gulp-minify": "^3.1.0",
     "gulp-sass": "^4.1.0",
     "gulp-sourcemaps": "^3.0.0",
-    "node-sass": "^5.0.0"
+    "node-sass": "^6.0.0"
   }
 }
