@@ -23,7 +23,8 @@ import {
   IDENTIFY,
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE,
-  ADD_PERMISSION
+  ADD_PERMISSION,
+  VIEW_LICENCES
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
@@ -261,6 +262,10 @@ export default [
         page: TERMS_AND_CONDITIONS
       }
     }
+  },
+
+  {
+    current: VIEW_LICENCES
   },
 
   // This is the end of the journey. The rest is handled by the agreed handler

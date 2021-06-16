@@ -20,7 +20,8 @@ export const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 export const CONTACT_SUMMARY = { uri: '/buy/contact-summary', page: 'contact-summary' }
 export const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-summary' }
 
-export const ADD_ANOTHER_LICENCE = { uri: '/buy/another-licence', page: 'buy-another-licence'}
+export const ADD_ANOTHER_LICENCE = { uri: '/buy/add-another-licence', page: 'add-another-licence' }
+export const VIEW_LICENCES = { uri: '/buy/view-licences', page: 'view-licences' }
 
 export const PAYMENT_CANCELLED = { uri: '/buy/payment-cancelled', page: 'payment-cancelled' }
 export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-failed' }

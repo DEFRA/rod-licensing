@@ -1,10 +1,9 @@
-import pageRoute from '../../routes/page-route.js'
+import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
-import { ADD_ANOTHER_LICENCE, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
-import { nextPage } from '../../routes/next-page.js'
+import { ADD_ANOTHER_LICENCE, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../../uri.js'
+import { nextPage } from '../../../routes/next-page.js'
 
-import GetDataRedirect from '../../handlers/get-data-redirect.js'
-// import { licenceTypeDisplay, licenceLengthDisplay } from '../../../processors/licence-type-display.js'
+import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -18,15 +17,6 @@ const getData = async request => {
   }
 
   const transaction = await request.cache().helpers.transaction.get()
-
-  // const licences = transaction.permissions.map(permission => ({
-  //   licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
-  //   type: licenceTypeDisplay(permission),
-  //   length: licenceLengthDisplay(permission),
-  //   start: permission.startDate,
-  //   price: permission.permit.cost
-  // }))
-  // return { licences }
 
   return { numberOfLicences: transaction.permissions.length }
 }
