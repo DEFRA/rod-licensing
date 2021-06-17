@@ -50,6 +50,7 @@ export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }
 export const ADD_PERMISSION = { uri: '/buy/add' }
 export const AGREED = { uri: '/buy/agreed' }
+export const SET_CURRENT_PERMISSION = { uri: '/buy/set-current-permission'}
 
 export const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }

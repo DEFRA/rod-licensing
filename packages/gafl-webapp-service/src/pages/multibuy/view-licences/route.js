@@ -6,12 +6,13 @@ import { displayStartTime } from '../../../processors/date-and-time-display.js'
 const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
 
-  const licences = transaction.permissions.map(permission => ({
+  const licences = transaction.permissions.map((permission, index) => ({
     licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
     type: licenceTypeDisplay(permission),
     length: licenceLengthDisplay(permission),
     start: displayStartTime(permission),
-    price: permission.permit.cost
+    price: permission.permit.cost,
+    index
   }))
   return { licences }
 }

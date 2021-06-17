@@ -12,7 +12,9 @@ import {
   RENEWAL_PUBLIC,
   IDENTIFY,
   OS_TERMS,
-  ATTRIBUTION
+  ATTRIBUTION,
+  SET_CURRENT_PERMISSION,
+  LICENCE_SUMMARY
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -102,6 +104,15 @@ export default [
     method: 'GET',
     path: ATTRIBUTION.uri,
     handler: attribution
+  },
+  {
+    method: 'GET',
+    path: SET_CURRENT_PERMISSION.uri,
+    handler: async (request, h) => {
+      const { permissionIndex } = request.query
+      await request.cache().helpers.status.set({ currentPermissionIdx: permissionIndex })
+      return h.redirect(LICENCE_SUMMARY.uri)
+    }
   },
   simpleView(ACCESSIBILITY_STATEMENT),
   simpleView(PRIVACY_POLICY),
