@@ -1,6 +1,4 @@
-import {
-  VIEW_LICENCES
-} from '../../../../uri.js'
+import { VIEW_LICENCES } from '../../../../uri.js'
 
 import { ADULT_FULL_1_DAY_LICENCE } from '../../../../__mocks__/mock-journeys.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'

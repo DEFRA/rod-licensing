@@ -22,7 +22,6 @@ export const licenceTypeDisplay = permission => {
 
 export const licenceLengthDisplay = permission => mappings.LICENCE_LENGTH[permission.licenceLength]
 
-export const licenceTypeAndLengthDisplay = permission => 
-  `${licenceTypeDisplay(permission)}, ${licenceLengthDisplay(permission)}`
+export const licenceTypeAndLengthDisplay = permission => `${licenceTypeDisplay(permission)}, ${licenceLengthDisplay(permission)}`
 
 export const isPhysical = permission => permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission)

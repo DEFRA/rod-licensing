@@ -1,10 +1,4 @@
-import {
-  ADD_LICENCE, 
-  ADD_PERMISSION, 
-  CONTACT_SUMMARY, 
-  LICENCE_SUMMARY, 
-  TERMS_AND_CONDITIONS
-} from '../../../../uri.js'
+import { ADD_LICENCE, ADD_PERMISSION, CONTACT_SUMMARY, LICENCE_SUMMARY, TERMS_AND_CONDITIONS } from '../../../../uri.js'
 
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 

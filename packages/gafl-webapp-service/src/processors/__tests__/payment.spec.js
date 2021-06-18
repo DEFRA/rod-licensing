@@ -1,31 +1,33 @@
 import { preparePayment } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 
-jest.mock('../licence-type-display.js');
+jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 days')
 
 const createRequest = (opts = {}) => ({
   headers: opts.headers || { 'x-forwarded-proto': 'https' },
   info: { host: opts.host || 'localhost:1234' },
-  server: { info: { protocol: opts.protocol || '' } },
+  server: { info: { protocol: opts.protocol || '' } }
 })
 
 const createTransaction = () => ({
   id: 'transaction-id',
   cost: 12,
-  permissions: [{ 
-    licensee: {
-      firstName: 'Lando',
-      lastName: 'Norris',
-      email: 'test@example.com',
-      premises: '4',
-      street: 'Buttercup lane',
-      locality: 'Clifton',
-      postcode: 'BS8 3TP',
-      town: 'Bristol',
-      country: 'GB-ENG'
+  permissions: [
+    {
+      licensee: {
+        firstName: 'Lando',
+        lastName: 'Norris',
+        email: 'test@example.com',
+        premises: '4',
+        street: 'Buttercup lane',
+        locality: 'Clifton',
+        postcode: 'BS8 3TP',
+        town: 'Bristol',
+        country: 'GB-ENG'
+      }
     }
-  }]
+  ]
 })
 
 describe('preparePayment', () => {
@@ -37,23 +39,23 @@ describe('preparePayment', () => {
   })
 
   describe('provides the correct return url', () => {
-    it.each(['http', 'https'])(`uses SSL when 'x-forwarded-proto' header is present, proto '%s'`, (proto) => {
-        const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
-        result = preparePayment(request, transaction)
-        expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
-     })
+    it.each(['http', 'https'])(`uses SSL when 'x-forwarded-proto' header is present, proto '%s'`, proto => {
+      const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
+      result = preparePayment(request, transaction)
+      expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
+    })
 
     it.each([
-      ['http', 'localhost:4321'], 
-      ['https', 'otherhost:8888'], 
+      ['http', 'localhost:4321'],
+      ['https', 'otherhost:8888'],
       ['http', 'samplehost:4444']
     ])(`uses request data when 'x-forwarded-proto' header is not present, protocol '%s', host '%s'`, (protocol, host) => {
-        const request = createRequest({ headers: {}, protocol, host })
-        result = preparePayment(request, transaction)
-        expect(result.return_url).toBe(`${protocol}://${host}/buy/agreed`)
-      })
+      const request = createRequest({ headers: {}, protocol, host })
+      result = preparePayment(request, transaction)
+      expect(result.return_url).toBe(`${protocol}://${host}/buy/agreed`)
+    })
   })
-  
+
   it('provides the correct transaction amount', () => {
     expect(result.amount).toBe(1200)
   })
@@ -68,7 +70,7 @@ describe('preparePayment', () => {
     })
 
     it('when there are multiple permissions', () => {
-      transaction.permissions.push({licensee: { firstName: 'Test'} })
+      transaction.permissions.push({ licensee: { firstName: 'Test' } })
       const result = preparePayment(request, transaction)
       expect(result.description).toBe('Multiple permits')
     })
@@ -82,7 +84,7 @@ describe('preparePayment', () => {
     it('provides the licensee name as cardholder name', () => {
       expect(result.prefilled_cardholder_details.cardholder_name).toBe(`${licensee.firstName} ${licensee.lastName}`)
     })
-    
+
     describe('provides the licensee address correctly', () => {
       it('line1 includes street name if provided', () => {
         expect(result.prefilled_cardholder_details.billing_address.line1).toBe(`${licensee.premises} ${licensee.street}`)
