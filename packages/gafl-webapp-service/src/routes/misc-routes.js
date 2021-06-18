@@ -109,8 +109,7 @@ export default [
     method: 'GET',
     path: SET_CURRENT_PERMISSION.uri,
     handler: async (request, h) => {
-      const { permissionIndex } = request.query
-      await request.cache().helpers.status.set({ currentPermissionIdx: permissionIndex })
+      await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
       return h.redirect(LICENCE_SUMMARY.uri)
     }
   },

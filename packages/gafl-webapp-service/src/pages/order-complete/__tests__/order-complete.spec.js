@@ -89,7 +89,7 @@ describe('The order completion handler', () => {
     [ACCESSIBILITY_STATEMENT.page, ACCESSIBILITY_STATEMENT.uri],
     [PRIVACY_POLICY.page, PRIVACY_POLICY.uri],
     [REFUND_POLICY.page, REFUND_POLICY.uri]
-  ])('succesfully navigates to %s when on the order complete page', async (page, uri) => {
+  ])('successfully navigates to %s when on the order complete page', async (page, uri) => {
     await JUNIOR_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)

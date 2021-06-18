@@ -277,7 +277,7 @@ export default [
         page: AGREED
       }
     },
-    backLink: CONTACT_SUMMARY.uri
+    backLink: ADD_LICENCE.uri
   },
 
   {
