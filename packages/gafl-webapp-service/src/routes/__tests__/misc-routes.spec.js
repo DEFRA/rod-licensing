@@ -10,6 +10,7 @@ import {
   OS_TERMS,
   SET_CURRENT_PERMISSION
 } from '../../uri.js'
+import miscRoutes from '../misc-routes.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -36,23 +37,6 @@ describe('The miscellaneous route handlers', () => {
     expect(data.headers.location).toBe(IDENTIFY.uri.replace('{referenceNumber}', 'AAAAAA'))
   })
 
-  describe('set current permission', () => {
-    let data
-    beforeAll(async () => {
-      data = await injectWithCookies('GET', SET_CURRENT_PERMISSION.uri + '?permissionIndex=4')
-    })
-
-    it('sets the current permission index to the one provided', async () => {
-      const status = await data.request.cache().helpers.status.get()
-      expect(status.currentPermissionIdx).toBe(4)
-    })
-
-    it('redirects to the licence summary page', () => {
-      expect(data.statusCode).toBe(302)
-      expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
-    })
-  })
-
   it('return the accessibility statement page when requested', async () => {
     const data = await injectWithCookies('GET', ACCESSIBILITY_STATEMENT.uri)
     expect(data.statusCode).toBe(200)
@@ -72,4 +56,35 @@ describe('The miscellaneous route handlers', () => {
     const data = await injectWithCookies('GET', OS_TERMS.uri)
     expect(data.statusCode).toBe(200)
   })
+})
+
+describe('SET_CURRENT_PERMISSION handler', () => {
+  const currentPermissionHandler = miscRoutes.find(r => r.path === SET_CURRENT_PERMISSION.uri).handler
+  it.each([
+    [5, 5],
+    [3, 3],
+    ['7', 7],
+    ['2', 2]
+  ])('sets current permission index', async (permissionIndex, currentPermissionIdx) => {
+    const set = jest.fn()
+    await currentPermissionHandler(createMockRequest(permissionIndex, set), createMockRequestToolkit())
+    expect(set).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPermissionIdx
+      })
+    )
+  })
+
+  it('redirects to licence summary page', async () => {
+    const redirect = jest.fn()
+    await currentPermissionHandler(createMockRequest(), createMockRequestToolkit(redirect))
+    expect(redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
+  })
+
+  const createMockRequest = (permissionIndex = 1, set = () => {}) => ({
+    cache: () => ({ helpers: { status: { set } } }),
+    query: { permissionIndex }
+  })
+
+  const createMockRequestToolkit = (redirect = () => {}) => ({ redirect })
 })
