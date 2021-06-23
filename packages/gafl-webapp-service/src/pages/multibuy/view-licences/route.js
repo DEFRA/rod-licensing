@@ -3,7 +3,7 @@ import { VIEW_LICENCES } from '../../../uri.js'
 import { licenceTypeDisplay, licenceLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 
-const getData = async request => {
+export const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
 
   const licences = transaction.permissions.map((permission, index) => ({
