@@ -5,7 +5,7 @@ import { nextPage } from '../../../routes/next-page.js'
 
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
 
   if (!status[LICENCE_SUMMARY.page]) {
