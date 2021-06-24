@@ -35,6 +35,9 @@ describe('The view licences route .getData', () => {
 
     data = await getData(mockRequest)
   })
+
+  beforeEach(() => jest.clearAllMocks())
+
   describe('returns expected licence data for the given permission:', () => {
     it('licenceHolder', async () => {
       expect(data.licences[0].licenceHolder).toBe('Turanga Leela')

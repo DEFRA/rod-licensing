@@ -7,6 +7,20 @@ jest.mock('../../../../handlers/get-data-redirect.js')
 import { createMockRequest } from '../../../../__mocks__/request.js'
 
 describe('The add licence route .getData', () => {
+  beforeEach(() => jest.clearAllMocks())
+  
+  it('redirects to the licence summary page if the user has not visited it yet', async () => {
+    const mockRequest = createMockRequest()
+    await expect(() => getData(mockRequest)).rejects.toBeInstanceOf(GetDataRedirect)
+    expect(GetDataRedirect).toBeCalledWith(LICENCE_SUMMARY.uri)
+  })
+  
+  it('redirects to the contact summary page if the user has not visited it yet', async () => {
+    const mockRequest = createMockRequest({ cache: { status: { [LICENCE_SUMMARY.page]: true } } })
+    await expect(() => getData(mockRequest)).rejects.toBeInstanceOf(GetDataRedirect)
+    expect(GetDataRedirect).toBeCalledWith(CONTACT_SUMMARY.uri)
+  })
+  
   it('does not redirect if user has visited both summary pages', async () => {
     const mockRequest = createMockRequest({
       cache: {
@@ -15,18 +29,6 @@ describe('The add licence route .getData', () => {
     })
     await getData(mockRequest)
     expect(GetDataRedirect).not.toBeCalled()
-  })
-
-  it('redirects to the licence summary page if the user has not visited it yet', async () => {
-    const mockRequest = createMockRequest()
-    await expect(() => getData(mockRequest)).rejects.toBeInstanceOf(GetDataRedirect)
-    expect(GetDataRedirect).toBeCalledWith(LICENCE_SUMMARY.uri)
-  })
-
-  it('redirects to the contact summary page if the user has not visited it yet', async () => {
-    const mockRequest = createMockRequest({ cache: { status: { [LICENCE_SUMMARY.page]: true } } })
-    await expect(() => getData(mockRequest)).rejects.toBeInstanceOf(GetDataRedirect)
-    expect(GetDataRedirect).toBeCalledWith(CONTACT_SUMMARY.uri)
   })
 
   it.each([
