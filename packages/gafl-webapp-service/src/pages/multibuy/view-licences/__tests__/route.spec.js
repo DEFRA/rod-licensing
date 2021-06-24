@@ -1,5 +1,5 @@
 import { getData } from '../route.js'
-import { createMockRequest } from '../../../../__mocks__/request-cache'
+import { createMockRequest } from '../../../../__mocks__/request.js'
 
 import { licenceTypeDisplay, licenceLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
@@ -25,13 +25,15 @@ const permission = {
 describe('The view licences route .getData', () => {
   let data
   beforeAll(async () => {
-    const request = createMockRequest({
-      cache: { transaction: {
-        permissions: [permission]
-      }}
+    const mockRequest = createMockRequest({
+      cache: {
+        transaction: {
+          permissions: [permission]
+        }
+      }
     })
 
-    data = await getData(request)
+    data = await getData(mockRequest)
   })
   describe('returns expected licence data for the given permission:', () => {
     it('licenceHolder', async () => {
@@ -53,7 +55,7 @@ describe('The view licences route .getData', () => {
     it('price', async () => {
       expect(data.licences[0].price).toBe(permission.permit.cost)
     })
-    
+
     it('index', async () => {
       expect(data.licences[0].index).toBe(0)
     })

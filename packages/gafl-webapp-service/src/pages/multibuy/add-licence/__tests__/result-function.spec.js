@@ -3,7 +3,7 @@ import { CommonResults } from '../../../../constants.js'
 
 const createRequest = addLicence => ({
   payload: {
-    'add-licence': addLicence 
+    'add-licence': addLicence
   }
 })
 
@@ -13,11 +13,10 @@ describe('multibuy/add-licence/result-function', () => {
     const result = await resultFunction(request)
     expect(result).toBe(CommonResults.YES)
   })
-  
+
   it("returns no if payload['add-licence'] is no", async () => {
     const request = createRequest(CommonResults.NO)
     const result = await resultFunction(request)
     expect(result).toBe(CommonResults.NO)
   })
-
 })

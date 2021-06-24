@@ -11,6 +11,7 @@ import {
   SET_CURRENT_PERMISSION
 } from '../../uri.js'
 import miscRoutes from '../misc-routes.js'
+import { createMockRequest, createMockRequestToolkit } from '../../__mocks__/request.js'
 
 // Start application before running the test case
 beforeAll(d => start(d))
@@ -66,9 +67,9 @@ describe('SET_CURRENT_PERMISSION handler', () => {
     ['7', 7],
     ['2', 2]
   ])('sets current permission index', async (permissionIndex, currentPermissionIdx) => {
-    const set = jest.fn()
-    await currentPermissionHandler(createMockRequest(permissionIndex, set), createMockRequestToolkit())
-    expect(set).toHaveBeenCalledWith(
+    const mockRequest = createMockRequest({ cache: { status: { set: jest.fn() }}, query: { permissionIndex } })
+    await currentPermissionHandler(mockRequest, createMockRequestToolkit())
+    expect(mockRequest.cache().helpers.status.set).toHaveBeenCalledWith(
       expect.objectContaining({
         currentPermissionIdx
       })
@@ -76,15 +77,8 @@ describe('SET_CURRENT_PERMISSION handler', () => {
   })
 
   it('redirects to licence summary page', async () => {
-    const redirect = jest.fn()
-    await currentPermissionHandler(createMockRequest(), createMockRequestToolkit(redirect))
-    expect(redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
+    const mockToolkit = createMockRequestToolkit()
+    await currentPermissionHandler(createMockRequest(), mockToolkit)
+    expect(mockToolkit.redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
   })
-
-  const createMockRequest = (permissionIndex = 1, set = () => {}) => ({
-    cache: () => ({ helpers: { status: { set } } }),
-    query: { permissionIndex }
-  })
-
-  const createMockRequestToolkit = (redirect = () => {}) => ({ redirect })
 })
