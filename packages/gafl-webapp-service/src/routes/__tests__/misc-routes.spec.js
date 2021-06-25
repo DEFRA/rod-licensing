@@ -60,6 +60,8 @@ describe('The miscellaneous route handlers', () => {
 })
 
 describe('SET_CURRENT_PERMISSION handler', () => {
+  beforeEach(() => jest.clearAllMocks())
+  
   const currentPermissionHandler = miscRoutes.find(r => r.path === SET_CURRENT_PERMISSION.uri).handler
   it.each([
     [5, 5],
