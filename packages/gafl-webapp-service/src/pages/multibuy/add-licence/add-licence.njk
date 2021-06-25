@@ -1,0 +1,62 @@
+{% extends "layout.njk" %}
+
+{% from "error-summary.njk" import errorSummary %}
+{% from "inset-text/macro.njk" import govukInsetText %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "button/macro.njk" import govukButton %}
+
+
+{% set errorMap = {
+       'add-licence': {
+            'any.required': { ref: '#add-licence', text: 'Choose if you would like to get another licence' }
+       }
+    }
+%}
+
+{% set insetTextHtml %}
+  You have selected <a href="/buy/view-licences">{{data.numberOfLicences}} licences</a> 
+{% endset %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ govukInsetText({
+          html: insetTextHtml
+        }) }}
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ errorSummary(error, errorMap) }}
+
+        <form method="post">
+            {{ govukRadios({
+              idPrefix: "add-licence",
+              name: "add-licence",
+              fieldset: {
+                legend: {
+                  text: "Would you like to get another licence?",
+                  isPageHeading: true,
+                  classes: "govuk-fieldset__legend--l"
+                }
+              },
+              items: [
+                { value: "yes", text: "Yes" },
+                { value: "no", text: "No" }
+              ],
+              errorMessage: { text: 'Choose one option' } if error['add-licence']
+            }) }}
+
+            {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: "Continue",
+                classes: "govuk-!-margin-top-5"
+            }) }}
+            {{ csrf() }}
+        </form>
+    </div>
+</div>
+{% endblock %}

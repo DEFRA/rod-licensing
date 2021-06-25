@@ -7,7 +7,7 @@ import path from 'path'
 import Dirname from '../../dirname.cjs'
 import { displayStartTime, displayEndTime } from './date-and-time-display.js'
 import * as mappings from './mapping-constants.js'
-import { licenceTypeDisplay } from './licence-type-display.js'
+import { licenceTypeDisplay, licenceLengthDisplay } from './licence-type-display.js'
 import { hasDisabled } from './concession-helper.js'
 const eaImage = path.join(Dirname, 'public/images/EA-logo_black.png')
 
@@ -23,17 +23,6 @@ const alignment = {
   JUSTIFY: 'justify'
 }
 
-const licenceLength = permission => {
-  switch (permission.licenceLength) {
-    case '1D':
-      return '1 day'
-    case '8D':
-      return '8 days'
-    default:
-      return '12 months'
-  }
-}
-
 const tableRowHelper = (title, text) => [{ text: `${title}:`, style: style.TABLE_HEADER }, { text }]
 
 const getTable = permission => {
@@ -41,7 +30,7 @@ const getTable = permission => {
     body: [
       tableRowHelper('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`),
       tableRowHelper('Type', licenceTypeDisplay(permission)),
-      tableRowHelper('Length', licenceLength(permission))
+      tableRowHelper('Length', licenceLengthDisplay(permission))
     ]
   }
 

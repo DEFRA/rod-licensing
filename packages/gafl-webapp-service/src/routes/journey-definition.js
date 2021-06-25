@@ -14,6 +14,7 @@ import {
   NEWSLETTER,
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
+  ADD_LICENCE,
   TERMS_AND_CONDITIONS,
   AGREED,
   PAYMENT_CANCELLED,
@@ -21,7 +22,9 @@ import {
   ORDER_COMPLETE,
   IDENTIFY,
   RENEWAL_INACTIVE,
-  RENEWAL_START_DATE
+  RENEWAL_START_DATE,
+  ADD_PERMISSION,
+  VIEW_LICENCES
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
@@ -244,9 +247,25 @@ export default [
     current: CONTACT_SUMMARY,
     next: {
       [CommonResults.OK]: {
+        page: ADD_LICENCE
+      }
+    }
+  },
+
+  {
+    current: ADD_LICENCE,
+    next: {
+      [CommonResults.YES]: {
+        page: ADD_PERMISSION
+      },
+      [CommonResults.NO]: {
         page: TERMS_AND_CONDITIONS
       }
     }
+  },
+
+  {
+    current: VIEW_LICENCES
   },
 
   // This is the end of the journey. The rest is handled by the agreed handler
@@ -258,7 +277,7 @@ export default [
         page: AGREED
       }
     },
-    backLink: CONTACT_SUMMARY.uri
+    backLink: ADD_LICENCE.uri
   },
 
   {

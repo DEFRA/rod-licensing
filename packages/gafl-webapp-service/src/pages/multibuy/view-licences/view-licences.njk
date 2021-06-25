@@ -1,0 +1,53 @@
+{% extends "layout.njk" %}
+
+{% from "button/macro.njk" import govukButton %}
+{% from "summary-list/macro.njk" import govukSummaryList %}
+
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">Selected Licences</h1>
+
+          {% for licence in data.licences %}
+
+              {% set licenceInfo = [
+                { key: { text: 'Licence holder' }, value: { text: licence.licenceHolder } }, 
+                { key: { text: 'Type' }, value: { text: licence.type } }, 
+                { key: { text: 'Length' }, value: { text: licence.length } }, 
+                { key: { text: 'Start' }, value: { text: licence.start } }, 
+                { key: { text: 'Price' }, value: { text: '£' + licence.price } }
+                ]
+              %}
+
+              <section class="govuk-!-margin-bottom-6">
+
+                {{ govukSummaryList({
+                  rows: licenceInfo
+                }) }}
+
+                {{ govukButton({
+                  text: "Change",
+                  href: "/buy/set-current-permission?permissionIndex=" + licence.index,
+                  attributes: { 'aria-label': "Change licence options" },
+                  classes: "govuk-button--secondary"
+                })}}
+
+              </section>
+            {% endfor %}
+    </div>
+</div>
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+            {{ govukButton({
+                text: "Continue",
+                href: "/buy/add-licence"
+            })}}
+    </div>
+</div>
+
+{% endblock %}

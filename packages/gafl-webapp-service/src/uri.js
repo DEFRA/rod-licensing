@@ -20,6 +20,9 @@ export const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 export const CONTACT_SUMMARY = { uri: '/buy/contact-summary', page: 'contact-summary' }
 export const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-summary' }
 
+export const ADD_LICENCE = { uri: '/buy/add-licence', page: 'add-licence' }
+export const VIEW_LICENCES = { uri: '/buy/view-licences', page: 'view-licences' }
+
 export const PAYMENT_CANCELLED = { uri: '/buy/payment-cancelled', page: 'payment-cancelled' }
 export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-failed' }
 
@@ -47,6 +50,7 @@ export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }
 export const ADD_PERMISSION = { uri: '/buy/add' }
 export const AGREED = { uri: '/buy/agreed' }
+export const SET_CURRENT_PERMISSION = { uri: '/buy/set-current-permission' }
 
 export const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
