@@ -34,11 +34,6 @@ jobs:
         working-directory: ./coverage
         run: |
           sed -i 's/\/home\/runner\/work\/rod-licensing\/rod-licensing\//\/github\/workspace\//g' lcov.info
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   new-version:
     name: new-version
     runs-on: ubuntu-18.04
@@ -60,6 +55,6 @@ jobs:
       - name: Run versioning script
         run: . ./scripts/github/deploy.sh
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
