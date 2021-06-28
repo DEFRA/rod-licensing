@@ -1,7 +1,4 @@
 
-
-## Fixed changelog generation?
-
 ## v1.10.0
 * Updates Accessibility Statement headings to use correct semantics
 * Use serial number as Payment id for POCL transactions
