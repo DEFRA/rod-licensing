@@ -1,20 +1,4 @@
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
+
 ## v1.10.0
 * Updates Accessibility Statement headings to use correct semantics
 * Use serial number as Payment id for POCL transactions
