@@ -92,7 +92,7 @@ describe('The user', () => {
    */
   it.each([
     ['order-complete', ORDER_COMPLETE],
-    ['order-complete-pdf', ORDER_COMPLETE_PDF],
+    ['order-complete.pdf', ORDER_COMPLETE_PDF],
     ['payment-failed', PAYMENT_FAILED],
     ['payment-failed', PAYMENT_CANCELLED]
   ])('redirects to the controller on attempting to access %s', async (desc, page) => {
