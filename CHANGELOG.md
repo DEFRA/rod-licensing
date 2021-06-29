@@ -1,3 +1,11 @@
+
+## v1.14.0-rc.5 (2021-06-29)
+
+#### :bug: Bug Fix
+* [#785](https://github.com/DEFRA/rod-licensing/pull/785) Fix changelog generation ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
 Must provide GITHUB_AUTH
 Must provide GITHUB_AUTH
 
