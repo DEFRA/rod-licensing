@@ -1,20 +1,13 @@
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
-Must provide GITHUB_AUTH
+
+## v1.14.0-rc.2 (2021-06-28)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#787](https://github.com/DEFRA/rod-licensing/pull/787) Doing cool stuff ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.10.0
 * Updates Accessibility Statement headings to use correct semantics
 * Use serial number as Payment id for POCL transactions
