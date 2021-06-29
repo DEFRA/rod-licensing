@@ -14,47 +14,30 @@ export class PoclValidationError extends BaseEntity {
       id: { field: 'defra_poclvalidationerrorid', type: 'string' },
       licenseeForename: { field: 'defra_licenseeforename', type: 'string' },
       licenseeSurname: { field: 'defra_name', type: 'string' },
-      addressOrg: { field: 'defra_addressorg', type: 'string' },
-      addressPOBox: { field: 'defra_addresspobox', type: 'string' },
-      addressSubPrem: { field: 'defra_addresssubprem', type: 'string' },
-      addressBuildName: { field: 'defra_addressbuildname', type: 'string' },
-      addressBuildNum: { field: 'defra_addressbuildnum', type: 'string' },
-      addressDepthoro: { field: 'defra_addressdepthoro', type: 'string' },
-      addressThoro: { field: 'defra_addressthoro', type: 'string' },
-      addressLocal: { field: 'defra_addresslocal', type: 'string' },
-      addressTown: { field: 'defra_addresstown', type: 'string' },
-      addressPostcode: { field: 'defra_addresspostcode', type: 'string' },
-      addressPremises: { field: 'defra_addresspremises', type: 'string' },
-      addressAddress: { field: 'defra_addressaddress', type: 'string' },
-      addressContAddress: { field: 'defra_addresscontaddress', type: 'string' },
-      addressTownCity: { field: 'defra_addresstowncity', type: 'string' },
-      addressPostcodeZip: { field: 'defra_addresspostcodezip', type: 'string' },
-      addressCountry: { field: 'defra_addresscountry', type: 'string' },
-      dateOfBirth: { field: 'defra_dateofbirth', type: 'string' },
-      seniorId: { field: 'defra_seniorid', type: 'string' },
-      disabledId1: { field: 'defra_disabledid1', type: 'string' },
-      disabledId2: { field: 'defra_disabledid2', type: 'string' },
-      notifyByPost: { field: 'defra_notifybypost', type: 'string' },
-      notifyByEmail: { field: 'defra_notifybyemail', type: 'string' },
-      notifyBySms: { field: 'defra_notifybysms', type: 'string' },
-      notifyEmailAddress: { field: 'defra_notifyemailaddress', type: 'string' },
-      notifySmsNumber: { field: 'defra_notifysmsnumber', type: 'string' },
-      commsByPost: { field: 'defra_commsbypost', type: 'string' },
-      commsByEmail: { field: 'defra_commsbyemail', type: 'string' },
-      commsBySms: { field: 'defra_commsbysms', type: 'string' },
-      commsEmailAddress: { field: 'defra_commsemailaddress', type: 'string' },
-      commsSmsNumber: { field: 'defra_commssmsnumber', type: 'string' },
-      licenceCategory: { field: 'defra_licencecategory', type: 'string' },
-      licenceType: { field: 'defra_licencetype', type: 'string' },
+      organisation: { field: 'defra_organisation', type: 'string' },
+      premises: { field: 'defra_premises', type: 'string' },
+      street: { field: 'defra_street', type: 'string' },
+      locality: { field: 'defra_locality', type: 'string' },
+      town: { field: 'defra_town', type: 'string' },
+      postcode: { field: 'defra_postcode', type: 'string' },
+      country: { field: 'defra_country', type: 'string' },
+      birthDate: { field: 'defra_birthdate', type: 'string' },
+      emailAddress: { field: 'defra_emailaddress', type: 'string' },
+      mobileNumber: { field: 'defra_mobilenumber', type: 'string' },
+      preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'string' },
+      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'string' },
+      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'string' },
+      seniorConcessionId: { field: 'defra_seniorconcessionid', type: 'string' },
+      blueBadgeNumber: { field: 'defra_bluebadgenumber', type: 'string' },
+      pipReferenceNumber: { field: 'defra_pipreferencenumber', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
-      startTime: { field: 'defra_starttime', type: 'string' },
-      channelId: { field: 'defra_channelid', type: 'string' },
-      serialNo: { field: 'defra_serialno', type: 'string' },
+      serialNumber: { field: 'defra_serialnumber', type: 'string' },
+      permitId: { field: 'defra_permitid', type: 'string' },
+      transactionDate: { field: 'defra_transactiondate', type: 'string' },
       amount: { field: 'defra_amount', type: 'string' },
-      mopex: { field: 'defra_mopex', type: 'string' },
-      systemDate: { field: 'defra_systemdate', type: 'string' },
-      systemTime: { field: 'defra_systemtime', type: 'string' },
-      itemId: { field: 'defra_itemid', type: 'string' },
+      paymentSource: { field: 'defra_paymentsource', type: 'string' },
+      channelId: { field: 'defra_channelid', type: 'string' },
+      methodOfPayment: { field: 'defra_methodofpayment', type: 'string' },
       status: { field: 'statuscode', type: 'choice' }
     }
   }))
@@ -95,384 +78,180 @@ export class PoclValidationError extends BaseEntity {
    * The organisation in the licensee address associated with this pocl record
    * @type {string}
    */
-  get addressOrg () {
-    return super._getState('addressOrg')
+  get organisation () {
+    return super._getState('organisation')
   }
 
-  set addressOrg (addressOrg) {
-    super._setState('addressOrg', addressOrg)
-  }
-
-  /**
-   * The PO Box in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressPOBox () {
-    return super._getState('addressPOBox')
-  }
-
-  set addressPOBox (addressPOBox) {
-    super._setState('addressPOBox', addressPOBox)
+  set organisation (organisation) {
+    super._setState('organisation', organisation)
   }
 
   /**
-   * The sub premises in the licensee address associated with this pocl record
+   * The locality in the licensee address associated with this pocl record
    * @type {string}
    */
-  get addressSubPrem () {
-    return super._getState('addressSubPrem')
+  get locality () {
+    return super._getState('locality')
   }
 
-  set addressSubPrem (addressSubPrem) {
-    super._setState('addressSubPrem', addressSubPrem)
+  set locality (locality) {
+    super._setState('locality', locality)
   }
 
   /**
-   * The building name in the licensee address associated with this pocl record
+   * The town in the licensee address associated with this pocl record
    * @type {string}
    */
-  get addressBuildName () {
-    return super._getState('addressBuildName')
+  get town () {
+    return super._getState('town')
   }
 
-  set addressBuildName (addressBuildName) {
-    super._setState('addressBuildName', addressBuildName)
-  }
-
-  /**
-   * The building number in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressBuildNum () {
-    return super._getState('addressBuildNum')
-  }
-
-  set addressBuildNum (addressBuildNum) {
-    super._setState('addressBuildNum', addressBuildNum)
-  }
-
-  /**
-   * The dependent thoroughfare in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressDepthoro () {
-    return super._getState('addressDepthoro')
-  }
-
-  set addressDepthoro (addressDepthoro) {
-    super._setState('addressDepthoro', addressDepthoro)
-  }
-
-  /**
-   * The thoroughfare in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressThoro () {
-    return super._getState('addressThoro')
-  }
-
-  set addressThoro (addressThoro) {
-    super._setState('addressThoro', addressThoro)
-  }
-
-  /**
-   * The dependent locality in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressLocal () {
-    return super._getState('addressLocal')
-  }
-
-  set addressLocal (addressLocal) {
-    super._setState('addressLocal', addressLocal)
-  }
-
-  /**
-   * The post town in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressTown () {
-    return super._getState('addressTown')
-  }
-
-  set addressTown (addressTown) {
-    super._setState('addressTown', addressTown)
+  set town (town) {
+    super._setState('town', town)
   }
 
   /**
    * The postcode in the licensee address associated with this pocl record
    * @type {string}
    */
-  get addressPostcode () {
-    return super._getState('addressPostcode')
+  get postcode () {
+    return super._getState('postcode')
   }
 
-  set addressPostcode (addressPostcode) {
-    super._setState('addressPostcode', addressPostcode)
+  set postcode (postcode) {
+    super._setState('postcode', postcode)
   }
 
   /**
    * The premises in the licensee address associated with this pocl record
    * @type {string}
    */
-  get addressPremises () {
-    return super._getState('addressPremises')
+  get premises () {
+    return super._getState('premises')
   }
 
-  set addressPremises (addressPremises) {
-    super._setState('addressPremises', addressPremises)
-  }
-
-  /**
-   * The address line 1 in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressAddress () {
-    return super._getState('addressAddress')
-  }
-
-  set addressAddress (addressAddress) {
-    super._setState('addressAddress', addressAddress)
-  }
-
-  /**
-   * The address line 2 in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressContAddress () {
-    return super._getState('addressContAddress')
-  }
-
-  set addressContAddress (addressContAddress) {
-    super._setState('addressContAddress', addressContAddress)
-  }
-
-  /**
-   * The town or city in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressTownCity () {
-    return super._getState('addressTownCity')
-  }
-
-  set addressTownCity (addressTownCity) {
-    super._setState('addressTownCity', addressTownCity)
-  }
-
-  /**
-   * The postcode in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get addressPostcodeZip () {
-    return super._getState('addressPostcodeZip')
-  }
-
-  set addressPostcodeZip (addressPostcodeZip) {
-    super._setState('addressPostcodeZip', addressPostcodeZip)
+  set premises (premises) {
+    super._setState('premises', premises)
   }
 
   /**
    * The country in the licensee address associated with this pocl record
    * @type {string}
    */
-  get addressCountry () {
-    return super._getState('addressCountry')
+  get country () {
+    return super._getState('country')
   }
 
-  set addressCountry (addressCountry) {
-    super._setState('addressCountry', addressCountry)
+  set country (country) {
+    super._setState('country', country)
   }
 
   /**
    * The licensee's date of birth associated with this pocl record
    * @type {string}
    */
-  get dateOfBirth () {
-    return super._getState('dateOfBirth')
+  get birthDate () {
+    return super._getState('birthDate')
   }
 
-  set dateOfBirth (dateOfBirth) {
-    super._setState('dateOfBirth', dateOfBirth)
+  set birthDate (birthDate) {
+    super._setState('birthDate', birthDate)
+  }
+
+  /**
+   * The licensee's email address associated with this pocl record
+   * @type {string}
+   */
+  get emailAddress () {
+    return super._getState('emailAddress')
+  }
+
+  set emailAddress (emailAddress) {
+    super._setState('emailAddress', emailAddress)
+  }
+
+  /**
+   * The licensee's mobile number associated with this pocl record
+   * @type {string}
+   */
+  get mobileNumber () {
+    return super._getState('mobileNumber')
+  }
+
+  set mobileNumber (mobileNumber) {
+    super._setState('mobileNumber', mobileNumber)
+  }
+
+  /**
+   * The licensee's preferred method of confirmation associated with this pocl record
+   * @type {string}
+   */
+  get preferredMethodOfConfirmation () {
+    return super._getState('preferredMethodOfConfirmation')
+  }
+
+  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
+    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
+  }
+
+  /**
+   * The licensee's preferred method of newsletter associated with this pocl record
+   * @type {string}
+   */
+  get preferredMethodOfNewsletter () {
+    return super._getState('preferredMethodOfNewsletter')
+  }
+
+  set preferredMethodOfNewsletter (preferredMethodOfNewsletter) {
+    super._setState('preferredMethodOfNewsletter', preferredMethodOfNewsletter)
+  }
+
+  /**
+   * The licensee's preferred method of reminder associated with this pocl record
+   * @type {string}
+   */
+  get preferredMethodOfReminder () {
+    return super._getState('preferredMethodOfReminder')
+  }
+
+  set preferredMethodOfReminder (preferredMethodOfReminder) {
+    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
   }
 
   /**
    * The type of ID shown for senior concession associated with this pocl record
    * @type {string}
    */
-  get seniorId () {
-    return super._getState('seniorId')
+  get seniorConcessionId () {
+    return super._getState('seniorConcessionId')
   }
 
-  set seniorId (seniorId) {
-    super._setState('seniorId', seniorId)
+  set seniorConcessionId (seniorConcessionId) {
+    super._setState('seniorConcessionId', seniorConcessionId)
   }
 
   /**
    * The Blue Badge number associated with this pocl record
    * @type {string}
    */
-  get disabledId1 () {
-    return super._getState('disabledId1')
+  get blueBadgeNumber () {
+    return super._getState('blueBadgeNumber')
   }
 
-  set disabledId1 (disabledId1) {
-    super._setState('disabledId1', disabledId1)
-  }
-
-  /**
-   * The PIP number associated with this pocl record
-   * @type {string}
-   */
-  get disabledId2 () {
-    return super._getState('disabledId2')
-  }
-
-  set disabledId2 (disabledId2) {
-    super._setState('disabledId2', disabledId2)
+  set blueBadgeNumber (blueBadgeNumber) {
+    super._setState('blueBadgeNumber', blueBadgeNumber)
   }
 
   /**
-   * The licensee notification by post preference associated with this pocl record
+   * The PIP reference number associated with this pocl record
    * @type {string}
    */
-  get notifyByPost () {
-    return super._getState('notifyByPost')
+  get pipReferenceNumber () {
+    return super._getState('pipReferenceNumber')
   }
 
-  set notifyByPost (notifyByPost) {
-    super._setState('notifyByPost', notifyByPost)
-  }
-
-  /**
-   * The licensee notification by email preference associated with this pocl record
-   * @type {string}
-   */
-  get notifyByEmail () {
-    return super._getState('notifyByEmail')
-  }
-
-  set notifyByEmail (notifyByEmail) {
-    super._setState('notifyByEmail', notifyByEmail)
-  }
-
-  /**
-   * The licensee notification by SMS preference associated with this pocl record
-   * @type {string}
-   */
-  get notifyBySms () {
-    return super._getState('notifyBySms')
-  }
-
-  set notifyBySms (notifyBySms) {
-    super._setState('notifyBySms', notifyBySms)
-  }
-
-  /**
-   * The licensee email for notifications associated with this pocl record
-   * @type {string}
-   */
-  get notifyEmailAddress () {
-    return super._getState('notifyEmailAddress')
-  }
-
-  set notifyEmailAddress (notifyEmailAddress) {
-    super._setState('notifyEmailAddress', notifyEmailAddress)
-  }
-
-  /**
-   * The licensee SMS number for notifications associated with this pocl record
-   * @type {string}
-   */
-  get notifySmsNumber () {
-    return super._getState('notifySmsNumber')
-  }
-
-  set notifySmsNumber (notifySmsNumber) {
-    super._setState('notifySmsNumber', notifySmsNumber)
-  }
-
-  /**
-   * The licensee communication by post preference associated with this pocl record
-   * @type {string}
-   */
-  get commsByPost () {
-    return super._getState('commsByPost')
-  }
-
-  set commsByPost (commsByPost) {
-    super._setState('commsByPost', commsByPost)
-  }
-
-  /**
-   * The licensee communication by email preference associated with this pocl record
-   * @type {string}
-   */
-  get commsByEmail () {
-    return super._getState('commsByEmail')
-  }
-
-  set commsByEmail (commsByEmail) {
-    super._setState('commsByEmail', commsByEmail)
-  }
-
-  /**
-   * The licensee communication by SMS preference associated with this pocl record
-   * @type {string}
-   */
-  get commsBySms () {
-    return super._getState('commsBySms')
-  }
-
-  set commsBySms (commsBySms) {
-    super._setState('commsBySms', commsBySms)
-  }
-
-  /**
-   * The licensee email for communications associated with this pocl record
-   * @type {string}
-   */
-  get commsEmailAddress () {
-    return super._getState('commsEmailAddress')
-  }
-
-  set commsEmailAddress (commsEmailAddress) {
-    super._setState('commsEmailAddress', commsEmailAddress)
-  }
-
-  /**
-   * The licensee SMS number for communications associated with this pocl record
-   * @type {string}
-   */
-  get commsSmsNumber () {
-    return super._getState('commsSmsNumber')
-  }
-
-  set commsSmsNumber (commsSmsNumber) {
-    super._setState('commsSmsNumber', commsSmsNumber)
-  }
-
-  /**
-   * The licence category associated with this pocl record
-   * @type {string}
-   */
-  get licenceCategory () {
-    return super._getState('licenceCategory')
-  }
-
-  set licenceCategory (licenceCategory) {
-    super._setState('licenceCategory', licenceCategory)
-  }
-
-  /**
-   * The licence type associated with this pocl record
-   * @type {string}
-   */
-  get licenceType () {
-    return super._getState('licenceType')
-  }
-
-  set licenceType (licenceType) {
-    super._setState('licenceType', licenceType)
+  set pipReferenceNumber (pipReferenceNumber) {
+    super._setState('pipReferenceNumber', pipReferenceNumber)
   }
 
   /**
@@ -488,39 +267,39 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licence start time associated with this pocl record
+   * The serial number associated with this pocl record
    * @type {string}
    */
-  get startTime () {
-    return super._getState('startTime')
+  get serialNumber () {
+    return super._getState('serialNumber')
   }
 
-  set startTime (startTime) {
-    super._setState('startTime', startTime)
+  set serialNumber (serialNumber) {
+    super._setState('serialNumber', serialNumber)
   }
 
   /**
-   * The channel id associated with this pocl record
+   * The permit id associated with this pocl record
    * @type {string}
    */
-  get channelId () {
-    return super._getState('channelId')
+  get permitId () {
+    return super._getState('permitId')
   }
 
-  set channelId (channelId) {
-    super._setState('channelId', channelId)
+  set permitId (permitId) {
+    super._setState('permitId', permitId)
   }
 
   /**
-   * The serial no associated with this pocl record
+   * The licence transaction date associated with this pocl record
    * @type {string}
    */
-  get serialNo () {
-    return super._getState('serialNo')
+  get transactionDate () {
+    return super._getState('transactionDate')
   }
 
-  set serialNo (serialNo) {
-    super._setState('serialNo', serialNo)
+  set transactionDate (transactionDate) {
+    super._setState('transactionDate', transactionDate)
   }
 
   /**
@@ -536,51 +315,39 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The payment type associated with this pocl record
+   * The payment source associated with this pocl record
    * @type {string}
    */
-  get mopex () {
-    return super._getState('mopex')
+  get paymentSource () {
+    return super._getState('paymentSource')
   }
 
-  set mopex (mopex) {
-    super._setState('mopex', mopex)
+  set paymentSource (paymentSource) {
+    super._setState('paymentSource', paymentSource)
   }
 
   /**
-   * The transaction date associated with this pocl record
+   * The channel id associated with this pocl record
    * @type {string}
    */
-  get systemDate () {
-    return super._getState('systemDate')
+  get channelId () {
+    return super._getState('channelId')
   }
 
-  set systemDate (systemDate) {
-    super._setState('systemDate', systemDate)
+  set channelId (channelId) {
+    super._setState('channelId', channelId)
   }
 
   /**
-   * The transaction time associated with this pocl record
+   * The method of payment associated with this pocl record
    * @type {string}
    */
-  get systemTime () {
-    return super._getState('systemTime')
+  get methodOfPayment () {
+    return super._getState('methodOfPayment')
   }
 
-  set systemTime (systemTime) {
-    super._setState('systemTime', systemTime)
-  }
-
-  /**
-   * The item id associated with this pocl record
-   * @type {string}
-   */
-  get itemId () {
-    return super._getState('itemId')
-  }
-
-  set itemId (itemId) {
-    super._setState('itemId', itemId)
+  set methodOfPayment (methodOfPayment) {
+    super._setState('methodOfPayment', methodOfPayment)
   }
 
   /**
