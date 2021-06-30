@@ -49,7 +49,6 @@ export const resolveContactPayload = async payload => {
       contact = candidates[0]
     }
   }
-
   contact = Object.assign(contact || new Contact(), primitives)
 
   contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
