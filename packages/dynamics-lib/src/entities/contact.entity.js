@@ -246,7 +246,7 @@ export class Contact extends BaseEntity {
     return super._getState('obfuscatedDob')
   }
 
-  set obfuscatedDob (postalFulfilment) {
-    super._setState('obfuscatedDob', postalFulfilment)
+  set obfuscatedDob (obfuscatedDob) {
+    super._setState('obfuscatedDob', obfuscatedDob)
   }
 }
