@@ -64,5 +64,13 @@ export const resolveContactPayload = async payload => {
     preferredMethodOfReminder
   )
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
+
+  if (!contact.obfuscatedDob) {
+    contact.obfuscatedDob = generateDobId(payload.birthDate)
+  }
+
   return contact
 }
+
+export const generateDobId = dob => getRandomInt(10, 99) + dob.replace(/-/g, '') + getRandomInt(1000, 9999)
+export const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
