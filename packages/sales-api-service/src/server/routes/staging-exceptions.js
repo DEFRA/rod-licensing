@@ -1,5 +1,5 @@
 import { createStagingExceptionRequestSchema, createStagingExceptionResponseSchema } from '../../schema/staging-exception.schema.js'
-import { createTransactionFileException, createStagingException } from '../../services/exceptions/exceptions.service.js'
+import { createTransactionFileException, createStagingException, createDataValidationError } from '../../services/exceptions/exceptions.service.js'
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -15,6 +15,7 @@ export default [
         }
         if (request.payload.transactionFileException) {
           response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
+          await createDataValidationError(request.payload.record)
         }
         return h.response(response).code(200)
       },

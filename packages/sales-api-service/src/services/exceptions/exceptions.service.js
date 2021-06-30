@@ -1,4 +1,4 @@
-import { persist, StagingException, PoclStagingException } from '@defra-fish/dynamics-lib'
+import { persist, StagingException, PoclStagingException, PoclValidationError } from '@defra-fish/dynamics-lib'
 import db from 'debug'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 const debug = db('sales:exceptions')
@@ -61,4 +61,29 @@ export const createTransactionFileException = async transactionFileError => {
   stagingException.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, transactionFileError.transactionFile)
   await persist([stagingException])
   return stagingException
+}
+
+/**
+ * @typedef {Object} TransactionValidationError
+ * @property {!object} createTransactionPayload the data used to create a transaction
+ * @property {!object} finaliseTransactionPayload the transaction data
+ *
+ * @param {TransactionValidationError} record
+ * @returns {Promise<PoclValidationError>}
+ */
+export const createDataValidationError = async record => {
+  debug('Adding exception for POCL record: %o', record)
+  const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
+  const { licensee, issueDate: transactionDate, ...otherPermissionData } = permission
+  const validationErrorRecord = Object.assign(new PoclValidationError(), {
+    dataSource,
+    serialNumber,
+    transactionDate,
+    ...licensee,
+    ...otherPermissionData,
+    ...record.finaliseTransactionPayload.payment,
+    status: 'Needs Review' // @IWTF-2174: add lookup here
+  })
+  await persist([validationErrorRecord])
+  return validationErrorRecord
 }
