@@ -82,7 +82,7 @@ export const createDataValidationError = async record => {
     ...licensee,
     ...otherPermissionData,
     ...record.finaliseTransactionPayload.payment,
-    status: 'Needs Review' // @IWTF-2174: add lookup here
+    status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review')
   })
   await persist([validationErrorRecord])
   return validationErrorRecord
