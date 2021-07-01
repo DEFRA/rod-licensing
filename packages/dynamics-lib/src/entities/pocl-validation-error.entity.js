@@ -24,9 +24,9 @@ export class PoclValidationError extends BaseEntity {
       birthDate: { field: 'defra_birthdate', type: 'string' },
       emailAddress: { field: 'defra_emailaddress', type: 'string' },
       mobileNumber: { field: 'defra_mobilenumber', type: 'string' },
-      preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'string' },
-      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'string' },
-      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'string' },
+      preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       seniorConcessionId: { field: 'defra_seniorconcessionid', type: 'string' },
       blueBadgeNumber: { field: 'defra_bluebadgenumber', type: 'string' },
       pipReferenceNumber: { field: 'defra_pipreferencenumber', type: 'string' },
@@ -37,8 +37,8 @@ export class PoclValidationError extends BaseEntity {
       amount: { field: 'defra_amount', type: 'string' },
       paymentSource: { field: 'defra_paymentsource', type: 'string' },
       channelId: { field: 'defra_channelid', type: 'string' },
-      methodOfPayment: { field: 'defra_methodofpayment', type: 'string' },
-      status: { field: 'statuscode', type: 'choice' }
+      methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
+      status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' }
     }
   }))
 
@@ -184,7 +184,7 @@ export class PoclValidationError extends BaseEntity {
 
   /**
    * The licensee's preferred method of confirmation associated with this pocl record
-   * @type {string}
+   * @type {GlobalOptionSetDefinition}
    */
   get preferredMethodOfConfirmation () {
     return super._getState('preferredMethodOfConfirmation')
@@ -196,7 +196,7 @@ export class PoclValidationError extends BaseEntity {
 
   /**
    * The licensee's preferred method of newsletter associated with this pocl record
-   * @type {string}
+   * @type {GlobalOptionSetDefinition}
    */
   get preferredMethodOfNewsletter () {
     return super._getState('preferredMethodOfNewsletter')
@@ -208,7 +208,7 @@ export class PoclValidationError extends BaseEntity {
 
   /**
    * The licensee's preferred method of reminder associated with this pocl record
-   * @type {string}
+   * @type {GlobalOptionSetDefinition}
    */
   get preferredMethodOfReminder () {
     return super._getState('preferredMethodOfReminder')
