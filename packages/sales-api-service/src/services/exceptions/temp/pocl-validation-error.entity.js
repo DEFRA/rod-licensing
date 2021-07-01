@@ -1,4 +1,4 @@
-import { BaseEntity, EntityDefinition } from './base.entity.js'
+import { BaseEntity, EntityDefinition } from '@defra-fish/dynamics-lib/src/entities/base.entity'
 
 /**
  * pocl validation error entity
