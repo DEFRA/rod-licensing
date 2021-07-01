@@ -1,4 +1,5 @@
 import pluralize from 'pluralize'
+import { generateDobId } from '@defra-fish/dynamics-lib'
 
 /**
  * @typedef FulfilmentDataEntry
@@ -33,7 +34,10 @@ export async function * fulfilmentDataTransformer (source) {
         licenceNumber: permission.referenceNumber.substring(permission.referenceNumber.indexOf('-') + 1)
       },
       holder: {
-        dateOfBirth: { id: generateDobId(licensee.birthDate), value: licensee.birthDate },
+        dateOfBirth: {
+          id: licensee.obfuscatedDob ? licensee.obfuscatedDob : generateDobId(licensee.birthDate),
+          value: licensee.birthDate
+        },
         name: { firstName: licensee.firstName, surname: licensee.lastName },
         address: {
           ...(licensee.organisation && { organisation: licensee.organisation }),
@@ -53,5 +57,3 @@ export async function * fulfilmentDataTransformer (source) {
 const durations = { D: 'day', M: 'month', Y: 'year' }
 const getDuration = permit => pluralize(durations[permit.durationDesignator.description], permit.durationMagnitude, true)
 const getEquipment = permit => (permit.numberOfRods > 1 ? `Up to ${permit.numberOfRods} rods` : `${permit.numberOfRods} rod`)
-const generateDobId = dob => getRandomInt(10, 99) + dob.replace(/-/g, '') + getRandomInt(1000, 9999)
-const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min

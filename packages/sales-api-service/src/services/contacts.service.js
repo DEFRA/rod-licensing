@@ -1,4 +1,4 @@
-import { Contact, findByExample, findById } from '@defra-fish/dynamics-lib'
+import { Contact, findByExample, findById, generateDobId } from '@defra-fish/dynamics-lib'
 import { getGlobalOptionSetValue } from './reference-data.service.js'
 import db from 'debug'
 const debug = db('sales:transformers')
@@ -71,6 +71,3 @@ export const resolveContactPayload = async payload => {
 
   return contact
 }
-
-export const generateDobId = dob => getRandomInt(10, 99) + dob.replace(/-/g, '') + getRandomInt(1000, 9999)
-export const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
