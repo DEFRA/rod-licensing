@@ -19,7 +19,8 @@ const schemaObject = {
       .external(createAlternateKeyValidator(PoclFile))
       .required(),
     permissionId: Joi.string()
-  })
+  }),
+  record: Joi.object().optional()
 }
 
 /**
