@@ -3,7 +3,7 @@ import db from 'debug'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 
 // @IWTF-2174: Remove after testing
-import { PoclValidationError } from './temp/pocl-validation-error.entity'
+import { PoclValidationError } from './temp/index.js'
 
 const debug = db('sales:exceptions')
 
