@@ -86,7 +86,12 @@ export const createDataValidationError = async record => {
     ...otherPermissionData,
     ...record.finaliseTransactionPayload.payment,
     status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review'),
-    dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource)
+    dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
+    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
+    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
+    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder),
+    methodOfPayment: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.methodOfPayment.ref, record.finaliseTransactionPayload.payment.method)
+
   })
   await persist([validationErrorRecord])
   return validationErrorRecord
