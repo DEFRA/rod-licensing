@@ -80,13 +80,13 @@ export const createDataValidationError = async record => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, ...otherPermissionData } = permission
   const validationErrorRecord = Object.assign(new PoclValidationError(), {
-    dataSource,
     serialNumber,
     transactionDate,
     ...licensee,
     ...otherPermissionData,
     ...record.finaliseTransactionPayload.payment,
-    status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review')
+    status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review'),
+    dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource)
   })
   await persist([validationErrorRecord])
   return validationErrorRecord
