@@ -63,7 +63,7 @@ export const createTransactionFileException = async transactionFileError => {
     status: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.status.ref, 'Open')
   })
   stagingException.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, transactionFileError.transactionFile)
-  console.log('------ABOUT TO CREATE FILE EXCEPTION-------')
+  console.log('------ABOUT TO CREATE FILE EXCEPTION-------', { stagingException })
   await persist([stagingException])
   return stagingException
 }
