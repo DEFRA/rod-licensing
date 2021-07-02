@@ -131,7 +131,6 @@ const processFailed = async (filename, failed) => {
       record
     })
   }
-  // @IWTF-2174: Write to validation errors table
 
   const recordUpdates = failed.map(({ record }) => record)
   await updateRecordStagingTable(filename, recordUpdates)

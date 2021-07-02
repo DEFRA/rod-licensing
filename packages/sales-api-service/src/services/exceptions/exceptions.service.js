@@ -63,6 +63,7 @@ export const createTransactionFileException = async transactionFileError => {
     status: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.status.ref, 'Open')
   })
   stagingException.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, transactionFileError.transactionFile)
+  console.log('------ABOUT TO CREATE FILE EXCEPTION-------')
   await persist([stagingException])
   return stagingException
 }
@@ -91,8 +92,9 @@ export const createDataValidationError = async record => {
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
     preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder),
     methodOfPayment: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.methodOfPayment.ref, record.finaliseTransactionPayload.payment.method)
-
   })
+  console.log('------VALIDATION ERROR TO BE CREATED-------', { validationErrorRecord })
+
   await persist([validationErrorRecord])
   return validationErrorRecord
 }
