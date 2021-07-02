@@ -17,4 +17,4 @@ const escapeODataStringValueRegex = new RegExp(`[${Object.keys(stringSubstitutio
 export const escapeODataStringValue = value => String(value).replace(escapeODataStringValueRegex, char => stringSubstitutions[char])
 
 export const generateDobId = dob => getRandomInt(10, 99) + dob.replace(/-/g, '') + getRandomInt(1000, 9999)
-export const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
+const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min

@@ -1,4 +1,4 @@
-import { escapeODataStringValue, generateDobId, getRandomInt } from '../util.js'
+import { escapeODataStringValue, generateDobId } from '../util.js'
 
 describe('util', () => {
   describe('escapeODataStringValue', () => {
@@ -19,20 +19,6 @@ describe('util', () => {
       const obfuscatedDobSecondPart = parseInt(obfuscatedDob.substring(10, 14))
       expect(obfuscatedDobSecondPart).toBeGreaterThanOrEqual(1000)
       expect(obfuscatedDobSecondPart).toBeLessThanOrEqual(9999)
-    })
-  })
-
-  describe('getRandomInt', () => {
-    it('gets a random integer between a range', () => {
-      const randomInt = getRandomInt(10, 99)
-      expect(randomInt).toBeGreaterThanOrEqual(10)
-      expect(randomInt).toBeLessThanOrEqual(99)
-    })
-
-    it('gets a random integer between a negative range', () => {
-      const randomInt = getRandomInt(-10, 10)
-      expect(randomInt).toBeGreaterThanOrEqual(-10)
-      expect(randomInt).toBeLessThanOrEqual(10)
     })
   })
 })
