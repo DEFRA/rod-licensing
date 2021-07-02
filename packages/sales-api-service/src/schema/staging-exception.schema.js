@@ -28,7 +28,7 @@ const schemaObject = {
  * @type {Joi.AnySchema}
  */
 export const createStagingExceptionRequestSchema = Joi.object(schemaObject)
-  .or('stagingException', 'transactionFileException', 'record')
+  // .or('stagingException', 'transactionFileException', 'record')
   .label('create-staging-exception-request')
 
 /**
