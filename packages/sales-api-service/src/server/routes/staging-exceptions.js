@@ -23,7 +23,7 @@ export default [
           console.log('------FINISHED CREATING TRANSACTION FILE EXCEPTION-------')
           if (isDataValidationError(request.payload.transactionFileException)) {
             console.log('------IS DATA VALIDATION ERROR-------')
-            await createDataValidationError(request.payload.record)
+            // await createDataValidationError(request.payload.record)
           }
         }
         return h.response(response).code(200)

@@ -127,8 +127,8 @@ const processFailed = async (filename, failed) => {
         notes: 'Failed to create the transaction in the Sales API',
         type: 'Failure',
         transactionFile: filename
-      },
-      record
+      }
+      // record
     })
   }
 
