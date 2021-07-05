@@ -29,7 +29,7 @@ export class PoclValidationError extends BaseEntity {
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       seniorConcession: { field: 'defra_seniorconcessionid', type: 'string' },
       blueBadgeConcession: { field: 'defra_bluebadgenumber', type: 'string' },
-      PipConcession: { field: 'defra_pipreferencenumber', type: 'string' },
+      pipConcession: { field: 'defra_pipreferencenumber', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
@@ -259,12 +259,12 @@ export class PoclValidationError extends BaseEntity {
    * The PIP reference number associated with this pocl record
    * @type {string}
    */
-  get PipConcession () {
-    return super._getState('PipConcession')
+  get pipConcession () {
+    return super._getState('pipConcession')
   }
 
-  set PipConcession (PipConcession) {
-    super._setState('PipConcession', PipConcession)
+  set pipConcession (pipConcession) {
+    super._setState('pipConcession', pipConcession)
   }
 
   /**

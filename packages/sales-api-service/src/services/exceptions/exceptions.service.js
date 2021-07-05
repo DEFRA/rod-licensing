@@ -74,15 +74,15 @@ export const createTransactionFileException = async transactionFileError => {
 const getJSONString = obj => JSON.stringify(obj, null, 2)
 
 const getConcessions = (concessions) => {
-  const blueBadge = getJSONString(concessions.find(c => c.type === BLUE_BADGE))
-  const PipConcession = getJSONString(concessions.find(c => c.type === NATIONAL_INSURANCE_NUMBER))
+  const blueBadgeConcession = getJSONString(concessions.find(c => c.type === BLUE_BADGE))
+  const pipConcession = getJSONString(concessions.find(c => c.type === NATIONAL_INSURANCE_NUMBER))
   // all other types of concessions are classified as senior concessions
-  const SeniorConcession = getJSONString(concessions.find(c => ![BLUE_BADGE, NATIONAL_INSURANCE_NUMBER].includes(c.type)))
+  const seniorConcession = getJSONString(concessions.find(c => ![BLUE_BADGE, NATIONAL_INSURANCE_NUMBER].includes(c.type)))
 
   return {
-    ...blueBadge && { blueBadge },
-    ...PipConcession && { PipConcession },
-    ...SeniorConcession && { SeniorConcession }
+    ...blueBadgeConcession && { blueBadgeConcession },
+    ...pipConcession && { pipConcession },
+    ...seniorConcession && { seniorConcession }
   }
 }
 
