@@ -8,7 +8,7 @@ export class PoclValidationError extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition(() => ({
     localName: 'transactionValidationError',
-    dynamicsCollection: 'defra_poclvalidationerror',
+    dynamicsCollection: 'defra_poclvalidationerrors',
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_poclvalidationerrorid', type: 'string' },
@@ -34,7 +34,7 @@ export class PoclValidationError extends BaseEntity {
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
       transactionDate: { field: 'defra_transactiondate', type: 'string' },
-      amount: { field: 'defra_amount', type: 'string' },
+      amount: { field: 'defra_amount', type: 'decimal' },
       paymentSource: { field: 'defra_paymentsource', type: 'string' },
       channelId: { field: 'defra_channelid', type: 'string' },
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
