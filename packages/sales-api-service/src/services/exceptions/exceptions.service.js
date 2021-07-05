@@ -79,6 +79,7 @@ export const createTransactionFileException = async transactionFileError => {
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
+  console.log(permission)
   const { licensee, issueDate: transactionDate, ...otherPermissionData } = permission
   const validationErrorRecord = Object.assign(new PoclValidationError(), {
     serialNumber,
