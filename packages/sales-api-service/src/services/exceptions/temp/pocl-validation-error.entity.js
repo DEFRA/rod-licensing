@@ -12,8 +12,8 @@ export class PoclValidationError extends BaseEntity {
     defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_poclvalidationerrorid', type: 'string' },
-      licenseeForename: { field: 'defra_licenseeforename', type: 'string' },
-      licenseeSurname: { field: 'defra_name', type: 'string' },
+      firstName: { field: 'defra_firstname', type: 'string' },
+      lastName: { field: 'defra_name', type: 'string' },
       organisation: { field: 'defra_organisation', type: 'string' },
       premises: { field: 'defra_premises', type: 'string' },
       street: { field: 'defra_street', type: 'string' },
@@ -22,14 +22,14 @@ export class PoclValidationError extends BaseEntity {
       postcode: { field: 'defra_postcode', type: 'string' },
       country: { field: 'defra_country', type: 'string' },
       birthDate: { field: 'defra_birthdate', type: 'string' },
-      emailAddress: { field: 'defra_emailaddress', type: 'string' },
-      mobileNumber: { field: 'defra_mobilenumber', type: 'string' },
+      email: { field: 'defra_emailaddress', type: 'string' },
+      mobilePhone: { field: 'defra_mobilenumber', type: 'string' },
       preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      seniorConcessionId: { field: 'defra_seniorconcessionid', type: 'string' },
-      blueBadgeNumber: { field: 'defra_bluebadgenumber', type: 'string' },
-      pipReferenceNumber: { field: 'defra_pipreferencenumber', type: 'string' },
+      seniorConcession: { field: 'defra_seniorconcessionid', type: 'string' },
+      blueBadgeConcession: { field: 'defra_bluebadgenumber', type: 'string' },
+      PipConcession: { field: 'defra_pipreferencenumber', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
@@ -55,24 +55,24 @@ export class PoclValidationError extends BaseEntity {
    * The licensee forename associated with this pocl record
    * @type {string}
    */
-  get licenseeForename () {
-    return super._getState('licenseeForename')
+  get firstName () {
+    return super._getState('firstName')
   }
 
-  set licenseeForename (licenseeForename) {
-    super._setState('licenseeForename', licenseeForename)
+  set firstName (firstName) {
+    super._setState('firstName', firstName)
   }
 
   /**
    * The licensee surname associated with this pocl record
    * @type {string}
    */
-  get licenseeSurname () {
-    return super._getState('licenseeSurname')
+  get lastName () {
+    return super._getState('lastName')
   }
 
-  set licenseeSurname (licenseeSurname) {
-    super._setState('licenseeSurname', licenseeSurname)
+  set lastName (lastName) {
+    super._setState('lastName', lastName)
   }
 
   /**
@@ -85,6 +85,30 @@ export class PoclValidationError extends BaseEntity {
 
   set organisation (organisation) {
     super._setState('organisation', organisation)
+  }
+
+  /**
+   * The premises in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get premises () {
+    return super._getState('premises')
+  }
+
+  set premises (premises) {
+    super._setState('premises', premises)
+  }
+
+  /**
+   * The street in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get street () {
+    return super._getState('street')
+  }
+
+  set street (street) {
+    super._setState('street', street)
   }
 
   /**
@@ -124,18 +148,6 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The premises in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get premises () {
-    return super._getState('premises')
-  }
-
-  set premises (premises) {
-    super._setState('premises', premises)
-  }
-
-  /**
    * The country in the licensee address associated with this pocl record
    * @type {string}
    */
@@ -163,24 +175,24 @@ export class PoclValidationError extends BaseEntity {
    * The licensee's email address associated with this pocl record
    * @type {string}
    */
-  get emailAddress () {
-    return super._getState('emailAddress')
+  get email () {
+    return super._getState('email')
   }
 
-  set emailAddress (emailAddress) {
-    super._setState('emailAddress', emailAddress)
+  set email (email) {
+    super._setState('email', email)
   }
 
   /**
    * The licensee's mobile number associated with this pocl record
    * @type {string}
    */
-  get mobileNumber () {
-    return super._getState('mobileNumber')
+  get mobilePhone () {
+    return super._getState('mobilePhone')
   }
 
-  set mobileNumber (mobileNumber) {
-    super._setState('mobileNumber', mobileNumber)
+  set mobilePhone (mobilePhone) {
+    super._setState('mobilePhone', mobilePhone)
   }
 
   /**
@@ -223,36 +235,36 @@ export class PoclValidationError extends BaseEntity {
    * The type of ID shown for senior concession associated with this pocl record
    * @type {string}
    */
-  get seniorConcessionId () {
-    return super._getState('seniorConcessionId')
+  get seniorConcession () {
+    return super._getState('seniorConcession')
   }
 
-  set seniorConcessionId (seniorConcessionId) {
-    super._setState('seniorConcessionId', seniorConcessionId)
+  set seniorConcession (seniorConcession) {
+    super._setState('seniorConcession', seniorConcession)
   }
 
   /**
    * The Blue Badge number associated with this pocl record
    * @type {string}
    */
-  get blueBadgeNumber () {
-    return super._getState('blueBadgeNumber')
+  get blueBadgeConcession () {
+    return super._getState('blueBadgeConcession')
   }
 
-  set blueBadgeNumber (blueBadgeNumber) {
-    super._setState('blueBadgeNumber', blueBadgeNumber)
+  set blueBadgeConcession (blueBadgeConcession) {
+    super._setState('blueBadgeConcession', blueBadgeConcession)
   }
 
   /**
    * The PIP reference number associated with this pocl record
    * @type {string}
    */
-  get pipReferenceNumber () {
-    return super._getState('pipReferenceNumber')
+  get PipConcession () {
+    return super._getState('PipConcession')
   }
 
-  set pipReferenceNumber (pipReferenceNumber) {
-    super._setState('pipReferenceNumber', pipReferenceNumber)
+  set PipConcession (PipConcession) {
+    super._setState('PipConcession', PipConcession)
   }
 
   /**
