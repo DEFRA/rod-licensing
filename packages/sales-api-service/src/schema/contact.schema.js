@@ -63,7 +63,10 @@ const commonContactSchema = {
   postalFulfilment: Joi.boolean()
     .optional()
     .allow(null)
-    .example('true')
+    .example('true'),
+  obfuscatedDob: Joi.string()
+    .optional()
+    .max(14)
 }
 
 export const contactRequestSchema = Joi.object({

@@ -19,6 +19,7 @@
 
 {% set licenseDetailsSummaryRows = [] %}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Name' }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Identification' }, value: { text: data.permission.licensee.obfuscatedDob } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Type' }, value: { text: data.licenceTypeStr } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Length' }, value: { text: lengthText } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Starts' }, value: { text: data.startTimeString } }) }}
