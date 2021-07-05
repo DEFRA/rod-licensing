@@ -5,6 +5,9 @@ import { getGlobalOptionSetValue } from '../reference-data.service.js'
 // @IWTF-2174: Remove after testing
 import { PoclValidationError } from './temp/index.js'
 
+const BLUE_BADGE = 'Blue Badge'
+const NATIONAL_INSURANCE_NUMBER = 'National Insurance Number'
+
 const debug = db('sales:exceptions')
 
 /**
@@ -68,6 +71,21 @@ export const createTransactionFileException = async transactionFileError => {
   return stagingException
 }
 
+const getJSONString = obj => JSON.stringify(obj, null, 2)
+
+const getConcessions = (concessions) => {
+  const blueBadge = getJSONString(concessions.find(c => c.type === BLUE_BADGE))
+  const PipConcession = getJSONString(concessions.find(c => c.type === NATIONAL_INSURANCE_NUMBER))
+  // all other types of concessions are classified as senior concessions
+  const SeniorConcession = getJSONString(concessions.find(c => ![BLUE_BADGE, NATIONAL_INSURANCE_NUMBER].includes(c.type)))
+
+  return {
+    ...blueBadge && { blueBadge },
+    ...PipConcession && { PipConcession },
+    ...SeniorConcession && { SeniorConcession }
+  }
+}
+
 /**
  * @typedef {Object} TransactionValidationError
  * @property {!object} createTransactionPayload the data used to create a transaction
@@ -80,12 +98,13 @@ export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   console.log(permission)
-  const { licensee, issueDate: transactionDate, ...otherPermissionData } = permission
+  const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
   const validationErrorRecord = Object.assign(new PoclValidationError(), {
     serialNumber,
     transactionDate,
     ...licensee,
     ...otherPermissionData,
+    ...getConcessions(concessions),
     ...record.finaliseTransactionPayload.payment,
     paymentSource: record.finaliseTransactionPayload.payment.source,
     status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review'),
