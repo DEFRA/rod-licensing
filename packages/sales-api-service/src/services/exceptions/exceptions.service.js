@@ -71,20 +71,6 @@ export const createTransactionFileException = async transactionFileError => {
   return stagingException
 }
 
-const getConcessions = concessions => {
-  console.log({ concessions })
-  const blueBadgeConcession = JSON.stringify(concessions.find(c => c.proof.type === BLUE_BADGE))
-  const pipConcession = JSON.stringify(concessions.find(c => c.proof.type === NATIONAL_INSURANCE_NUMBER))
-  // all other types of concessions are classified as senior concessions
-  const seniorConcession = JSON.stringify(concessions.find(c => ![BLUE_BADGE, NATIONAL_INSURANCE_NUMBER].includes(c.proof.type)))
-
-  return {
-    ...blueBadgeConcession && { blueBadgeConcession },
-    ...pipConcession && { pipConcession },
-    ...seniorConcession && { seniorConcession }
-  }
-}
-
 /**
  * @typedef {Object} TransactionValidationError
  * @property {!object} createTransactionPayload the data used to create a transaction
@@ -103,7 +89,7 @@ export const createDataValidationError = async record => {
     transactionDate,
     ...licensee,
     ...otherPermissionData,
-    ...getConcessions(concessions),
+    ...concessions && { concessions: JSON.stringify(concessions) },
     ...record.finaliseTransactionPayload.payment,
     paymentSource: record.finaliseTransactionPayload.payment.source,
     status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review'),

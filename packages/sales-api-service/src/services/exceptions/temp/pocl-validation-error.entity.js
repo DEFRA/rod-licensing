@@ -27,9 +27,7 @@ export class PoclValidationError extends BaseEntity {
       preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      seniorConcession: { field: 'defra_seniorconcessionid', type: 'string' },
-      blueBadgeConcession: { field: 'defra_bluebadgenumber', type: 'string' },
-      pipConcession: { field: 'defra_pipreferencenumber', type: 'string' },
+      concessions: { field: 'defra_concessions', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
@@ -232,39 +230,15 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The type of ID shown for senior concession associated with this pocl record
+   * The concessions associated with this pocl record
    * @type {string}
    */
-  get seniorConcession () {
-    return super._getState('seniorConcession')
+  get concessions () {
+    return super._getState('concessions')
   }
 
-  set seniorConcession (seniorConcession) {
-    super._setState('seniorConcession', seniorConcession)
-  }
-
-  /**
-   * The Blue Badge number associated with this pocl record
-   * @type {string}
-   */
-  get blueBadgeConcession () {
-    return super._getState('blueBadgeConcession')
-  }
-
-  set blueBadgeConcession (blueBadgeConcession) {
-    super._setState('blueBadgeConcession', blueBadgeConcession)
-  }
-
-  /**
-   * The PIP reference number associated with this pocl record
-   * @type {string}
-   */
-  get pipConcession () {
-    return super._getState('pipConcession')
-  }
-
-  set pipConcession (pipConcession) {
-    super._setState('pipConcession', pipConcession)
+  set concessions (concessions) {
+    super._setState('concessions', concessions)
   }
 
   /**
