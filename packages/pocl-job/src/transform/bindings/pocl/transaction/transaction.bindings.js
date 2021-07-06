@@ -104,6 +104,15 @@ export const Transaction = new Binding({
     const paymentSource = dataSource === DIRECT_DEBIT_DATASOURCE ? DIRECT_DEBIT_PAYMENTSOURCE : POST_OFFICE_DATASOURCE
     const serialNumber = children[SerialNumber.element]
 
+    console.log('-----TRANSFORMING TRANSACTION DATA------')
+    console.log('Concessions', {
+      ...children[concessionBindings.SeniorConcession.element],
+      ...children[concessionBindings.PipConcession.element],
+      ...children[concessionBindings.BlueBadgeConcession.element]
+    })
+
+    console.log('Permit Id', children[licenceBindings.ItemId.element])
+
     return {
       id: serialNumber,
       createTransactionPayload: {
