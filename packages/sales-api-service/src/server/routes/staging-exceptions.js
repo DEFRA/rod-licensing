@@ -20,9 +20,7 @@ export default [
         }
         if (request.payload.transactionFileException) {
           response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
-          console.log('------FINISHED CREATING TRANSACTION FILE EXCEPTION-------')
           if (isDataValidationError(request.payload.transactionFileException)) {
-            console.log('------IS DATA VALIDATION ERROR-------')
             await createDataValidationError(request.payload.record)
           }
         }
