@@ -4,7 +4,7 @@ import { BaseEntity, EntityDefinition } from '@defra-fish/dynamics-lib/src/entit
  * pocl validation error entity
  * @extends BaseEntity
  */
-export class PoclValidationError extends BaseEntity {
+export class PoclDataValidationError extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition(() => ({
     localName: 'transactionValidationError',
@@ -46,7 +46,7 @@ export class PoclValidationError extends BaseEntity {
    * @type {EntityDefinition}
    */
   static get definition () {
-    return PoclValidationError._definition
+    return PoclDataValidationError._definition
   }
 
   /**

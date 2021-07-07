@@ -1,1 +1,1 @@
-export * from './pocl-validation-error.entity.js'
+export * from './pocl-data-validation-error.entity.js'

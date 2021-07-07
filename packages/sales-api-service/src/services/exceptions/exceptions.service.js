@@ -3,11 +3,7 @@ import db from 'debug'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 
 // @IWTF-2174: Remove after testing
-import { PoclValidationError } from './temp/index.js'
-
-const BLUE_BADGE = 'Blue Badge'
-const NATIONAL_INSURANCE_NUMBER = 'National Insurance Number'
-
+import { PoclDataValidationError } from './temp/index.js'
 const debug = db('sales:exceptions')
 
 /**
@@ -66,9 +62,17 @@ export const createTransactionFileException = async transactionFileError => {
     status: await getGlobalOptionSetValue(PoclStagingException.definition.mappings.status.ref, 'Open')
   })
   stagingException.bindToAlternateKey(PoclStagingException.definition.relationships.poclFile, transactionFileError.transactionFile)
-  console.log('------ABOUT TO CREATE FILE EXCEPTION-------', { stagingException })
   await persist([stagingException])
   return stagingException
+}
+
+const getPaymentData = async payment => {
+  const { source, method, ...rest } = payment
+  return {
+    ...rest,
+    paymentSource: source,
+    methodOfPayment: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.methodOfPayment.ref, method)
+  }
 }
 
 /**
@@ -77,29 +81,25 @@ export const createTransactionFileException = async transactionFileError => {
  * @property {!object} finaliseTransactionPayload the transaction data
  *
  * @param {TransactionValidationError} record
- * @returns {Promise<PoclValidationError>}
+ * @returns {Promise<PoclDataValidationError>}
  */
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
-  console.log(permission)
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
-  const validationErrorRecord = Object.assign(new PoclValidationError(), {
+  const validationErrorRecord = Object.assign(new PoclDataValidationError(), {
     serialNumber,
     transactionDate,
     ...licensee,
     ...otherPermissionData,
     ...concessions && { concessions: JSON.stringify(concessions) },
-    ...record.finaliseTransactionPayload.payment,
-    paymentSource: record.finaliseTransactionPayload.payment.source,
-    status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review'),
-    dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
-    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
-    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
-    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder),
-    methodOfPayment: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.methodOfPayment.ref, record.finaliseTransactionPayload.payment.method)
+    ...await getPaymentData(record.finaliseTransactionPayload.payment),
+    status: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.status.ref, 'Needs Review'),
+    dataSource: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.dataSource.ref, dataSource),
+    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
+    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
+    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder)
   })
-  console.log('------VALIDATION ERROR TO BE CREATED-------', { validationErrorRecord })
 
   await persist([validationErrorRecord])
   return validationErrorRecord
