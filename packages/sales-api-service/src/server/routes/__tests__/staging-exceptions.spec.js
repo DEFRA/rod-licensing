@@ -61,7 +61,13 @@ describe('staging exceptions handler', () => {
       })
 
       describe('if the error is a 422', () => {
-        it('creates a data validation error', async () => {
+        it('and record is not in payload, does not creates a data validation error', async () => {
+          transactionFileException.description = '{ "statusCode": 422 }'
+          await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { transactionFileException } })
+          expect(createDataValidationError).not.toHaveBeenCalled()
+        })
+
+        it('and record is in payload, creates a data validation error', async () => {
           transactionFileException.description = '{ "statusCode": 422 }'
           const record = {
             id: 'test-id',
