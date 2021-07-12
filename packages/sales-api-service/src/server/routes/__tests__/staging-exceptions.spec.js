@@ -22,6 +22,8 @@ describe('staging exceptions handler', () => {
     await server.stop()
   })
 
+  beforeEach(jest.clearAllMocks)
+
   describe('addStagingException', () => {
     it('adds a staging exception if the payload contains a stagingException object', async () => {
       const stagingException = {
@@ -62,13 +64,11 @@ describe('staging exceptions handler', () => {
 
       describe('if the error is a 422', () => {
         it('and record is not in payload, does not creates a data validation error', async () => {
-          transactionFileException.description = '{ "statusCode": 422 }'
-          await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { transactionFileException } })
+          await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { statusCode: 422, transactionFileException } })
           expect(createDataValidationError).not.toHaveBeenCalled()
         })
 
         it('and record is in payload, creates a data validation error', async () => {
-          transactionFileException.description = '{ "statusCode": 422 }'
           const record = {
             id: 'test-id',
             createTransactionPayload: {
@@ -92,7 +92,7 @@ describe('staging exceptions handler', () => {
               message: 'Error'
             }
           }
-          await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { transactionFileException, record } })
+          await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { statusCode: 422, transactionFileException, record } })
           expect(createDataValidationError).toHaveBeenCalledWith(record)
         })
       })

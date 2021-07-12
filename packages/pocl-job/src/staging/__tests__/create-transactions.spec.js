@@ -153,59 +153,7 @@ describe('create-transactions', () => {
         stage: RECORD_STAGE.TransactionCreationFailed
       })
     )
-    expect(salesApi.createStagingException).toHaveBeenCalledWith({
-      transactionFileException: {
-        name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
-        description: JSON.stringify(fakeApiError, null, 2),
-        json: expect.any(String),
-        transactionFile: 'test-2-records.xml',
-        type: 'Failure',
-        notes: 'Failed to create the transaction in the Sales API'
-      },
-      record: {
-        createTransactionError: {
-          error: 'Fake error',
-          message: 'Fake error message',
-          statusCode: 422
-        },
-        createTransactionPayload: {
-          dataSource: 'Post Office Sales',
-          permissions: [{
-            issueDate: '2020-07-01T12:00:00.000Z',
-            licensee: {
-              birthDate: '1975-08-26',
-              country: 'England',
-              email: 'cleaver321@email.com',
-              firstName: 'Daniel',
-              lastName: 'Cleaver',
-              mobilePhone: '07763 722080',
-              postcode: 'PL5 2AA',
-              preferredMethodOfConfirmation: 'Email',
-              preferredMethodOfNewsletter: 'Email',
-              preferredMethodOfReminder: 'Email',
-              premises: '65',
-              street: 'Groveside Close',
-              town: 'Carshalton'
-            },
-            permitId: 'test',
-            startDate: '2020-07-01T14:00:00.000Z'
-          }
-          ],
-          serialNumber: 'SERIAL 2'
-        },
-        finaliseTransactionPayload: {
-          payment: {
-            amount: 82,
-            channelId: '21995X',
-            method: 'Stamps',
-            source: 'Post Office Sales',
-            timestamp: '2020-07-01T12:00:00.000Z'
-          }
-        },
-        id: 'SERIAL 2',
-        stage: 'Transaction Creation Failed'
-      }
-    })
+    expect(salesApi.createStagingException).toMatchSnapshot()
   })
 })
 
