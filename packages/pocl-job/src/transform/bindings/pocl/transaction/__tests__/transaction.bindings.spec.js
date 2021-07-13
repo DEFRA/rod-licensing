@@ -4,7 +4,10 @@ import { POST_OFFICE_DATASOURCE, DIRECT_DEBIT_DATASOURCE } from '../../../../../
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     ...Object.keys(jest.requireActual('@defra-fish/connectors-lib').salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn() }), {}),
-    ...['permits', 'concessions'].reduce((acc, m) => ({ ...acc, [m]: { find: jest.fn(() => ({ id: `${m}-id` })) } }), {})
+    ...['permits', 'concessions'].reduce(
+      (acc, m) => ({ ...acc, [m]: { find: jest.fn(() => ({ id: `${m}-id`, isForFulfilment: false })) } }),
+      {}
+    )
   }
 }))
 

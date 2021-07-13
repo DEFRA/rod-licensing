@@ -170,7 +170,8 @@ describe('transaction service', () => {
                 country: 'GB',
                 preferredMethodOfConfirmation: 'Text',
                 preferredMethodOfNewsletter: 'Email',
-                preferredMethodOfReminder: 'Letter'
+                preferredMethodOfReminder: 'Letter',
+                postalFulfilment: false
               },
               referenceNumber: '1a0921f3-5c54-41ab-9ccd-097511c854f1',
               mandate: 'cb74dd42-6e95-46c5-9531-aa3e510e574f'
