@@ -12,8 +12,6 @@ jest.mock('../../../schema/validators/validators.js', () => ({
   createPermitConcessionValidator: () => async () => undefined
 }))
 
-const server = null
-
 describe('staging exceptions handler', () => {
   beforeEach(jest.clearAllMocks)
 
