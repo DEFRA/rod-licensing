@@ -153,7 +153,18 @@ describe('create-transactions', () => {
         stage: RECORD_STAGE.TransactionCreationFailed
       })
     )
-    expect(salesApi.createStagingException).toMatchSnapshot()
+    expect(salesApi.createStagingException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transactionFileException: {
+          name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
+          description: JSON.stringify(fakeApiError, null, 2),
+          json: expect.any(String),
+          transactionFile: 'test-2-records.xml',
+          type: 'Failure',
+          notes: 'Failed to create the transaction in the Sales API'
+        }
+      })
+    )
   })
 })
 
