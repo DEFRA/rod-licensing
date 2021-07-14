@@ -37,7 +37,7 @@ const goodAddress = {
 
 describe('The contact preferences page', () => {
   describe('where the prerequisite are not fulfilled', () => {
-    beforeAll(async d => {
+    beforeEach(async d => {
       await injectWithCookies('GET', CONTROLLER.uri)
       d()
     })
@@ -65,7 +65,7 @@ describe('The contact preferences page', () => {
   })
 
   describe('for a full 12 month licence, adult', () => {
-    beforeAll(async d => {
+    beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
@@ -120,7 +120,7 @@ describe('The contact preferences page', () => {
     it('post response none sets how-contacted - letter, in the cache', async () => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
+      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBeUndefined()
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.letter)
     })
 
@@ -135,7 +135,7 @@ describe('The contact preferences page', () => {
     it('post response email sets how-contacted - email, in the cache', async () => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.email)
+      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBeUndefined()
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.email)
     })
 
@@ -149,7 +149,7 @@ describe('The contact preferences page', () => {
     ])('post response text sets how-contacted - text in the cache for mobile number %s', async (mobileNumberi, mobileNumbero) => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: mobileNumberi })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.text)
+      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toBeUndefined()
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.text)
       expect(JSON.parse(payload).permissions[0].licensee.mobilePhone).toEqual(mobileNumbero)
     })

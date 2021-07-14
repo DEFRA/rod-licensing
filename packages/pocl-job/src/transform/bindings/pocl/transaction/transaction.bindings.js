@@ -103,6 +103,7 @@ export const Transaction = new Binding({
     const dataSource = getDataSource(children)
     const paymentSource = dataSource === DIRECT_DEBIT_DATASOURCE ? DIRECT_DEBIT_PAYMENTSOURCE : POST_OFFICE_DATASOURCE
     const serialNumber = children[SerialNumber.element]
+    const permit = children[licenceBindings.Permit.element]
 
     return {
       id: serialNumber,
@@ -120,7 +121,8 @@ export const Transaction = new Binding({
               ...children[contactBindings.Address.element],
               preferredMethodOfConfirmation: preferredNotifyMethod,
               preferredMethodOfNewsletter: preferredCommsMethod,
-              preferredMethodOfReminder: preferredNotifyMethod
+              preferredMethodOfReminder: preferredNotifyMethod,
+              postalFulfilment: permit?.isForFulfilment
             },
             issueDate: transactionDate,
             startDate: moment
@@ -132,7 +134,7 @@ export const Transaction = new Binding({
               )
               .utc()
               .toISOString(),
-            permitId: children[licenceBindings.ItemId.element],
+            permitId: permit?.id,
             ...children[concessionBindings.SeniorConcession.element],
             ...children[concessionBindings.PipConcession.element],
             ...children[concessionBindings.BlueBadgeConcession.element]

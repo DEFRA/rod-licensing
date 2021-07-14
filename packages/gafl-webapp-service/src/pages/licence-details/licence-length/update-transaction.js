@@ -12,12 +12,23 @@ import { licenceToStart } from '../licence-to-start/update-transaction.js'
  * @param permission
  */
 const checkContactDetails = permission => {
-  if (isPhysical(permission) && permission?.licensee?.preferredMethodOfConfirmation === mappings.HOW_CONTACTED.none) {
+  const preferredMethodOfConfirmation = permission?.licensee?.preferredMethodOfConfirmation
+  const preferredMethodOfReminder = permission?.licensee?.preferredMethodOfReminder
+
+  const physicalContactNone =
+    isPhysical(permission) &&
+    (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.none || preferredMethodOfReminder === mappings.HOW_CONTACTED.none)
+
+  if (physicalContactNone) {
     permission.licensee.preferredMethodOfConfirmation = mappings.HOW_CONTACTED.letter
     permission.licensee.preferredMethodOfReminder = mappings.HOW_CONTACTED.letter
   }
 
-  if (!isPhysical(permission) && permission?.licensee?.preferredMethodOfConfirmation === mappings.HOW_CONTACTED.letter) {
+  const digitalContactLeter =
+    !isPhysical(permission) &&
+    (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.letter || preferredMethodOfReminder === mappings.HOW_CONTACTED.letter)
+
+  if (digitalContactLeter) {
     permission.licensee.preferredMethodOfConfirmation = mappings.HOW_CONTACTED.none
     permission.licensee.preferredMethodOfReminder = mappings.HOW_CONTACTED.none
   }

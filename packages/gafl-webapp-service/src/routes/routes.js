@@ -14,12 +14,14 @@ import name from '../pages/contact/name/route.js'
 import addressLookup from '../pages/contact/address/lookup/route.js'
 import addressSelect from '../pages/contact/address/select/route.js'
 import addressEntry from '../pages/contact/address/entry/route.js'
+import licenceFulfilment from '../pages/contact/digital-licence/licence-fulfilment/route.js'
+import licenceConfirmationMethod from '../pages/contact/digital-licence/licence-confirmation-method/route.js'
 import contact from '../pages/contact/contact/route.js'
 import newsletter from '../pages/contact/newsletter/route.js'
 
 import termsAndConditions from '../pages/terms-and-conditions/route.js'
-import orderComplete from '../pages/order-complete/route.js'
-import orderCompletePdf from '../pages/order-complete/pdf-route.js'
+import orderComplete from '../pages/order-complete/order-complete/route.js'
+import licenceInformation from '../pages/order-complete/licence-information/route.js'
 import paymentCancelled from '../pages/payment/cancelled/route.js'
 import paymentFailed from '../pages/payment/failed/route.js'
 
@@ -45,6 +47,8 @@ const routes = [
   ...addressLookup,
   ...addressSelect,
   ...addressEntry,
+  ...licenceFulfilment,
+  ...licenceConfirmationMethod,
   ...contact,
   ...newsletter,
   ...contactSummary,
@@ -53,10 +57,10 @@ const routes = [
   ...paymentCancelled,
   ...paymentFailed,
   ...orderComplete,
+  ...licenceInformation,
   ...identify,
   ...invalidLink,
-  ...renewalStartDate,
-  orderCompletePdf
+  ...renewalStartDate
 ]
 
 if (process.env.CHANNEL === 'telesales') {

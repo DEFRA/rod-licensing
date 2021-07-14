@@ -1,0 +1,51 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = "Do you want to go paperless?" %}
+
+{% set errorMsg = 'Choose if you would like to go paperless' %}
+
+{% set errorMap = {
+        'licence-option': {
+            'any.required': { ref: '#licence-option', text: errorMsg }
+        }
+    }
+%}
+
+{% block pageContent %}
+    <p class="govuk-body">If you get your licence by email or text message you'll:</p>
+    {{ govukRadios({
+        idPrefix: "licence-option",
+        name: "licence-option",
+        hint: {
+          html: '<ul class="govuk-list govuk-list--bullet"><li>help the environment by reducing paper use</li><li>help us to save money, which we can invest in fishing</li></ul>'
+        },
+        items: [
+            {
+                value: "digital",
+                text: "Yes, go paperless",
+                checked: payload['licence-option'] === 'digital',
+                hint: {
+                    html: '<ul class="govuk-list govuk-list--bullet"><li>we\'ll send your rod licence by email or text message</li><li>the email or text message is proof of your rod licence</li></ul>'
+                }
+            },
+            {
+                value: "paper-licence",
+                text: "No, I prefer a card",
+                checked: payload['licence-option'] === 'paper-licence',
+                hint: {
+                    html: '<ul class="govuk-list govuk-list--bullet"><li>you\'ll get your rod licence card within 15 working days</li><li>if you give us your email address or text message, we\'ll send you a copy of your licence details</li></ul>'
+                }
+            }
+        ],
+        errorMessage: { text: errorMsg } if error['licence-option']
+    }) }}
+{% endblock %}
+
+{% block pricingSummary %}
+<div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+        <a href="https://www.gov.uk/government/publications/fisheries-annual-report-2019-to-2020/fisheries-annual-report-2019-to-2020" rel="noreferrer noopener" class="govuk-link" target="_blank">See how we spend money on fish and fishing (opens in a new tab)</a>.
+    </p>
+</div>
+{% endblock %}

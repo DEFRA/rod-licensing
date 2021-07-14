@@ -1,4 +1,13 @@
 
+## v1.15.0-rc.0 (2021-07-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  * [#804](https://github.com/DEFRA/rod-licensing/pull/804) feature/digital licence ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.14.0-rc.5 (2021-06-29)
 

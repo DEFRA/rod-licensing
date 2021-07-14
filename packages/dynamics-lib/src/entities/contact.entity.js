@@ -31,7 +31,8 @@ export class Contact extends BaseEntity {
         ref: 'defra_preferredcontactmethod'
       },
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' }
+      preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' }
     }
   }))
 
@@ -222,5 +223,17 @@ export class Contact extends BaseEntity {
 
   set preferredMethodOfReminder (preferredMethodOfReminder) {
     super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
+  }
+
+  /**
+   * Whether the user has requested a licence by post
+   * @type {GlobalOptionSetDefinition}
+   */
+  get postalFulfilment () {
+    return super._getState('postalFulfilment')
+  }
+
+  set postalFulfilment (postalFulfilment) {
+    super._setState('postalFulfilment', postalFulfilment)
   }
 }

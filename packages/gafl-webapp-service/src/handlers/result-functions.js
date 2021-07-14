@@ -11,6 +11,8 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   LICENCE_SUMMARY,
   NAME
@@ -23,6 +25,8 @@ import licenceType from '../pages/licence-details/licence-type/result-function.j
 import licenceLength from '../pages/licence-details/licence-length/result-function.js'
 import licenceStartTime from '../pages/licence-details/licence-start-time/result-function.js'
 import contact from '../pages/contact/contact/result-function.js'
+import licenceFulfilment from '../pages/contact/digital-licence/licence-fulfilment/result-function.js'
+import licenceConfirmationMethod from '../pages/contact/digital-licence/licence-confirmation-method/result-function.js'
 import name from '../pages/contact/name/result-function.js'
 import addressLookup from '../pages/contact/address/lookup/result-function.js'
 import addressSelect from '../pages/contact/address/select/result-function.js'
@@ -43,6 +47,8 @@ export default {
   [ADDRESS_ENTRY.page]: addressEntry,
   [ADDRESS_SELECT.page]: addressSelect,
   [CONTACT.page]: contact,
+  [LICENCE_FULFILMENT.page]: licenceFulfilment,
+  [LICENCE_CONFIRMATION_METHOD.page]: licenceConfirmationMethod,
   [NAME.page]: name,
   [LICENCE_SUMMARY.page]: licenceSummary
 }

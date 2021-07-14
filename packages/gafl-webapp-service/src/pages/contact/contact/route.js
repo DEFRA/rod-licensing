@@ -7,6 +7,7 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -32,14 +33,6 @@ const getData = async request => {
     howContacted: HOW_CONTACTED
   }
 }
-
-// Validate UK mobile phone numbers
-export const mobilePhoneRegex = /^((\+44)(\s?)|(0))(7\d{3})(\s?)(\d{3})(\s?)(\d{3})$/
-export const mobilePhoneValidator = Joi.string()
-  .trim()
-  .pattern(mobilePhoneRegex)
-  .replace(mobilePhoneRegex, '$2$4$5$7$9')
-  .example('+44 7700 900088')
 
 const validator = Joi.object({
   'how-contacted': Joi.string()

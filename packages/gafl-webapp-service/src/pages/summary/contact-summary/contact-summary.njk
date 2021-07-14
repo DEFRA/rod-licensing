@@ -8,141 +8,6 @@
 {% set title = 'Check your contact details' %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
-{% macro addressLine(line, term) %}
-    {% if line %}{{ line }}{% if not term %},{% endif %} {% endif %}
-{% endmacro %}
-
-{% set licenseeDetailsSummaryRows = [
-    {
-      key: {
-        text: "Name"
-      },
-      value: {
-        text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.name,
-            text: "Change",
-            visuallyHiddenText: "name",
-            attributes: { id: 'change-name' }
-          }
-        ]
-      }
-    },
-    {
-      key: {
-        text: "Address"
-      },
-      value: {
-        html: addressLine(data.permission.licensee.premises)
-        + addressLine(data.permission.licensee.street)
-        + addressLine(data.permission.licensee.locality)
-        + addressLine(data.permission.licensee.town)
-        + addressLine(data.permission.licensee.postcode)
-        + addressLine(data.countryName | upper, true)
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.address,
-            text: "Change",
-            visuallyHiddenText: "address",
-            attributes: { id: 'change-address' }
-          }
-        ]
-      }
-    }
-  ]
-%}
-
-{% if data.isPhysical %}
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Licence card"
-        },
-        value: {
-          text: 'By post within the next 15 working days'
-        }
-    }) }}
-{% endif %}
-
-{% if data.isPhysical %}
-    {% if data.contactMethod === data.howContacted['letter'] %}
-        {% set contactPref = 'By post' %}
-    {% elseif data.contactMethod === data.howContacted['email'] %}
-        {% set contactPref = 'By email: ' + data.permission.licensee.email %}
-    {% elseif data.contactMethod === data.howContacted['text'] %}
-        {% set contactPref = 'By text: ' + data.permission.licensee.mobilePhone %}
-    {% endif %}
-
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Contact preference"
-        },
-        value: {
-        html: contactPref
-      },
-      actions: {
-        items: [
-          {
-            href: data.uri.contact,
-            text: "Change",
-            visuallyHiddenText: "contact",
-            attributes: { id: 'change-contact' }
-          }
-        ]
-      }
-    }) }}
-{% else %}
-    {% if data.contactMethod === data.howContacted['none'] %}
-        {% set licencePref = 'Make a note on confirmation' %}
-    {% elseif data.contactMethod === data.howContacted['email'] %}
-        {% set licencePref = 'By email: ' + data.permission.licensee.email %}
-    {% elseif data.contactMethod === data.howContacted['text'] %}
-        {% set licencePref = 'By text: ' + data.permission.licensee.mobilePhone %}
-    {% endif %}
-
-    {{ licenseeDetailsSummaryRows.push({
-        key: {
-          text: "Licence details"
-        },
-        value: {
-          text: licencePref
-        },
-        actions: {
-            items: [
-              {
-                href: data.uri.contact,
-                text: "Change",
-                visuallyHiddenText: "contact",
-                attributes: { id: 'change-contact' }
-              }
-            ]
-          }
-    }) }}
-{% endif %}
-
-{{ licenseeDetailsSummaryRows.push({
-    key: {
-      text: "Newsletter"
-    },
-    value: {
-      text: 'Yes' if data.newsLetter else 'No'
-    },
-    actions: {
-      items: [
-        {
-          href: data.uri.newsletter,
-          text: "Change",
-          visuallyHiddenText: "newsletter",
-          attributes: { id: 'change-newsletter' }
-        }
-      ]
-    }
-}) }}
-
 {% set licenseeDetailsSummary %}
     {% call govukFieldset({
       legend: {
@@ -151,7 +16,7 @@
         isPageHeading: true
       }
     }) %}
-        {{ govukSummaryList({ rows: licenseeDetailsSummaryRows }) }}
+        {{ govukSummaryList({ rows: data.summaryTable }) }}
     {% endcall %}
 {% endset -%}
 
@@ -176,6 +41,7 @@
                 text: "Continue",
                 classes: "govuk-!-margin-top-5"
             }) }}
+
             {{ csrf() }}
         </form>
 
