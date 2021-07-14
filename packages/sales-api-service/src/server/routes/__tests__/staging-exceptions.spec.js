@@ -1,9 +1,7 @@
-import initialiseServer from '../../server.js'
 import { createStagingException, createTransactionFileException, createDataValidationError } from '../../../services/exceptions/exceptions.service.js'
 import stagingExceptionsRoute from '../staging-exceptions.js'
 import Joi from 'joi'
-const [{ options: { handler: stagingExceptionsHandler } }] = stagingExceptionsRoute
-const [{ options: { validate: { payload: payloadValidationSchema } } }] = stagingExceptionsRoute
+const [{ options: { handler: stagingExceptionsHandler, validate: { payload: payloadValidationSchema } } }] = stagingExceptionsRoute
 jest.mock('../../../services/exceptions/exceptions.service.js')
 jest.mock('../../../schema/validators/validators.js', () => ({
   ...jest.requireActual('../../../schema/validators/validators.js'),
@@ -14,29 +12,21 @@ jest.mock('../../../schema/validators/validators.js', () => ({
   createPermitConcessionValidator: () => async () => undefined
 }))
 
-let server = null
+const server = null
 
 describe('staging exceptions handler', () => {
-  beforeAll(async () => {
-    server = await initialiseServer({ port: null })
-  })
-
-  afterAll(async () => {
-    await server.stop()
-  })
-
   beforeEach(jest.clearAllMocks)
 
   describe('addStagingException', () => {
     describe('if the payload contains a stagingException object', () => {
-      let stagingException
+      const stagingException = Object.freeze({
+        stagingId: 'string',
+        description: 'string',
+        transactionJson: 'string',
+        exceptionJson: 'string'
+      })
+
       beforeEach(() => {
-        stagingException = {
-          stagingId: 'string',
-          description: 'string',
-          transactionJson: 'string',
-          exceptionJson: 'string'
-        }
         createStagingException.mockResolvedValueOnce(stagingException)
       })
 
@@ -54,17 +44,17 @@ describe('staging exceptions handler', () => {
     })
 
     describe('if the payload contains a transactionFileException object', () => {
-      let transactionFileException
+      const transactionFileException = Object.freeze({
+        name: 'string',
+        description: '{ "json": "string" }',
+        json: 'string',
+        notes: 'string',
+        type: 'Failure',
+        transactionFile: 'string',
+        permissionId: 'string'
+      })
+
       beforeEach(() => {
-        transactionFileException = {
-          name: 'string',
-          description: '{ "json": "string" }',
-          json: 'string',
-          notes: 'string',
-          type: 'Failure',
-          transactionFile: 'string',
-          permissionId: 'string'
-        }
         createTransactionFileException.mockResolvedValueOnce(transactionFileException)
         createDataValidationError.mockResolvedValue()
       })
@@ -110,7 +100,7 @@ describe('staging exceptions handler', () => {
               message: 'Error'
             }
           }
-          const payload = { statusCode: 422, transactionFileException: getSampleTransactionFileException(), record }
+          const payload = { statusCode: 422, transactionFileException, record }
           await stagingExceptionsHandler({ payload }, getMockResponseToolkit())
           expect(createDataValidationError).toHaveBeenCalledWith(record)
         })
@@ -128,13 +118,4 @@ const getMockResponseToolkit = (code = jest.fn()) => ({
   response: jest.fn(() => ({
     code
   }))
-})
-const getSampleTransactionFileException = () => ({
-  name: 'string',
-  description: '{ "json": "string" }',
-  json: 'string',
-  notes: 'string',
-  type: 'Failure',
-  transactionFile: 'string',
-  permissionId: 'string'
 })
