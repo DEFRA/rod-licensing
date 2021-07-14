@@ -3,12 +3,12 @@ import { retrieveGlobalOptionSets } from '../..'
 
 describe('pocl staging exception entity', () => {
   let optionSetData
-  beforeEach(async () => {
+  beforeAll(async () => {
     optionSetData = await retrieveGlobalOptionSets().cached()
   })
   describe('maps from dynamics', () => {
     let exception
-    beforeEach(() => {
+    beforeAll(() => {
       exception = PoclDataValidationError.fromResponse(
         {
           '@odata.etag': 'W/"56351087"',
