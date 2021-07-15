@@ -166,6 +166,13 @@ describe('create-transactions', () => {
       })
     )
   })
+  it('adds record to staging exception', async () => {
+    salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
+    const fakeApiError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }
+    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
+    const { calls: [[{ record }]] } = salesApi.createStagingException.mock
+    expect(record).toMatchSnapshot()
+  })
 })
 
 const expectCreateTransactionCalls = (...arrayLengths) => {
