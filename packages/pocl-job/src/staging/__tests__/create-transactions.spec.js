@@ -153,16 +153,25 @@ describe('create-transactions', () => {
         stage: RECORD_STAGE.TransactionCreationFailed
       })
     )
-    expect(salesApi.createStagingException).toHaveBeenCalledWith({
-      transactionFileException: {
-        name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
-        description: JSON.stringify(fakeApiError, null, 2),
-        json: expect.any(String),
-        transactionFile: 'test-2-records.xml',
-        type: 'Failure',
-        notes: 'Failed to create the transaction in the Sales API'
-      }
-    })
+    expect(salesApi.createStagingException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transactionFileException: {
+          name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
+          description: JSON.stringify(fakeApiError, null, 2),
+          json: expect.any(String),
+          transactionFile: 'test-2-records.xml',
+          type: 'Failure',
+          notes: 'Failed to create the transaction in the Sales API'
+        }
+      })
+    )
+  })
+  it('adds record to staging exception', async () => {
+    salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
+    const fakeApiError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }
+    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
+    const { calls: [[{ record }]] } = salesApi.createStagingException.mock
+    expect(record).toMatchSnapshot()
   })
 })
 

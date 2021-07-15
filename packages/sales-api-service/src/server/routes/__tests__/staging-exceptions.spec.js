@@ -1,6 +1,7 @@
-import initialiseServer from '../../server.js'
-import { createStagingException, createTransactionFileException } from '../../../services/exceptions/exceptions.service.js'
-
+import { createStagingException, createTransactionFileException, createDataValidationError } from '../../../services/exceptions/exceptions.service.js'
+import stagingExceptionsRoute from '../staging-exceptions.js'
+import Joi from 'joi'
+const [{ options: { handler: stagingExceptionsHandler, validate: { payload: payloadValidationSchema } } }] = stagingExceptionsRoute
 jest.mock('../../../services/exceptions/exceptions.service.js')
 jest.mock('../../../schema/validators/validators.js', () => ({
   ...jest.requireActual('../../../schema/validators/validators.js'),
@@ -11,58 +12,108 @@ jest.mock('../../../schema/validators/validators.js', () => ({
   createPermitConcessionValidator: () => async () => undefined
 }))
 
-let server = null
-
 describe('staging exceptions handler', () => {
-  beforeAll(async () => {
-    server = await initialiseServer({ port: null })
-  })
-
-  afterAll(async () => {
-    await server.stop()
-  })
+  beforeEach(jest.clearAllMocks)
 
   describe('addStagingException', () => {
-    it('adds a staging exception if the payload contains a stagingException object', async () => {
-      const stagingException = {
+    describe('if the payload contains a stagingException object', () => {
+      const stagingException = Object.freeze({
         stagingId: 'string',
         description: 'string',
         transactionJson: 'string',
         exceptionJson: 'string'
-      }
-      createStagingException.mockResolvedValueOnce(stagingException)
-      const result = await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { stagingException } })
-      expect(createStagingException).toHaveBeenCalledWith(stagingException)
-      expect(result.statusCode).toBe(200)
-      expect(JSON.parse(result.payload)).toMatchObject({ stagingException })
+      })
+
+      beforeEach(() => {
+        createStagingException.mockResolvedValueOnce(stagingException)
+      })
+
+      it('adds a staging exception', async () => {
+        await stagingExceptionsHandler({ payload: { stagingException } }, getMockResponseToolkit())
+        expect(createStagingException).toHaveBeenCalledWith(stagingException)
+      })
+
+      it('status code is ok', async () => {
+        const codeMock = jest.fn()
+        const responseToolkit = getMockResponseToolkit(codeMock)
+        await stagingExceptionsHandler({ payload: { stagingException } }, responseToolkit)
+        expect(codeMock).toHaveBeenCalledWith(200)
+      })
     })
 
-    it('adds a transaction file exception if the payload contains a transactionFileException object', async () => {
-      const transactionFileException = {
+    describe('if the payload contains a transactionFileException object', () => {
+      const transactionFileException = Object.freeze({
         name: 'string',
-        description: 'string',
+        description: '{ "json": "string" }',
         json: 'string',
         notes: 'string',
         type: 'Failure',
         transactionFile: 'string',
         permissionId: 'string'
-      }
-      createTransactionFileException.mockResolvedValueOnce(transactionFileException)
-      const result = await server.inject({ method: 'POST', url: '/stagingExceptions', payload: { transactionFileException } })
-      expect(createTransactionFileException).toHaveBeenCalledWith(transactionFileException)
-      expect(result.statusCode).toBe(200)
-      expect(JSON.parse(result.payload)).toMatchObject({ transactionFileException })
-    })
+      })
 
-    it('throws 422 errors if the payload was invalid', async () => {
-      const result = await server.inject({ method: 'POST', url: '/stagingExceptions', payload: {} })
-      expect(result.statusCode).toBe(422)
-      expect(JSON.parse(result.payload)).toMatchObject({
-        error: 'Unprocessable Entity',
-        message:
-          'Invalid payload: "create-staging-exception-request" must contain at least one of [stagingException, transactionFileException]',
-        statusCode: 422
+      beforeEach(() => {
+        createTransactionFileException.mockResolvedValueOnce(transactionFileException)
+        createDataValidationError.mockResolvedValue()
+      })
+
+      it('adds a transaction file exception', async () => {
+        await stagingExceptionsHandler({ payload: { transactionFileException } }, getMockResponseToolkit())
+        expect(createTransactionFileException).toHaveBeenCalledWith(transactionFileException)
+      })
+
+      it('status code is ok', async () => {
+        const codeMock = jest.fn()
+        const responseToolkit = getMockResponseToolkit(codeMock)
+        await stagingExceptionsHandler({ payload: { transactionFileException } }, responseToolkit)
+        expect(codeMock).toHaveBeenCalledWith(200)
+      })
+
+      describe('if the error is a 422', () => {
+        it('and record is not in payload, does not creates a data validation error', async () => {
+          await stagingExceptionsHandler({ payload: { statusCode: 422, transactionFileException } }, getMockResponseToolkit())
+          expect(createDataValidationError).not.toHaveBeenCalled()
+        })
+        it('and record is in payload, creates a data validation error', async () => {
+          const record = {
+            id: 'test-id',
+            createTransactionPayload: {
+              dataSource: 'Post Office Sales',
+              serialNumber: '14345-48457J',
+              permissions: []
+            },
+            finaliseTransactionPayload: {
+              payment: {
+                timestamp: '2020-01-01T14:00:00Z',
+                amount: 30,
+                source: 'Post Office Sales',
+                channelId: '948594',
+                method: 'Cash'
+              }
+            },
+            stage: 'Staging',
+            createTransactionError: {
+              statusCode: 422,
+              error: 'Data validation error',
+              message: 'Error'
+            }
+          }
+          const payload = { statusCode: 422, transactionFileException, record }
+          await stagingExceptionsHandler({ payload }, getMockResponseToolkit())
+          expect(createDataValidationError).toHaveBeenCalledWith(record)
+        })
       })
     })
+
+    it('validation fails if the payload is invalid', async () => {
+      const func = () => Joi.assert({}, payloadValidationSchema)
+      expect(func).toThrow()
+    })
   })
+})
+
+const getMockResponseToolkit = (code = jest.fn()) => ({
+  response: jest.fn(() => ({
+    code
+  }))
 })
