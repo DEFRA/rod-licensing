@@ -157,17 +157,15 @@ describe('exceptions service', () => {
   })
 
   describe('createDataValidationError', () => {
-    let record, result
-    beforeEach(async () => {
-      record = getDataValidationError()
-      result = await createDataValidationError(record)
-    })
-
-    it('maps the record to an instance of PoclDataValidationError', () => {
+    it('maps the record to an instance of PoclDataValidationError', async () => {
+      const record = getDataValidationError()
+      const result = await createDataValidationError(record)
       expect(result).toBeInstanceOf(PoclDataValidationError)
     })
 
-    it('maps the record data correctly', () => {
+    it('maps the record data correctly', async () => {
+      const record = getDataValidationError()
+      const result = await createDataValidationError(record)
       expect(result).toMatchSnapshot()
     })
   })
