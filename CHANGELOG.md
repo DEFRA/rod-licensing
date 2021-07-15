@@ -1,4 +1,13 @@
 
+## v1.16.0-rc.0 (2021-07-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#806](https://github.com/DEFRA/rod-licensing/pull/806) Links opening in new window without notifying the user ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.15.0-rc.0 (2021-07-13)
 
