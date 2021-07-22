@@ -3,8 +3,11 @@ import { createTransactionFileException, createStagingException, createDataValid
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
-const isDataValidationError = payload =>
-  !!payload.record && payload.statusCode === 422
+const isDataValidationError = payload => {
+  console.log({ payload })
+  const { statusCode } = JSON.parse(payload.transactionFileException.description)
+  return !!payload.record && statusCode === 422
+}
 
 export default [
   {
@@ -18,6 +21,7 @@ export default [
         }
         if (request.payload.transactionFileException) {
           response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
+          console.log({ request, payload: request.payload })
           if (isDataValidationError(request.payload)) {
             await createDataValidationError(request.payload.record)
           }
