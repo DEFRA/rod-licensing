@@ -98,7 +98,13 @@ describe('staging exceptions handler', () => {
               message: 'Error'
             }
           }
-          const payload = { statusCode: 422, transactionFileException, record }
+          const payload = {
+            transactionFileException: {
+              ...transactionFileException,
+              description: '{ "statusCode": 422 }'
+            },
+            record
+          }
           await stagingExceptionsHandler({ payload }, getMockResponseToolkit())
           expect(createDataValidationError).toHaveBeenCalledWith(record)
         })
