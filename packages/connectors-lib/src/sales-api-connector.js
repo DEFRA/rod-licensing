@@ -156,6 +156,14 @@ export const updatePaymentJournal = async (id, data) => exec2xxOrThrow(call(new 
 export const createStagingException = async data => exec2xxOrThrow(call(new URL('/stagingExceptions', urlBase), 'post', data))
 
 /**
+ * Retrieve all POCL validation errors which have a "Ready for processing" status
+ *
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const getPoclValidationErrorsForProcessing = async () => exec2xxOrThrow(call(new URL('/dataValidationErrors', urlBase), 'get'))
+
+/**
  * Retrieve details of a system user
  *
  * @param oid the Azure object ID pertaining to the system user
