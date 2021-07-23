@@ -1,5 +1,4 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { getPoclValidationErrorsForProcessing } from './temp-connector.js'
 import db from 'debug'
 const debug = db('sales:pocl-validation-errors')
 
@@ -33,7 +32,7 @@ const processFailed = async failed => {
 }
 
 export const processPoclValidationErrors = async () => {
-  const validationErrorsForProcessing = await getPoclValidationErrorsForProcessing()
+  const validationErrorsForProcessing = await salesApi.getPoclValidationErrorsForProcessing()
   debug('Retrieved %d records with a "Ready for Processing" status', validationErrorsForProcessing.length)
   const reprocessResults = await reprocessValidationErrors(validationErrorsForProcessing)
   const { succeeded, failed } = getSucceededAndFailedRecords(reprocessResults)
