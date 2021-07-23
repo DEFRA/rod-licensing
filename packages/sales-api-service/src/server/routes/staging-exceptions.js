@@ -1,5 +1,6 @@
-import { createStagingExceptionRequestSchema, createStagingExceptionResponseSchema } from '../../schema/staging-exception.schema.js'
+import { createStagingExceptionRequestSchema, createStagingExceptionResponseSchema, poclValidationErrorListSchema } from '../../schema/staging-exception.schema.js'
 import { createTransactionFileException, createStagingException, createDataValidationError } from '../../services/exceptions/exceptions.service.js'
+import { getPoclValidationErrors } from '../../services/exceptions/pocl-data-validation-errors.service.js'
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -39,6 +40,25 @@ export default [
             422: { description: 'The request payload was invalid' }
           },
           order: 1
+        }
+      }
+    }
+  },
+  {
+    method: 'GET',
+    path: '/dataValidationErrors',
+    options: {
+      handler: async (request, h) => h.response(await getPoclValidationErrors()).code(200),
+      description: 'Get all active data validation errors for processing',
+      notes: `
+        Query for all active POCL data validation errors which have a "Ready for Processing" status
+      `,
+      tags: ['api', 'pocl-data-validation'],
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { schema: poclValidationErrorListSchema }
+          }
         }
       }
     }
