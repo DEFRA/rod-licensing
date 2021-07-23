@@ -54,6 +54,7 @@
             assetsPath: assetPath + '/images',
             homepageUrl: "https://www.gov.uk/",
             serviceUrl: "/",
+            classes: "no-print",
             containerClasses: "govuk-width-container",
             serviceName: "Get a rod fishing licence" if not TELESALES else "Get a rod fishing licence (TELESALES)"
         })
@@ -121,6 +122,7 @@
 
 {% block footer %}
     {{ govukFooter({
+        classes: "no-print",
         meta: {
             html: footerHtml
         }

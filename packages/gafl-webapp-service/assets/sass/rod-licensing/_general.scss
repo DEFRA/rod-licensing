@@ -7,9 +7,53 @@ div.hidden-area {
 }
 
 @media print {
+
+  @page {
+    // size: A4, this affects the margin in the printer settings
+    margin: 0mm;
+  }
+
   .no-print {
     display: none !important;
   }
+
+  .pagebreak {
+    page-break-after: always;
+    position: relative;
+    top: 3cm;
+  }
+
+  .pagebreak:last-child {
+    page-break-after: auto;
+  }
+
+  .govuk-summary-list {
+    width: 16cm;
+  }
+
+  .govuk-heading-l {
+    font-size: 20pt;
+  }
+
+  .govuk-body,
+  .govuk-summary-list {
+    font-size: 14pt;
+  }
+
+  .govuk-grid-column-two-thirds {
+    width: 100%;
+  }
+
+  // general good print practice
+
+  h1, h2, h3, h4, h5 {
+    page-break-after: avoid;
+  }
+
+  table, figure {
+    page-break-inside: avoid;
+  }
+
 }
 
 @media screen {
@@ -17,6 +61,11 @@ div.hidden-area {
   .print-area * {
     display: none;
   }
+}
+
+.ea-logo {
+  width: 192px;
+  margin-bottom: 2cm;
 }
 
 div.no-border {
