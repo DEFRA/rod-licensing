@@ -25,7 +25,7 @@ const capitaliseNamePrefixes = prefixes => {
   return value => value && value.replace(regex, (match, g1, g2) => `${titleCaseFn(g1)}${g2.toUpperCase()}`)
 }
 
-const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
+const dateStringFormats = ['YYYY-MM-DD', 'YYYY-M-DD', 'YYYY-MM-D', 'YYYY-M-D']
 
 /**
  * Create a validator to check a contact's birth date
