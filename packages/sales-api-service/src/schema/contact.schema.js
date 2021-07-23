@@ -44,7 +44,7 @@ const commonContactSchema = {
   postcode: Joi.when(Joi.ref(DATASOURCE_REF), {
     is: Joi.string().valid(...POCL_TRANSACTION_SOURCES),
     then: Joi.alternatives().conditional('country', {
-      is: Joi.string().valid('GB', 'United Kingdom'),
+      is: Joi.string().valid('GB', 'GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'United Kingdom', 'England', 'Wales', 'Scotland', 'Northern Ireland'),
       then: validation.contact
         .createUKPostcodeValidator(Joi)
         .optional()

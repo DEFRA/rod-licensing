@@ -5,7 +5,7 @@ import { s3ToLocal } from './transport/s3-to-local.js'
 import { getFileRecords } from './io/db.js'
 import { removeTemp } from './io/file.js'
 import { stage } from './staging/pocl-data-staging.js'
-import { processPoclValidationErrors } from './staging/pocl-data-validation-errors'
+import { processPoclValidationErrors } from './staging/pocl-data-validation-errors.js'
 import { FILE_STAGE } from './staging/constants.js'
 
 import db from 'debug'
