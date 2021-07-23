@@ -1,4 +1,13 @@
 
+## v1.16.0-rc.3 (2021-07-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#816](https://github.com/DEFRA/rod-licensing/pull/816) Print Licence Confirmation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 ## v1.16.0-rc.0 (2021-07-15)
