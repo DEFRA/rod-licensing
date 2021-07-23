@@ -29,7 +29,7 @@ describe('contact validators', () => {
       await expect(contactValidation.createBirthDateValidator(Joi).validateAsync('1-111-19')).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)
     })
 
-    it('throws if given the year is specified as 2 digits', async () => {
+    it('throws if the year is specified as 2 digits', async () => {
       const testValueIn = validDate.format('YY-MM-DD')
       await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)
     })
