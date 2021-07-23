@@ -1,5 +1,5 @@
 import { retrieveMultiple } from '@defra-fish/dynamics-lib'
-import { PoclDataValidationError } from './temp'
+import { PoclDataValidationError } from './temp/pocl-data-validation-error.entity.js'
 /**
  * Query for POCL data validation errors with 'Ready for Processing' status
  * @param {*} payload
