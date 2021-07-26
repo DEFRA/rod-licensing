@@ -2,17 +2,6 @@ import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import { PoclDataValidationError } from './temp/pocl-data-validation-error.entity.js'
 const READY_FOR_PROCESSING_ID = 910400000 // change last digit to 1
 
-const getRecords = async () => {
-  const filters = [
-    `${PoclDataValidationError.definition.mappings.status.field} eq ${READY_FOR_PROCESSING_ID}`,
-    `${PoclDataValidationError.definition.defaultFilter}`
-  ]
-
-  // perform a multiple records retrieve operation
-  const { value } = await dynamicsClient.retrieveMultipleRequest(PoclDataValidationError.definition.toRetrieveRequest(filters.join(' and ')))
-  return value
-}
-
 /**
  * Query for POCL data validation errors with 'Ready for Processing' status
  * @param {*} payload
@@ -20,12 +9,14 @@ const getRecords = async () => {
  */
 export async function getPoclValidationErrors () {
   console.log('about to retrieve validation errors')
-  const validationErrors = await getRecords()
-  console.log({ validationErrors })
-  const recordsReadyForProcessing = validationErrors.filter(record => {
-    console.log({ record, status: record.status })
-    return record.status.label === 'Needs Review'
-  })
-  console.log({ recordsReadyForProcessing })
-  return recordsReadyForProcessing
+  const filters = [
+    `${PoclDataValidationError.definition.mappings.status.field} eq ${READY_FOR_PROCESSING_ID}`,
+    `${PoclDataValidationError.definition.defaultFilter}`
+  ]
+
+  const { value } = await dynamicsClient.retrieveMultipleRequest(
+    PoclDataValidationError.definition.toRetrieveRequest(filters.join(' and '))
+  )
+  console.log(`Retrieved ${value.length} records`, value)
+  return value
 }
