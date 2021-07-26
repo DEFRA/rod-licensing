@@ -1,5 +1,6 @@
 import Joi from 'joi'
-import { contactResponseSchema } from './contact.schema.js'
+import { commonContactSchema } from './contact.schema.js'
+import { optionSetOption } from './option-set.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
@@ -67,7 +68,11 @@ export const createStagingExceptionRequestSchema = Joi.object(schemaObject)
 export const createStagingExceptionResponseSchema = Joi.object(schemaObject).label('create-staging-exception-response')
 
 export const poclValidationErrorItemSchema = Joi.object({
-  ...contactResponseSchema,
+  ...commonContactSchema,
+  country: optionSetOption,
+  preferredMethodOfConfirmation: optionSetOption,
+  preferredMethodOfNewsletter: optionSetOption,
+  preferredMethodOfReminder: optionSetOption,
   concessions: concessionProofSchema.optional(),
   startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
   serialNumber: Joi.string().trim().required(),
