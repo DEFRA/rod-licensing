@@ -4,8 +4,9 @@ import { Contact } from '@defra-fish/dynamics-lib'
 import { validation, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { optionSetOption } from './option-set.schema.js'
 const DATASOURCE_REF = '/dataSource'
+const UK_COUNTRIES = ['GB', 'GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'United Kingdom', 'England', 'Wales', 'Scotland', 'Northern Ireland']
 
-const commonContactSchema = {
+export const commonContactSchema = {
   id: Joi.string()
     .guid()
     .optional()
@@ -44,7 +45,7 @@ const commonContactSchema = {
   postcode: Joi.when(Joi.ref(DATASOURCE_REF), {
     is: Joi.string().valid(...POCL_TRANSACTION_SOURCES),
     then: Joi.alternatives().conditional('country', {
-      is: Joi.string().valid('GB', 'GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'United Kingdom', 'England', 'Wales', 'Scotland', 'Northern Ireland'),
+      is: Joi.string().valid(...UK_COUNTRIES),
       then: validation.contact
         .createUKPostcodeValidator(Joi)
         .optional()
