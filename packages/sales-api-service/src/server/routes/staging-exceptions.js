@@ -48,7 +48,10 @@ export default [
     method: 'GET',
     path: '/dataValidationErrors',
     options: {
-      handler: async (request, h) => h.response(await getPoclValidationErrors()).code(200),
+      handler: async (request, h) => {
+        console.log('Inside Sales API endpoint')
+        return h.response(await getPoclValidationErrors()).code(200)
+      },
       description: 'Get all active data validation errors for processing',
       notes: `
         Query for all active POCL data validation errors which have a "Ready for Processing" status

@@ -6,7 +6,10 @@ import { PoclDataValidationError } from './temp/pocl-data-validation-error.entit
  * @returns {Array<Object>}
  */
 export async function getPoclValidationErrors () {
+  console.log('about to retrieve validation errors')
   const validationErrors = await retrieveMultiple(PoclDataValidationError)
+  console.log({ validationErrors: validationErrors.length })
   const recordsReadyForProcessing = validationErrors.filter(record => record.status.label === 'Ready for Processing')
+  console.log({ recordsReadyForProcessing })
   return recordsReadyForProcessing
 }
