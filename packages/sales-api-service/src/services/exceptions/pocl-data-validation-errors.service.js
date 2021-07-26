@@ -9,8 +9,8 @@ export async function getPoclValidationErrors () {
   console.log('about to retrieve validation errors')
   const validationErrors = await retrieveMultiple(PoclDataValidationError).cached()
   const recordsReadyForProcessing = validationErrors.filter(record => {
-    console.log({ record })
-    return record.status.label === 'Ready for Processing'
+    console.log({ record, status: record.status })
+    return record.status.label === 'Needs Review'
   })
   console.log({ recordsReadyForProcessing })
   return recordsReadyForProcessing
