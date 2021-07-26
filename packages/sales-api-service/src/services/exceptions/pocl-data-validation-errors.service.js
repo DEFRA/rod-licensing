@@ -1,15 +1,16 @@
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import { PoclDataValidationError } from './temp/pocl-data-validation-error.entity.js'
-const READY_FOR_PROCESSING_ID = 910400000
+const READY_FOR_PROCESSING_ID = 910400000 // change last digit to 1
 
 const getRecords = async () => {
   const filters = [
     `${PoclDataValidationError.definition.mappings.status.field} eq ${READY_FOR_PROCESSING_ID}`,
     `${PoclDataValidationError.definition.defaultFilter}`
   ]
-  console.log({ filters })
+
   // perform a multiple records retrieve operation
-  return dynamicsClient.retrieveMultipleRequest(PoclDataValidationError.definition.toRetrieveRequest(filters.join(' and ')))
+  const { value } = await dynamicsClient.retrieveMultipleRequest(PoclDataValidationError.definition.toRetrieveRequest(filters.join(' and ')))
+  return value
 }
 
 /**
