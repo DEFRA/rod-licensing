@@ -1,8 +1,12 @@
+import db from 'debug'
+
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
+
+const debug = db('webapp:page-handler')
 
 /**
  * Flattens the error structure from joi for use in the templates
@@ -59,7 +63,23 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
-    const page = await request.cache().helpers.page.getCurrentPermission(view)
+    let page
+    // try catch to find out what is causing "Cannot read property 'view' of undefined"
+    try {
+      page = await request.cache().helpers.page.getCurrentPermission(view)
+    } catch (err) {
+      const pageCache = await request.cache().helpers.page.get()
+      debug(`Page cache - ${JSON.stringify(pageCache)}`)
+
+      const statusCache = await request.cache().helpers.status.get()
+      debug(`Status cache - ${JSON.stringify(statusCache)}`)
+
+      const transactionCache = await request.cache().helpers.transaction.get()
+      debug(`Transaction cache - ${JSON.stringify(transactionCache)}`)
+
+      throw err
+    }
+
     const pageData = page || {}
 
     // The page data payload may be enriched by the data fetched by getData
