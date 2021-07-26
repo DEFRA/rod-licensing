@@ -7,7 +7,7 @@ const getRecords = async () => {
     `${PoclDataValidationError.definition.mappings.status.field} eq ${READY_FOR_PROCESSING_ID}`,
     `${PoclDataValidationError.definition.defaultFilter}`
   ]
-  
+
   // perform a multiple records retrieve operation
   return dynamicsClient.retrieveMultipleRequest(PoclDataValidationError.definition.toRetrieveRequest(filters.join(' and ')))
 }
@@ -19,7 +19,6 @@ const getRecords = async () => {
  */
 export async function getPoclValidationErrors () {
   console.log('about to retrieve validation errors')
-  const
   const validationErrors = await getRecords()
   const recordsReadyForProcessing = validationErrors.filter(record => {
     console.log({ record, status: record.status })
