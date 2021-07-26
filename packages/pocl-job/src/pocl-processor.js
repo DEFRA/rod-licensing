@@ -32,6 +32,8 @@ export async function execute () {
     onLockObtained: async () => {
       try {
         await config.initialise()
+        debug('Processing validation errors')
+        await processPoclValidationErrors()
         debug('Retrieving files from FTP')
         await ftpToS3()
         await refreshS3Metadata()
@@ -40,8 +42,6 @@ export async function execute () {
         const localXmlFiles = await Promise.all(pendingFileRecords.map(record => s3ToLocal(record.s3Key)))
         debug('Processing files: %o', localXmlFiles)
         await Promise.all(localXmlFiles.map(f => stage(f)))
-        debug('Processing validation errors')
-        await processPoclValidationErrors()
       } finally {
         removeTemp()
       }
