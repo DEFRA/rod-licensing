@@ -31,34 +31,48 @@
         {{ govukBackLink({
               text: "Back",
               href: backRef,
-              classes: "govuk-!-margin-bottom-7"
+              classes: "govuk-!-margin-bottom-7 no-print"
         }) }}
-        <h1 class="govuk-heading-xl">{{ title }}</h1>
+        <section class="no-print">
+            <h1 class="govuk-heading-xl">{{ title }}</h1>
 
-        <p class="govuk-body-l">
-            This is proof of your fishing licence. You might find it useful to take a screenshot or print out this page.
-        </p>
+            <p class="govuk-body-l">
+                This is proof of your fishing licence. You might find it useful to take a screenshot or print out this page.
+            </p>
 
-        <p class="govuk-body">
-            If you gave us your email address, you’ll get a message that includes your licence information.
-        </p>
+            <p class="govuk-body">
+                If you gave us your email address, you’ll get a message that includes your licence information.
+            </p>
+        </section>
 
-        <h2 class="govuk-heading-l">{{ data.permission.referenceNumber }}</h2>
+        <section class="pagebreak">
 
-        {{ govukSummaryList({
-          rows: licenseDetailsSummaryRows
-        }) }}
+            <img src="/public/images/EA-logo-black.png" class="print-area ea-logo">
 
-        {{ govukInsetText({
-          html: 'You must follow the rod fishing byelaws.<br/>Search for <a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link">rod fishing byelaws</a> on GOV.UK.'
-        }) }}
+            <span class="govuk-caption-xl"><span class="print-area">Licence number</span></span>
 
-        {{ govukWarningText({
-            html: "Report an environmental incident on 0800 80 70 60.<br />This is a 24-hour service.",
-            iconFallbackText: "Warning",
-            classes: "govuk-!-margin-top-6"
-        }) }}
+            <h2 class="govuk-heading-l">{{ data.permission.referenceNumber }}</h2>
 
+            {{ govukSummaryList({
+                rows: licenseDetailsSummaryRows
+            }) }}
+
+            {{ govukInsetText({
+                html: 'You must follow the rod fishing byelaws.<br/>Search for <a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link">rod fishing byelaws</a> on GOV.UK.',
+                classes: "no-print"
+            }) }}
+
+            {{ govukInsetText({
+                html: 'You must follow the rod fishing byelaws.<br/>Search for ‘rod fishing byelaws’ on GOV.UK.',
+                classes: "print-area"
+            }) }}
+
+            {{ govukWarningText({
+                html: "Report an environmental incident on 0800 80 70 60.<br />This is a 24-hour service.",
+                iconFallbackText: "Warning",
+                classes: "govuk-!-margin-top-6"
+            }) }}
+        </section>
     </div>
 </div>
 {% endblock %}

@@ -1,5 +1,35 @@
 
 
+## v1.16.0-rc.4 (2021-07-23)
+
+#### :bug: Bug Fix
+* `business-rules-lib`
+  * [#818](https://github.com/DEFRA/rod-licensing/pull/818) Unexpected response from the Sales API - date before minimum allowed ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.16.0-rc.3 (2021-07-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#816](https://github.com/DEFRA/rod-licensing/pull/816) Print Licence Confirmation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+
+## v1.16.0-rc.0 (2021-07-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#806](https://github.com/DEFRA/rod-licensing/pull/806) Links opening in new window without notifying the user ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
 ## v1.15.0-rc.0 (2021-07-13)
 
 #### :rocket: Enhancement
