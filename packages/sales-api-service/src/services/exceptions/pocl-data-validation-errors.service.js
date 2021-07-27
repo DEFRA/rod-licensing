@@ -4,7 +4,7 @@ import { PoclValidationError } from './temp/pocl-data-validation-error.entity.js
 const POCL_VALIDATION_ERROR_STATUS_OPTIONSET = 'defra_poclvalidationerrorstatus'
 
 const getRecords = async () => {
-  const statuses = await retrieveGlobalOptionSets().cache()
+  const statuses = await retrieveGlobalOptionSets().cached()
   const status = Object.values(statuses[POCL_VALIDATION_ERROR_STATUS_OPTIONSET].options).find(o => o.label === 'Ready for Processing')
 
   const filters = [
