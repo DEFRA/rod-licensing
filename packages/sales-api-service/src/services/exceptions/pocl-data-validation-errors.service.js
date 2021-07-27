@@ -1,16 +1,22 @@
-import { executeQuery, retrieveGlobalOptionSets, PoclValidationError, PredefinedQuery } from '@defra-fish/dynamics-lib'
+import { dynamicsClient, retrieveGlobalOptionSets } from '@defra-fish/dynamics-lib'
+import { PoclValidationError } from './temp/pocl-data-validation-error.entity.js'
 
 const POCL_VALIDATION_ERROR_STATUS_OPTIONSET = 'defra_poclvalidationerrorstatus'
 
 const getRecords = async () => {
   const statuses = await retrieveGlobalOptionSets().cache()
   const status = Object.values(statuses[POCL_VALIDATION_ERROR_STATUS_OPTIONSET].options).find(o => o.label === 'Ready for Processing')
+
   const filters = [
     `${PoclValidationError.definition.mappings.status.field} eq ${status.id}`,
     `${PoclValidationError.definition.defaultFilter}`
   ]
 
-  return executeQuery(new PredefinedQuery({ root: PoclValidationError, filter: filters.join(' and ') }))
+  const { value } = await dynamicsClient.retrieveMultipleRequest(
+    PoclValidationError.definition.toRetrieveRequest(filters.join(' and '))
+  )
+  console.log(`Retrieved ${value.length} records`, value)
+  return value
 }
 
 /**
