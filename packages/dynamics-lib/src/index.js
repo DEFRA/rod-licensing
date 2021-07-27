@@ -24,7 +24,6 @@ export * from './entities/system-user.entity.js'
 // Queries
 export * from './queries/permission.queries.js'
 export * from './queries/fulfilment.queries.js'
-export * from './queries/validation-errors.queries.js'
 
 // Framework functionality
 export * from './client/util.js'
