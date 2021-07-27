@@ -60,7 +60,7 @@ export default [
       plugins: {
         'hapi-swagger': {
           responses: {
-            200: { schema: poclValidationErrorListSchema }
+            200: { description: 'OK', schema: poclValidationErrorListSchema }
           }
         }
       }

@@ -3,7 +3,7 @@ import db from 'debug'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 
 // @IWTF-2174: Remove after testing
-import { PoclDataValidationError } from './temp/index.js'
+import { PoclValidationError } from './temp/index.js'
 const debug = db('sales:exceptions')
 
 /**
@@ -71,7 +71,7 @@ const getPaymentData = async payment => {
   return {
     ...rest,
     paymentSource: source,
-    methodOfPayment: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.methodOfPayment.ref, method)
+    methodOfPayment: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.methodOfPayment.ref, method)
   }
 }
 
@@ -81,24 +81,24 @@ const getPaymentData = async payment => {
  * @property {!object} finaliseTransactionPayload the transaction data
  *
  * @param {TransactionValidationError} record
- * @returns {Promise<PoclDataValidationError>}
+ * @returns {Promise<PoclValidationError>}
  */
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
-  const validationErrorRecord = Object.assign(new PoclDataValidationError(), {
+  const validationErrorRecord = Object.assign(new PoclValidationError(), {
     serialNumber,
     transactionDate,
     ...licensee,
     ...otherPermissionData,
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
-    status: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.status.ref, 'Needs Review'),
-    dataSource: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.dataSource.ref, dataSource),
-    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
-    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
-    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclDataValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder)
+    status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Needs Review'),
+    dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
+    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
+    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
+    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder)
   })
 
   await persist([validationErrorRecord])
