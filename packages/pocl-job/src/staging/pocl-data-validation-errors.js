@@ -7,7 +7,6 @@ const mapRecords = records => records.map(record => ({
   serialNumber: record.serialNumber,
   permissions: [{
     licensee: {
-      id: record.id,
       firstName: record.firstName,
       lastName: record.lastName,
       birthDate: record.birthDate,
