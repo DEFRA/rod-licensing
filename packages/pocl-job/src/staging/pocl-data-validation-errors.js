@@ -79,7 +79,7 @@ export const processPoclValidationErrors = async () => {
   const validationErrorsForProcessing = await salesApi.getPoclValidationErrorsForProcessing()
   debug('Retrieved %d records for reprocessing', validationErrorsForProcessing.length)
   const { succeeded, failed } = await reprocessValidationErrors(mapRecords(validationErrorsForProcessing))
-  debug('Successfully reprocessed %d POCL validation errors: ^%o', succeeded.length, succeeded)
+  debug('Successfully reprocessed %d POCL validation errors: %o', succeeded.length, JSON.stringify(succeeded))
 
   await processFailed(failed)
 }
