@@ -3,6 +3,7 @@ import db from 'debug'
 const debug = db('pocl:validation-errors')
 
 const mapRecords = records => records.map(record => ({
+  id: record.id,
   createTransactionsPayload: {
     dataSource: record.dataSource.label,
     serialNumber: record.serialNumber,
@@ -41,24 +42,11 @@ const mapRecords = records => records.map(record => ({
   }
 }))
 
-const sortRecordsAndResults = (results, records) => {
-  const succeeded = []
-  const failed = []
-  records.forEach((record, idx) => {
-    const result = results[idx]
-      ; (result.statusCode === 201 ? succeeded : failed).push({ record, result })
-  })
-
-  return { succeeded, failed }
-}
-
-const reprocessValidationErrors = async records => {
-  const creationResults = await salesApi.createTransactions(records.map(rec => rec.createTransactionsPayload))
-  const { succeeded, failed } = sortRecordsAndResults(creationResults, records)
-  // const finalisationResults = await await Promise.allSettled(succeeded.map(rec => salesApi.finaliseTransactionPayload(rec.finaliseTransactionPayload)))
-  return { succeeded, failed }
-}
-const processFailed = async failed => {
+/**
+ * Calls Sales Api to update Dynamics record
+ * @param {Array<Object>} failed
+ */
+const processFailedCreationResults = async failed => {
   for (const { record, result } of failed) {
     debug('Failed to create transaction when reprocessing record: %o, result: %o', record, result)
     // await salesApi.createStagingException({
@@ -75,11 +63,66 @@ const processFailed = async failed => {
   }
 }
 
+const createTransactions = async records => {
+  const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionsPayload))
+
+  const succeeded = []
+  const failed = []
+  records.forEach((record, idx) => {
+    const result = results[idx]
+      ; (result.statusCode === 201 ? succeeded : failed).push({ record, result })
+  })
+
+  debug('Successfully created %d transactions', succeeded.length)
+
+  // handle further validation errors
+  await processFailedCreationResults(failed)
+
+  return { succeeded, failed }
+}
+
+const finaliseTransactions = async records => {
+  const finalisationResults = await Promise.allSettled(
+    records.map(r =>
+      salesApi.finaliseTransactionPayload(r.result.response.id, r.record.finaliseTransactionPayload)
+    ))
+
+  const succeeded = []
+  const failed = []
+  records.forEach((record, idx) => {
+    const result = finalisationResults[idx]
+    if (result.status === 'fulfilled') {
+      succeeded.push({ record, response: result.value })
+    } else if (result.reason.status === 410) {
+      /*
+        HTTP-410 errors indicate that the record has already been finalised.  This can occur if the process is terminated while finalising records
+        (between the API call and the database update.) As the transaction has already been finalised, treat these as successful.  The data for the
+        previously finalised record is returned under the data key of the error structure returned by the Sales API
+       */
+      succeeded.push({ record, response: result.reason.body.data })
+    } else {
+      failed.push({ record, reason: result.reason })
+    }
+  })
+  debug('Successfully finalised %d transactions', succeeded.length)
+  debug('Failed when finalising %d transactions', failed.length)
+
+  // update Dynamics records
+  // await processSuccessfulFinalisationResults(succeeded)
+  await processFailedCreationResults(failed)
+
+  return { succeeded, failed }
+}
+
+const reprocessValidationErrors = async records => {
+  const createResults = await createTransactions(records)
+  const finalisationResults = await finaliseTransactions(createResults.succeeded)
+  return finalisationResults
+}
+
 export const processPoclValidationErrors = async () => {
   const validationErrorsForProcessing = await salesApi.getPoclValidationErrorsForProcessing()
   debug('Retrieved %d records for reprocessing', validationErrorsForProcessing.length)
-  const { succeeded, failed } = await reprocessValidationErrors(mapRecords(validationErrorsForProcessing))
-  debug('Successfully reprocessed %d POCL validation errors: %o', succeeded.length, JSON.stringify(succeeded))
-
-  await processFailed(failed)
+  const { succeeded } = await reprocessValidationErrors(mapRecords(validationErrorsForProcessing))
+  return succeeded
 }
