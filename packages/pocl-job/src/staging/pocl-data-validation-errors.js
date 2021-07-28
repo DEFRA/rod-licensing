@@ -45,7 +45,7 @@ const reprocessValidationErrors = async records => {
 }
 const processFailed = async failed => {
   for (const { record, result } of failed) {
-    debug('Failed to create transaction when reprocessing record: %o', record)
+    debug('Failed to create transaction when reprocessing record: %o, result: %o', record, result)
     // await salesApi.createStagingException({
     //   transactionFileException: {
     //     name: `${filename}: FAILED-CREATE-${record.id}`,
