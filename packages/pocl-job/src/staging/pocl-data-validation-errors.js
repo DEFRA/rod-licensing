@@ -2,8 +2,37 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
+const mapRecords = records => records.map(record => ({
+  dataSource: record.dataSource.label,
+  serialNumber: record.serialNumber,
+  permissions: [{
+    licensee: {
+      id: record.id,
+      firstName: record.firstName,
+      lastName: record.lastName,
+      birthDate: record.birthDate,
+      email: record.email,
+      mobilePhone: record.mobilePhone,
+      organisation: record.organisation,
+      premises: record.premises,
+      street: record.street,
+      locality: record.locality,
+      town: record.town,
+      postcode: record.postcode,
+      country: record.country,
+      preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
+      preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
+      preferredMethodOfReminder: record.preferredMethodOfReminder.label
+    },
+    issueDate: record.transactionDate,
+    startDate: record.startDate,
+    permitId: record.permitId,
+    concessions: record.concessions
+  }]
+}))
+
 const reprocessValidationErrors = async records => {
-  const results = await Promise.all(records.map(record => salesApi.createTransaction(record)))
+  const results = await salesApi.createTransactions(mapRecords(records))
 
   const succeeded = []
   const failed = []
