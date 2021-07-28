@@ -27,7 +27,7 @@ const mapRecords = records => records.map(record => ({
     issueDate: record.transactionDate,
     startDate: record.startDate,
     permitId: record.permitId,
-    concessions: record.concessions
+    ...record.concessions && { concessions: JSON.parse(record.concessions) }
   }]
 }))
 
