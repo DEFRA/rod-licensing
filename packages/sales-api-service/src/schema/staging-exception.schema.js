@@ -95,4 +95,4 @@ export const poclValidationErrorItemSchema = Joi.object({
 
 export const poclValidationErrorListSchema = Joi.array()
   .items(poclValidationErrorItemSchema)
-  .label('reference-data-item-list')
+  .label('pocl-data-validation-error-item-list')
