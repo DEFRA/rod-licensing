@@ -35,7 +35,7 @@
           firstCellIsHeader: true,
           head: [ { text: "Name" }, { text: "Purpose" }, { text: "Expires" } ],
           rows: [
-            [ { text: cookie.sess }, { text: "Used for session management" }, { text: "3 hours after you stop using the service" } ],
+            [ { text: cookie.sess }, { text: "Used for session management" }, { text: "24 hours after you stop using the service" } ],
             [ { text: cookie.csrf }, { text: "Used to protect the service against malicious activity" }, { text: "Until you close your browser" } ]
           ]
         }) }}
@@ -62,8 +62,8 @@
           firstCellIsHeader: true,
           head: [ { text: "Name" }, { text: "Purpose" }, { text: "Expires" } ],
           rows: [
-            [ { text: cookie.alb }, { text: "Used to ensure you receive a consistent experience" }, { text: "3 hours after you stop using the service" } ],
-            [ { text: cookie.albcors }, { text: "Used to ensure you receive a consistent experience" }, { text: "3 hours after you stop using the service" } ]
+            [ { text: cookie.alb }, { text: "Used to ensure you receive a consistent experience" }, { text: "7 days after you stop using the service" } ],
+            [ { text: cookie.albcors }, { text: "Used to ensure you receive a consistent experience" }, { text: "7 days after you stop using the service" } ]
           ]
         }) }}
 
