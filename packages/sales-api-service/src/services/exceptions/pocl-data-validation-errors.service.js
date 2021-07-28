@@ -1,14 +1,12 @@
 import { dynamicsClient, findPoclValidationErrors } from '@defra-fish/dynamics-lib'
-// import { getGlobalOptionSetValue } from '../reference-data.service.js'
+import { getGlobalOptionSetValue } from '../reference-data.service.js'
+
+const POCL_VALIDATION_ERROR_STATUS_OPTIONSET = 'defra_poclvalidationerrorstatus'
 
 // @IWTF-2175: Remove after testing
 // import { PoclValidationError } from './temp/pocl-data-validation-error.entity.js'
 
 // const getRecords = async () => {
-//   const status = await getGlobalOptionSetValue(
-//     PoclValidationError.definition.mappings.status.ref,
-//     'Ready for Processing'
-//   )
 
 //   const filters = [
 //     `${PoclValidationError.definition.mappings.status.field} eq ${status.id}`,
@@ -29,7 +27,8 @@ import { dynamicsClient, findPoclValidationErrors } from '@defra-fish/dynamics-l
  */
 export async function getPoclValidationErrors () {
   console.log('about to retrieve validation errors')
-  const records = await findPoclValidationErrors()
+  const status = await getGlobalOptionSetValue(POCL_VALIDATION_ERROR_STATUS_OPTIONSET, 'Ready for Processing')
+  const records = await findPoclValidationErrors(status)
   console.log(`Retrieved ${records.length} records`, records)
   return records
 }
