@@ -84,7 +84,7 @@ const createTransactions = async records => {
 const finaliseTransactions = async records => {
   const finalisationResults = await Promise.allSettled(
     records.map(r =>
-      salesApi.finaliseTransactionPayload(r.result.response.id, r.record.finaliseTransactionPayload)
+      salesApi.finaliseTransaction(r.result.response.id, r.record.finaliseTransactionPayload)
     ))
 
   const succeeded = []
