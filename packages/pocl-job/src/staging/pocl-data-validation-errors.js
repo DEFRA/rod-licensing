@@ -92,7 +92,7 @@ const finaliseTransactions = async records => {
 
   const succeeded = []
   const failed = []
-  records.forEach((record, idx) => {
+  records.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
     if (result.status === 'fulfilled') {
       succeeded.push({ record, response: result.value })
