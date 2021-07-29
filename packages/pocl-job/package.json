@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@defra-fish/business-rules-lib": "1.14.0",
-    "@defra-fish/connectors-lib": "DGajewska/connectors-lib#master",
+    "@defra-fish/connectors-lib": "github:DGajewska/connectors-lib#master",
     "commander": "^7.2.0",
     "debug": "^4.3.1",
     "filesize": "^6.3.0",
