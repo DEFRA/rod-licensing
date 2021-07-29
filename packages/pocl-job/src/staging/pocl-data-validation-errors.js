@@ -2,10 +2,12 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
+const getOptionSetValue = data => data.label || data
+
 const mapRecords = records => records.map(record => ({
   poclValidationErrorId: record.id,
   createTransactionsPayload: {
-    dataSource: record.dataSource.label,
+    dataSource: getOptionSetValue(record.dataSource),
     serialNumber: record.serialNumber,
     permissions: [{
       licensee: {
@@ -21,9 +23,9 @@ const mapRecords = records => records.map(record => ({
         town: record.town,
         postcode: record.postcode,
         country: record.country,
-        preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
-        preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
-        preferredMethodOfReminder: record.preferredMethodOfReminder.label
+        preferredMethodOfConfirmation: getOptionSetValue(record.preferredMethodOfConfirmation),
+        preferredMethodOfNewsletter: getOptionSetValue(record.preferredMethodOfNewsletter),
+        preferredMethodOfReminder: getOptionSetValue(record.preferredMethodOfReminder)
       },
       issueDate: record.transactionDate,
       startDate: record.startDate,
@@ -37,7 +39,7 @@ const mapRecords = records => records.map(record => ({
       amount: record.amount,
       source: record.paymentSource,
       channelId: record.channelId,
-      method: record.methodOfPayment.label
+      method: getOptionSetValue(record.methodOfPayment)
     }
   }
 }))
