@@ -3,7 +3,7 @@ import db from 'debug'
 const debug = db('pocl:validation-errors')
 
 const mapRecords = records => records.map(record => ({
-  id: record.id,
+  poclValidationErrorId: record.id,
   createTransactionsPayload: {
     dataSource: record.dataSource.label,
     serialNumber: record.serialNumber,
@@ -49,17 +49,14 @@ const mapRecords = records => records.map(record => ({
 const processFailedCreationResults = async failed => {
   for (const { record, result } of failed) {
     debug('Failed to create transaction when reprocessing record: %o, result: %o', record, result)
-    // await salesApi.createStagingException({
-    //   transactionFileException: {
-    //     name: `${filename}: FAILED-CREATE-${record.id}`,
-    //     description: JSON.stringify(result, null, 2),
-    //     json: JSON.stringify(record, null, 2),
-    //     notes: 'Failed to create the transaction in the Sales API',
-    //     type: 'Failure',
-    //     transactionFile: filename
-    //   },
-    //   record
-    // })
+    await salesApi.updatePoclValidationError(record.poclValidationErrorId, record)
+  }
+}
+
+const processSuccessfulFinalisationResults = async succeeded => {
+  for (const { record } of succeeded) {
+    debug('Successfully finalised transaction when reprocessing record: %o', record)
+    await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, status: 'Processed' })
   }
 }
 
@@ -108,8 +105,8 @@ const finaliseTransactions = async records => {
   debug('Failed when finalising %d transactions', failed.length)
 
   // update Dynamics records
-  // await processSuccessfulFinalisationResults(succeeded)
-  await processFailedCreationResults(failed)
+  await processSuccessfulFinalisationResults(succeeded)
+  // await processFailedCreationResults(failed)
 
   return { succeeded, failed }
 }
