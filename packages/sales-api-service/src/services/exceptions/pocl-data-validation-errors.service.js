@@ -1,4 +1,4 @@
-import { executeQuery, findById, persist, findPoclValidationErrors, PoclValidationError } from '@defra-fish/dynamics-lib'
+import { executeQuery, findById, persist, findPoclValidationErrors, PoclValidationError, PoclStagingException } from '@defra-fish/dynamics-lib'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 import db from 'debug'
 import { Boom } from '@hapi/boom'
@@ -31,10 +31,10 @@ const getStatus = async record => {
   return getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label)
 }
 
-const mapToPoclValidationErrorEntity = async record => {
+const flattenRecordPayload = async record => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
-  return Object.assign(new PoclValidationError(), {
+  return {
     serialNumber,
     transactionDate,
     ...licensee,
@@ -46,7 +46,7 @@ const mapToPoclValidationErrorEntity = async record => {
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
     preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder)
-  })
+  }
 }
 
 /**
@@ -59,7 +59,8 @@ const mapToPoclValidationErrorEntity = async record => {
  */
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
-  const validationError = await mapToPoclValidationErrorEntity(record.createTransactionPayload)
+  const data = await flattenRecordPayload(record.createTransactionPayload)
+  const validationError = Object.assign(new PoclStagingException(), data)
   await persist([validationError])
   return validationError
 }
@@ -79,7 +80,7 @@ export const updatePoclValidationError = async (id, payload) => {
   if (!validationError) {
     throw Boom.notFound('A POCL validation error with the given identifier could not be found')
   }
-  const mappedRecord = await mapToPoclValidationErrorEntity(payload)
+  const mappedRecord = await flattenRecordPayload(payload)
   console.log({ mappedRecord })
   const updated = Object.assign(validationError, mappedRecord)
   await persist([updated])
