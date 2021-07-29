@@ -74,11 +74,13 @@ export const createDataValidationError = async record => {
  * @returns {Promise<PoclValidationError>}
  */
 export const updatePoclValidationError = async (id, payload) => {
+  debug('Updating POCL validation record: %o', payload)
   const validationError = await findById(PoclValidationError, id)
   if (!validationError) {
     throw Boom.notFound('A POCL validation error with the given identifier could not be found')
   }
   const mappedRecord = await mapToPoclValidationErrorEntity(payload)
+  console.log({ mappedRecord })
   const updated = Object.assign(validationError, mappedRecord)
   await persist([updated])
 }
