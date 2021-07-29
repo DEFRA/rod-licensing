@@ -31,8 +31,8 @@ const getStatus = async record => {
   return getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label)
 }
 
-const mapToPoclValidationErrorEntity = async record => {
-  const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
+const mapToPoclValidationErrorEntity = async payload => {
+  const { dataSource, serialNumber, permissions: [permission] } = payload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
   return Object.assign(new PoclValidationError(), {
     serialNumber,
@@ -59,7 +59,7 @@ const mapToPoclValidationErrorEntity = async record => {
  */
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
-  const validationError = await mapToPoclValidationErrorEntity(record)
+  const validationError = await mapToPoclValidationErrorEntity(record.createTransactionPayload)
   await persist([validationError])
   return validationError
 }
