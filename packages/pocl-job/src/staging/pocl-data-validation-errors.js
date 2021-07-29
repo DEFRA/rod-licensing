@@ -6,7 +6,7 @@ const getOptionSetValue = data => data.label || data
 
 const mapRecords = records => records.map(record => ({
   poclValidationErrorId: record.id,
-  createTransactionsPayload: {
+  createTransactionPayload: {
     dataSource: getOptionSetValue(record.dataSource),
     serialNumber: record.serialNumber,
     permissions: [{
