@@ -74,6 +74,10 @@ const createTransactions = async records => {
 
   debug('Successfully created %d transactions', succeeded.length)
 
+  console.log('-------CREATE TRANSACTIONS-------')
+  console.log('SUCCEEDED', succeeded)
+  console.log('FAILED', failed)
+
   // handle further validation errors
   await processFailedCreationResults(failed)
 
