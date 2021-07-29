@@ -63,7 +63,7 @@ const processSuccessfulFinalisationResults = async succeeded => {
 }
 
 const createTransactions = async records => {
-  const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionsPayload))
+  const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionPayload))
 
   const succeeded = []
   const failed = []
