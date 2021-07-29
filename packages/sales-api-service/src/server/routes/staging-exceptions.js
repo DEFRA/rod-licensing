@@ -5,8 +5,8 @@ import {
   poclValidationErrorParamsSchema,
   updatePoclValidationErrorPayload
 } from '../../schema/staging-exception.schema.js'
-import { createTransactionFileException, createStagingException, createDataValidationError } from '../../services/exceptions/exceptions.service.js'
-import { getPoclValidationErrors, updatePoclValidationError } from '../../services/exceptions/pocl-data-validation-errors.service.js'
+import { createTransactionFileException, createStagingException } from '../../services/exceptions/exceptions.service.js'
+import { createDataValidationError, getPoclValidationErrors, updatePoclValidationError } from '../../services/exceptions/pocl-data-validation-errors.service.js'
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -92,7 +92,7 @@ export default [
           responses: {
             200: { description: 'OK', schema: poclValidationErrorListSchema },
             400: { description: 'Invalid request params' },
-            404: { description: 'No POCL validation error with the given id exists' },
+            404: { description: 'A POCL validation error with the given identifier could not be found' },
             422: { description: 'Invalid payload' }
           }
         }
