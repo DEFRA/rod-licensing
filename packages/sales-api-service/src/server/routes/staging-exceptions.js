@@ -1,6 +1,12 @@
-import { createStagingExceptionRequestSchema, createStagingExceptionResponseSchema, poclValidationErrorListSchema } from '../../schema/staging-exception.schema.js'
+import {
+  createStagingExceptionRequestSchema,
+  createStagingExceptionResponseSchema,
+  poclValidationErrorListSchema,
+  poclValidationErrorParamsSchema,
+  updatePoclValidationErrorPayload
+} from '../../schema/staging-exception.schema.js'
 import { createTransactionFileException, createStagingException, createDataValidationError } from '../../services/exceptions/exceptions.service.js'
-import { getPoclValidationErrors } from '../../services/exceptions/pocl-data-validation-errors.service.js'
+import { getPoclValidationErrors, updatePoclValidationError } from '../../services/exceptions/pocl-data-validation-errors.service.js'
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -46,10 +52,9 @@ export default [
   },
   {
     method: 'GET',
-    path: '/dataValidationErrors',
+    path: '/poclValidationErrors',
     options: {
       handler: async (request, h) => {
-        console.log('Inside Sales API endpoint')
         return h.response(await getPoclValidationErrors()).code(200)
       },
       description: 'Get all active data validation errors for processing',
@@ -61,6 +66,34 @@ export default [
         'hapi-swagger': {
           responses: {
             200: { description: 'OK', schema: poclValidationErrorListSchema }
+          }
+        }
+      }
+    }
+  },
+  {
+    method: 'PATCH',
+    path: '/poclValidationErrors/{id}',
+    options: {
+      handler: async (request, h) => {
+        return h.response(await updatePoclValidationError(request.params.id, request.payload)).code(200)
+      },
+      description: 'Get all active data validation errors for processing',
+      notes: `
+        Query for all active POCL data validation errors which have a "Ready for Processing" status
+      `,
+      tags: ['api', 'pocl-validation-error'],
+      validate: {
+        params: poclValidationErrorParamsSchema,
+        payload: updatePoclValidationErrorPayload
+      },
+      plugins: {
+        'hapi-swagger': {
+          responses: {
+            200: { description: 'OK', schema: poclValidationErrorListSchema },
+            400: { description: 'Invalid request params' },
+            404: { description: 'No POCL validation error with the given id exists' },
+            422: { description: 'Invalid payload' }
           }
         }
       }

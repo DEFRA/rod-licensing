@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { v4 as uuidv4 } from 'uuid'
 import { commonContactSchema } from './contact.schema.js'
 import { optionSetOption } from './option-set.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
@@ -96,3 +97,14 @@ export const poclValidationErrorItemSchema = Joi.object({
 export const poclValidationErrorListSchema = Joi.array()
   .items(poclValidationErrorItemSchema)
   .label('pocl-data-validation-error-item-list')
+
+export const poclValidationErrorParamsSchema = Joi.object({
+  id: Joi.string()
+    .trim()
+    .guid()
+    .required()
+    .description('The POCL validation error identifier')
+    .example(uuidv4())
+})
+
+export const updatePoclValidationErrorPayload = Joi.object().required()
