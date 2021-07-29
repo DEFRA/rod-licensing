@@ -58,6 +58,7 @@ const processFailedCreationResults = async failed => {
 const processSuccessfulFinalisationResults = async succeeded => {
   for (const { record } of succeeded) {
     debug('Successfully finalised transaction when reprocessing record: %o', record)
+    console.log('Sending record to SalesApi', { ...record, status: 'Processed' })
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, status: 'Processed' })
   }
 }
