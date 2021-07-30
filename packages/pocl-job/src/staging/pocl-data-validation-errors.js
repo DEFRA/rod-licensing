@@ -2,12 +2,10 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
-const getOptionSetValue = data => data.label || data
-
 const mapRecords = records => records.map(record => ({
   poclValidationErrorId: record.id,
   createTransactionPayload: {
-    dataSource: getOptionSetValue(record.dataSource),
+    dataSource: record.dataSource.label,
     serialNumber: record.serialNumber,
     permissions: [{
       licensee: {
@@ -23,9 +21,9 @@ const mapRecords = records => records.map(record => ({
         town: record.town,
         postcode: record.postcode,
         country: record.country,
-        preferredMethodOfConfirmation: getOptionSetValue(record.preferredMethodOfConfirmation),
-        preferredMethodOfNewsletter: getOptionSetValue(record.preferredMethodOfNewsletter),
-        preferredMethodOfReminder: getOptionSetValue(record.preferredMethodOfReminder)
+        preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
+        preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
+        preferredMethodOfReminder: record.preferredMethodOfReminder.label
       },
       issueDate: record.transactionDate,
       startDate: record.startDate,
@@ -39,7 +37,7 @@ const mapRecords = records => records.map(record => ({
       amount: record.amount,
       source: record.paymentSource,
       channelId: record.channelId,
-      method: getOptionSetValue(record.methodOfPayment)
+      method: record.methodOfPayment.label
     }
   }
 }))
@@ -48,17 +46,16 @@ const mapRecords = records => records.map(record => ({
  * Calls Sales Api to update Dynamics record
  * @param {Array<Object>} failed
  */
-const processFailedCreationResults = async failed => {
+const processFailed = async failed => {
   for (const { record, result } of failed) {
-    debug('Failed to create transaction when reprocessing record: %o, result: %o', record, result)
+    debug('Failed when reprocessing record: %o', record)
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, record)
   }
 }
 
-const processSuccessfulFinalisationResults = async succeeded => {
+const processSucceeded = async succeeded => {
   for (const { record } of succeeded) {
-    debug('Successfully finalised transaction when reprocessing record: %o', record)
-    console.log('Sending record to SalesApi', { ...record, status: 'Processed' })
+    debug('Successfully reprocessed record: %o', record)
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, status: 'Processed' })
   }
 }
@@ -73,26 +70,17 @@ const createTransactions = async records => {
       ; (result.statusCode === 201 ? succeeded : failed).push({ record, result })
   })
 
-  debug('Successfully created %d transactions', succeeded.length)
-
-  console.log('-------CREATE TRANSACTIONS-------')
-  console.log('SUCCEEDED', succeeded)
-  console.log('FAILED', failed)
-
-  // handle further validation errors
-  await processFailedCreationResults(failed)
-
   return { succeeded, failed }
 }
 
 const finaliseTransactions = async records => {
+  const { succeeded: created, failed } = records
   const finalisationResults = await Promise.allSettled(
-    records.map(r =>
-      salesApi.finaliseTransaction(r.result.response.id, r.record.finaliseTransactionPayload)
+    created.map(rec =>
+      salesApi.finaliseTransaction(rec.result.response.id, rec.record.finaliseTransactionPayload)
     ))
 
   const succeeded = []
-  const failed = []
   records.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
     if (result.status === 'fulfilled') {
@@ -108,25 +96,17 @@ const finaliseTransactions = async records => {
       failed.push({ record, reason: result.reason })
     }
   })
-  debug('Successfully finalised %d transactions', succeeded.length)
-  debug('Failed when finalising %d transactions', failed.length)
 
-  // update Dynamics records
-  await processSuccessfulFinalisationResults(succeeded)
-  // await processFailedCreationResults(failed)
+  // updates Dynamics records
+  await processSucceeded(succeeded)
+  await processFailed(failed)
 
   return { succeeded, failed }
-}
-
-const reprocessValidationErrors = async records => {
-  const createResults = await createTransactions(records)
-  const finalisationResults = await finaliseTransactions(createResults.succeeded)
-  return finalisationResults
 }
 
 export const processPoclValidationErrors = async () => {
   const validationErrorsForProcessing = await salesApi.getPoclValidationErrorsForProcessing()
   debug('Retrieved %d records for reprocessing', validationErrorsForProcessing.length)
-  const { succeeded } = await reprocessValidationErrors(mapRecords(validationErrorsForProcessing))
-  return succeeded
+  const createResults = await createTransactions(mapRecords(validationErrorsForProcessing))
+  return finaliseTransactions(createResults)
 }

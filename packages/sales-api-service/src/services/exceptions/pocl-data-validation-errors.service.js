@@ -31,7 +31,7 @@ const getStatus = async record => {
   return getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label)
 }
 
-const flattenRecordPayload = async record => {
+const mapRecordPayload = async record => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
   return {
@@ -59,7 +59,7 @@ const flattenRecordPayload = async record => {
  */
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
-  const data = await flattenRecordPayload(record.createTransactionPayload)
+  const data = await mapRecordPayload(record.createTransactionPayload)
   const validationError = Object.assign(new PoclStagingException(), data)
   await persist([validationError])
   return validationError
@@ -80,8 +80,7 @@ export const updatePoclValidationError = async (id, payload) => {
   if (!validationError) {
     throw Boom.notFound('A POCL validation error with the given identifier could not be found')
   }
-  const mappedRecord = await flattenRecordPayload(payload)
-  console.log({ mappedRecord })
+  const mappedRecord = await mapRecordPayload(payload)
   const updated = Object.assign(validationError, mappedRecord)
   await persist([updated])
 }
