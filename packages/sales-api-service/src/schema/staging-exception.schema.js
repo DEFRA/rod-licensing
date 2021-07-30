@@ -89,8 +89,12 @@ export const poclValidationErrorItemSchema = Joi.object({
     .description('Channel specific identifier'),
   methodOfPayment: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
-  status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing')
-
+  status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
+  activeStatus: Joi.object({
+    id: Joi.number.allow(1, 2).required(),
+    description: Joi.string().allow('Active', 'Inactive').required(),
+    label: Joi.string().allow('Active', 'Inactive').required()
+  }).required()
 })
   .label('pocl-data-validation-error-item')
 

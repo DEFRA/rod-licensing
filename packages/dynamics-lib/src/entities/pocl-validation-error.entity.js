@@ -37,7 +37,8 @@ export class PoclValidationError extends BaseEntity {
       channelId: { field: 'defra_channelid', type: 'string' },
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
-      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' }
+      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
+      activeStatus: { field: 'statuscode', type: 'optionset' }
     }
   }))
 
@@ -359,5 +360,17 @@ export class PoclValidationError extends BaseEntity {
 
   set dataSource (dataSource) {
     super._setState('dataSource', dataSource)
+  }
+
+  /**
+   * The active status of the pocl validation error record
+   * @type {LocalOptionSetDefinition}
+   */
+  get activeStatus () {
+    return super._getState('activeStatus')
+  }
+
+  set activeStatus (activeStatus) {
+    super._setState('activeStatus', activeStatus)
   }
 }

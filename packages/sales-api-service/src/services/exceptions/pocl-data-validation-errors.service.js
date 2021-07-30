@@ -28,7 +28,10 @@ const getPaymentData = async payment => {
 
 const getStatus = async record => {
   const label = record.status ? record.status : 'Needs Review'
-  return getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label)
+  return {
+    status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label),
+    activeStatus: label === 'Processed' ? 'Inactive' : 'Active'
+  }
 }
 
 const mapRecordPayload = async record => {
@@ -41,7 +44,7 @@ const mapRecordPayload = async record => {
     ...otherPermissionData,
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
-    status: await getStatus(record),
+    ...await getStatus(record),
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
