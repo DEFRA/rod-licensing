@@ -91,7 +91,7 @@ export const poclValidationErrorItemSchema = Joi.object({
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
   status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
   activeStatus: Joi.object({
-    id: Joi.number.required(),
+    id: Joi.number().required(),
     description: Joi.string().allow('Active', 'Inactive').required(),
     label: Joi.string().allow('Active', 'Inactive').required()
   }).required()
