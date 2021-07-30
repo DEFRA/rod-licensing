@@ -38,7 +38,7 @@ export class PoclValidationError extends BaseEntity {
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
-      activeStatus: { field: 'statuscode', type: 'optionset', ref: 'defra_poclvalidationerror_statuscode' }
+      activeStatus: { field: 'statuscode', type: 'decimal' }
     }
   }))
 
