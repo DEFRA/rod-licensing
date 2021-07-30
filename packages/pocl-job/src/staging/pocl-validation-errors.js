@@ -105,8 +105,11 @@ const finaliseTransactions = async records => {
 }
 
 export const processPoclValidationErrors = async () => {
-  const validationErrorsForProcessing = await salesApi.getPoclValidationErrorsForProcessing()
-  debug('Retrieved %d records for reprocessing', validationErrorsForProcessing.length)
-  const createResults = await createTransactions(mapRecords(validationErrorsForProcessing))
+  const validationErrors = await salesApi.getPoclValidationErrorsForProcessing()
+  if (!Array.isArray(validationErrors) || !validationErrors.length) {
+    debug('No POCL validation errors to process')
+    return
+  }
+  const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
 }
