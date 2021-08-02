@@ -32,7 +32,8 @@ const getStatus = async record => {
   const label = record.status ? record.status : 'Needs Review'
   return {
     status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label),
-    activeStatus: label === 'Processed' ? INACTIVE_STATUS_VALUE : ACTIVE_STATUS_VALUE
+    activeStatus: label === 'Processed' ? INACTIVE_STATUS_VALUE : ACTIVE_STATUS_VALUE,
+    ...(label === 'Processed' && { stateCode: 1 })
   }
 }
 
