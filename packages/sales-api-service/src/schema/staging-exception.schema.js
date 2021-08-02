@@ -50,6 +50,7 @@ const schemaObject = {
       statusCode: Joi.number(),
       error: Joi.string(),
       message: Joi.string()
+    })
   }).optional()
 }
 

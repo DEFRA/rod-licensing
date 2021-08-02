@@ -14,6 +14,7 @@ const isDataValidationError = payload => {
   const { statusCode } = JSON.parse(payload.transactionFileException.description)
   return !!payload.record && statusCode === 422
 }
+
 export default [
   {
     method: 'POST',
