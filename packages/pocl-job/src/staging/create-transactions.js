@@ -119,12 +119,6 @@ const processFailed = async (filename, failed) => {
     record.stage = RECORD_STAGE.TransactionCreationFailed
     record.createTransactionError = result
     debug('Failed to create transaction for record: %o', JSON.stringify(record))
-    console.log({
-      record: {
-        ...record,
-        errorMessage: JSON.stringify(result.message)
-      }
-    })
     await salesApi.createStagingException({
       transactionFileException: {
         name: `${filename}: FAILED-CREATE-${record.id}`,
@@ -134,10 +128,7 @@ const processFailed = async (filename, failed) => {
         type: 'Failure',
         transactionFile: filename
       },
-      record: {
-        ...record,
-        errorMessage: JSON.stringify(result.message)
-      }
+      record
     })
   }
 

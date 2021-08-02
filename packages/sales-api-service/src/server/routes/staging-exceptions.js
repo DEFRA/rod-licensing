@@ -26,9 +26,6 @@ export default [
         }
         if (request.payload.transactionFileException) {
           response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
-          console.log('record exists:', !!request.payload.record)
-          console.log('has 422 status code:', request.payload.statusCode === 422)
-          console.log(request.payload)
           if (isDataValidationError(request.payload)) {
             await createDataValidationError(request.payload.record)
           }

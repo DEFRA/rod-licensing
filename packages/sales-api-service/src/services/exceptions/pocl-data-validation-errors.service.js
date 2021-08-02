@@ -46,6 +46,7 @@ const mapRecordPayload = async record => {
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
     ...await getStatus(record),
+    errorMessage: record.createTransactionError.message,
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
@@ -63,7 +64,7 @@ const mapRecordPayload = async record => {
  */
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
-  const data = await mapRecordPayload(record.createTransactionPayload)
+  const data = await mapRecordPayload(record)
   const validationError = Object.assign(new PoclStagingException(), data)
   await persist([validationError])
   return validationError
