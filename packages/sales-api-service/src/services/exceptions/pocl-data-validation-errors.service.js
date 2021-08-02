@@ -38,6 +38,7 @@ const getStatus = async record => {
 const mapRecordPayload = async record => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
+  console.log(record.createTransactionError, { errorMessage: record.createTransactionError.message })
   return {
     serialNumber,
     transactionDate,
