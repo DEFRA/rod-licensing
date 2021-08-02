@@ -46,7 +46,7 @@ const mapRecordPayload = async record => {
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
     ...await getStatus(record),
-    errorMessage: JSON.stringify(record.createTransactionError.message),
+    ...record.createTransactionError && { errorMessage: JSON.stringify(record.createTransactionError.message) },
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
