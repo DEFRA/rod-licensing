@@ -38,6 +38,7 @@ export class PoclValidationError extends BaseEntity {
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
+      errorMessage: { field: 'defra_errormessage', type: 'string' },
       activeStatus: { field: 'statuscode', type: 'decimal' }
     }
   }))
@@ -360,6 +361,18 @@ export class PoclValidationError extends BaseEntity {
 
   set dataSource (dataSource) {
     super._setState('dataSource', dataSource)
+  }
+
+  /**
+   * The error message associated with this pocl record
+   * @type {string}
+   */
+  get errorMessage () {
+    return super._getState('errorMessage')
+  }
+
+  set errorMessage (errorMessage) {
+    super._setState('errorMessage', errorMessage)
   }
 
   /**

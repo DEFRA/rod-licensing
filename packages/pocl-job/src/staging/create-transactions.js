@@ -128,7 +128,10 @@ const processFailed = async (filename, failed) => {
         type: 'Failure',
         transactionFile: filename
       },
-      record
+      record: {
+        ...record,
+        errorMessage: JSON.stringify(result.message)
+      }
     })
   }
 
