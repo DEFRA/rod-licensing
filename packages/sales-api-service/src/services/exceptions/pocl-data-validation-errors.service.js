@@ -38,7 +38,6 @@ const getStatus = async record => {
 const mapRecordPayload = async record => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
-  console.log(record.createTransactionError, { errorMessage: record.createTransactionError.message })
   return {
     serialNumber,
     transactionDate,
@@ -47,7 +46,7 @@ const mapRecordPayload = async record => {
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
     ...await getStatus(record),
-    errorMessage: record.createTransactionError.message,
+    errorMessage: JSON.stringify(record.createTransactionError.message),
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
