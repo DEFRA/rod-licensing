@@ -10,9 +10,10 @@ import { createDataValidationError, getPoclValidationErrors, updatePoclValidatio
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
-const isDataValidationError = payload =>
-  !!payload.record && payload.statusCode === 422
-
+const isDataValidationError = payload => {
+  const { statusCode } = JSON.parse(payload.transactionFileException.description)
+  return !!payload.record && statusCode === 422
+}
 export default [
   {
     method: 'POST',
@@ -26,8 +27,8 @@ export default [
         if (request.payload.transactionFileException) {
           response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
           console.log('record exists:', !!request.payload.record)
-          console.log('has 422 statuscode:', request.payload.statusCode === 422)
-          console.log({ isDataValidationError })
+          console.log('has 422 status code:', request.payload.statusCode === 422)
+          console.log(request.payload)
           if (isDataValidationError(request.payload)) {
             await createDataValidationError(request.payload.record)
           }
