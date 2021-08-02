@@ -4,8 +4,6 @@ import db from 'debug'
 import { Boom } from '@hapi/boom'
 const debug = db('sales:pocl-validation-errors')
 
-const ACTIVE_STATUS_VALUE = 1
-const INACTIVE_STATUS_VALUE = 2
 const POCL_VALIDATION_ERROR_STATUS_OPTIONSET = 'defra_poclvalidationerrorstatus'
 
 /**
@@ -32,8 +30,8 @@ const getStatus = async record => {
   const label = record.status ? record.status : 'Needs Review'
   return {
     status: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, label),
-    ...(label === 'Processed' && { stateCode: 1 }),
-    activeStatus: label === 'Processed' ? INACTIVE_STATUS_VALUE : ACTIVE_STATUS_VALUE
+    // if record has been processed, deactivate it
+    ...(label === 'Processed' && { stateCode: 1 })
   }
 }
 

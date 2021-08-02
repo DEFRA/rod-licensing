@@ -39,7 +39,6 @@ export class PoclValidationError extends BaseEntity {
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
       errorMessage: { field: 'defra_errormessage', type: 'string' },
-      activeStatus: { field: 'statuscode', type: 'decimal' },
       stateCode: { field: 'statecode', type: 'decimal' }
     }
   }))
@@ -374,18 +373,6 @@ export class PoclValidationError extends BaseEntity {
 
   set errorMessage (errorMessage) {
     super._setState('errorMessage', errorMessage)
-  }
-
-  /**
-   * The active status of the pocl validation error record
-   * @type {LocalOptionSetDefinition}
-   */
-  get activeStatus () {
-    return super._getState('activeStatus')
-  }
-
-  set activeStatus (activeStatus) {
-    super._setState('activeStatus', activeStatus)
   }
 
   /**
