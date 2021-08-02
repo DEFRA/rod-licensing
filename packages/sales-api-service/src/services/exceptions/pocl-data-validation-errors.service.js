@@ -1,4 +1,4 @@
-import { executeQuery, findById, persist, findPoclValidationErrors, PoclValidationError, PoclStagingException } from '@defra-fish/dynamics-lib'
+import { executeQuery, findById, persist, findPoclValidationErrors, PoclValidationError } from '@defra-fish/dynamics-lib'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 import db from 'debug'
 import { Boom } from '@hapi/boom'
@@ -65,7 +65,7 @@ const mapRecordPayload = async record => {
 export const createDataValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const data = await mapRecordPayload(record)
-  const validationError = Object.assign(new PoclStagingException(), data)
+  const validationError = Object.assign(new PoclValidationError(), data)
   await persist([validationError])
   return validationError
 }
