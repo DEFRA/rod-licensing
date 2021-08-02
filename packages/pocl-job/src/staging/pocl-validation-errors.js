@@ -49,7 +49,7 @@ const mapRecords = records => records.map(record => ({
 const processFailed = async failed => {
   for (const { record, result } of failed) {
     debug('Failed when reprocessing record: %o', record)
-    await salesApi.updatePoclValidationError(record.poclValidationErrorId, record)
+    await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, errorMessage: result.message })
   }
 }
 
@@ -81,7 +81,7 @@ const finaliseTransactions = async records => {
     ))
 
   const succeeded = []
-  records.forEach(({ record }, idx) => {
+  created.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
     if (result.status === 'fulfilled') {
       succeeded.push({ record, response: result.value })
