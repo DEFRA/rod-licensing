@@ -63,24 +63,24 @@
 
 {% block beforeContent %}
     {% if TELESALES %}
-        {{ govukPhaseBanner({
-            tag: {
-                text: "beta"
-            },
-            html: '<b>User:</b>&nbsp;&nbsp;' + credentials.name + ' (' + credentials.email + ')' if credentials else '<b>User:</b>&nbsp;&nbsp;Not logged in',
-            classes: 'no-print'
-        }) }}
+        <div class="govuk-phase-banner">
+            <p class="govuk-phase-banner__content">
+                <span class="govuk-phase-banner__text no-print">
+                    <b>User:</b>&nbsp;&nbsp;{{ credentials.name + ' (' + credentials.email + ')' if credentials else 'Not logged in' }}
+                </span>
+            </p>
+        </div>
         <div class="govuk-width-container govuk-!-display-none-print">
             <p class="govuk-body-s right-align"><a class="govuk-link" class="govuk-link" href="{{ _uri.clear }}">New customer</a></p>
         </div>
     {% else %}
-        {{ govukPhaseBanner({
-            tag: {
-                text: "beta"
-            },
-            html: 'Your <a class="govuk-link" href="' + _uri.feedback + '" rel="noreferrer noopener" target="_blank" >feedback (opens in a new tab)</a> will help us improve the service',
-            classes: 'no-print'
-        }) }}
+        <div class="govuk-phase-banner">
+            <p class="govuk-phase-banner__content">
+                <span class="govuk-phase-banner__text no-print">
+                    Your <a class="govuk-link" href="{{_uri.feedback}}" rel="noreferrer noopener" target="_blank" >feedback (opens in new tab)</a> will help us improve the service
+                </span>
+            </p>
+        </div>
     {% endif %}
 {% endblock %}
 
