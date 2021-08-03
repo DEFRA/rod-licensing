@@ -88,5 +88,5 @@ export const updatePoclValidationError = async (id, payload) => {
   const mappedRecord = await mapRecordPayload(payload)
   console.log({ mappedRecord })
   const updated = Object.assign(validationError, mappedRecord)
-  await persist([updated])
+  return persist([updated])
 }

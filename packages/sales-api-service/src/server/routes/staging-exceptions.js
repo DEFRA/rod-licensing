@@ -6,7 +6,7 @@ import {
   updatePoclValidationErrorPayload
 } from '../../schema/staging-exception.schema.js'
 import { createTransactionFileException, createStagingException } from '../../services/exceptions/exceptions.service.js'
-import { createDataValidationError, getPoclValidationErrors, updatePoclValidationError } from '../../services/exceptions/pocl-data-validation-errors.service.js'
+import { createPoclValidationError, getPoclValidationErrors, updatePoclValidationError } from '../../services/exceptions/pocl-validation-errors.service.js'
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -28,7 +28,7 @@ export default [
         if (request.payload.transactionFileException) {
           response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
           if (isDataValidationError(request.payload)) {
-            await createDataValidationError(request.payload.record)
+            await createPoclValidationError(request.payload.record)
           }
         }
         return h.response(response).code(200)
@@ -63,7 +63,7 @@ export default [
       notes: `
         Query for all active POCL data validation errors which have a "Ready for Processing" status
       `,
-      tags: ['api', 'pocl-data-validation'],
+      tags: ['api', 'pocl-validation-errors'],
       plugins: {
         'hapi-swagger': {
           responses: {
@@ -84,7 +84,7 @@ export default [
       notes: `
         Query for all active POCL data validation errors which have a "Ready for Processing" status
       `,
-      tags: ['api', 'pocl-validation-error'],
+      tags: ['api', 'pocl-validation-errors'],
       validate: {
         params: poclValidationErrorParamsSchema,
         payload: updatePoclValidationErrorPayload

@@ -92,11 +92,11 @@ export const poclValidationErrorItemSchema = Joi.object({
   status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
   stateCode: Joi.number().required()
 })
-  .label('pocl-data-validation-error-item')
+  .label('pocl-validation-error-item')
 
 export const poclValidationErrorListSchema = Joi.array()
   .items(poclValidationErrorItemSchema)
-  .label('pocl-data-validation-error-item-list')
+  .label('pocl-validation-error-item-list')
 
 export const poclValidationErrorParamsSchema = Joi.object({
   id: Joi.string()

@@ -118,7 +118,7 @@ const processFailed = async (filename, failed) => {
   for (const { record, result } of failed) {
     record.stage = RECORD_STAGE.TransactionCreationFailed
     record.createTransactionError = result
-    debug('Failed to create transaction for record: %o', JSON.stringify(record))
+    debug('Failed to create transaction for record: %o', record)
     await salesApi.createStagingException({
       transactionFileException: {
         name: `${filename}: FAILED-CREATE-${record.id}`,
