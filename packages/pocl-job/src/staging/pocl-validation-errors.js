@@ -48,7 +48,7 @@ const mapRecords = records => records.map(record => ({
  */
 const processFailed = async failed => {
   for (const { record, result } of failed) {
-    debug('Failed when reprocessing record: %o', record)
+    debug('Failed when reprocessing record: %o', record, result)
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, errorMessage: result.message })
   }
 }
