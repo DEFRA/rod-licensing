@@ -67,7 +67,7 @@ const commonContactSchema = {
   obfuscatedDob: Joi.string()
     .optional()
     .max(14)
-    .example('true')
+    .example('12123456781234')
 }
 
 export const contactRequestSchema = Joi.object({
