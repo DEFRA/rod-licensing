@@ -35,14 +35,6 @@ const getStatus = async record => {
   }
 }
 
-const getErrorMessage = record => {
-  console.log(JSON.stringify(record))
-  if (record.createTransactionError) {
-    return record.createTransactionError.message
-  }
-  return record.errorMessage
-}
-
 const mapRecordPayload = async record => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
@@ -54,7 +46,7 @@ const mapRecordPayload = async record => {
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
     ...await getStatus(record),
-    errorMessage: getErrorMessage(record),
+    errorMessage: record.errorMessage || record.createTransactionError?.message,
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
     preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
@@ -94,6 +86,7 @@ export const updatePoclValidationError = async (id, payload) => {
     throw Boom.notFound('A POCL validation error with the given identifier could not be found')
   }
   const mappedRecord = await mapRecordPayload(payload)
+  console.log({ mappedRecord })
   const updated = Object.assign(validationError, mappedRecord)
   await persist([updated])
 }
