@@ -12,7 +12,8 @@ Object {
     "id": 910400000,
     "label": "Post Office Sales",
   },
-  "email": "daniel-ricc@example.com",
+  "email": "daniel-ricc@example.couk",
+  "errorMessage": "\\"permissions[0].licensee.email\\" must be a valid email",
   "firstName": "Daniel",
   "id": "91f15d18-0aa4-ea11-a812-000d3a64905b",
   "lastName": "Ricciardo",
@@ -44,6 +45,7 @@ Object {
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
+  "stateCode": 1,
   "status": Object {
     "description": "Needs Review",
     "id": 910400000,
@@ -63,7 +65,8 @@ Object {
   "defra_concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":123456789}]",
   "defra_country": "GB",
   "defra_datasource": 910400000,
-  "defra_emailaddress": "daniel-ricc@example.com",
+  "defra_emailaddress": "daniel-ricc@example.couk",
+  "defra_errormessage": "\\"permissions[0].licensee.email\\" must be a valid email",
   "defra_firstname": "Daniel",
   "defra_methodofpayment": 910400001,
   "defra_mobilenumber": "07722 123456",
@@ -82,5 +85,6 @@ Object {
   "defra_street": "Eastmead Lane",
   "defra_town": "Bristol",
   "defra_transactiondate": "2020-01-01T14:00:00Z",
+  "statecode": 1,
 }
 `;

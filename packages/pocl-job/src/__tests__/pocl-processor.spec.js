@@ -3,7 +3,9 @@ import { execute } from '../pocl-processor.js'
 import { ftpToS3 } from '../transport/ftp-to-s3.js'
 import { s3ToLocal } from '../transport/s3-to-local.js'
 import { getFileRecords } from '../io/db.js'
+import { refreshS3Metadata } from '../io/s3.js'
 import { stage } from '../staging/pocl-data-staging.js'
+import { processPoclValidationErrors } from '../staging/pocl-validation-errors.js'
 
 global.simulateLockError = false
 global.lockReleased = false
@@ -43,28 +45,58 @@ jest.mock('../config.js', () => ({
 jest.mock('../transport/ftp-to-s3.js')
 jest.mock('../transport/s3-to-local.js')
 jest.mock('../io/db.js')
+jest.mock('../io/s3.js')
 jest.mock('../staging/pocl-data-staging.js')
+jest.mock('../staging/pocl-validation-errors.js')
 
 describe('pocl-processor', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
     global.simulateLockError = false
     global.lockReleased = false
-  })
-
-  it('runs all stages to retrieve data from SFTP and stage into the Sales API', async () => {
     getFileRecords.mockResolvedValue([{ s3Key: 's3path/1' }, { s3Key: 's3path/2' }])
     s3ToLocal.mockResolvedValueOnce('local/1')
     s3ToLocal.mockResolvedValueOnce('local/2')
+    await execute()
+  })
 
-    await expect(execute()).resolves.toBeUndefined()
+  it('initialises the config', () => {
     expect(config.initialise).toHaveBeenCalled()
+  })
+
+  it('retrieves files from FTP', () => {
     expect(ftpToS3).toHaveBeenCalled()
+  })
+
+  it('refreshes S3 metadata', () => {
+    expect(refreshS3Metadata).toHaveBeenCalled()
+  })
+
+  it('retrieves files records', () => {
     expect(getFileRecords).toHaveBeenCalled()
+  })
+
+  it('gets first file from s3', () => {
     expect(s3ToLocal).toHaveBeenNthCalledWith(1, 's3path/1')
+  })
+
+  it('gets second file from s3', () => {
     expect(s3ToLocal).toHaveBeenNthCalledWith(2, 's3path/2')
+  })
+
+  it('stages first file into Sales Api', () => {
     expect(stage).toHaveBeenNthCalledWith(1, 'local/1')
+  })
+
+  it('stages second file into Sales Api', () => {
     expect(stage).toHaveBeenNthCalledWith(2, 'local/2')
+  })
+
+  it('processes POCL validation errors', () => {
+    expect(processPoclValidationErrors).toHaveBeenCalled()
+  })
+
+  it('releases lock on ETL process', async () => {
     expect(global.lockReleased).toEqual(true)
   })
 

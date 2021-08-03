@@ -1,4 +1,4 @@
-import { PoclDataValidationError } from '../pocl-data-validation-error.entity.js'
+import { PoclValidationError } from '../pocl-validation-error.entity.js'
 import { retrieveGlobalOptionSets } from '../..'
 
 describe('pocl staging exception entity', () => {
@@ -9,7 +9,7 @@ describe('pocl staging exception entity', () => {
   describe('maps from dynamics', () => {
     let exception
     beforeAll(() => {
-      exception = PoclDataValidationError.fromResponse(
+      exception = PoclValidationError.fromResponse(
         {
           '@odata.etag': 'W/"56351087"',
           defra_poclvalidationerrorid: '91f15d18-0aa4-ea11-a812-000d3a64905b',
@@ -22,7 +22,7 @@ describe('pocl staging exception entity', () => {
           defra_postcode: 'BS9 1HJ',
           defra_country: 'GB',
           defra_birthdate: '1989-07-01',
-          defra_emailaddress: 'daniel-ricc@example.com',
+          defra_emailaddress: 'daniel-ricc@example.couk',
           defra_mobilenumber: '07722 123456',
           defra_preferredmethodofnewsletter: 910400003,
           defra_preferredmethodofconfirmation: 910400000,
@@ -37,14 +37,16 @@ describe('pocl staging exception entity', () => {
           defra_channelid: '948594',
           defra_methodofpayment: 910400001,
           defra_status: 910400000,
-          defra_datasource: 910400000
+          defra_datasource: 910400000,
+          statecode: 1,
+          defra_errormessage: '\"permissions[0].licensee.email\" must be a valid email'
         },
         optionSetData
       )
     })
 
     it('returns a PoclValidationError instance', () => {
-      expect(exception).toBeInstanceOf(PoclDataValidationError)
+      expect(exception).toBeInstanceOf(PoclValidationError)
     })
 
     it('has the expected data', () => {
@@ -53,7 +55,7 @@ describe('pocl staging exception entity', () => {
   })
 
   it('maps to dynamics', async () => {
-    const validationError = new PoclDataValidationError()
+    const validationError = new PoclValidationError()
     validationError.firstName = 'Daniel'
     validationError.lastName = 'Ricciardo'
     validationError.organisation = 'Fishy Endeavours'
@@ -63,7 +65,7 @@ describe('pocl staging exception entity', () => {
     validationError.postcode = 'BS9 1HJ'
     validationError.country = 'GB'
     validationError.birthDate = '1989-07-01'
-    validationError.email = 'daniel-ricc@example.com'
+    validationError.email = 'daniel-ricc@example.couk'
     validationError.mobilePhone = '07722 123456'
     validationError.preferredMethodOfConfirmation = optionSetData.defra_preferredcontactmethod.options['910400000']
     validationError.preferredMethodOfNewsletter = optionSetData.defra_preferredcontactmethod.options['910400003']
@@ -79,6 +81,8 @@ describe('pocl staging exception entity', () => {
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']
     validationError.status = optionSetData.defra_poclvalidationerrorstatus.options['910400000']
     validationError.dataSource = optionSetData.defra_datasource.options['910400000']
+    validationError.stateCode = 1
+    validationError.errorMessage = '\"permissions[0].licensee.email\" must be a valid email'
 
     const dynamicsEntity = validationError.toRequestBody()
     expect(dynamicsEntity).toMatchSnapshot()
