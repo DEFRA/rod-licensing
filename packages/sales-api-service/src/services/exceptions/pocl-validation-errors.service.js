@@ -36,6 +36,7 @@ const getStatus = async record => {
 }
 
 const getErrorMessage = record => {
+  console.log(JSON.stringify(record))
   if (record.createTransactionError) {
     return record.createTransactionError.message
   }
