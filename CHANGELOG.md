@@ -1,4 +1,13 @@
 
+## v1.17.0-rc.1 (2021-08-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#834](https://github.com/DEFRA/rod-licensing/pull/834) Removal of Beta badge on GAFL service ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 
