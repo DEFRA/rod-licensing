@@ -2,6 +2,8 @@ import Joi from 'joi'
 import * as contactValidation from '../contact.validators.js'
 import moment from 'moment'
 
+const INVALID_DATE_ERROR_MESSAGE = '"value" must be in [YYYY-MM-DD] format'
+
 describe('contact validators', () => {
   describe('birthDateValidator', () => {
     const validDate = moment().subtract(1, 'day')
@@ -12,21 +14,24 @@ describe('contact validators', () => {
     })
 
     it('allows a date in alternative format', async () => {
-      const testValueIn = validDate.format('YY-MM-DD')
+      const testValueIn = validDate.format('YYYY-M-D')
       const testValueOut = validDate.format('YYYY-MM-DD')
       await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).resolves.toEqual(testValueOut)
     })
 
     it('throws if given an invalid format', async () => {
       await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(validDate.format('YYYY-MM-DDThh:mm:ss'))).rejects.toThrow(
-        '"value" must be in [YYYY-MM-DD] format'
+        INVALID_DATE_ERROR_MESSAGE
       )
     })
 
     it('throws if given an invalid date', async () => {
-      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync('1-111-19')).rejects.toThrow(
-        '"value" must be in [YYYY-MM-DD] format'
-      )
+      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync('1-111-19')).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)
+    })
+
+    it('throws if the year is specified as 2 digits', async () => {
+      const testValueIn = validDate.format('YY-MM-DD')
+      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)
     })
 
     it("throws if given tommorow's date", async () => {

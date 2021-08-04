@@ -1,4 +1,55 @@
 
+## v1.17.0-rc.1 (2021-08-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#834](https://github.com/DEFRA/rod-licensing/pull/834) Removal of Beta badge on GAFL service ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+
+
+## v1.16.0-rc.4 (2021-07-23)
+
+#### :bug: Bug Fix
+* `business-rules-lib`
+  * [#818](https://github.com/DEFRA/rod-licensing/pull/818) Unexpected response from the Sales API - date before minimum allowed ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.16.0-rc.3 (2021-07-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#816](https://github.com/DEFRA/rod-licensing/pull/816) Print Licence Confirmation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+
+## v1.16.0-rc.0 (2021-07-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#806](https://github.com/DEFRA/rod-licensing/pull/806) Links opening in new window without notifying the user ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.15.0-rc.0 (2021-07-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  * [#804](https://github.com/DEFRA/rod-licensing/pull/804) feature/digital licence ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.14.0-rc.5 (2021-06-29)
 

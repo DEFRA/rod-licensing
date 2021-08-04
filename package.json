@@ -104,9 +104,6 @@
     "projects": [
       "<rootDir>/packages/*"
     ],
-    "transformIgnorePatterns": [
-      "<rootDir>/packages/sales-api-service/node_modules/@defra-fish/"
-    ],
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "silent": true

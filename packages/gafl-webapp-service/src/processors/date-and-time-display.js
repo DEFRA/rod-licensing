@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-export const dateDisplayFormat = 'dddd, MMMM Do, YYYY'
+export const dateDisplayFormat = 'D MMMM YYYY'
 export const cacheDateFormat = 'YYYY-MM-DD'
 
 export const advancePurchaseDateMoment = permission =>
@@ -9,6 +9,7 @@ export const advancePurchaseDateMoment = permission =>
 /**
  * Function to convert licence start and end times to standard strings for display in the service
  * @param permission
+ * @param displayTimeFirst - whether to display the time before the date, default is false
  * @returns {string}
  */
 export const displayStartTime = permission => {
@@ -17,7 +18,7 @@ export const displayStartTime = permission => {
     .format('h:mma')
     .replace('12:00am', '12:00am (midnight)')
     .replace('12:00pm', '12:00pm (midday)')
-  return `${startMoment.format(dateDisplayFormat)}, ${timeComponent}`
+  return `${timeComponent} on ${startMoment.format(dateDisplayFormat)}`
 }
 
 const endMomentStr = d => {
@@ -29,7 +30,7 @@ const endMomentStr = d => {
       return '11:59pm'
     })
     .replace('12:00pm', '12:00pm (midday)')
-  return `${m.format(dateDisplayFormat)}, ${timeComponent}`
+  return `${timeComponent} on ${m.format(dateDisplayFormat)}`
 }
 
 // For renewals

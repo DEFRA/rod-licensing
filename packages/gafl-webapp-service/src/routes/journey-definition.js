@@ -10,6 +10,8 @@ import {
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
   ADDRESS_ENTRY,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   NEWSLETTER,
   CONTACT_SUMMARY,
@@ -19,17 +21,19 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
   ORDER_COMPLETE,
+  LICENCE_INFORMATION,
   IDENTIFY,
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, allowsPhysicalLicence } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
+import { isPhysical } from '../processors/licence-type-display.js'
 
 /**
  * The structure of each atom is as follows
@@ -194,7 +198,10 @@ export default [
   {
     current: ADDRESS_ENTRY,
     next: {
-      [CommonResults.OK]: {
+      [allowsPhysicalLicence.YES]: {
+        page: LICENCE_FULFILMENT
+      },
+      [allowsPhysicalLicence.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -207,7 +214,10 @@ export default [
   {
     current: ADDRESS_SELECT,
     next: {
-      [CommonResults.OK]: {
+      [allowsPhysicalLicence.YES]: {
+        page: LICENCE_FULFILMENT
+      },
+      [allowsPhysicalLicence.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -216,7 +226,30 @@ export default [
     },
     backLink: ADDRESS_LOOKUP.uri
   },
-
+  {
+    current: LICENCE_FULFILMENT,
+    next: {
+      [CommonResults.OK]: {
+        page: LICENCE_CONFIRMATION_METHOD
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_CONFIRMATION_METHOD
+      }
+    },
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+  },
+  {
+    current: LICENCE_CONFIRMATION_METHOD,
+    next: {
+      [CommonResults.OK]: {
+        page: CONTACT
+      },
+      [CommonResults.SUMMARY]: {
+        page: CONTACT
+      }
+    },
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_FULFILMENT.uri)
+  },
   {
     current: CONTACT,
     next: {
@@ -227,7 +260,15 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: (status, transaction) => {
+      if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+        return CONTACT_SUMMARY.uri
+      } else if (isPhysical(transaction)) {
+        return LICENCE_CONFIRMATION_METHOD.uri
+      } else {
+        return ADDRESS_LOOKUP.uri
+      }
+    }
   },
 
   {
@@ -291,6 +332,11 @@ export default [
 
   {
     current: ORDER_COMPLETE,
+    backLink: ORDER_COMPLETE.uri
+  },
+
+  {
+    current: LICENCE_INFORMATION,
     backLink: ORDER_COMPLETE.uri
   },
 

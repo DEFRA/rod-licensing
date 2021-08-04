@@ -59,6 +59,7 @@ describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
+
   beforeEach(AwsMock.__resetAll)
 
   describe('processQueue', () => {

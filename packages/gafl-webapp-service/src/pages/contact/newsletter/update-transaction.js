@@ -12,14 +12,11 @@ export default async request => {
 
   if (payload.newsletter === 'yes') {
     licensee.preferredMethodOfNewsletter = HOW_CONTACTED.email
-    if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {
+    if (payload.email) {
       licensee.email = payload.email
     }
   } else {
     licensee.preferredMethodOfNewsletter = HOW_CONTACTED.none
-    if (licensee.preferredMethodOfConfirmation !== HOW_CONTACTED.email) {
-      licensee.email = null
-    }
   }
 
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })

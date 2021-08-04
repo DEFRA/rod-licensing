@@ -43,7 +43,8 @@ export const authenticationResult = {
         id: 910400002,
         label: 'Text',
         description: 'Text'
-      }
+      },
+      postalFulfilment: false
     },
     concessions: [
       {
