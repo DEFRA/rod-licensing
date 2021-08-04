@@ -118,11 +118,16 @@ export const updatePoclValidationErrorPayload = Joi.object({
     dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
     serialNumber: Joi.string().trim().required(),
     permissions: Joi.array().items(Joi.object({
-      ...commonContactSchema,
-      country: optionSetOption,
-      preferredMethodOfConfirmation: optionSetOption,
-      preferredMethodOfNewsletter: optionSetOption,
-      preferredMethodOfReminder: optionSetOption,
+      licensee: Joi.object({
+        ...commonContactSchema,
+        country: optionSetOption,
+        preferredMethodOfConfirmation: optionSetOption,
+        preferredMethodOfNewsletter: optionSetOption,
+        preferredMethodOfReminder: optionSetOption
+      }),
+      issueDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+      startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+      permitId: Joi.string().guid().required(),
       concessions: concessionProofSchema.optional()
     }))
   },
