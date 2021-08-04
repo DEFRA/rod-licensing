@@ -107,4 +107,38 @@ export const poclValidationErrorParamsSchema = Joi.object({
     .example(uuidv4())
 })
 
-export const updatePoclValidationErrorPayload = Joi.object().required()
+export const updatePoclValidationErrorPayload = Joi.object({
+  poclValidationErrorId: Joi.string()
+    .trim()
+    .guid()
+    .required()
+    .description('The POCL validation error identifier')
+    .example(uuidv4()),
+  createTransactionPayload: {
+    dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
+    serialNumber: Joi.string().trim().required(),
+    permissions: Joi.array().items(Joi.object({
+      ...commonContactSchema,
+      country: optionSetOption,
+      preferredMethodOfConfirmation: optionSetOption,
+      preferredMethodOfNewsletter: optionSetOption,
+      preferredMethodOfReminder: optionSetOption,
+      concessions: concessionProofSchema.optional()
+    }))
+  },
+  finaliseTransactionPayload: {
+    payment: {
+      transactionDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+      amount: Joi.number().required(),
+      source: Joi.string().trim().required(),
+      channelId: Joi.string()
+        .trim()
+        .required()
+        .description('Channel specific identifier'),
+      method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card')
+    }
+  },
+  createTransactionError: Joi.object().optional(),
+  status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing').optional(),
+  errorMessage: Joi.string().optional()
+}).required()
