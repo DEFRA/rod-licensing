@@ -128,7 +128,19 @@ export const updatePoclValidationErrorPayload = Joi.object({
       issueDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
       startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
       permitId: Joi.string().guid().required(),
-      concessions: concessionProofSchema.optional()
+      concessions: Joi.array().items(Joi.object({
+        id: Joi.string()
+          .guid()
+          .required()
+          .example(uuidv4()),
+        proof: Joi.object({
+          type: Joi.string().required(),
+          referenceNumber: Joi.string()
+            .optional()
+            .example('QQ 12 34 56 C')
+        })
+          .required()
+      })).optional()
     }))
   },
   finaliseTransactionPayload: {
