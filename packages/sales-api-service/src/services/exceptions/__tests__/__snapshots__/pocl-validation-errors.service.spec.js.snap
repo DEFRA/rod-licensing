@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`POCL validation error service createPoclValidationError creates the validation record 1`] = `undefined`;
+
+exports[`POCL validation error service createPoclValidationError maps the record data correctly 1`] = `undefined`;

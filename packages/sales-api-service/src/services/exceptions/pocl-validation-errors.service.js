@@ -66,8 +66,7 @@ export const createPoclValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const data = await mapRecordPayload(record)
   const validationError = Object.assign(new PoclValidationError(), data)
-  await persist([validationError])
-  return validationError
+  return persist([validationError])
 }
 
 /**
@@ -86,7 +85,7 @@ export const updatePoclValidationError = async (id, payload) => {
     throw Boom.notFound('A POCL validation error with the given identifier could not be found')
   }
   const mappedRecord = await mapRecordPayload(payload)
-  console.log({ mappedRecord })
   const updated = Object.assign(validationError, mappedRecord)
-  return persist([updated])
+  await persist([updated])
+  return updated
 }
