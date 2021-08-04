@@ -1,8 +1,9 @@
 import { createPoclValidationError, updatePoclValidationError } from '../pocl-validation-errors.service.js'
 import { persist, findById, PoclValidationError } from '@defra-fish/dynamics-lib'
+import Boom from '@hapi/boom'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
-  PoclValidationError: jest.requireActual('@defra-fish/connectors-lib').PoclValidationError,
+  ...jest.requireActual('@defra-fish/dynamics-lib'),
   findById: jest.fn(),
   persist: jest.fn()
 }))
@@ -78,12 +79,12 @@ describe('POCL validation error service', () => {
     })
 
     it('maps the record to an instance of PoclDataValidationError', async () => {
-      const [poclValidationError] = persist.mock.calls[0]
+      const [poclValidationError] = persist.mock.calls[0][0]
       expect(poclValidationError).toBeInstanceOf(PoclValidationError)
     })
 
     it('creates the validation record', async () => {
-      const [poclValidationError] = persist.mock.calls[0]
+      const [poclValidationError] = persist.mock.calls[0][0]
       expect(poclValidationError).toMatchSnapshot()
     })
   })
@@ -97,33 +98,27 @@ describe('POCL validation error service', () => {
     })
 
     describe('when validation error record exists', () => {
+      let poclValidationError
       beforeEach(async () => {
         findById.mockResolvedValue(getValidationError(payload))
         await updatePoclValidationError('pocl-validation-error-id', payload)
+        poclValidationError = persist.mock.calls[0][0][0]
       })
 
       it('retrieves existing record', async () => {
         expect(findById).toBeCalledWith(PoclValidationError, 'pocl-validation-error-id')
       })
 
-      it('maps the record to an instance of PoclDataValidationError', async () => {
-        const [poclValidationError] = persist.mock.calls[0]
-        expect(poclValidationError).toBeInstanceOf(PoclValidationError)
-      })
-
       describe('and status is not provided', () => {
         it('sets the status to "Needs Review"', async () => {
-          const [poclValidationError] = persist.mock.calls[0]
-          expect(poclValidationError.status).toBe('Needs Review')
+          expect(poclValidationError.status.label).toBe('Needs Review')
         })
 
         it('the state code is not set', async () => {
-          const [poclValidationError] = persist.mock.calls[0]
           expect(poclValidationError.stateCode).toBe(undefined)
         })
 
         it('updates the validation record', async () => {
-          const [poclValidationError] = persist.mock.calls[0]
           expect(poclValidationError).toMatchSnapshot()
         })
       })
@@ -135,17 +130,17 @@ describe('POCL validation error service', () => {
         })
 
         it('the status is set to "Processed"', async () => {
-          const [poclValidationError] = persist.mock.calls[0]
-          expect(poclValidationError.status).toBe('Processed')
+          const [poclValidationError] = persist.mock.calls[0][0]
+          expect(poclValidationError.status.label).toBe('Processed')
         })
 
         it('the state code is set to 1', async () => {
-          const [poclValidationError] = persist.mock.calls[0]
+          const [poclValidationError] = persist.mock.calls[0][0]
           expect(poclValidationError.stateCode).toBe(1)
         })
 
         it('updates the validation record', async () => {
-          const [poclValidationError] = persist.mock.calls[0]
+          const [poclValidationError] = persist.mock.calls[0][0]
           expect(poclValidationError).toMatchSnapshot()
         })
       })
@@ -157,13 +152,17 @@ describe('POCL validation error service', () => {
       })
 
       it('throws a 404 error', async () => {
-        expect(
-          await updatePoclValidationError('pocl-validation-error-id', payload)
-        ).toThrow('A POCL validation error with the given identifier could not be found')
+        await expect(
+          updatePoclValidationError('pocl-validation-error-id', payload)
+        ).rejects.toEqual(
+          Boom.notFound('A POCL validation error with the given identifier could not be found')
+        )
       })
 
       it('does not call persist to update record', async () => {
-        await updatePoclValidationError('pocl-validation-error-id', payload)
+        try {
+          await updatePoclValidationError('pocl-validation-error-id', payload)
+        } catch (err) {}
         expect(persist).not.toBeCalled()
       })
     })

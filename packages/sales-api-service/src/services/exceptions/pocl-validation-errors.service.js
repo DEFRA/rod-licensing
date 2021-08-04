@@ -1,7 +1,7 @@
 import { executeQuery, findById, persist, findPoclValidationErrors, PoclValidationError } from '@defra-fish/dynamics-lib'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
 import db from 'debug'
-import { Boom } from '@hapi/boom'
+import Boom from '@hapi/boom'
 const debug = db('sales:pocl-validation-errors')
 
 const POCL_VALIDATION_ERROR_STATUS_OPTIONSET = 'defra_poclvalidationerrorstatus'

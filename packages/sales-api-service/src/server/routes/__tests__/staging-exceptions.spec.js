@@ -8,6 +8,7 @@ const [
   { options: { handler: patchPoclValidationErrorsHandler, validate: { params: poclValidationErrorParamsSchema, payload: updatePoclValidationErrorPayload } } }
 ] = stagingExceptionsRoute
 jest.mock('../../../services/exceptions/exceptions.service.js')
+jest.mock('../../../services/exceptions/pocl-validation-errors.service.js')
 jest.mock('../../../schema/validators/validators.js', () => ({
   ...jest.requireActual('../../../schema/validators/validators.js'),
   createOptionSetValidator: () => async () => undefined,
@@ -16,6 +17,71 @@ jest.mock('../../../schema/validators/validators.js', () => ({
   createReferenceDataEntityValidator: () => async () => undefined,
   createPermitConcessionValidator: () => async () => undefined
 }))
+
+const poclValidationError = Object.freeze([{
+  id: 'string',
+  firstName: 'string',
+  lastName: 'string',
+  birthDate: '1987-01-05',
+  postcode: 'AB12 3CD',
+  country: 'GB',
+  preferredMethodOfConfirmation: 'Text',
+  preferredMethodOfNewsletter: 'Email',
+  preferredMethodOfReminder: 'Email',
+  startDate: '2021-06-06',
+  permitId: 'adfcbe49-f1a7-4cde-859a-7642effa61a0',
+  amount: 20,
+  transactionDate: '2021-06-06',
+  paymentSource: 'Post Office Sales',
+  channelId: 'ABCD-1234',
+  methodOfPayment: 'Debit card',
+  dataSource: 'Post Office Sales',
+  status: 'Ready for Processing'
+}])
+
+const record = Object.freeze({
+  poclValidationErrorId: 'test-id',
+  createTransactionPayload: {
+    dataSource: 'Post Office Sales',
+    serialNumber: '14345-48457J',
+    permitId: 'test-permit-id',
+    startDate: '2021-06-15',
+    issueDate: '2020-01-01',
+    permissions: [{
+      licensee: {
+        firstName: 'Daniel',
+        lastName: 'Ricciardo',
+        birthDate: '1989-07-01',
+        email: 'daniel-ricc@example.couk',
+        mobilePhone: '07722 123456',
+        organisation: 'Fishy Endeavours',
+        postcode: 'BS9 1HJ',
+        premises: '14 Howecroft Court',
+        street: 'Eastmead Lane',
+        town: 'Bristol',
+        country: 'GB',
+        preferredMethodOfConfirmation: 'Text',
+        preferredMethodOfNewsletter: 'Email',
+        preferredMethodOfReminder: 'Email'
+      }
+    }]
+  },
+  finaliseTransactionPayload: {
+    payment: {
+      timestamp: '2020-01-01T14:00:00Z',
+      amount: 30,
+      source: 'Post Office Sales',
+      channelId: '948594',
+      method: 'Cash'
+    }
+  },
+  stage: 'Staging',
+  createTransactionError: {
+    statusCode: 422,
+    error: 'Data validation error',
+    message: 'Error'
+  }
+})
 
 describe('staging exceptions handler', () => {
   beforeEach(jest.clearAllMocks)
@@ -49,7 +115,7 @@ describe('staging exceptions handler', () => {
     describe('if the payload contains a transactionFileException object', () => {
       const transactionFileException = Object.freeze({
         name: 'string',
-        description: '{ "json": "string" }',
+        description: '{ "statusCode": 422 }',
         json: 'string',
         notes: 'string',
         type: 'Failure',
@@ -76,35 +142,11 @@ describe('staging exceptions handler', () => {
 
       describe('if the error is a 422', () => {
         it('and record is not in payload, does not creates a data validation error', async () => {
-          await stagingExceptionsHandler({ payload: { statusCode: 422, transactionFileException } }, getMockResponseToolkit())
+          await stagingExceptionsHandler({ payload: { transactionFileException } }, getMockResponseToolkit())
           expect(createPoclValidationError).not.toHaveBeenCalled()
         })
         it('and record is in payload, creates a data validation error', async () => {
-          const record = {
-            id: 'test-id',
-            createTransactionPayload: {
-              dataSource: 'Post Office Sales',
-              serialNumber: '14345-48457J',
-              permissions: []
-            },
-            finaliseTransactionPayload: {
-              payment: {
-                timestamp: '2020-01-01T14:00:00Z',
-                amount: 30,
-                source: 'Post Office Sales',
-                channelId: '948594',
-                method: 'Cash'
-              }
-            },
-            stage: 'Staging',
-            createTransactionError: {
-              statusCode: 422,
-              error: 'Data validation error',
-              message: 'Error'
-            }
-          }
-          const payload = { statusCode: 422, transactionFileException, record }
-          await stagingExceptionsHandler({ payload }, getMockResponseToolkit())
+          await stagingExceptionsHandler({ payload: { transactionFileException, record } }, getMockResponseToolkit())
           expect(createPoclValidationError).toHaveBeenCalledWith(record)
         })
       })
@@ -117,28 +159,6 @@ describe('staging exceptions handler', () => {
   })
 
   describe('getPoclValidationErrors', () => {
-    const poclValidationError = Object.freeze([{
-      id: 'string',
-      firstName: 'string',
-      lastName: 'string',
-      birthDate: '1987-01-05',
-      postcode: 'AB12 3CD',
-      country: 'GB',
-      preferredMethodOfConfirmation: 'Text',
-      preferredMethodOfNewsletter: 'Email',
-      preferredMethodOfReminder: 'Email',
-      startDate: '2021-06-06',
-      permitId: 'adfcbe49-f1a7-4cde-859a-7642effa61a0',
-      amount: 20,
-      transactionDate: '2021-06-06',
-      paymentSource: 'Post Office Sales',
-      channelId: 'ABCD-1234',
-      methodOfPayment: 'Debit card',
-      dataSource: 'Post Office Sales',
-      status: 'Ready for Processing',
-      stateCode: 0
-    }])
-
     beforeEach(() => {
       getPoclValidationErrors.mockResolvedValueOnce(poclValidationError)
     })
@@ -157,41 +177,38 @@ describe('staging exceptions handler', () => {
   })
 
   describe('patchPoclValidationErrors', () => {
-    const poclValidationError = Object.freeze([{
-      id: 'string',
-      firstName: 'string',
-      lastName: 'string',
-      birthDate: '1987-01-05',
-      postcode: 'AB12 3CD',
-      country: 'GB',
-      preferredMethodOfConfirmation: 'Text',
-      preferredMethodOfNewsletter: 'Email',
-      preferredMethodOfReminder: 'Email',
-      startDate: '2021-06-06',
-      permitId: 'adfcbe49-f1a7-4cde-859a-7642effa61a0',
-      amount: 20,
-      transactionDate: '2021-06-06',
-      paymentSource: 'Post Office Sales',
-      channelId: 'ABCD-1234',
-      methodOfPayment: 'Debit card',
-      dataSource: 'Post Office Sales',
-      status: 'Processed'
-    }])
+    let request
 
     beforeEach(() => {
+      request = {
+        params: {
+          id: '04a6ae41-4b5d-4fed-9a79-3b624faae37e'
+        },
+        payload: record
+      }
       updatePoclValidationError.mockResolvedValueOnce(poclValidationError)
     })
 
-    it('retrieves POCL validation errors', async () => {
-      await patchPoclValidationErrorsHandler({ }, getMockResponseToolkit())
-      expect(patchPoclValidationErrorsHandler).toHaveBeenCalledWith()
+    it('update the POCL validation record', async () => {
+      await patchPoclValidationErrorsHandler(request, getMockResponseToolkit())
+      expect(updatePoclValidationError).toHaveBeenCalledWith(request.params.id, request.payload)
     })
 
     it('status code is ok', async () => {
       const codeMock = jest.fn()
       const responseToolkit = getMockResponseToolkit(codeMock)
-      await patchPoclValidationErrorsHandler({}, responseToolkit)
+      await patchPoclValidationErrorsHandler(request, responseToolkit)
       expect(codeMock).toHaveBeenCalledWith(200)
+    })
+
+    it('validation fails if the id is not a guid', async () => {
+      const func = () => Joi.assert('not-a-guid', poclValidationErrorParamsSchema)
+      expect(func).toThrow()
+    })
+
+    it('validation fails if the payload is invalid', async () => {
+      const func = () => Joi.assert(poclValidationError, updatePoclValidationErrorPayload)
+      expect(func).toThrow()
     })
   })
 })
