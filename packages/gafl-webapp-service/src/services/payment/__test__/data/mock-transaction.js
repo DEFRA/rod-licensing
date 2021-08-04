@@ -14,6 +14,7 @@ export default {
         preferredMethodOfNewsletter: 'Email',
         preferredMethodOfConfirmation: 'Text',
         preferredMethodOfReminder: 'Text',
+        postalFulfilment: false,
         mobilePhone: '07700 900 900',
         email: 'angling@email.com'
       },

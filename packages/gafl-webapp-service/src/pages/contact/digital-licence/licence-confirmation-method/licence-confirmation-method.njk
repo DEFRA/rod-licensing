@@ -1,0 +1,163 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "input/macro.njk" import govukInput %}
+
+{% set errorMsg = 'Choose how you would like to receive the licence' %}
+{% set emailError = 'Enter an email address in the correct format' %}
+{% set mobileError = 'Enter your UK mobile phone number' %}
+
+{% set errorMap = {
+        'licence-confirmation-method': {
+            'any.required': { ref: '#licence-confirmation-method', text: errorMsg }
+        },
+        'email': {
+            'string.empty': { ref: '#email', text: emailError },
+            'string.email': { ref: '#email', text: emailError },
+            'string.max': { ref: '#email', text: emailError }
+        },
+        'text': {
+            'string.empty': { ref: '#email', text: mobileError },
+            'string.pattern.base': { ref: '#email', text: mobileError },
+            'string.max': { ref: '#email', text: mobileError }
+        }
+    }
+%}
+
+{% set emailHtml %}
+    <div id="email-rw" class="govuk-body-m">
+        {{ govukInput({
+          id: "email",
+          name: "email",
+          type: "email",
+          classes: "govuk-!-width-two-thirds",
+          autocomplete: "email",
+          errorMessage: { text: emailError } if error['email'],
+          label: {
+            text: "Email address"
+          },
+          hint: {
+              text: "For example name@example.com"
+          },
+          attributes: {
+            spellcheck: "false",
+            maxlength: "50"
+          },
+          value: data.licensee.email if data.licensee.email and not error['email'] else payload.email
+        }) }}
+    </div>
+    <div id="email-ro" class="govuk-body-m initially-hidden">
+        Email address</br>
+        <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
+            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">Change</a>
+        </span>
+    </div>
+{% endset -%}
+
+{% set textMessageHtml %}
+    <div id="text-rw" class="govuk-body-m">
+        {{ govukInput({
+          id: "text",
+          name: "text",
+          type: "tel",
+          autocomplete: "tel",
+          classes: "govuk-!-width-one-third",
+          errorMessage: { text: mobileError } if error['text'],
+          label: {
+            text: "UK mobile phone number"
+          },
+          hint: {
+              text: "For example 07700 900 900"
+          },
+          attributes: {
+            maxlength: "16"
+          },
+          value: data.licensee.mobilePhone if data.licensee.mobilePhone and not error['text'] else payload.text
+        }) }}
+     </div>
+     <div id="text-ro" class="govuk-body-m initially-hidden">
+         Mobile phone number</br>
+         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
+             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">Change</a>
+         </span>
+     </div>
+{% endset -%}
+
+{% set itemsArray = [
+    {
+        value: "email",
+        text: "Email",
+        checked: payload['licence-confirmation-method'] === 'email',
+        conditional: {
+            html: emailHtml
+        }
+    },
+    {
+        value: "text",
+        text: "Text message",
+        checked: payload['licence-confirmation-method'] === 'text',
+        conditional: {
+            html: textMessageHtml
+        }
+    }
+] %}
+
+{% if data.licensee.postalFulfilment %}
+    {% set title = 'How do you want your fishing licence confirmation?' %}
+    {% set bodyText = 'This is where we will send confirmation of your fishing licence' %}
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "none",
+            text: "I will make a note of my licence number",
+            checked: payload['licence-confirmation-method'] === 'none'
+        }), itemsArray) 
+    %}
+{% else %}
+    {% set title = 'Where should we send your fishing licence?' %}
+    {% set bodyText = 'This is where we will send the licence after payment.' %}
+    {% set hintText = 'You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.' %}
+{% endif %}
+
+{% block pageContent %}
+    <p class="govuk-body">{{ bodyText }}</p>
+    {{ govukRadios({
+        idPrefix: "licence-confirmation-method",
+        name: "licence-confirmation-method",
+        hint: {
+          text: hintText,
+          classes: 'govuk-inset-text' if hintText
+        },
+        errorMessage: { text: errorMsg } if error['licence-confirmation-method'],
+        items: itemsArray
+    }) }}
+{% endblock %}
+
+{% block bodyEnd %}
+    <script src="/public/javascript/all-min.js"></script>
+    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script nonce={{nonce}}>(function () {
+        if ('{{ data.licensee.email }}' && !'{{ error.email }}' ) {
+            document.getElementById("email-ro").style.display = "block"
+            document.getElementById("email-rw").style.display = "none"
+        } else {
+            document.getElementById("email-ro").style.display = "none"
+            document.getElementById("email-rw").style.display = "block"
+        }
+        document.getElementById("change-email").addEventListener("click", function () {
+            document.getElementById("email-ro").style.display = "none"
+            document.getElementById("email-rw").style.display = "block"
+        })
+    })()</script>
+    <script nonce={{nonce}}>(function () {
+        if ('{{ data.licensee.mobilePhone }}' && !'{{ error.text }}' ) {
+            document.getElementById("text-ro").style.display = "block"
+            document.getElementById("text-rw").style.display = "none"
+        } else {
+            document.getElementById("text-ro").style.display = "none"
+            document.getElementById("text-rw").style.display = "block"
+        }
+        document.getElementById("change-text").addEventListener("click", function () {
+            document.getElementById("text-ro").style.display = "none"
+            document.getElementById("text-rw").style.display = "block"
+        })
+    })()</script>
+{% endblock %}

@@ -35,7 +35,8 @@ describe('prepareApiTransactionPayload', () => {
                     countryCode: 'GB-ENG',
                     preferredMethodOfNewsletter: 'Prefer not to be contacted',
                     preferredMethodOfConfirmation: 'Prefer not to be contacted',
-                    preferredMethodOfReminder: 'Prefer not to be contacted'
+                    preferredMethodOfReminder: 'Prefer not to be contacted',
+                    postalFulfilment: false
                   },
                   licenceToStart: licenceToStart.AFTER_PAYMENT
                 }
@@ -64,6 +65,7 @@ describe('prepareApiTransactionPayload', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Prefer not to be contacted',
+            postalFulfilment: false,
             country: 'England'
           },
           issueDate: null,
@@ -94,7 +96,8 @@ describe('prepareApiTransactionPayload', () => {
                     countryCode: 'GB-ENG',
                     preferredMethodOfNewsletter: 'Prefer not to be contacted',
                     preferredMethodOfConfirmation: 'Prefer not to be contacted',
-                    preferredMethodOfReminder: 'Prefer not to be contacted'
+                    preferredMethodOfReminder: 'Prefer not to be contacted',
+                    postalFulfilment: false
                   },
                   licenceToStart: licenceToStart.ANOTHER_DATE,
                   licenceStartDate: '2021-01-01',
@@ -125,6 +128,7 @@ describe('prepareApiTransactionPayload', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Prefer not to be contacted',
+            postalFulfilment: false,
             country: 'England'
           },
           issueDate: null,
