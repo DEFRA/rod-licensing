@@ -1,0 +1,169 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`POCL validation error service createPoclValidationError creates the validation record 1`] = `
+Object {
+  "amount": 30,
+  "birthDate": "1989-07-01",
+  "channelId": "948594",
+  "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
+  "country": "GB",
+  "dataSource": Object {
+    "description": "Post Office Sales",
+    "id": 910400000,
+    "label": "Post Office Sales",
+  },
+  "email": "daniel-ricc@example.com",
+  "errorMessage": "Error",
+  "firstName": "Daniel",
+  "lastName": "Ricciardo",
+  "methodOfPayment": Object {
+    "description": "Cash",
+    "id": 910400001,
+    "label": "Cash",
+  },
+  "mobilePhone": "07722 123456",
+  "organisation": "Fishy Endeavours",
+  "paymentSource": "Post Office Sales",
+  "permitId": "test-permit-id",
+  "postcode": "BS9 1HJ",
+  "preferredMethodOfConfirmation": Object {
+    "description": "Email",
+    "id": 910400000,
+    "label": "Email",
+  },
+  "preferredMethodOfNewsletter": Object {
+    "description": "Prefer not to be contacted",
+    "id": 910400003,
+    "label": "Prefer not to be contacted",
+  },
+  "preferredMethodOfReminder": Object {
+    "description": "Text",
+    "id": 910400002,
+    "label": "Text",
+  },
+  "premises": "14 Howecroft Court",
+  "serialNumber": "14345-48457J",
+  "startDate": "2021-06-15",
+  "status": Object {
+    "description": "Needs Review",
+    "id": 910400000,
+    "label": "Needs Review",
+  },
+  "street": "Eastmead Lane",
+  "town": "Bristol",
+  "transactionDate": undefined,
+}
+`;
+
+exports[`POCL validation error service updatePoclValidationError when validation error record exists and status equals "Processed" updates the validation record 1`] = `
+Object {
+  "amount": 30,
+  "birthDate": "1989-07-01",
+  "channelId": "948594",
+  "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
+  "country": "GB",
+  "dataSource": Object {
+    "description": "Post Office Sales",
+    "id": 910400000,
+    "label": "Post Office Sales",
+  },
+  "email": "daniel-ricc@example.com",
+  "errorMessage": "Invalid email address",
+  "firstName": "Daniel",
+  "lastName": "Ricciardo",
+  "methodOfPayment": Object {
+    "description": "Cash",
+    "id": 910400001,
+    "label": "Cash",
+  },
+  "mobilePhone": "07722 123456",
+  "organisation": "Fishy Endeavours",
+  "paymentSource": "Post Office Sales",
+  "permitId": "test-permit-id",
+  "postcode": "BS9 1HJ",
+  "preferredMethodOfConfirmation": Object {
+    "description": "Email",
+    "id": 910400000,
+    "label": "Email",
+  },
+  "preferredMethodOfNewsletter": Object {
+    "description": "Prefer not to be contacted",
+    "id": 910400003,
+    "label": "Prefer not to be contacted",
+  },
+  "preferredMethodOfReminder": Object {
+    "description": "Text",
+    "id": 910400002,
+    "label": "Text",
+  },
+  "premises": "14 Howecroft Court",
+  "serialNumber": "14345-48457J",
+  "startDate": "2021-06-15",
+  "stateCode": 1,
+  "status": Object {
+    "description": "Processed",
+    "id": 910400002,
+    "label": "Processed",
+  },
+  "street": "Eastmead Lane",
+  "timestamp": "2020-01-01T14:00:00Z",
+  "town": "Bristol",
+  "transactionDate": undefined,
+}
+`;
+
+exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is not provided updates the validation record 1`] = `
+Object {
+  "amount": 30,
+  "birthDate": "1989-07-01",
+  "channelId": "948594",
+  "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
+  "country": "GB",
+  "dataSource": Object {
+    "description": "Post Office Sales",
+    "id": 910400000,
+    "label": "Post Office Sales",
+  },
+  "email": "daniel-ricc@example.com",
+  "errorMessage": "Invalid email address",
+  "firstName": "Daniel",
+  "lastName": "Ricciardo",
+  "methodOfPayment": Object {
+    "description": "Cash",
+    "id": 910400001,
+    "label": "Cash",
+  },
+  "mobilePhone": "07722 123456",
+  "organisation": "Fishy Endeavours",
+  "paymentSource": "Post Office Sales",
+  "permitId": "test-permit-id",
+  "postcode": "BS9 1HJ",
+  "preferredMethodOfConfirmation": Object {
+    "description": "Email",
+    "id": 910400000,
+    "label": "Email",
+  },
+  "preferredMethodOfNewsletter": Object {
+    "description": "Prefer not to be contacted",
+    "id": 910400003,
+    "label": "Prefer not to be contacted",
+  },
+  "preferredMethodOfReminder": Object {
+    "description": "Text",
+    "id": 910400002,
+    "label": "Text",
+  },
+  "premises": "14 Howecroft Court",
+  "serialNumber": "14345-48457J",
+  "startDate": "2021-06-15",
+  "status": Object {
+    "description": "Needs Review",
+    "id": 910400000,
+    "label": "Needs Review",
+  },
+  "street": "Eastmead Lane",
+  "timestamp": "2020-01-01T14:00:00Z",
+  "town": "Bristol",
+  "transactionDate": undefined,
+}
+`;

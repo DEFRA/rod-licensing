@@ -4,7 +4,7 @@ import { BaseEntity, EntityDefinition } from './base.entity.js'
  * pocl validation error entity
  * @extends BaseEntity
  */
-export class PoclDataValidationError extends BaseEntity {
+export class PoclValidationError extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition(() => ({
     localName: 'transactionValidationError',
@@ -37,7 +37,9 @@ export class PoclDataValidationError extends BaseEntity {
       channelId: { field: 'defra_channelid', type: 'string' },
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
-      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' }
+      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
+      errorMessage: { field: 'defra_errormessage', type: 'string' },
+      stateCode: { field: 'statecode', type: 'decimal' }
     }
   }))
 
@@ -46,7 +48,7 @@ export class PoclDataValidationError extends BaseEntity {
    * @type {EntityDefinition}
    */
   static get definition () {
-    return PoclDataValidationError._definition
+    return PoclValidationError._definition
   }
 
   /**
@@ -359,5 +361,29 @@ export class PoclDataValidationError extends BaseEntity {
 
   set dataSource (dataSource) {
     super._setState('dataSource', dataSource)
+  }
+
+  /**
+   * The error message associated with this pocl record
+   * @type {string}
+   */
+  get errorMessage () {
+    return super._getState('errorMessage')
+  }
+
+  set errorMessage (errorMessage) {
+    super._setState('errorMessage', errorMessage)
+  }
+
+  /**
+   * The state code of the pocl validation error record
+   * @type {LocalOptionSetDefinition}
+   */
+  get stateCode () {
+    return super._getState('stateCode')
+  }
+
+  set stateCode (stateCode) {
+    super._setState('stateCode', stateCode)
   }
 }

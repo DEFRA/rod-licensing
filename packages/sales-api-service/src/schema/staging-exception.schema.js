@@ -1,6 +1,15 @@
 import Joi from 'joi'
+import { v4 as uuidv4 } from 'uuid'
+import { commonContactSchema } from './contact.schema.js'
+import { optionSetOption } from './option-set.schema.js'
+import { concessionProofSchema } from './concession-proof.schema.js'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
+
+const dateSchema = Joi.string()
+  .isoDate()
+  .required()
+  .example(new Date().toISOString())
 
 const schemaObject = {
   stagingException: Joi.object({
@@ -54,7 +63,99 @@ export const createStagingExceptionRequestSchema = Joi.object(schemaObject)
   .label('create-staging-exception-request')
 
 /**
- * Schema for the create staging exception response
+ * Schema for the get pocl data validation errors response
  * @type {Joi.AnySchema}
  */
 export const createStagingExceptionResponseSchema = Joi.object(schemaObject).label('create-staging-exception-response')
+
+export const poclValidationErrorItemSchema = Joi.object({
+  ...commonContactSchema,
+  country: optionSetOption,
+  preferredMethodOfConfirmation: optionSetOption,
+  preferredMethodOfNewsletter: optionSetOption,
+  preferredMethodOfReminder: optionSetOption,
+  concessions: concessionProofSchema.optional(),
+  startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+  serialNumber: Joi.string().trim().required(),
+  permitId: Joi.string().guid().required(),
+  amount: Joi.number().required(),
+  transactionDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+  paymentSource: Joi.string()
+    .trim()
+    .required(),
+  channelId: Joi.string()
+    .trim()
+    .required()
+    .description('Channel specific identifier'),
+  methodOfPayment: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
+  status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
+  stateCode: Joi.number().required()
+})
+  .label('pocl-validation-error-item')
+
+export const poclValidationErrorListSchema = Joi.array()
+  .items(poclValidationErrorItemSchema)
+  .label('pocl-validation-error-item-list')
+
+export const poclValidationErrorParamsSchema = Joi.object({
+  id: Joi.string()
+    .trim()
+    .guid()
+    .required()
+    .description('The POCL validation error identifier')
+    .example(uuidv4())
+})
+
+export const updatePoclValidationErrorPayload = Joi.object({
+  poclValidationErrorId: Joi.string()
+    .trim()
+    .guid()
+    .required()
+    .description('The POCL validation error identifier')
+    .example(uuidv4()),
+  createTransactionPayload: {
+    dataSource: Joi.string().optional(),
+    serialNumber: Joi.string().trim().required(),
+    permissions: Joi.array().items(Joi.object({
+      licensee: Joi.object({
+        ...commonContactSchema,
+        country: Joi.string().optional(),
+        preferredMethodOfConfirmation: Joi.string().optional(),
+        preferredMethodOfNewsletter: Joi.string().optional(),
+        preferredMethodOfReminder: Joi.string().optional()
+      }),
+      issueDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+      startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+      permitId: Joi.string().guid().required(),
+      concessions: Joi.array().items(Joi.object({
+        id: Joi.string()
+          .guid()
+          .required()
+          .example(uuidv4()),
+        proof: Joi.object({
+          type: Joi.string().required(),
+          referenceNumber: Joi.string()
+            .optional()
+            .example('QQ 12 34 56 C')
+        })
+          .required()
+      })).optional()
+    }))
+  },
+  finaliseTransactionPayload: {
+    payment: {
+      timestamp: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+      amount: Joi.number().required(),
+      source: Joi.string().trim().required(),
+      channelId: Joi.string()
+        .trim()
+        .required()
+        .description('Channel specific identifier'),
+      method: Joi.string().trim().required()
+    }
+  },
+  createTransactionError: Joi.object().optional(),
+  status: Joi.string().optional(),
+  errorMessage: Joi.string().optional()
+}).required()
