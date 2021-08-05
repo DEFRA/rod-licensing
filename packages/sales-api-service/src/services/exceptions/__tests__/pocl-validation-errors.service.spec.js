@@ -78,7 +78,7 @@ describe('POCL validation error service', () => {
       await createPoclValidationError(payload)
     })
 
-    it('maps the record to an instance of PoclDataValidationError', async () => {
+    it('maps the record to an instance of PoclValidationError', async () => {
       const [[[poclValidationError]]] = persist.mock.calls
       expect(poclValidationError).toBeInstanceOf(PoclValidationError)
     })
