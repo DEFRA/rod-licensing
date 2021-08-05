@@ -8,7 +8,8 @@ import { salesApi } from '@defra-fish/connectors-lib'
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     ...Object.keys(jest.requireActual('@defra-fish/connectors-lib').salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn() }), {}),
-    ...['permits', 'concessions'].reduce((acc, m) => ({ ...acc, [m]: { find: jest.fn(() => ({ id: 'test' })) } }), {})
+    concessions: { find: jest.fn(() => ({ id: 'test' })) },
+    permits: { find: jest.fn(() => ({ id: 'test', isForFulfilment: true })) }
   }
 }))
 jest.mock('../../io/db.js', () => ({
@@ -153,16 +154,24 @@ describe('create-transactions', () => {
         stage: RECORD_STAGE.TransactionCreationFailed
       })
     )
-    expect(salesApi.createStagingException).toHaveBeenCalledWith({
-      transactionFileException: {
-        name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
-        description: JSON.stringify(fakeApiError, null, 2),
-        json: expect.any(String),
-        transactionFile: 'test-2-records.xml',
-        type: 'Failure',
-        notes: 'Failed to create the transaction in the Sales API'
-      }
-    })
+    expect(salesApi.createStagingException).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transactionFileException: {
+          name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
+          description: JSON.stringify(fakeApiError, null, 2),
+          json: expect.any(String),
+          transactionFile: 'test-2-records.xml',
+          type: 'Failure',
+          notes: 'Failed to create the transaction in the Sales API'
+        }
+      })
+    )
+  })
+  it('adds record to staging exception', async () => {
+    salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
+    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
+    const { calls: [[{ record }]] } = salesApi.createStagingException.mock
+    expect(record).toMatchSnapshot()
   })
 })
 

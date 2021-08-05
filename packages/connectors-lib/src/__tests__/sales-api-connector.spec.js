@@ -383,6 +383,74 @@ describe('sales-api-connector', () => {
     })
   })
 
+  describe('getPoclValidationErrorsForProcessing', () => {
+    it('creates a new staging exception', async () => {
+      const expectedResponse = { a: 'response' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.getPoclValidationErrorsForProcessing()).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/poclValidationErrors',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      fetch.mockReturnValue({
+        ok: false,
+        status: 422,
+        statusText: 'Unprocessable Entity',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
+      await expect(salesApi.getPoclValidationErrorsForProcessing()).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/poclValidationErrors',
+        expect.objectContaining({
+          method: 'get'
+        })
+      )
+    })
+  })
+
+  describe('updatePoclValidationError', () => {
+    it('creates a new staging exception', async () => {
+      const id = 'test-id'
+      const payload = { some: 'data' }
+      const expectedResponse = { a: 'response' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.updatePoclValidationError(id, payload)).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/poclValidationErrors/test-id',
+        expect.objectContaining({
+          method: 'patch',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+    it('throws on a non-ok response', async () => {
+      const id = 'test-id'
+      const payload = { some: 'data' }
+      fetch.mockReturnValue({
+        ok: false,
+        status: 422,
+        statusText: 'Unprocessable Entity',
+        text: async () => JSON.stringify({ error: 'Description' })
+      })
+      await expect(salesApi.updatePoclValidationError(id, payload)).rejects.toThrow(
+        /Unexpected response from the Sales API:.*"status": 422.*"statusText": "Unprocessable Entity"/s
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/poclValidationErrors/test-id',
+        expect.objectContaining({
+          method: 'patch',
+          body: JSON.stringify(payload)
+        })
+      )
+    })
+  })
+
   describe('getSystemUser', () => {
     it('retrieves details of a system user', async () => {
       const expectedResponse = { some: 'data' }
