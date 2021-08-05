@@ -2,7 +2,7 @@ import { findPoclValidationErrors } from '../pocl-validation-error.queries.js'
 
 describe('POCL validation error Queries', () => {
   describe('findPoclValidationErrors', () => {
-    it('applies default filter if no status is provided', async () => {
+    it('applies default filter if no status is provided', () => {
       const query = findPoclValidationErrors()
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_poclvalidationerrors',
@@ -11,7 +11,7 @@ describe('POCL validation error Queries', () => {
       })
     })
   })
-  it('filters by status and default filter if status provided', async () => {
+  it('filters by status and default filter if status provided', () => {
     const status = { id: 'test-status-id', label: 'Ready for Processing' }
     const query = findPoclValidationErrors(status)
     expect(query.toRetrieveRequest()).toEqual({

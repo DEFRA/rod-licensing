@@ -8,7 +8,7 @@ describe('pocl staging exception entity', () => {
   })
   describe('maps from dynamics', () => {
     let exception
-    beforeAll(() => {
+    beforeEach(() => {
       exception = PoclValidationError.fromResponse(
         {
           '@odata.etag': 'W/"56351087"',

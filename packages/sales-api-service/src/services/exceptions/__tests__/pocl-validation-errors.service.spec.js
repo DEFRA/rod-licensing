@@ -79,12 +79,12 @@ describe('POCL validation error service', () => {
     })
 
     it('maps the record to an instance of PoclDataValidationError', async () => {
-      const [poclValidationError] = persist.mock.calls[0][0]
+      const [[[poclValidationError]]] = persist.mock.calls
       expect(poclValidationError).toBeInstanceOf(PoclValidationError)
     })
 
     it('creates the validation record', async () => {
-      const [poclValidationError] = persist.mock.calls[0][0]
+      const [[[poclValidationError]]] = persist.mock.calls
       expect(poclValidationError).toMatchSnapshot()
     })
   })
@@ -130,17 +130,17 @@ describe('POCL validation error service', () => {
         })
 
         it('the status is set to "Processed"', async () => {
-          const [poclValidationError] = persist.mock.calls[0][0]
+          const [[[poclValidationError]]] = persist.mock.calls
           expect(poclValidationError.status.label).toBe('Processed')
         })
 
         it('the state code is set to 1', async () => {
-          const [poclValidationError] = persist.mock.calls[0][0]
+          const [[[poclValidationError]]] = persist.mock.calls
           expect(poclValidationError.stateCode).toBe(1)
         })
 
         it('updates the validation record', async () => {
-          const [poclValidationError] = persist.mock.calls[0][0]
+          const [[[poclValidationError]]] = persist.mock.calls
           expect(poclValidationError).toMatchSnapshot()
         })
       })

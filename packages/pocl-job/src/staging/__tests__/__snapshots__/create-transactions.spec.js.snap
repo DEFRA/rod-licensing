@@ -19,7 +19,7 @@ Object {
           "firstName": "Daniel",
           "lastName": "Cleaver",
           "mobilePhone": "07763 722080",
-          "postalFulfilment": undefined,
+          "postalFulfilment": true,
           "postcode": "PL5 2AA",
           "preferredMethodOfConfirmation": "Email",
           "preferredMethodOfNewsletter": "Email",

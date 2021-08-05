@@ -8,7 +8,8 @@ import { salesApi } from '@defra-fish/connectors-lib'
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     ...Object.keys(jest.requireActual('@defra-fish/connectors-lib').salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn() }), {}),
-    ...['permits', 'concessions'].reduce((acc, m) => ({ ...acc, [m]: { find: jest.fn(() => ({ id: 'test' })) } }), {})
+    concessions: { find: jest.fn(() => ({ id: 'test' })) },
+    permits: { find: jest.fn(() => ({ id: 'test', isForFulfilment: true })) }
   }
 }))
 jest.mock('../../io/db.js', () => ({
@@ -168,7 +169,6 @@ describe('create-transactions', () => {
   })
   it('adds record to staging exception', async () => {
     salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
-    const fakeApiError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }
     await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
     const { calls: [[{ record }]] } = salesApi.createStagingException.mock
     expect(record).toMatchSnapshot()
