@@ -4,7 +4,7 @@ import { Contact } from '@defra-fish/dynamics-lib'
 import { validation, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { optionSetOption } from './option-set.schema.js'
 const DATASOURCE_REF = '/dataSource'
-const UK_COUNTRIES = ['GB', 'GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR', 'United Kingdom', 'England', 'Wales', 'Scotland', 'Northern Ireland']
+const UK_COUNTRIES = ['GB', 'GB-ENG', 'GB-WLS', 'GB-SCT', 'GB-NIR']
 
 export const commonContactSchema = {
   id: Joi.string()
