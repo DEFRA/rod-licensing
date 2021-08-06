@@ -14,19 +14,22 @@ export default [
       handler: async (request, h) => {
         const { licenseeBirthDate, licenseePostcode } = request.query
         const results = await executeQuery(permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode))
-
+        // TODO check issue with caching
         if (results.length === 1) {
-          const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
-          const concessionProofs = await executeQuery(concessionsByIds(ids))
+          let concessionProofs = []
+          if(results[0].expanded.concessionProofs.length > 0) {
+            const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
+            concessionProofs = await executeQuery(concessionsByIds(ids))
+          }
           return h
             .response({
               permission: {
                 ...results[0].entity.toJSON(),
                 licensee: results[0].expanded.licensee.entity.toJSON(),
-                concessions: concessionProofs.map(c => ({
+                ...(concessionProofs && {concessions: concessionProofs.map(c => ({
                   id: c.expanded.concession.entity.id,
                   proof: c.entity.toJSON()
-                })),
+                }))}),
                 permit: results[0].expanded.permit.entity.toJSON()
               }
             })

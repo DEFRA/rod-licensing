@@ -8,6 +8,14 @@ import { ConcessionProof } from '../entities/concession-proof.entity.js'
  * @returns {PredefinedQuery}
  */
 export const concessionsByIds = concessionIds => {
+  if (!concessionIds instanceof Array) {
+    throw new Error('concessionIds must be an array')
+  }
+
+  if (concessionIds.length === 0) {
+    throw new Error('concessionIds must not be empty')
+  }
+
   const { concession } = ConcessionProof.definition.relationships
   const filter = concessionIds.reduce(
     (accum, currentValue, index) =>
