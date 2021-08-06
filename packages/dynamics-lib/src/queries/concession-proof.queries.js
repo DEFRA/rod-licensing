@@ -8,18 +8,18 @@ import { ConcessionProof } from '../entities/concession-proof.entity.js'
  * @returns {PredefinedQuery}
  */
 export const concessionsByIds = concessionIds => {
-	const { concession } = ConcessionProof.definition.relationships
-	const filter = concessionIds.reduce(
-		(accum, currentValue, index) =>
-			index === 0
-				? `${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`
-				: (accum += ` or ${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`),
-		''
-	)
+  const { concession } = ConcessionProof.definition.relationships
+  const filter = concessionIds.reduce(
+    (accum, currentValue, index) =>
+      index === 0
+        ? `${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`
+        : (accum += ` or ${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`),
+    ''
+  )
 
-	return new PredefinedQuery({
-		root: ConcessionProof,
-		filter,
-		expand: [concession]
-	})
+  return new PredefinedQuery({
+    root: ConcessionProof,
+    filter,
+    expand: [concession]
+  })
 }
