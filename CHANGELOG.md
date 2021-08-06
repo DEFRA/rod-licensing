@@ -1,4 +1,13 @@
 
+## v1.17.0-rc.3 (2021-08-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#838](https://github.com/DEFRA/rod-licensing/pull/838) Content Changes: Removes references to PDF in accessibility statement ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
 
 ## v1.17.0-rc.1 (2021-08-04)
 
