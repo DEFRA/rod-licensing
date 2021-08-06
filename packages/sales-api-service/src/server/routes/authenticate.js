@@ -4,7 +4,7 @@ import {
   authenticateRenewalRequestQuerySchema,
   authenticateRenewalResponseSchema
 } from '../../schema/authenticate.schema.js'
-import { permissionForLicensee, executeQuery } from '@defra-fish/dynamics-lib'
+import { permissionForLicensee, concessionsByIds, executeQuery } from '@defra-fish/dynamics-lib'
 
 export default [
   {
@@ -14,13 +14,16 @@ export default [
       handler: async (request, h) => {
         const { licenseeBirthDate, licenseePostcode } = request.query
         const results = await executeQuery(permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode))
+
         if (results.length === 1) {
+          const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
+          const concessionProofs = await executeQuery(concessionsByIds(ids))
           return h
             .response({
               permission: {
                 ...results[0].entity.toJSON(),
                 licensee: results[0].expanded.licensee.entity.toJSON(),
-                concessions: results[0].expanded.concessionProofs.map(c => ({
+                concessions: concessionProofs.map(c => ({
                   id: c.expanded.concession.entity.id,
                   proof: c.entity.toJSON()
                 })),
