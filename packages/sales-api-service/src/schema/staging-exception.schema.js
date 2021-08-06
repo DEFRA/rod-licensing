@@ -54,6 +54,8 @@ const schemaObject = {
   }).optional()
 }
 
+const transactionDate = dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed')
+
 /**
  * Schema for the create staging exception request
  * @type {Joi.AnySchema}
@@ -79,7 +81,7 @@ export const poclValidationErrorItemSchema = Joi.object({
   serialNumber: Joi.string().trim().required(),
   permitId: Joi.string().guid().required(),
   amount: Joi.number().required(),
-  transactionDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+  transactionDate,
   paymentSource: Joi.string()
     .trim()
     .required(),
@@ -125,7 +127,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
         preferredMethodOfNewsletter: Joi.string().optional(),
         preferredMethodOfReminder: Joi.string().optional()
       }),
-      issueDate: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+      issueDate: transactionDate,
       startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
       permitId: Joi.string().guid().required(),
       concessions: Joi.array().items(Joi.object({
@@ -145,7 +147,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
   },
   finaliseTransactionPayload: {
     payment: {
-      timestamp: dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed'),
+      timestamp: transactionDate,
       amount: Joi.number().required(),
       source: Joi.string().trim().required(),
       channelId: Joi.string()
