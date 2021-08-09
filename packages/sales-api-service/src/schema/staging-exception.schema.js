@@ -109,6 +109,7 @@ export const poclValidationErrorParamsSchema = Joi.object({
     .example(uuidv4())
 })
 
+// There may be further issues in the record data at this point
 export const updatePoclValidationErrorPayload = Joi.object({
   poclValidationErrorId: Joi.string()
     .trim()
@@ -120,13 +121,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
     dataSource: Joi.string().optional(),
     serialNumber: Joi.string().trim().required(),
     permissions: Joi.array().items(Joi.object({
-      licensee: Joi.object({
-        ...commonContactSchema,
-        country: Joi.string().optional(),
-        preferredMethodOfConfirmation: Joi.string().optional(),
-        preferredMethodOfNewsletter: Joi.string().optional(),
-        preferredMethodOfReminder: Joi.string().optional()
-      }),
+      licensee: Joi.object(),
       issueDate: TRANSACTION_DATE,
       startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
       permitId: Joi.string().guid().required(),
