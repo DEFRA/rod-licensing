@@ -1,4 +1,13 @@
 
+## v1.17.0-rc.6 (2021-08-09)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `sales-api-service`
+  * [#841](https://github.com/DEFRA/rod-licensing/pull/841) Easy renewals login not working ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.17.0-rc.4 (2021-08-09)
 
