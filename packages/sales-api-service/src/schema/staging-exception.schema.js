@@ -5,7 +5,6 @@ import { optionSetOption } from './option-set.schema.js'
 import { concessionProofSchema } from './concession-proof.schema.js'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
-import { validation, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 
 const dateSchema = Joi.string()
   .isoDate()
