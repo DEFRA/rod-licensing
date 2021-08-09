@@ -37,6 +37,7 @@ describe('authenticate handler', () => {
           }
         }
       ])
+      executeQuery.mockResolvedValueOnce([{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }])
       const result = await server.inject({
         method: 'GET',
         url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'

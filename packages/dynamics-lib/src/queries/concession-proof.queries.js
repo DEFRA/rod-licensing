@@ -8,10 +8,11 @@ import { ConcessionProof } from '../entities/concession-proof.entity.js'
  * @returns {PredefinedQuery}
  */
 export const concessionsByIds = concessionIds => {
-  if (!concessionIds instanceof Array) {
+  if (!Array.isArray(concessionIds)) {
     throw new Error('concessionIds must be an array')
   }
 
+  // passing an empty array returns all the concession proofs
   if (concessionIds.length === 0) {
     throw new Error('concessionIds must not be empty')
   }
