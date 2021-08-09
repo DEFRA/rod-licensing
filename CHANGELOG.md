@@ -1,4 +1,13 @@
 
+## v1.17.0-rc.4 (2021-08-09)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#840](https://github.com/DEFRA/rod-licensing/pull/840) Fix: Sonar cloud issues & test coverage ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
 ## v1.17.0-rc.3 (2021-08-06)
 
 #### :rocket: Enhancement
