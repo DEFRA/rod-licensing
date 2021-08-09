@@ -1,11 +1,14 @@
-import { createPoclValidationError, updatePoclValidationError } from '../pocl-validation-errors.service.js'
-import { persist, findById, PoclValidationError } from '@defra-fish/dynamics-lib'
+import { createPoclValidationError, updatePoclValidationError, getPoclValidationErrors } from '../pocl-validation-errors.service.js'
+import { persist, findById, PoclValidationError, executeQuery, findPoclValidationErrors } from '@defra-fish/dynamics-lib'
+import { getGlobalOptionSetValue } from '../../reference-data.service.js'
 import Boom from '@hapi/boom'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   findById: jest.fn(),
-  persist: jest.fn()
+  persist: jest.fn(),
+  executeQuery: jest.fn(),
+  findPoclValidationErrors: jest.fn()
 }))
 
 const getPayload = () => ({
@@ -165,6 +168,35 @@ describe('POCL validation error service', () => {
         } catch (err) {}
         expect(persist).not.toBeCalled()
       })
+    })
+  })
+
+  describe('getPoclValidationErrors', () => {
+    let status, result
+    beforeEach(async () => {
+      status = await await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Ready for Processing')
+      findPoclValidationErrors.mockReturnValue({ foo: 'bar' })
+      executeQuery.mockResolvedValue([{
+        fields: { some: 'fields' },
+        entity: { test: 'result' }
+      }, {
+        fields: { some: 'more fields' },
+        entity: { another: 'result' }
+      }
+      ])
+      result = await getPoclValidationErrors()
+    })
+
+    it('passes the "Ready for Processing" status to the findPoclValidationErrors query', async () => {
+      expect(findPoclValidationErrors).toHaveBeenCalledWith(status)
+    })
+
+    it('executes the output of the Pocl query', async () => {
+      expect(executeQuery).toHaveBeenCalledWith({ foo: 'bar' })
+    })
+
+    it('returns the entities retrieved from Dynamics', async () => {
+      expect(result).toMatchSnapshot()
     })
   })
 })

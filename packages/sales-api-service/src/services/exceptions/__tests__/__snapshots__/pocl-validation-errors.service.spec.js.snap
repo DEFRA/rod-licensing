@@ -55,6 +55,17 @@ Object {
 }
 `;
 
+exports[`POCL validation error service getPoclValidationErrors returns the entities retrieved from Dynamics 1`] = `
+Array [
+  Object {
+    "test": "result",
+  },
+  Object {
+    "another": "result",
+  },
+]
+`;
+
 exports[`POCL validation error service updatePoclValidationError when validation error record exists and status equals "Processed" updates the validation record 1`] = `
 Object {
   "amount": 30,

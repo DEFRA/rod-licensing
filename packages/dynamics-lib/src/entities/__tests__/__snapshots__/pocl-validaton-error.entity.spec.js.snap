@@ -5,7 +5,7 @@ Object {
   "amount": 30,
   "birthDate": "1989-07-01",
   "channelId": "948594",
-  "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
+  "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":123456789}]",
   "country": "GB",
   "dataSource": Object {
     "description": "Post Office Sales",
@@ -17,6 +17,7 @@ Object {
   "firstName": "Daniel",
   "id": "91f15d18-0aa4-ea11-a812-000d3a64905b",
   "lastName": "Ricciardo",
+  "locality": "Stoke Bishop",
   "methodOfPayment": Object {
     "description": "Cash",
     "id": 910400001,
@@ -68,6 +69,7 @@ Object {
   "defra_emailaddress": "daniel-ricc@example.couk",
   "defra_errormessage": "\\"permissions[0].licensee.email\\" must be a valid email",
   "defra_firstname": "Daniel",
+  "defra_locality": "Stoke Bishop",
   "defra_methodofpayment": 910400001,
   "defra_mobilenumber": "07722 123456",
   "defra_name": "Ricciardo",

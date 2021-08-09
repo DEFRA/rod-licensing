@@ -18,6 +18,7 @@ describe('pocl staging exception entity', () => {
           defra_organisation: 'Fishy Endeavours',
           defra_premises: '14 Howecroft Court',
           defra_street: 'Eastmead Lane',
+          defra_locality: 'Stoke Bishop',
           defra_town: 'Bristol',
           defra_postcode: 'BS9 1HJ',
           defra_country: 'GB',
@@ -27,7 +28,7 @@ describe('pocl staging exception entity', () => {
           defra_preferredmethodofnewsletter: 910400003,
           defra_preferredmethodofconfirmation: 910400000,
           defra_preferredmethodofreminder: 910400002,
-          defra_concessions: '[{"type":"Blue Badge","referenceNumber":"123456789"}]',
+          defra_concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
           defra_startdate: '2021-06-15',
           defra_serialnumber: '14345-48457J',
           defra_permitid: 'test-permit-id',
@@ -52,6 +53,41 @@ describe('pocl staging exception entity', () => {
     it('has the expected data', () => {
       expect(exception).toMatchSnapshot()
     })
+
+    it('has the expected fields', () => {
+      const expectedFields = {
+        firstName: 'Daniel',
+        lastName: 'Ricciardo',
+        organisation: 'Fishy Endeavours',
+        premises: '14 Howecroft Court',
+        street: 'Eastmead Lane',
+        locality: 'Stoke Bishop',
+        town: 'Bristol',
+        postcode: 'BS9 1HJ',
+        country: 'GB',
+        birthDate: '1989-07-01',
+        email: 'daniel-ricc@example.couk',
+        mobilePhone: '07722 123456',
+        preferredMethodOfConfirmation: expect.objectContaining({ id: 910400000, label: 'Email', description: 'Email' }),
+        preferredMethodOfNewsletter: expect.objectContaining({ id: 910400003, label: 'Prefer not to be contacted', description: 'Prefer not to be contacted' }),
+        preferredMethodOfReminder: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
+        concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
+        startDate: '2021-06-15',
+        serialNumber: '14345-48457J',
+        permitId: 'test-permit-id',
+        transactionDate: '2020-01-01T14:00:00Z',
+        amount: 30,
+        paymentSource: 'Post Office Sales',
+        channelId: '948594',
+        methodOfPayment: expect.objectContaining({ id: 910400001, label: 'Cash', description: 'Cash' }),
+        status: expect.objectContaining({ id: 910400000, label: 'Needs Review', description: 'Needs Review' }),
+        dataSource: expect.objectContaining({ id: 910400000, label: 'Post Office Sales', description: 'Post Office Sales' }),
+        stateCode: 1,
+        errorMessage: '\"permissions[0].licensee.email\" must be a valid email'
+      }
+
+      expect(exception).toMatchObject(expect.objectContaining({ etag: 'W/"56351087"', ...expectedFields }))
+    })
   })
 
   it('maps to dynamics', async () => {
@@ -61,6 +97,7 @@ describe('pocl staging exception entity', () => {
     validationError.organisation = 'Fishy Endeavours'
     validationError.premises = '14 Howecroft Court'
     validationError.street = 'Eastmead Lane'
+    validationError.locality = 'Stoke Bishop'
     validationError.town = 'Bristol'
     validationError.postcode = 'BS9 1HJ'
     validationError.country = 'GB'

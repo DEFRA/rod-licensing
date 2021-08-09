@@ -84,16 +84,16 @@ const finaliseTransactions = async records => {
   created.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
     if (result.status === 'fulfilled') {
-      succeeded.push({ record, response: result.value })
+      succeeded.push({ record, result: result.value })
     } else if (result.reason.status === 410) {
       /*
         HTTP-410 errors indicate that the record has already been finalised.  This can occur if the process is terminated while finalising records
         (between the API call and the database update.) As the transaction has already been finalised, treat these as successful.  The data for the
         previously finalised record is returned under the data key of the error structure returned by the Sales API
        */
-      succeeded.push({ record, response: result.reason.body.data })
+      succeeded.push({ record, result: result.reason.body.data })
     } else {
-      failed.push({ record, reason: result.reason })
+      failed.push({ record, result: result.reason })
     }
   })
 
@@ -108,7 +108,7 @@ export const processPoclValidationErrors = async () => {
   const validationErrors = await salesApi.getPoclValidationErrorsForProcessing()
   if (!Array.isArray(validationErrors) || !validationErrors.length) {
     debug('No POCL validation errors to process')
-    return
+    return undefined
   }
   const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
