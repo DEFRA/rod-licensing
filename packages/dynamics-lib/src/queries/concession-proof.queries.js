@@ -22,13 +22,13 @@ export const concessionsByIds = concessionIds => {
     (accum, currentValue, index) =>
       index === 0
         ? `${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`
-        : (accum += ` or ${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`),
+        : (accum + ` or ${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`),
     ''
   )
 
   return new PredefinedQuery({
     root: ConcessionProof,
-    filter,
+    filter: filter,
     expand: [concession]
   })
 }
