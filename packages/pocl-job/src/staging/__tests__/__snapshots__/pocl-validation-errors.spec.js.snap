@@ -1,0 +1,354 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pocl-validation-errors processes failed fixes of validation errors creates transaction in the Sales Api 1`] = `
+Object {
+  "dataSource": "Post Office Sales",
+  "permissions": Array [
+    Object {
+      "concessions": Array [
+        Object {
+          "referenceNumber": "123456789",
+          "type": "Blue Badge",
+        },
+      ],
+      "issueDate": "2020-01-01T14:00:00Z",
+      "licensee": Object {
+        "birthDate": "1989-07-01",
+        "country": "GB",
+        "email": "daniel-ricc@example.couk",
+        "firstName": "Daniel",
+        "lastName": "Ricciardo",
+        "locality": undefined,
+        "mobilePhone": "07722 123456",
+        "organisation": "Fishy Endeavours",
+        "postcode": "BS9 1HJ",
+        "preferredMethodOfConfirmation": "Text",
+        "preferredMethodOfNewsletter": "Email",
+        "preferredMethodOfReminder": "Email",
+        "premises": "14 Howecroft Court",
+        "street": "Eastmead Lane",
+        "town": "Bristol",
+      },
+      "permitId": "test-permit-id",
+      "startDate": "2021-06-15",
+    },
+  ],
+  "serialNumber": "12345-ABCDE",
+}
+`;
+
+exports[`pocl-validation-errors processes failed fixes of validation errors updates POCL validation error record in the Sales Api 1`] = `
+Array [
+  "test-pocl-validation-error-id",
+  Object {
+    "createTransactionPayload": Object {
+      "dataSource": "Post Office Sales",
+      "permissions": Array [
+        Object {
+          "concessions": Array [
+            Object {
+              "referenceNumber": "123456789",
+              "type": "Blue Badge",
+            },
+          ],
+          "issueDate": "2020-01-01T14:00:00Z",
+          "licensee": Object {
+            "birthDate": "1989-07-01",
+            "country": "GB",
+            "email": "daniel-ricc@example.couk",
+            "firstName": "Daniel",
+            "lastName": "Ricciardo",
+            "locality": undefined,
+            "mobilePhone": "07722 123456",
+            "organisation": "Fishy Endeavours",
+            "postcode": "BS9 1HJ",
+            "preferredMethodOfConfirmation": "Text",
+            "preferredMethodOfNewsletter": "Email",
+            "preferredMethodOfReminder": "Email",
+            "premises": "14 Howecroft Court",
+            "street": "Eastmead Lane",
+            "town": "Bristol",
+          },
+          "permitId": "test-permit-id",
+          "startDate": "2021-06-15",
+        },
+      ],
+      "serialNumber": "12345-ABCDE",
+    },
+    "errorMessage": "\\"permissions[0].licensee.email\\" must be a valid email",
+    "finaliseTransactionPayload": Object {
+      "payment": Object {
+        "amount": 30,
+        "channelId": "948594",
+        "method": "Cash",
+        "source": "Post Office Sales",
+        "timestamp": "2020-01-01T14:00:00Z",
+      },
+    },
+    "poclValidationErrorId": "test-pocl-validation-error-id",
+  },
+]
+`;
+
+exports[`pocl-validation-errors processes records which failed during finalising attempts to finalise transaction in the Sales Api 1`] = `
+Array [
+  "test-response-id",
+  Object {
+    "payment": Object {
+      "amount": 30,
+      "channelId": "948594",
+      "method": "Cash",
+      "source": "Post Office Sales",
+      "timestamp": "2020-01-01T14:00:00Z",
+    },
+  },
+]
+`;
+
+exports[`pocl-validation-errors processes records which failed during finalising creates transaction in the Sales Api 1`] = `
+Object {
+  "dataSource": "Post Office Sales",
+  "permissions": Array [
+    Object {
+      "concessions": Array [
+        Object {
+          "referenceNumber": "123456789",
+          "type": "Blue Badge",
+        },
+      ],
+      "issueDate": "2020-01-01T14:00:00Z",
+      "licensee": Object {
+        "birthDate": "1989-07-01",
+        "country": "GB",
+        "email": "daniel-ricc@example.couk",
+        "firstName": "Daniel",
+        "lastName": "Ricciardo",
+        "locality": undefined,
+        "mobilePhone": "07722 123456",
+        "organisation": "Fishy Endeavours",
+        "postcode": "BS9 1HJ",
+        "preferredMethodOfConfirmation": "Text",
+        "preferredMethodOfNewsletter": "Email",
+        "preferredMethodOfReminder": "Email",
+        "premises": "14 Howecroft Court",
+        "street": "Eastmead Lane",
+        "town": "Bristol",
+      },
+      "permitId": "test-permit-id",
+      "startDate": "2021-06-15",
+    },
+  ],
+  "serialNumber": "12345-ABCDE",
+}
+`;
+
+exports[`pocl-validation-errors processes records which failed during finalising updates POCL validation error record in the Sales Api 1`] = `
+Array [
+  "test-pocl-validation-error-id",
+  Object {
+    "createTransactionPayload": Object {
+      "dataSource": "Post Office Sales",
+      "permissions": Array [
+        Object {
+          "concessions": Array [
+            Object {
+              "referenceNumber": "123456789",
+              "type": "Blue Badge",
+            },
+          ],
+          "issueDate": "2020-01-01T14:00:00Z",
+          "licensee": Object {
+            "birthDate": "1989-07-01",
+            "country": "GB",
+            "email": "daniel-ricc@example.couk",
+            "firstName": "Daniel",
+            "lastName": "Ricciardo",
+            "locality": undefined,
+            "mobilePhone": "07722 123456",
+            "organisation": "Fishy Endeavours",
+            "postcode": "BS9 1HJ",
+            "preferredMethodOfConfirmation": "Text",
+            "preferredMethodOfNewsletter": "Email",
+            "preferredMethodOfReminder": "Email",
+            "premises": "14 Howecroft Court",
+            "street": "Eastmead Lane",
+            "town": "Bristol",
+          },
+          "permitId": "test-permit-id",
+          "startDate": "2021-06-15",
+        },
+      ],
+      "serialNumber": "12345-ABCDE",
+    },
+    "errorMessage": "The transaction has already been finalised",
+    "finaliseTransactionPayload": Object {
+      "payment": Object {
+        "amount": 30,
+        "channelId": "948594",
+        "method": "Cash",
+        "source": "Post Office Sales",
+        "timestamp": "2020-01-01T14:00:00Z",
+      },
+    },
+    "poclValidationErrorId": "test-pocl-validation-error-id",
+  },
+]
+`;
+
+exports[`pocl-validation-errors processes successfully fixed validation errors creates transaction in the Sales Api 1`] = `
+Object {
+  "dataSource": "Post Office Sales",
+  "permissions": Array [
+    Object {
+      "concessions": Array [
+        Object {
+          "referenceNumber": "123456789",
+          "type": "Blue Badge",
+        },
+      ],
+      "issueDate": "2020-01-01T14:00:00Z",
+      "licensee": Object {
+        "birthDate": "1989-07-01",
+        "country": "GB",
+        "email": "daniel-ricc@example.co.uk",
+        "firstName": "Daniel",
+        "lastName": "Ricciardo",
+        "locality": undefined,
+        "mobilePhone": "07722 123456",
+        "organisation": "Fishy Endeavours",
+        "postcode": "BS9 1HJ",
+        "preferredMethodOfConfirmation": "Text",
+        "preferredMethodOfNewsletter": "Email",
+        "preferredMethodOfReminder": "Email",
+        "premises": "14 Howecroft Court",
+        "street": "Eastmead Lane",
+        "town": "Bristol",
+      },
+      "permitId": "test-permit-id",
+      "startDate": "2021-06-15",
+    },
+  ],
+  "serialNumber": "12345-ABCDE",
+}
+`;
+
+exports[`pocl-validation-errors processes successfully fixed validation errors finalises the transaction in the Sales Api 1`] = `
+Array [
+  "test-response-id",
+  Object {
+    "payment": Object {
+      "amount": 30,
+      "channelId": "948594",
+      "method": "Cash",
+      "source": "Post Office Sales",
+      "timestamp": "2020-01-01T14:00:00Z",
+    },
+  },
+]
+`;
+
+exports[`pocl-validation-errors processes successfully fixed validation errors treats 410 Gone errors from the Sales API as a success 1`] = `
+Array [
+  "test-pocl-validation-error-id",
+  Object {
+    "createTransactionPayload": Object {
+      "dataSource": "Post Office Sales",
+      "permissions": Array [
+        Object {
+          "concessions": Array [
+            Object {
+              "referenceNumber": "123456789",
+              "type": "Blue Badge",
+            },
+          ],
+          "issueDate": "2020-01-01T14:00:00Z",
+          "licensee": Object {
+            "birthDate": "1989-07-01",
+            "country": "GB",
+            "email": "daniel-ricc@example.co.uk",
+            "firstName": "Daniel",
+            "lastName": "Ricciardo",
+            "locality": undefined,
+            "mobilePhone": "07722 123456",
+            "organisation": "Fishy Endeavours",
+            "postcode": "BS9 1HJ",
+            "preferredMethodOfConfirmation": "Text",
+            "preferredMethodOfNewsletter": "Email",
+            "preferredMethodOfReminder": "Email",
+            "premises": "14 Howecroft Court",
+            "street": "Eastmead Lane",
+            "town": "Bristol",
+          },
+          "permitId": "test-permit-id",
+          "startDate": "2021-06-15",
+        },
+      ],
+      "serialNumber": "12345-ABCDE",
+    },
+    "finaliseTransactionPayload": Object {
+      "payment": Object {
+        "amount": 30,
+        "channelId": "948594",
+        "method": "Cash",
+        "source": "Post Office Sales",
+        "timestamp": "2020-01-01T14:00:00Z",
+      },
+    },
+    "poclValidationErrorId": "test-pocl-validation-error-id",
+    "status": "Processed",
+  },
+]
+`;
+
+exports[`pocl-validation-errors processes successfully fixed validation errors updates POCL validation error record in the Sales Api 1`] = `
+Array [
+  "test-pocl-validation-error-id",
+  Object {
+    "createTransactionPayload": Object {
+      "dataSource": "Post Office Sales",
+      "permissions": Array [
+        Object {
+          "concessions": Array [
+            Object {
+              "referenceNumber": "123456789",
+              "type": "Blue Badge",
+            },
+          ],
+          "issueDate": "2020-01-01T14:00:00Z",
+          "licensee": Object {
+            "birthDate": "1989-07-01",
+            "country": "GB",
+            "email": "daniel-ricc@example.co.uk",
+            "firstName": "Daniel",
+            "lastName": "Ricciardo",
+            "locality": undefined,
+            "mobilePhone": "07722 123456",
+            "organisation": "Fishy Endeavours",
+            "postcode": "BS9 1HJ",
+            "preferredMethodOfConfirmation": "Text",
+            "preferredMethodOfNewsletter": "Email",
+            "preferredMethodOfReminder": "Email",
+            "premises": "14 Howecroft Court",
+            "street": "Eastmead Lane",
+            "town": "Bristol",
+          },
+          "permitId": "test-permit-id",
+          "startDate": "2021-06-15",
+        },
+      ],
+      "serialNumber": "12345-ABCDE",
+    },
+    "finaliseTransactionPayload": Object {
+      "payment": Object {
+        "amount": 30,
+        "channelId": "948594",
+        "method": "Cash",
+        "source": "Post Office Sales",
+        "timestamp": "2020-01-01T14:00:00Z",
+      },
+    },
+    "poclValidationErrorId": "test-pocl-validation-error-id",
+    "status": "Processed",
+  },
+]
+`;

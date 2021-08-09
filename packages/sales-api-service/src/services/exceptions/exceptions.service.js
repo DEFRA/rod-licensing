@@ -1,6 +1,7 @@
 import { persist, StagingException, PoclStagingException } from '@defra-fish/dynamics-lib'
-import db from 'debug'
 import { getGlobalOptionSetValue } from '../reference-data.service.js'
+
+import db from 'debug'
 const debug = db('sales:exceptions')
 
 /**
