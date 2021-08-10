@@ -179,16 +179,6 @@ const processPayment = async (request, transaction, status) => {
 
 const finaliseTransaction = async (request, transaction, status) => {
   const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
-  /*
-  {
-    payment: {
-      amount: transaction.cost,
-      timestamp: moment().toISOString(),
-      source: TRANSACTION_SOURCE.govPay,
-      method: PAYMENT_TYPE.debit
-    }
-  }
-  */
   debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
   const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
 
