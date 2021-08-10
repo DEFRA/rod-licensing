@@ -63,6 +63,10 @@ export async function processQueue ({ id }) {
     transactionRecord.transactionFile &&
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
 
+    if (moment(startDate).isBefore(moment(issueDate))) {
+      console.error('start date is before issue date', permission)
+    }
+
     entities.push(contact, permission)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {

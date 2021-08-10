@@ -29,6 +29,10 @@ export const prepareApiTransactionPayload = async request => {
         })
       }
 
+      if (moment(permission.startDate).isBefore()) {
+        console.error('permission start date before current time: ', permission)
+      }
+
       // Calculate the concession (proof entry) - disabled takes precedence
       if (concessionHelper.hasDisabled(p)) {
         permission.concessions = [

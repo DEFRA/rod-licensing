@@ -34,6 +34,11 @@ export async function finaliseTransaction ({ id, ...payload }) {
         .toISOString()
     permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
     permission.endDate = await calculateEndDate(permission)
+
+    const { issueDate, startDate } = permission
+    if (moment(startDate).isBefore(moment(issueDate))) {
+      console.error('Start date is before issue date', permission)
+    }
   }
 
   const { Attributes: updatedRecord } = await docClient

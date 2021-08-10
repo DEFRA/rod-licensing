@@ -19,6 +19,7 @@ import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { getTrackingProductDetailsFromTransaction, getAffiliation } from '../processors/analytics.js'
+import moment from 'moment'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -178,8 +179,19 @@ const processPayment = async (request, transaction, status) => {
 
 const finaliseTransaction = async (request, transaction, status) => {
   const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
+  /*
+  {
+    payment: {
+      amount: transaction.cost,
+      timestamp: moment().toISOString(),
+      source: TRANSACTION_SOURCE.govPay,
+      method: PAYMENT_TYPE.debit
+    }
+  }
+  */
   debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
   const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+
   /*
    * Write the licence number and end dates into the cache
    */
@@ -192,6 +204,10 @@ const finaliseTransaction = async (request, transaction, status) => {
     transaction.permissions[i].startDate = response.permissions[i].startDate
     debug(`Setting permission end date: ${response.permissions[i].endDate}`)
     transaction.permissions[i].endDate = response.permissions[i].endDate
+    const { issueDate, startDate } = response.permissions[i]
+    if (moment(startDate).isBefore(moment(issueDate))) {
+      console.error('start date is before issue date', response)
+    }
   }
   status[COMPLETION_STATUS.finalised] = true
   await request.cache().helpers.status.set(status)
