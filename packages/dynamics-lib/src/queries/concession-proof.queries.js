@@ -18,13 +18,14 @@ export const concessionsByIds = concessionIds => {
   }
 
   const { concession } = ConcessionProof.definition.relationships
-  const filter = concessionIds.reduce(
+  let filter = concessionIds.reduce(
     (accum, currentValue, index) =>
       index === 0
         ? `${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`
         : (accum + ` or ${ConcessionProof.definition.mappings.id.field} eq ${currentValue}`),
     ''
   )
+  filter += ` and ${ConcessionProof.definition.defaultFilter}`
 
   return new PredefinedQuery({
     root: ConcessionProof,
