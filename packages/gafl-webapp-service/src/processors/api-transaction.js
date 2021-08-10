@@ -6,6 +6,7 @@ import * as concessionHelper from '../processors/concession-helper.js'
 import { countries } from './refdata-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
+import { logStartDateError } from './permission-helper.js'
 
 export const prepareApiTransactionPayload = async request => {
   const transactionCache = await request.cache().helpers.transaction.get()
@@ -29,9 +30,7 @@ export const prepareApiTransactionPayload = async request => {
         })
       }
 
-      if (moment(permission.startDate).isBefore()) {
-        console.error('permission start date before current time: ', permission)
-      }
+      logStartDateError(permission)
 
       // Calculate the concession (proof entry) - disabled takes precedence
       if (concessionHelper.hasDisabled(p)) {

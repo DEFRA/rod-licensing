@@ -19,6 +19,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { logStartDateError } from '../permissions.service.js'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
 
@@ -63,10 +64,7 @@ export async function processQueue ({ id }) {
     transactionRecord.transactionFile &&
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
 
-    if (moment(startDate).isBefore(moment(issueDate))) {
-      console.error('start date is before issue date', permission)
-    }
-
+    logStartDateError(permission)
     entities.push(contact, permission)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {

@@ -133,3 +133,10 @@ export const calculateLuhn = value => {
   }
   return (10 - (sum % 10)) % 10
 }
+
+export const logStartDateError = permission => {
+  const { startDate, issueDate } = permission
+  if (moment(startDate).isBefore(issueDate || undefined)) {
+    console.error('permission start date before current time: ', permission)
+  }
+}

@@ -1,6 +1,6 @@
 import { TRANSACTION_STATUS } from './constants.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
-import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
+import { calculateEndDate, generatePermissionNumber, logStartDateError } from '../permissions.service.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
@@ -35,10 +35,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
     permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
     permission.endDate = await calculateEndDate(permission)
 
-    const { issueDate, startDate } = permission
-    if (moment(startDate).isBefore(moment(issueDate))) {
-      console.error('Start date is before issue date', permission)
-    }
+    logStartDateError(permission)
   }
 
   const { Attributes: updatedRecord } = await docClient
