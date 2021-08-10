@@ -19,7 +19,7 @@ describe('concession-proof.queries', () => {
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_concessionproofs',
         expand: expect.arrayContaining([expect.objectContaining({ property: 'defra_ConcessionNameId' })]),
-        filter: 'defra_concessionproofid eq 123',
+        filter: 'defra_concessionproofid eq 123 and statecode eq 0',
         select: expect.any(Array)
       })
     })
@@ -29,7 +29,7 @@ describe('concession-proof.queries', () => {
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_concessionproofs',
         expand: expect.arrayContaining([expect.objectContaining({ property: 'defra_ConcessionNameId' })]),
-        filter: 'defra_concessionproofid eq 123 or defra_concessionproofid eq 456',
+        filter: 'defra_concessionproofid eq 123 or defra_concessionproofid eq 456 and statecode eq 0',
         select: expect.any(Array)
       })
     })
