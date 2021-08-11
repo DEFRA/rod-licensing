@@ -18,7 +18,7 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { getTrackingProductDetailsFromTransaction, getAffiliation } from '../processors/analytics.js'
+import { logStartDateError } from '../processors/permission-helper.js'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -180,6 +180,7 @@ const finaliseTransaction = async (request, transaction, status) => {
   const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
   debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
   const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+
   /*
    * Write the licence number and end dates into the cache
    */
@@ -192,6 +193,7 @@ const finaliseTransaction = async (request, transaction, status) => {
     transaction.permissions[i].startDate = response.permissions[i].startDate
     debug(`Setting permission end date: ${response.permissions[i].endDate}`)
     transaction.permissions[i].endDate = response.permissions[i].endDate
+    logStartDateError(response.permissions[i])
   }
   status[COMPLETION_STATUS.finalised] = true
   await request.cache().helpers.status.set(status)

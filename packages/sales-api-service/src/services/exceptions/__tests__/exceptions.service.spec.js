@@ -30,7 +30,7 @@ expect.extend({
   }
 })
 
-describe('payment-journals service', () => {
+describe('exceptions service', () => {
   describe('createStagingException', () => {
     it('creates a staging exception entity in Dynamics', async () => {
       const stagingException = {
