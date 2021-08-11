@@ -7,7 +7,9 @@ describe('logStartDateError', () => {
   beforeAll(() => {
     console.error = jest.fn()
   })
+
   beforeEach(jest.clearAllMocks)
+
   afterAll(() => {
     console.error = consoleError
   })
