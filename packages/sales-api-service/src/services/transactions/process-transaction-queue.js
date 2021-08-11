@@ -16,6 +16,7 @@ import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDa
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
+import { logStartDateError } from '../permission-helper.js'
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -63,6 +64,7 @@ export async function processQueue ({ id }) {
     transactionRecord.transactionFile &&
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
 
+    logStartDateError(permission)
     entities.push(contact, permission)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
