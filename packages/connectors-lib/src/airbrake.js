@@ -34,7 +34,7 @@ export const initialise = () => {
             // Support for PM2 process.env.name
             ...(process.env.name && { name: process.env.name })
           },
-          session: request?.state,
+          ...(request?.state && { session: request?.state }),
           context: {
             ...(request?.method && { action: `${request?.method?.toUpperCase()} ${request?.path}` }),
             ...(request?.headers?.['user-agent'] && { userAgent: request?.headers?.['user-agent'] })
