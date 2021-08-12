@@ -1,4 +1,13 @@
 
+## v1.18.0-rc.0 (2021-08-12)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#854](https://github.com/DEFRA/rod-licensing/pull/854) Add more logging details to errbit ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 
