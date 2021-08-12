@@ -20,7 +20,10 @@ describe('logStartDateError', () => {
       issueDate: '2021-08-10T14:05:54Z'
     }
     logStartDateError(samplePermission)
-    expect(console.error).toHaveBeenCalled()
+    expect(console.error).toHaveBeenCalledWith(
+      'permission start date before issue date: ',
+      samplePermission
+    )
   })
 
   it('logs if start date is before current time, if no issue date is provided', () => {
@@ -28,7 +31,10 @@ describe('logStartDateError', () => {
       startDate: moment().subtract(5, 'hours').toISOString()
     }
     logStartDateError(samplePermission)
-    expect(console.error).toHaveBeenCalled()
+    expect(console.error).toHaveBeenCalledWith(
+      'permission start date before current time: ',
+      samplePermission
+    )
   })
 
   it('doesn\'t log if start date is after issue date', () => {
@@ -43,6 +49,15 @@ describe('logStartDateError', () => {
   it('doesn\'t log if start date is after current date', () => {
     const samplePermission = {
       startDate: moment().add(30, 'minutes').toISOString()
+    }
+    logStartDateError(samplePermission)
+    expect(console.error).not.toHaveBeenCalled()
+  })
+
+  it('doesn\'t log if it\'t a POCL import', () => {
+    const samplePermission = {
+      startDate: moment().subtract(5, 'hours').toISOString(),
+      dataSource: { id: 910400000 }
     }
     logStartDateError(samplePermission)
     expect(console.error).not.toHaveBeenCalled()
