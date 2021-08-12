@@ -54,7 +54,7 @@ describe('logStartDateError', () => {
     expect(console.error).not.toHaveBeenCalled()
   })
 
-  it('doesn\'t log if it\'t a POCL import', () => {
+  it('doesn\'t log if isn\'t a POCL import', () => {
     const samplePermission = {
       startDate: moment().subtract(5, 'hours').toISOString(),
       dataSource: { id: 910400000 }
