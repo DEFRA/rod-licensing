@@ -209,7 +209,7 @@ describe('airbrake', () => {
         const airbrake = require('../airbrake.js')
         expect(airbrake.initialise()).toEqual(true)
 
-        const requestDetail = { headers: {'user-agent': 'chrome'} }
+        const requestDetail = { headers: { 'user-agent': 'chrome' } }
         console.error('Error processing request. Request: %j, Exception: %o', requestDetail, {})
         expect(Notifier.prototype.notify).toHaveBeenLastCalledWith({
           error: expect.errorWithMessageMatching(expect.stringMatching('Error')),
