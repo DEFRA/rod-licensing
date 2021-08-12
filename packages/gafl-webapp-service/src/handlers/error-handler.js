@@ -27,7 +27,7 @@ export const errorHandler = async (request, h) => {
     /*
      * 5xx server errors and are logged.
      */
-    const requestDetail = { path: request.path, query: request.query, params: request.params, payload: request.payload }
+    const requestDetail = { url: request.url, path: request.path, query: request.query, params: request.params, payload: request.payload, headers: request.headers, state: request.state, method: request.method }
     console.error('Error processing request. Request: %j, Exception: %o', requestDetail, request.response)
 
     return h

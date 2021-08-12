@@ -25,12 +25,19 @@ export const initialise = () => {
     ;['warn', 'error'].forEach(method => {
       nativeConsoleMethods[method] = console[method].bind(console)
       console[method] = (...args) => {
+        const error = args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args))
+        const request = args.find(arg => arg.hasOwnProperty('headers'))
         airbrake.notify({
-          error: args.find(arg => arg instanceof Error) ?? new Error(formatWithOptions(INSPECT_OPTS, ...args)),
+          error,
           params: { consoleInvocationDetails: { method, arguments: { ...args.map(arg => inspect(arg, INSPECT_OPTS)) } } },
           environment: {
             // Support for PM2 process.env.name
-            ...(process.env.name && { name: process.env.name })
+            ...(process.env.name && { name: process.env.name }),
+          },
+          session: request?.state,
+          context: {
+            ...(request?.method && { action: `${request?.method?.toUpperCase()} ${request?.path}`}),
+            ...(request?.headers?.['user-agent'] && { userAgent: request?.headers?.['user-agent'] })
           }
         })
         nativeConsoleMethods[method](...args)
