@@ -79,6 +79,7 @@ describe('airbrake', () => {
               method: 'error'
             }
           }),
+          context: {},
           environment: {
             name: 'Test PM2 process name'
           }
@@ -93,6 +94,7 @@ describe('airbrake', () => {
               method: 'warn'
             }
           }),
+          context: {},
           environment: {
             name: 'Test PM2 process name'
           }
@@ -129,6 +131,7 @@ describe('airbrake', () => {
                 method: 'error'
               }
             }),
+            context: {},
             environment: expect.any(Object)
           })
           done()
@@ -136,6 +139,95 @@ describe('airbrake', () => {
           done(e)
         }
       })
+    })
+  })
+
+  it('should output the request state in the session object if it is present', done => {
+    jest.isolateModules(async () => {
+      try {
+        process.env.AIRBRAKE_HOST = 'https://test-airbrake.com'
+        process.env.AIRBRAKE_PROJECT_KEY = '123'
+        const airbrake = require('../airbrake.js')
+        expect(airbrake.initialise()).toEqual(true)
+
+        const requestDetail = { state: { sid: 'abc123' }, headers: {} }
+        console.error('Error processing request. Request: %j, Exception: %o', requestDetail, {})
+        expect(Notifier.prototype.notify).toHaveBeenLastCalledWith({
+          error: expect.errorWithMessageMatching(expect.stringMatching('Error')),
+          params: expect.objectContaining({
+            consoleInvocationDetails: {
+              arguments: expect.any(Object),
+              method: 'error'
+            }
+          }),
+          context: {},
+          session: { sid: 'abc123' },
+          environment: expect.any(Object)
+        })
+        done()
+      } catch (e) {
+        done(e)
+      }
+    })
+  })
+
+  it('should output the request path in the context object if it is present', done => {
+    jest.isolateModules(async () => {
+      try {
+        process.env.AIRBRAKE_HOST = 'https://test-airbrake.com'
+        process.env.AIRBRAKE_PROJECT_KEY = '123'
+        const airbrake = require('../airbrake.js')
+        expect(airbrake.initialise()).toEqual(true)
+
+        const requestDetail = { method: 'GET', path: '/path', headers: {} }
+        console.error('Error processing request. Request: %j, Exception: %o', requestDetail, {})
+        expect(Notifier.prototype.notify).toHaveBeenLastCalledWith({
+          error: expect.errorWithMessageMatching(expect.stringMatching('Error')),
+          params: expect.objectContaining({
+            consoleInvocationDetails: {
+              arguments: expect.any(Object),
+              method: 'error'
+            }
+          }),
+          context: {
+            action: 'GET /path'
+          },
+          environment: expect.any(Object)
+        })
+        done()
+      } catch (e) {
+        done(e)
+      }
+    })
+  })
+
+  it('should output the user agent in the context object if it is present', done => {
+    jest.isolateModules(async () => {
+      try {
+        process.env.AIRBRAKE_HOST = 'https://test-airbrake.com'
+        process.env.AIRBRAKE_PROJECT_KEY = '123'
+        const airbrake = require('../airbrake.js')
+        expect(airbrake.initialise()).toEqual(true)
+
+        const requestDetail = { headers: { 'user-agent': 'chrome' } }
+        console.error('Error processing request. Request: %j, Exception: %o', requestDetail, {})
+        expect(Notifier.prototype.notify).toHaveBeenLastCalledWith({
+          error: expect.errorWithMessageMatching(expect.stringMatching('Error')),
+          params: expect.objectContaining({
+            consoleInvocationDetails: {
+              arguments: expect.any(Object),
+              method: 'error'
+            }
+          }),
+          context: {
+            userAgent: 'chrome'
+          },
+          environment: expect.any(Object)
+        })
+        done()
+      } catch (e) {
+        done(e)
+      }
     })
   })
 
