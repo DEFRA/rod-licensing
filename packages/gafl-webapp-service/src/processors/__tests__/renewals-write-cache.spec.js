@@ -94,7 +94,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set start and end dates, if renewal has not expired', async () => {
-      const endDate = moment().add(5, 'days');
+      const endDate = moment().add(5, 'days')
       const mockDateAuthResult = {
         permission: {
           ...authenticationResult.permission,
@@ -114,7 +114,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set start and end dates, if renewal has expired', async () => {
-      const endDate = moment().subtract(5, 'days');
+      const endDate = moment().subtract(5, 'days')
       const mockDateAuthResult = {
         permission: {
           ...authenticationResult.permission,
@@ -140,12 +140,12 @@ describe('renewals-write-cache', () => {
           licensee: expect.objectContaining({
             birthDate: '2004-01-13',
             countryCode: 'GB-ENG',
-            email: "email@gmail.com",
-            firstName: "Negativetwelve",
-            lastName: "Test",
-            postcode: "SN15 3PG",
-            "street": "Blackthorn Mews",
-            "town": "Chippenham"
+            email: 'email@gmail.com',
+            firstName: 'Negativetwelve',
+            lastName: 'Test',
+            postcode: 'SN15 3PG',
+            street: 'Blackthorn Mews',
+            town: 'Chippenham'
           })
         })
       )
@@ -196,7 +196,7 @@ describe('renewals-write-cache', () => {
       await setUpCacheFromAuthenticationResult(mockRequest, mockConccessionAuthResult)
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
-          concessions: [{ "proof": { "referenceNumber": "1233", "type": "Blue Badge" }, "type": "Disabled" }]
+          concessions: [{ proof: { referenceNumber: '1233', type: 'Blue Badge' }, type: 'Disabled' }]
         })
       )
     })
