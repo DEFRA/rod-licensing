@@ -8,6 +8,8 @@ jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
 
 describe('renewals-write-cache', () => {
+  beforeEach(jest.clearAllMocks)
+
   describe('setUpCacheFromAuthenticationResult', () => {
     const mockStatusCacheSet = jest.fn()
     const mockTransactionCacheGet = jest.fn()
@@ -70,7 +72,6 @@ describe('renewals-write-cache', () => {
     }
 
     beforeEach(() => {
-      jest.clearAllMocks()
       mockTransactionCacheGet.mockImplementationOnce(() => ({}))
     })
 
