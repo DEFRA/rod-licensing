@@ -201,5 +201,14 @@ describe('renewals-write-cache', () => {
         })
       )
     })
+
+    it('should set renewal and fromSummary on the status cache', async () => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          renewal: true, fromSummary: 'contact-summary'
+        })
+      )
+    })
   })
 })
