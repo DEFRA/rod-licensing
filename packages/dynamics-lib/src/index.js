@@ -12,6 +12,7 @@ export * from './entities/transaction-journal.entity.js'
 export * from './entities/transaction-currency.entity.js'
 export * from './entities/pocl-file.entity.js'
 export * from './entities/pocl-staging-exception.entity.js'
+export * from './entities/pocl-validation-error.entity.js'
 export * from './entities/recurring-payment.entity.js'
 export * from './entities/recurring-payment-instruction.entity.js'
 export * from './entities/staging-exception.entity.js'
@@ -23,6 +24,8 @@ export * from './entities/system-user.entity.js'
 // Queries
 export * from './queries/permission.queries.js'
 export * from './queries/fulfilment.queries.js'
+export * from './queries/concession-proof.queries.js'
+export * from './queries/pocl-validation-error.queries.js'
 
 // Framework functionality
 export * from './client/util.js'

@@ -5,6 +5,7 @@ import { s3ToLocal } from './transport/s3-to-local.js'
 import { getFileRecords } from './io/db.js'
 import { removeTemp } from './io/file.js'
 import { stage } from './staging/pocl-data-staging.js'
+import { processPoclValidationErrors } from './staging/pocl-validation-errors.js'
 import { FILE_STAGE } from './staging/constants.js'
 
 import db from 'debug'
@@ -39,6 +40,8 @@ export async function execute () {
         const localXmlFiles = await Promise.all(pendingFileRecords.map(record => s3ToLocal(record.s3Key)))
         debug('Processing files: %o', localXmlFiles)
         await Promise.all(localXmlFiles.map(f => stage(f)))
+        debug('Processing validation errors')
+        await processPoclValidationErrors()
       } finally {
         removeTemp()
       }

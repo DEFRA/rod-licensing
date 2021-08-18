@@ -1,5 +1,56 @@
 
 
+## v1.18.0-rc.0 (2021-08-12)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#854](https://github.com/DEFRA/rod-licensing/pull/854) Add more logging details to errbit ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+
+
+## v1.17.0-rc.6 (2021-08-09)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `sales-api-service`
+  * [#841](https://github.com/DEFRA/rod-licensing/pull/841) Easy renewals login not working ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.17.0-rc.4 (2021-08-09)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#840](https://github.com/DEFRA/rod-licensing/pull/840) Fix: Sonar cloud issues & test coverage ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
+## v1.17.0-rc.3 (2021-08-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#838](https://github.com/DEFRA/rod-licensing/pull/838) Content Changes: Removes references to PDF in accessibility statement ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
+
+## v1.17.0-rc.1 (2021-08-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#834](https://github.com/DEFRA/rod-licensing/pull/834) Removal of Beta badge on GAFL service ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
 
 
 ## v1.16.0-rc.4 (2021-07-23)

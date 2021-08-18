@@ -37,6 +37,7 @@ describe('authenticate handler', () => {
           }
         }
       ])
+      executeQuery.mockResolvedValueOnce([{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }])
       const result = await server.inject({
         method: 'GET',
         url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
@@ -54,6 +55,51 @@ describe('authenticate handler', () => {
             }
           ],
           permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+        })
+      })
+    })
+
+    describe('if no concessions are returned', () => {
+      beforeEach(() => {
+        executeQuery.mockResolvedValueOnce([
+          {
+            entity: MOCK_EXISTING_PERMISSION_ENTITY,
+            expanded: {
+              licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
+              concessionProofs: [],
+              permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+            }
+          }
+        ])
+      })
+
+      it('should call permissionForLicensee with the licence number, dob and postcode for a renewal request, ', async () => {
+        await server.inject({
+          method: 'GET',
+          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+        })
+        expect(permissionForLicensee).toHaveBeenCalledWith('CD379B', '2000-01-01', 'AB12 3CD')
+      })
+
+      it('returns 200 from a renewal request', async () => {
+        const result = await server.inject({
+          method: 'GET',
+          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+        })
+        expect(result.statusCode).toBe(200)
+      })
+
+      it('returns permission from a renewal request', async () => {
+        const result = await server.inject({
+          method: 'GET',
+          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+        })
+        expect(JSON.parse(result.payload)).toMatchObject({
+          permission: expect.objectContaining({
+            ...MOCK_EXISTING_PERMISSION_ENTITY.toJSON(),
+            licensee: MOCK_EXISTING_CONTACT_ENTITY.toJSON(),
+            permit: MOCK_1DAY_SENIOR_PERMIT_ENTITY.toJSON()
+          })
         })
       })
     })
