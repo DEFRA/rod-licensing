@@ -55,6 +55,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   // Add in concession proofs
   const concessions = await salesApi.concessions.getAll()
+  permission.concessions = []
   authenticationResult.permission.concessions.forEach(concessionProof => {
     const concessionReference = concessions.find(c => c.id === concessionProof.id)
     if (concessionReference && concessionReference.name === constants.CONCESSION.DISABLED) {
