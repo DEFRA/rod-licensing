@@ -1,4 +1,13 @@
 
+## v1.18.0-rc.2 (2021-08-18)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#856](https://github.com/DEFRA/rod-licensing/pull/856) When logging in with one permission and going back and entering anoth… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.18.0-rc.0 (2021-08-12)
 
