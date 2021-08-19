@@ -1,4 +1,15 @@
 
+
+
+## v1.18.0-rc.3 (2021-08-19)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `sales-api-service`
+  * [#858](https://github.com/DEFRA/rod-licensing/pull/858) feature/obfuscated dob ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.18.0-rc.2 (2021-08-18)
 
 #### :bug: Bug Fix

@@ -1,5 +1,11 @@
 import { finaliseTransaction } from '../finalise-transaction.js'
-import { MOCK_END_DATE, MOCK_PERMISSION_NUMBER, mockTransactionPayload, mockStagedTransactionRecord } from '../../../__mocks__/test-data.js'
+import {
+  MOCK_END_DATE,
+  MOCK_PERMISSION_NUMBER,
+  MOCK_OBFUSCATED_DOB,
+  mockTransactionPayload,
+  mockStagedTransactionRecord
+} from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../../config.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
@@ -9,6 +15,10 @@ import { TRANSACTION_STATUS } from '../constants.js'
 jest.mock('../../permissions.service.js', () => ({
   generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
   calculateEndDate: () => MOCK_END_DATE
+}))
+
+jest.mock('../../contacts.service.js', () => ({
+  getObfuscatedDob: () => MOCK_OBFUSCATED_DOB
 }))
 
 describe('transaction service', () => {
