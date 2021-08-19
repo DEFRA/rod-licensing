@@ -26,7 +26,8 @@ describe('contact entity', () => {
         defra_preferredmethodofconfirmation: 910400002,
         defra_preferredmethodofnewsletter: 910400000,
         defra_preferredmethodofreminder: 910400001,
-        defra_postalfulfilment: true
+        defra_postalfulfilment: true,
+        defra_obfuscated_dob: '87200001013460'
       },
       optionSetData
     )
@@ -48,7 +49,8 @@ describe('contact entity', () => {
       preferredMethodOfConfirmation: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
       preferredMethodOfNewsletter: expect.objectContaining({ id: 910400000, label: 'Email', description: 'Email' }),
       preferredMethodOfReminder: expect.objectContaining({ id: 910400001, label: 'Letter', description: 'Letter' }),
-      postalFulfilment: true
+      postalFulfilment: true,
+      obfuscatedDob: '87200001013460'
     }
 
     expect(contact).toBeInstanceOf(Contact)
@@ -75,6 +77,7 @@ describe('contact entity', () => {
     contact.preferredMethodOfNewsletter = optionSetData.defra_preferredcontactmethod.options['910400000']
     contact.preferredMethodOfReminder = optionSetData.defra_preferredcontactmethod.options['910400001']
     contact.postalFulfilment = true
+    contact.obfuscatedDob = '87200001013460'
 
     const dynamicsEntity = contact.toRequestBody()
     expect(dynamicsEntity).toMatchObject(
@@ -94,7 +97,8 @@ describe('contact entity', () => {
         defra_preferredmethodofconfirmation: 910400002,
         defra_preferredmethodofnewsletter: 910400000,
         defra_preferredmethodofreminder: 910400001,
-        defra_postalfulfilment: true
+        defra_postalfulfilment: true,
+        defra_obfuscated_dob: '87200001013460'
       })
     )
   })

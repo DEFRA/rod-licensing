@@ -193,6 +193,8 @@ const finaliseTransaction = async (request, transaction, status) => {
     transaction.permissions[i].startDate = response.permissions[i].startDate
     debug(`Setting permission end date: ${response.permissions[i].endDate}`)
     transaction.permissions[i].endDate = response.permissions[i].endDate
+    debug(`Setting obfuscated dob: ${response.permissions[i].licensee.obfuscatedDob}`)
+    transaction.permissions[i].licensee.obfuscatedDob = response.permissions[i].licensee.obfuscatedDob
     logStartDateError(response.permissions[i])
   }
   status[COMPLETION_STATUS.finalised] = true

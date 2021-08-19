@@ -110,4 +110,44 @@ describe('fulfilment-transform', () => {
       }
     })
   })
+
+  it('should set holder.dateOfBirth.id to the obfuscatedDob if it is present', async () => {
+    const testData = {
+      permission: MOCK_EXISTING_PERMISSION_ENTITY,
+      licensee: { ...MOCK_EXISTING_CONTACT_ENTITY, obfuscatedDob: '87200001013460' },
+      permit: MOCK_1DAY_FULL_PERMIT_ENTITY
+    }
+
+    const transform = await fulfilmentDataTransformer([testData])
+    let result = ''
+    let yielded = {}
+    do {
+      yielded = await transform.next()
+      if (!yielded.done) {
+        result += yielded.value
+      }
+    } while (!yielded.done)
+    const jsonResult = JSON.parse(result)
+    expect(jsonResult.holder.dateOfBirth.id).toBe('87200001013460')
+  })
+
+  it('should generate an obfuscated date of birth for holder.dateOfBirth.id if obfuscatedDob is not present', async () => {
+    const testData = {
+      permission: MOCK_EXISTING_PERMISSION_ENTITY,
+      licensee: MOCK_EXISTING_CONTACT_ENTITY,
+      permit: MOCK_1DAY_FULL_PERMIT_ENTITY
+    }
+
+    const transform = await fulfilmentDataTransformer([testData])
+    let result = ''
+    let yielded = {}
+    do {
+      yielded = await transform.next()
+      if (!yielded.done) {
+        result += yielded.value
+      }
+    } while (!yielded.done)
+    const jsonResult = JSON.parse(result)
+    expect(jsonResult.holder.dateOfBirth.id.substring(2, 10)).toBe('19460101')
+  })
 })
