@@ -1,7 +1,7 @@
 import Boom from '@hapi/boom'
 
 import pageRoute from '../../../routes/page-route.js'
-import { LICENCE_INFORMATION } from '../../../uri.js'
+import { LICENCE_DETAILS } from '../../../uri.js'
 import { COMPLETION_STATUS } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
@@ -37,4 +37,4 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(LICENCE_INFORMATION.page, LICENCE_INFORMATION.uri, null, nextPage, getData)
+export default pageRoute(LICENCE_DETAILS.page, LICENCE_DETAILS.uri, null, nextPage, getData)

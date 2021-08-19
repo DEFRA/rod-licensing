@@ -6,7 +6,7 @@ import {
   AGREED,
   ORDER_COMPLETE,
   TERMS_AND_CONDITIONS,
-  LICENCE_INFORMATION,
+  LICENCE_DETAILS,
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
@@ -80,7 +80,7 @@ describe('The order completion handler', () => {
 
     await injectWithCookies('GET', AGREED.uri)
     await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    const data = await injectWithCookies('GET', LICENCE_INFORMATION.uri)
+    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
     expect(data.statusCode).toBe(200)
   })
 

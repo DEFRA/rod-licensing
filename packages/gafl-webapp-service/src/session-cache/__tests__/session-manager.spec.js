@@ -6,7 +6,7 @@ import {
   DATE_OF_BIRTH,
   LICENCE_TYPE,
   ORDER_COMPLETE,
-  LICENCE_INFORMATION,
+  LICENCE_DETAILS,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
   IDENTIFY
@@ -92,7 +92,7 @@ describe('The user', () => {
    */
   it.each([
     ['order-complete', ORDER_COMPLETE],
-    ['licence-information', LICENCE_INFORMATION],
+    ['licence-details', LICENCE_DETAILS],
     ['payment-failed', PAYMENT_FAILED],
     ['payment-failed', PAYMENT_CANCELLED]
   ])('redirects to the controller on attempting to access %s', async (desc, page) => {

@@ -2,7 +2,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 
 import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
-import { AGREED, TERMS_AND_CONDITIONS, LICENCE_INFORMATION } from '../../../../uri.js'
+import { AGREED, TERMS_AND_CONDITIONS, LICENCE_DETAILS } from '../../../../uri.js'
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
@@ -21,13 +21,13 @@ afterAll(() => {
 
 describe('The licence information page', () => {
   it('throws a status 403 (forbidden) exception if the agreed flag is not set', async () => {
-    const data = await injectWithCookies('GET', LICENCE_INFORMATION.uri)
+    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
     expect(data.statusCode).toBe(403)
   })
 
   it('throws a status 403 (forbidden) exception if the posted flag is not set', async () => {
     await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-    const data = await injectWithCookies('GET', LICENCE_INFORMATION.uri)
+    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
     expect(data.statusCode).toBe(403)
   })
 
@@ -37,7 +37,7 @@ describe('The licence information page', () => {
     salesApi.finaliseTransaction.mockRejectedValue(new Error())
 
     await injectWithCookies('GET', AGREED.uri)
-    const data = await injectWithCookies('GET', LICENCE_INFORMATION.uri)
+    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
     expect(data.statusCode).toBe(403)
   })
 
@@ -47,7 +47,7 @@ describe('The licence information page', () => {
     salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
 
     await injectWithCookies('GET', AGREED.uri)
-    const data = await injectWithCookies('GET', LICENCE_INFORMATION.uri)
+    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
     expect(data.statusCode).toBe(200)
   })
 })

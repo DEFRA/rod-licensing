@@ -74,6 +74,8 @@ export const removeDisabled = permission => {
   }
 }
 
+export const hasAgeConcession = permission => hasSenior(permission) || hasJunior(permission)
+
 export const ageConcessionHelper = permission => {
   delete permission.licensee.noLicenceRequired
   const ageAtLicenceStartDate = permission.licenceStartDate
