@@ -1,53 +1,70 @@
-import { salesApi } from '@defra-fish/connectors-lib'
+import { getData } from '../route.js'
+import Boom from '@hapi/boom'
+import { COMPLETION_STATUS } from '../../../../constants.js'
+import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 
-import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
-import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
-import { AGREED, TERMS_AND_CONDITIONS, LICENCE_DETAILS } from '../../../../uri.js'
-
-jest.mock('@defra-fish/connectors-lib')
-mockSalesApi()
-
-beforeAll(() => {
-  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+const createMockRequest = status => ({
+  cache: jest.fn(() => ({
+    helpers: {
+      status: {
+        get: jest.fn(() => status)
+      },
+      transaction: {
+        getCurrentPermission: jest.fn(() => ({
+          startDate: '2020-06-06',
+          endDate: '2021-06-05',
+          licenceType: LICENCE_TYPE['trout-and-coarse'],
+          numberOfRods: '3',
+          concessions: [{
+            type: CONCESSION.DISABLED,
+            proof: {
+              type: CONCESSION_PROOF.blueBadge,
+              referenceNumber: '123456324'
+            }
+          }, {
+            type: CONCESSION.SENIOR,
+            proof: {
+              type: CONCESSION_PROOF.none
+            }
+          }]
+        }))
+      }
+    }
+  }))
 })
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
-afterAll(() => {
-  delete process.env.ANALYTICS_PRIMARY_PROPERTY
-  delete process.env.ANALYTICS_XGOV_PROPERTY
-})
 
-describe('The licence information page', () => {
-  it('throws a status 403 (forbidden) exception if the agreed flag is not set', async () => {
-    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
-    expect(data.statusCode).toBe(403)
-  })
+afterAll(jest.clearAllMocks)
 
-  it('throws a status 403 (forbidden) exception if the posted flag is not set', async () => {
-    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
-    expect(data.statusCode).toBe(403)
-  })
+describe('The licence details page', () => {
+  describe('.getData', () => {
+    describe('throws a Boom forbidden error', () => {
+      it('if status agreed flag is not set', async () => {
+        const mockRequest = createMockRequest({})
+        const boomError = Boom.forbidden('Attempt to access the licence information handler with no agreed flag set')
+        await expect(getData(mockRequest)).rejects.toThrow(boomError)
+      })
 
-  it('throw a status 403 (forbidden) exception if the finalized flag is not set', async () => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockRejectedValue(new Error())
+      it('if status posted flag is not set', async () => {
+        const mockRequest = createMockRequest({ [COMPLETION_STATUS.agreed]: true })
+        const boomError = Boom.forbidden('Attempt to access the licence information handler with no posted flag set')
+        await expect(getData(mockRequest)).rejects.toThrow(boomError)
+      })
 
-    await injectWithCookies('GET', AGREED.uri)
-    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
-    expect(data.statusCode).toBe(403)
-  })
+      it('if status finalised flag is not set', async () => {
+        const mockRequest = createMockRequest({ [COMPLETION_STATUS.agreed]: true, [COMPLETION_STATUS.posted]: true })
+        const boomError = Boom.forbidden('Attempt to access the licence information handler with no finalised flag set')
+        await expect(getData(mockRequest)).rejects.toThrow(boomError)
+      })
+    })
 
-  it('responds with the licence information page when requested', async () => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-
-    await injectWithCookies('GET', AGREED.uri)
-    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
-    expect(data.statusCode).toBe(200)
+    it('returns the expected data', async () => {
+      const mockRequest = createMockRequest({
+        [COMPLETION_STATUS.agreed]: true,
+        [COMPLETION_STATUS.posted]: true,
+        [COMPLETION_STATUS.finalised]: true
+      })
+      const result = await getData(mockRequest)
+      expect(result).toMatchSnapshot()
+    })
   })
 })

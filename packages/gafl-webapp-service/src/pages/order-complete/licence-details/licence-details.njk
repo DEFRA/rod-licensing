@@ -17,6 +17,14 @@
     {% set lengthText = '12 months' %}
 {% endif %}
 
+{% if data.ageConcession %}
+    {% if data.ageConcession.type == 'Senior' %}
+        {% set ageConcessionText = 'Over 65' %}
+    {% elseif data.ageConcession.type == 'Junior' %}
+        {% set ageConcessionText = 'Junior (13 to 16)' %}
+    {% endif%}
+{% endif%}
+
 {% set licenseDetailsSummaryRows = [] %}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Name' }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Type' }, value: { text: data.licenceTypeStr } }) }}
@@ -24,6 +32,7 @@
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Starts' }, value: { text: data.startTimeString } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Ends' }, value: { text: data.endTimeString } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: 'Disability concession' }, value: { text: 'Yes' } }) if data.disabled }}
+{{ licenseDetailsSummaryRows.push({ key: { text: 'Age concession' }, value: { text: ageConcessionText } }) if data.ageConcession }}
 
 {% block content %}
 <div class="govuk-grid-row">

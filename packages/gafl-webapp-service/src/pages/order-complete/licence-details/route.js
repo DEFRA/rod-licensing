@@ -8,7 +8,7 @@ import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.get()
 
   if (!status[COMPLETION_STATUS.agreed]) {
@@ -33,6 +33,7 @@ const getData = async request => {
     startTimeString,
     endTimeString,
     disabled: concessionHelper.hasDisabled(permission),
+    ageConcession: concessionHelper.getAgeConcession(permission),
     licenceTypeStr: licenceTypeDisplay(permission)
   }
 }
