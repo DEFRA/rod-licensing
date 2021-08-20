@@ -54,8 +54,6 @@ packages/
 
 - [business-rules-lib](packages/business-rules-lib/README.md)
   > Shared business rules for the rod licensing services
-- [connectors-lib](packages/connectors-lib/README.md)
-  > Shared infrastructure connectors for the rod licensing services
 - [dynamics-lib](packages/dynamics-lib/README.md)
   > Framework to consume the Dynamics ODATA Web API
 - [gafl-webapp-service](packages/gafl-webapp-service/README.md)
