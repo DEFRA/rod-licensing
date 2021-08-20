@@ -46,13 +46,13 @@
                 <p class="govuk-body">You must give your licence number to an enforcement officer if they ask for it.</p>
             {% endif %}
 
-            <div class="govuk-!-margin-bottom-3">
-                {{ govukButton({
-                    href: data.uri.licenceInformation,
-                    text: "View your licence details",
-                    classes: "govuk-button--secondary"
-                }) }}
-            </div>
+        <div class="govuk-!-margin-bottom-3">
+            {{ govukButton({
+                href: data.uri.licenceDetails,
+                text: "View your licence details",
+                classes: "govuk-button--secondary"
+            }) }}
+        </div>
                 
             {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
                 <div class="govuk-!-margin-bottom-3">
