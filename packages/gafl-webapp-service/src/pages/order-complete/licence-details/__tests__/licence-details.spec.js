@@ -3,37 +3,7 @@ import Boom from '@hapi/boom'
 import { COMPLETION_STATUS } from '../../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 
-const createMockRequest = status => ({
-  cache: jest.fn(() => ({
-    helpers: {
-      status: {
-        get: jest.fn(() => status)
-      },
-      transaction: {
-        getCurrentPermission: jest.fn(() => ({
-          startDate: '2020-06-06',
-          endDate: '2021-06-05',
-          licenceType: LICENCE_TYPE['trout-and-coarse'],
-          numberOfRods: '3',
-          concessions: [{
-            type: CONCESSION.DISABLED,
-            proof: {
-              type: CONCESSION_PROOF.blueBadge,
-              referenceNumber: '123456324'
-            }
-          }, {
-            type: CONCESSION.SENIOR,
-            proof: {
-              type: CONCESSION_PROOF.none
-            }
-          }]
-        }))
-      }
-    }
-  }))
-})
-
-afterAll(jest.clearAllMocks)
+beforeEach(jest.clearAllMocks)
 
 describe('The licence details page', () => {
   describe('.getData', () => {
@@ -67,4 +37,34 @@ describe('The licence details page', () => {
       expect(result).toMatchSnapshot()
     })
   })
+})
+
+const createMockRequest = status => ({
+  cache: jest.fn(() => ({
+    helpers: {
+      status: {
+        get: jest.fn(() => status)
+      },
+      transaction: {
+        getCurrentPermission: jest.fn(() => ({
+          startDate: '2020-06-06',
+          endDate: '2021-06-05',
+          licenceType: LICENCE_TYPE['trout-and-coarse'],
+          numberOfRods: '3',
+          concessions: [{
+            type: CONCESSION.DISABLED,
+            proof: {
+              type: CONCESSION_PROOF.blueBadge,
+              referenceNumber: '123456324'
+            }
+          }, {
+            type: CONCESSION.SENIOR,
+            proof: {
+              type: CONCESSION_PROOF.none
+            }
+          }]
+        }))
+      }
+    }
+  }))
 })

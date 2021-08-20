@@ -76,7 +76,7 @@ export const removeDisabled = permission => {
 
 export const getAgeConcession = permission =>
   permission.concessions
-    ? permission.concessions.find(c => c.type !== CONCESSION.DISABLED)
+    ? permission.concessions.find(c => [CONCESSION.JUNIOR, CONCESSION.SENIOR].includes(c.type))
     : undefined
 
 export const ageConcessionHelper = permission => {
