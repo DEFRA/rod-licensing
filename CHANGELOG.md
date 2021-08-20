@@ -1,4 +1,13 @@
 
+## v1.18.0-rc.6 (2021-08-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#860](https://github.com/DEFRA/rod-licensing/pull/860) Content changes: display age concession ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
 
 
 ## v1.18.0-rc.3 (2021-08-19)
