@@ -1,4 +1,13 @@
 
+## v1.18.0-rc.7 (2021-08-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#867](https://github.com/DEFRA/rod-licensing/pull/867) Fixed issue when the licence is make a note ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.18.0-rc.6 (2021-08-20)
 
 #### :rocket: Enhancement
