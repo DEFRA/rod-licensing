@@ -106,6 +106,9 @@
     ],
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@defra-fish\/connectors-lib)\/)"
+    ],
     "silent": true
   }
 }
