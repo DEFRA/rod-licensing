@@ -32,12 +32,14 @@
         {% else %}
             {% if data.contactMethod === data.howContacted['email'] %}
                 <p class="govuk-body">We have sent the licence by email.</p>
+                <p class="govuk-body">Take it with you when you go fishing.</p>
+                <p class="govuk-body">You must give your licence number to an enforcement officer if they ask for it.</p>
             {% endif %}
             {% if data.contactMethod === data.howContacted['text'] %}
                 <p class="govuk-body">We have sent the licence by text message.</p>
-            {% endif %}     
-            <p class="govuk-body">Take it with you when you go fishing.</p>
-            <p class="govuk-body">You must give your licence number to an enforcement officer if they ask for it.</p>
+                <p class="govuk-body">Take it with you when you go fishing.</p>
+                <p class="govuk-body">You must give your licence number to an enforcement officer if they ask for it.</p>
+            {% endif %}
         {% endif %}
 
         <div class="govuk-!-margin-bottom-9">
