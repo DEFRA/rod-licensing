@@ -45,7 +45,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   // Delete any licensee objects which are null
   Object.entries(permission.licensee)
-    .filter(e => !e[1])
+    .filter(e => e[1] == null)
     .map(e => e[0])
     .forEach(k => delete permission.licensee[k])
 
