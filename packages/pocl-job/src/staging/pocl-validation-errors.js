@@ -62,7 +62,6 @@ const processSucceeded = async succeeded => {
 
 const createTransactions = async records => {
   const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionPayload))
-  console.log({ createTransactionResults: results })
   const succeeded = []
   const failed = []
   records.forEach((record, idx) => {

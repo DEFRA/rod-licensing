@@ -33,6 +33,7 @@ export const resolveContactPayload = async payload => {
 
   const contactInCRM = await findContactInCRM(payload)
   const contact = Object.assign(contactInCRM || new Contact(), primitives)
+  console.log('RESOLVING CONTACT PAYLOAD', { primitives, contact })
 
   contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
     Contact.definition.mappings.preferredMethodOfConfirmation.ref,
