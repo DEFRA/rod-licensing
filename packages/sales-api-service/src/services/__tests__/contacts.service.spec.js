@@ -1,5 +1,10 @@
-import { resolveContactPayload } from '../contacts.service.js'
-import { mockContactPayload, mockContactWithIdPayload, MOCK_EXISTING_CONTACT_ENTITY } from '../../__mocks__/test-data.js'
+import { resolveContactPayload, getObfuscatedDob } from '../contacts.service.js'
+import {
+  mockContactPayload,
+  mockContactWithIdPayload,
+  MOCK_EXISTING_CONTACT_ENTITY,
+  MOCK_OBFUSCATED_DOB
+} from '../../__mocks__/test-data.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -48,6 +53,22 @@ describe('contacts service', () => {
       const contact = await resolveContactPayload(mockPayload)
       expect(contact.isNew()).toBeTruthy()
       expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
+    })
+  })
+
+  describe('getObfuscatedDob', () => {
+    it('generates an obfuscated date of birth if it is not present', async () => {
+      const mockPayload = mockContactWithIdPayload()
+      dynamicsLib.findById.mockImplementationOnce(() => {})
+      const obfuscatedDob = await getObfuscatedDob(mockPayload)
+      expect(obfuscatedDob).toContain('20000101')
+    })
+
+    it('does not generate a new obfuscated date of birth if it is already present', async () => {
+      const mockPayload = mockContactWithIdPayload()
+      dynamicsLib.findById.mockImplementationOnce(() => ({ obfuscatedDob: MOCK_OBFUSCATED_DOB }))
+      const obfuscatedDob = await getObfuscatedDob(mockPayload)
+      expect(obfuscatedDob).toBe(MOCK_OBFUSCATED_DOB)
     })
   })
 })

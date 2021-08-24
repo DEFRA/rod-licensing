@@ -1,4 +1,52 @@
 
+## v1.18.0-rc.7 (2021-08-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#867](https://github.com/DEFRA/rod-licensing/pull/867) Fixed issue when the licence is make a note ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.18.0-rc.6 (2021-08-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#860](https://github.com/DEFRA/rod-licensing/pull/860) Content changes: display age concession ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
+
+
+## v1.18.0-rc.3 (2021-08-19)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `sales-api-service`
+  * [#858](https://github.com/DEFRA/rod-licensing/pull/858) feature/obfuscated dob ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.18.0-rc.2 (2021-08-18)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#856](https://github.com/DEFRA/rod-licensing/pull/856) When logging in with one permission and going back and entering anoth… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.18.0-rc.0 (2021-08-12)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#854](https://github.com/DEFRA/rod-licensing/pull/854) Add more logging details to errbit ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 

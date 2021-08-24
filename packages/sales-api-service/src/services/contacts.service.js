@@ -1,4 +1,4 @@
-import { Contact, findByExample, findById } from '@defra-fish/dynamics-lib'
+import { Contact, findByExample, findById, generateDobId } from '@defra-fish/dynamics-lib'
 import { getGlobalOptionSetValue } from './reference-data.service.js'
 import db from 'debug'
 const debug = db('sales:transformers')
@@ -30,26 +30,9 @@ const debug = db('sales:transformers')
  */
 export const resolveContactPayload = async payload => {
   const { id, country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...primitives } = payload
-  /** @type Contact */ let contact
-  if (id) {
-    // Resolve an existing contact id
-    contact = await findById(Contact, id)
-    debug('Resolved existing contact record for id=%s - exists=%s', id, contact !== null)
-  } else {
-    const lookup = new Contact()
-    lookup.firstName = payload.firstName
-    lookup.lastName = payload.lastName
-    lookup.birthDate = payload.birthDate
-    lookup.premises = payload.premises
-    lookup.postcode = payload.postcode
 
-    const candidates = await findByExample(lookup)
-    if (candidates.length) {
-      debug('Resolved %d candidate contacts for contact %o', candidates.length, lookup)
-      contact = candidates[0]
-    }
-  }
-  contact = Object.assign(contact || new Contact(), primitives)
+  const contactInCRM = await findContactInCRM(payload)
+  const contact = Object.assign(contactInCRM || new Contact(), primitives)
 
   contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
     Contact.definition.mappings.preferredMethodOfConfirmation.ref,
@@ -64,5 +47,34 @@ export const resolveContactPayload = async payload => {
     preferredMethodOfReminder
   )
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
+
+  return contact
+}
+
+export const getObfuscatedDob = async licensee => {
+  const contactInCRM = await findContactInCRM(licensee)
+  return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
+}
+
+const findContactInCRM = async licensee => {
+  let contact
+  if (licensee.id) {
+    // Resolve an existing contact id
+    contact = await findById(Contact, licensee.id)
+    debug('Resolved existing contact record for id=%s - exists=%s', licensee.id, contact !== null)
+  } else {
+    const lookup = new Contact()
+    lookup.firstName = licensee.firstName
+    lookup.lastName = licensee.lastName
+    lookup.birthDate = licensee.birthDate
+    lookup.premises = licensee.premises
+    lookup.postcode = licensee.postcode
+
+    const candidates = await findByExample(lookup)
+    if (candidates.length) {
+      debug('Resolved %d candidate contacts for contact %o', candidates.length, lookup)
+      contact = candidates[0]
+    }
+  }
   return contact
 }
