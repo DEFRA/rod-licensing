@@ -35,7 +35,6 @@ export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
-  console.log({ transactionRecord })
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
 
@@ -47,7 +46,7 @@ export async function processQueue ({ id }) {
   for (const { licensee, concessions, permitId, referenceNumber, issueDate, startDate, endDate } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
-    console.log({ contact, permit })
+
     totalTransactionValue += permit.cost
 
     const permission = new Permission()

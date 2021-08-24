@@ -23,7 +23,8 @@ const mapRecords = records => records.map(record => ({
         country: record.country,
         preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
         preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
-        preferredMethodOfReminder: record.preferredMethodOfReminder.label
+        preferredMethodOfReminder: record.preferredMethodOfReminder.label,
+        postalFulfilment: record.postalFulfilment
       },
       issueDate: record.transactionDate,
       startDate: record.startDate,
