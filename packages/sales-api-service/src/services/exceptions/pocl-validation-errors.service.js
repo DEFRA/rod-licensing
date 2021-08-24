@@ -65,6 +65,7 @@ const mapRecordPayload = async record => {
 export const createPoclValidationError = async record => {
   debug('Adding exception for POCL record: %o', record)
   const data = await mapRecordPayload(record)
+  console.log('CREATING POCL VALIDATION ERROR RECORD', data)
   const validationError = Object.assign(new PoclValidationError(), data)
   return persist([validationError])
 }

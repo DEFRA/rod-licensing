@@ -110,7 +110,7 @@ export const processPoclValidationErrors = async () => {
     debug('No POCL validation errors to process')
     return undefined
   }
-  console.log({ mappedRecords: mapRecords(validationErrors) })
+
   const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
 }
