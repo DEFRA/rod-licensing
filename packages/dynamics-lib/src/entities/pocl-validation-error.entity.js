@@ -233,6 +233,18 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
+   * The postal fulfilment flag with this pocl record
+   * @type {boolean}
+   */
+  get postalFulfilment () {
+    return super._getState('postalFulfilment')
+  }
+
+  set postalFulfilment (postalFulfilment) {
+    super._setState('postalFulfilment', postalFulfilment)
+  }
+
+  /**
    * The concessions associated with this pocl record
    * @type {string}
    */
