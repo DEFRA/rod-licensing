@@ -76,6 +76,7 @@ export const poclValidationErrorItemSchema = Joi.object({
   preferredMethodOfConfirmation: optionSetOption,
   preferredMethodOfNewsletter: optionSetOption,
   preferredMethodOfReminder: optionSetOption,
+  postalFulfilment: Joi.boolean().required(),
   concessions: concessionProofSchema.optional(),
   startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
   serialNumber: Joi.string().trim().required(),
