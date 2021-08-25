@@ -234,7 +234,8 @@ describe('renewals-write-cache', () => {
       await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
       expect(mockStatusCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
-          renewal: true, fromSummary: 'contact-summary'
+          renewal: true,
+          fromSummary: 'contact-summary'
         })
       )
     })
