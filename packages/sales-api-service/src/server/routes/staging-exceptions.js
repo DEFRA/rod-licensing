@@ -21,14 +21,15 @@ export default [
     path: '/stagingExceptions',
     options: {
       handler: async (request, h) => {
+        const { stagingException, transactionFileException } = request.payload
         const response = {}
-        if (request.payload.stagingException) {
-          response.stagingException = await createStagingException(request.payload.stagingException)
+        if (stagingException) {
+          response.stagingException = await createStagingException(stagingException)
         }
-        if (request.payload.transactionFileException) {
-          response.transactionFileException = await createTransactionFileException(request.payload.transactionFileException)
+        if (transactionFileException) {
+          response.transactionFileException = await createTransactionFileException(transactionFileException)
           if (isDataValidationError(request.payload)) {
-            await createPoclValidationError(request.payload.record)
+            await createPoclValidationError(request.payload.record, transactionFileException.transactionFile)
           }
         }
         return h.response(response).code(200)

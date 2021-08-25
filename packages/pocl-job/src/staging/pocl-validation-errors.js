@@ -33,6 +33,7 @@ const mapRecords = records => records.map(record => ({
     }]
   },
   finaliseTransactionPayload: {
+    transactionFile: record.transactionFile,
     payment: {
       timestamp: record.transactionDate,
       amount: record.amount,
