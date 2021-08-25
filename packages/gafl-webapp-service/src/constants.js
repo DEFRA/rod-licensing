@@ -47,9 +47,9 @@ export const CommonResults = {
   YES: 'yes'
 }
 
-export const allowsPhysicalLicence = {
-  YES: 'yes',
-  NO: 'no'
+export const showDigitalLicencePages = {
+  YES: 'show-digital-licence-yes',
+  NO: 'show-digital-licence-no'
 }
 
 // If the user has seen the summary page these are set in the status
