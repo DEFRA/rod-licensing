@@ -80,6 +80,7 @@ export const poclValidationErrorItemSchema = Joi.object({
   concessions: concessionProofSchema.optional(),
   startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
   serialNumber: Joi.string().trim().required(),
+  transactionFile: Joi.string().trim().required(),
   permitId: Joi.string().guid().required(),
   amount: Joi.number().required(),
   transactionDate: TRANSACTION_DATE,
@@ -142,6 +143,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
     }))
   },
   finaliseTransactionPayload: {
+    transactionFile: Joi.string().required(),
     payment: {
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
