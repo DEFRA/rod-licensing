@@ -29,7 +29,6 @@ export default [
         if (transactionFileException) {
           response.transactionFileException = await createTransactionFileException(transactionFileException)
           if (isDataValidationError(request.payload)) {
-            console.log('CREATE POCL VALIDATION ERROR', JSON.stringify(request.payload))
             await createPoclValidationError(request.payload.record, transactionFileException.transactionFile)
           }
         }

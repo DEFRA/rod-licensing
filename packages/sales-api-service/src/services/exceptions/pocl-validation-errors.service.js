@@ -35,7 +35,7 @@ const getStatus = async record => {
   }
 }
 
-const mapRecordPayload = async record => {
+const mapRecordPayload = async (record, transactionFile = null) => {
   const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
   return {
@@ -46,7 +46,7 @@ const mapRecordPayload = async record => {
     ...concessions && { concessions: JSON.stringify(concessions) },
     ...await getPaymentData(record.finaliseTransactionPayload.payment),
     ...await getStatus(record),
-    transactionFile: record.finaliseTransactionPayload.transactionFile,
+    transactionFile: transactionFile || record.finaliseTransactionPayload.transactionFile,
     errorMessage: record.errorMessage || record.createTransactionError?.message,
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
     preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
@@ -64,9 +64,8 @@ const mapRecordPayload = async record => {
  * @returns {Promise<PoclValidationError>}
  */
 export const createPoclValidationError = async (record, transactionFile) => {
-  record.transactionFile = transactionFile
-  debug('Adding exception for POCL record: %o', record)
-  const data = await mapRecordPayload(record)
+  debug('Adding exception for POCL record: %o & transaction file %s', record, transactionFile)
+  const data = await mapRecordPayload(record, transactionFile)
   console.log('CREATING POCL VALIDATION ERROR RECORD', data)
   const validationError = Object.assign(new PoclValidationError(), data)
   console.log({ validationError })
