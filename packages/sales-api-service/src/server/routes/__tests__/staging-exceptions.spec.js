@@ -29,6 +29,7 @@ const poclValidationError = Object.freeze([{
   preferredMethodOfConfirmation: 'Text',
   preferredMethodOfNewsletter: 'Email',
   preferredMethodOfReminder: 'Email',
+  postalFulfilment: true,
   startDate: '2021-06-06',
   permitId: 'adfcbe49-f1a7-4cde-859a-7642effa61a0',
   amount: 20,
@@ -37,6 +38,7 @@ const poclValidationError = Object.freeze([{
   channelId: 'ABCD-1234',
   methodOfPayment: 'Debit card',
   dataSource: 'Post Office Sales',
+  transactionFile: 'test-pocl-file.xml',
   status: 'Ready for Processing'
 }])
 
@@ -63,11 +65,13 @@ const record = Object.freeze({
         country: 'GB',
         preferredMethodOfConfirmation: 'Text',
         preferredMethodOfNewsletter: 'Email',
-        preferredMethodOfReminder: 'Email'
+        preferredMethodOfReminder: 'Email',
+        postalFulfilment: true
       }
     }]
   },
   finaliseTransactionPayload: {
+    transactionFile: 'test-pocl-file.xml',
     payment: {
       timestamp: '2020-01-01T14:00:00Z',
       amount: 30,
@@ -148,7 +152,7 @@ describe('staging exceptions handler', () => {
         })
         it('and record is in payload, creates a data validation error', async () => {
           await stagingExceptionsHandler({ payload: { transactionFileException, record } }, getMockResponseToolkit())
-          expect(createPoclValidationError).toHaveBeenCalledWith(record)
+          expect(createPoclValidationError).toHaveBeenCalledWith(record, transactionFileException.transactionFile)
         })
       })
     })

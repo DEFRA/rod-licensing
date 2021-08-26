@@ -31,7 +31,8 @@ const getPayload = () => ({
         mobilePhone: '07722 123456',
         preferredMethodOfNewsletter: 'Prefer not to be contacted',
         preferredMethodOfConfirmation: 'Email',
-        preferredMethodOfReminder: 'Text'
+        preferredMethodOfReminder: 'Text',
+        postalFulfilment: true
       },
       permitId: 'test-permit-id',
       startDate: '2021-06-15',
@@ -39,6 +40,7 @@ const getPayload = () => ({
     }]
   },
   finaliseTransactionPayload: {
+    transactionFile: 'test-pocl-file.xml',
     payment: {
       timestamp: '2020-01-01T14:00:00Z',
       amount: 30,
@@ -78,7 +80,8 @@ describe('POCL validation error service', () => {
     let payload
     beforeEach(async () => {
       payload = getPayload()
-      await createPoclValidationError(payload)
+      delete payload.finaliseTransactionPayload.transactionFile
+      await createPoclValidationError(payload, 'test-pocl-file.xml')
     })
 
     it('maps the record to an instance of PoclValidationError', async () => {
