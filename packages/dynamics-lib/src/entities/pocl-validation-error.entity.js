@@ -40,6 +40,7 @@ export class PoclValidationError extends BaseEntity {
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
       errorMessage: { field: 'defra_errormessage', type: 'string' },
+      transactionFile: { field: 'defra_transactionfile', type: 'string' },
       stateCode: { field: 'statecode', type: 'decimal' }
     }
   }))
@@ -386,6 +387,18 @@ export class PoclValidationError extends BaseEntity {
 
   set errorMessage (errorMessage) {
     super._setState('errorMessage', errorMessage)
+  }
+
+  /**
+   * The name of the POCL file associated with this pocl record
+   * @type {string}
+   */
+  get transactionFile () {
+    return super._getState('transactionFile')
+  }
+
+  set transactionFile (transactionFile) {
+    super._setState('transactionFile', transactionFile)
   }
 
   /**
