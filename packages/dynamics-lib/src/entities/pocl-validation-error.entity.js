@@ -78,75 +78,15 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The organisation in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get organisation () {
-    return super._getState('organisation')
+     * The licensee's date of birth associated with this pocl record
+     * @type {string}
+     */
+  get birthDate () {
+    return super._getState('birthDate')
   }
 
-  set organisation (organisation) {
-    super._setState('organisation', organisation)
-  }
-
-  /**
-   * The premises in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get premises () {
-    return super._getState('premises')
-  }
-
-  set premises (premises) {
-    super._setState('premises', premises)
-  }
-
-  /**
-   * The street in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get street () {
-    return super._getState('street')
-  }
-
-  set street (street) {
-    super._setState('street', street)
-  }
-
-  /**
-   * The locality in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get locality () {
-    return super._getState('locality')
-  }
-
-  set locality (locality) {
-    super._setState('locality', locality)
-  }
-
-  /**
-   * The town in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get town () {
-    return super._getState('town')
-  }
-
-  set town (town) {
-    super._setState('town', town)
-  }
-
-  /**
-   * The postcode in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get postcode () {
-    return super._getState('postcode')
-  }
-
-  set postcode (postcode) {
-    super._setState('postcode', postcode)
+  set birthDate (birthDate) {
+    super._setState('birthDate', birthDate)
   }
 
   /**
@@ -162,15 +102,87 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licensee's date of birth associated with this pocl record
-   * @type {string}
-   */
-  get birthDate () {
-    return super._getState('birthDate')
+     * The postcode in the licensee address associated with this pocl record
+     * @type {string}
+     */
+  get postcode () {
+    return super._getState('postcode')
   }
 
-  set birthDate (birthDate) {
-    super._setState('birthDate', birthDate)
+  set postcode (postcode) {
+    super._setState('postcode', postcode)
+  }
+
+  /**
+     * The town in the licensee address associated with this pocl record
+     * @type {string}
+     */
+  get town () {
+    return super._getState('town')
+  }
+
+  set town (town) {
+    super._setState('town', town)
+  }
+
+  /**
+   * The locality in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get locality () {
+    return super._getState('locality')
+  }
+
+  set locality (locality) {
+    super._setState('locality', locality)
+  }
+
+  /**
+     * The street in the licensee address associated with this pocl record
+     * @type {string}
+     */
+  get street () {
+    return super._getState('street')
+  }
+
+  set street (street) {
+    super._setState('street', street)
+  }
+
+  /**
+   * The premises in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get premises () {
+    return super._getState('premises')
+  }
+
+  set premises (premises) {
+    super._setState('premises', premises)
+  }
+
+  /**
+     * The organisation in the licensee address associated with this pocl record
+     * @type {string}
+     */
+  get organisation () {
+    return super._getState('organisation')
+  }
+
+  set organisation (organisation) {
+    super._setState('organisation', organisation)
+  }
+
+  /**
+     * The licensee's mobile number associated with this pocl record
+     * @type {string}
+     */
+  get mobilePhone () {
+    return super._getState('mobilePhone')
+  }
+
+  set mobilePhone (mobilePhone) {
+    super._setState('mobilePhone', mobilePhone)
   }
 
   /**
@@ -186,27 +198,15 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licensee's mobile number associated with this pocl record
-   * @type {string}
-   */
-  get mobilePhone () {
-    return super._getState('mobilePhone')
+     * The licensee's preferred method of reminder associated with this pocl record
+     * @type {GlobalOptionSetDefinition}
+     */
+  get preferredMethodOfReminder () {
+    return super._getState('preferredMethodOfReminder')
   }
 
-  set mobilePhone (mobilePhone) {
-    super._setState('mobilePhone', mobilePhone)
-  }
-
-  /**
-   * The licensee's preferred method of confirmation associated with this pocl record
-   * @type {GlobalOptionSetDefinition}
-   */
-  get preferredMethodOfConfirmation () {
-    return super._getState('preferredMethodOfConfirmation')
-  }
-
-  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
-    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
+  set preferredMethodOfReminder (preferredMethodOfReminder) {
+    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
   }
 
   /**
@@ -222,15 +222,15 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licensee's preferred method of reminder associated with this pocl record
-   * @type {GlobalOptionSetDefinition}
-   */
-  get preferredMethodOfReminder () {
-    return super._getState('preferredMethodOfReminder')
+     * The licensee's preferred method of confirmation associated with this pocl record
+     * @type {GlobalOptionSetDefinition}
+     */
+  get preferredMethodOfConfirmation () {
+    return super._getState('preferredMethodOfConfirmation')
   }
 
-  set preferredMethodOfReminder (preferredMethodOfReminder) {
-    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
+  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
+    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
   }
 
   /**
