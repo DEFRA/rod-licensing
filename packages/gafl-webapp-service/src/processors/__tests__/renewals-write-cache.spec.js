@@ -152,6 +152,34 @@ describe('renewals-write-cache', () => {
       )
     })
 
+    it('should remove null values and keep false values from the licensee object', async () => {
+      const authResultNullFalse = {
+        permission: {
+          ...authenticationResult.permission,
+          licensee: {
+            ...authenticationResult.permission.licensee,
+            mobilePhone: null,
+            postalFulfilment: false
+          }
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, authResultNullFalse)
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          licensee: expect.not.objectContaining({
+            mobilePhone: null
+          })
+        })
+      )
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          licensee: expect.objectContaining({
+            postalFulfilment: false
+          })
+        })
+      )
+    })
+
     it('should map the contact preferences correctly', async () => {
       await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
@@ -206,7 +234,8 @@ describe('renewals-write-cache', () => {
       await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
       expect(mockStatusCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
-          renewal: true, fromSummary: 'contact-summary'
+          renewal: true,
+          fromSummary: 'contact-summary'
         })
       )
     })

@@ -28,8 +28,8 @@ jest.mock('../constants', () => ({
   CommonResults: {
     OK: 'okay'
   },
-  allowsPhysicalLicence: {
-    YES: 'yes'
+  showDigitalLicencePages: {
+    YES: 'show-digital-licence-yes'
   }
 }))
 

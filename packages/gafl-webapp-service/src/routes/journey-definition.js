@@ -27,7 +27,7 @@ import {
   RENEWAL_START_DATE
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, allowsPhysicalLicence } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, showDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
@@ -157,6 +157,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
+      },
+      [showDigitalLicencePages.YES]: {
+        page: LICENCE_FULFILMENT
       }
     }
   },
@@ -198,10 +201,10 @@ export default [
   {
     current: ADDRESS_ENTRY,
     next: {
-      [allowsPhysicalLicence.YES]: {
+      [showDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
       },
-      [allowsPhysicalLicence.NO]: {
+      [showDigitalLicencePages.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -214,10 +217,10 @@ export default [
   {
     current: ADDRESS_SELECT,
     next: {
-      [allowsPhysicalLicence.YES]: {
+      [showDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
       },
-      [allowsPhysicalLicence.NO]: {
+      [showDigitalLicencePages.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
