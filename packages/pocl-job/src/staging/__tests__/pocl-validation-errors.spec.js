@@ -28,6 +28,7 @@ const getPoclValidationError = () => ({
   preferredMethodOfConfirmation: { label: 'Text' },
   preferredMethodOfNewsletter: { label: 'Email' },
   preferredMethodOfReminder: { label: 'Email' },
+  postalFulfilment: true,
   concessions: '[{"type":"Blue Badge","referenceNumber":"123456789"}]',
   startDate: '2021-06-15',
   permitId: 'test-permit-id',
@@ -36,7 +37,8 @@ const getPoclValidationError = () => ({
   paymentSource: 'Post Office Sales',
   channelId: '948594',
   methodOfPayment: { label: 'Cash' },
-  status: { label: 'Ready for Processing' }
+  status: { label: 'Ready for Processing' },
+  transactionFile: 'test-pocl-file.xml'
 })
 
 const getFinalisationError = (status, error) => ({

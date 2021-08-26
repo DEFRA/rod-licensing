@@ -64,6 +64,7 @@ const processSucceeded = async succeeded => {
 
 const createTransactions = async records => {
   const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionPayload))
+
   const succeeded = []
   const failed = []
   records.forEach((record, idx) => {
@@ -111,7 +112,6 @@ export const processPoclValidationErrors = async () => {
     debug('No POCL validation errors to process')
     return undefined
   }
-
   const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
 }
