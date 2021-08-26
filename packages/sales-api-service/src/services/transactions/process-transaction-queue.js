@@ -35,7 +35,7 @@ export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
-  console.log({ transactionRecord: JSON.stringify(transactionRecord) })
+
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
 

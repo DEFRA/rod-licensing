@@ -50,14 +50,14 @@ const mapRecords = records => records.map(record => ({
  */
 const processFailed = async failed => {
   for (const { record, result } of failed) {
-    debug('Failed when reprocessing record: %o', JSON.stringify(record))
+    debug('Failed when reprocessing record: %o', record)
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, errorMessage: result.message })
   }
 }
 
 const processSucceeded = async succeeded => {
   for (const { record } of succeeded) {
-    debug('Successfully reprocessed record: %o', JSON.stringify(record))
+    debug('Successfully reprocessed record: %o', record)
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, status: 'Processed' })
   }
 }
