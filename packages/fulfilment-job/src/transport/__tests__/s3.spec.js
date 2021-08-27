@@ -69,9 +69,10 @@ describe('s3', () => {
       expect(readStream.setEncoding).toHaveBeenCalledWith('utf8')
     })
 
-    const createMockReadStream = () => jest.fn(() => ({
-      setEncoding: jest.fn()
-    }))
+    const createMockReadStream = () =>
+      jest.fn(() => ({
+        setEncoding: jest.fn()
+      }))
   })
 
   describe('createS3WriteStream', () => {

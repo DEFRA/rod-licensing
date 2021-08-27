@@ -42,7 +42,7 @@ describe('pocl staging exception entity', () => {
           defra_datasource: 910400000,
           defra_transactionfile: 'test-pocl-file.xml',
           statecode: 1,
-          defra_errormessage: '\"permissions[0].licensee.email\" must be a valid email'
+          defra_errormessage: '"permissions[0].licensee.email" must be a valid email'
         },
         optionSetData
       )
@@ -71,7 +71,11 @@ describe('pocl staging exception entity', () => {
         email: 'daniel-ricc@example.couk',
         mobilePhone: '07722 123456',
         preferredMethodOfConfirmation: expect.objectContaining({ id: 910400000, label: 'Email', description: 'Email' }),
-        preferredMethodOfNewsletter: expect.objectContaining({ id: 910400003, label: 'Prefer not to be contacted', description: 'Prefer not to be contacted' }),
+        preferredMethodOfNewsletter: expect.objectContaining({
+          id: 910400003,
+          label: 'Prefer not to be contacted',
+          description: 'Prefer not to be contacted'
+        }),
         preferredMethodOfReminder: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
         postalFulfilment: true,
         concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
@@ -87,7 +91,7 @@ describe('pocl staging exception entity', () => {
         dataSource: expect.objectContaining({ id: 910400000, label: 'Post Office Sales', description: 'Post Office Sales' }),
         transactionFile: 'test-pocl-file.xml',
         stateCode: 1,
-        errorMessage: '\"permissions[0].licensee.email\" must be a valid email'
+        errorMessage: '"permissions[0].licensee.email" must be a valid email'
       }
 
       expect(exception).toMatchObject(expect.objectContaining({ etag: 'W/"56351087"', ...expectedFields }))
@@ -125,7 +129,7 @@ describe('pocl staging exception entity', () => {
     validationError.dataSource = optionSetData.defra_datasource.options['910400000']
     validationError.transactionFile = 'test-pocl-file.xml'
     validationError.stateCode = 1
-    validationError.errorMessage = '\"permissions[0].licensee.email\" must be a valid email'
+    validationError.errorMessage = '"permissions[0].licensee.email" must be a valid email'
 
     const dynamicsEntity = validationError.toRequestBody()
     expect(dynamicsEntity).toMatchSnapshot()

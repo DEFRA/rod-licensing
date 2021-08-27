@@ -6,7 +6,11 @@ import {
   updatePoclValidationErrorPayload
 } from '../../schema/staging-exception.schema.js'
 import { createTransactionFileException, createStagingException } from '../../services/exceptions/exceptions.service.js'
-import { createPoclValidationError, getPoclValidationErrors, updatePoclValidationError } from '../../services/exceptions/pocl-validation-errors.service.js'
+import {
+  createPoclValidationError,
+  getPoclValidationErrors,
+  updatePoclValidationError
+} from '../../services/exceptions/pocl-validation-errors.service.js'
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -57,8 +61,7 @@ export default [
     method: 'GET',
     path: '/poclValidationErrors',
     options: {
-      handler: async (request, h) =>
-        h.response(await getPoclValidationErrors()).code(200),
+      handler: async (request, h) => h.response(await getPoclValidationErrors()).code(200),
       description: 'Get all active data validation errors for processing',
       notes: `
         Query for all active POCL data validation errors which have a "Ready for Processing" status
@@ -77,8 +80,7 @@ export default [
     method: 'PATCH',
     path: '/poclValidationErrors/{id}',
     options: {
-      handler: async (request, h) =>
-        h.response(await updatePoclValidationError(request.params.id, request.payload)).code(200),
+      handler: async (request, h) => h.response(await updatePoclValidationError(request.params.id, request.payload)).code(200),
       description: 'Get all active data validation errors for processing',
       notes: `
         Query for all active POCL data validation errors which have a "Ready for Processing" status

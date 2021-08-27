@@ -117,7 +117,7 @@ describe('pocl-validation-errors', () => {
       poclValidationError = getPoclValidationError()
       poclValidationError.email = 'daniel-ricc@example.couk'
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 422, message: '\"permissions[0].licensee.email\" must be a valid email' }])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 422, message: '"permissions[0].licensee.email" must be a valid email' }])
       await processPoclValidationErrors()
     })
 

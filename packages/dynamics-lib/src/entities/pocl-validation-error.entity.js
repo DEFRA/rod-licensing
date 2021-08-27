@@ -78,9 +78,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The licensee's date of birth associated with this pocl record
-     * @type {string}
-     */
+   * The licensee's date of birth associated with this pocl record
+   * @type {string}
+   */
   get birthDate () {
     return super._getState('birthDate')
   }
@@ -102,9 +102,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The postcode in the licensee address associated with this pocl record
-     * @type {string}
-     */
+   * The postcode in the licensee address associated with this pocl record
+   * @type {string}
+   */
   get postcode () {
     return super._getState('postcode')
   }
@@ -114,9 +114,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The town in the licensee address associated with this pocl record
-     * @type {string}
-     */
+   * The town in the licensee address associated with this pocl record
+   * @type {string}
+   */
   get town () {
     return super._getState('town')
   }
@@ -138,9 +138,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The street in the licensee address associated with this pocl record
-     * @type {string}
-     */
+   * The street in the licensee address associated with this pocl record
+   * @type {string}
+   */
   get street () {
     return super._getState('street')
   }
@@ -162,9 +162,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The organisation in the licensee address associated with this pocl record
-     * @type {string}
-     */
+   * The organisation in the licensee address associated with this pocl record
+   * @type {string}
+   */
   get organisation () {
     return super._getState('organisation')
   }
@@ -174,9 +174,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The licensee's mobile number associated with this pocl record
-     * @type {string}
-     */
+   * The licensee's mobile number associated with this pocl record
+   * @type {string}
+   */
   get mobilePhone () {
     return super._getState('mobilePhone')
   }
@@ -198,9 +198,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The licensee's preferred method of reminder associated with this pocl record
-     * @type {GlobalOptionSetDefinition}
-     */
+   * The licensee's preferred method of reminder associated with this pocl record
+   * @type {GlobalOptionSetDefinition}
+   */
   get preferredMethodOfReminder () {
     return super._getState('preferredMethodOfReminder')
   }
@@ -222,9 +222,9 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-     * The licensee's preferred method of confirmation associated with this pocl record
-     * @type {GlobalOptionSetDefinition}
-     */
+   * The licensee's preferred method of confirmation associated with this pocl record
+   * @type {GlobalOptionSetDefinition}
+   */
   get preferredMethodOfConfirmation () {
     return super._getState('preferredMethodOfConfirmation')
   }

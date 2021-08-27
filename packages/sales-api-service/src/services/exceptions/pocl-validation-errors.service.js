@@ -36,22 +36,35 @@ const getStatus = async record => {
 }
 
 const mapRecordPayload = async (record, transactionFile = null) => {
-  const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
+  const {
+    dataSource,
+    serialNumber,
+    permissions: [permission]
+  } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
   return {
     serialNumber,
     transactionDate,
     ...licensee,
     ...otherPermissionData,
-    ...concessions && { concessions: JSON.stringify(concessions) },
-    ...await getPaymentData(record.finaliseTransactionPayload.payment),
-    ...await getStatus(record),
+    ...(concessions && { concessions: JSON.stringify(concessions) }),
+    ...(await getPaymentData(record.finaliseTransactionPayload.payment)),
+    ...(await getStatus(record)),
     transactionFile: transactionFile || record.finaliseTransactionPayload.transactionFile,
     errorMessage: record.errorMessage || record.createTransactionError?.message,
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
-    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
-    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
-    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder)
+    preferredMethodOfConfirmation: await getGlobalOptionSetValue(
+      PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref,
+      licensee.preferredMethodOfConfirmation
+    ),
+    preferredMethodOfNewsletter: await getGlobalOptionSetValue(
+      PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref,
+      licensee.preferredMethodOfNewsletter
+    ),
+    preferredMethodOfReminder: await getGlobalOptionSetValue(
+      PoclValidationError.definition.mappings.preferredMethodOfReminder.ref,
+      licensee.preferredMethodOfReminder
+    )
   }
 }
 
