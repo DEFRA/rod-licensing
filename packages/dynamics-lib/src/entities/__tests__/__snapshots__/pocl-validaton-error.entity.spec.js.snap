@@ -27,6 +27,7 @@ Object {
   "organisation": "Fishy Endeavours",
   "paymentSource": "Post Office Sales",
   "permitId": "test-permit-id",
+  "postalFulfilment": true,
   "postcode": "BS9 1HJ",
   "preferredMethodOfConfirmation": Object {
     "description": "Email",
@@ -55,6 +56,7 @@ Object {
   "street": "Eastmead Lane",
   "town": "Bristol",
   "transactionDate": "2020-01-01T14:00:00Z",
+  "transactionFile": "test-pocl-file.xml",
 }
 `;
 
@@ -76,6 +78,7 @@ Object {
   "defra_organisation": "Fishy Endeavours",
   "defra_paymentsource": "Post Office Sales",
   "defra_permitid": "test-permit-id",
+  "defra_postalfulfilment": true,
   "defra_postcode": "BS9 1HJ",
   "defra_preferredmethodofconfirmation": 910400000,
   "defra_preferredmethodofnewsletter": 910400003,
@@ -87,6 +90,7 @@ Object {
   "defra_street": "Eastmead Lane",
   "defra_town": "Bristol",
   "defra_transactiondate": "2020-01-01T14:00:00Z",
+  "defra_transactionfile": "test-pocl-file.xml",
   "statecode": 1,
 }
 `;

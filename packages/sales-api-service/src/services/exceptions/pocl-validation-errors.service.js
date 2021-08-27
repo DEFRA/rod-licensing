@@ -35,22 +35,36 @@ const getStatus = async record => {
   }
 }
 
-const mapRecordPayload = async record => {
-  const { dataSource, serialNumber, permissions: [permission] } = record.createTransactionPayload
+const mapRecordPayload = async (record, transactionFile = null) => {
+  const {
+    dataSource,
+    serialNumber,
+    permissions: [permission]
+  } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
   return {
     serialNumber,
     transactionDate,
     ...licensee,
     ...otherPermissionData,
-    ...concessions && { concessions: JSON.stringify(concessions) },
-    ...await getPaymentData(record.finaliseTransactionPayload.payment),
-    ...await getStatus(record),
+    ...(concessions && { concessions: JSON.stringify(concessions) }),
+    ...(await getPaymentData(record.finaliseTransactionPayload.payment)),
+    ...(await getStatus(record)),
+    transactionFile: transactionFile || record.finaliseTransactionPayload.transactionFile,
     errorMessage: record.errorMessage || record.createTransactionError?.message,
     dataSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.dataSource.ref, dataSource),
-    preferredMethodOfConfirmation: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref, licensee.preferredMethodOfConfirmation),
-    preferredMethodOfNewsletter: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref, licensee.preferredMethodOfNewsletter),
-    preferredMethodOfReminder: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.preferredMethodOfReminder.ref, licensee.preferredMethodOfReminder)
+    preferredMethodOfConfirmation: await getGlobalOptionSetValue(
+      PoclValidationError.definition.mappings.preferredMethodOfConfirmation.ref,
+      licensee.preferredMethodOfConfirmation
+    ),
+    preferredMethodOfNewsletter: await getGlobalOptionSetValue(
+      PoclValidationError.definition.mappings.preferredMethodOfNewsletter.ref,
+      licensee.preferredMethodOfNewsletter
+    ),
+    preferredMethodOfReminder: await getGlobalOptionSetValue(
+      PoclValidationError.definition.mappings.preferredMethodOfReminder.ref,
+      licensee.preferredMethodOfReminder
+    )
   }
 }
 
@@ -62,9 +76,9 @@ const mapRecordPayload = async record => {
  * @param {TransactionValidationError} record
  * @returns {Promise<PoclValidationError>}
  */
-export const createPoclValidationError = async record => {
-  debug('Adding exception for POCL record: %o', record)
-  const data = await mapRecordPayload(record)
+export const createPoclValidationError = async (record, transactionFile) => {
+  debug('Adding exception for POCL record: %o & transaction file %s', record, transactionFile)
+  const data = await mapRecordPayload(record, transactionFile)
   const validationError = Object.assign(new PoclValidationError(), data)
   return persist([validationError])
 }

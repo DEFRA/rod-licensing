@@ -171,7 +171,8 @@ export const getPoclValidationErrorsForProcessing = async () => exec2xxOrThrow(c
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const updatePoclValidationError = async (id, data) => exec2xxOrThrow(call(new URL(`/poclValidationErrors/${id}`, urlBase), 'patch', data))
+export const updatePoclValidationError = async (id, data) =>
+  exec2xxOrThrow(call(new URL(`/poclValidationErrors/${id}`, urlBase), 'patch', data))
 
 /**
  * Retrieve details of a system user

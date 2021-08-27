@@ -28,6 +28,7 @@ describe('pocl staging exception entity', () => {
           defra_preferredmethodofnewsletter: 910400003,
           defra_preferredmethodofconfirmation: 910400000,
           defra_preferredmethodofreminder: 910400002,
+          defra_postalfulfilment: true,
           defra_concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
           defra_startdate: '2021-06-15',
           defra_serialnumber: '14345-48457J',
@@ -39,8 +40,9 @@ describe('pocl staging exception entity', () => {
           defra_methodofpayment: 910400001,
           defra_status: 910400000,
           defra_datasource: 910400000,
+          defra_transactionfile: 'test-pocl-file.xml',
           statecode: 1,
-          defra_errormessage: '\"permissions[0].licensee.email\" must be a valid email'
+          defra_errormessage: '"permissions[0].licensee.email" must be a valid email'
         },
         optionSetData
       )
@@ -69,8 +71,13 @@ describe('pocl staging exception entity', () => {
         email: 'daniel-ricc@example.couk',
         mobilePhone: '07722 123456',
         preferredMethodOfConfirmation: expect.objectContaining({ id: 910400000, label: 'Email', description: 'Email' }),
-        preferredMethodOfNewsletter: expect.objectContaining({ id: 910400003, label: 'Prefer not to be contacted', description: 'Prefer not to be contacted' }),
+        preferredMethodOfNewsletter: expect.objectContaining({
+          id: 910400003,
+          label: 'Prefer not to be contacted',
+          description: 'Prefer not to be contacted'
+        }),
         preferredMethodOfReminder: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
+        postalFulfilment: true,
         concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
         startDate: '2021-06-15',
         serialNumber: '14345-48457J',
@@ -82,8 +89,9 @@ describe('pocl staging exception entity', () => {
         methodOfPayment: expect.objectContaining({ id: 910400001, label: 'Cash', description: 'Cash' }),
         status: expect.objectContaining({ id: 910400000, label: 'Needs Review', description: 'Needs Review' }),
         dataSource: expect.objectContaining({ id: 910400000, label: 'Post Office Sales', description: 'Post Office Sales' }),
+        transactionFile: 'test-pocl-file.xml',
         stateCode: 1,
-        errorMessage: '\"permissions[0].licensee.email\" must be a valid email'
+        errorMessage: '"permissions[0].licensee.email" must be a valid email'
       }
 
       expect(exception).toMatchObject(expect.objectContaining({ etag: 'W/"56351087"', ...expectedFields }))
@@ -107,6 +115,7 @@ describe('pocl staging exception entity', () => {
     validationError.preferredMethodOfConfirmation = optionSetData.defra_preferredcontactmethod.options['910400000']
     validationError.preferredMethodOfNewsletter = optionSetData.defra_preferredcontactmethod.options['910400003']
     validationError.preferredMethodOfReminder = optionSetData.defra_preferredcontactmethod.options['910400002']
+    validationError.postalFulfilment = true
     validationError.concessions = '[{"type":"Blue Badge","referenceNumber":123456789}]'
     validationError.startDate = '2021-06-15'
     validationError.serialNumber = '14345-48457J'
@@ -118,8 +127,9 @@ describe('pocl staging exception entity', () => {
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']
     validationError.status = optionSetData.defra_poclvalidationerrorstatus.options['910400000']
     validationError.dataSource = optionSetData.defra_datasource.options['910400000']
+    validationError.transactionFile = 'test-pocl-file.xml'
     validationError.stateCode = 1
-    validationError.errorMessage = '\"permissions[0].licensee.email\" must be a valid email'
+    validationError.errorMessage = '"permissions[0].licensee.email" must be a valid email'
 
     const dynamicsEntity = validationError.toRequestBody()
     expect(dynamicsEntity).toMatchSnapshot()

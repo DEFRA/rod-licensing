@@ -31,11 +31,13 @@ export const writeS3PartFile = async (fulfilmentRequestFile, partNumber, data) =
  */
 export async function readS3PartFiles (fulfilmentRequestFile) {
   const { Contents: files } = await s3.listObjectsV2({ Bucket: config.s3.bucket, Prefix: `${fulfilmentRequestFile.fileName}/` }).promise()
-  return files.filter(f => /part\d+$/.test(f.Key)).map(f => {
-    const s3rs = s3.getObject({ Bucket: config.s3.bucket, Key: f.Key }).createReadStream()
-    s3rs.setEncoding('utf8')
-    return s3rs
-  })
+  return files
+    .filter(f => /part\d+$/.test(f.Key))
+    .map(f => {
+      const s3rs = s3.getObject({ Bucket: config.s3.bucket, Key: f.Key }).createReadStream()
+      s3rs.setEncoding('utf8')
+      return s3rs
+    })
 }
 
 /**

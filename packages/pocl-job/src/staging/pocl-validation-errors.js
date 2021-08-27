@@ -2,45 +2,50 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
-const mapRecords = records => records.map(record => ({
-  poclValidationErrorId: record.id,
-  createTransactionPayload: {
-    dataSource: record.dataSource.label,
-    serialNumber: record.serialNumber,
-    permissions: [{
-      licensee: {
-        firstName: record.firstName,
-        lastName: record.lastName,
-        birthDate: record.birthDate,
-        email: record.email,
-        mobilePhone: record.mobilePhone,
-        organisation: record.organisation,
-        premises: record.premises,
-        street: record.street,
-        locality: record.locality,
-        town: record.town,
-        postcode: record.postcode,
-        country: record.country,
-        preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
-        preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
-        preferredMethodOfReminder: record.preferredMethodOfReminder.label
-      },
-      issueDate: record.transactionDate,
-      startDate: record.startDate,
-      permitId: record.permitId,
-      ...record.concessions && { concessions: JSON.parse(record.concessions) }
-    }]
-  },
-  finaliseTransactionPayload: {
-    payment: {
-      timestamp: record.transactionDate,
-      amount: record.amount,
-      source: record.paymentSource,
-      channelId: record.channelId,
-      method: record.methodOfPayment.label
+const mapRecords = records =>
+  records.map(record => ({
+    poclValidationErrorId: record.id,
+    createTransactionPayload: {
+      dataSource: record.dataSource.label,
+      serialNumber: record.serialNumber,
+      permissions: [
+        {
+          licensee: {
+            firstName: record.firstName,
+            lastName: record.lastName,
+            birthDate: record.birthDate,
+            email: record.email,
+            mobilePhone: record.mobilePhone,
+            organisation: record.organisation,
+            premises: record.premises,
+            street: record.street,
+            locality: record.locality,
+            town: record.town,
+            postcode: record.postcode,
+            country: record.country,
+            preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
+            preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
+            preferredMethodOfReminder: record.preferredMethodOfReminder.label,
+            postalFulfilment: record.postalFulfilment
+          },
+          issueDate: record.transactionDate,
+          startDate: record.startDate,
+          permitId: record.permitId,
+          ...(record.concessions && { concessions: JSON.parse(record.concessions) })
+        }
+      ]
+    },
+    finaliseTransactionPayload: {
+      transactionFile: record.transactionFile,
+      payment: {
+        timestamp: record.transactionDate,
+        amount: record.amount,
+        source: record.paymentSource,
+        channelId: record.channelId,
+        method: record.methodOfPayment.label
+      }
     }
-  }
-}))
+  }))
 
 /**
  * Calls Sales Api to update Dynamics record
@@ -67,7 +72,7 @@ const createTransactions = async records => {
   const failed = []
   records.forEach((record, idx) => {
     const result = results[idx]
-      ; (result.statusCode === 201 ? succeeded : failed).push({ record, result })
+    ;(result.statusCode === 201 ? succeeded : failed).push({ record, result })
   })
 
   return { succeeded, failed }
@@ -76,9 +81,8 @@ const createTransactions = async records => {
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records
   const finalisationResults = await Promise.allSettled(
-    created.map(rec =>
-      salesApi.finaliseTransaction(rec.result.response.id, rec.record.finaliseTransactionPayload)
-    ))
+    created.map(rec => salesApi.finaliseTransaction(rec.result.response.id, rec.record.finaliseTransactionPayload))
+  )
 
   const succeeded = []
   created.forEach(({ record }, idx) => {

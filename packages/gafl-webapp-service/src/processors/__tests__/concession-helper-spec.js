@@ -97,7 +97,7 @@ describe('The concession helper', () => {
   })
 
   describe('getAgeConcession', () => {
-    [junior, senior].forEach(concession => {
+    ;[junior, senior].forEach(concession => {
       it(`returns the ${concession.type} concession if present`, () => {
         const permission = { concessions: [concession] }
         expect(f.getAgeConcession(permission)).toBe(concession)
@@ -109,7 +109,7 @@ describe('The concession helper', () => {
       expect(f.getAgeConcession(permission)).toBe(undefined)
     })
 
-    it('returns undefined if concessions don\'t exist', () => {
+    it("returns undefined if concessions don't exist", () => {
       const permission = {}
       expect(f.getAgeConcession(permission)).toBe(undefined)
     })
@@ -119,29 +119,44 @@ describe('The concession helper', () => {
     const licenceStartDate = '2020-06-06'
 
     it('if the licensee is a minor, sets noLicenceRequired flag to true', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(8, 'years').format('YYYY-MM-DD'))
+      const licensee = getLicensee(
+        moment(licenceStartDate)
+          .subtract(8, 'years')
+          .format('YYYY-MM-DD')
+      )
       const permission = { licenceStartDate, licensee, concessions: [] }
       f.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
 
     it('if the licensee is a junior, sets license data, junior concession and contact methods', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(14, 'years').format('YYYY-MM-DD'))
+      const licensee = getLicensee(
+        moment(licenceStartDate)
+          .subtract(14, 'years')
+          .format('YYYY-MM-DD')
+      )
       const permission = { licenceStartDate, licensee, concessions: [] }
       f.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
 
     it('if the licensee is a senior, adds senior concession', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(67, 'years').format('YYYY-MM-DD'))
+      const licensee = getLicensee(
+        moment(licenceStartDate)
+          .subtract(67, 'years')
+          .format('YYYY-MM-DD')
+      )
       const permission = { licenceStartDate, licensee, concessions: [] }
       f.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
-
     ;[junior, senior].forEach(concession => {
       it(`if is normal licence, removes ${concession.type} concession`, () => {
-        const licensee = getLicensee(moment(licenceStartDate).subtract(35, 'years').format('YYYY-MM-DD'))
+        const licensee = getLicensee(
+          moment(licenceStartDate)
+            .subtract(35, 'years')
+            .format('YYYY-MM-DD')
+        )
         const permission = { licenceStartDate, licensee, concessions: [concession] }
         f.ageConcessionHelper(permission)
         expect(permission).toMatchSnapshot()

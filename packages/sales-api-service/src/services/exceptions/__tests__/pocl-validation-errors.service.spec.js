@@ -16,29 +16,33 @@ const getPayload = () => ({
   createTransactionPayload: {
     dataSource: 'Post Office Sales',
     serialNumber: '14345-48457J',
-    permissions: [{
-      licensee: {
-        firstName: 'Daniel',
-        lastName: 'Ricciardo',
-        organisation: 'Fishy Endeavours',
-        premises: '14 Howecroft Court',
-        street: 'Eastmead Lane',
-        town: 'Bristol',
-        postcode: 'BS9 1HJ',
-        country: 'GB',
-        birthDate: '1989-07-01',
-        email: 'daniel-ricc@example.com',
-        mobilePhone: '07722 123456',
-        preferredMethodOfNewsletter: 'Prefer not to be contacted',
-        preferredMethodOfConfirmation: 'Email',
-        preferredMethodOfReminder: 'Text'
-      },
-      permitId: 'test-permit-id',
-      startDate: '2021-06-15',
-      concessions: [{ type: 'Blue Badge', referenceNumber: '123456789' }]
-    }]
+    permissions: [
+      {
+        licensee: {
+          firstName: 'Daniel',
+          lastName: 'Ricciardo',
+          organisation: 'Fishy Endeavours',
+          premises: '14 Howecroft Court',
+          street: 'Eastmead Lane',
+          town: 'Bristol',
+          postcode: 'BS9 1HJ',
+          country: 'GB',
+          birthDate: '1989-07-01',
+          email: 'daniel-ricc@example.com',
+          mobilePhone: '07722 123456',
+          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          preferredMethodOfConfirmation: 'Email',
+          preferredMethodOfReminder: 'Text',
+          postalFulfilment: true
+        },
+        permitId: 'test-permit-id',
+        startDate: '2021-06-15',
+        concessions: [{ type: 'Blue Badge', referenceNumber: '123456789' }]
+      }
+    ]
   },
   finaliseTransactionPayload: {
+    transactionFile: 'test-pocl-file.xml',
     payment: {
       timestamp: '2020-01-01T14:00:00Z',
       amount: 30,
@@ -78,7 +82,8 @@ describe('POCL validation error service', () => {
     let payload
     beforeEach(async () => {
       payload = getPayload()
-      await createPoclValidationError(payload)
+      delete payload.finaliseTransactionPayload.transactionFile
+      await createPoclValidationError(payload, 'test-pocl-file.xml')
     })
 
     it('maps the record to an instance of PoclValidationError', async () => {
@@ -155,9 +160,7 @@ describe('POCL validation error service', () => {
       })
 
       it('throws a 404 error', async () => {
-        await expect(
-          updatePoclValidationError('pocl-validation-error-id', payload)
-        ).rejects.toEqual(
+        await expect(updatePoclValidationError('pocl-validation-error-id', payload)).rejects.toEqual(
           Boom.notFound('A POCL validation error with the given identifier could not be found')
         )
       })
@@ -176,13 +179,15 @@ describe('POCL validation error service', () => {
     beforeEach(async () => {
       status = await await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Ready for Processing')
       findPoclValidationErrors.mockReturnValue({ foo: 'bar' })
-      executeQuery.mockResolvedValue([{
-        fields: { some: 'fields' },
-        entity: { test: 'result' }
-      }, {
-        fields: { some: 'more fields' },
-        entity: { another: 'result' }
-      }
+      executeQuery.mockResolvedValue([
+        {
+          fields: { some: 'fields' },
+          entity: { test: 'result' }
+        },
+        {
+          fields: { some: 'more fields' },
+          entity: { another: 'result' }
+        }
       ])
       result = await getPoclValidationErrors()
     })
