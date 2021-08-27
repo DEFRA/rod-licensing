@@ -195,7 +195,7 @@ const finaliseTransaction = async (request, transaction, status) => {
     transaction.permissions[i].endDate = response.permissions[i].endDate
     debug(`Setting obfuscated dob: ${response.permissions[i].licensee.obfuscatedDob}`)
     transaction.permissions[i].licensee.obfuscatedDob = response.permissions[i].licensee.obfuscatedDob
-    logStartDateError(response.permissions[i])
+    logStartDateError(response.permissions[i], request)
   }
   status[COMPLETION_STATUS.finalised] = true
   await request.cache().helpers.status.set(status)
