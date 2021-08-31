@@ -1,4 +1,13 @@
 
+## v1.19.0-rc.4 (2021-08-31)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#879](https://github.com/DEFRA/rod-licensing/pull/879) Additional logging for order-complete undefined ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 
