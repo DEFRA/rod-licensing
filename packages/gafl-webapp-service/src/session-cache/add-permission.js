@@ -19,7 +19,7 @@ export default async request => {
     throw boom.badRequest('Too many permissions')
   }
 
-  debug(`Add permission: ${transaction.permissions.length}`)
+  debug(`Add permission: ${transaction.permissions.length} for key: ${request.cache().getId()}`)
   transaction.permissions.push({ licensee: {} })
   page.permissions.push({})
   status.permissions.push({})
