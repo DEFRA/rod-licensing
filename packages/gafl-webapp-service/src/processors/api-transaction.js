@@ -30,7 +30,7 @@ export const prepareApiTransactionPayload = async request => {
         })
       }
 
-      logStartDateError(permission)
+      logStartDateError(permission, request)
 
       // Calculate the concession (proof entry) - disabled takes precedence
       if (concessionHelper.hasDisabled(p)) {
