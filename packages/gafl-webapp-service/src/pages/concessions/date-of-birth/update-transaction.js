@@ -22,7 +22,7 @@ export default async request => {
   }).format(cacheDateFormat)
 
   const pageCache = await request.cache().helpers.page.get()
-  const dobPageCache = pageCache.permissions.find(permission => !!permission[DATE_OF_BIRTH.page])
+  const dobPageCache = pageCache.permissions.find(perm => !!perm[DATE_OF_BIRTH.page])
 
   if (!pageCacheMatchesPayload(dobPageCache, payload)) {
     console.error('DOB page cache payload does not match current permission payload', { dobPageCache: dobPageCache[DATE_OF_BIRTH.page], payload })
