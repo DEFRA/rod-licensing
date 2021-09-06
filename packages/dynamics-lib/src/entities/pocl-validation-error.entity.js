@@ -14,19 +14,20 @@ export class PoclValidationError extends BaseEntity {
       id: { field: 'defra_poclvalidationerrorid', type: 'string' },
       firstName: { field: 'defra_firstname', type: 'string' },
       lastName: { field: 'defra_name', type: 'string' },
-      organisation: { field: 'defra_organisation', type: 'string' },
-      premises: { field: 'defra_premises', type: 'string' },
-      street: { field: 'defra_street', type: 'string' },
-      locality: { field: 'defra_locality', type: 'string' },
-      town: { field: 'defra_town', type: 'string' },
-      postcode: { field: 'defra_postcode', type: 'string' },
-      country: { field: 'defra_country', type: 'string' },
       birthDate: { field: 'defra_birthdate', type: 'string' },
-      email: { field: 'defra_emailaddress', type: 'string' },
+      country: { field: 'defra_country', type: 'string' },
+      postcode: { field: 'defra_postcode', type: 'string' },
+      town: { field: 'defra_town', type: 'string' },
+      locality: { field: 'defra_locality', type: 'string' },
+      street: { field: 'defra_street', type: 'string' },
+      premises: { field: 'defra_premises', type: 'string' },
+      organisation: { field: 'defra_organisation', type: 'string' },
       mobilePhone: { field: 'defra_mobilenumber', type: 'string' },
-      preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      email: { field: 'defra_emailaddress', type: 'string' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
       concessions: { field: 'defra_concessions', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
@@ -39,6 +40,7 @@ export class PoclValidationError extends BaseEntity {
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
       errorMessage: { field: 'defra_errormessage', type: 'string' },
+      transactionFile: { field: 'defra_transactionfile', type: 'string' },
       stateCode: { field: 'statecode', type: 'decimal' }
     }
   }))
@@ -76,75 +78,15 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The organisation in the licensee address associated with this pocl record
+   * The licensee's date of birth associated with this pocl record
    * @type {string}
    */
-  get organisation () {
-    return super._getState('organisation')
+  get birthDate () {
+    return super._getState('birthDate')
   }
 
-  set organisation (organisation) {
-    super._setState('organisation', organisation)
-  }
-
-  /**
-   * The premises in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get premises () {
-    return super._getState('premises')
-  }
-
-  set premises (premises) {
-    super._setState('premises', premises)
-  }
-
-  /**
-   * The street in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get street () {
-    return super._getState('street')
-  }
-
-  set street (street) {
-    super._setState('street', street)
-  }
-
-  /**
-   * The locality in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get locality () {
-    return super._getState('locality')
-  }
-
-  set locality (locality) {
-    super._setState('locality', locality)
-  }
-
-  /**
-   * The town in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get town () {
-    return super._getState('town')
-  }
-
-  set town (town) {
-    super._setState('town', town)
-  }
-
-  /**
-   * The postcode in the licensee address associated with this pocl record
-   * @type {string}
-   */
-  get postcode () {
-    return super._getState('postcode')
-  }
-
-  set postcode (postcode) {
-    super._setState('postcode', postcode)
+  set birthDate (birthDate) {
+    super._setState('birthDate', birthDate)
   }
 
   /**
@@ -160,27 +102,75 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licensee's date of birth associated with this pocl record
+   * The postcode in the licensee address associated with this pocl record
    * @type {string}
    */
-  get birthDate () {
-    return super._getState('birthDate')
+  get postcode () {
+    return super._getState('postcode')
   }
 
-  set birthDate (birthDate) {
-    super._setState('birthDate', birthDate)
+  set postcode (postcode) {
+    super._setState('postcode', postcode)
   }
 
   /**
-   * The licensee's email address associated with this pocl record
+   * The town in the licensee address associated with this pocl record
    * @type {string}
    */
-  get email () {
-    return super._getState('email')
+  get town () {
+    return super._getState('town')
   }
 
-  set email (email) {
-    super._setState('email', email)
+  set town (town) {
+    super._setState('town', town)
+  }
+
+  /**
+   * The locality in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get locality () {
+    return super._getState('locality')
+  }
+
+  set locality (locality) {
+    super._setState('locality', locality)
+  }
+
+  /**
+   * The street in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get street () {
+    return super._getState('street')
+  }
+
+  set street (street) {
+    super._setState('street', street)
+  }
+
+  /**
+   * The premises in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get premises () {
+    return super._getState('premises')
+  }
+
+  set premises (premises) {
+    super._setState('premises', premises)
+  }
+
+  /**
+   * The organisation in the licensee address associated with this pocl record
+   * @type {string}
+   */
+  get organisation () {
+    return super._getState('organisation')
+  }
+
+  set organisation (organisation) {
+    super._setState('organisation', organisation)
   }
 
   /**
@@ -196,15 +186,27 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licensee's preferred method of confirmation associated with this pocl record
-   * @type {GlobalOptionSetDefinition}
+   * The licensee's email address associated with this pocl record
+   * @type {string}
    */
-  get preferredMethodOfConfirmation () {
-    return super._getState('preferredMethodOfConfirmation')
+  get email () {
+    return super._getState('email')
   }
 
-  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
-    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
+  set email (email) {
+    super._setState('email', email)
+  }
+
+  /**
+   * The licensee's preferred method of reminder associated with this pocl record
+   * @type {GlobalOptionSetDefinition}
+   */
+  get preferredMethodOfReminder () {
+    return super._getState('preferredMethodOfReminder')
+  }
+
+  set preferredMethodOfReminder (preferredMethodOfReminder) {
+    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
   }
 
   /**
@@ -220,15 +222,27 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
-   * The licensee's preferred method of reminder associated with this pocl record
+   * The licensee's preferred method of confirmation associated with this pocl record
    * @type {GlobalOptionSetDefinition}
    */
-  get preferredMethodOfReminder () {
-    return super._getState('preferredMethodOfReminder')
+  get preferredMethodOfConfirmation () {
+    return super._getState('preferredMethodOfConfirmation')
   }
 
-  set preferredMethodOfReminder (preferredMethodOfReminder) {
-    super._setState('preferredMethodOfReminder', preferredMethodOfReminder)
+  set preferredMethodOfConfirmation (preferredMethodOfConfirmation) {
+    super._setState('preferredMethodOfConfirmation', preferredMethodOfConfirmation)
+  }
+
+  /**
+   * The postal fulfilment flag with this pocl record
+   * @type {boolean}
+   */
+  get postalFulfilment () {
+    return super._getState('postalFulfilment')
+  }
+
+  set postalFulfilment (postalFulfilment) {
+    super._setState('postalFulfilment', postalFulfilment)
   }
 
   /**
@@ -373,6 +387,18 @@ export class PoclValidationError extends BaseEntity {
 
   set errorMessage (errorMessage) {
     super._setState('errorMessage', errorMessage)
+  }
+
+  /**
+   * The name of the POCL file associated with this pocl record
+   * @type {string}
+   */
+  get transactionFile () {
+    return super._getState('transactionFile')
+  }
+
+  set transactionFile (transactionFile) {
+    super._setState('transactionFile', transactionFile)
   }
 
   /**

@@ -170,7 +170,9 @@ describe('create-transactions', () => {
   it('adds record to staging exception', async () => {
     salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
     await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
-    const { calls: [[{ record }]] } = salesApi.createStagingException.mock
+    const {
+      calls: [[{ record }]]
+    } = salesApi.createStagingException.mock
     expect(record).toMatchSnapshot()
   })
 })

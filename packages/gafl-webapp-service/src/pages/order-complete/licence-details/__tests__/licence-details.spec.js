@@ -51,18 +51,21 @@ const createMockRequest = status => ({
           endDate: '2021-06-05',
           licenceType: LICENCE_TYPE['trout-and-coarse'],
           numberOfRods: '3',
-          concessions: [{
-            type: CONCESSION.DISABLED,
-            proof: {
-              type: CONCESSION_PROOF.blueBadge,
-              referenceNumber: '123456324'
+          concessions: [
+            {
+              type: CONCESSION.DISABLED,
+              proof: {
+                type: CONCESSION_PROOF.blueBadge,
+                referenceNumber: '123456324'
+              }
+            },
+            {
+              type: CONCESSION.SENIOR,
+              proof: {
+                type: CONCESSION_PROOF.none
+              }
             }
-          }, {
-            type: CONCESSION.SENIOR,
-            proof: {
-              type: CONCESSION_PROOF.none
-            }
-          }]
+          ]
         }))
       }
     }

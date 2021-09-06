@@ -76,10 +76,18 @@ export const poclValidationErrorItemSchema = Joi.object({
   preferredMethodOfConfirmation: optionSetOption,
   preferredMethodOfNewsletter: optionSetOption,
   preferredMethodOfReminder: optionSetOption,
+  postalFulfilment: Joi.boolean().required(),
   concessions: concessionProofSchema.optional(),
   startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
-  serialNumber: Joi.string().trim().required(),
-  permitId: Joi.string().guid().required(),
+  serialNumber: Joi.string()
+    .trim()
+    .required(),
+  transactionFile: Joi.string()
+    .trim()
+    .required(),
+  permitId: Joi.string()
+    .guid()
+    .required(),
   amount: Joi.number().required(),
   transactionDate: TRANSACTION_DATE,
   paymentSource: Joi.string()
@@ -93,8 +101,7 @@ export const poclValidationErrorItemSchema = Joi.object({
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
   status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
   stateCode: Joi.number().required()
-})
-  .label('pocl-validation-error-item')
+}).label('pocl-validation-error-item')
 
 export const poclValidationErrorListSchema = Joi.array()
   .items(poclValidationErrorItemSchema)
@@ -119,37 +126,51 @@ export const updatePoclValidationErrorPayload = Joi.object({
     .example(uuidv4()),
   createTransactionPayload: {
     dataSource: Joi.string().optional(),
-    serialNumber: Joi.string().trim().required(),
-    permissions: Joi.array().items(Joi.object({
-      licensee: Joi.object(),
-      issueDate: TRANSACTION_DATE,
-      startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
-      permitId: Joi.string().guid().required(),
-      concessions: Joi.array().items(Joi.object({
-        id: Joi.string()
+    serialNumber: Joi.string()
+      .trim()
+      .required(),
+    permissions: Joi.array().items(
+      Joi.object({
+        licensee: Joi.object(),
+        issueDate: TRANSACTION_DATE,
+        startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+        permitId: Joi.string()
           .guid()
-          .required()
-          .example(uuidv4()),
-        proof: Joi.object({
-          type: Joi.string().required(),
-          referenceNumber: Joi.string()
-            .optional()
-            .example('QQ 12 34 56 C')
-        })
-          .required()
-      })).optional()
-    }))
+          .required(),
+        concessions: Joi.array()
+          .items(
+            Joi.object({
+              id: Joi.string()
+                .guid()
+                .required()
+                .example(uuidv4()),
+              proof: Joi.object({
+                type: Joi.string().required(),
+                referenceNumber: Joi.string()
+                  .optional()
+                  .example('QQ 12 34 56 C')
+              }).required()
+            })
+          )
+          .optional()
+      })
+    )
   },
   finaliseTransactionPayload: {
+    transactionFile: Joi.string().required(),
     payment: {
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
-      source: Joi.string().trim().required(),
+      source: Joi.string()
+        .trim()
+        .required(),
       channelId: Joi.string()
         .trim()
         .required()
         .description('Channel specific identifier'),
-      method: Joi.string().trim().required()
+      method: Joi.string()
+        .trim()
+        .required()
     }
   },
   createTransactionError: Joi.object().optional(),

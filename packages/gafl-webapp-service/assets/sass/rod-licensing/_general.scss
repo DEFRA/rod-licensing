@@ -7,7 +7,6 @@ div.hidden-area {
 }
 
 @media print {
-
   @page {
     // size: A4, this affects the margin in the printer settings
     margin: 0mm;
@@ -46,14 +45,18 @@ div.hidden-area {
 
   // general good print practice
 
-  h1, h2, h3, h4, h5 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
     page-break-after: avoid;
   }
 
-  table, figure {
+  table,
+  figure {
     page-break-inside: avoid;
   }
-
 }
 
 @media screen {

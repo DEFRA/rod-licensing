@@ -1,11 +1,27 @@
 import { createStagingException, createTransactionFileException } from '../../../services/exceptions/exceptions.service.js'
-import { createPoclValidationError, getPoclValidationErrors, updatePoclValidationError } from '../../../services/exceptions/pocl-validation-errors.service.js'
+import {
+  createPoclValidationError,
+  getPoclValidationErrors,
+  updatePoclValidationError
+} from '../../../services/exceptions/pocl-validation-errors.service.js'
 import stagingExceptionsRoute from '../staging-exceptions.js'
 import Joi from 'joi'
 const [
-  { options: { handler: stagingExceptionsHandler, validate: { payload: payloadValidationSchema } } },
-  { options: { handler: getPoclValidationErrorsHandler } },
-  { options: { handler: patchPoclValidationErrorsHandler, validate: { params: poclValidationErrorParamsSchema, payload: updatePoclValidationErrorPayload } } }
+  {
+    options: {
+      handler: stagingExceptionsHandler,
+      validate: { payload: payloadValidationSchema }
+    }
+  },
+  {
+    options: { handler: getPoclValidationErrorsHandler }
+  },
+  {
+    options: {
+      handler: patchPoclValidationErrorsHandler,
+      validate: { params: poclValidationErrorParamsSchema, payload: updatePoclValidationErrorPayload }
+    }
+  }
 ] = stagingExceptionsRoute
 
 jest.mock('../../../services/exceptions/exceptions.service.js')
@@ -19,26 +35,30 @@ jest.mock('../../../schema/validators/validators.js', () => ({
   createPermitConcessionValidator: () => async () => undefined
 }))
 
-const poclValidationError = Object.freeze([{
-  id: 'string',
-  firstName: 'string',
-  lastName: 'string',
-  birthDate: '1987-01-05',
-  postcode: 'AB12 3CD',
-  country: 'GB',
-  preferredMethodOfConfirmation: 'Text',
-  preferredMethodOfNewsletter: 'Email',
-  preferredMethodOfReminder: 'Email',
-  startDate: '2021-06-06',
-  permitId: 'adfcbe49-f1a7-4cde-859a-7642effa61a0',
-  amount: 20,
-  transactionDate: '2021-06-06',
-  paymentSource: 'Post Office Sales',
-  channelId: 'ABCD-1234',
-  methodOfPayment: 'Debit card',
-  dataSource: 'Post Office Sales',
-  status: 'Ready for Processing'
-}])
+const poclValidationError = Object.freeze([
+  {
+    id: 'string',
+    firstName: 'string',
+    lastName: 'string',
+    birthDate: '1987-01-05',
+    postcode: 'AB12 3CD',
+    country: 'GB',
+    preferredMethodOfConfirmation: 'Text',
+    preferredMethodOfNewsletter: 'Email',
+    preferredMethodOfReminder: 'Email',
+    postalFulfilment: true,
+    startDate: '2021-06-06',
+    permitId: 'adfcbe49-f1a7-4cde-859a-7642effa61a0',
+    amount: 20,
+    transactionDate: '2021-06-06',
+    paymentSource: 'Post Office Sales',
+    channelId: 'ABCD-1234',
+    methodOfPayment: 'Debit card',
+    dataSource: 'Post Office Sales',
+    transactionFile: 'test-pocl-file.xml',
+    status: 'Ready for Processing'
+  }
+])
 
 const record = Object.freeze({
   poclValidationErrorId: 'test-id',
@@ -48,26 +68,30 @@ const record = Object.freeze({
     permitId: 'test-permit-id',
     startDate: '2021-06-15',
     issueDate: '2020-01-01',
-    permissions: [{
-      licensee: {
-        firstName: 'Daniel',
-        lastName: 'Ricciardo',
-        birthDate: '1989-07-01',
-        email: 'daniel-ricc@example.couk',
-        mobilePhone: '07722 123456',
-        organisation: 'Fishy Endeavours',
-        postcode: 'BS9 1HJ',
-        premises: '14 Howecroft Court',
-        street: 'Eastmead Lane',
-        town: 'Bristol',
-        country: 'GB',
-        preferredMethodOfConfirmation: 'Text',
-        preferredMethodOfNewsletter: 'Email',
-        preferredMethodOfReminder: 'Email'
+    permissions: [
+      {
+        licensee: {
+          firstName: 'Daniel',
+          lastName: 'Ricciardo',
+          birthDate: '1989-07-01',
+          email: 'daniel-ricc@example.couk',
+          mobilePhone: '07722 123456',
+          organisation: 'Fishy Endeavours',
+          postcode: 'BS9 1HJ',
+          premises: '14 Howecroft Court',
+          street: 'Eastmead Lane',
+          town: 'Bristol',
+          country: 'GB',
+          preferredMethodOfConfirmation: 'Text',
+          preferredMethodOfNewsletter: 'Email',
+          preferredMethodOfReminder: 'Email',
+          postalFulfilment: true
+        }
       }
-    }]
+    ]
   },
   finaliseTransactionPayload: {
+    transactionFile: 'test-pocl-file.xml',
     payment: {
       timestamp: '2020-01-01T14:00:00Z',
       amount: 30,
@@ -148,7 +172,7 @@ describe('staging exceptions handler', () => {
         })
         it('and record is in payload, creates a data validation error', async () => {
           await stagingExceptionsHandler({ payload: { transactionFileException, record } }, getMockResponseToolkit())
-          expect(createPoclValidationError).toHaveBeenCalledWith(record)
+          expect(createPoclValidationError).toHaveBeenCalledWith(record, transactionFileException.transactionFile)
         })
       })
     })
@@ -165,7 +189,7 @@ describe('staging exceptions handler', () => {
     })
 
     it('retrieves POCL validation errors', async () => {
-      await getPoclValidationErrorsHandler({ }, getMockResponseToolkit())
+      await getPoclValidationErrorsHandler({}, getMockResponseToolkit())
       expect(getPoclValidationErrors).toHaveBeenCalledWith()
     })
 

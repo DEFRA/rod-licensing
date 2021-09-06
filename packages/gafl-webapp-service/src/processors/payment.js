@@ -5,13 +5,10 @@ const debug = db('webapp:payment-processors')
 
 /**
  * Only include street if a value is provided
- * @param {Object} licensee 
+ * @param {Object} licensee
  * @returns {String}
  */
-const getAddressLine1 = licensee => 
-  licensee.street
-    ? `${licensee.premises} ${licensee.street}`
-    : `${licensee.premises}`
+const getAddressLine1 = licensee => (licensee.street ? `${licensee.premises} ${licensee.street}` : `${licensee.premises}`)
 
 /**
  * Create the payload for the payment creation post request
