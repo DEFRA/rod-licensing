@@ -39,7 +39,7 @@ describe('preparePayment', () => {
   })
 
   describe('provides the correct return url', () => {
-    it.each(['http', 'https'])(`uses SSL when 'x-forwarded-proto' header is present, proto '%s'`, proto => {
+    it.each(['http', 'https'])('uses SSL when "x-forwarded-proto" header is present, proto "%s"', proto => {
       const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
       result = preparePayment(request, transaction)
       expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
@@ -49,7 +49,7 @@ describe('preparePayment', () => {
       ['http', 'localhost:4321'],
       ['https', 'otherhost:8888'],
       ['http', 'samplehost:4444']
-    ])(`uses request data when 'x-forwarded-proto' header is not present, protocol '%s', host '%s'`, (protocol, host) => {
+    ])('uses request data when "x-forwarded-proto" header is not present, protocol "%s", host "%s"', (protocol, host) => {
       const request = createRequest({ headers: {}, protocol, host })
       result = preparePayment(request, transaction)
       expect(result.return_url).toBe(`${protocol}://${host}/buy/agreed`)
