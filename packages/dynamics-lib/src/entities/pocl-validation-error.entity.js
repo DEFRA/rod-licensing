@@ -26,7 +26,11 @@ export class PoclValidationError extends BaseEntity {
       email: { field: 'defra_emailaddress', type: 'string' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
-      preferredMethodOfConfirmation: { field: 'defra_preferredmethodofconfirmation', type: 'optionset', ref: 'defra_preferredcontactmethod' },
+      preferredMethodOfConfirmation: {
+        field: 'defra_preferredmethodofconfirmation',
+        type: 'optionset',
+        ref: 'defra_preferredcontactmethod'
+      },
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
       concessions: { field: 'defra_concessions', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },

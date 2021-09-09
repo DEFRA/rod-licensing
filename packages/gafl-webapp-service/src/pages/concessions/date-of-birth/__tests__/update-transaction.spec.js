@@ -17,11 +17,11 @@ const VALID_PAYLOAD = {
   'date-of-birth-day': '1'
 }
 
-const transactionHelperMock = ({
+const transactionHelperMock = {
   get: jest.fn(),
   getCurrentPermission: jest.fn(() => ({ licensee: {} })),
   setCurrentPermission: jest.fn()
-})
+}
 
 describe('updateTransaction', () => {
   beforeEach(jest.clearAllMocks)
@@ -64,24 +64,26 @@ describe('updateTransaction', () => {
     })
 
     it('logs an error if page cache does not match payload', async () => {
-      expect(consoleErrorSpy).toBeCalledWith(
-        'DOB page cache payload does not match current permission payload',
-        { dobPageCache: { payload: VALID_PAYLOAD }, payload: { test: 'payload' } }
-      )
+      expect(consoleErrorSpy).toBeCalledWith('DOB page cache payload does not match current permission payload', {
+        dobPageCache: { payload: VALID_PAYLOAD },
+        payload: { test: 'payload' }
+      })
     })
   })
 })
 
-const createRequestMock = (payload) => ({
+const createRequestMock = payload => ({
   cache: jest.fn(() => ({
     helpers: {
       page: {
         get: jest.fn(() => ({
-          permissions: [{
-            [DATE_OF_BIRTH.page]: {
-              payload: VALID_PAYLOAD
+          permissions: [
+            {
+              [DATE_OF_BIRTH.page]: {
+                payload: VALID_PAYLOAD
+              }
             }
-          }]
+          ]
         })),
         getCurrentPermission: jest.fn(() => ({ payload: payload || { test: 'payload' } }))
       },

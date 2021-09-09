@@ -5,7 +5,6 @@ import findPermit from '../find-permit.js'
 import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
-import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
 import {
   LICENCE_SUMMARY,
   LICENCE_LENGTH,
