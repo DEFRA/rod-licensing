@@ -46,9 +46,7 @@ const staticMatcherOidc = /^\/oidc\/.*/
 export const isStaticResource = request => staticMatcherPublic.test(request.path)
 export const useSessionCookie = request => !isStaticResource(request) && !staticMatcherOidc.test(request.path)
 
-export const includesRegex = (str, regexArray) => {
-  return regexArray.some(regex => regex.test(str))
-}
+export const includesRegex = (str, regexArray) => regexArray.some(regex => regex.test(str))
 
 /**
  * If there is no session cookie create it and initialize user cache contexts
