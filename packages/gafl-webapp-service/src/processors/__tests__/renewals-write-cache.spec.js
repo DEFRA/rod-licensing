@@ -1,15 +1,14 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import moment from 'moment'
 
-import { setUpCacheFromAuthenticationResult } from '../renewals-write-cache'
+import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../renewals-write-cache'
 import mockConcessions from '../../__mocks__/data/concessions'
+import { ADDRESS_LOOKUP, CONTACT, LICENCE_TYPE, NAME } from '../../uri'
 
 jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
 
 describe('renewals-write-cache', () => {
-  beforeEach(jest.clearAllMocks)
-
   describe('setUpCacheFromAuthenticationResult', () => {
     const mockStatusCacheSet = jest.fn()
     const mockTransactionCacheGet = jest.fn()
@@ -73,6 +72,7 @@ describe('renewals-write-cache', () => {
 
     beforeEach(() => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({}))
+      jest.clearAllMocks()
     })
 
     it('should set licence length to 12M, as only 12 month licences can be renewed', async () => {
@@ -238,6 +238,142 @@ describe('renewals-write-cache', () => {
           fromSummary: 'contact-summary'
         })
       )
+    })
+  })
+
+  describe('setupPayloads', () => {
+    const mockTransactionCacheGet = jest.fn()
+    const mockPageCacheSet = jest.fn()
+
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          transaction: {
+            getCurrentPermission: mockTransactionCacheGet
+          },
+          page: {
+            setCurrentPermission: mockPageCacheSet
+          }
+        }
+      })
+    }
+
+    const permission = {
+      licenceType: 'salmon-and-sea-trout',
+      licensee: {
+        birthDate: '2004-01-13',
+        email: 'email@gmail.com',
+        firstName: 'First',
+        lastName: 'Last',
+        postcode: 'SN15 3PG',
+        premises: '1',
+        preferredMethodOfConfirmation: 'Email'
+      }
+    }
+
+    beforeEach(jest.clearAllMocks)
+
+    it('should set the licence-type on the licence-type page to salmon-and-sea-trout in the cache, if licenceType is Salmon and sea trout', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(LICENCE_TYPE.page, {
+        payload: {
+          'licence-type': 'salmon-and-sea-trout'
+        }
+      })
+    })
+
+    it('should set the licence-type on the licence-type page to trout-and-coarse-2-rod in the cache, if licenceType is Trout and coarse and numberOfRods is 2', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        ...permission,
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2',
+      }))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(LICENCE_TYPE.page, {
+        payload: {
+          'licence-type': 'trout-and-coarse-2-rod'
+        }
+      })
+    })
+
+    it('should set the licence-type on the licence-type page to trout-and-coarse-3-rod in the cache, if licenceType is Trout and coarse and numberOfRods is 3', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        ...permission,
+        licenceType: 'Trout and coarse',
+        numberOfRods: '3',
+      }))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(LICENCE_TYPE.page, {
+        payload: {
+          'licence-type': 'trout-and-coarse-3-rod'
+        }
+      })
+    })
+
+    it('should set the first-name and last-name on the name page in the cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(NAME.page, {
+        payload: {
+          'first-name': 'First',
+          'last-name': 'Last'
+        }
+      })
+    })
+
+    it('should set the premises and postcode on the address-lookup page in the cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(ADDRESS_LOOKUP.page, {
+        payload: {
+          'premises': '1',
+          'postcode': 'SN15 3PG'
+        }
+      })
+    })
+
+    it('should set the how-contacted to email with an email on the contact page in the cache, if preferredMethodOfConfirmation is Email', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(CONTACT.page, {
+        payload: {
+          'how-contacted': 'email',
+          email: 'email@gmail.com'
+        }
+      })
+    })
+
+    it('should set the how-contacted to text with a phone number on the contact page in the cache, if preferredMethodOfConfirmation is Text', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        ...permission,
+        licensee: {
+          preferredMethodOfConfirmation: 'Text',
+          mobilePhone: '07700900900'
+        }
+      }))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(CONTACT.page, {
+        payload: {
+          'how-contacted': 'text',
+          text: '07700900900'
+        }
+      })
+    })
+
+    it('should set the how-contacted to none on the contact page in the cache, if preferredMethodOfConfirmation is Letter', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        ...permission,
+        licensee: {
+          preferredMethodOfConfirmation: 'Letter'
+        }
+      }))
+      await setUpPayloads(mockRequest)
+      expect(mockPageCacheSet).toBeCalledWith(CONTACT.page, {
+        payload: {
+          'how-contacted': 'none',
+        }
+      })
     })
   })
 })
