@@ -71,7 +71,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
 export const setUpPayloads = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  
+
   const type = () => {
     if (permission.licenceType === constants.LICENCE_TYPE['trout-and-coarse']) {
       if (permission.numberOfRods === '2') {

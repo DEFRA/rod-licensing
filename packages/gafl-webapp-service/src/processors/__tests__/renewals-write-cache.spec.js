@@ -274,7 +274,7 @@ describe('renewals-write-cache', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should set the licence-type on the licence-type page to salmon-and-sea-trout in the cache, if licenceType is Salmon and sea trout', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(LICENCE_TYPE.page, {
         payload: {
@@ -287,7 +287,7 @@ describe('renewals-write-cache', () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({
         ...permission,
         licenceType: 'Trout and coarse',
-        numberOfRods: '2',
+        numberOfRods: '2'
       }))
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(LICENCE_TYPE.page, {
@@ -301,7 +301,7 @@ describe('renewals-write-cache', () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({
         ...permission,
         licenceType: 'Trout and coarse',
-        numberOfRods: '3',
+        numberOfRods: '3'
       }))
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(LICENCE_TYPE.page, {
@@ -312,7 +312,7 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set the first-name and last-name on the name page in the cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(NAME.page, {
         payload: {
@@ -323,18 +323,18 @@ describe('renewals-write-cache', () => {
     })
 
     it('should set the premises and postcode on the address-lookup page in the cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(ADDRESS_LOOKUP.page, {
         payload: {
-          'premises': '1',
-          'postcode': 'SN15 3PG'
+          premises: '1',
+          postcode: 'SN15 3PG'
         }
       })
     })
 
     it('should set the how-contacted to email with an email on the contact page in the cache, if preferredMethodOfConfirmation is Email', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => (permission))
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(CONTACT.page, {
         payload: {
@@ -371,7 +371,7 @@ describe('renewals-write-cache', () => {
       await setUpPayloads(mockRequest)
       expect(mockPageCacheSet).toBeCalledWith(CONTACT.page, {
         payload: {
-          'how-contacted': 'none',
+          'how-contacted': 'none'
         }
       })
     })
