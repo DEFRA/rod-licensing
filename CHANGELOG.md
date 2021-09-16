@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.1 (2021-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#894](https://github.com/DEFRA/rod-licensing/pull/894) Find Address page does not hold previous values when accessing from t… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 
