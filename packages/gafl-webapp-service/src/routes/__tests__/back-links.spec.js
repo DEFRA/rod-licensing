@@ -120,6 +120,10 @@ describe('The licence-fulfilment page', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
   })
+  it('has a back-link to the licence-summary page if in renewal', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_FULFILMENT.page)
+    expect(n.backLink({ renewal: true })).toBe(LICENCE_SUMMARY.uri)
+  })
 })
 
 describe('The licence-confirmation page', () => {
