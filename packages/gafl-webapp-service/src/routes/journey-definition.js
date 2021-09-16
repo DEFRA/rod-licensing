@@ -242,7 +242,7 @@ export default [
     backLink: status => {
       if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
-      } else if(status.renewal) {
+      } else if (status.renewal) {
         return LICENCE_SUMMARY.uri
       } else {
         return ADDRESS_LOOKUP.uri

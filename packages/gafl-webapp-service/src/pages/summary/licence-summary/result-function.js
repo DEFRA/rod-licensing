@@ -6,7 +6,7 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   if (status.renewal) {
-    if(isPhysical(permission) && permission.licensee.postalFulfilment !== false) {
+    if (isPhysical(permission) && permission.licensee.postalFulfilment !== false) {
       return showDigitalLicencePages.YES
     } else {
       return CommonResults.SUMMARY
