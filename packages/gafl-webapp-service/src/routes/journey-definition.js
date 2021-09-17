@@ -239,7 +239,15 @@ export default [
         page: LICENCE_CONFIRMATION_METHOD
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: status => {
+      if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+        return CONTACT_SUMMARY.uri
+      } else if (status.renewal) {
+        return LICENCE_SUMMARY.uri
+      } else {
+        return ADDRESS_LOOKUP.uri
+      }
+    }
   },
   {
     current: LICENCE_CONFIRMATION_METHOD,

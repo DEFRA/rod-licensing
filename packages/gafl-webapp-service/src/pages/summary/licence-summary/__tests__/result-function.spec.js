@@ -33,6 +33,18 @@ describe('licence-summary > result-function', () => {
       expect(result).toBe(showDigitalLicencePages.YES)
     })
 
+    it('should return the summary screen, if licence is in renewal, is 12 months and postal fulfilment is false', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        licensee: {
+          postalFulfilment: false
+        }
+      }))
+      const result = await resultFunction(mockRequest)
+      expect(result).toBe(CommonResults.SUMMARY)
+    })
+
     it('should return ok, if licence is 12 months and postal fulfilment is true', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({}))
       mockTransactionPageGet.mockImplementationOnce(() => ({
