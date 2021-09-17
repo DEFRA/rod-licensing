@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.2 (2021-09-17)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#895](https://github.com/DEFRA/rod-licensing/pull/895) Easy Renewal-Clicking on back button and proceeding forward on summar… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.20.0-rc.1 (2021-09-16)
 
 #### :bug: Bug Fix
