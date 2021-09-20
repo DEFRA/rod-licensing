@@ -1,10 +1,12 @@
-import { IDENTIFY, AUTHENTICATE } from '../../../uri.js'
+import { IDENTIFY, AUTHENTICATE, RENEWAL_PUBLIC } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import Boom from '@hapi/boom'
 
-const getData = async request => {
+import GetDataRedirect from '../../../handlers/get-data-redirect.js'
+
+const getData = async (request, h) => {
   // If we are supplied a permission number, validate it or throw 400
   const permission = await request.cache().helpers.status.getCurrentPermission()
 
@@ -13,7 +15,8 @@ const getData = async request => {
       .permissionNumberUniqueComponentValidator(Joi)
       .validate(permission.referenceNumber)
     if (validatePermissionNumber.error) {
-      throw Boom.forbidden('Attempt to access the authentication page with an invalid permission number')
+      await request.cache().helpers.status.setCurrentPermission({ referenceNumber: '' })
+      throw new GetDataRedirect(IDENTIFY.uri)
     }
   }
 
