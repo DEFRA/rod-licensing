@@ -5,7 +5,7 @@ import { validation } from '@defra-fish/business-rules-lib'
 
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
-const getData = async (request, h) => {
+const getData = async (request) => {
   // If we are supplied a permission number, validate it or throw 400
   const permission = await request.cache().helpers.status.getCurrentPermission()
 

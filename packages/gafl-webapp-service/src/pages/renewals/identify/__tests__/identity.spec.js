@@ -47,6 +47,11 @@ describe('The easy renewal identification page', () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(IDENTIFY.uri)
+    const data2 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data2.statusCode).toBe(302)
+    expect(data2.headers.location).toBe(IDENTIFY.uri)
+    const data3 = await injectWithCookies('GET', IDENTIFY.uri)
+    expect(data3.statusCode).toBe(200)
   })
 
   it('returns successfully when called with a valid reference ', async () => {
