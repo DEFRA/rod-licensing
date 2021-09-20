@@ -14,7 +14,7 @@ const getData = async request => {
       .permissionNumberUniqueComponentValidator(Joi)
       .validate(permission.referenceNumber)
     if (validatePermissionNumber.error) {
-      await request.cache().helpers.status.setCurrentPermission({ referenceNumber: '' })
+      await request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
       throw new GetDataRedirect(IDENTIFY.uri)
     }
   }
