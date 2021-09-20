@@ -43,7 +43,7 @@ mockSalesApi()
 salesApi.countries.getAll = jest.fn(() => Promise.resolve(mockDefraCountries))
 
 describe('The easy renewal identification page', () => {
-  it('redirects to identify page when called with an invalid permission reference ', async () => {
+  it('redirects to identify page when called with an invalid permission reference', async () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'not-a-valid-reference-number'))
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(IDENTIFY.uri)
