@@ -135,7 +135,7 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.email }}' && !'{{ error.email }}' ) {
+        if ('{{ data.licensee.email }}' && !'{{ data.changeEmail }}' && !'{{ error.email }}' ) {
             document.getElementById("email-ro").style.display = "block"
             document.getElementById("email-rw").style.display = "none"
         } else {
@@ -148,7 +148,7 @@
         })
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.mobilePhone }}' && !'{{ error.text }}' ) {
+        if ('{{ data.licensee.mobilePhone }}' && !'{{ data.changeMobile }}' && !'{{ error.text }}' ) {
             document.getElementById("text-ro").style.display = "block"
             document.getElementById("text-rw").style.display = "none"
         } else {

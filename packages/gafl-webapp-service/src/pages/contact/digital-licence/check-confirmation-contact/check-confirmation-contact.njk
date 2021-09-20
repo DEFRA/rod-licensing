@@ -1,0 +1,64 @@
+{% extends "standard-form.njk" %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% set contactType %}
+  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
+    email address
+  {% else %}
+    phone number
+  {% endif %}
+{% endset %}
+
+{% set contactInfo %}
+  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
+   {{ data.licensee.email }}
+  {% else %}
+    {{ data.licensee.mobilePhone }}
+  {% endif %}
+{% endset %}
+
+{% set changeLinkUrl %}
+  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
+   {{ data.uri.licenceConfirmationMethod }}?change=email
+  {% else %}
+    {{ data.uri.licenceConfirmationMethod }}?change=mobile
+  {% endif %}
+{% endset %}
+
+{% set title = 'Is your ' + contactType + ' correct?' %}
+
+{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if backRef %}
+        {{ govukBackLink({
+          text: "Back",
+          href: backRef,
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
+      {% endif %}
+      
+      <h1 class="govuk-heading-l" id="contact-information-question">
+        {{ title }}
+      </h1>
+
+      <p class="govuk-body govuk-!-font-size-27" id="contact-information" tabindex="0" aria-labelledby="contact-information">
+        {{ contactInfo }}
+      </p>
+
+      <p class="govuk-body govuk-!-margin-bottom-6">
+        <a class="govuk-link" href="{{ changeLinkUrl }}">
+          Change {{ contactType }}
+        </a>
+      </p>
+
+      {{ govukButton({
+        text: "It's correct",
+        classes: "govuk-!-margin-top-5",
+        href: data.uri.contact
+      }) }}    
+    </div>
+  </div>
+{% endblock %}

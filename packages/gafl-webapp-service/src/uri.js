@@ -19,6 +19,7 @@ export const NEWSLETTER = { uri: '/buy/newsletter', page: 'newsletter' }
 
 export const LICENCE_FULFILMENT = { uri: '/buy/fulfilment', page: 'licence-fulfilment' }
 export const LICENCE_CONFIRMATION_METHOD = { uri: '/buy/confirmation-method', page: 'licence-confirmation-method' }
+export const CHECK_CONFIRMATION_CONTACT = { uri: '/buy/check-confirmation-contact', page: 'check-confirmation-contact' }
 
 export const CONTACT_SUMMARY = { uri: '/buy/contact-summary', page: 'contact-summary' }
 export const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-summary' }

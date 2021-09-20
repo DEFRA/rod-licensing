@@ -12,6 +12,7 @@ import {
   ADDRESS_ENTRY,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
+  CHECK_CONFIRMATION_CONTACT,
   CONTACT,
   NEWSLETTER,
   CONTACT_SUMMARY,
@@ -253,13 +254,22 @@ export default [
     current: LICENCE_CONFIRMATION_METHOD,
     next: {
       [CommonResults.OK]: {
-        page: CONTACT
+        page: CHECK_CONFIRMATION_CONTACT
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT
       }
     },
     backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_FULFILMENT.uri)
+  },
+  {
+    current: CHECK_CONFIRMATION_CONTACT,
+    next: {
+      [CommonResults.OK]: {
+        page: CONTACT
+      }
+    },
+    backLink: LICENCE_CONFIRMATION_METHOD.uri
   },
   {
     current: CONTACT,
