@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.4 (2021-09-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#902](https://github.com/DEFRA/rod-licensing/pull/902) Adds email/text check page ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
 ## v1.20.0-rc.3 (2021-09-20)
 
 #### :bug: Bug Fix
