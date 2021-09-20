@@ -9,7 +9,8 @@ import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 import { mobilePhoneValidator } from '../../../../processors/contact-validator.js'
 
-const getData = async request => {
+export const getData = async request => {
+  const { change } = request?.query
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // page is only permitted for physical licences
@@ -19,7 +20,9 @@ const getData = async request => {
 
   return {
     licensee: permission.licensee,
-    howContacted: HOW_CONTACTED
+    howContacted: HOW_CONTACTED,
+    ...change === 'email' && { changeEmail: true },
+    ...change === 'mobile' && { changeMobile: true }
   }
 }
 
