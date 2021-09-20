@@ -5,7 +5,7 @@
   {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
     email address
   {% else %}
-  phone number
+    phone number
   {% endif %}
 {% endset %}
 
@@ -30,7 +30,7 @@
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% block content %}
-<div class="govuk-grid-row">
+  <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {% if backRef %}
         {{ govukBackLink({
@@ -58,7 +58,7 @@
         text: "It's correct",
         classes: "govuk-!-margin-top-5",
         href: data.uri.contact
-  }) }}    
+      }) }}    
+    </div>
   </div>
-</div>
 {% endblock %}

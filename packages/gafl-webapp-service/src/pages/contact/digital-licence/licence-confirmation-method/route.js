@@ -21,8 +21,8 @@ export const getData = async request => {
   return {
     licensee: permission.licensee,
     howContacted: HOW_CONTACTED,
-    ...change === 'email' && { changeEmail: true },
-    ...change === 'mobile' && { changeMobile: true }
+    ...(change === 'email' && { changeEmail: true }),
+    ...(change === 'mobile' && { changeMobile: true })
   }
 }
 

@@ -202,12 +202,12 @@ describe('.getData', () => {
       result = await getData(createRequestMock())
     })
 
-    it('doesn\'t return changeEmail', async () => {
-      expect(result.changeEmail).toBe(undefined)
+    it("doesn't return changeEmail", async () => {
+      expect(result.changeEmail).toBeUndefined()
     })
 
-    it('doesn\'t return changeMobile', async () => {
-      expect(result.changeMobile).toBe(undefined)
+    it("doesn't return changeMobile", async () => {
+      expect(result.changeMobile).toBeUndefined()
     })
   })
 
