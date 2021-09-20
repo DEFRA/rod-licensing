@@ -36,12 +36,9 @@ describe('includesRegex', () => {
     }
   )
 
-  it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete'])(
-    'returns false if one of the regexes is not matched %s',
-    async path => {
-      expect(includesRegex(path, regexArray)).toBeFalsy()
-    }
-  )
+  it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete'])('returns false if one of the regexes is not matched %s', async path => {
+    expect(includesRegex(path, regexArray)).toBeFalsy()
+  })
 })
 
 describe('Use session cookie', () => {

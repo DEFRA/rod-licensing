@@ -1,8 +1,7 @@
-import { IDENTIFY, AUTHENTICATE, RENEWAL_PUBLIC } from '../../../uri.js'
+import { IDENTIFY, AUTHENTICATE } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
-import Boom from '@hapi/boom'
 
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
