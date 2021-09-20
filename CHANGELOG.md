@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.3 (2021-09-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#903](https://github.com/DEFRA/rod-licensing/pull/903) Unexpected error is displayed when try to renew another license ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.20.0-rc.2 (2021-09-17)
 
 #### :bug: Bug Fix
