@@ -45,7 +45,7 @@ describe('The address select page', () => {
     expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
   })
 
-  describe('on successful submission', async () => {
+  describe('on successful submission', () => {
     beforeEach(async d => {
       // Set up the licence details
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })

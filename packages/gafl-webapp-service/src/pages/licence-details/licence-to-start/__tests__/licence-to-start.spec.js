@@ -71,7 +71,7 @@ describe("The 'when would you like you licence to start?' page", () => {
     expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
-  describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, async () => {
+  describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, () => {
     beforeEach(async d => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(juniorIn16Days))
       d()

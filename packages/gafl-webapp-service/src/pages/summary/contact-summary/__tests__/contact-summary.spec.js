@@ -49,7 +49,7 @@ const goodAddress = {
 }
 
 describe('The contact summary page', () => {
-  describe('where the prerequisite are not fulfilled', async () => {
+  describe('where the prerequisite are not fulfilled', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
@@ -87,7 +87,7 @@ describe('The contact summary page', () => {
     })
   })
 
-  describe('when purchasing a 12 month adult licence', async () => {
+  describe('when purchasing a 12 month adult licence', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)

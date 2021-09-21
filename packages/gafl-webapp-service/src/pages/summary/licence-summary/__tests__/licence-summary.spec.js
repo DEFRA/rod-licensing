@@ -32,7 +32,7 @@ afterAll(() => {
 })
 
 describe('The licence summary page', () => {
-  describe('where the prerequisite are not fulfilled', async () => {
+  describe('where the prerequisite are not fulfilled', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', CONTROLLER.uri)
       d()
@@ -69,7 +69,7 @@ describe('The licence summary page', () => {
     })
   })
 
-  describe('for a full 12 month, 2 rod, trout and coarse licence', async () => {
+  describe('for a full 12 month, 2 rod, trout and coarse licence', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', CONTROLLER.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
@@ -100,7 +100,7 @@ describe('The licence summary page', () => {
     })
   })
 
-  describe('for a disabled concession 12 month, 2 rod, trout and coarse licence', async () => {
+  describe('for a disabled concession 12 month, 2 rod, trout and coarse licence', () => {
     beforeAll(async d => {
       await injectWithCookies('GET', CONTROLLER.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))

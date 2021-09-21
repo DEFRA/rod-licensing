@@ -39,7 +39,7 @@ describe('The newsletter page', () => {
     expect(response.headers.location).toBe(NEWSLETTER.uri)
   })
 
-  describe('if the user has set the preferred method of contact to email ', async () => {
+  describe('if the user has set the preferred method of contact to email ', () => {
     beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
@@ -123,7 +123,7 @@ describe('The newsletter page', () => {
     })
   })
 
-  describe('if the user has set the preferred method of contact to text ', async () => {
+  describe('if the user has set the preferred method of contact to text ', () => {
     beforeEach(async d => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
