@@ -47,7 +47,7 @@ export const CommonResults = {
   YES: 'yes'
 }
 
-export const showDigitalLicencePages = {
+export const ShowDigitalLicencePages = {
   YES: 'show-digital-licence-yes',
   NO: 'show-digital-licence-no'
 }
