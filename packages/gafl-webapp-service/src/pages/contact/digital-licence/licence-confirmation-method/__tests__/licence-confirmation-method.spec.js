@@ -35,12 +35,11 @@ const goodAddress = {
 
 describe('The licence confirmation method page', () => {
   describe('for a full 12 month licence, adult', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      d()
     })
 
     it('return the page on request', async () => {
@@ -125,12 +124,11 @@ describe('The licence confirmation method page', () => {
   })
 
   describe('for 1 day licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-      d()
     })
 
     it('redirects to the contact page', async () => {

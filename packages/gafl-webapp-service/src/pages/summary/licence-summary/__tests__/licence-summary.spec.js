@@ -33,9 +33,8 @@ afterAll(() => {
 
 describe('The licence summary page', () => {
   describe('where the prerequisite are not fulfilled', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      d()
     })
 
     it('redirects to the date of birth page if the date of birth has been not been set', async () => {
@@ -70,13 +69,12 @@ describe('The licence summary page', () => {
   })
 
   describe('for a full 12 month, 2 rod, trout and coarse licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      d()
     })
 
     it('displays the page on request', async () => {
@@ -101,7 +99,7 @@ describe('The licence summary page', () => {
   })
 
   describe('for a disabled concession 12 month, 2 rod, trout and coarse licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
@@ -110,7 +108,6 @@ describe('The licence summary page', () => {
       })
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      d()
     })
 
     it('displays the page on request', async () => {
