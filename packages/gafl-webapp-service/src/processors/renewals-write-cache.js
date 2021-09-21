@@ -62,7 +62,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
     }
   })
 
-  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false ? true : false
+  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
 
   // Add appropriate age concessions
   ageConcessionHelper(permission)
