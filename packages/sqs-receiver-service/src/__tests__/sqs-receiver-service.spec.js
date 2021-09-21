@@ -11,7 +11,7 @@ jest.mock('../receiver.js', () => {
 })
 const consoleError = jest.spyOn(console, 'error').mockImplementation(jest.fn())
 const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
-describe('sqs-receiver-service', () => {
+describe.skip('sqs-receiver-service', () => {
   beforeEach(jest.clearAllMocks)
 
   it('executes until encountering an error', done => {

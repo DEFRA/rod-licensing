@@ -22,9 +22,9 @@ import { ADULT_TODAY, dobHelper, JUNIOR_TODAY } from '../../../../__mocks__/test
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',

@@ -15,9 +15,9 @@ import { licenceToStart } from '../../licence-to-start/update-transaction'
 import moment from 'moment'
 import { licenseTypes } from '../../licence-type/route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 describe('The licence start time page', () => {
   it('returns success on requesting', async () => {

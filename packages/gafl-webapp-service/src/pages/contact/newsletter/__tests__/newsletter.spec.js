@@ -16,9 +16,9 @@ import { start, stop, initialize, injectWithCookies } from '../../../../__mocks_
 import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 describe('The newsletter page', () => {
   it('returns success on request', async () => {

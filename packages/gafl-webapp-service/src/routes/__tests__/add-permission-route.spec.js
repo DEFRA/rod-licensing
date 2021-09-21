@@ -2,9 +2,9 @@ import { start, stop, initialize, injectWithCookies } from '../../__mocks__/test
 import { ADD_PERMISSION, NEW_TRANSACTION, TEST_TRANSACTION } from '../../uri.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION } from '@defra-fish/business-rules-lib'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 describe('The new permission handler', () => {
   it('Adds new permission objects to the transaction cache', async () => {

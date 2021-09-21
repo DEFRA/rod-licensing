@@ -20,9 +20,9 @@ import {
 import { licenceToStart } from '../update-transaction.js'
 import moment from 'moment'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 const juniorIn16Days = moment()
   .add(16, 'day')

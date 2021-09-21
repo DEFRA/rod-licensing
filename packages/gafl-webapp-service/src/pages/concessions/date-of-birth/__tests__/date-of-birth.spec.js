@@ -9,9 +9,9 @@ import {
   dobHelper
 } from '../../../../__mocks__/test-utils-business-rules.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 describe('The date of birth page', () => {
   it('return success on requesting the page', async () => {

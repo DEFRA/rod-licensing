@@ -2,9 +2,9 @@ import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, TEST_TRANSACTION, 
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 mockSalesApi()
 

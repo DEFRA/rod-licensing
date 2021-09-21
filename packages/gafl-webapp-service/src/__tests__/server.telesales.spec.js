@@ -4,13 +4,13 @@ import { LICENCE_LENGTH } from '../uri.js'
 
 jest.mock('../handlers/oidc-handler.js')
 
-beforeAll(d => {
+beforeAll(() => {
   process.env.CHANNEL = 'telesales'
-  start(d)
+  start(() => {})
 })
 
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 describe('Where the server started in telesales mode', () => {
   it('telesales is displayed in the header', async () => {

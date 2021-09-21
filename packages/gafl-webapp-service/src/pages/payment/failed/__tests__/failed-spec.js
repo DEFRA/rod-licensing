@@ -1,9 +1,9 @@
 import { initialize, injectWithCookies, start, stop } from '../../../../__mocks__/test-utils-system.js'
 import { PAYMENT_FAILED } from '../../../../uri.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 describe('The payment failed handler', () => {
   it('throws a status 403 (forbidden) exception if the payment created flag is not set', async () => {

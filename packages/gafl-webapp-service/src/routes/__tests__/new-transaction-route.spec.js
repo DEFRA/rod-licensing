@@ -3,10 +3,10 @@ import * as sessionManager from '../../session-cache/session-manager'
 const spy = jest.spyOn(sessionManager, 'default')
 
 // Start application before running the test case
-beforeAll(d => start(d))
+beforeAll(() => start(() => {}))
 
 // Stop application after running the test case
-afterAll(d => stop(d))
+afterAll(() => stop(() => {}))
 
 describe('The new transaction route clears the cache and invokes the controller invokes the controller', () => {
   it('Return success on requesting', async () => {

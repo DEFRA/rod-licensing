@@ -17,9 +17,9 @@ import { disabilityConcessionTypes } from '../../pages/concessions/disability/up
 
 mockSalesApi()
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => start(() => {}))
+beforeAll(() => initialize(() => {}))
+afterAll(() => stop(() => {}))
 
 const juniorPricingByType = {
   [licenseTypes.troutAndCoarse2Rod]: {
