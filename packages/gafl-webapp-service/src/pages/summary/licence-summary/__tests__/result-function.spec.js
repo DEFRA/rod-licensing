@@ -46,7 +46,7 @@ describe('licence-summary > result-function', () => {
     })
 
     it('should return ok, if licence is 12 months and showDigitalLicencePages is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({}))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ showDigitalLicencePages: true }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
         licensee: {
