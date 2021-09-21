@@ -62,10 +62,12 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
     }
   })
 
+  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false ? true : false
+
   // Add appropriate age concessions
   ageConcessionHelper(permission)
   await request.cache().helpers.transaction.setCurrentPermission(permission)
-  await request.cache().helpers.status.setCurrentPermission({ renewal: true })
+  await request.cache().helpers.status.setCurrentPermission({ renewal: true, showDigitalLicencePages })
 }
 
 export const setUpPayloads = async request => {

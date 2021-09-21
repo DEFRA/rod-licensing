@@ -1,5 +1,5 @@
 import resultFunction from '../result-function'
-import { CommonResults, showDigitalLicencePages } from '../../../../constants.js'
+import { CommonResults, ShowDigitalLicencePages } from '../../../../constants.js'
 
 describe('licence-summary > result-function', () => {
   const mockStatusCacheGet = jest.fn()
@@ -21,8 +21,8 @@ describe('licence-summary > result-function', () => {
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
-    it('should return the digital licence screen, if licence is in renewal, is 12 months and postal fulfilment is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
+    it('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: true }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
         licensee: {
@@ -30,11 +30,11 @@ describe('licence-summary > result-function', () => {
         }
       }))
       const result = await resultFunction(mockRequest)
-      expect(result).toBe(showDigitalLicencePages.YES)
+      expect(result).toBe(ShowDigitalLicencePages.YES)
     })
 
-    it('should return the summary screen, if licence is in renewal, is 12 months and postal fulfilment is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
+    it('should return the summary screen, if licence is in renewal, is 12 months and showDigitalLicencePages is false', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: false }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
         licensee: {
@@ -45,7 +45,7 @@ describe('licence-summary > result-function', () => {
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
-    it('should return ok, if licence is 12 months and postal fulfilment is true', async () => {
+    it('should return ok, if licence is 12 months and showDigitalLicencePages is true', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({}))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
