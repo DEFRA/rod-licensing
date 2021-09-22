@@ -20,10 +20,10 @@ const getData = async request => {
   }
 
   return {
-    uri: { 
+    referenceNumber: permission.referenceNumber,
+    uri: {
       new: NEW_TRANSACTION.uri
-    },
-    referenceNumber: permission.referenceNumber
+    }
   }
 }
 
