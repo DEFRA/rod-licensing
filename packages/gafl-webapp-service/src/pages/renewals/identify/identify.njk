@@ -55,7 +55,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(error, errorMap) }}
-        <form method="post">
+        <form method="post" class="govuk-!-margin-bottom-6">
             {% call govukFieldset({
               legend: {
                 text: title,
@@ -133,12 +133,16 @@
                     preventDoubleClick: true,
                     name: "continue",
                     text: "Continue",
-                    classes: "govuk-!-margin-top-5"
+                    classes: "govuk-!-margin-top-1"
                 }) }}
 
             {% endcall %}
             {{ csrf() }}
         </form>
+        <div>
+            <h2 class="govuk-heading-s">Problem with the licence details?</h2>
+            <p class="govuk-body">If you can’t match your licence details you can <a href="{{ data.uri.new }}">get a new fishing licence here</a></p>
+        </div>
     </div>
 </div>
 {% endblock %}

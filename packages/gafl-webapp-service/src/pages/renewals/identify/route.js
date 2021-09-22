@@ -1,4 +1,4 @@
-import { IDENTIFY, AUTHENTICATE } from '../../../uri.js'
+import { IDENTIFY, AUTHENTICATE, NEW_TRANSACTION } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
@@ -19,7 +19,12 @@ const getData = async request => {
     }
   }
 
-  return { referenceNumber: permission.referenceNumber }
+  return {
+    uri: { 
+      new: NEW_TRANSACTION.uri
+    },
+    referenceNumber: permission.referenceNumber
+  }
 }
 
 const schema = Joi.object({
