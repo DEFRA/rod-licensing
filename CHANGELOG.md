@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.6 (2021-09-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#908](https://github.com/DEFRA/rod-licensing/pull/908) Link to redirect to buy on renewal page ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.20.0-rc.4 (2021-09-20)
 
