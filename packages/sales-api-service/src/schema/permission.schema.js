@@ -35,7 +35,11 @@ export const stagedPermissionSchema = Joi.object({
   licensee: contactRequestSchema,
   concessions: concessionProofSchema.optional(),
   issueDate: issueDateSchema.allow(null),
-  startDate: startDateSchema.allow(null)
+  startDate: startDateSchema.allow(null),
+  isRenewal: Joi.boolean()
+    .optional()
+    .allow(null)
+    .example('true')
 }).label('staged-permission')
 
 export const finalisedPermissionSchemaContent = {
