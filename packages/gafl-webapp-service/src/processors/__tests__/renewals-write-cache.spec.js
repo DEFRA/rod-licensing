@@ -239,11 +239,11 @@ describe('renewals-write-cache', () => {
       )
     })
 
-    it('should set renewal on the status cache', async () => {
+    it('should set renewal on the transaction cache', async () => {
       await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
-      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
-          renewal: true
+          isRenewal: true
         })
       )
     })

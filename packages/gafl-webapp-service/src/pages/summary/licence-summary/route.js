@@ -43,7 +43,7 @@ export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  if (!status.renewal) {
+  if (!permission.isRenewal) {
     /*
      * Before we try and filter the permit it is necessary to check that the user has navigated through
      * the journey in such a way as to have gather all the required data. They may have manipulated the
@@ -63,7 +63,7 @@ export const getData = async request => {
     startTimeString,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
     licenceTypeStr: licenceTypeDisplay(permission),
-    isRenewal: status.renewal,
+    isRenewal: permission.isRenewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),
     disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
@@ -77,7 +77,7 @@ export const getData = async request => {
       licenceToStart: LICENCE_TO_START.uri,
       dateOfBirth: DATE_OF_BIRTH.uri,
       disabilityConcession: DISABILITY_CONCESSION.uri,
-      licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
+      licenceStartDate: permission.isRenewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
       clear: NEW_TRANSACTION.uri
     }
   }
