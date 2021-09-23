@@ -84,6 +84,15 @@ describe('renewals-write-cache', () => {
       )
     })
 
+    it('should set isRenewal to true', async () => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isRenewal: true
+        })
+      )
+    })
+
     it('should set licence type and number of rods to the values in the permit', async () => {
       await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
       expect(mockTransactionCacheSet).toHaveBeenCalledWith(
