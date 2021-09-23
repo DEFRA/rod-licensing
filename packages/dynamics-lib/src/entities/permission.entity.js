@@ -23,7 +23,7 @@ export class Permission extends BaseEntity {
       endDate: { field: 'defra_enddate', type: 'datetime' },
       stagingId: { field: 'defra_stagingid', type: 'string' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
-      isRenewal: { field: 'defra_renewal', type: 'boolean' },
+      isRenewal: { field: 'defra_renewal', type: 'boolean' }
     },
     relationships: {
       licensee: { property: 'defra_ContactId', entity: Contact, parent: true },

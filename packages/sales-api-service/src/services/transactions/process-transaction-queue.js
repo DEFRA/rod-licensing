@@ -44,7 +44,16 @@ export async function processQueue ({ id }) {
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
-  for (const { licensee, concessions, permitId, referenceNumber, issueDate, startDate, endDate, isRenewal } of transactionRecord.permissions) {
+  for (const {
+    licensee,
+    concessions,
+    permitId,
+    referenceNumber,
+    issueDate,
+    startDate,
+    endDate,
+    isRenewal
+  } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
