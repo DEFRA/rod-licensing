@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.7 (2021-09-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#914](https://github.com/DEFRA/rod-licensing/pull/914) Added missing class to link ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.20.0-rc.6 (2021-09-22)
 
 #### :rocket: Enhancement
