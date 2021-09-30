@@ -115,7 +115,7 @@ const getContactDetails = permission => {
         getRow(
           'Licence',
           getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          LICENCE_CONFIRMATION_METHOD.uri,
+          LICENCE_FULFILMENT.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
