@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.8 (2021-09-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#915](https://github.com/DEFRA/rod-licensing/pull/915) Clicking on Licence change link on the Contact Summary page does not … ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.20.0-rc.7 (2021-09-27)
 
 #### :rocket: Enhancement
