@@ -54,7 +54,7 @@ export async function processQueue ({ id }) {
     permission.referenceNumber = referenceNumber
     permission.stagingId = transactionRecord.id
     permission.issueDate = issueDate
-    permission.startDate = startDate
+    permission.startDate = moment(issueDate).add(30, 'minutes').toISOString()
     permission.endDate = endDate
     permission.dataSource = dataSource
 

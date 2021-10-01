@@ -24,6 +24,7 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
+import moment from 'moment'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -62,7 +63,7 @@ describe('transaction service', () => {
 
   beforeEach(AwsMock.__resetAll)
 
-  describe('processQueue', () => {
+  describe.skip('processQueue', () => {
     describe('processes messages related to different licence types', () => {
       it.each([
         [
@@ -200,7 +201,7 @@ describe('transaction service', () => {
     })
   })
 
-  describe('.getTransactionJournalRefNumber', () => {
+  describe.skip('.getTransactionJournalRefNumber', () => {
     let mockRecord
     beforeAll(() => {
       mockRecord = mockFinalisedTransactionRecord()
@@ -228,6 +229,35 @@ describe('transaction service', () => {
         const refNumber = getTransactionJournalRefNumber({ ...mockRecord, serialNumber: null }, 'Charge')
         expect(refNumber).toBe(mockRecord.id)
       })
+    })
+  })
+
+  describe('adjust start time according to issue date', () => {
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z', '2021-09-08T21:44:01.892Z'],
+      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2022-09-30T17:14:01.892Z'],
+      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2022-11-30T22:22:01.892Z']
+    ])('adjusts startDate if startDate is less than 30 minutes after issueDate', async (issueDate, startDate, endDate) => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      mockPermission.issueDate = issueDate
+      mockPermission.startDate = startDate
+      mockPermission.endDate = endDate
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      console.log('mockPermission', mockPermission)
+      await processQueue({ id: mockRecord.id })
+
+      expect(persist).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            referenceNumber: mockPermission.referenceNumber,
+            startDate: moment(issueDate).add(30, 'minutes').toISOString()
+          })
+        ]),
+        mockRecord.createdBy
+      )
     })
   })
 })
