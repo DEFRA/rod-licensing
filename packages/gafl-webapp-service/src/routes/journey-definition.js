@@ -261,8 +261,7 @@ export default [
       }
     },
     backLink: s => {
-      if((s.currentPage === LICENCE_FULFILMENT.page && s.fromSummary === CONTACT_SUMMARY_SEEN)
-       || s.fromSummary !== CONTACT_SUMMARY_SEEN) {
+      if ((s.currentPage === LICENCE_FULFILMENT.page && s.fromSummary === CONTACT_SUMMARY_SEEN) || s.fromSummary !== CONTACT_SUMMARY_SEEN) {
         return LICENCE_FULFILMENT.uri
       } else {
         return CONTACT_SUMMARY.uri
@@ -289,7 +288,7 @@ export default [
       }
     },
     backLink: (status, transaction) => {
-      if(status.currentPage === LICENCE_CONFIRMATION_METHOD.page && status.fromSummary === CONTACT_SUMMARY_SEEN) {
+      if (status.currentPage === LICENCE_CONFIRMATION_METHOD.page && status.fromSummary === CONTACT_SUMMARY_SEEN) {
         return LICENCE_CONFIRMATION_METHOD.uri
       } else if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
