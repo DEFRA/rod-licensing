@@ -245,14 +245,15 @@ describe('transaction service', () => {
     })
 
     it.each([
-      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 22],
-      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 38],
-      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z', '2021-09-08T21:44:01.892Z', 47],
-      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 12],
-      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2022-11-30T22:22:01.892Z', 1]
-    ])('adjusts startDate if startDate is less than 30 minutes after issueDate', async (issueDate, startDate, endDate, startAfterPaymentMinutes) => {
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 22, 'Web Sales'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 38, 'Web Sales'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z', '2021-09-08T21:44:01.892Z', 47, 'Web Sales'],
+      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 12, 'Telesales'],
+      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2022-11-30T22:22:01.892Z', 1, 'Telesales']
+    ])('adjusts startDate if startDate is less than 30 minutes after issueDate', async (issueDate, startDate, endDate, startAfterPaymentMinutes, dataSource) => {
       BusinessRulesLib.START_AFTER_PAYMENT_MINUTES = startAfterPaymentMinutes
       const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.dataSource = dataSource
       const [mockPermission] = mockRecord.permissions
       mockPermission.issueDate = issueDate
       mockPermission.startDate = startDate
