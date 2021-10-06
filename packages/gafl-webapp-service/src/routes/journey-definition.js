@@ -260,7 +260,13 @@ export default [
         page: CONTACT
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_FULFILMENT.uri)
+    backLink: s => {
+      const seenContactSummary = s.fromSummary === CONTACT_SUMMARY_SEEN
+      if ((s.currentPage === LICENCE_FULFILMENT.page && seenContactSummary) || !seenContactSummary) {
+        return LICENCE_FULFILMENT.uri
+      }
+      return CONTACT_SUMMARY.uri
+    }
   },
   {
     current: CHECK_CONFIRMATION_CONTACT,
@@ -282,13 +288,15 @@ export default [
       }
     },
     backLink: (status, transaction) => {
-      if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+      const contactSummarySeen = status.fromSummary === CONTACT_SUMMARY_SEEN
+      if (status.currentPage === LICENCE_CONFIRMATION_METHOD.page && contactSummarySeen) {
+        return LICENCE_CONFIRMATION_METHOD.uri
+      } else if (contactSummarySeen) {
         return CONTACT_SUMMARY.uri
       } else if (isPhysical(transaction)) {
         return LICENCE_CONFIRMATION_METHOD.uri
-      } else {
-        return ADDRESS_LOOKUP.uri
       }
+      return ADDRESS_LOOKUP.uri
     }
   },
 
