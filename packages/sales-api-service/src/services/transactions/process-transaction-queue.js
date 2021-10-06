@@ -24,7 +24,6 @@ const { docClient } = AWS()
 const debug = db('sales:transactions')
 
 const getAdjustedLicenseDates = (issueDate, startDate, endDate, dataSource) => {
-  console.log('dataSource', dataSource)
   const adjustedDates = { startDate, endDate }
   const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(30, 'minutes'))
   const webOrTelesales = ['Web Sales'].includes(dataSource)
