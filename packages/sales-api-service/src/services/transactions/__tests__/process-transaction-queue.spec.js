@@ -25,7 +25,7 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import moment from 'moment'
-import BusinessRulesLib, { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import BusinessRulesLib from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -298,7 +298,7 @@ describe('transaction service', () => {
     it.each([
       ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 23],
       ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 39],
-      ['2021-09-30T22:14:01.892Z', '2021-09-30T09:00:00.000Z', '2021-10-01T09.00.00.000Z', 42],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T09:00:00.000Z', '2021-10-01T09:00:00.000Z', 42],
       ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2021-10-01T17:14:01.892Z', 18],
       ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2021-11-08T22:22:01.892Z', 1]
     ])('adjusts endDate to maintain licence length', async (issueDate, startDate, endDate, startAfterPaymentMinutes) => {
@@ -322,29 +322,29 @@ describe('transaction service', () => {
         mockRecord.createdBy
       )
     })
-  })
 
-  it.each([
-    ['2021-09-30T17:14:01.892Z', '2021-09-30T17:44:02.892Z', '2022-09-30T17:44:02.892Z'],
-    ['2021-09-30T23:14:01.892Z', '2021-10-01T09:00:00.000Z', '2022-10-01T09:00:00.000Z'],
-    ['2021-02-28T22:14:01.892Z', '2021-03-01T06:00:00.000Z', '2021-03-02T06:00:00.000Z']
-  ])('leaves endDate unmodified if startDate is more than 30 minutes after issueDate', async (issueDate, startDate, endDate) => {
-    const mockRecord = mockFinalisedTransactionRecord()
-    const [mockPermission] = mockRecord.permissions
-    mockPermission.issueDate = issueDate
-    mockPermission.startDate = startDate
-    mockPermission.endDate = endDate
-    AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-    await processQueue({ id: mockRecord.id })
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:44:02.892Z', '2022-09-30T17:44:02.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-10-01T09:00:00.000Z', '2022-10-01T09:00:00.000Z'],
+      ['2021-02-28T22:14:01.892Z', '2021-03-01T06:00:00.000Z', '2021-03-02T06:00:00.000Z']
+    ])('leaves endDate unmodified if startDate is more than 30 minutes after issueDate', async (issueDate, startDate, endDate) => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      mockPermission.issueDate = issueDate
+      mockPermission.startDate = startDate
+      mockPermission.endDate = endDate
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
 
-    expect(persist).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({
-          referenceNumber: mockPermission.referenceNumber,
-          endDate
-        })
-      ]),
-      mockRecord.createdBy
-    )
+      expect(persist).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            referenceNumber: mockPermission.referenceNumber,
+            endDate
+          })
+        ]),
+        mockRecord.createdBy
+      )
+    })
   })
 })
