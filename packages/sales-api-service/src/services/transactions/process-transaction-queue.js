@@ -11,7 +11,7 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
-import { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
@@ -22,6 +22,16 @@ import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
+
+const getAdjustedLicenseDates = (issueDate, startDate, endDate) => {
+  const adjustedDates = { startDate, endDate }
+  if (moment(startDate).isBefore(moment(issueDate).add(30, 'minutes'))) {
+    const licenceLength = moment(endDate).subtract(moment(startDate))
+    adjustedDates.startDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
+    adjustedDates.endDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').add(licenceLength).toISOString()
+  }
+  return adjustedDates
+}
 
 /**
  * Process messages from the transactions queue
@@ -50,12 +60,14 @@ export async function processQueue ({ id }) {
 
     totalTransactionValue += permit.cost
 
+    const { startDate: adjustedStartDate, endDate: adjustedEndDate } = getAdjustedLicenseDates(issueDate, startDate, endDate)
+
     const permission = new Permission()
     permission.referenceNumber = referenceNumber
     permission.stagingId = transactionRecord.id
     permission.issueDate = issueDate
-    permission.startDate = startDate
-    permission.endDate = endDate
+    permission.startDate = adjustedStartDate
+    permission.endDate = adjustedEndDate
     permission.dataSource = dataSource
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
