@@ -261,11 +261,11 @@ export default [
       }
     },
     backLink: s => {
-      if ((s.currentPage === LICENCE_FULFILMENT.page && s.fromSummary === CONTACT_SUMMARY_SEEN) || s.fromSummary !== CONTACT_SUMMARY_SEEN) {
+      const seenContactSummary = s.fromSummary === CONTACT_SUMMARY_SEEN
+      if ((s.currentPage === LICENCE_FULFILMENT.page && seenContactSummary) || !seenContactSummary) {
         return LICENCE_FULFILMENT.uri
-      } else {
-        return CONTACT_SUMMARY.uri
       }
+      return CONTACT_SUMMARY.uri
     }
   },
   {
@@ -288,15 +288,15 @@ export default [
       }
     },
     backLink: (status, transaction) => {
-      if (status.currentPage === LICENCE_CONFIRMATION_METHOD.page && status.fromSummary === CONTACT_SUMMARY_SEEN) {
+      const contactSummarySeen = status.fromSummary === CONTACT_SUMMARY_SEEN
+      if (status.currentPage === LICENCE_CONFIRMATION_METHOD.page && contactSummarySeen) {
         return LICENCE_CONFIRMATION_METHOD.uri
-      } else if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+      } else if (contactSummarySeen) {
         return CONTACT_SUMMARY.uri
       } else if (isPhysical(transaction)) {
         return LICENCE_CONFIRMATION_METHOD.uri
-      } else {
-        return ADDRESS_LOOKUP.uri
       }
+      return ADDRESS_LOOKUP.uri
     }
   },
 
