@@ -301,7 +301,8 @@ describe('transaction service', () => {
       ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 39],
       ['2021-09-30T22:14:01.892Z', '2021-09-30T09:00:00.000Z', '2021-10-01T09:00:00.000Z', 42],
       ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2021-10-01T17:14:01.892Z', 18],
-      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2021-11-08T22:22:01.892Z', 1]
+      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2021-11-08T22:22:01.892Z', 1],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T22:45:00.000Z', '2021-10-01T22:45:00.000Z', 42]
     ])('adjusts endDate to maintain licence length', async (issueDate, startDate, endDate, startAfterPaymentMinutes) => {
       BusinessRulesLib.START_AFTER_PAYMENT_MINUTES = startAfterPaymentMinutes
       const mockRecord = mockFinalisedTransactionRecord()

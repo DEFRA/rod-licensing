@@ -25,7 +25,7 @@ const debug = db('sales:transactions')
 
 const getAdjustedLicenseDates = (issueDate, startDate, endDate, dataSource) => {
   const adjustedDates = { startDate, endDate }
-  const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(30, 'minutes'))
+  const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes'))
   const webOrTelesales = ['Web Sales', 'Telesales'].includes(dataSource)
   if (startDateTooEarly && webOrTelesales) {
     const licenceLength = moment(endDate).subtract(moment(startDate))
