@@ -1,4 +1,4 @@
-import { processQueue, getTransactionJournalRefNumber, getStartTime } from '../process-transaction-queue.js'
+import { processQueue, getTransactionJournalRefNumber } from '../process-transaction-queue.js'
 import {
   persist,
   findById,
@@ -69,7 +69,7 @@ describe('transaction service', () => {
 
   beforeEach(AwsMock.__resetAll)
 
-  describe.skip('processQueue', () => {
+  describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
       it.each([
         [
@@ -207,7 +207,7 @@ describe('transaction service', () => {
     })
   })
 
-  describe.skip('.getTransactionJournalRefNumber', () => {
+  describe('.getTransactionJournalRefNumber', () => {
     let mockRecord
     beforeAll(() => {
       mockRecord = mockFinalisedTransactionRecord()
