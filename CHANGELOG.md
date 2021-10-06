@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.10 (2021-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#921](https://github.com/DEFRA/rod-licensing/pull/921) Back button takes back to the Contact summary page instead of digital license pages ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.20.0-rc.8 (2021-09-30)
 
