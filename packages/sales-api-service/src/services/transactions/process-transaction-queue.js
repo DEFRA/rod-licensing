@@ -23,9 +23,12 @@ import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
 
-const getAdjustedLicenseDates = (issueDate, startDate, endDate) => {
+const getAdjustedLicenseDates = (issueDate, startDate, endDate, dataSource) => {
+  console.log('dataSource', dataSource)
   const adjustedDates = { startDate, endDate }
-  if (moment(startDate).isBefore(moment(issueDate).add(30, 'minutes'))) {
+  const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(30, 'minutes'))
+  const webOrTelesales = ['Web Sales'].includes(dataSource)
+  if (startDateTooEarly && webOrTelesales) {
     const licenceLength = moment(endDate).subtract(moment(startDate))
     adjustedDates.startDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
     adjustedDates.endDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').add(licenceLength).toISOString()
@@ -60,7 +63,7 @@ export async function processQueue ({ id }) {
 
     totalTransactionValue += permit.cost
 
-    const { startDate: adjustedStartDate, endDate: adjustedEndDate } = getAdjustedLicenseDates(issueDate, startDate, endDate)
+    const { startDate: adjustedStartDate, endDate: adjustedEndDate } = getAdjustedLicenseDates(issueDate, startDate, endDate, dataSource.label)
 
     const permission = new Permission()
     permission.referenceNumber = referenceNumber

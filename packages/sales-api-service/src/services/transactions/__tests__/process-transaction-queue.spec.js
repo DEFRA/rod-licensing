@@ -25,7 +25,7 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import moment from 'moment'
-import BusinessRulesLib from '@defra-fish/business-rules-lib'
+import BusinessRulesLib, { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -340,6 +340,35 @@ describe('transaction service', () => {
         expect.arrayContaining([
           expect.objectContaining({
             referenceNumber: mockPermission.referenceNumber,
+            endDate
+          })
+        ]),
+        mockRecord.createdBy
+      )
+    })
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 'Post Office Sales'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 'Post Office Sales'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z', '2021-09-08T21:44:01.892Z', 'DDE File'],
+      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 'DDE File'],
+      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2022-11-30T22:22:01.892Z', 'Weeb Sales']
+    ])('leaves start and end time unmodified for any data source type other than Web Sales and Telesales', async (issueDate, startDate, endDate, dataSource) => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      mockPermission.issueDate = issueDate
+      mockPermission.startDate = startDate
+      mockPermission.endDate = endDate
+      mockPermission.dataSource = dataSource
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+      await processQueue({ id: mockRecord.id })
+
+      expect(persist).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            referenceNumber: mockPermission.referenceNumber,
+            startDate,
             endDate
           })
         ]),
