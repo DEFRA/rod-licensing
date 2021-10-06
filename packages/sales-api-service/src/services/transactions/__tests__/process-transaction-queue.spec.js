@@ -25,7 +25,7 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import moment from 'moment'
-import BusinessRulesLib, { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+import BusinessRulesLib from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
