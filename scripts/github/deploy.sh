@@ -21,7 +21,6 @@ npm i -g semver lerna lerna-changelog
 echo "Checking out target branch"
 git fetch --unshallow
 git fetch --tags
-echo ${BRANCH}
 git checkout "${BRANCH}"
 git pull
 git branch -avl
@@ -48,7 +47,7 @@ if [ "${BRANCH}" == "master" ]; then
     PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
-elif [ "$BRANCH" == "IWTF-2511-unable-to-publish-npm-packages" ]; then
+elif [ "$BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
     PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
@@ -67,6 +66,19 @@ fi
 echo "Updating version from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package files versions, project inter-dependencies and lerna.json with new version number
 lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact
+
+# Generate changelog information for changes since the last tag
+echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} and ${NEW_VERSION}"
+lerna-changelog --from "${PREVIOUS_VERSION}" --to "${NEW_VERSION}" | cat - CHANGELOG.md > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
+git commit -a --amend --no-edit --no-verify
+
+# Push new tag, updated changelog and package metadata to the remote
+echo "Pushing new release to the remote"
+git push origin "${BRANCH}:${BRANCH}" --no-verify
+
+echo "Pushing new release tag to the remote"
+git tag "${NEW_VERSION}" -m "${NEW_VERSION}" -f
+git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
 echo "Publishing latest packages to npm"

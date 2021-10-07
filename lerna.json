@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "1.20.0-rc.12",
+  "version": "1.20.0-rc.14",
   "npmClient": "npm",
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
@@ -12,8 +12,7 @@
     "version": {
       "allowBranch": [
         "master",
-        "develop",
-        "IWTF-2511-unable-to-publish-npm-packages"
+        "develop"
       ],
       "message": "chore(release): publish %s"
     },
@@ -21,8 +20,7 @@
       "message": "chore(release): publish %s",
       "allowBranch": [
         "master",
-        "develop",
-        "IWTF-2511-unable-to-publish-npm-packages"
+        "develop"
       ],
       "ignoreChanges": [
         ".*",
