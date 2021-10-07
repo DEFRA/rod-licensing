@@ -1,3 +1,12 @@
+
+## v1.20.0-rc.13 (2021-10-07)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#924](https://github.com/DEFRA/rod-licensing/pull/924) Unable to publish npm packages ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
 ## v1.20.0-rc.10 (2021-10-06)
 
 #### :bug: Bug Fix
