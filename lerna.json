@@ -12,7 +12,8 @@
     "version": {
       "allowBranch": [
         "master",
-        "develop"
+        "develop",
+        "IWTF-2511-unable-to-publish-npm-packages"
       ],
       "message": "chore(release): publish %s"
     },
@@ -20,7 +21,8 @@
       "message": "chore(release): publish %s",
       "allowBranch": [
         "master",
-        "develop"
+        "develop",
+        "IWTF-2511-unable-to-publish-npm-packages"
       ],
       "ignoreChanges": [
         ".*",
