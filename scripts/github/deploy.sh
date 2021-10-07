@@ -82,7 +82,7 @@ git push origin "${NEW_VERSION}"
 
 # Publish packages to npm
 echo "Publishing latest packages to npm"
-lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc
+lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc --no-verify-access
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
 if [ "${BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
