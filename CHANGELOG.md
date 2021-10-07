@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.14 (2021-10-07)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#923](https://github.com/DEFRA/rod-licensing/pull/923) Only amend start time for web and telesales ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.20.0-rc.13 (2021-10-07)
 
 #### :bug: Bug Fix
