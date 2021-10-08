@@ -72,9 +72,8 @@ describe("The 'when would you like you licence to start?' page", () => {
   })
 
   describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(juniorIn16Days))
-      d()
     })
 
     it(`redirects to the disabled concessions page when posting a licence start date of ${moment()
