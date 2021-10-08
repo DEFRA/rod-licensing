@@ -40,13 +40,12 @@ describe('The newsletter page', () => {
   })
 
   describe('if the user has set the preferred method of contact to email ', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
-      d()
     })
 
     it('if posting no it sets the newsletter contact method to none and preserves the contact methods and email', async () => {
@@ -124,13 +123,12 @@ describe('The newsletter page', () => {
   })
 
   describe('if the user has set the preferred method of contact to text ', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07900000000' })
-      d()
     })
 
     it('if posting no it sets the newsletter contact method to none and preserves the email address', async () => {
