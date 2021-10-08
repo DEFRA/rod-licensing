@@ -37,9 +37,8 @@ const goodAddress = {
 
 describe('The contact preferences page', () => {
   describe('where the prerequisite are not fulfilled', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      d()
     })
 
     it('redirects to the date-of-birth page if no date of birth has been set', async () => {
@@ -65,12 +64,11 @@ describe('The contact preferences page', () => {
   })
 
   describe('for a full 12 month licence, adult', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      d()
     })
 
     it('return the page on request', async () => {
