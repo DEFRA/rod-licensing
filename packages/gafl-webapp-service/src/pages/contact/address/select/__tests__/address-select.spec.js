@@ -46,7 +46,7 @@ describe('The address select page', () => {
   })
 
   describe('on successful submission', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       // Set up the licence details
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -70,7 +70,6 @@ describe('The address select page', () => {
       await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
-      d()
     })
 
     it('redirects to the contact page if licence length is 1 day', async () => {
