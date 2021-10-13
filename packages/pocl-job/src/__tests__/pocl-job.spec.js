@@ -2,17 +2,24 @@ import { execute } from '../pocl-processor.js'
 import commander from 'commander'
 
 jest.mock('commander', () => {
-  const commander = jest.requireActual('commander')
-  commander.args = ['test']
-  commander.parse = jest.fn()
-  commander.outputHelp = jest.fn()
-  commander.help = jest.fn()
-  return commander
+  if (!global.commander) {
+    global.commander = jest.requireActual('commander')
+    global.commander.args = ['test']
+    global.commander.parse = jest.fn()
+    global.commander.outputHelp = jest.fn()
+    global.commander.help = jest.fn()
+  }
+  return global.commander
 })
 jest.mock('fs')
 jest.mock('../transform/pocl-transform-stream.js')
 jest.mock('../staging/pocl-data-staging.js')
-jest.mock('../pocl-processor.js')
+jest.mock('../pocl-processor.js', () => {
+  if (!global.poclProcessor) {
+    global.poclProcessor = jest.fn()
+  }
+  return { execute: global.poclProcessor }
+})
 
 describe('pocl-job', () => {
   beforeEach(() => {
