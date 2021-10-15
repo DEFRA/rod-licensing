@@ -3,11 +3,11 @@ import { displayStartTime, displayEndTime, displayExpiryDate } from '../date-and
 describe('displayStartTime', () => {
   it('displays the date in the correct format where no start time is set', () => {
     const startTime = displayStartTime({ licenceStartDate: '2021-01-01' })
-    expect(startTime).toEqual('12:00am (midnight) on 1 January 2021')
+    expect(startTime).toEqual('0.00am (first minute of the day) on 1 January 2021')
   })
   it('displays the date in the correct format where the start time is midnight', () => {
     const startTime = displayStartTime({ licenceStartDate: '2021-01-01', licenceStartTime: 0 })
-    expect(startTime).toEqual('12:00am (midnight) on 1 January 2021')
+    expect(startTime).toEqual('0.00am (first minute of the day) on 1 January 2021')
   })
   it('displays the date in the correct format where the start time is 12pm', () => {
     const startTime = displayStartTime({ licenceStartDate: '2021-01-01', licenceStartTime: '12' })
@@ -25,7 +25,7 @@ describe('displayStartTime', () => {
   it('displays the date in the correct format where the API start time is midnight', () => {
     // Tests that the API start time is used if the date/time has just rolled over (purchase completed at 11.59.59pm)
     const startTime = displayStartTime({ startDate: '2021-01-01T00:00:00.000Z', licenceStartDate: '2020-12-31' })
-    expect(startTime).toEqual('12:00am (midnight) on 1 January 2021')
+    expect(startTime).toEqual('0.00am (first minute of the day) on 1 January 2021')
   })
   it('displays the date in the correct where the API start time is 1 minute past midnight', () => {
     const startTime = displayStartTime({ startDate: '2020-01-01T00:01:00.000Z', licenceStartDate: '2020-01-01' })
