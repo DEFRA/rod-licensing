@@ -20,6 +20,7 @@ const checkContactDetails = permission => {
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.none || preferredMethodOfReminder === mappings.HOW_CONTACTED.none)
 
   if (physicalContactNone) {
+    permission.licensee.postalFulfilment = true
     permission.licensee.preferredMethodOfConfirmation = mappings.HOW_CONTACTED.letter
     permission.licensee.preferredMethodOfReminder = mappings.HOW_CONTACTED.letter
   }
@@ -29,6 +30,7 @@ const checkContactDetails = permission => {
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.letter || preferredMethodOfReminder === mappings.HOW_CONTACTED.letter)
 
   if (digitalContactLeter) {
+    permission.licensee.postalFulfilment = false
     permission.licensee.preferredMethodOfConfirmation = mappings.HOW_CONTACTED.none
     permission.licensee.preferredMethodOfReminder = mappings.HOW_CONTACTED.none
   }
