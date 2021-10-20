@@ -103,13 +103,20 @@ describe('The contact summary page', () => {
       await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital'})
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
     })
 
-    it('displays the contact summary page', async () => {
+    it('when navigating to the contact summary, it redirects to the licence fulfilment page, if it has not been visited', async () => {
+      const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+    })
+
+    it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment page has been visited', async () => {
+      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital'})
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })
+    
   })
 })
