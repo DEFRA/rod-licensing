@@ -51,7 +51,14 @@ describe('The licence length page', () => {
     expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
 
-  it("where contact is 'none' setting a 12 month licence changes it to 'post' and set postalFulfilment to false and vice-versa", async () => {
+  it("where contact is 'none' setting a 12 month licence changes it to 'post'", async () => {
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
+  })
+
+  it("where contact is 'none' setting a 12 month licence changes it to 'post', changing it to 1 day sets it to none and sets postalFulfilment to false", async () => {
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -60,6 +67,13 @@ describe('The licence length page', () => {
     const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
     expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeFalsy()
+  })
+
+  it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
   })
 
   it("where contact is 'none', setting a 1 day licence keeps it at 'none', changing to 12 months sets it to letter and set postalFulfilment to true", async () => {
