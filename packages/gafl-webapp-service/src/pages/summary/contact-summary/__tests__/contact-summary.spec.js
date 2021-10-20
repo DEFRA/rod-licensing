@@ -11,6 +11,7 @@ import {
   ADDRESS_LOOKUP,
   CONTACT,
   LICENCE_TO_START,
+  LICENCE_FULFILMENT,
   DATE_OF_BIRTH,
   NEWSLETTER,
   LICENCE_LENGTH,
@@ -49,11 +50,10 @@ const goodAddress = {
 }
 
 describe('The contact summary page', () => {
-  describe('where the prerequisite are not fulfilled', async () => {
-    beforeAll(async d => {
+  describe('where the prerequisite are not fulfilled', () => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
-      d()
     })
 
     it('redirects to the name page if it has not been visited', async () => {
@@ -87,8 +87,8 @@ describe('The contact summary page', () => {
     })
   })
 
-  describe('when purchasing a 12 month adult licence', async () => {
-    beforeAll(async d => {
+  describe('when purchasing a 12 month adult licence', () => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
 
@@ -103,8 +103,8 @@ describe('The contact summary page', () => {
       await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
+      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital'})
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
-      d()
     })
 
     it('displays the contact summary page', async () => {

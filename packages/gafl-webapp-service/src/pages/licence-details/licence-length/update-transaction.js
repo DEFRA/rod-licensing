@@ -1,5 +1,5 @@
 import * as mappings from '../../../processors/mapping-constants.js'
-import { LICENCE_LENGTH } from '../../../uri.js'
+import { LICENCE_LENGTH, LICENCE_FULFILMENT } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
@@ -91,5 +91,9 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.licenceLength = payload['licence-length']
   onLengthChange(permission)
+
+  // Clear the licence fulfilment here otherwise it can end up being set incorrectly
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page] : false})
+
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

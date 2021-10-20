@@ -106,6 +106,7 @@ describe('The address select page', () => {
     })
 
     it('redirects to the summary page if the summary page is seen', async () => {
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
