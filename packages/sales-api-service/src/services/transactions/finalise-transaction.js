@@ -2,15 +2,27 @@ import { TRANSACTION_STATUS } from './constants.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
-import { logStartDateError } from '../permission-helper.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
-import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
+import { logStartDateError } from '../permission-helper.js'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
+
+const getAdjustedLicenseDates = ({ issueDate, startDate, endDate, dataSource }) => {
+  const adjustedDates = { startDate, endDate }
+  const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes'))
+  const webOrTelesales = !POCL_TRANSACTION_SOURCES.includes(dataSource)
+  if (startDateTooEarly && webOrTelesales) {
+    const licenceLength = moment(endDate).subtract(moment(startDate))
+    adjustedDates.startDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
+    adjustedDates.endDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').add(licenceLength).toISOString()
+  }
+  return adjustedDates
+}
 
 export async function finaliseTransaction ({ id, ...payload }) {
   debug('Finalising transaction %s', id)
@@ -29,14 +41,24 @@ export async function finaliseTransaction ({ id, ...payload }) {
   // Generate derived fields
   for (const permission of transactionRecord.permissions) {
     permission.issueDate = permission.issueDate ?? payload.payment.timestamp
-    permission.startDate =
+    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+    permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
+
+    const startDate =
       permission.startDate ??
       moment(payload.payment.timestamp)
         .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
         .toISOString()
-    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
-    permission.endDate = await calculateEndDate(permission)
-    permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
+
+    const endDate = await calculateEndDate(permission)
+    const adjustedDates = getAdjustedLicenseDates({
+      startDate,
+      endDate,
+      dataSource: transactionRecord.dataSource,
+      issueDate: permission.issueDate
+    })
+    permission.startDate = adjustedDates.startDate
+    permission.endDate = adjustedDates.endDate
 
     logStartDateError(permission)
   }
