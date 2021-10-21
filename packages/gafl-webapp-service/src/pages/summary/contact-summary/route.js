@@ -39,6 +39,10 @@ const getData = async request => {
     if (!status[NEWSLETTER.page]) {
       throw new GetDataRedirect(NEWSLETTER.uri)
     }
+
+    if (isPhysical(permission) && !status[LICENCE_FULFILMENT.page]) {
+      throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+    }
   }
 
   status.fromSummary = CONTACT_SUMMARY_SEEN
