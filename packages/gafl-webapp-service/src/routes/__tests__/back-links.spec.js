@@ -127,13 +127,17 @@ describe('The licence-fulfilment page', () => {
 })
 
 describe('The licence-confirmation page', () => {
-  it('has a back-link to the licence-fulfilment page if the contact summary has not been seen', () => {
+  it('has a back-link to the licence-fulfilment page if the contact-summary has not been seen', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
     expect(n.backLink({})).toBe(LICENCE_FULFILMENT.uri)
   })
-  it('has a back-link to the licence-fulfilment page if the contact summary has been seen and the last sumbitted page is licence fulfilment', () => {
+  it('has a back-link to the licence-fulfilment page if the contact-summary has been seen and the last sumbitted page is licence-fulfilment', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
-    expect(n.backLink({ currentPage: LICENCE_FULFILMENT.page })).toBe(LICENCE_FULFILMENT.uri)
+    expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN, currentPage: LICENCE_FULFILMENT.page })).toBe(LICENCE_FULFILMENT.uri)
+  })
+  it('has a back-link to the licence-fulfilment page if the contact-summary has been seen and the last sumbitted page is licence-confirmation-method', () => {
+    const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
+    expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN, currentPage: LICENCE_CONFIRMATION_METHOD.page })).toBe(LICENCE_FULFILMENT.uri)
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     const n = journeyDefinition.find(n => n.current.page === LICENCE_CONFIRMATION_METHOD.page)
@@ -150,7 +154,9 @@ describe('The contact page', () => {
     expect(n.backLink({}, { licenceLength: '12M' })).toBe(LICENCE_CONFIRMATION_METHOD.uri)
   })
   it('has a back-link to the licence confirmation method page if the contact summary has been seen and the last submitted page is licence confirmation method', () => {
-    expect(n.backLink({ currentPage: LICENCE_CONFIRMATION_METHOD.page, fromSummary: CONTACT_SUMMARY_SEEN })).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+    expect(n.backLink({ currentPage: LICENCE_CONFIRMATION_METHOD.page, fromSummary: CONTACT_SUMMARY_SEEN })).toBe(
+      LICENCE_CONFIRMATION_METHOD.uri
+    )
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)

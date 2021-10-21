@@ -53,7 +53,7 @@ export const getData = async request => {
     checkNavigation(permission)
   }
 
-  status.fromSummary = status.fromSummary || LICENCE_SUMMARY_SEEN
+  status.fromSummary = status.renewal ? LICENCE_SUMMARY_SEEN : status.fromSummary || LICENCE_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
   const startTimeString = displayStartTime(permission)
