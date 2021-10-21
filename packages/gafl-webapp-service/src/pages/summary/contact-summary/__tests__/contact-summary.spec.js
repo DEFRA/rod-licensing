@@ -113,10 +113,9 @@ describe('The contact summary page', () => {
     })
 
     it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment page has been visited', async () => {
-      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital'})
+      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })
-    
   })
 })

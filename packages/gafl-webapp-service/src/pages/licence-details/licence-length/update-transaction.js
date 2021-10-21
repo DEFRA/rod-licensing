@@ -93,7 +93,7 @@ export default async request => {
   onLengthChange(permission)
 
   // Clear the licence fulfilment here otherwise it can end up being set incorrectly
-  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page] : false})
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page]: false })
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }
