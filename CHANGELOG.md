@@ -1,4 +1,16 @@
 
+## v1.20.0-rc.16 (2021-10-21)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#933](https://github.com/DEFRA/rod-licensing/pull/933) Licence start time is not displayed after amendment ([@jaucourt](https://github.com/jaucourt))
+* `gafl-webapp-service`
+  * [#942](https://github.com/DEFRA/rod-licensing/pull/942) Purchasing a 1 or 8 day licence, then changing to a 12 month displays… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 2
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 ## v1.20.0-rc.14 (2021-10-07)
 
