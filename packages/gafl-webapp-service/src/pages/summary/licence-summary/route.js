@@ -83,7 +83,7 @@ export const getData = async request => {
   }
 }
 
-const getFromSummary = status => {
+export const getFromSummary = status => {
   if (status.renewal) {
     return LICENCE_SUMMARY_SEEN
   }
