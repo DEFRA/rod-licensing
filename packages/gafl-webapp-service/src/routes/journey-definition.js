@@ -263,7 +263,7 @@ export default [
     backLink: s => {
       const seenContactSummary = s.fromSummary === CONTACT_SUMMARY_SEEN
       if (
-        ((s.currentPage === LICENCE_FULFILMENT.page || s.currentPage === LICENCE_CONFIRMATION_METHOD.page) && seenContactSummary) ||
+        ([LICENCE_FULFILMENT.page, LICENCE_CONFIRMATION_METHOD.page].includes(s.currentPage) && seenContactSummary) ||
         !seenContactSummary
       ) {
         return LICENCE_FULFILMENT.uri
