@@ -59,9 +59,7 @@ const createServer = options => {
   server.listener.headersTimeout = keepAlive + 5000
 }
 
-const getServer = () => {
-  return server
-}
+const getServer = () => server
 
 /*
   * The hapi plugins and their options which will be registered on initialization
@@ -200,4 +198,3 @@ const shutdownBehavior = () => {
 }
 
 export { createServer, server, init, shutdownBehavior, getServer }
-
