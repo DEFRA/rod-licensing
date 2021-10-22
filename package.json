@@ -106,6 +106,6 @@
     ],
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
-    "silent": false
+    "silent": true
   }
 }
