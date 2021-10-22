@@ -38,7 +38,7 @@ const agreedHandlerProtectionExemptSet = [
 ]
 
 // regex for /renew/{referenceNumber?} and /buy/renew/identify
-const startProtectionExemptSet = [/^\/renew\/[a-zA-Z0-9]{6}$/, /^\/buy\/renew\/identify$/]
+const startProtectionExemptSet = [/^\/renew\/.*$/, /^\/buy\/renew\/identify$/]
 
 const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/
 const staticMatcherOidc = /^\/oidc\/.*/

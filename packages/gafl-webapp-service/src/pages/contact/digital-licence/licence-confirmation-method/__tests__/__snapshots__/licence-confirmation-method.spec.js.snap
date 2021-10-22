@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`.getData returns the expected data 1`] = `
+Object {
+  "howContacted": Object {
+    "email": "Email",
+    "letter": "Letter",
+    "none": "Prefer not to be contacted",
+    "text": "Text",
+  },
+  "licensee": Object {
+    "firstName": "Lando",
+    "lastName": "Norris",
+  },
+}
+`;

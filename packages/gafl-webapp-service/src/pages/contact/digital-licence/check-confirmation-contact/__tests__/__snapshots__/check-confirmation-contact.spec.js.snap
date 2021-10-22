@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`.getData returns the expected data 1`] = `
+Object {
+  "licensee": Object {
+    "firstName": "Lando",
+    "lastName": "Norris",
+    "preferredMethodOfConfirmation": "email",
+  },
+  "uri": Object {
+    "contact": "/buy/contact",
+    "licenceConfirmationMethod": "/buy/confirmation-method",
+  },
+}
+`;

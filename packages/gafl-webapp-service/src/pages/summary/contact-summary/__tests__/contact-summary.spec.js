@@ -11,6 +11,7 @@ import {
   ADDRESS_LOOKUP,
   CONTACT,
   LICENCE_TO_START,
+  LICENCE_FULFILMENT,
   DATE_OF_BIRTH,
   NEWSLETTER,
   LICENCE_LENGTH,
@@ -105,7 +106,14 @@ describe('The contact summary page', () => {
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
     })
 
-    it('displays the contact summary page', async () => {
+    it('when navigating to the contact summary, it redirects to the licence fulfilment page, if it has not been visited', async () => {
+      const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+    })
+
+    it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment page has been visited', async () => {
+      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })

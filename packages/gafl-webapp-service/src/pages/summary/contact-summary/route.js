@@ -39,6 +39,10 @@ const getData = async request => {
     if (!status[NEWSLETTER.page]) {
       throw new GetDataRedirect(NEWSLETTER.uri)
     }
+
+    if (isPhysical(permission) && !status[LICENCE_FULFILMENT.page]) {
+      throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+    }
   }
 
   status.fromSummary = CONTACT_SUMMARY_SEEN
@@ -115,7 +119,7 @@ const getContactDetails = permission => {
         getRow(
           'Licence',
           getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          LICENCE_CONFIRMATION_METHOD.uri,
+          LICENCE_FULFILMENT.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),

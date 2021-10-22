@@ -12,6 +12,7 @@ import {
   ADDRESS_ENTRY,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
+  CHECK_CONFIRMATION_CONTACT,
   CONTACT,
   NEWSLETTER,
   CONTACT_SUMMARY,
@@ -27,7 +28,7 @@ import {
   RENEWAL_START_DATE
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, showDigitalLicencePages } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
@@ -158,7 +159,7 @@ export default [
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
       },
-      [showDigitalLicencePages.YES]: {
+      [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
       }
     }
@@ -201,10 +202,10 @@ export default [
   {
     current: ADDRESS_ENTRY,
     next: {
-      [showDigitalLicencePages.YES]: {
+      [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
       },
-      [showDigitalLicencePages.NO]: {
+      [ShowDigitalLicencePages.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -217,10 +218,10 @@ export default [
   {
     current: ADDRESS_SELECT,
     next: {
-      [showDigitalLicencePages.YES]: {
+      [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
       },
-      [showDigitalLicencePages.NO]: {
+      [ShowDigitalLicencePages.NO]: {
         page: CONTACT
       },
       [CommonResults.SUMMARY]: {
@@ -253,13 +254,31 @@ export default [
     current: LICENCE_CONFIRMATION_METHOD,
     next: {
       [CommonResults.OK]: {
-        page: CONTACT
+        page: CHECK_CONFIRMATION_CONTACT
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_FULFILMENT.uri)
+    backLink: s => {
+      const seenContactSummary = s.fromSummary === CONTACT_SUMMARY_SEEN
+      if (
+        ([LICENCE_FULFILMENT.page, LICENCE_CONFIRMATION_METHOD.page].includes(s.currentPage) && seenContactSummary) ||
+        !seenContactSummary
+      ) {
+        return LICENCE_FULFILMENT.uri
+      }
+      return CONTACT_SUMMARY.uri
+    }
+  },
+  {
+    current: CHECK_CONFIRMATION_CONTACT,
+    next: {
+      [CommonResults.OK]: {
+        page: CONTACT
+      }
+    },
+    backLink: LICENCE_CONFIRMATION_METHOD.uri
   },
   {
     current: CONTACT,
@@ -272,13 +291,15 @@ export default [
       }
     },
     backLink: (status, transaction) => {
-      if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+      const contactSummarySeen = status.fromSummary === CONTACT_SUMMARY_SEEN
+      if (status.currentPage === LICENCE_CONFIRMATION_METHOD.page && contactSummarySeen) {
+        return LICENCE_CONFIRMATION_METHOD.uri
+      } else if (contactSummarySeen) {
         return CONTACT_SUMMARY.uri
       } else if (isPhysical(transaction)) {
         return LICENCE_CONFIRMATION_METHOD.uri
-      } else {
-        return ADDRESS_LOOKUP.uri
       }
+      return ADDRESS_LOOKUP.uri
     }
   },
 

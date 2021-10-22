@@ -238,6 +238,60 @@ describe('renewals-write-cache', () => {
         })
       )
     })
+
+    it('should set showDigitalLicencePages to true on the status cache if postalFulfilment is true', async () => {
+      const authPostalFulfilmentFalse = {
+        permission: {
+          ...authenticationResult.permission,
+          licensee: {
+            ...authenticationResult.permission.licensee,
+            postalFulfilment: true
+          }
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, authPostalFulfilmentFalse)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          showDigitalLicencePages: true
+        })
+      )
+    })
+
+    it('should set showDigitalLicencePages to true on the status cache if postalFulfilment is undefined', async () => {
+      const authPostalFulfilmentFalse = {
+        permission: {
+          ...authenticationResult.permission,
+          licensee: {
+            ...authenticationResult.permission.licensee,
+            postalFulfilment: undefined
+          }
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, authPostalFulfilmentFalse)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          showDigitalLicencePages: true
+        })
+      )
+    })
+
+    it('should set showDigitalLicencePages to false on the status cache if postalFulfilment is false', async () => {
+      const authPostalFulfilmentFalse = {
+        permission: {
+          ...authenticationResult.permission,
+          licensee: {
+            ...authenticationResult.permission.licensee,
+            postalFulfilment: false
+          }
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, authPostalFulfilmentFalse)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          showDigitalLicencePages: false
+        })
+      )
+    })
   })
 
   describe('setupPayloads', () => {
