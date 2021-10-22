@@ -1,21 +1,25 @@
-import receiver from '../receiver.js'
-jest.mock('@defra-fish/connectors-lib')
-jest.mock('../receiver.js', () => {
-  return jest.fn(async () => {
-    global.receiverInitialised = true
-    if (global.throwReceiverError) {
-      throw new Error('Simulated')
-    }
-    await new Promise(resolve => setTimeout(resolve, 100))
+const buildMocks = () => {
+  const consoleError = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+  const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
+  jest.mock('@defra-fish/connectors-lib')
+  jest.mock('../receiver.js', () => {
+    return jest.fn(async () => {
+      global.receiverInitialised = true
+      if (global.throwReceiverError) {
+        throw new Error('Simulated')
+      }
+      await new Promise(resolve => setTimeout(resolve, 100))
+    })
   })
-})
-const consoleError = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(jest.fn())
-describe.skip('sqs-receiver-service', () => {
+  return { consoleError, processExitSpy }
+}
+describe('sqs-receiver-service', () => {
   beforeEach(jest.clearAllMocks)
 
   it('executes until encountering an error', done => {
     jest.isolateModules(() => {
+      const { consoleError, processExitSpy } = buildMocks()
+      const receiver = require('../receiver.js')
       global.throwReceiverError = false
       require('../sqs-receiver-service.js')
       setImmediate(() => {
@@ -39,6 +43,8 @@ describe.skip('sqs-receiver-service', () => {
   ])('executes until interrupted with the %s signal', (signal, code) => {
     it(`exits the process with code ${code}`, done => {
       jest.isolateModules(() => {
+        const { consoleError, processExitSpy } = buildMocks()
+        const receiver = require('../receiver.js')
         global.throwReceiverError = false
         require('../sqs-receiver-service.js')
         setImmediate(() => {
@@ -60,6 +66,7 @@ describe.skip('sqs-receiver-service', () => {
 
   it('logs and errors and exits the process', done => {
     jest.isolateModules(() => {
+      const { consoleError, processExitSpy } = buildMocks()
       global.throwReceiverError = true
       require('../sqs-receiver-service.js')
       setImmediate(() => {
