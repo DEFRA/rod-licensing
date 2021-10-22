@@ -4,9 +4,9 @@ import { disabilityConcessionTypes } from '../update-transaction.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 
-beforeAll(() => start(() => {}))
-beforeAll(() => initialize(() => {}))
-afterAll(() => stop(() => {}))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 describe('The disability concession page', () => {
   it('returns success on requesting', async () => {

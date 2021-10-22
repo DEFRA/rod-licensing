@@ -23,12 +23,8 @@ beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
 })
-beforeAll(async () => {
-  await start(() => {})
-})
-beforeAll(async () => {
-  await initialize(() => {})
-})
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY

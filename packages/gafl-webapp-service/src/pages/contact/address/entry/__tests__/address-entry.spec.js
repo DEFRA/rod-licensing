@@ -22,9 +22,9 @@ import { licenceToStart } from '../../../../licence-details/licence-to-start/upd
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 import { getCountryDropDownOptions } from '../route'
 
-beforeAll(() => start(() => {}))
-beforeAll(() => initialize(() => {}))
-afterAll(() => stop(() => {}))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',

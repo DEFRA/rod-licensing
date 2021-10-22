@@ -22,9 +22,9 @@ import { licenseTypes } from '../../../../licence-details/licence-type/route'
 import { getData } from '../route.js'
 import GetDataRedirect from '../../../../../handlers/get-data-redirect.js'
 
-beforeAll(() => start(() => {}))
-beforeAll(() => initialize(() => {}))
-afterAll(() => stop(() => {}))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',

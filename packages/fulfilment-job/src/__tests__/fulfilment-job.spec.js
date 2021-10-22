@@ -1,5 +1,6 @@
 import commander from 'commander'
 import { processFulfilment } from '../fulfilment-processor.js'
+
 jest.mock('../fulfilment-processor.js', () => {
   if (!global.processFulfilment) {
     global.processFulfilment = jest.fn()

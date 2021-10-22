@@ -1,9 +1,9 @@
 import { NAME, TEST_TRANSACTION, ADDRESS_LOOKUP } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 
-beforeAll(() => start(() => {}))
-beforeAll(() => initialize(() => {}))
-afterAll(() => stop(() => {}))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 describe('The name page', () => {
   it('Return success on requesting', async () => {
