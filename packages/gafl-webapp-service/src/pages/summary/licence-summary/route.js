@@ -83,8 +83,6 @@ export const getData = async request => {
   }
 }
 
-export const getFromSummary = status => {
-  return status.renewal ? LICENCE_SUMMARY_SEEN : status.fromSummary || LICENCE_SUMMARY_SEEN
-}
+export const getFromSummary = status => status.renewal ? LICENCE_SUMMARY_SEEN : status.fromSummary || LICENCE_SUMMARY_SEEN
 
 export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, nextPage, getData)
