@@ -1,14 +1,6 @@
 import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import {
-  CONTACT_SUMMARY,
-  LICENCE_SUMMARY,
-  NAME,
-  ADDRESS_ENTRY,
-  ADDRESS_SELECT,
-  ADDRESS_LOOKUP,
-  CONTACT,
-  NEWSLETTER,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD
 } from '../../../../uri.js'

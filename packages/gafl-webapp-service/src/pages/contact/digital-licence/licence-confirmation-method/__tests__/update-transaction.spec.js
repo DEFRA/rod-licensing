@@ -82,6 +82,6 @@ describe('licence-confirmation-method > update-transaction', () => {
 
     await updateTransaction(mockRequest)
 
-    expect(mockStatusCacheSet).toHaveBeenCalledWith({[CONTACT.page]: false })
+    expect(mockStatusCacheSet).toHaveBeenCalledWith({ [CONTACT.page]: false })
   })
 })

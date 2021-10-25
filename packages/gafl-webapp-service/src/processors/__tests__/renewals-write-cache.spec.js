@@ -308,7 +308,7 @@ describe('renewals-write-cache', () => {
           page: {
             setCurrentPermission: mockPageCacheSet
           },
-          status: { 
+          status: {
             setCurrentPermission: mockStatusCacheSet
           }
         }
