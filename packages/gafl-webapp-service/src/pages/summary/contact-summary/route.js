@@ -19,10 +19,7 @@ import {
   LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
-const getData = async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
+export const checkNavigation = (status, permission) => {
   if (!status.renewal) {
     if (!status[NAME.page]) {
       throw new GetDataRedirect(NAME.uri)
@@ -39,16 +36,23 @@ const getData = async request => {
     if (!status[NEWSLETTER.page]) {
       throw new GetDataRedirect(NEWSLETTER.uri)
     }
+  }
 
-    if (isPhysical(permission)) {
-      if (!status[LICENCE_FULFILMENT.page]) {
-        throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
-      }
-      if (!status[LICENCE_CONFIRMATION_METHOD.page]) {
-        throw new GetDataRedirect(LICENCE_CONFIRMATION_METHOD.uri)
-      }
+  if (isPhysical(permission)) {
+    if (!status[LICENCE_FULFILMENT.page]) {
+      throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+    }
+    if (!status[LICENCE_CONFIRMATION_METHOD.page]) {
+      throw new GetDataRedirect(LICENCE_CONFIRMATION_METHOD.uri)
     }
   }
+}
+
+const getData = async request => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  checkNavigation(status, permission)
 
   status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)

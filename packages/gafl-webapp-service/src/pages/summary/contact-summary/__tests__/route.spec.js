@@ -1,4 +1,17 @@
-import { getLicenseeDetailsSummaryRows } from '../route'
+import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
+import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
+import {
+  CONTACT_SUMMARY,
+  LICENCE_SUMMARY,
+  NAME,
+  ADDRESS_ENTRY,
+  ADDRESS_SELECT,
+  ADDRESS_LOOKUP,
+  CONTACT,
+  NEWSLETTER,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD
+} from '../../../../uri.js'
 
 const address = {
   firstName: 'Fester',
@@ -139,6 +152,26 @@ describe('contact-summary > route', () => {
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
       })
+    })
+  })
+
+  describe('checkNavigation', () => {
+    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', () => {
+      const status = {
+        renewal: true,
+        [LICENCE_FULFILMENT.page]: false
+      }
+      const permission = { licenceLength: '12M' }
+      expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if licence-confirmation page is false on the status', () => {
+      const status = {
+        renewal: true,
+        [LICENCE_CONFIRMATION_METHOD.page]: false
+      }
+      const permission = { licenceLength: '12M' }
+      expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
   })
 })
