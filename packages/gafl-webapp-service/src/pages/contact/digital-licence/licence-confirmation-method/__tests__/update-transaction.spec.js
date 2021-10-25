@@ -1,8 +1,11 @@
 import updateTransaction from '../update-transaction'
+import { CONTACT } from '../../../../../uri.js'
 
 describe('licence-confirmation-method > update-transaction', () => {
   const mockTransactionCacheSet = jest.fn()
   const mockPageCacheGet = jest.fn()
+  const mockStatusCacheSet = jest.fn()
+
   const mockRequest = {
     cache: () => ({
       helpers: {
@@ -14,6 +17,9 @@ describe('licence-confirmation-method > update-transaction', () => {
             licensee: {}
           }),
           setCurrentPermission: mockTransactionCacheSet
+        },
+        status: {
+          setCurrentPermission: mockStatusCacheSet
         }
       }
     })
@@ -65,5 +71,17 @@ describe('licence-confirmation-method > update-transaction', () => {
     expect(mockTransactionCacheSet).toHaveBeenCalledWith(
       expect.objectContaining({ licensee: { preferredMethodOfConfirmation: 'Prefer not to be contacted' } })
     )
+  })
+
+  it('should set the contact page to false on the status cache', async () => {
+    mockPageCacheGet.mockImplementationOnce(() => ({
+      payload: {
+        'licence-confirmation-method': 'none'
+      }
+    }))
+
+    await updateTransaction(mockRequest)
+
+    expect(mockStatusCacheSet).toHaveBeenCalledWith({[CONTACT.page]: false })
   })
 })

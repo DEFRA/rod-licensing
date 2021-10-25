@@ -1,4 +1,4 @@
-import { LICENCE_CONFIRMATION_METHOD } from '../../../../uri.js'
+import { LICENCE_CONFIRMATION_METHOD, CONTACT } from '../../../../uri.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
 export default async request => {
@@ -20,5 +20,6 @@ export default async request => {
       break
   }
 
+  await request.cache().helpers.status.setCurrentPermission({ [CONTACT.page]: false })
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

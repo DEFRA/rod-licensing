@@ -40,8 +40,13 @@ const getData = async request => {
       throw new GetDataRedirect(NEWSLETTER.uri)
     }
 
-    if (isPhysical(permission) && !status[LICENCE_FULFILMENT.page]) {
-      throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+    if (isPhysical(permission)) {
+      if (!status[LICENCE_FULFILMENT.page]) {
+        throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+      }
+      if (!status[LICENCE_CONFIRMATION_METHOD.page]) {
+        throw new GetDataRedirect(LICENCE_CONFIRMATION_METHOD.uri)
+      }
     }
   }
 

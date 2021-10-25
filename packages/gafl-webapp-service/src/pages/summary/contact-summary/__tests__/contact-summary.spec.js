@@ -12,6 +12,7 @@ import {
   CONTACT,
   LICENCE_TO_START,
   LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
   DATE_OF_BIRTH,
   NEWSLETTER,
   LICENCE_LENGTH,
@@ -112,8 +113,17 @@ describe('The contact summary page', () => {
       expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
     })
 
-    it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment page has been visited', async () => {
+    it('when navigating to the contact summary, it redirects to the licence confirmation method page, if it has not been visited', async () => {
       await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
+      const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+    })
+
+    it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment and confirmation method page have been visited', async () => {
+      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
+      await injectWithCookies('POST', LICENCE_CONFIRMATION_METHOD.uri, { 'licence-confirmation-method': 'none' })
+      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })
