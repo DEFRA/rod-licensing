@@ -2,6 +2,9 @@ import Path from 'path'
 import fs from 'fs'
 import os from 'os'
 let processTemp = null
+export function reset () {
+  processTemp = null
+}
 export function getTempDir (...subfolders) {
   if (!processTemp) {
     processTemp = Path.resolve(fs.mkdtempSync(`${os.tmpdir()}${Path.sep}pocl-`))

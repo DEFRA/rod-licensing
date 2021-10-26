@@ -23,12 +23,12 @@ beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
 })
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
-afterAll(() => {
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll(d => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY
+  stop(d)
 })
 
 const goodAddress = {
@@ -83,7 +83,7 @@ describe('The terms and conditions page', () => {
     const data1 = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     expect(data1.statusCode).toBe(302)
     expect(data1.headers.location).toBe(AGREED.uri)
-    await injectWithCookies('GET', AGREED.uri)
+    await injectWithCookies('GET', AGREED.uri) // generates dirty great error
     const data2 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(AGREED.uri)

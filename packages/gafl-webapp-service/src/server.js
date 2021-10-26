@@ -59,15 +59,17 @@ const createServer = options => {
   server.listener.headersTimeout = keepAlive + 5000
 }
 
+const getServer = () => server
+
 /*
- * The hapi plugins and their options which will be registered on initialization
- */
+  * The hapi plugins and their options which will be registered on initialization
+  */
 const getSessionCookieName = () => process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT
 export const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT
 
 /**
- * Adds the uri's used by the layout page to each relevant response
- */
+  * Adds the uri's used by the layout page to each relevant response
+  */
 const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
@@ -169,9 +171,9 @@ const init = async () => {
   })
 
   /*
-   * Decorator to make access to the session cache functions available as
-   * simple setters and getters hiding the session key.
-   */
+    * Decorator to make access to the session cache functions available as
+    * simple setters and getters hiding the session key.
+    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
   if (process.env.CHANNEL === 'telesales') {
@@ -195,4 +197,4 @@ const shutdownBehavior = () => {
   process.on('SIGTERM', () => shutdown(137))
 }
 
-export { createServer, server, init, shutdownBehavior }
+export { createServer, server, init, shutdownBehavior, getServer }

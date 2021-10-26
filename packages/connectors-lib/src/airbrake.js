@@ -4,6 +4,10 @@ const INSPECT_OPTS = { depth: null, maxStringLength: null, maxArrayLength: null,
 
 let airbrake = null
 
+export const reset = () => {
+  airbrake = null
+}
+
 /**
  * Initialise the airbrake client and intercept console.error and console.warn calls, notifying airbrake/errbit of any invocations.
  * If the required environment variables are not set then airbrake will not be initialised.

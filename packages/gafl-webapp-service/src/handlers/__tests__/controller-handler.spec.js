@@ -1,9 +1,9 @@
 import { start, stop, initialize, injectWithCookies } from '../../__mocks__/test-utils-system.js'
 import { CONTROLLER, DATE_OF_BIRTH, ADD_PERMISSION, NEW_TRANSACTION } from '../../uri.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 describe('The controller handler', () => {
   it('If there is no transaction then initialize redirect to the controller', async () => {

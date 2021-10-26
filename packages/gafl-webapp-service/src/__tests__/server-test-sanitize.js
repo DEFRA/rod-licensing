@@ -1,10 +1,8 @@
 import { start, stop, initialize, injectWithCookies, server } from '../__mocks__/test-utils-system.js'
 
-beforeAll(d => {
-  start(d)
-})
+beforeAll(() => new Promise(resolve => start(resolve)))
 
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 
 beforeAll(() => {
   server.route({
@@ -18,7 +16,7 @@ beforeAll(() => {
   })
 })
 
-afterAll(d => stop(d))
+afterAll((d) => stop(d))
 
 describe('That the server', () => {
   it('sanitizes user input', async () => {
