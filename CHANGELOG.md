@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.20 (2021-10-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#948](https://github.com/DEFRA/rod-licensing/pull/948) Fix start time layout ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.20.0-rc.19 (2021-10-26)
 
 #### :rocket: Enhancement
