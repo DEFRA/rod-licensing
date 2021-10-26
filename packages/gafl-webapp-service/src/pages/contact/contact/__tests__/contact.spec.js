@@ -22,9 +22,9 @@ import { ADULT_TODAY, dobHelper, JUNIOR_TODAY } from '../../../../__mocks__/test
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
@@ -37,9 +37,8 @@ const goodAddress = {
 
 describe('The contact preferences page', () => {
   describe('where the prerequisite are not fulfilled', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      d()
     })
 
     it('redirects to the date-of-birth page if no date of birth has been set', async () => {
@@ -65,12 +64,11 @@ describe('The contact preferences page', () => {
   })
 
   describe('for a full 12 month licence, adult', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      d()
     })
 
     it('return the page on request', async () => {
@@ -168,11 +166,10 @@ describe('The contact preferences page', () => {
   })
 
   describe('for a junior licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      d()
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
@@ -184,12 +181,11 @@ describe('The contact preferences page', () => {
   })
 
   describe('for 1 day licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-      d()
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
@@ -201,7 +197,7 @@ describe('The contact preferences page', () => {
   })
 
   describe('if the contact summary has been seen', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
 
@@ -218,7 +214,6 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-      d()
     })
 
     it('controller redirects to the summary page', async () => {

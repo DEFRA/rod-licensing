@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.19 (2021-10-26)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#904](https://github.com/DEFRA/rod-licensing/pull/904) Upgrade Jest to v27 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.20.0-rc.18 (2021-10-22)
 
 #### :bug: Bug Fix
