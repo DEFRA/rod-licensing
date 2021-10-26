@@ -20,9 +20,9 @@ import {
 import { licenceToStart } from '../update-transaction.js'
 import moment from 'moment'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 const juniorIn16Days = moment()
   .add(16, 'day')
@@ -71,10 +71,9 @@ describe("The 'when would you like you licence to start?' page", () => {
     expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
-  describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, async () => {
-    beforeEach(async d => {
+  describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, () => {
+    beforeEach(async () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(juniorIn16Days))
-      d()
     })
 
     it(`redirects to the disabled concessions page when posting a licence start date of ${moment()
