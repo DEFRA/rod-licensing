@@ -12,7 +12,7 @@ import { logStartDateError } from '../permission-helper.js'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
-const getAdjustedStartDate = ({ issueDate, startDate, endDate, dataSource }) => {
+const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {
   const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes'))
   const webOrTelesales = !POCL_TRANSACTION_SOURCES.includes(dataSource)
   if (startDateTooEarly && webOrTelesales) {
