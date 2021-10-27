@@ -41,9 +41,6 @@ export async function finaliseTransaction ({ id, ...payload }) {
   // Generate derived fields
   for (const permission of transactionRecord.permissions) {
     permission.issueDate = permission.issueDate ?? payload.payment.timestamp
-    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
-    permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
-
     const startDate =
       permission.startDate ??
       moment(payload.payment.timestamp)
@@ -59,6 +56,8 @@ export async function finaliseTransaction ({ id, ...payload }) {
     })
     permission.startDate = adjustedDates.startDate
     permission.endDate = adjustedDates.endDate
+    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+    permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
     logStartDateError(permission)
   }
