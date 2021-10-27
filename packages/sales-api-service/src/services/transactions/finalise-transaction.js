@@ -1,6 +1,6 @@
 import { TRANSACTION_STATUS } from './constants.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
-import { calculateEndDate, generatePermissionNumber } from '../permissions.service.js'
+import { calculateEndDate, generate, generatePermissionNumber } from '../permissions.service.js'
 import { getObfuscatedDob } from '../contacts.service.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
@@ -41,9 +41,6 @@ export async function finaliseTransaction ({ id, ...payload }) {
   // Generate derived fields
   for (const permission of transactionRecord.permissions) {
     permission.issueDate = permission.issueDate ?? payload.payment.timestamp
-    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
-    permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
-
     const startDate =
       permission.startDate ??
       moment(payload.payment.timestamp)
@@ -59,6 +56,8 @@ export async function finaliseTransaction ({ id, ...payload }) {
     })
     permission.startDate = adjustedDates.startDate
     permission.endDate = adjustedDates.endDate
+    permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
+    permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
     logStartDateError(permission)
   }

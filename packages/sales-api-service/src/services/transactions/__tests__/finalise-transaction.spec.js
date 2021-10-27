@@ -16,7 +16,7 @@ import permissionsService from '../../permissions.service.js'
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 
 jest.mock('../../permissions.service.js', () => ({
-  generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
+  generatePermissionNumber: jest.fn(() => MOCK_PERMISSION_NUMBER),
   calculateEndDate: jest.fn(() => MOCK_END_DATE)
 }))
 
@@ -45,6 +45,7 @@ describe('transaction service', () => {
   beforeEach(AwsMock.__resetAll)
 
   describe('finaliseTransaction', () => {
+    beforeEach(jest.clearAllMocks)
     it.each([
       ['records with a predetermined issue and start date', getStagedTransactionRecord],
       [
@@ -399,10 +400,44 @@ describe('transaction service', () => {
       )
     })
 
-    const getCompletionFields = () => ({
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z']
+    ])('passes a permission with a start date when generating a permission number', async (issueDate, startDate) => {
+      const mockRecord = mockStagedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      const completionFields = getCompletionFields(issueDate)
+      mockPermission.issueDate = issueDate
+      delete mockPermission.startDate
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+      })
+      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
+      // have to do this as Jest holds calling arguments by reference, so we don't
+      // get the permission as it was when generatePermissionNumber was called but how it
+      // ends up by the end of finaliseTransaction...
+      let permission
+      permissionsService.generatePermissionNumber.mockImplementationOnce(p => {
+        permission = JSON.parse(JSON.stringify(p))
+        return startDate
+      })
+
+      await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+      expect(permission).toEqual(
+        expect.objectContaining({
+          permitId: mockPermission.permitId,
+          startDate: moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
+        })
+      )
+    })
+
+    const getCompletionFields = (timestamp = new Date().toISOString()) => ({
       payment: {
         amount: 30,
-        timestamp: new Date().toISOString(),
+        timestamp,
         type: 'Gov Pay',
         method: 'Debit card'
       }
