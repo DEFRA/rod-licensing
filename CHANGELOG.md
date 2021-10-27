@@ -1,4 +1,13 @@
 
+## v1.20.0-rc.21 (2021-10-27)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#952](https://github.com/DEFRA/rod-licensing/pull/952) 'Invalid date' in permission reference ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.20.0-rc.20 (2021-10-26)
 
 #### :bug: Bug Fix
