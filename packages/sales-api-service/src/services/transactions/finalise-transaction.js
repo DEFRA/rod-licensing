@@ -12,16 +12,13 @@ import { logStartDateError } from '../permission-helper.js'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
-const getAdjustedLicenseDates = ({ issueDate, startDate, endDate, dataSource }) => {
-  const adjustedDates = { startDate, endDate }
+const getAdjustedStartDate = ({ issueDate, startDate, endDate, dataSource }) => {
   const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes'))
   const webOrTelesales = !POCL_TRANSACTION_SOURCES.includes(dataSource)
   if (startDateTooEarly && webOrTelesales) {
-    const licenceLength = moment(endDate).subtract(moment(startDate))
-    adjustedDates.startDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
-    adjustedDates.endDate = moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').add(licenceLength).toISOString()
+    return moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
   }
-  return adjustedDates
+  return startDate
 }
 
 export async function finaliseTransaction ({ id, ...payload }) {
@@ -46,16 +43,12 @@ export async function finaliseTransaction ({ id, ...payload }) {
       moment(payload.payment.timestamp)
         .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
         .toISOString()
-
-    const endDate = await calculateEndDate(permission)
-    const adjustedDates = getAdjustedLicenseDates({
+    permission.startDate = getAdjustedStartDate({
       startDate,
-      endDate,
       dataSource: transactionRecord.dataSource,
       issueDate: permission.issueDate
     })
-    permission.startDate = adjustedDates.startDate
-    permission.endDate = adjustedDates.endDate
+    permission.endDate = await calculateEndDate(permission)
     permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
     permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
 
