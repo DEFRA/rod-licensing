@@ -1,14 +1,10 @@
-import {
-  LICENCE_FOR,
-  NEW_TRANSACTION,
-  TEST_STATUS
-} from '../../../../uri.js'
+import { LICENCE_FOR, NEW_TRANSACTION, TEST_STATUS } from '../../../../uri.js'
 
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The licence for page', () => {
   beforeAll(async () => {

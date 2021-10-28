@@ -21,13 +21,13 @@ describe('licence-for > update-transaction', () => {
 
   describe('default', () => {
     it('should set isLicenceForYou to true if user has selected you', async () => {
-      mockPageCacheGet.mockImplementationOnce(() => ({payload:{'licence-for': 'you'}}))
+      mockPageCacheGet.mockImplementationOnce(() => ({ payload: { 'licence-for': 'you' } }))
       await updateTransaction(mockRequest)
       expect(mockStatusCacheSet).toHaveBeenCalledWith({ isLicenceForYou: true })
     })
 
     it('should set isLicenceForYou to false if user has selected someone-else', async () => {
-      mockPageCacheGet.mockImplementationOnce(() => ({payload:{'licence-for': 'someone-else'}}))
+      mockPageCacheGet.mockImplementationOnce(() => ({ payload: { 'licence-for': 'someone-else' } }))
       await updateTransaction(mockRequest)
       expect(mockStatusCacheSet).toHaveBeenCalledWith({ isLicenceForYou: false })
     })
