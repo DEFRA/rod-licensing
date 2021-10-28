@@ -5,6 +5,7 @@ import {
   DATE_OF_BIRTH,
   NO_LICENCE_REQUIRED,
   LICENCE_TYPE,
+  LICENCE_FOR,
   NAME,
   DISABILITY_CONCESSION,
   ADDRESS_LOOKUP,
@@ -45,6 +46,15 @@ import { isPhysical } from '../processors/licence-type-display.js'
 export default [
   {
     current: { page: 'start' },
+    next: {
+      [CommonResults.OK]: {
+        page: LICENCE_FOR
+      }
+    }
+  },
+
+  {
+    current: LICENCE_FOR,
     next: {
       [CommonResults.OK]: {
         page: DATE_OF_BIRTH

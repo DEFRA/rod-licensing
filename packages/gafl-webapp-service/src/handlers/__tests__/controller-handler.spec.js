@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookies } from '../../__mocks__/test-utils-system.js'
-import { CONTROLLER, DATE_OF_BIRTH, ADD_PERMISSION, NEW_TRANSACTION } from '../../uri.js'
+import { CONTROLLER, LICENCE_FOR, ADD_PERMISSION, NEW_TRANSACTION } from '../../uri.js'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
@@ -27,6 +27,6 @@ describe('The controller handler', () => {
   it('The controller returns a redirect to the start of the journey', async () => {
     const data = await injectWithCookies('GET', CONTROLLER.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(data.headers.location).toBe(LICENCE_FOR.uri)
   })
 })
