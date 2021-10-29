@@ -28,20 +28,17 @@ describe('isStaticResource', () => {
 })
 
 describe('includesRegex', () => {
-  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/[a-zA-Z0-9]{6}$/]
-  it.each(['/buy/renew/identify', '/renew/ABC123', '/renew/123123', '/renew/ABCDEF'])(
+  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/]
+  it.each(['/buy/renew/identify', '/renew/ABC123', '/renew/123123', '/renew/ABCDEF', '/renew/anytext'])(
     'returns true if one of the regexes is matched %s',
     async path => {
       expect(includesRegex(path, regexArray)).toBeTruthy()
     }
   )
 
-  it.each(['/buy/renew', '/buy', '/renew/123', '/buy/order-complete'])(
-    'returns false if one of the regexes is not matched %s',
-    async path => {
-      expect(includesRegex(path, regexArray)).toBeFalsy()
-    }
-  )
+  it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete'])('returns false if one of the regexes is not matched %s', async path => {
+    expect(includesRegex(path, regexArray)).toBeFalsy()
+  })
 })
 
 describe('Use session cookie', () => {
@@ -58,9 +55,9 @@ describe('Use session cookie', () => {
 })
 
 describe('The user', () => {
-  beforeAll(d => start(d))
-  beforeAll(d => initialize(d))
-  afterAll(d => stop(d))
+  beforeAll(() => new Promise(resolve => start(resolve)))
+  beforeAll(() => new Promise(resolve => initialize(resolve)))
+  afterAll((d) => stop(d))
 
   it('clearing the session cookie automatically creates a new cookie and cache', async () => {
     const response = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)

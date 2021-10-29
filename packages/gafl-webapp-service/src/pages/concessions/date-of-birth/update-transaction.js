@@ -4,8 +4,7 @@ import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { onLengthChange } from '../../licence-details/licence-length/update-transaction.js'
 
-const pageCacheMatchesPayload = (pageCache, payload) =>
-  JSON.stringify(pageCache[DATE_OF_BIRTH.page].payload) === JSON.stringify(payload)
+const pageCacheMatchesPayload = (pageCache, payload) => JSON.stringify(pageCache[DATE_OF_BIRTH.page].payload) === JSON.stringify(payload)
 
 /**
  * Transfer the validated page object
@@ -25,7 +24,10 @@ export default async request => {
   const dobPageCache = pageCache.permissions.find(perm => !!perm[DATE_OF_BIRTH.page])
 
   if (!pageCacheMatchesPayload(dobPageCache, payload)) {
-    console.error('DOB page cache payload does not match current permission payload', { dobPageCache: dobPageCache[DATE_OF_BIRTH.page], payload })
+    console.error('DOB page cache payload does not match current permission payload', {
+      dobPageCache: dobPageCache[DATE_OF_BIRTH.page],
+      payload
+    })
     console.log('page cache', JSON.stringify(await request.cache().helpers.page.get()))
     console.log('transaction cache', JSON.stringify(await request.cache().helpers.transaction.get()))
     console.log('status cache', JSON.stringify(await request.cache().helpers.status.get()))

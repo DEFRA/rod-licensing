@@ -1,10 +1,9 @@
 import moment from 'moment-timezone'
 import db from 'debug'
-import { LICENCE_TYPE, NAME, ADDRESS_ENTRY, CONTACT } from '../uri.js'
+import { LICENCE_TYPE, NAME, ADDRESS_LOOKUP, CONTACT } from '../uri.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
-import { CONTACT_SUMMARY_SEEN } from '../constants.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -63,10 +62,12 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
     }
   })
 
+  const showDigitalLicencePages = permission.licensee.postalFulfilment !== false
+
   // Add appropriate age concessions
   ageConcessionHelper(permission)
   await request.cache().helpers.transaction.setCurrentPermission(permission)
-  await request.cache().helpers.status.setCurrentPermission({ renewal: true, fromSummary: CONTACT_SUMMARY_SEEN })
+  await request.cache().helpers.status.setCurrentPermission({ renewal: true, showDigitalLicencePages })
 }
 
 export const setUpPayloads = async request => {
@@ -96,14 +97,10 @@ export const setUpPayloads = async request => {
     }
   })
 
-  await request.cache().helpers.page.setCurrentPermission(ADDRESS_ENTRY.page, {
+  await request.cache().helpers.page.setCurrentPermission(ADDRESS_LOOKUP.page, {
     payload: {
       premises: permission.licensee.premises,
-      street: permission.licensee.street,
-      locality: permission.licensee.locality,
-      town: permission.licensee.town,
-      postcode: permission.licensee.postcode,
-      'country-code': permission.licensee.countryCode
+      postcode: permission.licensee.postcode
     }
   })
 

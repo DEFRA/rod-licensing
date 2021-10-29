@@ -20,9 +20,9 @@ import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/t
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
@@ -45,8 +45,8 @@ describe('The address select page', () => {
     expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
   })
 
-  describe('on successful submission', async () => {
-    beforeEach(async d => {
+  describe('on successful submission', () => {
+    beforeEach(async () => {
       // Set up the licence details
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -70,7 +70,6 @@ describe('The address select page', () => {
       await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
-      d()
     })
 
     it('redirects to the contact page if licence length is 1 day', async () => {
@@ -106,6 +105,7 @@ describe('The address select page', () => {
     })
 
     it('redirects to the summary page if the summary page is seen', async () => {
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)

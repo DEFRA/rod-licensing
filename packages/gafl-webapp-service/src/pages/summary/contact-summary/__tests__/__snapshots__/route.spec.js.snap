@@ -679,7 +679,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
+          "href": "/buy/fulfilment",
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -784,7 +784,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
+          "href": "/buy/fulfilment",
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },

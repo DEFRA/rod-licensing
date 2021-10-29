@@ -24,6 +24,8 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
+import moment from 'moment'
+import BusinessRulesLib from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -53,6 +55,11 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 jest.mock('../../contacts.service.js', () => ({
   ...jest.requireActual('../../contacts.service.js'),
   resolveContactPayload: async () => MOCK_EXISTING_CONTACT_ENTITY
+}))
+
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  POCL_TRANSACTION_SOURCES: ['Post Office Sales', 'DDE File'],
+  START_AFTER_PAYMENT_MINUTES: 30
 }))
 
 describe('transaction service', () => {

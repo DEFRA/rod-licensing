@@ -1,6 +1,5 @@
 import pageRoute from '../../routes/page-route.js'
 import * as mappings from '../../processors/mapping-constants.js'
-import { getTrackingProductDetailsFromTransaction } from '../../processors/analytics.js'
 import Joi from 'joi'
 import { TERMS_AND_CONDITIONS, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
 import { nextPage } from '../../routes/next-page.js'

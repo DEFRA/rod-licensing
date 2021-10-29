@@ -1,5 +1,148 @@
 
 
+## v1.20.0-rc.21 (2021-10-27)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#952](https://github.com/DEFRA/rod-licensing/pull/952) 'Invalid date' in permission reference ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.20.0-rc.20 (2021-10-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#948](https://github.com/DEFRA/rod-licensing/pull/948) Fix start time layout ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.20.0-rc.19 (2021-10-26)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#904](https://github.com/DEFRA/rod-licensing/pull/904) Upgrade Jest to v27 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.20.0-rc.18 (2021-10-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#943](https://github.com/DEFRA/rod-licensing/pull/943) Back button takes back to the Contact summary page instead of digital license pages ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.20.0-rc.16 (2021-10-21)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#933](https://github.com/DEFRA/rod-licensing/pull/933) Licence start time is not displayed after amendment ([@jaucourt](https://github.com/jaucourt))
+* `gafl-webapp-service`
+  * [#942](https://github.com/DEFRA/rod-licensing/pull/942) Purchasing a 1 or 8 day licence, then changing to a 12 month displays… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 2
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.20.0-rc.14 (2021-10-07)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#923](https://github.com/DEFRA/rod-licensing/pull/923) Only amend start time for web and telesales ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.20.0-rc.13 (2021-10-07)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#924](https://github.com/DEFRA/rod-licensing/pull/924) Unable to publish npm packages ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+## v1.20.0-rc.10 (2021-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#921](https://github.com/DEFRA/rod-licensing/pull/921) Back button takes back to the Contact summary page instead of digital license pages ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.20.0-rc.8 (2021-09-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#915](https://github.com/DEFRA/rod-licensing/pull/915) Clicking on Licence change link on the Contact Summary page does not … ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.20.0-rc.7 (2021-09-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#914](https://github.com/DEFRA/rod-licensing/pull/914) Added missing class to link ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.20.0-rc.6 (2021-09-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#908](https://github.com/DEFRA/rod-licensing/pull/908) Link to redirect to buy on renewal page ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+## v1.20.0-rc.4 (2021-09-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#902](https://github.com/DEFRA/rod-licensing/pull/902) Adds email/text check page ([@DGajewska](https://github.com/DGajewska))
+
+#### Committers: 1
+- Dana Gajewska ([@DGajewska](https://github.com/DGajewska))
+
+## v1.20.0-rc.3 (2021-09-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#903](https://github.com/DEFRA/rod-licensing/pull/903) Unexpected error is displayed when try to renew another license ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.20.0-rc.2 (2021-09-17)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#895](https://github.com/DEFRA/rod-licensing/pull/895) Easy Renewal-Clicking on back button and proceeding forward on summar… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.20.0-rc.1 (2021-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#894](https://github.com/DEFRA/rod-licensing/pull/894) Find Address page does not hold previous values when accessing from t… ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+
 
 ## v1.19.0-rc.4 (2021-08-31)
 

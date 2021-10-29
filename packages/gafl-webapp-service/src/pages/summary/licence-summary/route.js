@@ -5,7 +5,6 @@ import findPermit from '../find-permit.js'
 import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
-import { getTrackingProductDetailsFromTransaction } from '../../../processors/analytics.js'
 import {
   LICENCE_SUMMARY,
   LICENCE_LENGTH,
@@ -54,7 +53,7 @@ export const getData = async request => {
     checkNavigation(permission)
   }
 
-  status.fromSummary = status.fromSummary || LICENCE_SUMMARY_SEEN
+  status.fromSummary = getFromSummary(status)
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
   const startTimeString = displayStartTime(permission)
@@ -82,6 +81,16 @@ export const getData = async request => {
       clear: NEW_TRANSACTION.uri
     }
   }
+}
+
+export const getFromSummary = status => {
+  if (status.renewal) {
+    return LICENCE_SUMMARY_SEEN
+  }
+  if (status.fromSummary) {
+    return status.fromSummary
+  }
+  return LICENCE_SUMMARY_SEEN
 }
 
 export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, nextPage, getData)

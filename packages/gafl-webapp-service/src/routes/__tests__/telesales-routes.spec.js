@@ -4,18 +4,18 @@ jest.mock('@defra-fish/connectors-lib')
 let TestUtils = null
 describe('Telesales route handlers', () => {
   // Start application before running the test case
-  beforeAll(async d => {
+  beforeAll(async () => {
     jest.isolateModules(() => {
       process.env.CHANNEL = 'telesales'
       setupEnvironment()
       TestUtils = require('../../__mocks__/test-utils-system.js')
-      TestUtils.start(d)
+      TestUtils.start(() => {})
     })
   })
 
   // Stop application after running the test case
-  afterAll(async d => {
-    TestUtils.stop(d)
+  afterAll(async () => {
+    TestUtils.stop(() => {})
   })
 
   it('redirects to the oidc endpoint when unauthenticated', async () => {

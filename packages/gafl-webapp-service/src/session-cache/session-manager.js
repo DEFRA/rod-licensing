@@ -38,7 +38,7 @@ const agreedHandlerProtectionExemptSet = [
 ]
 
 // regex for /renew/{referenceNumber?} and /buy/renew/identify
-const startProtectionExemptSet = [/^\/renew\/[a-zA-Z0-9]{6}$/, /^\/buy\/renew\/identify$/]
+const startProtectionExemptSet = [/^\/renew\/.*$/, /^\/buy\/renew\/identify$/]
 
 const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/
 const staticMatcherOidc = /^\/oidc\/.*/
@@ -46,9 +46,7 @@ const staticMatcherOidc = /^\/oidc\/.*/
 export const isStaticResource = request => staticMatcherPublic.test(request.path)
 export const useSessionCookie = request => !isStaticResource(request) && !staticMatcherOidc.test(request.path)
 
-export const includesRegex = (str, regexArray) => {
-  return regexArray.some(regex => regex.test(str))
-}
+export const includesRegex = (str, regexArray) => regexArray.some(regex => regex.test(str))
 
 /**
  * If there is no session cookie create it and initialize user cache contexts

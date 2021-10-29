@@ -11,6 +11,7 @@ import {
   ADDRESS_LOOKUP,
   CONTACT,
   LICENCE_TO_START,
+  LICENCE_FULFILMENT,
   DATE_OF_BIRTH,
   NEWSLETTER,
   LICENCE_LENGTH,
@@ -31,9 +32,9 @@ beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
 })
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 afterAll(() => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY
@@ -49,11 +50,10 @@ const goodAddress = {
 }
 
 describe('The contact summary page', () => {
-  describe('where the prerequisite are not fulfilled', async () => {
-    beforeAll(async d => {
+  describe('where the prerequisite are not fulfilled', () => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
-      d()
     })
 
     it('redirects to the name page if it has not been visited', async () => {
@@ -87,8 +87,8 @@ describe('The contact summary page', () => {
     })
   })
 
-  describe('when purchasing a 12 month adult licence', async () => {
-    beforeAll(async d => {
+  describe('when purchasing a 12 month adult licence', () => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
 
@@ -104,10 +104,16 @@ describe('The contact summary page', () => {
       await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
-      d()
     })
 
-    it('displays the contact summary page', async () => {
+    it('when navigating to the contact summary, it redirects to the licence fulfilment page, if it has not been visited', async () => {
+      const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+    })
+
+    it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment page has been visited', async () => {
+      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })

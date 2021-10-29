@@ -19,10 +19,12 @@ import { start, stop, initialize, injectWithCookies } from '../../../../../__moc
 import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
+import { getData } from '../route.js'
+import GetDataRedirect from '../../../../../handlers/get-data-redirect.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll((d) => stop(d))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
@@ -35,12 +37,11 @@ const goodAddress = {
 
 describe('The licence confirmation method page', () => {
   describe('for a full 12 month licence, adult', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      d()
     })
 
     it('return the page on request', async () => {
@@ -125,12 +126,11 @@ describe('The licence confirmation method page', () => {
   })
 
   describe('for 1 day licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-      d()
     })
 
     it('redirects to the contact page', async () => {
@@ -161,5 +161,61 @@ describe('The licence confirmation method page', () => {
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(CONTACT.uri)
     })
+  })
+})
+
+describe('.getData', () => {
+  const createRequestMock = (options = {}) => ({
+    cache: jest.fn(() => ({
+      helpers: {
+        transaction: {
+          getCurrentPermission: jest.fn(() => ({
+            licenceLength: options.licenceLength || '12M',
+            licensee: {
+              firstName: 'Lando',
+              lastName: 'Norris'
+            }
+          }))
+        }
+      }
+    })),
+    query: options.query || {}
+  })
+
+  beforeEach(jest.restoreAllMocks)
+
+  it('if licence is physical, redirects to contact page', async () => {
+    const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
+    const func = async () => await getData(createRequestMock({ licenceLength: '1D' }))
+    await expect(func).rejects.toThrow(getDataRedirectError)
+  })
+
+  it('returns the expected data', async () => {
+    expect(await getData(createRequestMock())).toMatchSnapshot()
+  })
+
+  describe('if change query is undefined,', () => {
+    let result
+    beforeEach(async () => {
+      result = await getData(createRequestMock())
+    })
+
+    it("doesn't return changeEmail", async () => {
+      expect(result.changeEmail).toBeUndefined()
+    })
+
+    it("doesn't return changeMobile", async () => {
+      expect(result.changeMobile).toBeUndefined()
+    })
+  })
+
+  it('if change query param is "email", returns changeEmail set to true', async () => {
+    const result = await getData(createRequestMock({ query: { change: 'email' } }))
+    expect(result.changeEmail).toBe(true)
+  })
+
+  it('if change query param is "mobile", returns changeMobile set to true', async () => {
+    const result = await getData(createRequestMock({ query: { change: 'mobile' } }))
+    expect(result.changeMobile).toBe(true)
   })
 })

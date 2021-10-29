@@ -65,7 +65,7 @@ const start = async done => {
   await init()
 }
 
-const stop = async done => {
+const stop = done => {
   server.events.on('stop', () => {
     done()
   })
