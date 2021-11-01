@@ -1,4 +1,11 @@
-import { validator } from '../route'
+import pageRoute from '../../../../routes/page-route.js'
+import { nextPage } from '../../../../routes/next-page.js'
+import {validator} from '../route'
+
+jest.mock('../../../../routes/next-page.js', () => ({
+  nextPage: jest.fn()
+}))
+jest.mock('../../../../routes/page-route.js')
 
 describe('licence-for > route', () => {
   describe('validator', () => {
@@ -16,6 +23,12 @@ describe('licence-for > route', () => {
     it('should not return an error if licence-for is someone-else', () => {
       const result = validator.validate({ 'licence-for': 'someone-else' })
       expect(result.error).toBeUndefined()
+    })
+  })
+
+  describe('default', () => {
+    it('should call the pageRoute with licence-for, /buy/licence-for, validator and nextPage', async () => {
+      expect(pageRoute).toBeCalledWith('licence-for', '/buy/licence-for', validator, nextPage)
     })
   })
 })
