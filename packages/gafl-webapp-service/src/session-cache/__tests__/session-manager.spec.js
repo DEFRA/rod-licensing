@@ -3,7 +3,7 @@ import { isStaticResource, useSessionCookie, includesRegex } from '../session-ma
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
   CONTROLLER,
-  DATE_OF_BIRTH,
+  LICENCE_FOR,
   LICENCE_TYPE,
   ORDER_COMPLETE,
   LICENCE_DETAILS,
@@ -57,7 +57,7 @@ describe('Use session cookie', () => {
 describe('The user', () => {
   beforeAll(() => new Promise(resolve => start(resolve)))
   beforeAll(() => new Promise(resolve => initialize(resolve)))
-  afterAll((d) => stop(d))
+  afterAll(d => stop(d))
 
   it('clearing the session cookie automatically creates a new cookie and cache', async () => {
     const response = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)
@@ -69,7 +69,7 @@ describe('The user', () => {
     await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     const response = await injectWithCookies('GET', CONTROLLER.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(LICENCE_FOR.uri)
   })
 
   /*
@@ -81,7 +81,7 @@ describe('The user', () => {
     await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, {})
     const response = await injectWithCookies('GET', CONTROLLER.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(LICENCE_FOR.uri)
   })
 
   /*

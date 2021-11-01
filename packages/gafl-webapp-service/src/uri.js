@@ -1,6 +1,7 @@
 /*
  * Page locations, templates
  */
+export const LICENCE_FOR = { uri: '/buy/licence-for', page: 'licence-for' }
 export const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 export const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
 export const LICENCE_TO_START = { uri: '/buy/start-kind', page: 'licence-to-start' }

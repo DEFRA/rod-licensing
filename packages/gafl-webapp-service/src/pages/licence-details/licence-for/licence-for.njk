@@ -1,0 +1,35 @@
+{% extends "standard-form.njk" %}
+
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = 'Who is this fishing licence for?' %}
+
+{% set errorMsg = 'Tell us who the licence is for' %}
+
+{% set errorMap = {
+        'licence-for': {
+            'any.required': { ref: '#licence-for', text: errorMsg }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+        idPrefix: "licence-for",
+        name: "licence-for",
+        hint: { text: "One person can use this fishing licence." },
+        items: [
+            {
+                value: "you",
+                text: "You",
+                checked: payload['licence-for'] === 'you'
+            },
+            {
+                value: "someone-else",
+                text: "Someone else",
+                checked: payload['licence-for'] === 'someone-else'
+            }
+        ],
+        errorMessage: { text: errorMsg } if error['licence-for']
+    }) }}
+{% endblock %}
