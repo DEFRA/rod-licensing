@@ -1,6 +1,6 @@
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
-import {validator} from '../route'
+import { validator } from '../route'
 
 jest.mock('../../../../routes/next-page.js', () => ({
   nextPage: jest.fn()
