@@ -57,7 +57,7 @@ describe('Use session cookie', () => {
 describe('The user', () => {
   beforeAll(() => new Promise(resolve => start(resolve)))
   beforeAll(() => new Promise(resolve => initialize(resolve)))
-  afterAll((d) => stop(d))
+  afterAll(d => stop(d))
 
   it('clearing the session cookie automatically creates a new cookie and cache', async () => {
     const response = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)

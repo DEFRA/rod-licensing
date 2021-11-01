@@ -3,7 +3,7 @@ import { CONTROLLER, LICENCE_FOR, ADD_PERMISSION, NEW_TRANSACTION } from '../../
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The controller handler', () => {
   it('If there is no transaction then initialize redirect to the controller', async () => {
