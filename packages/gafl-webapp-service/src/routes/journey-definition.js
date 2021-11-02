@@ -29,7 +29,7 @@ import {
   RENEWAL_START_DATE
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
