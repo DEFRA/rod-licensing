@@ -9,7 +9,13 @@ const validator = Joi.object({
   'last-name': validation.contact.createLastNameValidator(Joi)
 }).options({ abortEarly: false, allowUnknown: true })
 
-const namePageRoute = pageRoute(NAME.page, NAME.uri, validator, nextPage)
+export const getData = async request => {
+  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
+
+  return { isLicenceForYou }
+}
+
+const namePageRoute = pageRoute(NAME.page, NAME.uri, validator, nextPage, getData)
 
 // Sanitize does not play well with the name validator and is unnecessary
 Object.assign(namePageRoute[1].options, {

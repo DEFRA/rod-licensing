@@ -57,9 +57,23 @@ export default [
     current: LICENCE_FOR,
     next: {
       [CommonResults.OK]: {
-        page: DATE_OF_BIRTH
+        page: NAME
       }
-    }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+  },
+
+  {
+    current: NAME,
+    next: {
+      [CommonResults.OK]: {
+        page: ADDRESS_LOOKUP
+      },
+      [CommonResults.SUMMARY]: {
+        page: CONTACT_SUMMARY
+      }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_FOR.uri)
   },
 
   {
@@ -171,27 +185,6 @@ export default [
       },
       [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
-      }
-    }
-  },
-
-  {
-    current: NAME,
-    next: {
-      [CommonResults.OK]: {
-        page: ADDRESS_LOOKUP
-      },
-      [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY
-      }
-    },
-    backLink: s => {
-      if (s.fromSummary === LICENCE_SUMMARY_SEEN) {
-        return LICENCE_SUMMARY.uri
-      } else if (s.fromSummary === CONTACT_SUMMARY_SEEN) {
-        return CONTACT_SUMMARY.uri
-      } else {
-        return null
       }
     }
   },
