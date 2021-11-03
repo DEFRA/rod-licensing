@@ -1,26 +1,30 @@
 {% extends "standard-form.njk" %}
 {% from "input/macro.njk" import govukInput %}
 
-{% set title = 'What\'s your name?' %}
+{% set title = 'What is your name?' if data.isLicenceForYou else 'What is the person\'s name?' %}
+
+{% set pronoun = 'Your' if data.isLicenceForYou  else 'Their' %}
 
 {% set errorMap = {
         'first-name': {
-            'string.empty': { ref: '#first-name', text: 'Enter your first name' },
-            'string.min': { ref: '#first-name', text: 'Your first name must contain at least 2 letters' },
-            'string.max': { ref: '#first-name', text: 'Your first name must not be longer than 100 letters' },
-            'string.forbidden': { ref: '#first-name', text: 'Your first name must only contain letters' }
+            'string.empty': { ref: '#first-name', text: 'Enter ' + pronoun | lower + ' first name'},
+            'string.min': { ref: '#first-name', text: pronoun + ' first name must contain at least 2 letters' },
+            'string.max': { ref: '#first-name', text: pronoun + ' first name must not be longer than 100 letters' },
+            'string.forbidden': { ref: '#first-name', text: pronoun + ' first name must only contain letters' }
         },
         'last-name': {
-            'string.empty': { ref: '#last-name', text: 'Enter your last name' },
-            'string.min': { ref: '#last-name', text: 'Your last name must contain at least 2 letters' },
-            'string.max': { ref: '#last-name', text: 'Your last name must not be longer than 100 letters' },
-            'string.forbidden': { ref: '#last-name', text: 'Your last name must only contain letters' }
+            'string.empty': { ref: '#last-name', text: 'Enter ' + pronoun | lower + ' last name'},
+            'string.min': { ref: '#last-name', text: pronoun + ' last name must contain at least 2 letters' },
+            'string.max': { ref: '#last-name', text: pronoun + ' last name must not be longer than 100 letters' },
+            'string.forbidden': { ref: '#last-name', text: pronoun + ' last name must only contain letters' }
         }
     }
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">If you're applying for someone else enter their name.</p>
+    {% if not data.isLicenceForYou %}
+      <p class="govuk-body-m">Take care to spell their name correctly.</p>
+    {% endif %}
 
     {{ govukInput({
       label: {
@@ -33,7 +37,7 @@
       classes: "govuk-input--width-20",
       autocomplete: 'given-name',
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter your first name' } if error['first-name']
+      errorMessage: { text: 'Enter ' + pronoun | lower + ' first name' } if error['first-name']
     }) }}
 
     {{ govukInput({
@@ -46,7 +50,7 @@
       autocomplete: 'family-name',
       classes: "govuk-input--width-20",
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter your last name' } if error['last-name']
+      errorMessage: { text: 'Enter ' + pronoun | lower  + ' last name' } if error['last-name']
     }) }}
 
 {% endblock %}
