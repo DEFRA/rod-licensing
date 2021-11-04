@@ -3,7 +3,7 @@ import { start, stop, initialize, injectWithCookies } from '../../../../__mocks_
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The name page', () => {
   it('Return success on requesting', async () => {

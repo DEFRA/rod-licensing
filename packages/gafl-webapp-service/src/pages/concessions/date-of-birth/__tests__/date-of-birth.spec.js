@@ -11,7 +11,7 @@ import {
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The date of birth page', () => {
   it('return success on requesting the page', async () => {
