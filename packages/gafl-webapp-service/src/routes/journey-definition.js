@@ -67,7 +67,7 @@ export default [
     current: NAME,
     next: {
       [CommonResults.OK]: {
-        page: ADDRESS_LOOKUP
+        page: DATE_OF_BIRTH
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
@@ -80,7 +80,7 @@ export default [
     current: DATE_OF_BIRTH,
     next: {
       [CommonResults.OK]: {
-        page: LICENCE_TO_START
+        page: DISABILITY_CONCESSION
       },
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
         page: NO_LICENCE_REQUIRED
@@ -89,7 +89,7 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : NAME.uri)
   },
 
   {
