@@ -1,7 +1,4 @@
 import { getData } from '../route'
-import { getPronoun } from '../../../../processors/licence-type-display.js'
-
-jest.mock('../../../../processors/licence-type-display.js')
 
 describe('name > route', () => {
   const mockStatusCacheGet = jest.fn()
@@ -23,16 +20,23 @@ describe('name > route', () => {
       expect(result.isLicenceForYou).toBeTruthy()
     })
 
+    it('should return pronoun as your if isLicenceForYou is true on the status cache', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
+      const result = await getData(mockRequest)
+      console.log(result)
+      expect(result.pronoun).toBe('your')
+    })
+
     it('should return isLicenceForYou as false if isLicenceForYou is false on the status cache', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
       const result = await getData(mockRequest)
       expect(result.isLicenceForYou).toBeFalsy()
     })
 
-    it('should call getPronoun', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
-      await getData(mockRequest)
-      expect(getPronoun).toHaveBeenCalled()
+    it('should return isLicenceForYou as their if isLicenceForYou is false on the status cache', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
+      const result = await getData(mockRequest)
+      expect(result.pronoun).toBe('their')
     })
   })
 })

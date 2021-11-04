@@ -5,7 +5,7 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'
 import { getPronoun } from '../../../processors/licence-type-display.js'
 
-const validator = payload => {
+export const validator = payload => {
   const dateOfBirth = `${payload['date-of-birth-year']}-${payload['date-of-birth-month']}-${payload['date-of-birth-day']}`
   Joi.assert(
     { 'date-of-birth': dateOfBirth },
