@@ -31,10 +31,10 @@ describe('The licence-for page', () => {
 
 describe('The date-of-birth page', () => {
   const n = journeyDefinition.find(n => n.current.page === DATE_OF_BIRTH.page)
-  it('has no back-link on initial viewing', () => {
-    expect(n.backLink({})).not.toBeTruthy()
+  it('has a back-link to the name page on initial viewing', () => {
+    expect(n.backLink({})).toBe(NAME.uri)
   })
-  it('has a back-link to the license summary if the summary is seen', () => {
+  it('has a back-link to the licence summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
   })
 })
