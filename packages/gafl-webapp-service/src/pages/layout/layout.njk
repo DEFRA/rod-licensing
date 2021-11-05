@@ -20,10 +20,10 @@
     <div id="global-cookie-message" class="cookie-banner no-print" role="region" aria-label="cookie banner">
       <div class="govuk-width-container">
         <p class="govuk-body">
-          This website only stores the cookies that are essential to make it work. Read more about <a class="govuk-link" href="/guidance/cookies">how we use cookies</a>
+          {{ mssgs.cookie_banner_preamble }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
         </p>
         <button id="close-global-cookie-message" class="govuk-button govuk-!-margin-bottom-0" type="submit">
-            Close<span class="govuk-visually-hidden"> cookie banner</span>
+            {{ mssgs.cookie_banner_close }}<span class="govuk-visually-hidden"> {{ mssgs.cookie_banner_close_ex }}</span>
         </button>
       </div>
     </div>
