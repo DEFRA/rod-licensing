@@ -13,7 +13,7 @@ const validator = Joi.object({
 export const getData = async request => {
   const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
 
-  const pronoun = getPronoun(isLicenceForYou)
+  const pronoun = getPronoun(isLicenceForYou).possessive
 
   return { isLicenceForYou, pronoun }
 }

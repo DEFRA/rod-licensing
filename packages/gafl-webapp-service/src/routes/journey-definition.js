@@ -93,6 +93,19 @@ export default [
   },
 
   {
+    current: DISABILITY_CONCESSION,
+    next: {
+      [CommonResults.OK]: {
+        page: LICENCE_TO_START
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY
+      }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
+  },
+
+  {
     current: LICENCE_TO_START,
     next: {
       [CommonResults.OK]: {
@@ -114,19 +127,6 @@ export default [
   {
     current: NO_LICENCE_REQUIRED,
     backLink: DATE_OF_BIRTH.uri
-  },
-
-  {
-    current: DISABILITY_CONCESSION,
-    next: {
-      [CommonResults.OK]: {
-        page: LICENCE_TYPE
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY
-      }
-    },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri)
   },
 
   {
