@@ -10,6 +10,8 @@ import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
+import Path from 'path'
+
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
@@ -98,7 +100,7 @@ const initialiseHapiI18nPlugin = () => ({
   plugin: HapiI18n,
   options: {
     locales: ['en', 'cy'],
-    directory: path.resolve(path.dirname('')) + '/src/locales',
+    directory: Path.resolve(Path.dirname('')) + '/src/locales',
     queryParameter: 'lang'
   }
 })
