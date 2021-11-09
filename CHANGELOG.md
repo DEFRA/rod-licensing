@@ -1,4 +1,13 @@
 
+## v1.21.0-rc.2 (2021-11-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#949](https://github.com/DEFRA/rod-licensing/pull/949) Changing fulfilment after visiting contact summary gives invalid options ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.21.0-rc.1 (2021-11-08)
 
 #### :rocket: Enhancement
