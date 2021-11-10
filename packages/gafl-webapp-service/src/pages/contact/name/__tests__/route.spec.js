@@ -23,7 +23,6 @@ describe('name > route', () => {
     it('should return pronoun as your, if isLicenceForYou is true on the status cache', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
       const result = await getData(mockRequest)
-      console.log(result)
       expect(result.pronoun).toBe('your')
     })
 
@@ -33,7 +32,7 @@ describe('name > route', () => {
       expect(result.isLicenceForYou).toBeFalsy()
     })
 
-    it('should return isLicenceForYou as their, if isLicenceForYou is false on the status cache', async () => {
+    it('should return pronoun as their, if isLicenceForYou is false on the status cache', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
       const result = await getData(mockRequest)
       expect(result.pronoun).toBe('their')
