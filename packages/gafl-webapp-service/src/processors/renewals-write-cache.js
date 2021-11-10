@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import db from 'debug'
-import { LICENCE_TYPE, NAME, ADDRESS_LOOKUP, CONTACT } from '../uri.js'
+import { LICENCE_TYPE, NAME, ADDRESS_LOOKUP, CONTACT, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../uri.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
@@ -118,4 +118,7 @@ export const setUpPayloads = async request => {
       }
     })(permission.licensee)
   })
+
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page]: true })
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_CONFIRMATION_METHOD.page]: true })
 }
