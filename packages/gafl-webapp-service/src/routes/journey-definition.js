@@ -109,7 +109,7 @@ export default [
     current: LICENCE_TO_START,
     next: {
       [CommonResults.OK]: {
-        page: DISABILITY_CONCESSION
+        page: LICENCE_TYPE
       },
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
         page: NO_LICENCE_REQUIRED
@@ -121,7 +121,7 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
   },
 
   {
@@ -178,7 +178,7 @@ export default [
     current: LICENCE_SUMMARY,
     next: {
       [CommonResults.OK]: {
-        page: NAME
+        page: ADDRESS_LOOKUP
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY

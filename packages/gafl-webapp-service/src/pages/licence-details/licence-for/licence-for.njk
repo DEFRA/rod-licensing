@@ -20,11 +20,13 @@
         hint: { text: "One person can use this fishing licence." },
         items: [
             {
+                "id": "selector-you",
                 value: "you",
                 text: "You",
                 checked: payload['licence-for'] === 'you'
             },
             {
+                "id": "selector-someone-else",
                 value: "someone-else",
                 text: "Someone else",
                 checked: payload['licence-for'] === 'someone-else'
