@@ -2,15 +2,15 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'When would you like your licence to start?' %}
+{% set title = 'When would you like your licence to start?' if data.isLicenceForYou else 'When should the licence start?'%}
 
 {%
     set errorMap = {
         'licence-to-start': {
-            'any.required': { ref: '#licence-to-start', text: "Choose when you'd like your licence to start" }
+            'any.required': { ref: '#licence-to-start', text: "Choose when you'd like your licence to start" if data.isLicenceForYou else "Choose when the licence should start" }
         },
         'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want your licence to start, include a day, month and year' },
+            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want your licence to start, include a day, month and year' if data.isLicenceForYou else 'Enter the date you want the licence to start, include a day, month and year' },
             'date.max': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' },
             'date.min': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' }
         }
@@ -41,7 +41,7 @@
 
 {% set startDate %}
     {% if not data.hasJunior %}
-        <p class="govuk-body-m">Enter today's date if you want a 1 or 8 day licence to start later today.</p>
+        <p class="govuk-body-m">Enter today's date if you want the 1 or 8 day licence to start later today.</p>
     {% endif %}
 
     {{ govukDateInput({
@@ -56,7 +56,7 @@
 {% endset -%}
 
 {% block pageContent %}
-    <p class="govuk-body-m">Your licence can start today or any day within the next {{ data.advancedPurchaseMaxDays }} days.</p>
+    <p class="govuk-body-m">The licence can start today or any day within the next {{ data.advancedPurchaseMaxDays }} days.</p>
 
     {{ govukRadios({
         idPrefix: "licence-to-start",
@@ -76,7 +76,7 @@
                 }
             }
         ],
-        errorMessage: { text: 'Choose when you\'d like your licence to start' } if error['licence-to-start']
+        errorMessage: { text: 'Choose when you\'d like your licence to start' if data.isLicenceForYou else 'Choose when the licence should start' } if error['licence-to-start']
     }) }}
 {% endblock %}
 

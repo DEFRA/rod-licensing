@@ -41,8 +41,8 @@ describe('The date-of-birth page', () => {
 
 describe('The licence-to-start page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_TO_START.page)
-  it('has a back-link to the date-of-birth page on initial viewing', () => {
-    expect(n.backLink({})).toBe(DATE_OF_BIRTH.uri)
+  it('has a back-link to the disability concessions page on initial viewing', () => {
+    expect(n.backLink({})).toBe(DISABILITY_CONCESSION.uri)
   })
   it('has a back-link to the license summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)

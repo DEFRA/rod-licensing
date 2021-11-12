@@ -1,7 +1,7 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = "What is your date of birth?" if data.isLicenceForYou else "What is the person’s date of birth?" %}
+{% set title = "What is your date of birth?" if data.isLicenceForYou else "What is the person's date of birth?" %}
 
 {%
     set errorMap = {
