@@ -5,34 +5,51 @@ import Joi from 'joi'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { getServer } from '../../../server.js'
 
-const minHour = permission =>
-  moment(permission.licenceStartDate, cacheDateFormat)
+let permission
+const getMinHour = permission => {
+  const now = moment().tz(SERVICE_LOCAL_TIME)
+  const permissionStartsToday = moment(permission.licenceStartDate, cacheDateFormat)
     .tz(SERVICE_LOCAL_TIME)
-    .isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')
-    ? moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .add(1, 'hour')
-      .add(30, 'minute')
-      .startOf('hour')
-      .hour()
-    : 0
+    .isSame(now, 'day')
+  if (permissionStartsToday) {
+    const cantStartUntilTomorrow = moment(now).add(90, 'minute').isAfter(now, 'day')
+    if (cantStartUntilTomorrow) {
+      return 24
+    }
+    return now.add(90, 'minute').startOf('hour').hour()
+  }
+  return 0
+}
 
-const hours = Array(24)
+const hours = Array(25)
   .fill(0)
   .map((e, idx) => idx.toString())
 
-// Not worth validating dynamically - can only be curl'd to the users disadvantage
-const validator = Joi.object({
-  'licence-start-time': Joi.string()
-    .valid(...hours)
-    .required()
-}).options({ abortEarly: false, allowUnknown: true })
+const validator = async (payload, validationTargets) => {
+  console.log('payload', payload)
+  console.log('validationTargets', validationTargets)
+  console.log('permission', permission)
+  console.log('server', getServer())
+  // const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const minHour = getMinHour(permission)
+
+  Joi.assert(
+    payload,
+    Joi.object({
+      'licence-start-time': Joi.string()
+        .valid(...hours.filter(h => h >= minHour))
+        .required()
+    }).options({ abortEarly: false, allowUnknown: true })
+  )
+}
 
 const getData = async request => {
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  permission = await request.cache().helpers.transaction.getCurrentPermission()
   const startDateStr = moment(permission.licenceStartDate, cacheDateFormat).format('dddd, Do MMMM, YYYY')
-  return { startDateStr, minHour: minHour(permission) }
+
+  return { startDateStr, minHour: getMinHour(permission) }
 }
 
 export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)
