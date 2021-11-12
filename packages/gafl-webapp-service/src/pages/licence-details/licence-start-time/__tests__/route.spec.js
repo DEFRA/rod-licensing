@@ -2,8 +2,12 @@ import startTimePageRoute from '../route.js'
 import moment from 'moment-timezone'
 import pageRoute from '../../../../routes/page-route.js'
 
-jest.mock('../../../../routes/page-route.js')
+jest.mock('../../../../routes/page-route.js', () => jest.fn(() => [{
+  method: 'POST',
+  options: {}
+}]))
 jest.mock('moment-timezone')
+const realMoment = jest.requireActual('moment-timezone')
 
 describe('Licence start time data validation', () => {
   const validator = pageRoute.mock.calls[1][2]
@@ -35,7 +39,6 @@ describe('Licence start time data validation', () => {
     ['22', '2021-11-10', '2021-11-10T21:31:00.000Z'],
     ['23', '2021-11-10', '2021-11-10T22:31:00.000Z']
   ])('validation fails for start time of %s when permission date is %s and current date and time is %s', (hour, licenceStartDate, now) => {
-    const realMoment = jest.requireActual('moment-timezone')
     moment.mockImplementation((date, format) => {
       if (date) {
         return realMoment(date, format)
@@ -46,9 +49,9 @@ describe('Licence start time data validation', () => {
     return expect(() =>
       validator(
         { 'licence-start-time': hour },
-        getMockRequest(licenceStartDate)
+        getMockOptions(licenceStartDate)
       )
-    ).rejects.toThrow()
+    ).toThrow()
   })
 
   it.each([
@@ -88,12 +91,40 @@ describe('Licence start time data validation', () => {
     return expect(
       validator(
         { 'licence-start-time': hour },
-        getMockRequest(licenceStartDate)
+        getMockOptions(licenceStartDate)
       )
-    ).resolves.toBeUndefined()
+    ).toBeUndefined()
   })
 
-  const getMockRequest = licenceStartDate => ({
+  const getMockOptions = licenceStartDate => ({
+    context: {
+      app: {
+        request: {
+          permission: {
+            licenceStartDate
+          }
+        }
+      }
+    }
+  })
+})
+
+describe('licenceStartTimeRoute > onPostAuth', () => {
+  const { onPostAuth } = startTimePageRoute.find(r => r.method === 'POST').options.ext
+  it('returns reply.continue symbol', async () => {
+    const sampleResponseToolkit = getMockResponseToolkit()
+    expect(await onPostAuth.method(getMockRequest(), sampleResponseToolkit)).toEqual(sampleResponseToolkit.continue)
+  })
+
+  it('adds permission to app key', async () => {
+    const sampleRequest = getMockRequest
+  })
+
+  const getMockResponseToolkit = () => ({
+    continue: Symbol('continue')
+  })
+  const getMockRequest = (licenceStartDate = realMoment().format('YYYY-MM-DD')) => ({
+    app: {},
     cache: () => ({
       helpers: {
         transaction: {

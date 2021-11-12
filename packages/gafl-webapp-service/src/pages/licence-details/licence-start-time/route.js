@@ -5,9 +5,7 @@ import Joi from 'joi'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { getServer } from '../../../server.js'
 
-let permission
 const getMinHour = permission => {
   const now = moment().tz(SERVICE_LOCAL_TIME)
   const permissionStartsToday = moment(permission.licenceStartDate, cacheDateFormat)
@@ -27,12 +25,8 @@ const hours = Array(25)
   .fill(0)
   .map((e, idx) => idx.toString())
 
-const validator = async (payload, validationTargets) => {
-  console.log('payload', payload)
-  console.log('validationTargets', validationTargets)
-  console.log('permission', permission)
-  console.log('server', getServer())
-  // const permission = await request.cache().helpers.transaction.getCurrentPermission()
+const validator = (payload, options) => {
+  const { permission } = options.context.app.request
   const minHour = getMinHour(permission)
 
   Joi.assert(
@@ -46,10 +40,21 @@ const validator = async (payload, validationTargets) => {
 }
 
 const getData = async request => {
-  permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const startDateStr = moment(permission.licenceStartDate, cacheDateFormat).format('dddd, Do MMMM, YYYY')
 
   return { startDateStr, minHour: getMinHour(permission) }
 }
 
-export default pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)
+const licenceStartTimeRoute = pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)
+licenceStartTimeRoute.find(r => r.method === 'POST').options.ext = {
+  onPostAuth: {
+    method: async (request, reply) => {
+      const permission = await request.cache().helpers.transaction.getCurrentPermission()
+      request.app.permission = permission
+      return reply.continue
+    }
+  }
+}
+
+export default licenceStartTimeRoute
