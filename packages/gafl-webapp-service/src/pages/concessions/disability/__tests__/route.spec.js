@@ -1,6 +1,6 @@
 import { getData } from '../route'
 
-describe('name > route', () => {
+describe('disability > route', () => {
   const mockStatusCacheGet = jest.fn()
   const mockTransactionCacheGet = jest.fn()
 
