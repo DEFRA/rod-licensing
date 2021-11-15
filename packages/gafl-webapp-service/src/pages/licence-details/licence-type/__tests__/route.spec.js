@@ -1,6 +1,13 @@
-import { getData } from '../route'
+import { getData, validator } from '../route'
+import pageRoute from '../../../../routes/page-route.js'
+import { nextPage } from '../../../../routes/next-page.js'
+import '../../../../processors/pricing-summary.js'
 
-describe('disability > route', () => {
+jest.mock('../../../../routes/next-page.js')
+jest.mock('../../../../routes/page-route.js')
+jest.mock('../../../../processors/pricing-summary.js')
+
+describe('licence-type > route', () => {
   const mockStatusCacheGet = jest.fn()
   const mockTransactionCacheGet = jest.fn()
 
@@ -30,6 +37,12 @@ describe('disability > route', () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
       const result = await getData(mockRequest)
       expect(result.pronoun).toStrictEqual({ possessive: 'their', personal: 'they' })
+    })
+  })
+
+  describe('default', () => {
+    it('should call the pageRoute with licence-type, /buy/licence-type, validator and nextPage', async () => {
+      expect(pageRoute).toBeCalledWith('licence-type', '/buy/licence-type', validator, nextPage, getData)
     })
   })
 })

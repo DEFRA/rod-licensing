@@ -3,12 +3,12 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
-{% set title = 'Which type of licence do you want?' %}
+{% set title = 'Which type of licence do ' + data.pronoun.personal + ' want?' %}
 
 {%
     set errorMap = {
         'licence-type': {
-            'any.required': { ref: '#licence-type', text: 'Choose which type of fishing licence you want' }
+            'any.required': { ref: '#licence-type', text: 'Choose which type of fishing licence ' + data.pronoun.personal + ' want' }
         }
     }
 %}
@@ -77,7 +77,7 @@
         idPrefix: "licence-type",
         name: "licence-type",
         items: items,
-        errorMessage: { text: 'Choose which type of fishing licence you want' } if error
+        errorMessage: { text: 'Choose which type of fishing licence ' + data.pronoun.personal + ' want' } if error
     }) }}
 {% endblock %}
 
