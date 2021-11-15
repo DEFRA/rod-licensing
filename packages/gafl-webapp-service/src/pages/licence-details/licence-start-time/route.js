@@ -46,8 +46,8 @@ const getData = async request => {
   return { startDateStr, minHour: getMinHour(permission) }
 }
 
-const licenceStartTimeRoute = pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)
-licenceStartTimeRoute.find(r => r.method === 'POST').options.ext = {
+const route = pageRoute(LICENCE_START_TIME.page, LICENCE_START_TIME.uri, validator, nextPage, getData)
+route.find(r => r.method === 'POST').options.ext = {
   onPostAuth: {
     method: async (request, reply) => {
       const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -57,4 +57,4 @@ licenceStartTimeRoute.find(r => r.method === 'POST').options.ext = {
   }
 }
 
-export default licenceStartTimeRoute
+export default route
