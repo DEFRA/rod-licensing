@@ -78,7 +78,8 @@ describe('Licence start time data validation', () => {
     ['20', '2021-11-10', '2021-11-10T19:29:00.000Z'],
     ['21', '2021-11-10', '2021-11-10T20:29:00.000Z'],
     ['22', '2021-11-10', '2021-11-10T21:29:00.000Z'],
-    ['23', '2021-11-10', '2021-11-10T22:29:00.000Z']
+    ['23', '2021-11-10', '2021-11-10T22:29:00.000Z'],
+    ['2', '2021-10-31', '2021-10-31T01:29:00.000']
   ])('validation succeeds for start time of %s when permission date is %s and current date and time is %s', (hour, licenceStartDate, now) => {
     const realMoment = jest.requireActual('moment-timezone')
     moment.mockImplementation((date, format) => {
@@ -112,12 +113,15 @@ describe('Licence start time data validation', () => {
 describe('licenceStartTimeRoute > onPostAuth', () => {
   const { onPostAuth } = startTimePageRoute.find(r => r.method === 'POST').options.ext
   it('returns reply.continue symbol', async () => {
-    const sampleResponseToolkit = getMockResponseToolkit()
-    expect(await onPostAuth.method(getMockRequest(), sampleResponseToolkit)).toEqual(sampleResponseToolkit.continue)
+    const mockResponseToolkit = getMockResponseToolkit()
+    expect(await onPostAuth.method(getMockRequest(), mockResponseToolkit)).toEqual(mockResponseToolkit.continue)
   })
 
   it('adds permission to app key', async () => {
-    const sampleRequest = getMockRequest
+    const mockRequest = getMockRequest()
+    const permission = await mockRequest.cache().helpers.transaction.getCurrentPermission()
+    await onPostAuth.method(mockRequest, getMockResponseToolkit())
+    expect(mockRequest.app.permission).toStrictEqual(permission)
   })
 
   const getMockResponseToolkit = () => ({
@@ -136,39 +140,3 @@ describe('licenceStartTimeRoute > onPostAuth', () => {
     })
   })
 })
-
-// payload {"licence-start-time":"18","continue":""}
-// request permission
-/*
-    permission {
-      licensee: { birthDate: '1987-10-12' },
-      licenceToStart: 'another-date',
-      licenceStartDate: '2021-11-09',
-      licenceType: 'Trout and coarse',
-      numberOfRods: '2',
-      licenceLength: '1D',
-      licenceStartTime: '18',
-      permit: {
-        id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
-        description: 'Coarse 1 day 2 Rod Licence (Full)',
-        permitType: {
-          id: 910400000,
-          label: 'Rod Fishing Licence',
-          description: 'Rod Fishing Licence'
-        },
-        permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
-        durationMagnitude: 1,
-        durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
-        numberOfRods: 2,
-        availableFrom: '2017-03-31T23:00:00.000Z',
-        availableTo: '2037-03-31T23:59:00.000Z',
-        isForFulfilment: false,
-        isCounterSales: true,
-        isRecurringPaymentSupported: false,
-        cost: 6,
-        itemId: '42289',
-        concessions: []
-      },
-      hash: 'd3b0b22d3d2b617833a681542d56e3534529335bc5ebbe53feb19220b729cdbc'
-    }
-    */
