@@ -79,7 +79,7 @@ describe('Licence start time data validation', () => {
     ['21', '2021-11-10', '2021-11-10T20:29:00.000Z'],
     ['22', '2021-11-10', '2021-11-10T21:29:00.000Z'],
     ['23', '2021-11-10', '2021-11-10T22:29:00.000Z'],
-    ['2', '2021-10-31', '2021-10-31T01:29:00.000']
+    ['1', '2021-10-31', '2021-10-31T01:29:00.000']
   ])('validation succeeds for start time of %s when permission date is %s and current date and time is %s', (hour, licenceStartDate, now) => {
     const realMoment = jest.requireActual('moment-timezone')
     moment.mockImplementation((date, format) => {
