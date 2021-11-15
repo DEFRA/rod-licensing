@@ -1,4 +1,13 @@
 
+## v1.21.0-rc.3 (2021-11-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#969](https://github.com/DEFRA/rod-licensing/pull/969) Validate licence start time ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.21.0-rc.2 (2021-11-09)
 
 #### :bug: Bug Fix
