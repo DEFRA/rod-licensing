@@ -33,7 +33,7 @@ describe('licence-summary > route', () => {
       numberOfRods: '3',
       licenceType: 'Salmon and sea trout',
       licenceLength: '12M',
-      licensee: { 
+      licensee: {
         birthDate: '1946-01-01'
       },
       permit: {
