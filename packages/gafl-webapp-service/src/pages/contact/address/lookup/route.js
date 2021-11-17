@@ -3,9 +3,8 @@ import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { isPhysical } from '../../../../processors/licence-type-display.js'
+import { isPhysical, getPronoun } from '../../../../processors/licence-type-display.js'
 import { nextPage } from '../../../../routes/next-page.js'
-import { getPronoun } from '../../../../processors/licence-type-display.js'
 
 const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
@@ -15,7 +14,7 @@ const validator = Joi.object({
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
-  
+
   const pronoun = getPronoun(isLicenceForYou).possessive
 
   return {
