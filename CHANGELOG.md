@@ -1,4 +1,40 @@
 
+## v1.21.0-rc.3 (2021-11-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#969](https://github.com/DEFRA/rod-licensing/pull/969) Validate licence start time ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.21.0-rc.2 (2021-11-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#949](https://github.com/DEFRA/rod-licensing/pull/949) Changing fulfilment after visiting contact summary gives invalid options ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.21.0-rc.1 (2021-11-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#964](https://github.com/DEFRA/rod-licensing/pull/964) Incorrect wording on the rod licence paperless web journey ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.21.0-rc.0 (2021-11-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#962](https://github.com/DEFRA/rod-licensing/pull/962) Annual accessibility statement review - Summer 2021 ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 ## v1.20.0-rc.21 (2021-10-27)

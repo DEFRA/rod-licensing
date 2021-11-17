@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../renewals-write-cache'
 import mockConcessions from '../../__mocks__/data/concessions'
-import { ADDRESS_LOOKUP, CONTACT, LICENCE_TYPE, NAME } from '../../uri'
+import { ADDRESS_LOOKUP, CONTACT, LICENCE_TYPE, NAME, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../uri'
 
 jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
@@ -297,6 +297,7 @@ describe('renewals-write-cache', () => {
   describe('setupPayloads', () => {
     const mockTransactionCacheGet = jest.fn()
     const mockPageCacheSet = jest.fn()
+    const mockStatusCacheSet = jest.fn()
 
     const mockRequest = {
       cache: () => ({
@@ -306,6 +307,9 @@ describe('renewals-write-cache', () => {
           },
           page: {
             setCurrentPermission: mockPageCacheSet
+          },
+          status: {
+            setCurrentPermission: mockStatusCacheSet
           }
         }
       })
@@ -427,6 +431,18 @@ describe('renewals-write-cache', () => {
           'how-contacted': 'none'
         }
       })
+    })
+
+    it('should set the licence-fulfilment to true on the status cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+      await setUpPayloads(mockRequest)
+      expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_FULFILMENT.page]: true })
+    })
+
+    it('should set the licence-confirmation-method to true on the status cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+      await setUpPayloads(mockRequest)
+      expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_CONFIRMATION_METHOD.page]: true })
     })
   })
 })
