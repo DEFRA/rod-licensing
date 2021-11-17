@@ -132,7 +132,6 @@
 {% endif %}
 
 {{ licenseDetailsSummaryRows.push({
-  classes: 'govuk-summary-list__row--last',
   key: {
     text: "Cost"
   },
@@ -149,7 +148,10 @@
         isPageHeading: true
       }
     }) %}
-        {{ govukSummaryList({ rows: licenseDetailsSummaryRows }) }}
+    {{ govukSummaryList({ 
+      classes: 'licence-summary-list',
+      rows: licenseDetailsSummaryRows 
+    }) }}
     {% endcall %}
 {% endset -%}
 
