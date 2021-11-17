@@ -70,7 +70,7 @@ export default [
         page: DATE_OF_BIRTH
       },
       [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_FOR.uri)

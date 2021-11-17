@@ -12,24 +12,63 @@
 {% set licenseDetailsSummaryRows = [
     {
       key: {
-        text: "Type"
+        text: "Name"
       },
       value: {
-        text: data.licenceTypeStr
+        text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName
       },
       actions: {
         items: [
           {
-            href: data.uri.licenceType,
+            href: data.uri.name,
             text: "Change",
-            visuallyHiddenText: "type",
-            attributes: { id: 'change-licence-type' }
+            visuallyHiddenText: "name",
+            attributes: { id: 'change-name' }
           }
         ]
       }
     }
   ]
 %}
+
+
+{% if not data.isRenewal %}
+    {{ licenseDetailsSummaryRows.push({
+        key: {
+            text: "Date of birth"
+        },
+        value: {
+            text: data.birthDateStr
+        },
+        actions: {
+            items: [{
+                href: data.uri.dateOfBirth,
+                text: "Change",
+                visuallyHiddenText: "date of birth",
+                attributes: { id: 'change-birth-date' }
+            }]
+        }
+    }) }}
+{% endif %}
+
+{{ licenseDetailsSummaryRows.push({
+    key: {
+      text: "Type"
+    },
+    value: {
+      text: data.licenceTypeStr
+    },
+    actions: {
+      items: [
+        {
+          href: data.uri.licenceType,
+          text: "Change",
+          visuallyHiddenText: "type",
+          attributes: { id: 'change-licence-type' }
+        }
+      ]
+    }
+}) }}
 
 {{ licenseDetailsSummaryRows.push({
   key: {
@@ -49,27 +88,6 @@
     ] if not data.hasJunior and not data.isRenewal
   }
 }) }}
-
-{% if not data.isRenewal %}
-    {{ licenseDetailsSummaryRows.push({
-        key: {
-        text: "Date of birth"
-        },
-        value: {
-        text: data.birthDateStr
-        },
-        actions: {
-        items: [
-          {
-            href: data.uri.dateOfBirth,
-            text: "Change",
-            visuallyHiddenText: "date of birth",
-            attributes: { id: 'change-birth-date' }
-          }
-        ]
-        }
-    }) }}
-{% endif %}
 
 {{ licenseDetailsSummaryRows.push({
       key: {
@@ -130,13 +148,16 @@
         isPageHeading: true
       }
     }) %}
-        {{ govukSummaryList({ rows: licenseDetailsSummaryRows }) }}
+    {{ govukSummaryList({ 
+      classes: 'licence-summary-list',
+      rows: licenseDetailsSummaryRows 
+    }) }}
     {% endcall %}
 {% endset -%}
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-two-thirds">
         {% if backRef %}
             {{ govukBackLink({
               text: "Back",
