@@ -4,8 +4,9 @@ import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { countries } from '../../../../processors/refdata-helper.js'
 import { nextPage } from '../../../../routes/next-page.js'
+import { getPronoun } from '../../../../processors/licence-type-display.js'
 
-const validator = Joi.object({
+export const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
   street: validation.contact.createStreetValidator(Joi),
   locality: validation.contact.createLocalityValidator(Joi),
@@ -23,11 +24,18 @@ export const getCountryDropDownOptions = async () => {
   return options.filter(country => country.code !== 'GB')
 }
 
-export default pageRoute(ADDRESS_ENTRY.page, ADDRESS_ENTRY.uri, validator, nextPage, async request => {
+export const getData = async request => {
   const { addresses, searchTerms } = await request.cache().helpers.addressLookup.getCurrentPermission()
+  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
+
+  const pronoun = getPronoun(isLicenceForYou).possessive
+
   return {
+    pronoun,
     searchTerms: !addresses?.length && searchTerms ? searchTerms : null,
     countries: await getCountryDropDownOptions(),
     lookupPage: ADDRESS_LOOKUP.uri
   }
-})
+}
+
+export default pageRoute(ADDRESS_ENTRY.page, ADDRESS_ENTRY.uri, validator, nextPage, getData)
