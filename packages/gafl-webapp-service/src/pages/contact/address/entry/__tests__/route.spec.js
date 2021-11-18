@@ -5,7 +5,7 @@ import '../../../../../processors/refdata-helper.js'
 
 jest.mock('../../../../../processors/refdata-helper.js', () => ({
   countries: {
-    getAll: jest.fn(() => ([]))
+    getAll: jest.fn(() => [])
   }
 }))
 jest.mock('../../../../../routes/next-page.js', () => ({

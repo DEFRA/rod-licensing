@@ -12,9 +12,10 @@ export const getData = async request => {
 
   return {
     pronoun,
+    addresses,
+    searchTerms,
     lookupPage: ADDRESS_LOOKUP.uri,
-    entryPage: ADDRESS_ENTRY.uri,
-    addresses, searchTerms
+    entryPage: ADDRESS_ENTRY.uri
   }
 }
 
