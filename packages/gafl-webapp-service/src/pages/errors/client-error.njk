@@ -2,8 +2,6 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 
-{% block pageTitle %}A problem has occurred{% endblock %}
-
 {% set title = '' %}
 {% if clientError.statusCode === 400 %}
     {% set title = 'Bad request' %}
@@ -15,33 +13,25 @@
     {% set title = 'Page not found' %}
 {% endif %}
 
+{% block pageTitle %}Sorry, there is a problem with the service - {{title}}{% endblock %}
+
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
             {% call govukFieldset({
               legend: {
-                text: "A problem has occurred",
+                text: "Sorry, there is a problem with the service",
                 classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
                 isPageHeading: true
               }
             }) %}
-            {% if title|length %}
-                <h2 class="govuk-heading-m">{{ title }}</h2>
-            {% endif %}
-            <p class="govuk-body-m">An unexpected error occurred. Use only the buttons and links to navigate the service and do not use the back button from the payment pages.</p>
-            {% if path !== uri.agreed %}
-                {{ govukButton({
-                    attributes: { id: "try-again" },
-                    preventDoubleClick: true,
-                    name: "try-again",
-                    text: "Try again",
-                    href: uri.controller,
-                    classes: "govuk-!-margin-top-5"
-                }) }}
-            {% endif %}
-
+            <p class="govuk-body-m">
+                You can <a class="govuk-link" href="javascript:history.back()">try to get back to your application</a>.
+            </p>
+            <p class="govuk-body">
+                If that does not work, you will have to <a class="govuk-link" href="{{ uri.new }}">start again</a>. Sorry.
+            </p>
             {% endcall %}
-            <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">Start again</a></p>
      </div>
 </div>
 {% endblock %}
