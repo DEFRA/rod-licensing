@@ -18,6 +18,7 @@ export const errorHandler = async (request, h) => {
      */
     return h
       .view(CLIENT_ERROR.page, {
+        referer: request?.headers?.referer,
         clientError: request.response.output.payload,
         path: request.path,
         uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri, agreed: AGREED.uri }
