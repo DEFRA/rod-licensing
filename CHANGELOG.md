@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.0 (2021-11-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#973](https://github.com/DEFRA/rod-licensing/pull/973) Generic Notice of Service Error ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.21.0-rc.3 (2021-11-15)
 
