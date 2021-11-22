@@ -1,5 +1,5 @@
 import { errorHandler } from '../error-handler.js'
-import { CLIENT_ERROR} from '../../uri.js'
+import { CLIENT_ERROR } from '../../uri.js'
 
 const mockView = jest.fn(() => ({
   code: jest.fn()
@@ -23,9 +23,12 @@ describe('error-handler', () => {
         }
       }
       await errorHandler(request, h)
-      expect(mockView).toBeCalledWith(CLIENT_ERROR.page, expect.objectContaining({
-        referer: 'http://example.com'
-      }))
+      expect(mockView).toBeCalledWith(
+        CLIENT_ERROR.page,
+        expect.objectContaining({
+          referer: 'http://example.com'
+        })
+      )
     })
 
     it('should not pass the referer to the view if it is not present', async () => {
@@ -39,9 +42,12 @@ describe('error-handler', () => {
         }
       }
       await errorHandler(request, h)
-      expect(mockView).toBeCalledWith(CLIENT_ERROR.page, expect.not.objectContaining({
-        referer: 'http://example.com'
-      }))
+      expect(mockView).toBeCalledWith(
+        CLIENT_ERROR.page,
+        expect.not.objectContaining({
+          referer: 'http://example.com'
+        })
+      )
     })
   })
 })
