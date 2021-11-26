@@ -3,7 +3,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { isPhysical } from '../../../../processors/licence-type-display.js'
+import { isPhysical, getPronoun } from '../../../../processors/licence-type-display.js'
 import { nextPage } from '../../../../routes/next-page.js'
 
 const validator = Joi.object({
@@ -11,9 +11,14 @@ const validator = Joi.object({
   postcode: validation.contact.createUKPostcodeValidator(Joi)
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
+
+  const pronoun = getPronoun(isLicenceForYou).possessive
+
   return {
+    pronoun,
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
     isPhysical: isPhysical(permission),

@@ -1,5 +1,9 @@
-import { getFromSummary } from '../route'
+import { getFromSummary, getData } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
+import { NAME } from '../../../../uri.js'
+import '../../find-permit.js'
+
+jest.mock('../../find-permit.js')
 
 describe('licence-summary > route', () => {
   describe('getFromSummary', () => {
@@ -18,6 +22,44 @@ describe('licence-summary > route', () => {
       const request = { fromSummary: CONTACT_SUMMARY_SEEN }
       const result = await getFromSummary(request)
       expect(result).toBe(CONTACT_SUMMARY_SEEN)
+    })
+  })
+
+  describe('getData', () => {
+    const mockStatusCacheGet = jest.fn(() => ({}))
+    const mockStatusCacheSet = jest.fn()
+    const mockTransactionCacheGet = jest.fn(() => ({
+      licenceStartDate: '2021-07-01',
+      numberOfRods: '3',
+      licenceType: 'Salmon and sea trout',
+      licenceLength: '12M',
+      licensee: {
+        birthDate: '1946-01-01'
+      },
+      permit: {
+        cost: 6
+      }
+    }))
+    const mockTransactionCacheSet = jest.fn()
+
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          status: {
+            getCurrentPermission: mockStatusCacheGet,
+            setCurrentPermission: mockStatusCacheSet
+          },
+          transaction: {
+            getCurrentPermission: mockTransactionCacheGet,
+            setCurrentPermission: mockTransactionCacheSet
+          }
+        }
+      })
+    }
+
+    it('should return the name page uri', async () => {
+      const result = await getData(mockRequest)
+      expect(result.uri.name).toBe(NAME.uri)
     })
   })
 })
