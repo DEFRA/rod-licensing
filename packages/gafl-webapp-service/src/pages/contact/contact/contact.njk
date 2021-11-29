@@ -3,7 +3,7 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'How should we contact you?' %}
+{% set title = 'How should we contact the licence holder about reminders and importand changes?' if data.isPhysical else 'How should we contact you?' %}
 {% set errorMsg = 'Choose how you would like to be contacted' %}
 {% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
 {% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
@@ -138,7 +138,8 @@
 
 {% block pageContent %}
     {% if data.isPhysical %}
-        <p class="govuk-body-m">This is where we will send important updates and renewal reminders when your licence is expiring.</p>
+        <p class="govuk-body-m">This is where we will send renewal reminders when your licence is ending.</p>
+        <p class="govuk-body-m">We will also send important information like byelaw updates.</p>
     {% else %}
         {% if data.isJunior %}
             <p class="govuk-body-m">We don't provide physical cards for junior licences.</p>
