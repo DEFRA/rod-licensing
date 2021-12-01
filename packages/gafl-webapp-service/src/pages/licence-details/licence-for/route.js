@@ -10,11 +10,12 @@ export const validator = Joi.object({
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
+const licenceForKey = 'licence-for'
 const route = pageRoute(LICENCE_FOR.page, LICENCE_FOR.uri, validator, nextPage)
 const handler = route[1].handler
 route[1].handler = async (request, h) => {
   const permission = await request.cache().helpers.page.getCurrentPermission()
-  const licenceForHasChanged = permission['licence-for'].payload['licence-for'] !== request.payload['licence-for']
+  const licenceForHasChanged = permission[licenceForKey].payload[licenceForKey] !== request.payload[licenceForKey]
   if (licenceForHasChanged) {
     initialiseSession(request)
   }
