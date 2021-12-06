@@ -4,22 +4,6 @@ import { LICENCE_FOR } from '../../../../uri.js'
 describe('licence-for > update-transaction', () => {
   beforeEach(jest.clearAllMocks)
 
-  // const mockPageCacheGet = jest.fn()
-  // const mockStatusCacheSet = jest.fn()
-
-  // const mockRequest = {
-  //   cache: () => ({
-  //     helpers: {
-  //       page: {
-  //         getCurrentPermission: mockPageCacheGet
-  //       },
-  //       status: {
-  //         setCurrentPermission: mockStatusCacheSet
-  //       }
-  //     }
-  //   })
-  // }
-
   describe('default', () => {
     it('should set isLicenceForYou to true if user has selected you', async () => {
       const mockStatusCacheSet = jest.fn()
