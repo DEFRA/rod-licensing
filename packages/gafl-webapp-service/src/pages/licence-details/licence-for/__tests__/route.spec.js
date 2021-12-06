@@ -52,7 +52,7 @@ describe('licence-for > route', () => {
         beforeEach(jest.clearAllMocks)
 
         it('should call default POST handler', async () => {
-          await postHandler(getMockRequest(), {})
+          await postHandler(getMockRequest())
           expect(mockPostHandler).toHaveBeenCalled()
         })
 
@@ -66,7 +66,7 @@ describe('licence-for > route', () => {
         it('should return value of default POST handler', async () => {
           const retVal = Symbol('Prince')
           mockPostHandler.mockReturnValueOnce(retVal)
-          expect(await postHandler(getMockRequest(), {})).toBe(retVal)
+          expect(await postHandler(getMockRequest())).toBe(retVal)
         })
 
         it.each([
@@ -75,7 +75,7 @@ describe('licence-for > route', () => {
         ])('should clear personal information from session if licence for has changed from %s to %s', async (licenceForInPayload, licenceForInCache) => {
           const setPageCache = jest.fn()
           const mockRequest = getMockRequest({ licenceForInPayload, licenceForInCache, setPageCache })
-          await postHandler(mockRequest, {})
+          await postHandler(mockRequest)
           // set function should have been called with an object, containing a permissions array
           const [[newPageCache]] = setPageCache.mock.calls
           const pages = Object.keys(newPageCache.permissions[0])
@@ -90,7 +90,7 @@ describe('licence-for > route', () => {
         ])('should omit call to new session handler if licence for hasn\'t changed', async (licenceForInPayload, licenceForInCache) => {
           const setPageCache = jest.fn()
           const mockRequest = getMockRequest({ licenceForInPayload, licenceForInCache, setPageCache })
-          await postHandler(mockRequest, {})
+          await postHandler(mockRequest)
           expect(setPageCache).not.toHaveBeenCalled()
         })
 
@@ -98,7 +98,7 @@ describe('licence-for > route', () => {
           const setPageCache = jest.fn()
           const getCurrentPermission = async () => undefined
           const mockRequest = getMockRequest({ getCurrentPermission, setPageCache })
-          await postHandler(mockRequest, {})
+          await postHandler(mockRequest)
           expect(setPageCache).not.toHaveBeenCalled()
         })
 
@@ -122,7 +122,7 @@ describe('licence-for > route', () => {
           const currentPermissionIdx = 2
           const mockRequest = getMockRequest({ additionalPermissions, currentPermissionIdx, licenceForInPayload, licenceForInCache, setPageCache })
 
-          await postHandler(mockRequest, {})
+          await postHandler(mockRequest)
 
           const [[newPageCache]] = setPageCache.mock.calls
           const pages = Object.keys(newPageCache.permissions[currentPermissionIdx])
@@ -157,7 +157,7 @@ describe('licence-for > route', () => {
         ]))
         const { default: route } = require('../route.js')
         const postHandler = route[2].handler
-        await postHandler(getMockRequest(), {})
+        await postHandler(getMockRequest())
         expect(postHandler).not.toBe(mockPostHandler)
         expect(mockPostHandler).toHaveBeenCalled()
       })
