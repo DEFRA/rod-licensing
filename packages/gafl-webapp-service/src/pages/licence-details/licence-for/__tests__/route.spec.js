@@ -52,8 +52,10 @@ describe('licence-for > route', () => {
         beforeEach(jest.clearAllMocks)
 
         it('should call default POST handler', async () => {
-          await postHandler(getMockRequest())
-          expect(mockPostHandler).toHaveBeenCalled()
+          const request = getMockRequest()
+          const responseToolkit = Symbol('responseToolkit')
+          await postHandler(request, responseToolkit)
+          expect(mockPostHandler).toHaveBeenCalledWith(request, responseToolkit)
         })
 
         it('should call default POST handler with request and response toolkit', async () => {
