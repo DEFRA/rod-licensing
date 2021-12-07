@@ -5,7 +5,7 @@ const setIsLicenceForYou = async request => {
   const isLicenceForYou = (payload[LICENCE_FOR.page] === 'you')
   await request.cache().helpers.status.setCurrentPermission({ isLicenceForYou })
 }
-// make pipelines run
+
 const clearPageCacheIfLicenceForHasChanged = async request => {
   const permission = await request.cache().helpers.page.getCurrentPermission(LICENCE_FOR.page)
   const { currentPermissionIdx } = await request.cache().helpers.status.get()
