@@ -9,7 +9,7 @@ import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // We need to have set the licence length, dob and start date here to determining the contact
@@ -25,8 +25,10 @@ const getData = async request => {
   if (!permission.licenceLength) {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
+  const cachePermission = await request.cache().helpers.status.getCurrentPermission()
 
   return {
+    isLicenceForYou: cachePermission.isLicenceForYou,
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     isJunior: hasJunior(permission),
@@ -34,7 +36,7 @@ const getData = async request => {
   }
 }
 
-const validator = Joi.object({
+export const validator = Joi.object({
   'how-contacted': Joi.string()
     .valid('email', 'text', 'none')
     .required(),
