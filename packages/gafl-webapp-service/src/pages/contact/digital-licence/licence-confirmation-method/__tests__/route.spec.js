@@ -1,0 +1,73 @@
+import { CONTACT } from '../../../../../uri.js'
+import { getData } from '../route.js'
+import GetDataRedirect from '../../../../../handlers/get-data-redirect.js'
+
+describe('licence-confirmation-method > route', () => {
+  describe('getData', () => {
+    const createRequestMock = (options = {}) => ({
+      cache: jest.fn(() => ({
+        helpers: {
+          transaction: {
+            getCurrentPermission: jest.fn(() => ({
+              licenceLength: options.licenceLength || '12M',
+              licensee: {
+                firstName: 'Lando',
+                lastName: 'Norris'
+              }
+            }))
+          },
+          status: { getCurrentPermission: jest.fn(() => ({isLicenceForYou: options.isLicenceForYou || false })) }
+        }
+      })),
+      query: options.query || {}
+    })
+
+    beforeEach(jest.clearAllMocks)
+
+    it('if licence is physical, redirects to contact page', async () => {
+      const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
+      const func = async () => await getData(createRequestMock({ licenceLength: '1D' }))
+      await expect(func).rejects.toThrow(getDataRedirectError)
+    })
+
+    it('returns the expected data', async () => {
+      expect(await getData(createRequestMock())).toMatchSnapshot()
+    })
+
+    describe('if change query is undefined,', () => {
+      let result
+      beforeEach(async () => {
+        result = await getData(createRequestMock())
+      })
+
+      it("doesn't return changeEmail", async () => {
+        expect(result.changeEmail).toBeUndefined()
+      })
+
+      it("doesn't return changeMobile", async () => {
+        expect(result.changeMobile).toBeUndefined()
+      })
+    })
+
+    it('if change query param is "email", returns changeEmail set to true', async () => {
+      const result = await getData(createRequestMock({ query: { change: 'email' } }))
+      expect(result.changeEmail).toBe(true)
+    })
+
+    it('if change query param is "mobile", returns changeMobile set to true', async () => {
+      const result = await getData(createRequestMock({ query: { change: 'mobile' } }))
+      expect(result.changeMobile).toBe(true)
+    })
+
+    it('should return isLicenceForYou as true, if isLicenceForYou is true on the status cache', async () => {
+      const result = await getData(createRequestMock({ isLicenceForYou: true }))
+      expect(result.isLicenceForYou).toBeTruthy()
+    })
+
+    it('should return isLicenceForYou as false, if isLicenceForYou is false on the status cache', async () => {
+      const b = createRequestMock({ isLicenceForYou: false });
+      const result = await getData(b)
+      expect(result.isLicenceForYou).toBeFalsy()
+    })
+  })
+})
