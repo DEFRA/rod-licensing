@@ -16,7 +16,7 @@ describe('licence-confirmation-method > route', () => {
               }
             }))
           },
-          status: { getCurrentPermission: jest.fn(() => ({isLicenceForYou: options.isLicenceForYou || false })) }
+          status: { getCurrentPermission: jest.fn(() => ({ isLicenceForYou: options.isLicenceForYou || false })) }
         }
       })),
       query: options.query || {}
@@ -65,7 +65,7 @@ describe('licence-confirmation-method > route', () => {
     })
 
     it('should return isLicenceForYou as false, if isLicenceForYou is false on the status cache', async () => {
-      const b = createRequestMock({ isLicenceForYou: false });
+      const b = createRequestMock({ isLicenceForYou: false })
       const result = await getData(b)
       expect(result.isLicenceForYou).toBeFalsy()
     })

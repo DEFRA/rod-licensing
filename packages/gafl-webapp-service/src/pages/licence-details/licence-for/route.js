@@ -16,7 +16,7 @@ postRoute.handler = async (request, h) => {
   const { currentPermissionIdx } = await request.cache().helpers.status.get()
   const pageCache = Object.assign({}, await request.cache().helpers.page.get())
   const permission = await request.cache().helpers.page.getCurrentPermission(LICENCE_FOR.page)
-  const licenceForHasChanged = (permission !== undefined) && permission.payload[LICENCE_FOR.page] !== request.payload[LICENCE_FOR.page]
+  const licenceForHasChanged = permission !== undefined && permission.payload[LICENCE_FOR.page] !== request.payload[LICENCE_FOR.page]
   if (licenceForHasChanged) {
     pageCache.permissions[currentPermissionIdx] = {
       [LICENCE_FOR.page]: permission
