@@ -74,29 +74,32 @@ describe('licence-for > route', () => {
         it.each([
           ['you', 'someone-else'],
           ['someone-else', 'you']
-        ])('should clear personal information from session if licence for has changed from %s to %s', async (licenceForInPayload, licenceForInCache) => {
-          const setPageCache = jest.fn()
-          const mockRequest = getMockRequest({ licenceForInPayload, licenceForInCache, setPageCache })
-          await postHandler(mockRequest)
-          // set function should have been called with an object, containing a permissions array
-          const [[newPageCache]] = setPageCache.mock.calls
-          const pages = Object.keys(newPageCache.permissions[0])
-          expect(pages.length).toBe(1)
-          expect(pages[0]).toBe(LICENCE_FOR.page)
-          expect(newPageCache.permissions[0]).toMatchSnapshot()
-        })
+        ])(
+          'should clear personal information from session if licence for has changed from %s to %s',
+          async (licenceForInPayload, licenceForInCache) => {
+            const setPageCache = jest.fn()
+            const mockRequest = getMockRequest({ licenceForInPayload, licenceForInCache, setPageCache })
+            await postHandler(mockRequest)
+            // set function should have been called with an object, containing a permissions array
+            const [[newPageCache]] = setPageCache.mock.calls
+            const pages = Object.keys(newPageCache.permissions[0])
+            expect(pages.length).toBe(1)
+            expect(pages[0]).toBe(LICENCE_FOR.page)
+            expect(newPageCache.permissions[0]).toMatchSnapshot()
+          }
+        )
 
         it.each([
           ['you', 'you'],
           ['someone-else', 'someone-else']
-        ])('should omit call to new session handler if licence for hasn\'t changed', async (licenceForInPayload, licenceForInCache) => {
+        ])("should omit call to new session handler if licence for hasn't changed", async (licenceForInPayload, licenceForInCache) => {
           const setPageCache = jest.fn()
           const mockRequest = getMockRequest({ licenceForInPayload, licenceForInCache, setPageCache })
           await postHandler(mockRequest)
           expect(setPageCache).not.toHaveBeenCalled()
         })
 
-        it('should omit call to new session handler if cache permission isn\'t set', async () => {
+        it("should omit call to new session handler if cache permission isn't set", async () => {
           const setPageCache = jest.fn()
           const getCurrentPermission = async () => undefined
           const mockRequest = getMockRequest({ getCurrentPermission, setPageCache })
@@ -107,31 +110,40 @@ describe('licence-for > route', () => {
         it.each([
           ['you', 'someone-else'],
           ['someone-else', 'you']
-        ])('should clear personal information from _current_ permission if licence for has changed from %s to %s', async (licenceForInPayload, licenceForInCache) => {
-          const setPageCache = jest.fn()
-          const additionalPermissions = [
-            getMockPermissionPageCache(),
-            getMockPermissionPageCache({
-              name: {
-                payload: {
-                  'first-name': 'Fisher',
-                  'last-name': 'Two',
-                  continue: ''
+        ])(
+          'should clear personal information from _current_ permission if licence for has changed from %s to %s',
+          async (licenceForInPayload, licenceForInCache) => {
+            const setPageCache = jest.fn()
+            const additionalPermissions = [
+              getMockPermissionPageCache(),
+              getMockPermissionPageCache({
+                name: {
+                  payload: {
+                    'first-name': 'Fisher',
+                    'last-name': 'Two',
+                    continue: ''
+                  }
                 }
-              }
+              })
+            ]
+            const currentPermissionIdx = 2
+            const mockRequest = getMockRequest({
+              additionalPermissions,
+              currentPermissionIdx,
+              licenceForInPayload,
+              licenceForInCache,
+              setPageCache
             })
-          ]
-          const currentPermissionIdx = 2
-          const mockRequest = getMockRequest({ additionalPermissions, currentPermissionIdx, licenceForInPayload, licenceForInCache, setPageCache })
 
-          await postHandler(mockRequest)
+            await postHandler(mockRequest)
 
-          const [[newPageCache]] = setPageCache.mock.calls
-          const pages = Object.keys(newPageCache.permissions[currentPermissionIdx])
-          expect(pages.length).toBe(1)
-          expect(pages[0]).toBe(LICENCE_FOR.page)
-          expect(newPageCache.permissions[currentPermissionIdx]).toMatchSnapshot()
-        })
+            const [[newPageCache]] = setPageCache.mock.calls
+            const pages = Object.keys(newPageCache.permissions[currentPermissionIdx])
+            expect(pages.length).toBe(1)
+            expect(pages[0]).toBe(LICENCE_FOR.page)
+            expect(newPageCache.permissions[currentPermissionIdx]).toMatchSnapshot()
+          }
+        )
       })
     })
   })
@@ -139,24 +151,26 @@ describe('licence-for > route', () => {
   describe('Route test sandbox', () => {
     jest.isolateModules(() => {
       it('should attach the handler to the correct route', async () => {
-        jest.mock('../../../../routes/page-route.js', () => jest.fn(() => [
-          {
-            method: 'PATCH',
-            handler: () => {}
-          },
-          {
-            method: 'DELETE',
-            handler: () => {}
-          },
-          {
-            method: 'POST',
-            handler: mockPostHandler
-          },
-          {
-            method: 'GET',
-            handler: () => {}
-          }
-        ]))
+        jest.mock('../../../../routes/page-route.js', () =>
+          jest.fn(() => [
+            {
+              method: 'PATCH',
+              handler: () => {}
+            },
+            {
+              method: 'DELETE',
+              handler: () => {}
+            },
+            {
+              method: 'POST',
+              handler: mockPostHandler
+            },
+            {
+              method: 'GET',
+              handler: () => {}
+            }
+          ])
+        )
         const { default: route } = require('../route.js')
         const postHandler = route[2].handler
         await postHandler(getMockRequest())
@@ -166,7 +180,7 @@ describe('licence-for > route', () => {
     })
   })
 
-  const getMockRequest = (spec) => {
+  const getMockRequest = spec => {
     const {
       additionalPermissions,
       currentPermissionIdx,
@@ -210,10 +224,7 @@ describe('licence-for > route', () => {
           },
           page: {
             get: async () => ({
-              permissions: [
-                ...additionalPermissions,
-                samplePermissionPageCache
-              ]
+              permissions: [...additionalPermissions, samplePermissionPageCache]
             }),
             set,
             getCurrentPermission: getCurrentPermission || (async () => samplePermissionPageCache['licence-for'])
@@ -261,9 +272,7 @@ describe('licence-for > route', () => {
         continue: ''
       }
     },
-    'licence-start-time': {
-
-    },
+    'licence-start-time': {},
     'licence-type': {
       payload: {
         'licence-type': 'trout-and-coarse-2-rod',
