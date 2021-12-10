@@ -1,7 +1,6 @@
 import { getData, validator } from '../route'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
-import { CONTACT } from '../../../../uri.js'
 
 jest.mock('../../../../routes/next-page.js', () => ({
   nextPage: jest.fn()
