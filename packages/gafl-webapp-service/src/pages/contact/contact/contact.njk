@@ -3,7 +3,7 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'How should we contact the licence holder about reminders and important changes?' if data.isPhysical else 'How should we contact you?' %}
+{% set title = 'How should we contact you with reminders and important changes?' if data.isLicenceForYou else 'How should we contact the licence holder about reminders and important changes?' %}
 {% set errorMsg = 'Choose how you would like to be contacted' %}
 {% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
 {% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
