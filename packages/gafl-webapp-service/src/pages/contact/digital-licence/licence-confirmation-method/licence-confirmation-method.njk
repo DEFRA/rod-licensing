@@ -102,8 +102,8 @@
 ] %}
 
 {% if data.licensee.postalFulfilment %}
-    {% set title = 'How do you want your fishing licence confirmation?' %}
-    {% set bodyText = 'This is where we will send confirmation of your fishing licence' %}
+    {% set title = 'How do you want your fishing licence confirmation?' if data.isLicenceForYou else 'How should we send the fishing licence confirmation?' %}
+    {% set bodyText = 'This is where we will send confirmation of the fishing licence' %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "none",
@@ -112,9 +112,9 @@
         }), itemsArray) 
     %}
 {% else %}
-    {% set title = 'Where should we send your fishing licence?' %}
+    {% set title = 'Where should we send your fishing licence?' if data.isLicenceForYou else 'Where should we send the fishing licence?' %}
     {% set bodyText = 'This is where we will send the licence after payment.' %}
-    {% set hintText = 'You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.' %}
+    {% set hintText = 'You will receive your licence information by email or text message only. You will not receive a licence card.' if data.isLicenceForYou else 'Licence information will be sent by email or text message only. We will not send a licence card.' %}
 {% endif %}
 
 {% block pageContent %}
