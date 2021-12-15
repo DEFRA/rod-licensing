@@ -43,12 +43,23 @@ describe('name > route', () => {
     licenceLength: 'licenceLength',
     licenceStartDate: 'licenceStartDate'
   }))
+  }
+}))
+
+describe('name > route', () => {
+  const mockStatusCacheGet = jest.fn()
 
   const mockRequest = {
     cache: () => ({
       helpers: {
         transaction: {
-          getCurrentPermission: mockTransactionCacheGet
+          getCurrentPermission: async () => ({
+            licensee: {
+              birthDate: 'birthDate'
+            },
+            licenceLength: 'licenceLength',
+            licenceStartDate: 'licenceStartDate'
+          })
         },
         status: {
           getCurrentPermission: mockStatusCacheGet
