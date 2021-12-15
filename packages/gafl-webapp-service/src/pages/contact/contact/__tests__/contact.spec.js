@@ -1,5 +1,6 @@
 import {
   CONTACT,
+  LICENCE_FOR,
   LICENCE_LENGTH,
   CONTROLLER,
   DATE_OF_BIRTH,
@@ -152,16 +153,32 @@ describe('The contact preferences page', () => {
       expect(JSON.parse(payload).permissions[0].licensee.mobilePhone).toEqual(mobileNumbero)
     })
 
-    it('controller redirects to the newsletter page if an email is given', async () => {
+    it('controller redirects to the newsletter page if an email is given and licence is for you', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(NEWSLETTER.uri)
     })
 
-    it('controller redirects to the newsletter page if a text number is given', async () => {
+    it('controller redirects to the contact-summary page if an email is given and licence is for someone else', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'someone-else' })
+      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
+
+    it('controller redirects to the newsletter page if a text number is given and licence is for you', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(NEWSLETTER.uri)
+    })
+
+    it('controller redirects to the contact-summary page if an text number is given and licence is for someone else', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'someone-else' })
+      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
     })
   })
 

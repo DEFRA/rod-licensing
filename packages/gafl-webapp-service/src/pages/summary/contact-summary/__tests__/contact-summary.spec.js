@@ -77,15 +77,6 @@ describe('The contact summary page', () => {
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(CONTACT.uri)
     })
-
-    it('redirects to the newsletter page if it has not been visited', async () => {
-      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
-      await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
-      await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'graham@gmail.com' })
-      const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-      expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(NEWSLETTER.uri)
-    })
   })
 
   describe('when purchasing a 12 month adult licence', () => {
