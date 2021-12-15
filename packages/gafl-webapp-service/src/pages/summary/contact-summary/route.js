@@ -32,7 +32,6 @@ export const checkNavigation = (status, permission) => {
     if (!status[CONTACT.page]) {
       throw new GetDataRedirect(CONTACT.uri)
     }
-
   }
 
   if (isPhysical(permission)) {
