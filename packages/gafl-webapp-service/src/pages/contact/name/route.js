@@ -3,7 +3,6 @@ import Joi from 'joi'
 import { NAME } from '../../../uri.js'
 import { validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'
-import { getPronoun } from '../../../processors/licence-type-display.js'
 
 const validator = Joi.object({
   'first-name': validation.contact.createFirstNameValidator(Joi),
