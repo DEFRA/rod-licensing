@@ -32,3 +32,6 @@ export const licenceTypeAndLengthDisplay = permission => {
 }
 
 export const isPhysical = permission => permission.licenceLength === '12M' && !concessionHelper.hasJunior(permission)
+
+export const getPronoun = isLicenceForYou =>
+  isLicenceForYou ? { possessive: 'your', personal: 'you' } : { possessive: 'their', personal: 'they' }
