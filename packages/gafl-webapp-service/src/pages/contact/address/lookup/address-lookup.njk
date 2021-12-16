@@ -10,11 +10,11 @@
 
 {% set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
+            'string.empty': { ref: '#premises', text: 'Enter a building number or name' },
             'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'Enter the postcode' },
+            'string.empty': { ref: '#postcode', text: 'Enter a postcode' },
             'string.pattern.base': { ref: '#postcode', text: 'Enter a UK postcode. If the address is outside the UK, enter the address manually.' }
         }
     }
@@ -55,7 +55,7 @@
                   value: payload['premises'],
                   classes: "govuk-input--width-20",
                   attributes: { maxlength: 50 },
-                  errorMessage: { text: 'Enter the building number or name' } if error['premises']
+                  errorMessage: { text: 'Enter a building number or name' } if error['premises']
                 }) }}
 
                 {{ govukInput({
@@ -69,7 +69,7 @@
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-20",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: 'Enter the postcode' } if error['postcode']
+                  errorMessage: { text: 'Enter a postcode' } if error['postcode']
                 }) }}
 
                 {{ govukButton({
