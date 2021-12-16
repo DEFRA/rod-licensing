@@ -1,9 +1,6 @@
 import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
-import {
-  LICENCE_FULFILMENT,
-  LICENCE_CONFIRMATION_METHOD
-} from '../../../../uri.js'
+import { LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../../../uri.js'
 
 const address = {
   firstName: 'Fester',
@@ -145,7 +142,7 @@ describe('contact-summary > route', () => {
         expect(summaryTable).toMatchSnapshot()
       })
     })
-    
+
     it('should have the newsletter row if isLicenceForYou is true', () => {
       const permission = {
         licenceLength: '1D',
@@ -167,7 +164,6 @@ describe('contact-summary > route', () => {
       const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', false)
       expect(summaryTable).toMatchSnapshot()
     })
-    
   })
 
   describe('checkNavigation', () => {

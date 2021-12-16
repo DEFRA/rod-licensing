@@ -60,17 +60,24 @@ const getData = async request => {
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
 export const getLicenseeDetailsSummaryRows = (permission, countryName, isLicenceForYou) => {
-  return [
+  const licenseeSummaryArray = [
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
-    ...getContactDetails(permission),
-    ... isLicenceForYou ? [getRow(
-      'Newsletter',
-      permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
-      NEWSLETTER.uri,
-      'newsletter',
-      'change-newsletter'
-    )] : []
+    ...getContactDetails(permission)
   ]
+
+  if (isLicenceForYou) {
+    licenseeSummaryArray.push(
+      getRow(
+        'Newsletter',
+        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
+        NEWSLETTER.uri,
+        'newsletter',
+        'change-newsletter'
+      )
+    )
+  }
+
+  return licenseeSummaryArray
 }
 
 const CONTACT_TEXT_DEFAULT = {
