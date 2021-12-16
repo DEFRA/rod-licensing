@@ -4,9 +4,9 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = 'How should we contact you with reminders and important changes?' if data.isLicenceForYou else 'How should we contact the licence holder about reminders and important changes?' %}
-{% set errorMsg = 'Choose how you would like to be contacted' %}
-{% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
-{% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
+{% set errorMsg = 'Choose how we should contact the licence holder' %}
+{% set emailError = 'Enter your email address in the correct format' %}
+{% set mobileError = "Enter a UK mobile phone number" %}
 
 {% set errorMap = {
         'how-contacted': {
@@ -35,7 +35,7 @@
           type: "email",
           classes: "govuk-!-width-two-thirds",
           autocomplete: "email",
-          errorMessage: { text: 'Enter your email address in the correct format' } if error['email'],
+          errorMessage: { text: 'Enter an email address in the correct format' } if error['email'],
           label: {
             text: "Email address"
           },
@@ -65,7 +65,7 @@
           type: "tel",
           autocomplete: "tel",
           classes: "govuk-!-width-one-third",
-          errorMessage: { text: 'Enter your UK mobile phone number' } if error['text'],
+          errorMessage: { text: 'Enter a UK mobile phone number' } if error['text'],
           label: {
             text: "UK mobile phone number"
           },
