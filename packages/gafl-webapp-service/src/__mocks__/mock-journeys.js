@@ -70,6 +70,7 @@ export const ADULT_FULL_1_DAY_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -77,7 +78,6 @@ export const ADULT_FULL_1_DAY_LICENCE = {
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
@@ -134,6 +134,7 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
@@ -145,7 +146,6 @@ export const ADULT_DISABLED_12_MONTH_LICENCE = {
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
@@ -201,6 +201,7 @@ export const SENIOR_12_MONTH_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -208,7 +209,6 @@ export const SENIOR_12_MONTH_LICENCE = {
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
@@ -264,13 +264,13 @@ export const JUNIOR_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
@@ -327,6 +327,7 @@ export const JUNIOR_DISABLED_LICENCE = {
     await injectWithCookies('GET', CONTROLLER.uri)
 
     // Set up the licence details
+    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
@@ -337,7 +338,6 @@ export const JUNIOR_DISABLED_LICENCE = {
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
 
     // Set up the contact details
-    await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })

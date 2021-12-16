@@ -22,7 +22,11 @@ import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-consta
 import { nextPage } from '../../../routes/next-page.js'
 
 // Extracted to keep sonar happy
-const checkNavigation = permission => {
+export const checkNavigation = permission => {
+  if (!permission.licensee.firstName || !permission.licensee.lastName) {
+    throw new GetDataRedirect(NAME.uri)
+  }
+
   if (!permission.licensee.birthDate) {
     throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }

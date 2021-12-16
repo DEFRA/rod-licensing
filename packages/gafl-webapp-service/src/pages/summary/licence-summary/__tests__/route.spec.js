@@ -1,6 +1,7 @@
-import { getFromSummary, getData } from '../route'
+import { getFromSummary, getData, checkNavigation } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
-import { NAME } from '../../../../uri.js'
+import { NAME, CONTACT } from '../../../../uri.js'
+import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 
 jest.mock('../../find-permit.js')
@@ -25,6 +26,21 @@ describe('licence-summary > route', () => {
     })
   })
 
+  describe('checkNavigation', () => {
+    const checkNavigationRedirectError = new GetDataRedirect(CONTACT.uri)
+    it('should return a redirect error if firstName is not included on the licensee', () => {
+      const permission = { licensee: {} }
+      const func = () => checkNavigation(permission)
+      expect(func).toThrow(checkNavigationRedirectError)
+    })
+
+    it('should return a redirect error if lastName is not included on the licensee', () => {
+      const permission = { licensee: { firstName: 'John' } }
+      const func = () => checkNavigation(permission)
+      expect(func).toThrow(checkNavigationRedirectError)
+    })
+  })
+
   describe('getData', () => {
     const mockStatusCacheGet = jest.fn(() => ({}))
     const mockStatusCacheSet = jest.fn()
@@ -34,6 +50,8 @@ describe('licence-summary > route', () => {
       licenceType: 'Salmon and sea trout',
       licenceLength: '12M',
       licensee: {
+        firstName: 'Graham',
+        lastName: 'Willis',
         birthDate: '1946-01-01'
       },
       permit: {
