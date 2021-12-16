@@ -8,7 +8,7 @@
 {%
     set errorMap = {
         'licence-type': {
-            'any.required': { ref: '#licence-type', text: 'Choose which type of fishing licence ' + data.pronoun.personal + ' want' }
+            'any.required': { ref: '#licence-type', text: 'Choose one of the fishing licence types' }
         }
     }
 %}
@@ -77,7 +77,7 @@
         idPrefix: "licence-type",
         name: "licence-type",
         items: items,
-        errorMessage: { text: 'Choose which type of fishing licence ' + data.pronoun.personal + ' want' } if error
+        errorMessage: { text: 'Choose one of the fishing licence types' } if error
     }) }}
 {% endblock %}
 
