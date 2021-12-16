@@ -145,6 +145,29 @@ describe('contact-summary > route', () => {
         expect(summaryTable).toMatchSnapshot()
       })
     })
+    
+    it('should have the newsletter row if isLicenceForYou is true', () => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...address
+        }
+      }
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', true)
+      expect(summaryTable).toMatchSnapshot()
+    })
+
+    it('should not have the newsletter row if isLicenceForYou is false', () => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...address
+        }
+      }
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', false)
+      expect(summaryTable).toMatchSnapshot()
+    })
+    
   })
 
   describe('checkNavigation', () => {

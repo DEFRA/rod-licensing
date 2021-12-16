@@ -9,7 +9,6 @@ import { nextPage } from '../../../routes/next-page.js'
 import {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
-  NAME,
   ADDRESS_ENTRY,
   ADDRESS_SELECT,
   ADDRESS_LOOKUP,
@@ -21,10 +20,6 @@ import {
 
 export const checkNavigation = (status, permission) => {
   if (!status.renewal) {
-    if (!status[NAME.page]) {
-      throw new GetDataRedirect(NAME.uri)
-    }
-
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
     }
@@ -55,7 +50,7 @@ const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
-    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, status.isLicenceForYou),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
     }
@@ -64,18 +59,17 @@ const getData = async request => {
 
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
-export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
+export const getLicenseeDetailsSummaryRows = (permission, countryName, isLicenceForYou) => {
   return [
-    getRow('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`, NAME.uri, 'name', 'change-name'),
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
     ...getContactDetails(permission),
-    getRow(
+    ... isLicenceForYou ? [getRow(
       'Newsletter',
       permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
       NEWSLETTER.uri,
       'newsletter',
       'change-newsletter'
-    )
+    )] : []
   ]
 }
 
