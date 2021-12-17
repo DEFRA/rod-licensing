@@ -1,6 +1,6 @@
 import { getFromSummary, getData } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
-import { NAME, CONTACT } from '../../../../uri.js'
+import { NAME } from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 
@@ -80,7 +80,6 @@ describe('licence-summary > route', () => {
       const result = await getData(mockRequest)
       expect(result.uri.name).toBe(NAME.uri)
     })
-
 
     it('should return a redirect error if firstName is not included on the licensee', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: {} }))
