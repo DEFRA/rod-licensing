@@ -57,21 +57,13 @@ describe('The contact summary page', () => {
       await injectWithCookies('GET', CONTROLLER.uri)
     })
 
-    it('redirects to the name page if it has not been visited', async () => {
-      const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-      expect(data.statusCode).toBe(302)
-      expect(data.headers.location).toBe(NAME.uri)
-    })
-
     it('redirects to the address lookup page if the address entry or address select page has not been visited', async () => {
-      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
     })
 
     it('redirects to the contact page if it has not been visited', async () => {
-      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)

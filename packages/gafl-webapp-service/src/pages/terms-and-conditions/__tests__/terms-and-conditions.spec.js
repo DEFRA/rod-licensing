@@ -43,13 +43,15 @@ const goodAddress = {
 mockSalesApi()
 
 describe('The terms and conditions page', () => {
+  beforeEach(jest.clearAllMocks)
+
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
     const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
   })
 
-  it('redirects to the contact summary page if the contact name has not been set', async () => {
+  it('redirects to the contact summary page if the contact page has not been visited', async () => {
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -69,6 +71,13 @@ describe('The terms and conditions page', () => {
 
   it('responds with the terms and conditions page if all data is provided', async () => {
     await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+    await injectWithCookies('POST', LICENCE_SUMMARY.uri)
+
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
     await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no', 'email-entry': 'no' })
