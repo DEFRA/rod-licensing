@@ -4,7 +4,7 @@
 {% from "radios/macro.njk" import govukRadios %}
 
 {% set title = 'How long do you want your licence for?' if data.isLicenceForYou else 'How long do they want the licence for?' %}
-{% set errorMsg = 'Choose how long you want your licence for' if data.isLicenceForYou else 'Choose how long they want the licence for' %}
+{% set errorMsg = 'Choose the length of this licence' %}
 
 {%
     set errorMap = {

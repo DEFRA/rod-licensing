@@ -6,9 +6,9 @@
 {%
     set errorMap = {
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: 'Enter ' + data.pronoun + ' date of birth and include a day, month and year' },
-            'date.max': { ref: '#date-of-birth-day', text: data.pronoun | capitalize +' date of birth must be in the past' },
-            'date.min': { ref: '#date-of-birth-day', text: 'Enter ' + data.pronoun +' date of birth and include a day, month and year' }
+            'date.format': { ref: '#date-of-birth-day', text: "Enter the licence holder's date of birth and include a day, month and year" },
+            'date.max': { ref: '#date-of-birth-day', text: 'The date of birth must be in the past' },
+            'date.min': { ref: '#date-of-birth-day', text: 'Enter the date of birth and include a day, month and year' }
         }
     }
 %}
@@ -41,7 +41,7 @@
       id: "date-of-birth",
       namePrefix: "date-of-birth",
       items: dateInputItems,
-      errorMessage: { text: 'Enter ' + data.pronoun + ' date of birth' } if error,
+      errorMessage: { text: 'Enter the date of birth' } if error,
       hint: {
         text: "For example, 23 11 1979"
       }

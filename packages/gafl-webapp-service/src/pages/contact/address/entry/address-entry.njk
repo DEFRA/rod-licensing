@@ -20,19 +20,19 @@
 {%
     set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter the building number or name' },
+            'string.empty': { ref: '#premises', text: 'Enter a building number or name' },
             'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'Enter the postcode' },
+            'string.empty': { ref: '#postcode', text: 'Enter a postcode' },
             'string.pattern.base': { ref: '#postcode', text: 'The postcode doesn\'t look right. Check and enter again' }
         },
         'town': {
-            'string.empty': { ref: '#town', text: 'Enter the town or city' },
+            'string.empty': { ref: '#town', text: 'Enter a town or city' },
             'string.max': { ref: '#town', text: 'The town or city must be less than 50 characters long' }
         },
         'country': {
-            'string.empty': { ref: '#country', text: 'Choose the country' }
+            'string.empty': { ref: '#country', text: 'Choose a country' }
         }
     }
 %}
@@ -57,7 +57,7 @@
       value: payload['premises'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
-      errorMessage: { text: 'Enter the building number or name' } if error['premises']
+      errorMessage: { text: 'Enter a building number or name' } if error['premises']
     }) }}
 
     {{ govukInput({
@@ -93,7 +93,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
       autocomplete: 'address-level1',
-      errorMessage: { text: 'Enter the town or city' } if error['town']
+      errorMessage: { text: 'Enter a town or city' } if error['town']
     }) }}
 
     {{ govukInput({
@@ -106,7 +106,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 10 },
       autocomplete: 'postal-code',
-      errorMessage: { text: 'Enter the postcode' } if error['postcode']
+      errorMessage: { text: 'Enter a postcode' } if error['postcode']
     }) }}
 
     {{ govukSelect({
@@ -116,7 +116,7 @@
         text: "Country"
       },
       items: countries,
-      errorMessage: { text: 'Select the country' } if error['country-code']
+      errorMessage: { text: 'Select a country' } if error['country-code']
     }) }}
 
     <p class="govuk-body-m"><a class="govuk-link" href="{{ data.lookupPage }}">Find the address</a></p>

@@ -12,7 +12,7 @@
 {%
     set errorMap = {
         'licence-start-time': {
-            'any.required': { ref: '#licence-start-time-am', text: 'Choose the time you want the licence to start on ' + data.startDateStr }
+            'any.required': { ref: '#licence-start-time-am', text: 'Choose the time for the licence to start on ' + data.startDateStr }
         }
     }
 %}
@@ -74,7 +74,7 @@
                             idPrefix: "licence-start-time-am",
                             name: "licence-start-time",
                             items: am,
-                            errorMessage: { text: 'Choose the time you would like your licence to start' } if error
+                            errorMessage: { text: 'Choose the time for the licence to start' } if error
                         }) }}
                     </div>
 
