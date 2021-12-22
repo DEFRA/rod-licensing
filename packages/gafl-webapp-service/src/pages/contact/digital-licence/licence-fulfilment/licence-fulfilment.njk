@@ -1,7 +1,7 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = "Do you want to go paperless?" %}
+{% set title = "Do you want to go paperless?" if data.isLicenceForYou else "Do they want to go paperless?"%}
 
 {% set errorMsg = 'Choose if you want this licence to be paperless' %}
 
