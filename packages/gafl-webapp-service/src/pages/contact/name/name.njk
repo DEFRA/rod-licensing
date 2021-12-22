@@ -1,46 +1,46 @@
 {% extends "standard-form.njk" %}
 {% from "input/macro.njk" import govukInput %}
 
-{% set title = 'What is your name?' if data.isLicenceForYou else 'What is the person\'s name?' %}
+{% set title = mssgs.name_title_you if data.isLicenceForYou else mssgs.name_title_other %}
 
 {% set errorMap = {
         'first-name': {
-            'string.empty': { ref: '#first-name', text: 'Enter the licence holder’s first name'},
-            'string.min': { ref: '#first-name', text: 'The first name must contain at least 2 letters' },
-            'string.max': { ref: '#first-name', text: 'The first name must not be longer than 100 letters' },
-            'string.forbidden': { ref: '#first-name', text: 'The first name must only contain letters' }
+            'string.empty': { ref: '#first-name', text: mssgs.name_first_empty_error },
+            'string.min': { ref: '#first-name', text: mssgs.name_first_min_error },
+            'string.max': { ref: '#first-name', text: mssgs.name_first_max_error },
+            'string.forbidden': { ref: '#first-name', text: mssgs.name_first_non_letter_error }
         },
         'last-name': {
-            'string.empty': { ref: '#last-name', text: 'Enter the licence holder’s last name'},
-            'string.min': { ref: '#last-name', text: 'The last name must contain at least 2 letters' },
-            'string.max': { ref: '#last-name', text: 'The last name must not be longer than 100 letters' },
-            'string.forbidden': { ref: '#last-name', text: 'The last name must only contain letters' }
+            'string.empty': { ref: '#last-name', text: mssgs.name_last_empty_error },
+            'string.min': { ref: '#last-name', text: mssgs.name_last_min_error },
+            'string.max': { ref: '#last-name', text: mssgs.name_last_max_error },
+            'string.forbidden': { ref: '#last-name', text: mssgs.name_last_non_letter_error }
         }
     }
 %}
 
 {% block pageContent %}
     {% if not data.isLicenceForYou %}
-      <p class="govuk-body-m">Take care to spell their name correctly.</p>
+      <p class="govuk-body-m">{{ mssgs.name_spelling_hint }}</p>
     {% endif %}
 
     {{ govukInput({
       label: {
-        text: "First name"
+        text: mssgs.name_first_label
       },
       id: "first-name",
       name: "first-name",
-      hint: { text: "Do not use abbreviations or nicknames" },
+      hint: { text: mssgs.name_abbr_hint },
       value: payload['first-name'],
       classes: "govuk-input--width-20",
       autocomplete: 'given-name',
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter the first name' } if error['first-name']
+      errorMessage: { text: mssgs.name_first_empty_error_msg } if error['first-name']
     }) }}
 
     {{ govukInput({
       label: {
-        text: "Last name"
+        text: mssgs.name_last_label
       },
       id: "last-name",
       name: "last-name",
@@ -48,7 +48,7 @@
       autocomplete: 'family-name',
       classes: "govuk-input--width-20",
       attributes: { maxlength: 100 },
-      errorMessage: { text: 'Enter the last name' } if error['last-name']
+      errorMessage: { text: mssgs.name_last_empty_error_msg } if error['last-name']
     }) }}
 
 {% endblock %}
