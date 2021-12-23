@@ -5,7 +5,6 @@ import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { disabilityConcessionTypes } from './update-transaction.js'
-import { getPronoun } from '../../../processors/licence-type-display.js'
 
 const validator = Joi.object({
   'disability-concession': Joi.string()
@@ -32,7 +31,7 @@ export const getData = async request => {
   return {
     hasJunior: concessionHelper.hasJunior(permission),
     hasSenior: concessionHelper.hasSenior(permission),
-    pronoun: getPronoun(isLicenceForYou),
+    isLicenceForYou,
     ...disabilityConcessionTypes
   }
 }
