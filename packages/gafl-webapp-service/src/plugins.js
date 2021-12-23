@@ -10,7 +10,8 @@ import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
-import Path from 'path'
+import Dirname from '../dirname.cjs'
+import path from 'path'
 
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
@@ -100,7 +101,7 @@ const initialiseHapiI18nPlugin = () => ({
   plugin: HapiI18n,
   options: {
     locales: ['en', 'cy'],
-    directory: Path.resolve(Path.dirname('')) + '/src/locales',
+    directory: path.join(Dirname, 'src/locales'),
     queryParameter: 'lang'
   }
 })
