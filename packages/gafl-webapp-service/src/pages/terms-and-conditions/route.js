@@ -24,7 +24,7 @@ export const getData = async request => {
   }
 }
 
-const validator = Joi.object({
+export const validator = Joi.object({
   agree: Joi.string()
     .valid('yes')
     .required()
