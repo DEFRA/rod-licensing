@@ -9,7 +9,7 @@ jest.mock('../../../routes/page-route.js')
 
 describe('terms-and-conditions > route', () => {
   describe('default', () => {
-    it('should call the pageRoute with terms-and-conditions, /buy/conditions, validator and nextPage', async () => {
+    it('should call the pageRoute with terms-and-conditions, /buy/conditions, validator, nextPage and getData', async () => {
       expect(pageRoute).toBeCalledWith('terms-and-conditions', '/buy/conditions', validator, nextPage, getData)
     })
   })
