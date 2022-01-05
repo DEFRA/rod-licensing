@@ -6,13 +6,13 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set title = 'Check the licence details' %}
+{% set title = mssgs.licence_summary_title %}
 {% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
 
 {% set licenseDetailsSummaryRows = [
     {
       key: {
-        text: "Name"
+        text: mssgs.licence_summary_name
       },
       value: {
         text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName
@@ -21,7 +21,7 @@
         items: [
           {
             href: data.uri.name,
-            text: "Change",
+            text: mssgs.licence_summary_change,
             visuallyHiddenText: "name",
             attributes: { id: 'change-name' }
           }
@@ -35,7 +35,7 @@
 {% if not data.isRenewal %}
     {{ licenseDetailsSummaryRows.push({
         key: {
-            text: "Date of birth"
+            text: mssgs.licence_summary_dob
         },
         value: {
             text: data.birthDateStr
@@ -43,7 +43,7 @@
         actions: {
             items: [{
                 href: data.uri.dateOfBirth,
-                text: "Change",
+                text: mssgs.licence_summary_change,
                 visuallyHiddenText: "date of birth",
                 attributes: { id: 'change-birth-date' }
             }]
@@ -53,7 +53,7 @@
 
 {{ licenseDetailsSummaryRows.push({
     key: {
-      text: "Type"
+      text: mssgs.licence_summary_type
     },
     value: {
       text: data.licenceTypeStr
@@ -62,7 +62,7 @@
       items: [
         {
           href: data.uri.licenceType,
-          text: "Change",
+          text: mssgs.licence_summary_change,
           visuallyHiddenText: "type",
           attributes: { id: 'change-licence-type' }
         }
@@ -72,16 +72,16 @@
 
 {{ licenseDetailsSummaryRows.push({
   key: {
-    text: "Length"
+    text: mssgs.licence_summary_length
   },
   value: {
-    text: '12 months' if data.permission.licenceLength === '12M' else ('8 days' if data.permission.licenceLength === '8D' else '1 day')
+    text: mssgs.licence_type_12m if data.permission.licenceLength === '12M' else (mssgs.licence_type_8d if data.permission.licenceLength === '8D' else mssgs.licence_type_1d)
   },
   actions: {
     items: [
       {
         href: data.uri.licenceLength,
-        text: "Change",
+        text: mssgs.licence_summary_change,
         visuallyHiddenText: "length",
         attributes: { id: 'change-licence-length' }
       }
@@ -91,17 +91,17 @@
 
 {{ licenseDetailsSummaryRows.push({
       key: {
-        text: "Start date"
+        text: mssgs.licence_summary_start_date
       },
       value: {
-        html: data.startAfterPaymentMinutes + ' minutes after payment' if data.permission.licenceToStart === 'after-payment' else data.startTimeString +
-        ('</br><span class="govuk-caption-m">Immediately after the current licence expires</span>' if data.isContinuing and data.isRenewal else '')
+        html: data.startAfterPaymentMinutes + mssgs.licence_summary_minutes_after_payment if data.permission.licenceToStart === 'after-payment' else data.startTimeString +
+        ('</br><span class="govuk-caption-m">' + mssgs.licence_summary_immediately_after_expire + '</span>' if data.isContinuing and data.isRenewal else '')
       },
       actions: {
         items: [
           {
             href:  data.uri.licenceStartDate if data.isRenewal else data.uri.licenceToStart,
-            text: "Change",
+            text: mssgs.licence_summary_change,
             visuallyHiddenText: "start date",
             attributes: { id: 'change-licence-to-start' }
           }
@@ -110,19 +110,19 @@
 }) }}
 
 {% if data.permission.licenceLength === '12M' %}
-    {% set concessionText = 'Blue Badge number' if data.disabled.proof.type === data.concessionProofs.blueBadge else ('National Insurance number' if data.disabled.proof.type === data.concessionProofs.NI else 'Disability concession') %}
+    {% set concessionText = mssgs.licence_summary_blue_badge_num if data.disabled.proof.type === data.concessionProofs.blueBadge else (mssgs.licence_summary_ni_num if data.disabled.proof.type === data.concessionProofs.NI else mssgs.licence_summary_disability_concession) %}
     {{ licenseDetailsSummaryRows.push({
       key: {
         text: concessionText
       },
       value: {
-        html: data.disabled.proof.referenceNumber if data.disabled else '<span>None</span>'
+        html: data.disabled.proof.referenceNumber if data.disabled else '<span>' + mssgs.licence_summary_none + '</span>'
       },
       actions: {
         items: [
           {
             href: data.uri.disabilityConcession,
-            text: "Change",
+            text: mssgs.licence_summary_change,
             visuallyHiddenText: concessionText,
             attributes: { id: 'change-benefit-check' }
           }
@@ -160,7 +160,7 @@
     <div class="govuk-grid-column-two-thirds">
         {% if backRef %}
             {{ govukBackLink({
-              text: "Back",
+              text: mssgs.back,
               href: backRef,
               classes: "govuk-!-margin-bottom-7"
             }) }}
@@ -172,13 +172,13 @@
                 attributes: { id: 'continue' },
                 preventDoubleClick: true,
                 name: "continue",
-                text: "Continue",
+                text: mssgs.continue,
                 classes: "govuk-!-margin-top-5"
             }) }}
 
             {{ csrf() }}
         </form>
-        {% if data.isRenewal %}<a class="govuk-link" class="govuk-link" href="{{ data.uri.clear }}">Buy a different licence</a>{% endif %}
+        {% if data.isRenewal %}<a class="govuk-link" class="govuk-link" href="{{ data.uri.clear }}">{{ mssgs.buy_different_licence }}</a>{% endif %}
     </div>
 </div>
 {% endblock %}
