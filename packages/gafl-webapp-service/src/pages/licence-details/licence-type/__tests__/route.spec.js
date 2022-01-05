@@ -29,14 +29,14 @@ describe('licence-type > route', () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [] }))
       mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
       const result = await getData(mockRequest)
-      expect(result.pronoun).toStrictEqual({ possessive: 'your', personal: 'you' })
+      expect(result.isLicenceForYou).toBeTruthy()
     })
 
     it('should return pronoun as their and they, if isLicenceForYou is false on the status cache', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [] }))
       mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
       const result = await getData(mockRequest)
-      expect(result.pronoun).toStrictEqual({ possessive: 'their', personal: 'they' })
+      expect(result.isLicenceForYou).toBeFalsy()
     })
   })
 

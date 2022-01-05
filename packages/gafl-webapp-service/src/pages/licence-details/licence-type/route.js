@@ -4,7 +4,6 @@ import { pricingDetail } from '../../../processors/pricing-summary.js'
 import Joi from 'joi'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { getPronoun } from '../../../processors/licence-type-display.js'
 
 export const licenseTypes = {
   troutAndCoarse2Rod: 'trout-and-coarse-2-rod',
@@ -27,7 +26,7 @@ export const getData = async request => {
     licenseTypes,
     permission,
     pricing,
-    pronoun: getPronoun(isLicenceForYou),
+    isLicenceForYou,
     hasJunior: concessionHelper.hasJunior(permission),
     uri: {
       freshWaterFishingRules: FRESHWATER_FISING_RULES.uri,
