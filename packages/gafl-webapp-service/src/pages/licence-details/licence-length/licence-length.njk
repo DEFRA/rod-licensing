@@ -3,8 +3,8 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = 'How long do you want your licence for?' if data.isLicenceForYou else 'How long do they want the licence for?' %}
-{% set errorMsg = 'Choose the length of this licence' %}
+{% set title = mssgs.licence_length_title_you if data.isLicenceForYou else mssgs.licence_length_title_other %}
+{% set errorMsg = mssgs.licence_length_error_choose %}
 
 {%
     set errorMap = {
@@ -15,11 +15,11 @@
 %}
 
 {% set 8day %}
-    <p class="govuk-body-m">8 day licences are valid for 8 consecutive days from the start time that you select.</p>
+    <p class="govuk-body-m">{{ mssgs.licence_length_eight_day }}</p>
 {% endset -%}
 
 {% set 1day %}
-    <p class="govuk-body-m">1 day licences are valid for 24 hours from the start time that you select.</p>
+    <p class="govuk-body-m">{{ mssgs.licence_length_one_day }}</p>
 {% endset -%}
 
 
@@ -30,20 +30,20 @@
         items: [
             {
                 id: 'selector-12M',
-                text: "12 months",
+                text: mssgs.licence_type_12m,
                 value: "12M",
                 checked: payload['licence-length'] === '12M'
             },
             {
                 id: 'selector-8D',
-                text: "8 days",
+                text: mssgs.licence_type_8d,
                 value: "8D",
                 checked: payload['licence-length'] === '8D',
                 conditional: { html: 8day }
             },
             {
                 id: 'selector-1D',
-                text: "1 day",
+                text: mssgs.licence_type_1d,
                 value: "1D",
                 checked: payload['licence-length'] === '1D',
                 conditional: { html: 1day }
@@ -55,7 +55,7 @@
 
 {% block pricingSummary %}
     {{ pricingSummary(data.pricing.byLength, {
-        'total': { desc: 'Total' }
+        'total': { desc: mssgs.total }
     }, data.licenceTypeStr ) }}
 {% endblock %}
 
