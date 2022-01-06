@@ -1,9 +1,9 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = "Do you want to go paperless?" if data.isLicenceForYou else "Do they want to go paperless?"%}
+{% set title = mssgs.licence_fufilment_title_you if data.isLicenceForYou else mssgs.licence_fufilment_title_other %}
 
-{% set errorMsg = 'Choose if you want this licence to be paperless' %}
+{% set errorMsg = mssgs.licence_fufilment_error %}
 
 {% set errorMap = {
         'licence-option': {
@@ -13,25 +13,25 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body">Getting a licence by email or text message helps the environment by reducing paper use and help us to save money, which we can invest in fishing.</p>
+    <p class="govuk-body">{{ mssgs.licence_fufilment_content_info }}</p>
     {{ govukRadios({
         idPrefix: "licence-option",
         name: "licence-option",
         items: [
             {
                 value: "digital",
-                text: "Yes, go paperless",
+                text: mssgs.licence_fufilment_radio_paperless,
                 checked: payload['licence-option'] === 'digital',
                 hint: {
-                    html: '<ul class="govuk-list govuk-list--bullet"><li>we\'ll send the fishing licence by email or text message</li><li>the email or text message is proof of your fishing licence</li></ul>'
+                    html: '<ul class="govuk-list govuk-list--bullet"><li>' + mssgs.licence_fufilment_radio_paperless_hint1 + '</li><li>' + mssgs.licence_fufilment_radio_paperless_hint2 + '</li></ul>'
                 }
             },
             {
                 value: "paper-licence",
-                text: "No, get a card",
+                text: mssgs.licence_fufilment_radio_card,
                 checked: payload['licence-option'] === 'paper-licence',
                 hint: {
-                    html: '<ul class="govuk-list govuk-list--bullet"><li>if we have the licence holder’s email or mobile phone number, we\'ll send a copy of the licence details</li><li>get the fishing licence card within 15 working days</li></ul>'
+                    html: '<ul class="govuk-list govuk-list--bullet"><li>' + mssgs.licence_fufilment_radio_card_hint1 + '</li><li>' + mssgs.licence_fufilment_radio_card_hint2 + '</li></ul>'
                 }
             }
         ],
@@ -42,7 +42,7 @@
 {% block pricingSummary %}
 <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body">
-        <a href="https://www.gov.uk/government/publications/fisheries-annual-report-2019-to-2020/fisheries-annual-report-2019-to-2020" rel="noreferrer noopener" class="govuk-link" target="_blank">See how we spend money on fish and fishing (opens in a new tab)</a>.
+        <a href="https://www.gov.uk/government/publications/fisheries-annual-report-2019-to-2020/fisheries-annual-report-2019-to-2020" rel="noreferrer noopener" class="govuk-link" target="_blank">{{ mssgs.licence_fufilment_how_we_spend_link }}</a>
     </p>
 </div>
 {% endblock %}
