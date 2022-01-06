@@ -19,24 +19,13 @@
     }
 %}
 
-{% set hint_msg %}
-{% if data.hasJunior %}
-    {{ mssgs.disability_concession_ni_hint_jr }}
-{% elif data.isLicenceForYou  %}
-    {{ mssgs.disability_concession_ni_hint_you }}
-{% else %}
-    {{ mssgs.disability_concession_ni_hint_other }}
-{% endif %}
-{% endset %}
-
-
 {% set pipDla %}
     {{ govukInput({
       label: {
         html: mssgs.disability_concession_ni_label_jr if data.hasJunior else mssgs.disability_concession_ni_label
       },
       hint: {
-        html: hint_msg
+        html: mssgs.disability_concession_ni_hint if not data.hasJunior else mssgs.disability_concession_ni_hint_jr
       },
       id: "ni-number",
       name: "ni-number",
@@ -62,11 +51,8 @@
 {% endset -%}
 
 {% block pageContent %}
-    {% if not data.hasJunior and not data.hasSenior and data.isLicenceForYou %}
-        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month_you }} </p>
-    {% endif %}
-    {% if not data.hasJunior and not data.hasSenior and not data.isLicenceForYou %}
-        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month_other }} </p>
+    {% if not data.hasJunior and not data.hasSenior %}
+        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month }}</p>
     {% endif %}
 
     {{ govukRadios({
