@@ -50,12 +50,12 @@
 
       <p class="govuk-body govuk-!-margin-bottom-6">
         <a class="govuk-link" href="{{ changeLinkUrl }}">
-          Change {{ contactType }}
+          {{ mssgs.licence_summary_change }} {{ contactType }}
         </a>
       </p>
 
       {{ govukButton({
-        text: "It's correct",
+        text: mssgs.check_conf_contact_correct,
         classes: "govuk-!-margin-top-5",
         href: data.uri.contact
       }) }}    
