@@ -4,7 +4,6 @@ import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { countries } from '../../../../processors/refdata-helper.js'
 import { nextPage } from '../../../../routes/next-page.js'
-import { getPronoun } from '../../../../processors/licence-type-display.js'
 
 export const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
@@ -28,10 +27,8 @@ export const getData = async request => {
   const { addresses, searchTerms } = await request.cache().helpers.addressLookup.getCurrentPermission()
   const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
 
-  const pronoun = getPronoun(isLicenceForYou).possessive
-
   return {
-    pronoun,
+    isLicenceForYou,
     searchTerms: !addresses?.length && searchTerms ? searchTerms : null,
     countries: await getCountryDropDownOptions(),
     lookupPage: ADDRESS_LOOKUP.uri
