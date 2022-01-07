@@ -67,7 +67,7 @@ describe('transaction service', () => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
 
-  beforeEach(AwsMock.__resetAll)
+  beforeEach(jest.clearAllMocks)
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
@@ -179,6 +179,44 @@ describe('transaction service', () => {
           })
         )
       })
+    })
+
+    it('sets isLicenceForYou to Yes on the transaction, if it is true on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = true
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstAgument[0][4]).toMatchObject({isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' }})
+    })
+
+    it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = false
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstAgument[0][4]).toMatchObject({isLicenceForYou: { id: 0, label: 'No', description: 'No' }})
+    })
+
+    it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = undefined
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+    })
+
+    it('does not set isLicenceForYou on the transaction, if it is null on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = null
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
     it('handles requests which relate to an transaction file', async () => {
