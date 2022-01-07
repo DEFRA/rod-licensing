@@ -44,7 +44,16 @@ export async function processQueue ({ id }) {
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
-  for (const { licensee, concessions, permitId, referenceNumber, issueDate, startDate, endDate, isLicenceForYou } of transactionRecord.permissions) {
+  for (const {
+    licensee,
+    concessions,
+    permitId,
+    referenceNumber,
+    issueDate,
+    startDate,
+    endDate,
+    isLicenceForYou
+  } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
@@ -58,7 +67,10 @@ export async function processQueue ({ id }) {
     permission.endDate = endDate
     permission.dataSource = dataSource
     if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
-      permission.isLicenceForYou = await getGlobalOptionSetValue(Permission.definition.mappings.isLicenceForYou.ref, isLicenceForYou ? 'Yes': 'No')
+      permission.isLicenceForYou = await getGlobalOptionSetValue(
+        Permission.definition.mappings.isLicenceForYou.ref,
+        isLicenceForYou ? 'Yes' : 'No'
+      )
     }
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)

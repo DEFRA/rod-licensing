@@ -30,7 +30,7 @@ describe('permission entity', () => {
       endDate: '2020-12-13T23:59:59Z',
       stagingId: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
       dataSource: expect.objectContaining({ id: 910400003, label: 'Web Sales', description: 'Web Sales' }),
-      isLicenceForYou: expect.objectContaining({ id: 1, label: "Yes", description: "Yes" })
+      isLicenceForYou: expect.objectContaining({ id: 1, label: 'Yes', description: 'Yes' })
     }
 
     expect(permission).toBeInstanceOf(Permission)
