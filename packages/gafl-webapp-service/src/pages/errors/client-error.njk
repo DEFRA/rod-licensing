@@ -4,32 +4,32 @@
 
 {% set title = '' %}
 {% if clientError.statusCode === 400 %}
-    {% set title = 'Bad request' %}
+    {% set title = mssgs.client_error_title_bad_req %}
 {% elseif clientError.statusCode === 401 %}
-    {% set title = 'Unauthorized' %}
+    {% set title = mssgs.client_error_title_unauth %}
 {% elseif clientError.statusCode === 403 %}
-    {% set title = 'Forbidden' %}
+    {% set title = mssgs.client_error_title_forbidden %}
 {% elseif clientError.statusCode === 404 %}
-    {% set title = 'Page not found' %}
+    {% set title = mssgs.client_error_title_not_found %}
 {% endif %}
 
-{% block pageTitle %}Sorry, there is a problem with the service - {{title}}{% endblock %}
+{% block pageTitle %}{{mssgs.client_error_title_block}}{{title}}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
             {% call govukFieldset({
               legend: {
-                text: "Sorry, there is a problem with the service",
+                text: mssgs.client_error_content_msg,
                 classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
                 isPageHeading: true
               }
             }) %}
             <p class="govuk-body-m">
-                You can <a class="govuk-link" href="{{referer if referer else 'javascript:history.back()'}}">try to get back to your application</a>.
+                {{ mssgs.client_error_content_you_can }}<a class="govuk-link" href="{{referer if referer else 'javascript:history.back()'}}">{{ mssgs.client_error_content_try_another }}</a>.
             </p>
             <p class="govuk-body">
-                If that does not work, you will have to <a class="govuk-link" href="{{ uri.new }}">start again</a>. Sorry.
+                {{ mssgs.client_error_content_if_not_working }}<a class="govuk-link" href="{{ uri.new }}">{{ mssgs.client_error_content_start_again }}</a>{{ mssgs.client_error_content_sorry }}
             </p>
             {% endcall %}
      </div>
