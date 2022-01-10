@@ -20,14 +20,13 @@ export const validator = Joi.object({
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
   const pricing = await pricingDetail(LICENCE_TYPE.page, permission)
 
   return {
     licenseTypes,
     permission,
     pricing,
-    pronoun: getPronoun(isLicenceForYou),
+    pronoun: getPronoun(permission.isLicenceForYou),
     hasJunior: concessionHelper.hasJunior(permission),
     uri: {
       freshWaterFishingRules: FRESHWATER_FISING_RULES.uri,

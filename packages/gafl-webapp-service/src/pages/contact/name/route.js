@@ -10,7 +10,7 @@ const validator = Joi.object({
 }).options({ abortEarly: false, allowUnknown: true })
 
 export const getData = async request => {
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
+  const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
 
   return { isLicenceForYou }
 }

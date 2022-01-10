@@ -7,8 +7,5 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.isLicenceForYou = isLicenceForYou
 
-  // TODO move isLicenceForYou to permission everywhere
-
-  await request.cache().helpers.status.setCurrentPermission({ isLicenceForYou })
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

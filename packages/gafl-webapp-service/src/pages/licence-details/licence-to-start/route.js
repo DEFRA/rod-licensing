@@ -44,7 +44,7 @@ const validator = payload => {
 
 export const getData = async request => {
   const fmt = 'DD MM YYYY'
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
+  const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
 
   return {
     isLicenceForYou,

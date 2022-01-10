@@ -25,10 +25,9 @@ export const getData = async request => {
   if (!permission.licenceLength) {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
-  const cachePermission = await request.cache().helpers.status.getCurrentPermission()
 
   return {
-    isLicenceForYou: cachePermission.isLicenceForYou,
+    isLicenceForYou: permission.isLicenceForYou,
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     isJunior: hasJunior(permission),
