@@ -30,7 +30,7 @@ const debug = db('sales:transactions')
  * @param id
  * @returns {Promise<void>}
  */
-export async function processQueue ({ id }) {
+export async function processQueue({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
@@ -58,19 +58,8 @@ export async function processQueue ({ id }) {
 
     totalTransactionValue += permit.cost
 
-    const permission = new Permission()
-    permission.referenceNumber = referenceNumber
-    permission.stagingId = transactionRecord.id
-    permission.issueDate = issueDate
-    permission.startDate = startDate
-    permission.endDate = endDate
-    permission.dataSource = dataSource
-    if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
-      permission.isLicenceForYou = await getGlobalOptionSetValue(
-        Permission.definition.mappings.isLicenceForYou.ref,
-        isLicenceForYou ? 'Yes' : 'No'
-      )
-    }
+    const permission = await mapToPermission(referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou)
+
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
     permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
@@ -96,8 +85,6 @@ export async function processQueue ({ id }) {
     }
   }
 
-  console.log(entities)
-
   transaction.total = totalTransactionValue
   chargeJournal.total = -totalTransactionValue
   paymentJournal.total = totalTransactionValue
@@ -113,6 +100,23 @@ export async function processQueue ({ id }) {
       ConditionExpression: 'attribute_not_exists(id)'
     })
     .promise()
+}
+
+const mapToPermission = async (referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou) => {
+  const permission = new Permission()
+  permission.referenceNumber = referenceNumber
+  permission.stagingId = transactionRecord.id
+  permission.issueDate = issueDate
+  permission.startDate = startDate
+  permission.endDate = endDate
+  permission.dataSource = dataSource
+  if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
+    permission.isLicenceForYou = await getGlobalOptionSetValue(
+      Permission.definition.mappings.isLicenceForYou.ref,
+      isLicenceForYou ? 'Yes' : 'No'
+    )
+  }
+  return permission
 }
 
 /**
