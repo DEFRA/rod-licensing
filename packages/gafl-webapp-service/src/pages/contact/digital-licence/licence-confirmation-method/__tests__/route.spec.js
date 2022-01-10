@@ -16,7 +16,7 @@ describe('licence-confirmation-method > route', () => {
               },
               isLicenceForYou: options.isLicenceForYou || false
             }))
-          },
+          }
         }
       })),
       query: options.query || {}

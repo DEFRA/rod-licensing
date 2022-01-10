@@ -24,8 +24,6 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
-import moment from 'moment'
-import BusinessRulesLib from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -188,7 +186,7 @@ describe('transaction service', () => {
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
-      expect(persistMockFirstAgument[0][4]).toMatchObject({isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' }})
+      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
     })
 
     it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
@@ -198,7 +196,7 @@ describe('transaction service', () => {
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
-      expect(persistMockFirstAgument[0][4]).toMatchObject({isLicenceForYou: { id: 0, label: 'No', description: 'No' }})
+      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 0, label: 'No', description: 'No' } })
     })
 
     it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {

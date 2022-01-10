@@ -68,9 +68,7 @@ describe('createTransactionSchema', () => {
   it('does not allow isLicenceForYou to be a string', async () => {
     const mockPayload = mockTransactionPayload()
     mockPayload.permissions[0].isLicenceForYou = 'test'
-    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow(
-      '"permissions[0].isLicenceForYou" must be a boolean'
-    )
+    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow('"permissions[0].isLicenceForYou" must be a boolean')
   })
 })
 

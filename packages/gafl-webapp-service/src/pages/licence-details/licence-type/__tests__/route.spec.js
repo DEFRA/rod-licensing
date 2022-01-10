@@ -28,7 +28,7 @@ describe('licence-type > route', () => {
     })
 
     it('should return pronoun as their and they, if isLicenceForYou is false on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: false  }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: false }))
       const result = await getData(mockRequest)
       expect(result.pronoun).toStrictEqual({ possessive: 'their', personal: 'they' })
     })

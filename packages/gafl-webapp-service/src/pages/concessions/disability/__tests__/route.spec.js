@@ -15,13 +15,13 @@ describe('disability > route', () => {
 
   describe('getData', () => {
     it('should return pronoun as your and you, if isLicenceForYou is true on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: true  }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: true }))
       const result = await getData(mockRequest)
       expect(result.pronoun).toStrictEqual({ possessive: 'your', personal: 'you' })
     })
 
     it('should return pronoun as their and they, if isLicenceForYou is false on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: false  }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: false }))
       const result = await getData(mockRequest)
       expect(result.pronoun).toStrictEqual({ possessive: 'their', personal: 'they' })
     })
