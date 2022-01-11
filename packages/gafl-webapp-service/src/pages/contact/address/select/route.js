@@ -6,7 +6,7 @@ import { getPronoun } from '../../../../processors/licence-type-display.js'
 
 export const getData = async request => {
   const { addresses, searchTerms } = await request.cache().helpers.addressLookup.getCurrentPermission()
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
+  const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
 
   const pronoun = getPronoun(isLicenceForYou).possessive
 

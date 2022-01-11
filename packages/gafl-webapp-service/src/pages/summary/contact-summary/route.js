@@ -50,7 +50,7 @@ const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
-    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, status.isLicenceForYou),
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
     }
@@ -59,13 +59,13 @@ const getData = async request => {
 
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
-export const getLicenseeDetailsSummaryRows = (permission, countryName, isLicenceForYou) => {
+export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
   const licenseeSummaryArray = [
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
     ...getContactDetails(permission)
   ]
 
-  if (isLicenceForYou) {
+  if (permission.isLicenceForYou) {
     licenseeSummaryArray.push(
       getRow(
         'Newsletter',

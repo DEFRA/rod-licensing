@@ -8,14 +8,13 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
 
   // page is only permitted for physical licences
   if (!isPhysical(permission)) {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
-  return { isLicenceForYou }
+  return { isLicenceForYou: permission.isLicenceForYou }
 }
 
 const validator = Joi.object({

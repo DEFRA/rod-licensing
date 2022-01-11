@@ -12,7 +12,6 @@ import { mobilePhoneValidator } from '../../../../processors/contact-validator.j
 export const getData = async request => {
   const { change } = request?.query
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
 
   // page is only permitted for physical licences
   if (!isPhysical(permission)) {
@@ -20,7 +19,7 @@ export const getData = async request => {
   }
 
   return {
-    isLicenceForYou,
+    isLicenceForYou: permission.isLicenceForYou,
     licensee: permission.licensee,
     howContacted: HOW_CONTACTED,
     ...(change === 'email' && { changeEmail: true }),

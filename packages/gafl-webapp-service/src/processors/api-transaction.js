@@ -26,7 +26,8 @@ export const prepareApiTransactionPayload = async request => {
           startDate: advancePurchaseDateMoment(p)
             .utc()
             .toISOString()
-        })
+        }),
+        isLicenceForYou: p.isLicenceForYou
       }
 
       // Calculate the concession (proof entry) - disabled takes precedence

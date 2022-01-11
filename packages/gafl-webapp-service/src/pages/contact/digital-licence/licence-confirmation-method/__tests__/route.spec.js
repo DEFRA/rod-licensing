@@ -13,10 +13,10 @@ describe('licence-confirmation-method > route', () => {
               licensee: {
                 firstName: 'Lando',
                 lastName: 'Norris'
-              }
+              },
+              isLicenceForYou: options.isLicenceForYou || false
             }))
-          },
-          status: { getCurrentPermission: jest.fn(() => ({ isLicenceForYou: options.isLicenceForYou || false })) }
+          }
         }
       })),
       query: options.query || {}
@@ -59,14 +59,13 @@ describe('licence-confirmation-method > route', () => {
       expect(result.changeMobile).toBe(true)
     })
 
-    it('should return isLicenceForYou as true, if isLicenceForYou is true on the status cache', async () => {
+    it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
       const result = await getData(createRequestMock({ isLicenceForYou: true }))
       expect(result.isLicenceForYou).toBeTruthy()
     })
 
-    it('should return isLicenceForYou as false, if isLicenceForYou is false on the status cache', async () => {
-      const b = createRequestMock({ isLicenceForYou: false })
-      const result = await getData(b)
+    it('should return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
+      const result = await getData(createRequestMock({ isLicenceForYou: false }))
       expect(result.isLicenceForYou).toBeFalsy()
     })
   })
