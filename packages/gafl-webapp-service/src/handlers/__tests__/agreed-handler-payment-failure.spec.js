@@ -21,6 +21,8 @@ afterAll(() => {
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
 
+const TRY_AGAIN_STR = 'Try again'
+
 const paymentStatusCancelled = {
   state: {
     finished: true,
