@@ -65,8 +65,7 @@ describe('licence-confirmation-method > route', () => {
     })
 
     it('should return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
-      const b = createRequestMock({ isLicenceForYou: false })
-      const result = await getData(b)
+      const result = await getData(createRequestMock({ isLicenceForYou: false }))
       expect(result.isLicenceForYou).toBeFalsy()
     })
   })
