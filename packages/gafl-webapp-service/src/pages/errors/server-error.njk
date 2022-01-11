@@ -2,19 +2,19 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 
-{% block pageTitle %}Error - GOV.UK{% endblock %}
+{% block pageTitle %}{{ mssgs.server_error_title }}{% endblock %}
 
 {% macro standard() %}
    {% call govukFieldset({
        legend: {
-         text: "Sorry, an error occurred while processing your request",
+         text: mssgs.server_error_occured,
          classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
          isPageHeading: true
        }
      }) %}
-     <p class="govuk-body-m">We have logged the error and we will look into it, and make sure it doesn’t happen again. However if you keep seeing this page, please send your <a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank">feedback (opens in a new tab)</a> to help us improve the service.</p>
-     <h2 class="govuk-heading-m">What now?</h2>
-     <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
+     <p class="govuk-body-m">{{ mssgs.server_error_logged }}<a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank">{{ mssgs.feedback_link_text }}</a>{{ mssgs.feedback_link_suffix_alt }}</p>
+     <h2 class="govuk-heading-m">{{ mssgs.server_error_what_now }}</h2>
+     <a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a>
    {% endcall %}
 {% endmacro %}
 
@@ -26,24 +26,24 @@
             {% if serverError.origin.step === 'pre-payment' %}
                {% call govukFieldset({
                    legend: {
-                     text: "Sorry, we were unable to process your payment",
+                     text: mssgs.server_error_unable_to_process_payment,
                      classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
                      isPageHeading: true
                    }
                  }) %}
-                    <p class="govuk-body-m">We were unable to process your payment. This may be due to current high demand for the service. Please wait a few minutes and try again by pressing the 'Try again' button below.</p>
-                    <p class="govuk-body-m">If you keep seeing this page, remember that you can purchase a fishing licence at your local Post Office branch.</p>
-                    <p class="govuk-body-m">To check the opening times of your local Post Office branch visit the <a class="govuk-link" href="https://www.postoffice.co.uk/branch-finder" rel="noreferrer noopener" target="_blank">Post Office branch finder service (opens in a new tab).</a></p>
+                    <p class="govuk-body-m">{{ mssgs.server_error_try_again }}</p>
+                    <p class="govuk-body-m">{{ mssgs.server_error_post_office }}</p>
+                    <p class="govuk-body-m">{{ mssgs.server_error_post_office_check }}<a class="govuk-link" href="https://www.postoffice.co.uk/branch-finder" rel="noreferrer noopener" target="_blank">{{ mssgs.server_error_post_office_check_link }}</a></p>
                     {{ govukButton({
                         attributes: { id: "try-again" },
                         preventDoubleClick: true,
                         name: "try-again",
-                        text: "Try again",
+                        text: mssgs.try_again,
                         href: uri.agreed,
                         classes: "govuk-!-margin-top-5"
                     }) }}
                {% endcall %}
-               <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
+               <a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a>
             {% elseif serverError.origin.step === 'post-payment' %}
                {% call govukFieldset({
                    legend: {
@@ -52,23 +52,23 @@
                      isPageHeading: true
                    }
                  }) %}
-                    <p class="govuk-body-m">We were unable to retrieve your payment details at this time because of an unexpected problem with the service. Please wait a few minutes and try again by pressing the 'Try again' button below.</p>
-                    <p class="govuk-body-m">If you keep seeing this page:  </p>
+                    <p class="govuk-body-m">{{ mssgs.server_error_unable_to_retrieve_pay_details }}</p>
+                    <p class="govuk-body-m">{{ mssgs.server_error_if_seeing_page }}</p>
                     <ul class="govuk-list govuk-list--bullet">
-                      <li>If you have requested an email or text notification, this should be delivered in 3 hours if a payment has been taken.</li>
-                      <li>If you have bought a 365 day licence this should still arrive by post if a payment has been taken.</li>
-                      <li>If you would prefer a refund please ring the helpline using the number given below.</li>
+                      <li>{{ mssgs.server_error_bulletpoint_1 }}</li>
+                      <li>{{ mssgs.server_error_bulletpoint_2 }}</li>
+                      <li>{{ mssgs.server_error_bulletpoint_3 }}</li>
                     </ul>
                     {{ govukButton({
                         attributes: { id: "try-again" },
                         preventDoubleClick: true,
                         name: "try-again",
-                        text: "Try again",
+                        text: mssgs.try_again,
                         href: uri.agreed,
                         classes: "govuk-!-margin-top-5"
                     }) }}
                 {% endcall %}
-                <a class="govuk-link" href="{{ uri.new }}">Buy another licence</a>
+                <a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a>
             {% else %}
                 {{ standard() }}
             {% endif %}

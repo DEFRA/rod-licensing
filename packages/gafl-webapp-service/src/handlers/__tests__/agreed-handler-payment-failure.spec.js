@@ -21,8 +21,6 @@ afterAll(() => {
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
 
-const TRY_AGAIN_STR = 'Try again'
-
 const paymentStatusCancelled = {
   state: {
     finished: true,
@@ -229,7 +227,6 @@ describe('The agreed handler', () => {
 
     const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(500)
-    expect(data.payload.includes(TRY_AGAIN_STR)).toBeTruthy()
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
@@ -262,7 +259,6 @@ describe('The agreed handler', () => {
     expect(salesApi.createPaymentJournal).not.toHaveBeenCalled()
 
     expect(data.statusCode).toBe(500)
-    expect(data.payload.includes(TRY_AGAIN_STR)).toBeTruthy()
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
@@ -376,7 +372,6 @@ describe('The agreed handler', () => {
     salesApi.updatePaymentJournal = jest.fn()
     const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(500)
-    expect(data.payload.includes(TRY_AGAIN_STR)).toBeTruthy()
 
     expect(salesApi.updatePaymentJournal).not.toHaveBeenCalledWith()
 
