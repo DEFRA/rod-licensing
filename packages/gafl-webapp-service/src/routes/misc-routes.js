@@ -28,7 +28,15 @@ import attribution from '../handlers/attribution-handler.js'
 const simpleView = view => ({
   method: 'GET',
   path: view.uri,
-  handler: async (request, h) => h.view(view.page)
+  handler: async (request, h) => {
+    const mssgs = request.i18n.getCatalog()
+    const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+    return h
+      .view(view.page, {
+        mssgs,
+        altLang
+      })
+  }
 })
 
 export default [

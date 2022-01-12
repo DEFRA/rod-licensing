@@ -26,7 +26,7 @@
               }
             }) %}
             <p class="govuk-body-m">
-                {{ mssgs.client_error_content_you_can }}<a class="govuk-link" href="{{referer if referer else 'javascript:history.back()'}}">{{ mssgs.client_error_content_try_another }}</a>.
+                {{ mssgs.client_error_content_you_can }}<a class="govuk-link" href="{{referer if referer else 'javascript:history.back()'}}">{{ mssgs.client_error_content_try_another }}</a>
             </p>
             <p class="govuk-body">
                 {{ mssgs.client_error_content_if_not_working }}<a class="govuk-link" href="{{ uri.new }}">{{ mssgs.client_error_content_start_again }}</a>{{ mssgs.client_error_content_sorry }}
