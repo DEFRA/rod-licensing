@@ -26,12 +26,11 @@ const validator = Joi.object({
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const { isLicenceForYou } = await request.cache().helpers.status.getCurrentPermission()
 
   return {
     hasJunior: concessionHelper.hasJunior(permission),
     hasSenior: concessionHelper.hasSenior(permission),
-    isLicenceForYou,
+    isLicenceForYou: permission.isLicenceForYou,
     ...disabilityConcessionTypes
   }
 }

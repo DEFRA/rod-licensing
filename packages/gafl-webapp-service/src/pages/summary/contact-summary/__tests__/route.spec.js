@@ -148,9 +148,10 @@ describe('contact-summary > route', () => {
         licenceLength: '1D',
         licensee: {
           ...address
-        }
+        },
+        isLicenceForYou: true
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', true)
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
       expect(summaryTable).toMatchSnapshot()
     })
 
@@ -159,9 +160,10 @@ describe('contact-summary > route', () => {
         licenceLength: '1D',
         licensee: {
           ...address
-        }
+        },
+        isLicenceForYou: false
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', false)
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
       expect(summaryTable).toMatchSnapshot()
     })
   })

@@ -8,15 +8,11 @@ jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../processors/pricing-summary.js')
 
 describe('licence-type > route', () => {
-  const mockStatusCacheGet = jest.fn()
   const mockTransactionCacheGet = jest.fn()
 
   const mockRequest = {
     cache: () => ({
       helpers: {
-        status: {
-          getCurrentPermission: mockStatusCacheGet
-        },
         transaction: {
           getCurrentPermission: mockTransactionCacheGet
         }
@@ -25,16 +21,14 @@ describe('licence-type > route', () => {
   }
 
   describe('getData', () => {
-    it('should return pronoun as your and you, if isLicenceForYou is true on the status cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [] }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
+    it('should return pronoun as your and you, if isLicenceForYou is true on the transaction cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: true }))
       const result = await getData(mockRequest)
       expect(result.isLicenceForYou).toBeTruthy()
     })
 
-    it('should return pronoun as their and they, if isLicenceForYou is false on the status cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [] }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
+    it('should return pronoun as their and they, if isLicenceForYou is false on the transaction cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: false }))
       const result = await getData(mockRequest)
       expect(result.isLicenceForYou).toBeFalsy()
     })
