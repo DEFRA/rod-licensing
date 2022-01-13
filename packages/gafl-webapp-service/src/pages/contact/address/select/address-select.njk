@@ -1,11 +1,11 @@
 {% extends "standard-form.njk" %}
 
 {% from "radios/macro.njk" import govukRadios %}
-{% set title = 'Choose ' + data.pronoun + ' address' %}
+{% set title = mssgs.address_select_title_you if data.isLicenceForYou else mssgs.address_select_title_other %}
 
 {% set errorMap = {
         'address': {
-            'any.required': { ref: '#address', text: 'Choose an address' }
+            'any.required': { ref: '#address', text: mssgs.address_select_error_choose }
         }
     }
 %}
@@ -24,9 +24,9 @@
 {% block pageContent %}
     <p class="govuk-body-m">
         {{ data.addresses.length }} {{ "address" if data.addresses.length === 1 else "addresses"}} found for 
-        {{ data.searchTerms.premises}} and {{ data.searchTerms.postcode}}&nbsp;&nbsp;
+        {{ data.searchTerms.premises}}{{ mssgs.and }}{{ data.searchTerms.postcode}}&nbsp;&nbsp;
         <a href="{{ data.lookupPage }}">
-            Change<span class="govuk-visually-hidden"> address</span>
+            {{ mssgs.licence_summary_change }}<span class="govuk-visually-hidden">{{ mssgs.address_select_link }}</span>
         </a>
     </p>
 
@@ -34,11 +34,11 @@
         idPrefix: "address",
         name: "address",
         items: addressItems,
-        errorMessage: { text: 'Choose an address' } if error
+        errorMessage: { text: mssgs.address_select_error_choose } if error
     })
     }}
 
     <p class="govuk-body-m">
-        <a class="govuk-link" href="{{ data.entryPage }}">Enter the address manually</a>
+        <a class="govuk-link" href="{{ data.entryPage }}">{{ mssgs.address_lookup_manually_enter }}</a>
     </p>
 {% endblock %}
