@@ -1,30 +1,30 @@
 {% extends "layout.njk" %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% block pageTitle %}Get a fishing licence privacy policy - GOV.UK{% endblock %}
+{% block pageTitle %}{{ mssgs.privacy_title }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
         {{ govukBackLink({
-          text: "Back",
+          text: mssgs.back,
           href: "/buy",
           classes: "govuk-!-margin-bottom-7"
         }) }}
 
-        <h1 class="govuk-heading-l">Get a fishing licence privacy policy</h1>
+        <h1 class="govuk-heading-l">{{ mssgs.privacy_heading }}</h1>
 
-        <h2 class="govuk-heading-m">How we use personal data</h2>
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_how }}</h2>
 
-        <p class="govuk-body">We are the Environment Agency and we are the official authority for issuing fishing licences in England (except the River Tweed), Wales and the Border Esk region of Scotland. We are the controller for personal data collected and processed for our Get a fishing licence service. A data controller determines how and why personal data (personal information) is processed.</p>
-        <p class="govuk-body">Children under the age of 13 do not require a licence and you should not provide us with their personal data. If you are not the angler and you are providing us with someone else’s personal data to apply for a licence on their behalf, please make them aware of this privacy notice.</p>
+        <p class="govuk-body">{{ mssgs.privacy_how_body_1 }}</p>
+        <p class="govuk-body">{{ mssgs.privacy_how_body_2 }}</p>
 
-        <h2 class="govuk-heading-m">The personal data we need</h2>
-        <p class="govuk-body">The personal data we need about the angler is:</p>
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_needed }}</h2>
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_1 }}</p>
 
         <ul class="govuk-list govuk-list--bullet">
-            <li>name and address</li>
+            <li>{{ mssgs.privacy_needed_body_bulleypoint_1 }}</li>
             <li>date of birth</li>
             <li>contact details including phone number, email address or both</li>
         </ul>
