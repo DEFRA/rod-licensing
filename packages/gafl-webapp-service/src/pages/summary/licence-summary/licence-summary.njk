@@ -7,7 +7,7 @@
 {% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = mssgs.licence_summary_title %}
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set licenseDetailsSummaryRows = [
     {
