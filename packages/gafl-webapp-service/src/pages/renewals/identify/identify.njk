@@ -6,28 +6,28 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "error-summary.njk" import errorSummary %}
 
-{% set title = 'Renew your rod fishing licence?' %}
+{% set title = mssgs.identify_title %}
 
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {%
     set errorMap = {
         'referenceNumber' : {
-            'string.empty': { text: 'Enter the last six digits of your licence number', ref: '#ref' },
-            'string.pattern.base': { text: 'The last six digits of your licence number don\'t look right. Check and enter again', ref: '#ref' },
+            'string.empty': { text: mssgs.identify_error_empty, ref: '#ref' },
+            'string.pattern.base': { text: mssgs.identify_error_pattern, ref: '#ref' },
             'string.invalid': {
-                text: 'We do not have any record of a licence number ending ' + payload.referenceNumber + ' matching these details.',
+                text: mssgs.identify_error_invalid_1 + payload.referenceNumber + mssgs.identify_error_invalid_2,
                 ref: "#ref"
             }
         },
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
-            'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
-            'date.min': { ref: '#date-of-birth-day', text: 'Your date of birth is too long ago' }
+            'date.format': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday },
+            'date.max': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday_max },
+            'date.min': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday_min }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'You did not enter your postcode' },
-            'string.pattern.base': { ref: '#postcode', text: 'Your postcode doesn\'t look right. Check and enter again' }
+            'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },
+            'string.pattern.base': { ref: '#postcode', text: mssgs.identify_error_pattern_postcode }
         }
     }
 %}
@@ -64,8 +64,8 @@
               }
             }) %}
 
-                <p class="govuk-body-m">To find your licence details we first need to identify you. This helps us protect your personal information.</p>
-                <h2 class="govuk-heading-m">Confirm your details</h2>
+                <p class="govuk-body-m">{{ mssgs.identify_body_protect_info }}</p>
+                <h2 class="govuk-heading-m">{{ mssgs.identify_subheading_confirm }}</h2>
 
                 <div id="ref-rw" class="govuk-body-m">
                     {{ govukInput({
@@ -73,13 +73,13 @@
                       name: "referenceNumber",
                       type: "text",
                       classes: "govuk-!-width-one-third",
-                      errorMessage: { text: 'Enter the last 6 characters of your licence number' } if error['referenceNumber'],
+                      errorMessage: { text: mssgs.identify_error_empty } if error['referenceNumber'],
                       label: {
-                        text: "The last six characters of your licence number",
+                        text: mssgs.identify_label_last_six,
                         classes: "govuk-!-font-weight-bold"
                       },
                       hint: {
-                          text: "For example F4A315"
+                          text: mssgs.identify_label_last_six_hint
                       },
                       attributes: {
                         spellcheck: "false",
@@ -90,9 +90,9 @@
                 </div>
 
                 <div id="ref-ro" class="govuk-body-m initially-hidden">
-                    <span class="govuk-!-font-weight-bold">The licence number ending</span>
+                    <span class="govuk-!-font-weight-bold">{{ mssgs.identify_label_licence_ending }}</span>
                     <span class="govuk-body-m govuk-!-font-weight-bold">{{ payload.referenceNumber if payload.referenceNumber else data.referenceNumber }}
-                        &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">Change</a>
+                        &nbsp;&nbsp;<a id="change" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
                     </span>
                 </div>
 
@@ -102,37 +102,37 @@
                   items: dateInputItems,
                   fieldset: {
                       legend: {
-                            text: "Date of birth",
+                            text: mssgs.licence_summary_dob,
                             isPageHeading: false,
                             classes: "govuk-!-font-weight-bold govuk-label"
                       }
                   },
-                  errorMessage: { text: 'Enter your date of birth' } if error['date-of-birth'] or error['referenceNumber'],
+                  errorMessage: { text: mssgs.enter_dob } if error['date-of-birth'] or error['referenceNumber'],
                   hint: {
-                    text: "For example, 22 11 1970"
+                    text: mssgs.enter_dob_example
                   }
                 }) }}
 
                 {{ govukInput({
                   label: {
-                    text: "Postcode",
+                    text: mssgs.address_entry_content_postcode,
                     classes: "govuk-!-font-weight-bold"
                   },
                   id: "postcode",
                   name: "postcode",
-                  hint: { text: "For example, WA4 1AB" },
+                  hint: { text: mssgs.address_lookup_postcode_hint },
                   value: payload['postcode'],
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-10",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: 'Enter your postcode' } if error['postcode'] or error['referenceNumber']
+                  errorMessage: { text: mssgs.enter_postcode } if error['postcode'] or error['referenceNumber']
                 }) }}
 
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
                     name: "continue",
-                    text: "Continue",
+                    text: mssgs.continue,
                     classes: "govuk-!-margin-top-1"
                 }) }}
 
@@ -140,8 +140,8 @@
             {{ csrf() }}
         </form>
         <div>
-            <h2 class="govuk-heading-s">Problem with the licence details?</h2>
-            <p class="govuk-body">If you can’t match your licence details you can <a href="{{ data.uri.new }}" class="govuk-link">get a new fishing licence here</a></p>
+            <h2 class="govuk-heading-s">{{ mssgs.identify_subheading_problem }}</h2>
+            <p class="govuk-body">{{ mssgs.identify_problem_body }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.identify_problem_link }}</a></p>
         </div>
     </div>
 </div>
