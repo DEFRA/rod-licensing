@@ -6,40 +6,40 @@
 {% from "summary-list/macro.njk" import govukSummaryList %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set title = "Licence details" %}
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% set title = mssgs.licence_details_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% if data.permission.licenceLength === '1D' %}
-    {% set lengthText = '1 day' %}
+    {% set lengthText = mssgs.licence_type_1d %}
 {% elseif data.permission.licenceLength === '8D' %}
-    {% set lengthText = '8 days' %}
+    {% set lengthText = mssgs.licence_type_8d %}
 {% else %}
-    {% set lengthText = '12 months' %}
+    {% set lengthText = mssgs.licence_type_12m %}
 {% endif %}
 
 {% if data.ageConcession %}
-    {% if data.ageConcession.type == 'Senior' %}
-        {% set ageConcessionText = 'Over 65' %}
-    {% elseif data.ageConcession.type == 'Junior' %}
-        {% set ageConcessionText = 'Junior (13 to 16)' %}
+    {% if data.ageConcession.type == mssgs.senior %}
+        {% set ageConcessionText = mssgs.age_senior_concession %}
+    {% elseif data.ageConcession.type == mssgs.age_junior %}
+        {% set ageConcessionText = mssgs.age_junior_concession %}
     {% endif%}
 {% endif%}
 
 {% set licenseDetailsSummaryRows = [] %}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Name' }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Identification' }, value: { text: data.permission.licensee.obfuscatedDob } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Type' }, value: { text: data.licenceTypeStr } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Length' }, value: { text: lengthText } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Starts' }, value: { text: data.startTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Ends' }, value: { text: data.endTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Disability concession' }, value: { text: 'Yes' } }) if data.disabled }}
-{{ licenseDetailsSummaryRows.push({ key: { text: 'Age concession' }, value: { text: ageConcessionText } }) if data.ageConcession }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_name }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.identification }, value: { text: data.permission.licensee.obfuscatedDob } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_type }, value: { text: data.licenceTypeStr } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_length }, value: { text: lengthText } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.starts }, value: { text: data.startTimeString } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.ends }, value: { text: data.endTimeString } }) }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: 'Yes' } }) if data.disabled }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: ageConcessionText } }) if data.ageConcession }}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         {{ govukBackLink({
-              text: "Back",
+              text: mssgs.back,
               href: backRef,
               classes: "govuk-!-margin-bottom-7 no-print"
         }) }}
@@ -47,11 +47,11 @@
             <h1 class="govuk-heading-xl">{{ title }}</h1>
 
             <p class="govuk-body-l">
-                This is proof of your fishing licence. You might find it useful to take a screenshot or print out this page.
+                {{ mssgs.licence_details_body_1 }}
             </p>
 
             <p class="govuk-body">
-                If you gave us your email address, you’ll get a message that includes your licence information.
+                {{ mssgs.licence_details_body_2 }}
             </p>
         </section>
 
@@ -59,7 +59,7 @@
 
             <img src="/public/images/EA-logo-black.png" class="print-area ea-logo">
 
-            <span class="govuk-caption-xl"><span class="print-area">Licence number</span></span>
+            <span class="govuk-caption-xl"><span class="print-area">{{ mssgs.licence_num }}</span></span>
 
             <h2 class="govuk-heading-l">{{ data.permission.referenceNumber }}</h2>
 
