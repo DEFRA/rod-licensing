@@ -5,7 +5,7 @@
 {% from "error-summary.njk" import errorSummary %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
