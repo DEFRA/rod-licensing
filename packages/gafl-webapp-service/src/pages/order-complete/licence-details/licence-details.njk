@@ -32,7 +32,7 @@
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_length }, value: { text: lengthText } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.starts }, value: { text: data.startTimeString } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.ends }, value: { text: data.endTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: 'Yes' } }) if data.disabled }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }) if data.disabled }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: ageConcessionText } }) if data.ageConcession }}
 
 {% block content %}
