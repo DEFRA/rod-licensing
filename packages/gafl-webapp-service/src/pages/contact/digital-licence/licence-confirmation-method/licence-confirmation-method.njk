@@ -2,7 +2,7 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 
-{% set errorMsg = {{ mssgs.licence_confirm_method_error_choose }} %}
+{% set errorMsg = mssgs.licence_confirm_method_error_choose %}
 {% set emailError = mssgs.important_info_contact_error_email %}
 {% set mobileError = mssgs.important_info_contact_error_mobile %}
 
@@ -85,7 +85,7 @@
 {% set itemsArray = [
     {
         value: "email",
-        text: mssgs.email,
+        text: mssgs.email_alt,
         checked: payload['licence-confirmation-method'] === 'email',
         conditional: {
             html: emailHtml
@@ -102,7 +102,7 @@
 ] %}
 
 {% if data.licensee.postalFulfilment %}
-    {% set title = mssgs.licence_confirm_method_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_how_title_other %}
+    {% set title = mssgs.licence_confirm_method_how_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_how_title_other %}
     {% set bodyText = mssgs.licence_confirm_method_how_body_text %}
     {% set itemsArray = (itemsArray.push(
         {
@@ -114,7 +114,7 @@
 {% else %}
     {% set title = mssgs.licence_confirm_method_where_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_where_title_other %}
     {% set bodyText = mssgs.licence_confirm_method_where_body_text %}
-    {% set hintText = mssgs.licence_confirm_method_where_body_hint_you if data.isLicenceForYou else mssgs. %}
+    {% set hintText = mssgs.licence_confirm_method_where_body_hint_you if data.isLicenceForYou else mssgs.licence_confirm_method_how_title_other %}
 {% endif %}
 
 {% block pageContent %}
