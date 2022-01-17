@@ -3,7 +3,7 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 
-{% set title = 'Your payment has failed' %}
+{% set title = mssgs.payment_failed_title_3 %}
 
 {% if data['failure-code'] === data.codes.EXPIRED %}
     {% set title = mssgs.payment_failed_title_1 %}

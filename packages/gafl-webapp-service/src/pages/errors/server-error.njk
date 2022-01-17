@@ -48,7 +48,7 @@
             {% elseif serverError.origin.step === 'post-payment' %}
                {% call govukFieldset({
                    legend: {
-                     text: "Sorry, we were unable to retrieve your payment details",
+                     text: mssgs.server_error_unable_to_retrieve,
                      classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
                      isPageHeading: true
                    }

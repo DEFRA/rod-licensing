@@ -23,7 +23,7 @@
 
 {% block pageContent %}
     <p class="govuk-body-m">
-        {{ data.addresses.length }} {{ "address" if data.addresses.length === 1 else "addresses"}} found for 
+        {{ data.addresses.length }} {{ "address" if data.addresses.length === 1 else "addresses"}} {{ mssgs.address_select_found_for }}
         {{ data.searchTerms.premises}}{{ mssgs.and }}{{ data.searchTerms.postcode}}&nbsp;&nbsp;
         <a href="{{ data.lookupPage }}">
             {{ mssgs.licence_summary_change }}<span class="govuk-visually-hidden">{{ mssgs.address_select_link }}</span>

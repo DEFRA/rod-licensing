@@ -68,17 +68,17 @@
             }) }}
 
             {{ govukInsetText({
-                html: 'You must follow the rod fishing byelaws.<br/>Search for <a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link">rod fishing byelaws</a> on GOV.UK.',
+                html: mssgs.licence_details_no_print_1 + '<br/>' + mssgs.licence_details_no_print_2 + '<a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link">' + mssgs.licence_details_no_print_link + '</a>' + mssgs.licence_details_no_print_3,
                 classes: "no-print"
             }) }}
 
             {{ govukInsetText({
-                html: 'You must follow the rod fishing byelaws.<br/>Search for ‘rod fishing byelaws’ on GOV.UK.',
+                html: mssgs.licence_details_print_area_1 + '<br/>' + mssgs.licence_details_print_area_2,
                 classes: "print-area"
             }) }}
 
             {{ govukWarningText({
-                html: "Report an environmental incident on 0800 80 70 60.<br />This is a 24-hour service.",
+                html: mssgs.licence_details_warning_1 + '<br />' + mssgs.licence_details_warning_2,
                 iconFallbackText: "Warning",
                 classes: "govuk-!-margin-top-6"
             }) }}
