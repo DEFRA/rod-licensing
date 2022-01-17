@@ -3,9 +3,9 @@
 
 {% set contactType %}
   {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-    email address
+    {{ mssgs.email_address }}
   {% else %}
-    phone number
+    {{ mssgs.phone_number }}
   {% endif %}
 {% endset %}
 
@@ -25,16 +25,16 @@
   {% endif %}
 {% endset %}
 
-{% set title = 'Is the ' + contactType + ' correct?' %}
+{% set title = mssgs.check_conf_contact_title_1 + contactType + mssgs.check_conf_contact_title_2 %}
 
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {% if backRef %}
         {{ govukBackLink({
-          text: "Back",
+          text: mssgs.back,
           href: backRef,
           classes: "govuk-!-margin-bottom-7"
         }) }}
