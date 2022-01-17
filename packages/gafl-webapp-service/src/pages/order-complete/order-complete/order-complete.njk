@@ -19,7 +19,7 @@
 
         {{ govukPanel({
           titleHtml: titleHtml,
-          html: 'Your licence number is<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />Starts from <br />' + data.startTimeStringTitle
+          html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
         }) }}
         {% if data.isPostalFulfilment %}
             {% if data.contactMethod === data.howContacted['email'] %}

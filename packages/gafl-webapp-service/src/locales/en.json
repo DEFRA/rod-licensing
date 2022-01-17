@@ -479,6 +479,8 @@
   "pricing_summary_heading": "You can go fishing without a rod licence because you're under 13. You'll need to get a licence to fish as soon as you turn 13.",
   "order_complete_title_application": "Application complete",
   "order_complete_title_payment": "Payment complete",
+  "order_complete_conf_1": "Your licence number is ",
+  "order_complete_conf_2": "Starts from ",
   "order_complete_email_conf": "We have sent confirmation of the licence by email.",
   "order_complete_text_conf": "We have sent confirmation of the licence by text message.",
   "order_complete_post_conf": "Licence cards will arrive in the post within 15 working days.",
