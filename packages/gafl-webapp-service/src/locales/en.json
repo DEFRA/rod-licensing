@@ -468,6 +468,8 @@
   "role_required_title": "Role required",
   "role_required_body_1": "You were successfully signed in but you do not have the correct role assigned to access the telesales application.",
   "role_required_body_2": "Please contact your Microsoft Dynamics administrator to request access.",
+  "account_disabled_title": "Account not enabled",
+  "account_disabled_body_1": "You were successfully signed in but your account is not enabled in Microsoft Dynamics.",
   "payment_cancelled_title": "Your payment has been cancelled",
   "licence_details_title": "Licence details",
   "licence_details_body_1": "This is proof of your fishing licence. You might find it useful to take a screenshot or print out this page.",

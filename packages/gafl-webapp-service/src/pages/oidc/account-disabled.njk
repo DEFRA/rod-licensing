@@ -1,21 +1,21 @@
 {% extends "layout.njk" %}
 {% from "button/macro.njk" import govukButton %}
-{% block pageTitle %}Account not enabled - GOV.UK{% endblock %}
+{% block pageTitle %}{{ mssgs.account_disabled_title }}{{ mssgs.gov_uk }}{% endblock %}
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Account not enabled</h1>
+        <h1 class="govuk-heading-l">{{ mssgs.account_disabled_title }}</h1>
         <p class="govuk-body">
-            You were successfully signed in but your account is not enabled in Microsoft Dynamics.
+            {{ mssgs.account_disabled_body_1 }}
         </p>
         <p class="govuk-body">
-            Please contact your Microsoft Dynamics administrator to request access.
+            {{ mssgs.role_required_body_2 }}
         </p>
 
         {{ govukButton({
             href: uri.buy,
             attributes: { id: 'continue' },
-            text: "Try again",
+            text: mssgs.try_again,
             classes: "govuk-!-margin-top-5 no-print"
         }) }}
    </div>
