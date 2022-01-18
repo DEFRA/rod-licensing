@@ -54,7 +54,7 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {{ errorSummary(error, errorMap) }}
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
             {% call govukFieldset({
               legend: {
