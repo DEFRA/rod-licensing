@@ -13,7 +13,7 @@
 {%
     set errorMap = {
         'agree': {
-            'any.required': { ref: '#agree', text: 'You have not agreed to the terms and conditions' }
+            'any.required': { ref: '#agree', text: 'You have not agreed to the licence conditions' }
         }
     }
 %}
@@ -58,7 +58,7 @@
                 {{ govukCheckboxes({
                   idPrefix: "agree",
                   name: "agree",
-                  errorMessage: { text: 'You must agree to the terms and conditions to continue' } if error,
+                  errorMessage: { text: 'You must agree to the licence conditions to continue' } if error,
                   items: [
                     {
                       value: "yes",
