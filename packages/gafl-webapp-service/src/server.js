@@ -17,7 +17,7 @@ import {
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT
 } from './constants.js'
-import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TRANSACTION } from './uri.js'
+import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TRANSACTION, IDENTIFY } from './uri.js'
 
 import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
@@ -83,7 +83,8 @@ const layoutContextAmalgamation = (request, h) => {
         accessibility: ACCESSIBILITY_STATEMENT.uri,
         privacy: PRIVACY_POLICY.uri,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-        clear: NEW_TRANSACTION.uri
+        clear: NEW_TRANSACTION.uri,
+        identify: IDENTIFY.uri
       },
       credentials: request.auth.credentials
     })
