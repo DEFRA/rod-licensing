@@ -40,7 +40,8 @@ export const OIDC_ACCOUNT_DISABLED = { uri: '/oidc/account-disabled', page: 'acc
  * Renewals pages
  * @type {{uri: string}}
  */
-export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber?}' }
+export const RENEWAL_BASE = { uri: '/renew' }
+export const RENEWAL_PUBLIC = { uri: `${RENEWAL_BASE}/{referenceNumber?}` }
 export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
 export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }

@@ -38,6 +38,8 @@ export const UTM = {
   CONTENT: 'utm_content'
 }
 
+export const QUERYSTRING_LICENCE_KEY = 'reference'
+
 export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
 export const CommonResults = {
