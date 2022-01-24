@@ -100,9 +100,8 @@ const initialiseHapiGapiPlugin = () => {
 const initialiseHapiI18nPlugin = () => ({
   plugin: HapiI18n,
   options: {
-    locales: ['en', 'cy'],
-    directory: path.join(Dirname, 'src/locales'),
-    queryParameter: 'lang'
+    locales: ['en'],
+    directory: path.join(Dirname, 'src/locales')
   }
 })
 
