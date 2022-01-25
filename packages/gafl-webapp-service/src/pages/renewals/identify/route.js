@@ -7,6 +7,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
 const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
+  await request.cache().helpers.status.setCurrentPermission({ isLicenceForYou = true })
   const permission = await request.cache().helpers.status.getCurrentPermission()
 
   if (permission.referenceNumber) {
