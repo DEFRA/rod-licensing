@@ -33,13 +33,13 @@ describe('address-entry > route', () => {
     it('should return pronoun as your, if isLicenceForYou is true on the transaction cache', async () => {
       mockTransctionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
       const result = await getData(mockRequest)
-      expect(result.pronoun).toBe('your')
+      expect(result.isLicenceForYou).toBeTruthy()
     })
 
     it('should return pronoun as their, if isLicenceForYou is false on the transaction cache', async () => {
       mockTransctionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
       const result = await getData(mockRequest)
-      expect(result.pronoun).toBe('their')
+      expect(result.isLicenceForYou).toBeFalsy()
     })
   })
 

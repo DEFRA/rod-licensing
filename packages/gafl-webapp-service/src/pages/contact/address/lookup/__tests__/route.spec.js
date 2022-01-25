@@ -17,13 +17,13 @@ describe('address-lookup > route', () => {
     it('should return pronoun as your, if isLicenceForYou is true on the transaction cache', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: true }))
       const result = await getData(mockRequest)
-      expect(result.pronoun).toBe('your')
+      expect(result.isLicenceForYou).toBeTruthy()
     })
 
     it('should return pronoun as their, if isLicenceForYou is false on the transaction cache', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ concessions: [], isLicenceForYou: false }))
       const result = await getData(mockRequest)
-      expect(result.pronoun).toBe('their')
+      expect(result.isLicenceForYou).toBeFalsy()
     })
   })
 })

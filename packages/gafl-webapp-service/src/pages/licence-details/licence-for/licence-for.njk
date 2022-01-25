@@ -2,9 +2,9 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = 'Who is this fishing licence for?' %}
+{% set title = mssgs.licence_for_title %}
 
-{% set errorMsg = 'Tell us who the licence is for' %}
+{% set errorMsg = mssgs.licence_for_error %}
 
 {% set errorMap = {
         'licence-for': {
@@ -17,18 +17,18 @@
     {{ govukRadios({
         idPrefix: "licence-for",
         name: "licence-for",
-        hint: { text: "One person can use this fishing licence." },
+        hint: { text: mssgs.licence_for_hint },
         items: [
             {
                 "id": "selector-you",
                 value: "you",
-                text: "You",
+                text: mssgs.licence_for_radio_you,
                 checked: payload['licence-for'] === 'you'
             },
             {
                 "id": "selector-someone-else",
                 value: "someone-else",
-                text: "Someone else",
+                text: mssgs.licence_for_radio_other,
                 checked: payload['licence-for'] === 'someone-else'
             }
         ],

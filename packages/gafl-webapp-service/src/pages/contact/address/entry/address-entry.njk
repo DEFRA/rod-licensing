@@ -4,7 +4,7 @@
 {% from "select/macro.njk" import govukSelect %}
 {% from "inset-text/macro.njk" import govukInsetText %}
 
-{% set title = 'Enter ' + data.pronoun + ' address' %}
+{% set title = mssgs.address_entry_you if data.isLicenceForYou else mssgs.address_entry_other %}
 
 {% set countries = [] %}
 
@@ -20,19 +20,19 @@
 {%
     set errorMap = {
         'premises': {
-            'string.empty': { ref: '#premises', text: 'Enter a building number or name' },
-            'string.max': { ref: '#premises', text: 'The building number or name must be less than 50 characters' }
+            'string.empty': { ref: '#premises', text: mssgs.address_entry_error_empty_num },
+            'string.max': { ref: '#premises', text: mssgs.address_entry_error_max_char_num }
         },
         'postcode': {
-            'string.empty': { ref: '#postcode', text: 'Enter a postcode' },
-            'string.pattern.base': { ref: '#postcode', text: 'The postcode doesn\'t look right. Check and enter again' }
+            'string.empty': { ref: '#postcode', text: mssgs.address_entry_error_empty_postcode },
+            'string.pattern.base': { ref: '#postcode', text: mssgs.address_entry_error_pattern_postcode }
         },
         'town': {
-            'string.empty': { ref: '#town', text: 'Enter a town or city' },
-            'string.max': { ref: '#town', text: 'The town or city must be less than 50 characters long' }
+            'string.empty': { ref: '#town', text: mssgs.address_entry_error_empty_town },
+            'string.max': { ref: '#town', text: mssgs.address_entry_error_max_char_town }
         },
         'country': {
-            'string.empty': { ref: '#country', text: 'Choose a country' }
+            'string.empty': { ref: '#country', text: mssgs.address_entry_error_empty_country }
         }
     }
 %}
@@ -41,28 +41,28 @@
 
     {% if data.searchTerms %}
         {{ govukInsetText({
-          html: '<p>We could not find an address for premises <span class="govuk-!-font-weight-bold">' +
-          data.searchTerms.premises + '</span> and postcode <span class="govuk-!-font-weight-bold">' + data.searchTerms.postcode + '</span></p>' +
-            '<p>Enter the full address below</p>'
+          html: '<p>' + mssgs.address_entry_content_unable_to_find + ' <span class="govuk-!-font-weight-bold">' +
+          data.searchTerms.premises + '</span> ' + mssgs.address_entry_content_and_postcode + ' <span class="govuk-!-font-weight-bold">' + data.searchTerms.postcode + '</span></p>' +
+            '<p>' + mssgs.address_entry_enter_full_add + '</p>'
          }) }}
     {% endif %}
 
     {{ govukInput({
       label: {
-        text: "Building number or name"
+        text: mssgs.address_entry_content_name_num
       },
       id: "premises",
       name: "premises",
-      hint: { text: "For example, 47, Flat 2a or Rose Cottage" },
+      hint: { text: mssgs.address_entry_content_name_num_hint },
       value: payload['premises'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
-      errorMessage: { text: 'Enter a building number or name' } if error['premises']
+      errorMessage: { text: mssgs.address_entry_error_empty_num } if error['premises']
     }) }}
 
     {{ govukInput({
       label: {
-        text: "Address line 1 (optional)"
+        text: mssgs.address_entry_content_street_1
       },
       id: "street",
       name: "street",
@@ -73,7 +73,7 @@
 
     {{ govukInput({
       label: {
-        text: "Address line 2 (optional)"
+        text: mssgs.address_entry_content_street_2
       },
       id: "locality",
       name: "locality",
@@ -85,7 +85,7 @@
 
     {{ govukInput({
       label: {
-        text: "Town or city"
+        text: mssgs.address_entry_content_town
       },
       id: "town",
       name: "town",
@@ -93,12 +93,12 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 50 },
       autocomplete: 'address-level1',
-      errorMessage: { text: 'Enter a town or city' } if error['town']
+      errorMessage: { text: mssgs.address_entry_error_empty_town } if error['town']
     }) }}
 
     {{ govukInput({
       label: {
-        text: "Postcode"
+        text: mssgs.address_entry_content_postcode
       },
       id: "postcode",
       name: "postcode",
@@ -106,7 +106,7 @@
       classes: "govuk-input--width-20",
       attributes: { maxlength: 10 },
       autocomplete: 'postal-code',
-      errorMessage: { text: 'Enter a postcode' } if error['postcode']
+      errorMessage: { text: mssgs.address_entry_error_empty_postcode } if error['postcode']
     }) }}
 
     {{ govukSelect({
@@ -116,8 +116,8 @@
         text: "Country"
       },
       items: countries,
-      errorMessage: { text: 'Select a country' } if error['country-code']
+      errorMessage: { text: mssgs.address_entry_error_empty_country } if error['country-code']
     }) }}
 
-    <p class="govuk-body-m"><a class="govuk-link" href="{{ data.lookupPage }}">Find the address</a></p>
+    <p class="govuk-body-m"><a class="govuk-link" href="{{ data.lookupPage }}">{{ mssgs.address_entry_find_add }}</a></p>
 {% endblock %}

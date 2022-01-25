@@ -5,8 +5,8 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set title = 'Check the contact details' %}
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% set title = mssgs.contact_summary_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set licenseeDetailsSummary %}
     {% call govukFieldset({
@@ -25,7 +25,7 @@
     <div class="govuk-grid-column-full">
         {% if backRef %}
             {{ govukBackLink({
-              text: "Back",
+              text: mssgs.back,
               href: backRef,
               classes: "govuk-!-margin-bottom-7"
             }) }}
@@ -38,7 +38,7 @@
                 attributes: { id: 'continue' },
                 preventDoubleClick: true,
                 name: "continue",
-                text: "Continue",
+                text: mssgs.continue,
                 classes: "govuk-!-margin-top-5"
             }) }}
 
@@ -46,7 +46,7 @@
         </form>
 
         <p class="govuk-body-m">
-            <a class="govuk-link" href="{{ data.uri.licenceSummary }}">Review or change your licence details</a>
+            <a class="govuk-link" href="{{ data.uri.licenceSummary }}">{{ mssgs.change_licence_details }}</a>
         </p>
     </div>
 </div>
