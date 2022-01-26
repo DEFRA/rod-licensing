@@ -38,7 +38,8 @@ describe('prepareApiTransactionPayload', () => {
                     preferredMethodOfReminder: 'Prefer not to be contacted',
                     postalFulfilment: false
                   },
-                  licenceToStart: licenceToStart.AFTER_PAYMENT
+                  licenceToStart: licenceToStart.AFTER_PAYMENT,
+                  isLicenceForYou: true
                 }
               ],
               cost: 0
@@ -69,7 +70,8 @@ describe('prepareApiTransactionPayload', () => {
             country: 'England'
           },
           issueDate: null,
-          startDate: null
+          startDate: null,
+          isLicenceForYou: true
         }
       ]
     })

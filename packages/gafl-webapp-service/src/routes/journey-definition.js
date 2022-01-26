@@ -5,6 +5,7 @@ import {
   DATE_OF_BIRTH,
   NO_LICENCE_REQUIRED,
   LICENCE_TYPE,
+  LICENCE_FOR,
   NAME,
   DISABILITY_CONCESSION,
   ADDRESS_LOOKUP,
@@ -28,7 +29,7 @@ import {
   RENEWAL_START_DATE
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, LICENCE_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
@@ -47,16 +48,39 @@ export default [
     current: { page: 'start' },
     next: {
       [CommonResults.OK]: {
-        page: DATE_OF_BIRTH
+        page: LICENCE_FOR
       }
     }
+  },
+
+  {
+    current: LICENCE_FOR,
+    next: {
+      [CommonResults.OK]: {
+        page: NAME
+      }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+  },
+
+  {
+    current: NAME,
+    next: {
+      [CommonResults.OK]: {
+        page: DATE_OF_BIRTH
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY
+      }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_FOR.uri)
   },
 
   {
     current: DATE_OF_BIRTH,
     next: {
       [CommonResults.OK]: {
-        page: LICENCE_TO_START
+        page: DISABILITY_CONCESSION
       },
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
         page: NO_LICENCE_REQUIRED
@@ -65,14 +89,27 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : NAME.uri)
+  },
+
+  {
+    current: DISABILITY_CONCESSION,
+    next: {
+      [CommonResults.OK]: {
+        page: LICENCE_TO_START
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY
+      }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
   },
 
   {
     current: LICENCE_TO_START,
     next: {
       [CommonResults.OK]: {
-        page: DISABILITY_CONCESSION
+        page: LICENCE_TYPE
       },
       [ageConcessionResults.NO_LICENCE_REQUIRED]: {
         page: NO_LICENCE_REQUIRED
@@ -84,25 +121,12 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
   },
 
   {
     current: NO_LICENCE_REQUIRED,
     backLink: DATE_OF_BIRTH.uri
-  },
-
-  {
-    current: DISABILITY_CONCESSION,
-    next: {
-      [CommonResults.OK]: {
-        page: LICENCE_TYPE
-      },
-      [CommonResults.SUMMARY]: {
-        page: LICENCE_SUMMARY
-      }
-    },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri)
   },
 
   {
@@ -154,34 +178,13 @@ export default [
     current: LICENCE_SUMMARY,
     next: {
       [CommonResults.OK]: {
-        page: NAME
+        page: ADDRESS_LOOKUP
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
       },
       [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
-      }
-    }
-  },
-
-  {
-    current: NAME,
-    next: {
-      [CommonResults.OK]: {
-        page: ADDRESS_LOOKUP
-      },
-      [CommonResults.SUMMARY]: {
-        page: CONTACT_SUMMARY
-      }
-    },
-    backLink: s => {
-      if (s.fromSummary === LICENCE_SUMMARY_SEEN) {
-        return LICENCE_SUMMARY.uri
-      } else if (s.fromSummary === CONTACT_SUMMARY_SEEN) {
-        return CONTACT_SUMMARY.uri
-      } else {
-        return null
       }
     }
   },

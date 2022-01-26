@@ -1,33 +1,33 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = "What's your date of birth?" %}
+{% set title = mssgs.dob_title_you if data.isLicenceForYou else mssgs.dob_title_other %}
 
 {%
     set errorMap = {
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' },
-            'date.max': { ref: '#date-of-birth-day', text: 'Your date of birth must be in the past' },
-            'date.min': { ref: '#date-of-birth-day', text: 'Enter your date of birth and include a day, month and year' }
+            'date.format': { ref: '#date-of-birth-day', text: mssgs.dob_error_format },
+            'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_max },
+            'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_min }
         }
     }
 %}
 
 {% set dateInputItems = [
     {
-      name: "day",
+      name: mssgs.dob_day,
       classes: "govuk-input--width-2",
       value: payload['date-of-birth-day'],
       attributes: { maxlength : 2 }
     },
     {
-      name: "month",
+      name: mssgs.dob_month,
       classes: "govuk-input--width-2",
       value: payload['date-of-birth-month'],
       attributes: { maxlength : 2 }
     },
     {
-      name: "year",
+      name: mssgs.dob_year,
       classes: "govuk-input--width-4",
       value: payload['date-of-birth-year'],
       attributes: { maxlength : 4 }
@@ -36,16 +36,14 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">If you're applying for someone else enter their date of birth.</p>
-
     {{ govukDateInput({
       id: "date-of-birth",
       namePrefix: "date-of-birth",
       items: dateInputItems,
-      errorMessage: { text: 'Enter your date of birth' } if error,
+      errorMessage: { text: mssgs.dob_error } if error,
       hint: {
-        text: "For example, 23 11 1979"
+        text: mssgs.dob_entry_hint
       }
     }) }}
-    <div class="govuk-body-m">Read about <a class="govuk-link" href="{{ _uri.privacy }}">how we use personal information</a>.</div>
+    <div class="govuk-body-m">{{ mssgs.dob_privacy_link_prefix }} <a class="govuk-link" href="{{ _uri.privacy }}">{{ mssgs.dob_privacy_link }}</a>.</div>
 {% endblock %}

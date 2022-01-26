@@ -6,6 +6,7 @@ import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
+  NAME,
   LICENCE_SUMMARY,
   LICENCE_LENGTH,
   LICENCE_TYPE,
@@ -22,6 +23,10 @@ import { nextPage } from '../../../routes/next-page.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
+  if (!permission.licensee.firstName || !permission.licensee.lastName) {
+    throw new GetDataRedirect(NAME.uri)
+  }
+
   if (!permission.licensee.birthDate) {
     throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
@@ -72,6 +77,7 @@ export const getData = async request => {
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
     uri: {
+      name: NAME.uri,
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,
       licenceToStart: LICENCE_TO_START.uri,

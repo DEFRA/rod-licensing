@@ -9,7 +9,6 @@ import { nextPage } from '../../../routes/next-page.js'
 import {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
-  NAME,
   ADDRESS_ENTRY,
   ADDRESS_SELECT,
   ADDRESS_LOOKUP,
@@ -21,20 +20,12 @@ import {
 
 export const checkNavigation = (status, permission) => {
   if (!status.renewal) {
-    if (!status[NAME.page]) {
-      throw new GetDataRedirect(NAME.uri)
-    }
-
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
     }
 
     if (!status[CONTACT.page]) {
       throw new GetDataRedirect(CONTACT.uri)
-    }
-
-    if (!status[NEWSLETTER.page]) {
-      throw new GetDataRedirect(NEWSLETTER.uri)
     }
   }
 
@@ -69,18 +60,24 @@ const getData = async request => {
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
 export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
-  return [
-    getRow('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`, NAME.uri, 'name', 'change-name'),
+  const licenseeSummaryArray = [
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
-    ...getContactDetails(permission),
-    getRow(
-      'Newsletter',
-      permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
-      NEWSLETTER.uri,
-      'newsletter',
-      'change-newsletter'
-    )
+    ...getContactDetails(permission)
   ]
+
+  if (permission.isLicenceForYou) {
+    licenseeSummaryArray.push(
+      getRow(
+        'Newsletter',
+        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
+        NEWSLETTER.uri,
+        'newsletter',
+        'change-newsletter'
+      )
+    )
+  }
+
+  return licenseeSummaryArray
 }
 
 const CONTACT_TEXT_DEFAULT = {

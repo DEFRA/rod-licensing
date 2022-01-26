@@ -19,6 +19,7 @@ export const getData = async request => {
   }
 
   return {
+    isLicenceForYou: permission.isLicenceForYou,
     licensee: permission.licensee,
     howContacted: HOW_CONTACTED,
     ...(change === 'email' && { changeEmail: true }),
