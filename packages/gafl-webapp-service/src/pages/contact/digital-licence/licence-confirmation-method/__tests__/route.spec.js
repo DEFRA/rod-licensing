@@ -24,7 +24,7 @@ describe('licence-confirmation-method > route', () => {
 
     beforeEach(jest.clearAllMocks)
 
-    it('if licence is physical, redirects to contact page', async () => {
+    it('should reject and redirect to the contact page, if licence is not physical', async () => {
       const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
       const func = async () => await getData(createRequestMock({ licenceLength: '1D' }))
       await expect(func).rejects.toThrow(getDataRedirectError)
