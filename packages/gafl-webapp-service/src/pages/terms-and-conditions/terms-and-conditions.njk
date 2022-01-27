@@ -7,13 +7,13 @@
 {% from "back-link/macro.njk" import govukBackLink %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'Licence conditions' %}
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% set title = mssgs.terms_conds_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {%
     set errorMap = {
         'agree': {
-            'any.required': { ref: '#agree', text: 'You have not agreed to the licence conditions' }
+            'any.required': { ref: '#agree', text: mssgs.terms_conds_error }
         }
     }
 %}
@@ -23,13 +23,13 @@
     <div class="govuk-grid-column-two-thirds">
         {% if backRef %}
             {{ govukBackLink({
-              text: "Back",
+              text: mssgs.back,
               href: backRef,
               classes: "govuk-!-margin-bottom-7"
             }) }}
         {% endif %}
 
-        {{ errorSummary(error, errorMap) }}
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
 
         <form method="post">
 
@@ -42,15 +42,15 @@
             }) %}
 
             <div class="govuk-!-margin-bottom-9">
-                <p class="govuk-body">When you buy this licence you agree that:</p>
+                <p class="govuk-body">{{ mssgs.terms_conds_body }}</p>
                 <ul class="govuk-list govuk-list--bullet">
-                    <li>the licence is only valid for the person named on it (the licence holder)</li>
-                    <li>the licence holder must carry the necessary proof of licence when they go fishing and show it to our enforcement officers if asked. It is an offence not to do so</li>
-                    <li>the licence does not give the right to fish, but gives the licence holder the right to use a fishing rod and line only. The permission from any owner of fishing rights is also required before commencing to fish</li>
-                    <li>the licence holder must read and comply with the <a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">freshwater rod fishing byelaws (opens in a new tab)</a>. It is an offence not to do so</li>
-                    <li>the licence is only valid for the specified date and time period, number of rods and the species of fish</li>
+                    <li>{{ mssgs.terms_conds_bulletpoint_1 }}</li>
+                    <li>{{ mssgs.terms_conds_bulletpoint_2 }}</li>
+                    <li>{{ mssgs.terms_conds_bulletpoint_3 }}</li>
+                    <li>{{ mssgs.terms_conds_bulletpoint_4_1 }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_4_link }}</a>{{ mssgs.terms_conds_bulletpoint_4_2 }}</li>
+                    <li>{{ mssgs.terms_conds_bulletpoint_5 }}</li>
                     {% if data.isSalmonAndSeaTrout %}
-                        <li>you will <a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">report a catch return (opens in a new tab)</a> of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</li>
+                        <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
                     {% endif %}
                 </ul>
             </div>
@@ -58,18 +58,18 @@
                 {{ govukCheckboxes({
                   idPrefix: "agree",
                   name: "agree",
-                  errorMessage: { text: 'You must agree to the licence conditions to continue' } if error,
+                  errorMessage: { text: mssgs.terms_conds_error_must_agree } if error,
                   items: [
                     {
                       value: "yes",
-                      text: "I agree to the licence conditions"
+                      text: mssgs.terms_conds_item_agree
                     }
                   ]
                 }) }}
 
                 {% if data.paymentRequired %}
                     {{ govukWarningText({
-                      text: "Do not close the browser or use the back button during payment",
+                      text: mssgs.terms_conds_warning,
                       iconFallbackText: "Warning"
                     }) }}
                 {% endif %}
@@ -78,12 +78,12 @@
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
                     name: "continue",
-                    text: "Pay for the licence" if data.paymentRequired else "Get the licence",
+                    text: mssgs.terms_conds_pay_button_1 if data.paymentRequired else mssgs.terms_conds_pay_button_2,
                     classes: "govuk-!-margin-top-5"
                 }) }}
 
                 {% if data.paymentRequired %}
-                    <span class="govuk-caption-m">on the GOV.UK secure payment site</span>
+                    <span class="govuk-caption-m">{{ mssgs.terms_conds_pay_on_gov_uk }}</span>
                 {% endif %}
             {% endcall %}
             {{ csrf() }}

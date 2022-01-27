@@ -1,12 +1,12 @@
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
-import { DISABILITY_CONCESSION, LICENCE_TYPE, TEST_TRANSACTION, LICENCE_LENGTH } from '../../../../uri.js'
+import { DISABILITY_CONCESSION, LICENCE_TO_START, TEST_TRANSACTION, LICENCE_LENGTH } from '../../../../uri.js'
 import { disabilityConcessionTypes } from '../update-transaction.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The disability concession page', () => {
   it('returns success on requesting', async () => {
@@ -38,13 +38,13 @@ describe('The disability concession page', () => {
     expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
   })
 
-  it('on setting a correct ni number it redirects to the licence type page', async () => {
+  it('on setting a correct ni number it redirects to the licence-to-start page', async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.pipDla,
       'ni-number': 'NH 34 67 44 A'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
   it('on setting a correct ni number adds a disabled concession to the cache', async () => {
@@ -60,13 +60,13 @@ describe('The disability concession page', () => {
     })
   })
 
-  it('on setting a correct blue badge number redirects to the licence type page', async () => {
+  it('on setting a correct blue badge number redirects to the licence-to-start page', async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.blueBadge,
       'blue-badge-number': '1234'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
   it('on setting a correct blue badge number adds a disabled concession to the cache', async () => {
@@ -107,11 +107,11 @@ describe('The disability concession page', () => {
     expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).not.toBeTruthy()
   })
 
-  it("on setting 'no' it causes a redirect to the licence type page", async () => {
+  it("on setting 'no' it causes a redirect to the licence-to-start page", async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
       'disability-concession': disabilityConcessionTypes.no
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 })

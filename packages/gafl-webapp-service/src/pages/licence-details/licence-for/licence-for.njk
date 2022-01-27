@@ -1,0 +1,37 @@
+{% extends "standard-form.njk" %}
+
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = mssgs.licence_for_title %}
+
+{% set errorMsg = mssgs.licence_for_error %}
+
+{% set errorMap = {
+        'licence-for': {
+            'any.required': { ref: '#selector-you', text: errorMsg }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+        idPrefix: "licence-for",
+        name: "licence-for",
+        hint: { text: mssgs.licence_for_hint },
+        items: [
+            {
+                "id": "selector-you",
+                value: "you",
+                text: mssgs.licence_for_radio_you,
+                checked: payload['licence-for'] === 'you'
+            },
+            {
+                "id": "selector-someone-else",
+                value: "someone-else",
+                text: mssgs.licence_for_radio_other,
+                checked: payload['licence-for'] === 'someone-else'
+            }
+        ],
+        errorMessage: { text: errorMsg } if error['licence-for']
+    }) }}
+{% endblock %}

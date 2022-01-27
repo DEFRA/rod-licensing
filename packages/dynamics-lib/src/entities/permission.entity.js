@@ -22,7 +22,8 @@ export class Permission extends BaseEntity {
       startDate: { field: 'defra_startdate', type: 'datetime' },
       endDate: { field: 'defra_enddate', type: 'datetime' },
       stagingId: { field: 'defra_stagingid', type: 'string' },
-      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' }
+      dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
+      isLicenceForYou: { field: 'defra_licenceforyou', type: 'optionset', ref: 'defra_islicenceforyou' }
     },
     relationships: {
       licensee: { property: 'defra_ContactId', entity: Contact, parent: true },
@@ -111,5 +112,17 @@ export class Permission extends BaseEntity {
 
   set stagingId (stagingId) {
     super._setState('stagingId', stagingId)
+  }
+
+  /**
+   * Whether the permission is for the user purchasing the licence or someone else
+   * @type {boolean}
+   */
+  get isLicenceForYou () {
+    return super._getState('isLicenceForYou')
+  }
+
+  set isLicenceForYou (isLicenceForYou) {
+    super._setState('isLicenceForYou', isLicenceForYou)
   }
 }

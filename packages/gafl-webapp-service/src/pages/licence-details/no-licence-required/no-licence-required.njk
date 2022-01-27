@@ -6,16 +6,16 @@
 {% from "back-link/macro.njk" import govukBackLink %}
 {% from "error-summary.njk" import errorSummary %}
 
-{% set title = 'You do not need a licence yet' %}
+{% set title = mssgs.no_licence_req_title %}
 
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         {% if backRef %}
             {{ govukBackLink({
-              text: "Back",
+              text: mssgs.back,
               href: backRef,
               classes: "govuk-!-margin-bottom-7"
             }) }}
@@ -29,10 +29,10 @@
                 isPageHeading: true
               }
             }) %}
-            <p class="govuk-body-m">You can go fishing without a rod licence because you're under 13. You'll need to get a licence to fish as soon as you turn 13.</p>
+            <p class="govuk-body-m">{{ mssgs.no_licence_req_body }}</p>
 
                 {{ govukButton({
-                    text: "Exit the service",
+                    text: mssgs.exit_service_button,
                     classes: "govuk-!-margin-top-6",
                     href: data.uri.servicePage
                 }) }}

@@ -102,6 +102,8 @@ export default (path, view, completion, getData) => ({
     await clearErrorsFromOtherPages(request, view)
 
     // Calculate the back reference and add to page
+    pageData.mssgs = request.i18n.getCatalog()
+    pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
     return h.view(view, pageData)
   },

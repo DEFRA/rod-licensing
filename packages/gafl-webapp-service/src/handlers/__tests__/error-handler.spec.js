@@ -10,10 +10,15 @@ const h = {
 
 describe('error-handler', () => {
   describe('errorHandler', () => {
+    beforeEach(jest.clearAllMocks)
     it('should pass the referer to the view if it is present', async () => {
       const request = {
         headers: {
           referer: 'http://example.com'
+        },
+        i18n: {
+          getCatalog: () => [],
+          getLocales: () => []
         },
         response: {
           isBoom: true,
@@ -34,6 +39,10 @@ describe('error-handler', () => {
     it('should not pass the referer to the view if it is not present', async () => {
       const request = {
         headers: {},
+        i18n: {
+          getCatalog: () => [],
+          getLocales: () => []
+        },
         response: {
           isBoom: true,
           output: {
@@ -46,6 +55,29 @@ describe('error-handler', () => {
         CLIENT_ERROR.page,
         expect.not.objectContaining({
           referer: 'http://example.com'
+        })
+      )
+    })
+    it('should pass the catalog and language to the view if it is present', async () => {
+      const request = {
+        headers: {},
+        i18n: {
+          getCatalog: () => [],
+          getLocales: () => []
+        },
+        response: {
+          isBoom: true,
+          output: {
+            statusCode: 400
+          }
+        }
+      }
+      await errorHandler(request, h)
+      expect(mockView).toBeCalledWith(
+        CLIENT_ERROR.page,
+        expect.objectContaining({
+          mssgs: [],
+          altLang: []
         })
       )
     })

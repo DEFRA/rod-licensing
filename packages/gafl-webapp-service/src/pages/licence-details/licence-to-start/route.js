@@ -42,9 +42,12 @@ const validator = payload => {
   )
 }
 
-const getData = () => {
+export const getData = async request => {
   const fmt = 'DD MM YYYY'
+  const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
+
   return {
+    isLicenceForYou,
     exampleStartDate: moment()
       .tz(SERVICE_LOCAL_TIME)
       .add(1, 'days')

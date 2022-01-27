@@ -11,10 +11,15 @@ const validator = Joi.object({
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const pricing = await pricingDetail(LICENCE_LENGTH.page, permission)
-  return { pricing, licenceTypeStr: licenceTypeDisplay(permission) }
+
+  return {
+    pricing,
+    isLicenceForYou: permission.isLicenceForYou,
+    licenceTypeStr: licenceTypeDisplay(permission)
+  }
 }
 
 export default pageRoute(LICENCE_LENGTH.page, LICENCE_LENGTH.uri, validator, nextPage, getData)

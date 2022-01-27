@@ -1,20 +1,20 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
-{% set title = 'Do you receive any of the following?' %}
+{% set title = mssgs.disability_concession_title_you if data.isLicenceForYou else mssgs.disability_concession_title_other %}
 
 {%
     set errorMap = {
         'disability-concession': {
-            'any.required': { ref: '#disability-concession', text: 'Choose Personal Independence Payment (PIP) or Disability Living Allowance (DLA), Blue Badge or No.' }
+            'any.required': { ref: '#disability-concession', text: mssgs.disability_concession_error_choose_option }
         },
         'ni-number': {
-            'string.empty': { ref: '#ni-number', text: 'Enter your National Insurance number' },
-            'string.pattern.base': { ref: '#ni-number', text: 'This does not look like a valid UK national insurance number, please check you have entered it correctly.' }
+            'string.empty': { ref: '#ni-number', text: mssgs.disability_concession_error_ni_empty },
+            'string.pattern.base': { ref: '#ni-number', text: mssgs.disability_concession_error_ni_pattern }
         },
         'blue-badge-number': {
-            'string.empty': { ref: '#blue-badge-number', text: 'Enter your Blue Badge Number' },
-            'string.max': { ref: '#blue-badge-number', text: 'Enter your Blue Badge Number' }
+            'string.empty': { ref: '#blue-badge-number', text: mssgs.disability_concession_badge_error_msg },
+            'string.max': { ref: '#blue-badge-number', text: mssgs.disability_concession_badge_error_msg }
         }
     }
 %}
@@ -22,37 +22,37 @@
 {% set pipDla %}
     {{ govukInput({
       label: {
-        html: 'National Insurance or Child Reference number' if data.hasJunior else 'National Insurance number'
+        html: mssgs.disability_concession_ni_label_jr if data.hasJunior else mssgs.disability_concession_ni_label
       },
       hint: {
-        html: "This is on your National Insurance card, benefit letter, payslip or P60. For example 'QQ 12 34 56 C'" if not data.hasJunior else "<p>For example 'QQ 12 34 56 C'</p>"
+        html: mssgs.disability_concession_ni_hint if not data.hasJunior else mssgs.disability_concession_ni_hint_jr
       },
       id: "ni-number",
       name: "ni-number",
       value: payload['ni-number'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 13 },
-      errorMessage: { text: 'Enter your National Insurance number' } if error['ni-number']
+      errorMessage: { text: mssgs.disability_concession_ni_error_msg } if error['ni-number']
     }) }}
 {% endset -%}
 
 {% set blueBadge %}
     {{ govukInput({
       label: {
-        html: "Blue Badge number"
+        html: mssgs.disability_concession_badge_error_msg
       },
       id: "blue-badge-number",
       name: "blue-badge-number",
       value: payload['blue-badge-number'],
       classes: "govuk-input--width-20",
       attributes: { maxlength: 25 },
-      errorMessage: { text: 'Enter your Blue Badge number' } if error['blue-badge-number']
+      errorMessage: { text: mssgs.disability_concession_badge_error_msg } if error['blue-badge-number']
     }) }}
 {% endset -%}
 
 {% block pageContent %}
     {% if not data.hasJunior and not data.hasSenior %}
-        <p class="govuk-body-m">You may be eligible for a concession on a 12 month licence.</p>
+        <p class="govuk-body-m">{{ mssgs.disability_concession_12_month }}</p>
     {% endif %}
 
     {{ govukRadios({
@@ -60,25 +60,25 @@
            name: "disability-concession",
            items: [
                {
-                   html: 'Personal Independence Payment (PIP)</br> or Disability Living Allowance (DLA)',
+                   html: mssgs.disability_concession_radio_pip + '</br> ' + mssgs.disability_concession_radio_dla,
                    value: data.pipDla,
                    checked: payload['disability-concession'] === data.pipDla,
                    conditional: { html: pipDla }
                },
                {
-                  text: "Blue Badge",
+                  text: mssgs.disability_concession_radio_badge,
                   value: data.blueBadge,
                   checked: payload['disability-concession'] === data.blueBadge,
                   conditional: { html: blueBadge }
                },
                {
-                   text: "No",
+                   text: mssgs.disability_concession_radio_no,
                    value: data.no,
                    checked: payload['disability-concession'] === data.no
                }
            ],
-           errorMessage: { text: 'Choose one option' } if error['disability-concession']
+           errorMessage: { text: mssgs.disability_concession_error_choose_option } if error['disability-concession']
        })
-     }}
+    }}
 
 {% endblock %}

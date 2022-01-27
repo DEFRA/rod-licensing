@@ -2,6 +2,7 @@ import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-busines
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 import {
+  NAME,
   LICENCE_SUMMARY,
   LICENCE_LENGTH,
   LICENCE_TYPE,
@@ -25,7 +26,7 @@ beforeAll(() => {
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 afterAll(() => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY
@@ -38,12 +39,14 @@ describe('The licence summary page', () => {
     })
 
     it('redirects to the date of birth page if the date of birth has been not been set', async () => {
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
     })
 
     it('redirects to the licence to start page if no licence start date has been set', async () => {
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
@@ -51,6 +54,7 @@ describe('The licence summary page', () => {
     })
 
     it('redirects to the licence type page if no licence type has been set', async () => {
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
@@ -59,6 +63,7 @@ describe('The licence summary page', () => {
     })
 
     it('redirects to the licence length page if no length has been set', async () => {
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -71,6 +76,7 @@ describe('The licence summary page', () => {
   describe('for a full 12 month, 2 rod, trout and coarse licence', () => {
     beforeAll(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
@@ -101,6 +107,7 @@ describe('The licence summary page', () => {
   describe('for a disabled concession 12 month, 2 rod, trout and coarse licence', () => {
     beforeAll(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
         'disability-concession': disabilityConcessionTypes.pipDla,

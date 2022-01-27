@@ -1,5 +1,6 @@
 import licenceLength from '../pages/licence-details/licence-length/route.js'
 import licenceType from '../pages/licence-details/licence-type/route.js'
+import licenceFor from '../pages/licence-details/licence-for/route.js'
 import licenceToStart from '../pages/licence-details/licence-to-start/route.js'
 import licenceStartTime from '../pages/licence-details/licence-start-time/route.js'
 
@@ -40,6 +41,7 @@ const routes = [
   ...miscRoutes,
   ...licenceLength,
   ...licenceType,
+  ...licenceFor,
   ...licenceToStart,
   ...licenceStartTime,
   ...dateOfBirth,

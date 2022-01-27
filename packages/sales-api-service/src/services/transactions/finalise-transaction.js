@@ -8,7 +8,6 @@ import moment from 'moment'
 import Boom from '@hapi/boom'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
-import { logStartDateError } from '../permission-helper.js'
 const { sqs, docClient } = AWS()
 const debug = db('sales:transactions')
 
@@ -51,8 +50,6 @@ export async function finaliseTransaction ({ id, ...payload }) {
     permission.endDate = await calculateEndDate(permission)
     permission.referenceNumber = await generatePermissionNumber(permission, transactionRecord.dataSource)
     permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
-
-    logStartDateError(permission)
   }
 
   const { Attributes: updatedRecord } = await docClient
