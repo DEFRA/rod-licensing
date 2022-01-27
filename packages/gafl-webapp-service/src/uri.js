@@ -9,6 +9,7 @@ export const LICENCE_START_TIME = { uri: '/buy/start-time', page: 'licence-start
 export const NO_LICENCE_REQUIRED = { uri: '/buy/no-licence-required', page: 'no-licence-required' }
 export const DISABILITY_CONCESSION = { uri: '/buy/disability-concession', page: 'disability-concession' }
 export const DATE_OF_BIRTH = { uri: '/buy/date-of-birth', page: 'date-of-birth' }
+export const START_PAGE = { uri: '/buy/start-page', page: 'start-page' }
 
 export const NAME = { uri: '/buy/name', page: 'name' }
 export const ADDRESS_LOOKUP = { uri: '/buy/find-address', page: 'address-lookup' }

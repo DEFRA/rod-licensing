@@ -1,0 +1,33 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+
+{% set title = "Buy new licence or renew?" %}
+
+{%
+    set errorMap = {
+        'start-page': {
+            'any.required': { ref: '#start-page', text: 'Choose whether you want to buy a new licence or renew an existing one' }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+        idPrefix: "start-page",
+        name: "start-page",
+        items: [
+            {
+                text: "Buy",
+                value: "buy-licence",
+                checked: payload['page-start'] === 'buy-licence'
+            },
+            {
+                text: "Renew",
+                value: "renew-licence",
+                checked: payload['page-start'] === 'renew-licence'
+            }
+        ],
+        errorMessage: { text: 'Choose whether you want to buy a new licence or renew an existing one' } if error['start-page']
+    }) }}
+{% endblock %}
