@@ -1,6 +1,6 @@
 import { UTM, ATTRIBUTION_REDIRECT_DEFAULT, QUERYSTRING_LICENCE_KEY } from '../../constants'
 import attributionHandler from '../attribution-handler'
-import { RENEWAL_BASE } from '../../uri'
+import { RENEWAL_BASE, IDENTIFY } from '../../uri'
 
 jest.mock('../../constants', () => ({
   UTM: {
@@ -10,14 +10,13 @@ jest.mock('../../constants', () => ({
     SOURCE: 'utmsource',
     TERM: 'utmterm'
   },
-  ATTRIBUTION_REDIRECT_DEFAULT: '/attribution/redirect/default',
-  reference: {
-    reference: 'reference'
-  }
+  RENEWALS_CAMPAIGN_ID: 'RENEWALS_CAMPAIGN_ID',
+  ATTRIBUTION_REDIRECT_DEFAULT: '/attribution/redirect/default'
 }))
 
 jest.mock('../../uri', () => ({
-  RENEWAL_BASE: '/renew'
+  RENEWAL_BASE: '/licence-renew-url',
+  IDENTIFY: '/renewal-url'
 }))
 
 describe('The attribution handler', () => {
@@ -89,7 +88,7 @@ describe('The attribution handler', () => {
 
   it('redirects to RENEWAL_BASE if journey is renewal', async () => {
     const query = {
-      [UTM.CAMPAIGN]: 'renewals',
+      [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
       [UTM.MEDIUM]: 'click_bait',
       [UTM.CONTENT]: 'eieioh',
       [UTM.SOURCE]: 'tomato',
@@ -98,19 +97,19 @@ describe('The attribution handler', () => {
     const responseToolkit = generateResponseToolkitMock()
 
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(RENEWAL_BASE)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY)
   })
 
-  it('redirects begins with { RENEWAL_BASE } when journey is renewal', async () => {
+  it('redirects begins with { IDENTIFY } when journey is renewal', async () => {
     const query = {
-      [UTM.CAMPAIGN]: 'renewals',
+      [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
       [UTM.MEDIUM]: 'click_bait',
       [UTM.CONTENT]: 'eieioh',
       [UTM.SOURCE]: 'tomato',
       [UTM.TERM]: 'Michaelmas'
     }
     const responseToolkit = generateResponseToolkitMock()
-    const regExMatch = new RegExp(`${RENEWAL_BASE}`)
+    const regExMatch = new RegExp(`^${IDENTIFY}`)
 
     await attributionHandler(generateRequestMock(query), responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
@@ -122,7 +121,7 @@ describe('The attribution handler', () => {
     ['GH330P']
   ])('test renewal includes reference number when journey is renewal and reference number exists', async licenceKey => {
     const query = {
-      [UTM.CAMPAIGN]: 'renewals',
+      [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
       [UTM.MEDIUM]: 'click_bait',
       [UTM.CONTENT]: 'eieioh',
       [UTM.SOURCE]: 'tomato',
@@ -131,7 +130,7 @@ describe('The attribution handler', () => {
     }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    const regExMatch = new RegExp(`^\\${RENEWAL_BASE}\\/${licenceKey}$`)
+    const regExMatch = new RegExp(`^${RENEWAL_BASE}/${licenceKey}$`)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
   })
 

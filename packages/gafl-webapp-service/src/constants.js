@@ -13,6 +13,7 @@ export const CSRF_TOKEN_COOKIE_NAME_DEFAULT = 'rlsctkn'
 export const FEEDBACK_URI_DEFAULT = '#'
 export const CHANNEL_DEFAULT = 'websales'
 export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-fishing-licence'
+export const RENEWALS_CAMPAIGN_ID = 'renewals'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
