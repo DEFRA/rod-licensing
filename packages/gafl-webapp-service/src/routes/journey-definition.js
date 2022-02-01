@@ -56,7 +56,7 @@ export default [
   },
 
   {
-    current: { page: BUY_OR_RENEW },
+    current: BUY_OR_RENEW,
     next: {
       [CommonResults.OK]: {
         page: LICENCE_FOR
