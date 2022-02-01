@@ -444,5 +444,13 @@ describe('renewals-write-cache', () => {
       await setUpPayloads(mockRequest)
       expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_CONFIRMATION_METHOD.page]: true })
     })
+
+    it('should have isLicenceForYou set to true', async () => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          permission: true
+      }))
+    })
   })
 })
