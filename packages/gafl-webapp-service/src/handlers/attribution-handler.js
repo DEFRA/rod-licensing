@@ -15,7 +15,7 @@ export default async (request, h) => {
     if (request.query[QUERYSTRING_LICENCE_KEY]) {
       return h.redirect(`${RENEWAL_BASE}/${request.query[QUERYSTRING_LICENCE_KEY]}`)
     }
-    return h.redirect(`${IDENTIFY}`)
+    return h.redirect(IDENTIFY)
   }
   return h.redirect(process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT)
 }
