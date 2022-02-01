@@ -445,6 +445,7 @@ describe('renewals-write-cache', () => {
       expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_CONFIRMATION_METHOD.page]: true })
     })
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
     it('should have isLicenceForYou set to true', async () => {
@@ -456,5 +457,15 @@ describe('renewals-write-cache', () => {
       })
     })
 >>>>>>> dd77b579 (refactor and updated test)
+=======
+
+    it('should have isLicenceForYou set to true', async () => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          permission: true
+      }))
+    })
+>>>>>>> 0efe6f90 (set islicencefor you true, add test)
   })
 })

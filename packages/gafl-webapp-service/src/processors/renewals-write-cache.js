@@ -66,7 +66,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   // Add appropriate age concessions
   ageConcessionHelper(permission)
-  await request.cache().helpers.transaction.setCurrentPermission(permission)
+  await request.cache().helpers.transaction.setCurrentPermission(permission.isLicenceForYou = true)
   await request.cache().helpers.status.setCurrentPermission({ renewal: true, showDigitalLicencePages })
 }
 
