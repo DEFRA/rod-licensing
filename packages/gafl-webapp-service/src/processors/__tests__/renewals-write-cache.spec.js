@@ -444,28 +444,11 @@ describe('renewals-write-cache', () => {
       await setUpPayloads(mockRequest)
       expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_CONFIRMATION_METHOD.page]: true })
     })
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
     it('should have isLicenceForYou set to true', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => permission)
       await setUpPayloads(mockRequest)
-      const licence = permission.isLicenceForYou
-        expect.objectContaining({
-          licence: true
-      })
+      expect(permission.isLicenceForYou).toBeTruthy()
     })
->>>>>>> dd77b579 (refactor and updated test)
-=======
-
-    it('should have isLicenceForYou set to true', async () => {
-      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
-      expect(mockStatusCacheSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          permission: true
-      }))
-    })
->>>>>>> 0efe6f90 (set islicencefor you true, add test)
   })
 })
