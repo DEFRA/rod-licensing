@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.6 (2022-02-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1031](https://github.com/DEFRA/rod-licensing/pull/1031) Feature/iwtf 2590 attribution redirect ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.22.0-rc.5 (2022-02-01)
 
 #### :rocket: Enhancement
