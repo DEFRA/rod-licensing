@@ -446,12 +446,11 @@ describe('renewals-write-cache', () => {
     })
 
     it('should have isLicenceForYou set to true', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => permission)
-      await setUpPayloads(mockRequest)
-      const licence = permission.isLicenceForYou
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      expect(mockStatusCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
-          licence: true
-      })
+          permission: true
+      }))
     })
   })
 })
