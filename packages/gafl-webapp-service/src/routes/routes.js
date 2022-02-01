@@ -10,7 +10,7 @@ import licenceSummary from '../pages/summary/licence-summary/route.js'
 import dateOfBirth from '../pages/concessions/date-of-birth/route.js'
 import noLicenceRequired from '../pages/licence-details/no-licence-required/route.js'
 import disabilityConcession from '../pages/concessions/disability/route.js'
-import startPage from '../pages/start-page/route.js'
+import buyOrRenew from '../pages/buy-or-renew/route.js'
 
 import name from '../pages/contact/name/route.js'
 import addressLookup from '../pages/contact/address/lookup/route.js'
@@ -66,7 +66,7 @@ const routes = [
   ...identify,
   ...invalidLink,
   ...renewalStartDate,
-  ...startPage
+  ...buyOrRenew
 ]
 
 if (process.env.CHANNEL === 'telesales') {

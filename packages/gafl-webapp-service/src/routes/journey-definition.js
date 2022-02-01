@@ -26,7 +26,8 @@ import {
   LICENCE_DETAILS,
   IDENTIFY,
   RENEWAL_INACTIVE,
-  RENEWAL_START_DATE
+  RENEWAL_START_DATE,
+  BUY_OR_RENEW
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -35,6 +36,7 @@ import { licenceToStartResults } from '../pages/licence-details/licence-to-start
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
+import { buyNewLicence } from '../pages/buy-or-renew/result-function.js'
 import { isPhysical } from '../processors/licence-type-display.js'
 
 /**
@@ -48,9 +50,22 @@ export default [
     current: { page: 'start' },
     next: {
       [CommonResults.OK]: {
-        page: LICENCE_FOR
+        page: BUY_OR_RENEW
       }
     }
+  },
+
+  {
+    current: { page: BUY_OR_RENEW },
+    next: {
+      [CommonResults.OK]: {
+        page: LICENCE_FOR
+      },
+      [buyNewLicence.RENEW]: {
+        page: IDENTIFY
+      }
+    },
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
   },
 
   {
@@ -60,7 +75,7 @@ export default [
         page: NAME
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : BUY_OR_RENEW.uri)
   },
 
   {

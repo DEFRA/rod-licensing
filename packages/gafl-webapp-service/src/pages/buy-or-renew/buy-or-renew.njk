@@ -1,0 +1,33 @@
+{% extends "standard-form.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+
+{% set title = "Buy new licence or renew?" %}
+
+{%
+    set errorMap = {
+        'buy-or-renew': {
+            'any.required': { ref: '#buy-or-renew', text: 'Choose whether you want to buy a new licence or renew an existing one' }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+        idPrefix: "buy-or-renew",
+        name: "buy-or-renew",
+        items: [
+            {
+                text: "Buy",
+                value: "buy-licence",
+                checked: payload['buy-or-renew'] === 'buy-licence'
+            },
+            {
+                text: "Renew",
+                value: "renew-licence",
+                checked: payload['buy-or-renew'] === 'renew-licence'
+            }
+        ],
+        errorMessage: { text: 'Choose whether you want to buy a new licence or renew an existing one' } if error['buy-or-renew']
+    }) }}
+{% endblock %}

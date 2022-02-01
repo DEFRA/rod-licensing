@@ -2,6 +2,7 @@
  * This maps the functions to manipulate the transaction object to the pages
  */
 
+import buyOrRenew from '../pages/buy-or-renew/update-transaction.js'
 import dateOfBirth from '../pages/concessions/date-of-birth/update-transaction.js'
 import disabilityConcession from '../pages/concessions/disability/update-transaction.js'
 
@@ -45,7 +46,8 @@ import {
   TERMS_AND_CONDITIONS,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
-  RENEWAL_INACTIVE
+  RENEWAL_INACTIVE,
+  BUY_OR_RENEW
 } from '../uri.js'
 
 export default {
@@ -67,5 +69,6 @@ export default {
   [TERMS_AND_CONDITIONS.page]: termsAndConditions,
   [PAYMENT_FAILED.page]: paymentFailed,
   [PAYMENT_CANCELLED.page]: paymentCancelled,
-  [RENEWAL_INACTIVE.page]: renewalInactive
+  [RENEWAL_INACTIVE.page]: renewalInactive,
+  [BUY_OR_RENEW.page]: buyOrRenew
 }
