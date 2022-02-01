@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.5 (2022-02-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1053](https://github.com/DEFRA/rod-licensing/pull/1053) Reword fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 
