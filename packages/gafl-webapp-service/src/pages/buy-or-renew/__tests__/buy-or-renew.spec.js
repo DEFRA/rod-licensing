@@ -1,10 +1,10 @@
 import {
   BUY_OR_RENEW,
-  DATE_OF_BIRTH,
-  IDENTIFY
+  IDENTIFY,
+  LICENCE_FOR
 } from '../../../uri.js'
 import { start, stop, initialize, injectWithCookies } from '../../../__mocks__/test-utils-system.js'
-import { buyOrRenew } from '../route.js'
+import { buyNewLicence } from '../result-function'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
@@ -24,15 +24,15 @@ describe('The start page', () => {
 
   it("on setting 'buy' it causes a redirect to the date of birth page", async () => {
     const response = await injectWithCookies('POST', BUY_OR_RENEW.uri, {
-      'buy-or-renew': buyOrRenew.buy
+      'buy-or-renew': buyNewLicence.BUY
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(LICENCE_FOR.uri)
   })
 
   it("on setting 'renew' it causes a redirect to the renewal identify page", async () => {
     const response = await injectWithCookies('POST', BUY_OR_RENEW.uri, {
-      'buy-or-renew': buyOrRenew.renew
+      'buy-or-renew': buyNewLicence.RENEW
     })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(IDENTIFY.uri)

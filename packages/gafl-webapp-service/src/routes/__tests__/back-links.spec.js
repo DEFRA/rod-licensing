@@ -21,8 +21,8 @@ import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../constants.js'
 
 describe('The licence-for page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_FOR.page)
-  it('has no back-link on initial viewing', () => {
-    expect(n.backLink({})).not.toBeTruthy()
+  it('has a back-link to the buy or renew page', () => {
+    expect(n.backLink({})).toBeTruthy()
   })
   it('has a back-link to the license summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
