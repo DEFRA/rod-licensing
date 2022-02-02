@@ -9,6 +9,7 @@ jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
 
 describe('renewals-write-cache', () => {
+
   describe('setUpCacheFromAuthenticationResult', () => {
     const mockStatusCacheSet = jest.fn()
     const mockTransactionCacheGet = jest.fn()
@@ -66,7 +67,8 @@ describe('renewals-write-cache', () => {
             label: 'Salmon and sea trout'
           },
           numberOfRods: 1
-        }
+        },
+        isLicenceForYou: true
       }
     }
 
@@ -292,6 +294,23 @@ describe('renewals-write-cache', () => {
         })
       )
     })
+
+    it('should have isLicenceForYou set to true', async () => {
+      //mockTransactionCacheGet.mockImplementationOnce(() => permission)
+      const isLicenceForYou = true
+      const mockPermissionAuthResult = {
+        permission: {
+          ...authenticationResult.permission,
+          isLicenceForYou
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, mockPermissionAuthResult)
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isLicenceForYou: true
+        })
+      )
+    })
   })
 
   describe('setupPayloads', () => {
@@ -443,12 +462,6 @@ describe('renewals-write-cache', () => {
       mockTransactionCacheGet.mockImplementationOnce(() => permission)
       await setUpPayloads(mockRequest)
       expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_CONFIRMATION_METHOD.page]: true })
-    })
-
-    it('should have isLicenceForYou set to true', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => permission)
-      await setUpPayloads(mockRequest)
-      expect(permission.isLicenceForYou).toBeTruthy()
     })
   })
 })
