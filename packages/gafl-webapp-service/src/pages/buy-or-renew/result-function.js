@@ -7,7 +7,6 @@ export const buyNewLicence = {
 
 export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
-  console.log(status.buyNewLicence)
   if (!status.buyNewLicence) {
     return buyNewLicence.RENEW
   }
