@@ -5,7 +5,7 @@ describe('buy-or-renew > update-transaction', () => {
 
   const mockPageCacheGet = jest.fn()
   const mockStatusCacheSet = jest.fn()
-  const mockStatusCacheGet = jest.fn()
+  const mockStatusCacheGet = jest.fn(() => ({}))
 
   const mockRequest = {
     cache: () => ({
@@ -24,7 +24,6 @@ describe('buy-or-renew > update-transaction', () => {
   describe('default', () => {
     it('should set buyNewLicence to true on the transaction cache, if user has selected buy-licence', async () => {
       mockPageCacheGet.mockImplementationOnce(() => ({ payload: { 'buy-or-renew': 'buy-licence' } }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({}))
 
       await updateTransaction(mockRequest)
       expect(mockStatusCacheSet).toHaveBeenCalledWith({ buyNewLicence: true })
@@ -32,7 +31,6 @@ describe('buy-or-renew > update-transaction', () => {
 
     it('should set buyNewLicence to false on the transaction cache, if user has selected renew-licence', async () => {
       mockPageCacheGet.mockImplementationOnce(() => ({ payload: { 'buy-or-renew': 'renew-licence' } }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({}))
 
       await updateTransaction(mockRequest)
       expect(mockStatusCacheSet).toHaveBeenCalledWith({ buyNewLicence: false })

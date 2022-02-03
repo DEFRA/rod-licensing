@@ -17,7 +17,7 @@ describe('licence-for > route', () => {
     ])
     jest.mock('../../../routes/page-route.js', () => mockPageRoute)
     describe('validator', () => {
-      it('should return a defined error when no option has been selected', () => {
+      it('should return a defined error when no option is selected', () => {
         const result = validator.validate({ 'buy-or-renew': 'none' })
         expect(result.error).not.toBeUndefined()
       })
