@@ -2,12 +2,12 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = "Buy new licence or renew?" %}
+{% set title = mssgs.buy_or_renew_title %}
 
 {%
     set errorMap = {
         'buy-or-renew': {
-            'any.required': { ref: '#buy-or-renew', text: 'Choose whether you want to buy a new licence or renew an existing one' }
+            'any.required': { ref: '#buy-or-renew', text: mssgs.buy_or_renew_error_choose }
         }
     }
 %}
@@ -18,16 +18,16 @@
         name: "buy-or-renew",
         items: [
             {
-                text: "Buy",
+                text: mssgs.buy_or_renew_label_buy,
                 value: "buy-licence",
                 checked: payload['buy-or-renew'] === 'buy-licence'
             },
             {
-                text: "Renew",
+                text: mssgs.buy_or_renew_label_renew,
                 value: "renew-licence",
                 checked: payload['buy-or-renew'] === 'renew-licence'
             }
         ],
-        errorMessage: { text: 'Choose whether you want to buy a new licence or renew an existing one' } if error['buy-or-renew']
+        errorMessage: { text: mssgs.buy_or_renew_error_choose } if error['buy-or-renew']
     }) }}
 {% endblock %}
