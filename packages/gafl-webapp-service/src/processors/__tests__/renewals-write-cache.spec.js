@@ -296,7 +296,6 @@ describe('renewals-write-cache', () => {
     })
 
     it('should have isLicenceForYou set to true', async () => {
-      //mockTransactionCacheGet.mockImplementationOnce(() => permission)
       const isLicenceForYou = true
       const mockPermissionAuthResult = {
         permission: {
