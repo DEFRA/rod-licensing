@@ -19,7 +19,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceLength = '12M' // Always for easy renewals
   permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
-
+  permission.isLicenceForYou = true
   const endDateMoment = moment.utc(authenticationResult.permission.endDate).tz(SERVICE_LOCAL_TIME)
 
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))

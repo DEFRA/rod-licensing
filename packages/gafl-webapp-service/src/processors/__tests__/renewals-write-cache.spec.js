@@ -9,6 +9,7 @@ jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
 
 describe('renewals-write-cache', () => {
+
   describe('setUpCacheFromAuthenticationResult', () => {
     const mockStatusCacheSet = jest.fn()
     const mockTransactionCacheGet = jest.fn()
@@ -66,7 +67,8 @@ describe('renewals-write-cache', () => {
             label: 'Salmon and sea trout'
           },
           numberOfRods: 1
-        }
+        },
+        isLicenceForYou: true
       }
     }
 
@@ -289,6 +291,22 @@ describe('renewals-write-cache', () => {
       expect(mockStatusCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
           showDigitalLicencePages: false
+        })
+      )
+    })
+
+    it('should have isLicenceForYou set to true', async () => {
+      const isLicenceForYou = true
+      const mockPermissionAuthResult = {
+        permission: {
+          ...authenticationResult.permission,
+          isLicenceForYou
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, mockPermissionAuthResult)
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isLicenceForYou: true
         })
       )
     })
