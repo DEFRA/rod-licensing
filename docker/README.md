@@ -82,7 +82,7 @@ To support running the services locally using docker, there are three different 
   > Building the containers in production mode takes longer as all node modules need to be installed and additional build
   > steps such as compiling SASS need to be performed.
 
-In order to run the services locally, you'll need to to rename the env files in the in the [env](env) folder to include a leading dot and removing .example. You'll need to insert the appropriate values into the environment files ending with .secrets.env
+In order to run the services locally, you'll need to to rename the env files in the in the [env](env) folder to include a leading dot and removing .example. You'll need to insert the appropriate values into the environment files ending with .secrets.env. Either rename as below or grab the filles from the the gitlab repository: fish/rod-licensing-env-vars
 
 To rename the files:
 
