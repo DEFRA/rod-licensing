@@ -87,18 +87,18 @@ In order to run the services locally, you'll need to to rename the env files in 
 To rename the files:
 
 ```shell script
-git mv fulfilment_job.env.example .fulfilment_job.env
-git mv fulfilment_job.secrets.env.example .fulfilment_job.secrets.env
-git mv gafl-webapp_telesales.env.example .gafl-webapp_telesales.env
-git mv gafl-webapp_telesales.secrets.env.example .gafl-webapp_telesales.secrets.env
-git mv gafl-webapp.env.example .gafl-webapp.env
-git mv gafl-webapp.secrets.env.example .gafl-webapp.secrets.env
-git mv payment-mop_up_job.env.example .payment-mop_up_job.env
-git mv payment-mop_up_job.secrets.env.example .payment-mop_up_job.secrets.env
-git mv pocl_job.env.example .pocl_job.env
-git mv sales_api.env.example .sales_api.env
-git mv sales_api.secrets.env.example .sales_api.secrets.env
-git mv sqs_receiver.env.example .sqs_receiver.env
+cp mv fulfilment_job.env.example .fulfilment_job.env
+cp mv fulfilment_job.secrets.env.example .fulfilment_job.secrets.env
+cp mv gafl-webapp_telesales.env.example .gafl-webapp_telesales.env
+cp mv gafl-webapp_telesales.secrets.env.example .gafl-webapp_telesales.secrets.env
+cp mv gafl-webapp.env.example .gafl-webapp.env
+cp mv gafl-webapp.secrets.env.example .gafl-webapp.secrets.env
+cp mv payment-mop_up_job.env.example .payment-mop_up_job.env
+cp mv payment-mop_up_job.secrets.env.example .payment-mop_up_job.secrets.env
+cp mv pocl_job.env.example .pocl_job.env
+cp mv sales_api.env.example .sales_api.env
+cp mv sales_api.secrets.env.example .sales_api.secrets.env
+cp mv sqs_receiver.env.example .sqs_receiver.env
 ```
 
 ### How to run
