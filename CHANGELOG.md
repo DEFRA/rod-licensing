@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.7 (2022-02-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1056](https://github.com/DEFRA/rod-licensing/pull/1056) Feature/iwtf 2647 easy renewal content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.22.0-rc.6 (2022-02-01)
 
 #### :rocket: Enhancement
