@@ -82,23 +82,23 @@ To support running the services locally using docker, there are three different 
   > Building the containers in production mode takes longer as all node modules need to be installed and additional build
   > steps such as compiling SASS need to be performed.
 
-In order to run the services locally, you'll need to to rename the env files in the in the [env](env) folder to include a leading dot and removing .example. You'll need to insert the appropriate values into the environment files ending with .secrets.env. Either rename as below or grab the filles from the the gitlab repository: fish/rod-licensing-env-vars
+In order to run the services locally, you'll need to to rename the env files in the in the [env](env) folder to include a leading dot and removing .example. You'll need to insert the appropriate values into the environment files ending with .secrets.env. Copy files as follows, then get values for secret files from gitlab repo fish/rod-licensing-env-vars.'
 
 To rename the files:
 
 ```shell script
-cp mv fulfilment_job.env.example .fulfilment_job.env
-cp mv fulfilment_job.secrets.env.example .fulfilment_job.secrets.env
-cp mv gafl-webapp_telesales.env.example .gafl-webapp_telesales.env
-cp mv gafl-webapp_telesales.secrets.env.example .gafl-webapp_telesales.secrets.env
-cp mv gafl-webapp.env.example .gafl-webapp.env
-cp mv gafl-webapp.secrets.env.example .gafl-webapp.secrets.env
-cp mv payment-mop_up_job.env.example .payment-mop_up_job.env
-cp mv payment-mop_up_job.secrets.env.example .payment-mop_up_job.secrets.env
-cp mv pocl_job.env.example .pocl_job.env
-cp mv sales_api.env.example .sales_api.env
-cp mv sales_api.secrets.env.example .sales_api.secrets.env
-cp mv sqs_receiver.env.example .sqs_receiver.env
+cp fulfilment_job.env.example .fulfilment_job.env
+cp fulfilment_job.secrets.env.example .fulfilment_job.secrets.env
+cp gafl-webapp_telesales.env.example .gafl-webapp_telesales.env
+cp gafl-webapp_telesales.secrets.env.example .gafl-webapp_telesales.secrets.env
+cp gafl-webapp.env.example .gafl-webapp.env
+cp gafl-webapp.secrets.env.example .gafl-webapp.secrets.env
+cp payment-mop_up_job.env.example .payment-mop_up_job.env
+cp payment-mop_up_job.secrets.env.example .payment-mop_up_job.secrets.env
+cp pocl_job.env.example .pocl_job.env
+cp sales_api.env.example .sales_api.env
+cp sales_api.secrets.env.example .sales_api.secrets.env
+cp sqs_receiver.env.example .sqs_receiver.env
 ```
 
 ### How to run

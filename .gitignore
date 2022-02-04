@@ -38,6 +38,3 @@ docker/volumes/**/*
 **/.*
 # except the github dir...
 !.github 
-
-# Ignore any docker env files
-*.env
