@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.9 (2022-02-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1057](https://github.com/DEFRA/rod-licensing/pull/1057) Welsh translation for date of birth ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.22.0-rc.8 (2022-02-04)
 
 #### :rocket: Enhancement
