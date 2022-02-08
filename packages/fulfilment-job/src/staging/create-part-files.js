@@ -51,7 +51,7 @@ const processQueryPage = async page => {
     const partNumber = Math.floor(fulfilmentFile.numberOfRequests / config.file.partFileSize)
     const partFileSize = Math.min(config.file.partFileSize, config.file.size - fulfilmentFile.numberOfRequests)
     const itemsToWrite = page.splice(0, partFileSize).map(result => {
-      console.log(result.expanded.permission);
+      console.log(result);
       return {
         fulfilmentRequest: result.entity,
         permission: result.expanded.permission.entity,
