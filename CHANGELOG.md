@@ -1,4 +1,12 @@
 
+## v1.22.0-rc.10 (2022-02-08)
+
+#### :rocket: Enhancement
+* [#1069](https://github.com/DEFRA/rod-licensing/pull/1069) Update readme for env var structure ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.22.0-rc.9 (2022-02-08)
 
 #### :rocket: Enhancement
