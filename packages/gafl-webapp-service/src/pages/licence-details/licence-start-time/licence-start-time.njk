@@ -57,7 +57,7 @@
                     classes: "govuk-!-margin-bottom-7"
                 }) }}
             {% endif %}
-            {{ errorSummary(error, errorMap) }}
+            {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
             {% call govukFieldset({
                 legend: {
                     text: title,
