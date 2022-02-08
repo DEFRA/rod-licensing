@@ -89,12 +89,12 @@ To rename the files:
 ```shell script
 cp fulfilment_job.env.example .fulfilment_job.env
 cp fulfilment_job.secrets.env.example .fulfilment_job.secrets.env
-cp gafl_webapp_telesales.env.example .gafl_webapp_telesales.env
-cp gafl_webapp_telesales.secrets.env.example .gafl_webapp_telesales.secrets.env
-cp gafl_webapp.env.example .gafl_webapp.env
-cp gafl_webapp.secrets.env.example .gafl_webapp.secrets.env
-cp payment_mop_up_job.env.example .payment_mop_up_job.env
-cp payment_mop_up_job.secrets.env.example .payment_mop_up_job.secrets.env
+cp gafl-webapp_telesales.env.example .gafl-webapp_telesales.env
+cp gafl-webapp_telesales.secrets.env.example .gafl-webapp_telesales.secrets.env
+cp gafl-webapp.env.example .gafl-webapp.env
+cp gafl-webapp.secrets.env.example .gafl-webapp.secrets.env
+cp payment-mop_up_job.env.example .payment-mop_up_job.env
+cp payment-mop_up_job.secrets.env.example .payment-mop_up_job.secrets.env
 cp pocl_job.env.example .pocl_job.env
 cp sales_api.env.example .sales_api.env
 cp sales_api.secrets.env.example .sales_api.secrets.env
