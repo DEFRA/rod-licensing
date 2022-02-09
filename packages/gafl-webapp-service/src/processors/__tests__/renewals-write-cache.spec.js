@@ -9,7 +9,6 @@ jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
 
 describe('renewals-write-cache', () => {
-
   describe('setUpCacheFromAuthenticationResult', () => {
     const mockStatusCacheSet = jest.fn()
     const mockTransactionCacheGet = jest.fn()

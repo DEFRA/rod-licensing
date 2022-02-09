@@ -31,11 +31,10 @@ const simpleView = view => ({
   handler: async (request, h) => {
     const mssgs = request.i18n.getCatalog()
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
-    return h
-      .view(view.page, {
-        mssgs,
-        altLang
-      })
+    return h.view(view.page, {
+      mssgs,
+      altLang
+    })
   }
 })
 
@@ -107,11 +106,10 @@ export default [
           albcors: ALBCORS_COOKIE_NAME
         }
       })
-      return h
-        .view(COOKIES.page, {
-          mssgs,
-          altLang
-        })
+      return h.view(COOKIES.page, {
+        mssgs,
+        altLang
+      })
     }
   },
   {

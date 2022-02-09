@@ -22,7 +22,7 @@ import { licenseTypes } from '../../../../licence-details/licence-type/route'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',
