@@ -21,7 +21,9 @@ beforeAll(() => {
 })
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => { stop(d) })
+afterAll(d => {
+  stop(d)
+})
 afterAll(() => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY

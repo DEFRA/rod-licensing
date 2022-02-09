@@ -52,23 +52,22 @@ describe('The attribution handler', () => {
     })
   })
 
-  it.each([
-    ['campaign-12'],
-    ['sample-campaign'],
-    ['important-campaign']
-  ])("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async campaign => {
-    delete process.env.ATTRIBUTION_REDIRECT
-    const query = {
-      [UTM.CAMPAIGN]: campaign,
-      [UTM.MEDIUM]: 'click_bait',
-      [UTM.CONTENT]: 'eieioh',
-      [UTM.SOURCE]: 'tomato',
-      [UTM.TERM]: 'Michaelmas'
+  it.each([['campaign-12'], ['sample-campaign'], ['important-campaign']])(
+    "redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set",
+    async campaign => {
+      delete process.env.ATTRIBUTION_REDIRECT
+      const query = {
+        [UTM.CAMPAIGN]: campaign,
+        [UTM.MEDIUM]: 'click_bait',
+        [UTM.CONTENT]: 'eieioh',
+        [UTM.SOURCE]: 'tomato',
+        [UTM.TERM]: 'Michaelmas'
+      }
+      const responseToolkit = generateResponseToolkitMock()
+      await attributionHandler(generateRequestMock(query), responseToolkit)
+      expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
     }
-    const responseToolkit = generateResponseToolkitMock()
-    await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
-  })
+  )
 
   it("redirects to ATTRIBUTION_REDIRECT env var if it's set", async () => {
     const attributionRedirect = '/attribution/redirect'
@@ -115,24 +114,23 @@ describe('The attribution handler', () => {
     expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
   })
 
-  it.each([
-    ['B2F11U'],
-    ['AH56F6'],
-    ['GH330P']
-  ])('test renewal includes reference number when journey is renewal and reference number exists', async licenceKey => {
-    const query = {
-      [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
-      [UTM.MEDIUM]: 'click_bait',
-      [UTM.CONTENT]: 'eieioh',
-      [UTM.SOURCE]: 'tomato',
-      [UTM.TERM]: 'Michaelmas',
-      [QUERYSTRING_LICENCE_KEY]: licenceKey
+  it.each([['B2F11U'], ['AH56F6'], ['GH330P']])(
+    'test renewal includes reference number when journey is renewal and reference number exists',
+    async licenceKey => {
+      const query = {
+        [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
+        [UTM.MEDIUM]: 'click_bait',
+        [UTM.CONTENT]: 'eieioh',
+        [UTM.SOURCE]: 'tomato',
+        [UTM.TERM]: 'Michaelmas',
+        [QUERYSTRING_LICENCE_KEY]: licenceKey
+      }
+      const responseToolkit = generateResponseToolkitMock()
+      await attributionHandler(generateRequestMock(query), responseToolkit)
+      const regExMatch = new RegExp(`^${RENEWAL_BASE}/${licenceKey}$`)
+      expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
     }
-    const responseToolkit = generateResponseToolkitMock()
-    await attributionHandler(generateRequestMock(query), responseToolkit)
-    const regExMatch = new RegExp(`^${RENEWAL_BASE}/${licenceKey}$`)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
-  })
+  )
 
   const generateRequestMock = (query, status = {}) => ({
     query,

@@ -18,7 +18,7 @@ import { licenceToStart } from '../../../licence-details/licence-to-start/update
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
   it('returns success on request', async () => {

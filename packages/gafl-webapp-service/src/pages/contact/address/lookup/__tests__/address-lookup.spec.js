@@ -8,7 +8,7 @@ import mockDefraCountries from '../../../../../__mocks__/data/defra-country'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 jest.mock('node-fetch')
 const fetch = require('node-fetch')
