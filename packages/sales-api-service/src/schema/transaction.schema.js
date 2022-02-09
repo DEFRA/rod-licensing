@@ -34,7 +34,8 @@ const createTransactionRequestSchemaContent = {
       .min(1)
       .required()
   }),
-  createdBy: Joi.string().optional()
+  createdBy: Joi.string().optional(),
+  journalId: Joi.string().optional()
 }
 
 /**
