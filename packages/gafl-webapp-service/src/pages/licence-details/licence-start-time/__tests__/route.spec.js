@@ -2,10 +2,14 @@ import startTimePageRoute from '../route.js'
 import moment from 'moment-timezone'
 import pageRoute from '../../../../routes/page-route.js'
 
-jest.mock('../../../../routes/page-route.js', () => jest.fn(() => [{
-  method: 'POST',
-  options: {}
-}]))
+jest.mock('../../../../routes/page-route.js', () =>
+  jest.fn(() => [
+    {
+      method: 'POST',
+      options: {}
+    }
+  ])
+)
 jest.mock('moment-timezone')
 const realMoment = jest.requireActual('moment-timezone')
 
@@ -46,12 +50,7 @@ describe('Licence start time data validation', () => {
       return realMoment(now, format)
     })
 
-    return expect(() =>
-      validator(
-        { 'licence-start-time': hour },
-        getMockOptions(licenceStartDate)
-      )
-    ).toThrow()
+    return expect(() => validator({ 'licence-start-time': hour }, getMockOptions(licenceStartDate))).toThrow()
   })
 
   it.each([
@@ -80,22 +79,20 @@ describe('Licence start time data validation', () => {
     ['22', '2021-11-10', '2021-11-10T21:29:00.000Z'],
     ['23', '2021-11-10', '2021-11-10T22:29:00.000Z'],
     ['1', '2021-10-31', '2021-10-31T01:29:00.000']
-  ])('validation succeeds for start time of %s when permission date is %s and current date and time is %s', (hour, licenceStartDate, now) => {
-    const realMoment = jest.requireActual('moment-timezone')
-    moment.mockImplementation((date, format) => {
-      if (date) {
-        return realMoment(date, format)
-      }
-      return realMoment(now, format)
-    })
+  ])(
+    'validation succeeds for start time of %s when permission date is %s and current date and time is %s',
+    (hour, licenceStartDate, now) => {
+      const realMoment = jest.requireActual('moment-timezone')
+      moment.mockImplementation((date, format) => {
+        if (date) {
+          return realMoment(date, format)
+        }
+        return realMoment(now, format)
+      })
 
-    return expect(
-      validator(
-        { 'licence-start-time': hour },
-        getMockOptions(licenceStartDate)
-      )
-    ).toBeUndefined()
-  })
+      return expect(validator({ 'licence-start-time': hour }, getMockOptions(licenceStartDate))).toBeUndefined()
+    }
+  )
 
   const getMockOptions = licenceStartDate => ({
     context: {

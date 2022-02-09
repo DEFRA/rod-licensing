@@ -17,7 +17,7 @@ import { licenseTypes } from '../../licence-type/route'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The licence start time page', () => {
   it('returns success on requesting', async () => {

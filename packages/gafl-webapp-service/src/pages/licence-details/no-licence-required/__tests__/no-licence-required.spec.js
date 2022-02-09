@@ -3,7 +3,7 @@ import { NO_LICENCE_REQUIRED } from '../../../../uri.js'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The no licence required page', () => {
   it('Return success on requesting', async () => {
