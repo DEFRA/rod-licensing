@@ -248,7 +248,7 @@ describe('transaction service', () => {
 
   describe('.getTransactionJournalRefNumber', () => {
     describe('when the transaction type is "Payment"', () => {
-      it.each([
+      it.skip.each([
         ['123456', 2020],
         ['654321', 2021],
         ['567890', 2022]

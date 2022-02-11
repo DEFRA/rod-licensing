@@ -11,7 +11,7 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
-import { DDE_DATA_SOURCE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+import { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
@@ -21,7 +21,7 @@ import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
-
+const DDE_DATA_SOURCE = 'DDE File'
 /**
  * Process messages from the transactions queue
  *
