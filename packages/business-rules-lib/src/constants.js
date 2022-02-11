@@ -43,7 +43,9 @@ export const PAYMENT_TYPE = { debit: 'Debit card' }
 /**
  * Data sources associated with POCL transactions
  */
-export const POCL_TRANSACTION_SOURCES = ['Post Office Sales', 'DDE File']
+export const POCL_DATA_SOURCE = 'Post Office Sales'
+export const DDE_DATA_SOURCE = 'DDE File'
+export const POCL_TRANSACTION_SOURCES = [POCL_DATA_SOURCE, DDE_DATA_SOURCE]
 
 /**
  * Describes the lifetime of the renewal link.

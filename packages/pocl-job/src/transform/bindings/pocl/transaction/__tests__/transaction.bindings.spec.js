@@ -130,6 +130,28 @@ describe('transaction transforms', () => {
       })
     )
   })
+
+  it('ignores journal id if it\'s not provided', async () => {
+    const { createTransactionPayload } = await Transaction.transform(generateInputJSON())
+
+    expect(Object.keys(createTransactionPayload).includes('journalId')).toBeFalsy()
+  })
+
+  it.each([
+    ['123456'],
+    ['654321'],
+    ['A6B7C9']
+  ])('transforms a DDE record - includes DD_ID %s', async DD_ID => {
+    const { createTransactionPayload: { journalId } } = await Transaction.transform(
+      generateInputJSON({
+        DATA_SOURCE: { value: DIRECT_DEBIT_DATASOURCE },
+        MOPEX: { value: '6' },
+        DD_ID: { value: DD_ID }
+      })
+    )
+
+    expect(journalId).toBe(DD_ID)
+  })
 })
 
 const generateInputJSON = (overrides = {}) => ({
