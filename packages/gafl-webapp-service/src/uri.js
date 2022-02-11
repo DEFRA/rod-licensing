@@ -48,6 +48,7 @@ export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-ina
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 export const RENEWAL_START_DATE = { uri: '/buy/renew/renewal-start-date', page: 'renewal-start-date' }
 export const RENEWAL_START_VALIDATE = { uri: '/buy/renew/renewal-start-date/validate' }
+export const RENEWAL_LICENCE = { uri: '/renew-my-licence/{reference}', page: '/attribution?utm_campaign=renewals&urm_source=aen_invitation&reference=<licence number>' }
 
 export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }
