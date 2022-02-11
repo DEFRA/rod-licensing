@@ -9,13 +9,20 @@ import { IDENTIFY, RENEWAL_BASE } from '../uri.js'
  * @returns {Promise}
  */
 export default async (request, h) => {
+  console.log('attribution handler')
   await initialiseAnalyticsSessionData(request)
 
   if (request.query[UTM.CAMPAIGN] === RENEWALS_CAMPAIGN_ID) {
+    console.log('renewals campaign')
     if (request.query[QUERYSTRING_LICENCE_KEY]) {
-      return h.redirect(`${RENEWAL_BASE}/${request.query[QUERYSTRING_LICENCE_KEY]}`)
+      const url = `${RENEWAL_BASE.uri}/${request.query[QUERYSTRING_LICENCE_KEY]}`
+      console.log(`found licence key, redirecting ${url}`)
+      return h.redirect(url)
     }
-    return h.redirect(IDENTIFY)
+    console.log('no licence key, redirecting to identify')
+    return h.redirect(IDENTIFY.uri)
   }
+
+  console.log('redirecting to websales')
   return h.redirect(process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT)
 }
