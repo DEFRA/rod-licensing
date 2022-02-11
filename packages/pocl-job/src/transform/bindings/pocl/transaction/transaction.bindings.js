@@ -113,7 +113,7 @@ export const Transaction = new Binding({
       id: serialNumber,
       createTransactionPayload: {
         dataSource,
-        ...(journalId ? { journalId } : {}),
+        ...(journalId && { journalId }),
         serialNumber,
         permissions: [
           {
