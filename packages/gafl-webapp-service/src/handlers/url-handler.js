@@ -12,11 +12,11 @@ export default async (request, h) => {
   await initialiseAnalyticsSessionData(request)
   if (request.query[QUERYSTRING_LICENCE_KEY]) {
     const refNumber = request.query[QUERYSTRING_LICENCE_KEY]
-    const sixDigit = /[A-Za-z0-9]{6}/.test(refNumber)
+    const sixDigit = /^[A-Za-z0-9]{6}$/.test(refNumber)
     if (!sixDigit) {
-      return h.redirect(IDENTIFY)
+      return h.redirect(IDENTIFY.uri)
     }
-    return h.redirect(`${RENEWAL_LICENCE}/${refNumber}`)
+    return h.redirect(`${RENEWAL_LICENCE.uri}/${refNumber}`)
   }
-  return h.redirect(IDENTIFY)
+  return h.redirect(IDENTIFY.uri)
 }
