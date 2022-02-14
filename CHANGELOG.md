@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.15 (2022-02-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1075](https://github.com/DEFRA/rod-licensing/pull/1075) Fix attribution redirect for renewals ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 
 
