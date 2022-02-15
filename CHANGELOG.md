@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.16 (2022-02-15)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1085](https://github.com/DEFRA/rod-licensing/pull/1085) Fix for back button from address lookup page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.22.0-rc.15 (2022-02-14)
 
 #### :bug: Bug Fix
