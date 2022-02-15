@@ -199,7 +199,7 @@ export default [
         page: ADDRESS_ENTRY
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : NAME.uri)
+    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_SUMMARY.uri)
   },
 
   {
