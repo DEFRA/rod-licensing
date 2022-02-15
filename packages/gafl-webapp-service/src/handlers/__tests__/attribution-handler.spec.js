@@ -15,8 +15,8 @@ jest.mock('../../constants', () => ({
 }))
 
 jest.mock('../../uri', () => ({
-  RENEWAL_BASE: '/licence-renew-url',
-  IDENTIFY: '/renewal-url'
+  RENEWAL_BASE: { uri: '/licence-renew-url' },
+  IDENTIFY: { uri: '/renewal-url' }
 }))
 
 describe('The attribution handler', () => {
@@ -96,7 +96,7 @@ describe('The attribution handler', () => {
     const responseToolkit = generateResponseToolkitMock()
 
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY.uri)
   })
 
   it('redirects begins with { IDENTIFY } when journey is renewal', async () => {
@@ -108,7 +108,7 @@ describe('The attribution handler', () => {
       [UTM.TERM]: 'Michaelmas'
     }
     const responseToolkit = generateResponseToolkitMock()
-    const regExMatch = new RegExp(`^${IDENTIFY}`)
+    const regExMatch = new RegExp(`^${IDENTIFY.uri}`)
 
     await attributionHandler(generateRequestMock(query), responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
@@ -127,7 +127,7 @@ describe('The attribution handler', () => {
       }
       const responseToolkit = generateResponseToolkitMock()
       await attributionHandler(generateRequestMock(query), responseToolkit)
-      const regExMatch = new RegExp(`^${RENEWAL_BASE}/${licenceKey}$`)
+      const regExMatch = new RegExp(`^${RENEWAL_BASE.uri}/${licenceKey}$`)
       expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
     }
   )
