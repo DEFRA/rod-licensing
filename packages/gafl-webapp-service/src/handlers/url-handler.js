@@ -1,6 +1,6 @@
 import { QUERYSTRING_LICENCE_KEY } from '../constants.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
-import { IDENTIFY, RENEWAL_LICENCE } from '../uri.js'
+import { IDENTIFY, ATTRIBUTION } from '../uri.js'
 
 /**
  * Attribution route handler
@@ -13,10 +13,9 @@ export default async (request, h) => {
   if (request.query[QUERYSTRING_LICENCE_KEY]) {
     const refNumber = request.query[QUERYSTRING_LICENCE_KEY]
     const sixDigit = /^[A-Za-z0-9]{6}$/.test(refNumber)
-    if (!sixDigit) {
-      return h.redirect(IDENTIFY.uri)
+    if (sixDigit) {
+      return h.redirect(`${ATTRIBUTION.uri}/${refNumber}`)
     }
-    return h.redirect(`${RENEWAL_LICENCE.uri}/${refNumber}`)
   }
   return h.redirect(IDENTIFY.uri)
 }
