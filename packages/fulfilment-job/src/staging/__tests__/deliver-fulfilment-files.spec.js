@@ -14,9 +14,7 @@ jest.mock('../../transport/ftp.js')
 jest.mock('openpgp', () => ({
   readKey: jest.fn(() => ({})),
   encrypt: jest.fn(({ message: readableStream }) => readableStream),
-  Message: {
-    fromText: jest.fn(s => s)
-  }
+  createMessage: jest.fn(({ text }) => text)
 }))
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -148,13 +146,17 @@ describe('deliverFulfilmentFiles', () => {
     await mockExecuteQuery()
     createMockFileStreams()
     await deliverFulfilmentFiles()
-    expect(openpgp.Message.fromText).toHaveBeenCalledWith(s)
+    expect(openpgp.createMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        text: s
+      })
+    )
   })
 
   it('Uses message reading to encrypt', async () => {
     const s = createTestableStream()
     streamHelper.pipelinePromise.mockResolvedValue()
-    openpgp.Message.fromText.mockResolvedValue(s)
+    openpgp.createMessage.mockResolvedValue(s)
     await mockExecuteQuery()
     createMockFileStreams()
     await deliverFulfilmentFiles()
@@ -166,14 +168,14 @@ describe('deliverFulfilmentFiles', () => {
   })
 
   it('encrypts using public key', async () => {
-    const publicKeys = { type: 'skeleton' }
-    openpgp.readKey.mockResolvedValue(publicKeys)
+    const encryptionKeys = { type: 'skeleton' }
+    openpgp.readKey.mockResolvedValue(encryptionKeys)
     await mockExecuteQuery()
     createMockFileStreams()
     await deliverFulfilmentFiles()
     expect(openpgp.encrypt).toHaveBeenCalledWith(
       expect.objectContaining({
-        publicKeys
+        encryptionKeys
       })
     )
   })
