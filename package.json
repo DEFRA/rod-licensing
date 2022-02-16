@@ -19,6 +19,7 @@
   },
   "scripts": {
     "postinstall": "npm run lerna:bootstrap",
+    "prepare": "husky install",
     "test": "jest",
     "test:only-changed": "jest --changedSince develop",
     "test:watch": "jest --watch",
