@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.19 (2022-02-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1084](https://github.com/DEFRA/rod-licensing/pull/1084) Missing content on page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.22.0-rc.18 (2022-02-16)
 
 #### :rocket: Enhancement
