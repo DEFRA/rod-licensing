@@ -56,7 +56,9 @@
 {% block pricingSummary %}
     {{ pricingSummary(data.pricing.byLength, {
         'total': { desc: mssgs.total }
-    }, data.licenceTypeStr ) }}
+    }, data.licenceTypeStr,
+    mssgs
+    )}}
 {% endblock %}
 
 {% block bodyEnd %}
