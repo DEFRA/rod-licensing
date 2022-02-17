@@ -54,22 +54,6 @@ describe('updateTransaction', () => {
       expect(permission.licensee.birthDate).toBe('1985-01-01')
     })
   })
-
-  describe('unhappy path', () => {
-    let consoleErrorSpy, request
-    beforeEach(async () => {
-      consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
-      request = createRequestMock()
-      await updateTransaction(request)
-    })
-
-    it('logs an error if page cache does not match payload', async () => {
-      expect(consoleErrorSpy).toBeCalledWith('DOB page cache payload does not match current permission payload', {
-        dobPageCache: { payload: VALID_PAYLOAD },
-        payload: { test: 'payload' }
-      })
-    })
-  })
 })
 
 const createRequestMock = payload => ({
