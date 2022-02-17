@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.21 (2022-02-17)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#1087](https://github.com/DEFRA/rod-licensing/pull/1087) Upgrade OpenPGP Library ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.22.0-rc.20 (2022-02-16)
 
 #### :rocket: Enhancement
