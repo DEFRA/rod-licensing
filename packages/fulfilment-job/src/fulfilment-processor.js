@@ -17,7 +17,7 @@ const lock = new DistributedLock('fulfilment-etl', 5 * 60 * 1000)
  * @returns {Promise<void>}
  */
 export const processFulfilment = async () => {
-  //airbrake.initialise()
+  airbrake.initialise()
 
   try {
     await lock.obtainAndExecute({
@@ -33,21 +33,14 @@ export const processFulfilment = async () => {
       maxWaitSeconds: 0
     })
   } finally {
-    console.log('terminating')
     await terminateCacheManager()
-    console.log('terminated')
-    //await airbrake.flush()
-    console.log('flushed')
+    await airbrake.flush()
   }
 }
 
 const shutdown = async code => {
-  console.log('flushing again')
- // await airbrake.flush()
-  console.log('flushed again')
+  await airbrake.flush()
   await lock.release()
-  console.log('lock released')
-  console.log(code)
   process.exit(code)
 }
 
