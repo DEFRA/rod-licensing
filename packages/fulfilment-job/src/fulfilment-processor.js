@@ -33,8 +33,11 @@ export const processFulfilment = async () => {
       maxWaitSeconds: 0
     })
   } finally {
+    console.log('terminating')
     await terminateCacheManager()
+    console.log('terminated')
     await airbrake.flush()
+    console.log('flushed')
   }
 }
 
