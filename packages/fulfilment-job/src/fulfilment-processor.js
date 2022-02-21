@@ -42,8 +42,12 @@ export const processFulfilment = async () => {
 }
 
 const shutdown = async code => {
+  console.log('flushing again')
   await airbrake.flush()
+  console.log('flushed again')
   await lock.release()
+  console.log('lock released')
+  console.log(code)
   process.exit(code)
 }
 
