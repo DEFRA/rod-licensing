@@ -175,4 +175,12 @@ describe('airbrake', () => {
       done()
     })
   })
+
+  it('should flush and close Notifier, when airbrake is flushed, if it is initialised', async () => {
+    airbrake.initialise()
+    await airbrake.flush()
+
+    expect(Notifier.prototype.flush).toHaveBeenCalled()
+    expect(Notifier.prototype.close).toHaveBeenCalled()
+  })
 })
