@@ -1,4 +1,17 @@
 
+## v1.22.0-rc.26 (2022-02-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1093](https://github.com/DEFRA/rod-licensing/pull/1093) Remove additional logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1094](https://github.com/DEFRA/rod-licensing/pull/1094) Alternate image text for calendar ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.22.0-rc.23 (2022-02-18)
