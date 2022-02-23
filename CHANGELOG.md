@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.28 (2022-02-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1104](https://github.com/DEFRA/rod-licensing/pull/1104) Update text on licence complete confirmation page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.22.0-rc.26 (2022-02-22)
 
