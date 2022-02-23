@@ -34,7 +34,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.renewedEndDate = endDateMoment.toISOString()
   permission.renewedHasExpired = renewedHasExpired
   permission.licensee = Object.assign(
-    (({ country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...l }) => l)(
+    (({ _country, _preferredMethodOfConfirmation, _preferredMethodOfNewsletter, _preferredMethodOfReminder, ...l }) => l)(
       authenticationResult.permission.licensee
     ),
     {
