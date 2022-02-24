@@ -33,14 +33,16 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceStartTime = renewedHasExpired ? 0 : endDateMoment.hours()
   permission.renewedEndDate = endDateMoment.toISOString()
   permission.renewedHasExpired = renewedHasExpired
-  permission.licensee = Object.assign(
-    (({ _country, _preferredMethodOfConfirmation, _preferredMethodOfNewsletter, _preferredMethodOfReminder, ...l }) => l)(
-      authenticationResult.permission.licensee
-    ),
-    {
-      countryCode: authenticationResult.permission.licensee.country.description
-    }
-  )
+  const copyLicenseeWithoutContactAndCountry = ({
+    country,
+    preferredMethodOfConfirmation,
+    preferredMethodOfNewsletter,
+    preferredMethodOfReminder,
+    ...l
+  }) => l
+  permission.licensee = Object.assign(copyLicenseeWithoutContactAndCountry(authenticationResult.permission.licensee), {
+    countryCode: authenticationResult.permission.licensee.country.description
+  })
 
   // Delete any licensee objects which are null
   Object.entries(permission.licensee)
