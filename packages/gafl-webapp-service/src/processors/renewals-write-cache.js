@@ -35,9 +35,9 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.renewedHasExpired = renewedHasExpired
   const copyLicenseeWithoutContactAndCountry = ({
     country,
-    preferredMethodOfConfirmation,
-    preferredMethodOfNewsletter,
-    preferredMethodOfReminder,
+    _preferredMethodOfConfirmation,
+    _preferredMethodOfNewsletter,
+    _preferredMethodOfReminder,
     ...l
   }) => l
   permission.licensee = Object.assign(copyLicenseeWithoutContactAndCountry(authenticationResult.permission.licensee), {
