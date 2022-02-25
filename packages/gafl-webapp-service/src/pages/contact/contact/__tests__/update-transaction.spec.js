@@ -26,6 +26,7 @@ describe('contact > update-transaction', () => {
 
     it('should set email and preferredMethodOfReminder in cache, when how-contacted is email', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {}
       }))
@@ -52,6 +53,7 @@ describe('contact > update-transaction', () => {
 
     it('should set mobilePhone and preferredMethodOfReminder in cache, when how-contacted is test', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {}
       }))
@@ -78,6 +80,7 @@ describe('contact > update-transaction', () => {
 
     it('should set preferredMethodOfReminder in cache, when how-contacted is none', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {}
       }))
@@ -102,6 +105,7 @@ describe('contact > update-transaction', () => {
 
     it('should preserve the email and set preferredMethodOfReminder to text, when how-contacted is text', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {
           email: 'example@example.com'
@@ -130,6 +134,7 @@ describe('contact > update-transaction', () => {
 
     it('should preserve mobilePhone and set preferredMethodOfReminder to email, when how-contacted is email', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {
           mobilePhone: '07700900088'
@@ -158,6 +163,7 @@ describe('contact > update-transaction', () => {
 
     it('should preserve the original email and set preferredMethodOfReminder to text, when how-contacted is text and when an email is passed in', async () => {
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {
           email: 'example@example.com'
@@ -190,6 +196,7 @@ describe('contact > update-transaction', () => {
     beforeEach(() => {
       jest.clearAllMocks()
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: false },
         licenceLength: '1D',
         licensee: {}
       }))
@@ -212,7 +219,8 @@ describe('contact > update-transaction', () => {
             email: 'example@example.com',
             preferredMethodOfReminder: 'Email',
             preferredMethodOfConfirmation: 'Email'
-          })
+          }),
+          permit: { isForFulfilment: false }
         })
       )
     })
@@ -234,7 +242,8 @@ describe('contact > update-transaction', () => {
             mobilePhone: '07700900088',
             preferredMethodOfReminder: 'Text',
             preferredMethodOfConfirmation: 'Text'
-          })
+          }),
+          permit: { isForFulfilment: false }
         })
       )
     })
@@ -254,7 +263,8 @@ describe('contact > update-transaction', () => {
           licensee: expect.objectContaining({
             preferredMethodOfReminder: 'Prefer not to be contacted',
             preferredMethodOfConfirmation: 'Prefer not to be contacted'
-          })
+          }),
+          permit: { isForFulfilment: false }
         })
       )
     })

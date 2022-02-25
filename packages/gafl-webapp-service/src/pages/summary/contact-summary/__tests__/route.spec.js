@@ -24,7 +24,8 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
-          }
+          },
+          permit: { isForFulfilment: true }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
@@ -40,7 +41,8 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
             preferredMethodOfNewsletter: 'Yes'
-          }
+          },
+          permit: { isForFulfilment: true }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
@@ -54,7 +56,8 @@ describe('contact-summary > route', () => {
             postalFulfilment: true,
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Letter'
-          }
+          },
+          permit: { isForFulfilment: true }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
@@ -72,7 +75,8 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Email',
             email: 'new3@example.com',
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
-          }
+          },
+          permit: { isForFulfilment: true }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
@@ -88,7 +92,8 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
             preferredMethodOfNewsletter: 'Yes'
-          }
+          },
+          permit: { isForFulfilment: true }
         }
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
@@ -174,7 +179,7 @@ describe('contact-summary > route', () => {
         renewal: true,
         [LICENCE_FULFILMENT.page]: false
       }
-      const permission = { licenceLength: '12M' }
+      const permission = { licenceLength: '12M', permit: { isForFulfilment: true } }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
 
@@ -183,7 +188,7 @@ describe('contact-summary > route', () => {
         renewal: true,
         [LICENCE_CONFIRMATION_METHOD.page]: false
       }
-      const permission = { licenceLength: '12M' }
+      const permission = { licenceLength: '12M', permit: { isForFulfilment: true } }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
   })

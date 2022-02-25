@@ -24,13 +24,13 @@ describe('licence-fulfilment > route', () => {
       await expect(func).rejects.toThrow(new GetDataRedirect(CONTACT.uri))
     })
     it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '12M', isLicenceForYou: true }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '12M', isLicenceForYou: true, permit: { isForFulfilment: true } }))
       const result = await getData(mockRequest)
       expect(result.isLicenceForYou).toBeTruthy()
     })
 
     it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '12M', isLicenceForYou: false }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '12M', isLicenceForYou: false, permit: { isForFulfilment: true } }))
       const result = await getData(mockRequest)
       expect(result.isLicenceForYou).toBeFalsy()
     })

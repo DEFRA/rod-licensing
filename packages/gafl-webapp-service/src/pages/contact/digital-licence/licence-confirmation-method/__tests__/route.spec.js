@@ -14,7 +14,10 @@ describe('licence-confirmation-method > route', () => {
                 firstName: 'Lando',
                 lastName: 'Norris'
               },
-              isLicenceForYou: options.isLicenceForYou || false
+              isLicenceForYou: options.isLicenceForYou || false,
+              permit: {
+                isForFulfilment: true
+              }
             }))
           }
         }
@@ -26,7 +29,7 @@ describe('licence-confirmation-method > route', () => {
 
     it('should reject and redirect to the contact page, if licence is not physical', async () => {
       const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
-      const func = async () => await getData(createRequestMock({ licenceLength: '1D' }))
+      const func = async () => await getData(createRequestMock({ licenceLength: '1D', permit: { isForFulfilment: false } }))
       await expect(func).rejects.toThrow(getDataRedirectError)
     })
 

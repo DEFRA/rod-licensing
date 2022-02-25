@@ -3,7 +3,6 @@ import mockDefraCountries from '../../../../../__mocks__/data/defra-country.js'
 import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
 import {
   ADDRESS_ENTRY,
-  LICENCE_FULFILMENT,
   CONTACT,
   TEST_TRANSACTION,
   CONTACT_SUMMARY,
@@ -160,7 +159,7 @@ describe('The manual address entry page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+      expect(response.headers.location).toBe(CONTACT.uri)
     })
 
     it('redirects to the contact page if it is a 12 month junior licence on posting a valid UK address', async () => {

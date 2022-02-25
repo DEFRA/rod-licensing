@@ -21,9 +21,10 @@ describe('licence-summary > result-function', () => {
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
-    it('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
+    it.only('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: true }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
+        permit: { isForFulfilment: true },
         licenceLength: '12M',
         licensee: {
           postalFulfilment: true

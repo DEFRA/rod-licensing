@@ -1,6 +1,5 @@
 import {
   ADDRESS_SELECT,
-  LICENCE_FULFILMENT,
   CONTACT,
   ADDRESS_LOOKUP,
   TEST_TRANSACTION,
@@ -101,7 +100,7 @@ describe('The address select page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+      expect(response.headers.location).toBe(CONTACT.uri)
     })
 
     it('redirects to the summary page if the summary page is seen', async () => {

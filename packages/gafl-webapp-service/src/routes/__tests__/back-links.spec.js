@@ -159,7 +159,7 @@ describe('The contact page', () => {
     expect(n.backLink({}, {})).toBe(ADDRESS_LOOKUP.uri)
   })
   it('has a back-link to the licence confirmation method page if the contact summary has not been seen and is a physical licence', () => {
-    expect(n.backLink({}, { licenceLength: '12M' })).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+    expect(n.backLink({}, { licenceLength: '12M' })).toBe(ADDRESS_LOOKUP.uri)
   })
   it('has a back-link to the licence confirmation method page if the contact summary has been seen and the last submitted page is licence confirmation method', () => {
     expect(n.backLink({ currentPage: LICENCE_CONFIRMATION_METHOD.page, fromSummary: CONTACT_SUMMARY_SEEN })).toBe(
