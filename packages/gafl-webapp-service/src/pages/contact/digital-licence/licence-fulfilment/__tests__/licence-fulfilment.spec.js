@@ -1,11 +1,13 @@
 import {
-  DATE_OF_BIRTH,
-  LICENCE_LENGTH,
   ADDRESS_ENTRY,
-  LICENCE_FULFILMENT,
-  LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   CONTACT_SUMMARY,
+  CONTROLLER,
+  DATE_OF_BIRTH,
+  DISABILITY_CONCESSION,
+  LICENCE_CONFIRMATION_METHOD,
+  LICENCE_FULFILMENT,
+  LICENCE_LENGTH,
   LICENCE_SUMMARY,
   LICENCE_TO_START,
   LICENCE_TYPE,
@@ -19,9 +21,11 @@ import { start, stop, initialize, injectWithCookies } from '../../../../../__moc
 import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
+import { disabilityConcessionTypes } from '../../../../../pages/concessions/disability/update-transaction.js'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
+
 afterAll(d => stop(d))
 
 const goodAddress = {
@@ -37,9 +41,22 @@ describe('The licence fulfilment page', () => {
   describe('for a full 12 month licence, adult', () => {
     beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
+      await injectWithCookies('GET', CONTROLLER.uri)
+
+      // Set up the licence details
+      await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+        'disability-concession': disabilityConcessionTypes.pipDla,
+        'ni-number': 'NH 34 67 44 A'
+      })
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+
+      // Set up the contact details
+      await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     })
 
     it('returns success on requesting', async () => {

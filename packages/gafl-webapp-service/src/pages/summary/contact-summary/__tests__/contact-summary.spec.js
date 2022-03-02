@@ -6,6 +6,7 @@ import {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
   NAME,
+  DISABILITY_CONCESSION,
   CONTROLLER,
   ADDRESS_ENTRY,
   ADDRESS_LOOKUP,
@@ -14,15 +15,16 @@ import {
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   DATE_OF_BIRTH,
-  NEWSLETTER,
   LICENCE_LENGTH,
   LICENCE_TYPE,
-  NEW_TRANSACTION
+  NEW_TRANSACTION,
+  NEWSLETTER
 } from '../../../../uri.js'
 
 import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
+import { disabilityConcessionTypes } from '../../../../pages/concessions/disability/update-transaction.js'
 
 jest.mock('node-fetch')
 
@@ -78,6 +80,10 @@ describe('The contact summary page', () => {
 
       // Set up the licence details
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+        'disability-concession': disabilityConcessionTypes.pipDla,
+        'ni-number': 'NH 34 67 44 A'
+      })
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
@@ -87,7 +93,7 @@ describe('The contact summary page', () => {
       await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
-      await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
+      await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'no' })
     })
 
     it('when navigating to the contact summary, it redirects to the licence fulfilment page, if it has not been visited', async () => {
@@ -97,7 +103,6 @@ describe('The contact summary page', () => {
     })
 
     it('when navigating to the contact summary, it redirects to the licence confirmation method page, if it has not been visited', async () => {
-      await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)

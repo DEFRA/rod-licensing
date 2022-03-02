@@ -25,11 +25,32 @@ describe('licence-confirmation-method > route', () => {
       query: options.query || {}
     })
 
+    const createRequestMockFalse = (options = {}) => ({
+      cache: jest.fn(() => ({
+        helpers: {
+          transaction: {
+            getCurrentPermission: jest.fn(() => ({
+              licenceLength: options.licenceLength || '12M',
+              licensee: {
+                firstName: 'Lando',
+                lastName: 'Norris'
+              },
+              isLicenceForYou: options.isLicenceForYou || false,
+              permit: {
+                isForFulfilment: false
+              }
+            }))
+          }
+        }
+      })),
+      query: options.query || {}
+    })
+
     beforeEach(jest.clearAllMocks)
 
     it('should reject and redirect to the contact page, if licence is not physical', async () => {
       const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
-      const func = async () => await getData(createRequestMock({ licenceLength: '1D', permit: { isForFulfilment: false } }))
+      const func = async () => await getData(createRequestMockFalse({ licenceLength: '1D' }))
       await expect(func).rejects.toThrow(getDataRedirectError)
     })
 

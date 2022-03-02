@@ -1,18 +1,19 @@
 import {
+  ADDRESS_ENTRY,
   CONTACT,
-  LICENCE_FOR,
-  LICENCE_LENGTH,
+  CONTACT_SUMMARY,
   CONTROLLER,
   DATE_OF_BIRTH,
-  LICENCE_TO_START,
-  CONTACT_SUMMARY,
-  NEWSLETTER,
-  TEST_TRANSACTION,
-  NEW_TRANSACTION,
-  ADDRESS_ENTRY,
+  DISABILITY_CONCESSION,
+  LICENCE_FOR,
+  LICENCE_LENGTH,
   LICENCE_SUMMARY,
+  LICENCE_TO_START,
   LICENCE_TYPE,
-  NAME
+  NAME,
+  NEWSLETTER,
+  NEW_TRANSACTION,
+  TEST_TRANSACTION
 } from '../../../../uri.js'
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
@@ -22,6 +23,7 @@ import { start, stop, initialize, injectWithCookies } from '../../../../__mocks_
 import { ADULT_TODAY, dobHelper, JUNIOR_TODAY } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
+import { disabilityConcessionTypes } from '../../../../pages/concessions/disability/update-transaction.js'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
@@ -68,8 +70,15 @@ describe('The contact preferences page', () => {
     beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+        'disability-concession': disabilityConcessionTypes.pipDla,
+        'ni-number': 'NH 34 67 44 A'
+      })
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     })
 
     it('return the page on request', async () => {

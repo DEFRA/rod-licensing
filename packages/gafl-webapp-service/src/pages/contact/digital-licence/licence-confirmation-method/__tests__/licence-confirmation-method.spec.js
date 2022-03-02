@@ -43,7 +43,7 @@ describe('The licence confirmation method page', () => {
     })
 
     it('return the page on request', async () => {
-      const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri, { permit: { isForFulfilment: false } })
+      const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri)
       expect(response.statusCode).toBe(200)
     })
 
