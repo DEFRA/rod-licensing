@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.39 (2022-03-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1126](https://github.com/DEFRA/rod-licensing/pull/1126) Fix for incorrect title on confirmation method page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.22.0-rc.38 (2022-03-03)
 
 #### :rocket: Enhancement
