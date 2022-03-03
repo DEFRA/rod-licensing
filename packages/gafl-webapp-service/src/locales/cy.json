@@ -84,7 +84,7 @@
   "address_lookup_error_max_name_num": "Rhaid i rif neu enw’r adeilad fod yn llai na 50 nod",
   "address_lookup_error_pattern_postcode": "Rhowch god post yn y DU. Os yw’r cyfeiriad y tu allan i’r DU, nodwch y cyfeiriad â llaw.",
   "address_lookup_manually_enter": "Rhowch y cyfeiriad â llaw",
-  "address_lookup_name_num_hint": "Er enghraifft, Fflat 20A",
+  "address_lookup_name_num_hint": "Er enghraifft, 47, Fflat 2a neu Rose Cottage",
   "address_lookup_name_num_label": "Rhif neu enw adeilad",
   "address_lookup_postcode_hint": "Er enghraifft, WA4 1AB",
   "address_lookup_postcode_label": "Cod post",
