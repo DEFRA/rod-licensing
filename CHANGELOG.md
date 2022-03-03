@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.38 (2022-03-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1123](https://github.com/DEFRA/rod-licensing/pull/1123) Replace footmarks with apostrophes ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.22.0-rc.36 (2022-03-02)
 
