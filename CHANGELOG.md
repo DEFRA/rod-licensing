@@ -1,4 +1,13 @@
 
+## v1.22.0-rc.40 (2022-03-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1128](https://github.com/DEFRA/rod-licensing/pull/1128) Update find address hint text to be consistent ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.22.0-rc.39 (2022-03-03)
 
 #### :bug: Bug Fix
