@@ -2,12 +2,12 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = 'Would you like to receive our email newsletter?' %}
-{% set emailError = 'Enter an email address in the correct format, like name@example.com' %}
+{% set title = mssgs.newsletter_title %}
+{% set emailError = mssgs.newsletter_error_set_email %}
 
 {% set errorMap = {
        'newsletter' : {
-            'any.required': { ref: '#newsletter', text: 'Choose if you would like to receive our email newsletter' }
+            'any.required': { ref: '#newsletter', text: mssgs.newsletter_error_choose }
        },
        'email': {
             'string.empty': { ref: '#email', text: emailError },
@@ -27,10 +27,10 @@
       value: payload.email,
       errorMessage: { text: emailError } if error['email'],
       label: {
-        text: "Email address"
+        text: mssgs.important_info_contact_input_email
       },
       hint: {
-          text: "For example name@example.com"
+          text: mssgs.important_info_contact_input_email_hint
       },
       attributes: {
         spellcheck: "false",
@@ -45,7 +45,7 @@
       name: "newsletter",
       fieldset: {
         legend: {
-          text: "Stay up to date with the latest news on angling, fisheries and how we spend your licence money. You can unsubscribe at any time.",
+          text: mssgs.newsletter_subscribe,
           isPageHeading: false,
           classes: "govuk-body-m"
         }
@@ -53,7 +53,7 @@
       items: [
         {
           value: "yes",
-          text: "Yes",
+          text: mssgs.yes,
           checked: payload.newsletter === 'yes',
           conditional: {
             html: addEmailHtml if data.emailEntry
@@ -61,7 +61,7 @@
         },
         {
           value: "no",
-          text: "No",
+          text: mssgs.no,
           checked: true if not payload or payload['newsletter'] === 'no' else false
         }
       ]

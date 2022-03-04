@@ -24,8 +24,7 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
-import moment from 'moment'
-import BusinessRulesLib from '@defra-fish/business-rules-lib'
+import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -58,7 +57,9 @@ jest.mock('../../contacts.service.js', () => ({
 }))
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
-  POCL_TRANSACTION_SOURCES: ['Post Office Sales', 'DDE File'],
+  POCL_DATA_SOURCE: 'POCL_DATA_SOURCE',
+  DDE_DATA_SOURCE: 'DDE_DATA_SOURCE',
+  POCL_TRANSACTION_SOURCES: ['POCL_DATA_SOURCE', 'DDE_DATA_SOURCE'],
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
@@ -67,7 +68,7 @@ describe('transaction service', () => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
   })
 
-  beforeEach(AwsMock.__resetAll)
+  beforeEach(jest.clearAllMocks)
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
@@ -181,6 +182,44 @@ describe('transaction service', () => {
       })
     })
 
+    it('sets isLicenceForYou to Yes on the transaction, if it is true on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = true
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
+    })
+
+    it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = false
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
+      expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 0, label: 'No', description: 'No' } })
+    })
+
+    it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = undefined
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+    })
+
+    it('does not set isLicenceForYou on the transaction, if it is null on the permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions[0].isLicenceForYou = null
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const persistMockFirstAgument = persist.mock.calls[0]
+      expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+    })
+
     it('handles requests which relate to an transaction file', async () => {
       const transactionFilename = 'test-file.xml'
       const mockRecord = mockFinalisedTransactionRecord()
@@ -208,18 +247,38 @@ describe('transaction service', () => {
   })
 
   describe('.getTransactionJournalRefNumber', () => {
-    let mockRecord
-    beforeAll(() => {
-      mockRecord = mockFinalisedTransactionRecord()
-      mockRecord.dataSource = 'Post Office Sales'
-    })
     describe('when the transaction type is "Payment"', () => {
+      it.each([
+        ['123456', 2020],
+        ['654321', 2021],
+        ['567890', 2022]
+      ])('and it\'s a DDE File, and has a journal id, returns journal id', (journalId, year) => {
+        jest.useFakeTimers()
+        jest.setSystemTime(new Date(year, 1, 1, 10, 0, 0, 0))
+        const mockRecord = getSampleRecord({
+          dataSource: DDE_DATA_SOURCE,
+          journalId
+        })
+        const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')
+        expect(refNumber).toBe(`DDE-${year}-${journalId}`)
+        jest.useRealTimers()
+      })
+
+      it('and it\'s a POCL file, and has a journal id and a serial number, returns serial number', () => {
+        const mockRecord = getSampleRecord()
+        mockRecord.journalId = '123456'
+        const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')
+        expect(refNumber).toBe(mockRecord.serialNumber)
+      })
+
       it('and the serial number is present, returns serial number', () => {
+        const mockRecord = getSampleRecord()
         const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')
         expect(refNumber).toBe(mockRecord.serialNumber)
       })
 
       it('and the serial number is not present, returns id', () => {
+        const mockRecord = getSampleRecord()
         const refNumber = getTransactionJournalRefNumber({ ...mockRecord, serialNumber: null }, 'Payment')
         expect(refNumber).toBe(mockRecord.id)
       })
@@ -227,14 +286,22 @@ describe('transaction service', () => {
 
     describe('when the transaction type is "Charge"', () => {
       it('and the serial number is present, returns id', () => {
+        const mockRecord = getSampleRecord()
         const refNumber = getTransactionJournalRefNumber(mockRecord, 'Charge')
         expect(refNumber).toBe(mockRecord.id)
       })
 
       it('and the serial number is not present, returns id', () => {
+        const mockRecord = getSampleRecord()
         const refNumber = getTransactionJournalRefNumber({ ...mockRecord, serialNumber: null }, 'Charge')
         expect(refNumber).toBe(mockRecord.id)
       })
+    })
+
+    const getSampleRecord = (overrides = {}) => ({
+      ...mockFinalisedTransactionRecord(),
+      dataSource: POCL_DATA_SOURCE,
+      ...overrides
     })
   })
 })

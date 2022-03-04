@@ -11,23 +11,27 @@ export const licenseTypes = {
   salmonAndSeaTrout: 'salmon-and-sea-trout'
 }
 
-const validator = Joi.object({
+export const validator = Joi.object({
   'licence-type': Joi.string()
     .valid(...Object.values(licenseTypes))
     .required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-export default pageRoute(LICENCE_TYPE.page, LICENCE_TYPE.uri, validator, nextPage, async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const pricing = await pricingDetail(LICENCE_TYPE.page, permission)
+
   return {
     licenseTypes,
     permission,
     pricing,
+    isLicenceForYou: permission.isLicenceForYou,
     hasJunior: concessionHelper.hasJunior(permission),
     uri: {
       freshWaterFishingRules: FRESHWATER_FISING_RULES.uri,
       localByelaws: LOCAL_BYELAWS.uri
     }
   }
-})
+}
+
+export default pageRoute(LICENCE_TYPE.page, LICENCE_TYPE.uri, validator, nextPage, getData)

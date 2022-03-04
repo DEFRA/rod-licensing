@@ -11,12 +11,11 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
-import { POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+import { DDE_DATA_SOURCE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
-import { logStartDateError } from '../permission-helper.js'
 import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
@@ -44,19 +43,22 @@ export async function processQueue ({ id }) {
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
-  for (const { licensee, concessions, permitId, referenceNumber, issueDate, startDate, endDate } of transactionRecord.permissions) {
+  for (const {
+    licensee,
+    concessions,
+    permitId,
+    referenceNumber,
+    issueDate,
+    startDate,
+    endDate,
+    isLicenceForYou
+  } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
     totalTransactionValue += permit.cost
 
-    const permission = new Permission()
-    permission.referenceNumber = referenceNumber
-    permission.stagingId = transactionRecord.id
-    permission.issueDate = issueDate
-    permission.startDate = startDate
-    permission.endDate = endDate
-    permission.dataSource = dataSource
+    const permission = await mapToPermission(referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou)
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -64,7 +66,6 @@ export async function processQueue ({ id }) {
     transactionRecord.transactionFile &&
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
 
-    logStartDateError(permission)
     entities.push(contact, permission)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
@@ -99,6 +100,23 @@ export async function processQueue ({ id }) {
       ConditionExpression: 'attribute_not_exists(id)'
     })
     .promise()
+}
+
+const mapToPermission = async (referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou) => {
+  const permission = new Permission()
+  permission.referenceNumber = referenceNumber
+  permission.stagingId = transactionRecord.id
+  permission.issueDate = issueDate
+  permission.startDate = startDate
+  permission.endDate = endDate
+  permission.dataSource = dataSource
+  if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
+    permission.isLicenceForYou = await getGlobalOptionSetValue(
+      Permission.definition.mappings.isLicenceForYou.ref,
+      isLicenceForYou ? 'Yes' : 'No'
+    )
+  }
+  return permission
 }
 
 /**
@@ -152,6 +170,9 @@ const createTransactionEntities = async transactionRecord => {
 
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
   if (POCL_TRANSACTION_SOURCES.includes(transactionRecord.dataSource) && type === 'Payment') {
+    if (transactionRecord.dataSource === DDE_DATA_SOURCE && transactionRecord.journalId) {
+      return `DDE-${(new Date()).getFullYear()}-${transactionRecord.journalId}`
+    }
     return transactionRecord.serialNumber || transactionRecord.id
   }
   return transactionRecord.id

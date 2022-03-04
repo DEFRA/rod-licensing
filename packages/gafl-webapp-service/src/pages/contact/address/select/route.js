@@ -3,9 +3,17 @@ import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { nextPage } from '../../../../routes/next-page.js'
 
-const getData = async request => {
+export const getData = async request => {
   const { addresses, searchTerms } = await request.cache().helpers.addressLookup.getCurrentPermission()
-  return { lookupPage: ADDRESS_LOOKUP.uri, entryPage: ADDRESS_ENTRY.uri, addresses, searchTerms }
+  const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
+
+  return {
+    isLicenceForYou,
+    addresses,
+    searchTerms,
+    lookupPage: ADDRESS_LOOKUP.uri,
+    entryPage: ADDRESS_ENTRY.uri
+  }
 }
 
 export default pageRoute(

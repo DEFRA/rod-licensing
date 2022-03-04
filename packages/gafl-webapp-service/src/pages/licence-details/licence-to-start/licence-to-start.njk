@@ -2,17 +2,17 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'When would you like your licence to start?' %}
+{% set title = mssgs.licence_start_title_you if data.isLicenceForYou else mssgs.licence_start_title_other %}
 
 {%
     set errorMap = {
         'licence-to-start': {
-            'any.required': { ref: '#licence-to-start', text: "Choose when you'd like your licence to start" }
+            'any.required': { ref: '#licence-to-start', text: mssgs.licence_start_error_choose_when }
         },
         'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: 'Enter the date you want your licence to start, include a day, month and year' },
-            'date.max': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' },
-            'date.min': { ref: '#licence-start-date-day', text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' }
+            'date.format': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_format },
+            'date.max': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days },
+            'date.min': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days }
         }
     }
 %}
@@ -20,18 +20,21 @@
 {% set dateInputItems = [
     {
       name: "day",
+      label: mssgs.dob_day,
       classes: "govuk-input--width-2",
       value: payload['licence-start-date-day'],
       attributes: { maxlength : 2 }
     },
     {
       name: "month",
+      label: mssgs.dob_month,
       classes: "govuk-input--width-2",
       value: payload['licence-start-date-month'],
       attributes: { maxlength : 2 }
     },
     {
       name: "year",
+      label: mssgs.dob_year,
       classes: "govuk-input--width-4",
       value: payload['licence-start-date-year'],
       attributes: { maxlength : 4 }
@@ -41,34 +44,34 @@
 
 {% set startDate %}
     {% if not data.hasJunior %}
-        <p class="govuk-body-m">Enter today's date if you want a 1 or 8 day licence to start later today.</p>
+        <p class="govuk-body-m">{{ mssgs.licence_start_enter_todays_date }}</p>
     {% endif %}
 
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: 'Enter a date within the next ' + data.advancedPurchaseMaxDays + ' days' } if error['licence-start-date'],
+      errorMessage: { text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days } if error['licence-start-date'],
       hint: {
-        text: "Enter a date up to and including " + data.maxStartDate
+        text: mssgs.licence_start_hint + data.maxStartDate
       }
     }) }}
 {% endset -%}
 
 {% block pageContent %}
-    <p class="govuk-body-m">Your licence can start today or any day within the next {{ data.advancedPurchaseMaxDays }} days.</p>
+    <p class="govuk-body-m"> {{ mssgs.licence_start_today_or_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days }}</p>
 
     {{ govukRadios({
         idPrefix: "licence-to-start",
         name: "licence-to-start",
         items: [
             {
-                text: data.startAfterPaymentMinutes + " minutes after payment",
+                text: data.startAfterPaymentMinutes + mssgs.licence_start_minutes_after,
                 value: "after-payment",
                 checked: payload['licence-to-start'] === 'after-payment'
             },
             {
-                text: "Later",
+                text: mssgs.licence_start_later,
                 value: "another-date",
                 checked: payload['licence-to-start'] === 'another-date',
                 conditional: {
@@ -76,7 +79,7 @@
                 }
             }
         ],
-        errorMessage: { text: 'Choose when you\'d like your licence to start' } if error['licence-to-start']
+        errorMessage: { text: mssgs.licence_start_error_choose_when } if error['licence-to-start']
     }) }}
 {% endblock %}
 
@@ -89,6 +92,7 @@
         calImageDiv.id = 'cal-image-div'
         const calImage = document.createElement('img')
         calImage.src = '/public/images/icon-calendar-2x.png'
+        calImage.alt = '{{ mssgs.licence_date_picker }}'
         calImageDiv.appendChild(calImage)
         calImageDiv.setAttribute('aria-hidden', true)
         dataInputDiv.appendChild(calImageDiv)

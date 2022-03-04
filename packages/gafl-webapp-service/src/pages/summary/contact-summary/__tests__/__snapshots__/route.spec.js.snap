@@ -1,27 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as Make a note on confirmation 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter row if isLicenceForYou is true 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -85,28 +65,98 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as the email and Newsletter as no 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should not have the newsletter row if isLicenceForYou is false 1`] = `
 Array [
   Object {
     "actions": Object {
       "items": Array [
         Object {
           "attributes": Object {
-            "id": "change-name",
+            "id": "change-address",
           },
-          "href": "/buy/name",
+          "href": "/buy/find-address",
           "text": "Change",
-          "visuallyHiddenText": "name",
+          "visuallyHiddenText": "address",
         },
       ],
     },
     "key": Object {
-      "text": "Name",
+      "text": "Address",
     },
     "value": Object {
-      "text": "Fester Tester",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": "/buy/contact",
+          "text": "Change",
+          "visuallyHiddenText": "contact",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence details",
+    },
+    "value": Object {
+      "text": "Make a note on confirmation",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as Make a note on confirmation 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": "/buy/find-address",
+          "text": "Change",
+          "visuallyHiddenText": "address",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Address",
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": "/buy/contact",
+          "text": "Change",
+          "visuallyHiddenText": "contact",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence details",
+    },
+    "value": Object {
+      "text": "Make a note on confirmation",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as the email and Newsletter as no 1`] = `
+Array [
   Object {
     "actions": Object {
       "items": Array [
@@ -147,51 +197,11 @@ Array [
       "text": "Email to new3@example.com",
     },
   },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "No",
-    },
-  },
 ]
 `;
 
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as the phone number and Newsletter as yes 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -232,51 +242,11 @@ Array [
       "text": "Text messages to 07700900900",
     },
   },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "Yes",
-    },
-  },
 ]
 `;
 
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) with postal fulfilment should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -357,51 +327,11 @@ Array [
       "text": "Email to new3@example.com",
     },
   },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "No",
-    },
-  },
 ]
 `;
 
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) with postal fulfilment should display the Licence as post, Licence Confirmation and Contact as the phone number and Newsletter as yes 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -482,51 +412,11 @@ Array [
       "text": "Text messages to 07700900900",
     },
   },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "Yes",
-    },
-  },
 ]
 `;
 
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) with postal fulfilment should display the Licence as post, Licence Confirmation as note of licence and Contact as post 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -607,51 +497,11 @@ Array [
       "text": "By post",
     },
   },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "Yes",
-    },
-  },
 ]
 `;
 
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) without postal fulfilment should display the Licence and Contact as the email and Newsletter as no 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -712,51 +562,11 @@ Array [
       "text": "Email to new3@example.com",
     },
   },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "No",
-    },
-  },
 ]
 `;
 
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) without postal fulfilment should display the Licence and Contact as the phone number and Newsletter as yes 1`] = `
 Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-name",
-          },
-          "href": "/buy/name",
-          "text": "Change",
-          "visuallyHiddenText": "name",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Name",
-    },
-    "value": Object {
-      "text": "Fester Tester",
-    },
-  },
   Object {
     "actions": Object {
       "items": Array [
@@ -815,26 +625,6 @@ Array [
     },
     "value": Object {
       "text": "Text messages to 07700900900",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": "/buy/newsletter",
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "Yes",
     },
   },
 ]

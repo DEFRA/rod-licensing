@@ -1,6 +1,7 @@
 /*
  * Page locations, templates
  */
+export const LICENCE_FOR = { uri: '/buy/licence-for', page: 'licence-for' }
 export const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 export const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
 export const LICENCE_TO_START = { uri: '/buy/start-kind', page: 'licence-to-start' }
@@ -27,7 +28,7 @@ export const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-sum
 export const PAYMENT_CANCELLED = { uri: '/buy/payment-cancelled', page: 'payment-cancelled' }
 export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-failed' }
 
-export const TERMS_AND_CONDITIONS = { uri: '/buy/terms-conditions', page: 'terms-and-conditions' }
+export const TERMS_AND_CONDITIONS = { uri: '/buy/conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 export const LICENCE_DETAILS = { uri: '/buy/licence-details', page: 'licence-details' }
 export const ATTRIBUTION = { uri: '/buy/attribution' }
@@ -40,6 +41,7 @@ export const OIDC_ACCOUNT_DISABLED = { uri: '/oidc/account-disabled', page: 'acc
  * Renewals pages
  * @type {{uri: string}}
  */
+export const RENEWAL_BASE = { uri: '/renew' }
 export const RENEWAL_PUBLIC = { uri: '/renew/{referenceNumber?}' }
 export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
 export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }

@@ -16,7 +16,7 @@ beforeAll(() => {
   })
 })
 
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('That the server', () => {
   it('sanitizes user input', async () => {

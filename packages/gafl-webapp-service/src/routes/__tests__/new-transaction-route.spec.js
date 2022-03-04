@@ -6,7 +6,7 @@ const spy = jest.spyOn(sessionManager, 'default')
 beforeAll(() => new Promise(resolve => start(resolve)))
 
 // Stop application after running the test case
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The new transaction route clears the cache and invokes the controller invokes the controller', () => {
   it('Return success on requesting', async () => {

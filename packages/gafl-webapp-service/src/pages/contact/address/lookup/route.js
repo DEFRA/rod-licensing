@@ -11,9 +11,11 @@ const validator = Joi.object({
   postcode: validation.contact.createUKPostcodeValidator(Joi)
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
   return {
+    isLicenceForYou: permission.isLicenceForYou,
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
     isPhysical: isPhysical(permission),

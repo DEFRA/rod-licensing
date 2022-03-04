@@ -1,101 +1,105 @@
 {% extends "layout.njk" %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% block pageTitle %}Get a fishing licence privacy policy - GOV.UK{% endblock %}
+{% block pageTitle %}{{ mssgs.privacy_title }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
         {{ govukBackLink({
-          text: "Back",
+          text: mssgs.back,
           href: "/buy",
           classes: "govuk-!-margin-bottom-7"
         }) }}
 
-        <h1 class="govuk-heading-l">Get a fishing licence privacy policy</h1>
+        <h1 class="govuk-heading-l">{{ mssgs.privacy_heading }}</h1>
 
-        <h2 class="govuk-heading-m">How we use personal data</h2>
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_how }}</h2>
 
-        <p class="govuk-body">We are the Environment Agency and we are the official authority for issuing fishing licences in England (except the River Tweed), Wales and the Border Esk region of Scotland. We are the controller for personal data collected and processed for our Get a fishing licence service. A data controller determines how and why personal data (personal information) is processed.</p>
-        <p class="govuk-body">Children under the age of 13 do not require a licence and you should not provide us with their personal data. If you are not the angler and you are providing us with someone else’s personal data to apply for a licence on their behalf, please make them aware of this privacy notice.</p>
+        <p class="govuk-body">{{ mssgs.privacy_how_body_1 }}</p>
+        <p class="govuk-body">{{ mssgs.privacy_how_body_2 }}</p>
 
-        <h2 class="govuk-heading-m">The personal data we need</h2>
-        <p class="govuk-body">The personal data we need about the angler is:</p>
-
-        <ul class="govuk-list govuk-list--bullet">
-            <li>name and address</li>
-            <li>date of birth</li>
-            <li>contact details including phone number, email address or both</li>
-        </ul>
-
-        <p class="govuk-body">We process this personal data because it is necessary to process the application for a licence. If you don't provide this information then we can't issue a licence.</p>
-        <p class="govuk-body">The lawful basis we rely on to process your personal data is article 6(1)(e) of the UK GDPR, which allows us to process personal data when this is necessary to exercise our official authority set out in law (in this case the Salmon and Freshwater Fisheries Act 1975).</p>
-
-        <p class="govuk-body">If you have a disability and would like to be issued with a disabled licence, you can voluntarily provide us with your:</p>
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_needed }}</h2>
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_1 }}</p>
 
         <ul class="govuk-list govuk-list--bullet">
-            <li>National Insurance number (if relevant)</li>
-            <li>Blue Badge number (if relevant)</li>
+            <li>{{ mssgs.privacy_needed_body_bulleypoint_1 }}</li>
+            <li>{{ mssgs.privacy_needed_body_bulleypoint_2 }}</li>
+            <li>{{ mssgs.privacy_needed_body_bulleypoint_3 }}</li>
         </ul>
 
-        <p class="govuk-body">If you would like to receive marketing emails from us you can sign up to receive our email newsletter.</p>
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_3 }}</p>
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_4 }}</p>
 
-        <p class="govuk-body">The lawful basis we rely on for processing this special category personal data is your explicit consent under article 6(1)(a) and 9(2)(a) of the UK GDPR. We will only use this personal data to assess your eligibility for a disabled licence. Consent can be withdrawn at any time.</p>
-
-        <h2 class="govuk-heading-m">What we do with personal data</h2>
-        <p class="govuk-body">We use personal data to:</p>
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_5 }}</p>
 
         <ul class="govuk-list govuk-list--bullet">
-            <li>process your transaction, including taking payment</li>
-            <li>determine the type of licence (based on age and disability information if provided)</li>
-            <li>issue a licence and send this to the angler</li>
-            <li>communicate information about licences</li>
-            <li>check licences</li>
-            <li>email newsletters to people who sign up</li>
-            <li>ask anglers to provide feedback on the service</li>
-            <li>provide updates to byelaws</li>
+            <li>{{ mssgs.privacy_needed_body_bulleypoint_4 }}</li>
+            <li>{{ mssgs.privacy_needed_body_bulleypoint_5 }}</li>
         </ul>
 
-        <p class="govuk-body">We may use other organisations to do any of these activities on our behalf. These include:</p>
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_6 }}</p>
+
+        <p class="govuk-body">{{ mssgs.privacy_needed_body_7 }}</p>
+
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_what_we_do }}</h2>
+        <p class="govuk-body">{{ mssgs.privacy_what_we_do_body_1 }}</p>
 
         <ul class="govuk-list govuk-list--bullet">
-            <li>GOV.UK Pay and Worldpay – for card payments</li>
-            <li>SSCL – for Direct Debit payments</li>
-            <li>Post Office – to take payments and process applications</li>
-            <li>Paragon – for licence printing and mailing</li>
-            <li>Dotmailer – for marketing emails</li>
-            <li>SmartSurvey – to ask anglers to provide feedback on the service</li>
-            <li>GOV.Notify – to communicate information about licences</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_1 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_2 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_3 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_cr }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_4 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_5 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_6 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_7 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_8 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_enforcement }}</li>
         </ul>
 
-        <p class="govuk-body">We do not use personal data to make an automated decision or for automated profiling.</p>
+        <p class="govuk-body">{{ mssgs.privacy_what_we_do_body_2 }}</p>
 
-        <h2 class="govuk-heading-m">Service Usage</h2>
-        <p class="govuk-body">We use Google Analytics to collect anonymised information about how the service is used. We use this data to improve the service.</p>
-        <p class="govuk-body">We do not send any data to Google that could be used to personally identify you and we do not allow Google to use or share our analytics data.</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_9 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_10 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_11 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_12 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_13 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_14 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_qa }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_15 }}</li>
+            <li>{{ mssgs.privacy_what_we_do_bulletpoint_hh }}</li>
+        </ul>
 
-        <h2 class="govuk-heading-m">How long we keep personal data</h2>
-        <p class="govuk-body">We will keep personal data for the duration of the licence and for 6 years after it expires in line with our standard information retention policy.</p>
+        <p class="govuk-body">{{ mssgs.privacy_what_we_do_body_3 }}</p>
 
-        <h2 class="govuk-heading-m">Where personal data is processed and stored</h2>
-        <p class="govuk-body">We transfer personal data through Amazon Web Services (AWS) servers in the UK. We store the data on Microsoft Azure servers in Ireland.</p>
-        <p class="govuk-body">The organisations we share personal data with process and store data in the UK. Our processor may also store this data outside the UK in Switzerland.</p>
-        <p class="govuk-body">We do not store payment details.</p>
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_usage }}</h2>
+        <p class="govuk-body">{{ mssgs.privacy_usage_body_1 }}</p>
+        <p class="govuk-body">{{ mssgs.privacy_usage_body_2 }}</p>
 
-        <h2 class="govuk-heading-m">Data Protection Officer</h2>
-        <p class="govuk-body">Our Data Protection Officer (DPO) is responsible for independent advice and monitoring of the Environment Agency’s use of personal data. You can read our 
-        <a class="govuk-link" href="https://www.gov.uk/government/organisations/environment-agency/about/personal-information-charter" rel="noreferrer noopener" target="_blank">personal information charter (opens in new tab)</a> which explains how we deal with personal data in general. If you have any concerns or queries about how we process personal data, or if you would like to make a complaint or request relating to data protection, please contact our DPO using the following details:</p>
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_length_kept }}</h2>
+        <p class="govuk-body">{{ mssgs.privacy_length_kept_body_1 }}</p>
+
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_where_stored }}</h2>
+        <p class="govuk-body">{{ mssgs.privacy_where_stored_body_1 }}</p>
+        <p class="govuk-body">{{ mssgs.privacy_where_stored_body_2 }}</p>
+        <p class="govuk-body">{{ mssgs.privacy_where_stored_body_3 }}</p>
+
+        <h2 class="govuk-heading-m">{{ mssgs.privacy_subheading_dp_officer }}</h2>
+        <p class="govuk-body"> {{ mssgs.privacy_dp_officer_body_1 }}
+        <a class="govuk-link" href="https://www.gov.uk/government/organisations/environment-agency/about/personal-information-charter" rel="noreferrer noopener" target="_blank">{{ mssgs.privacy_dp_officer_body_link }}</a>{{ mssgs.privacy_dp_officer_body_2 }}</p>
         <p class="govuk-body">
-            Data Protection Officer</br>
-            Environment Agency</br>
-            Horizon House</br>
-            Deanery Road</br>
-            Bristol</br>
-            BS1 5AH
+            {{ mssgs.privacy_subheading_dp_officer }}</br>
+            {{ mssgs.our_address_1 }}</br>
+            {{ mssgs.our_address_2 }}</br>
+            {{ mssgs.our_address_3 }}</br>
+            {{ mssgs.our_address_4 }}</br>
+            {{ mssgs.our_address_5 }}
         </p>
 
-        <p class="govuk-body">Email: <a class="govuk-link" href="mailto:dataprotection@environment-agency.gov.uk">dataprotection@environment-agency.gov.uk</a></p>
+        <p class="govuk-body">{{ mssgs.email }}<a class="govuk-link" href="mailto:dataprotection@environment-agency.gov.uk">{{ mssgs.dp_email }}</a></p>
     </div>
 </div>
 {% endblock %}

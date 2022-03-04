@@ -13,6 +13,7 @@ export const CSRF_TOKEN_COOKIE_NAME_DEFAULT = 'rlsctkn'
 export const FEEDBACK_URI_DEFAULT = '#'
 export const CHANNEL_DEFAULT = 'websales'
 export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-fishing-licence'
+export const RENEWALS_CAMPAIGN_ID = 'renewals'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
@@ -37,6 +38,8 @@ export const UTM = {
   TERM: 'utm_term',
   CONTENT: 'utm_content'
 }
+
+export const QUERYSTRING_LICENCE_KEY = 'reference'
 
 export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 

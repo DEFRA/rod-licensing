@@ -6,7 +6,7 @@ beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 
 // Stop application after running the test case
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 describe('The miscellaneous route handlers', () => {
   it('redirect to the main controller when / is requested', async () => {

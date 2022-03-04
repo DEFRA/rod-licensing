@@ -1,5 +1,6 @@
-import { UTM, ATTRIBUTION_REDIRECT_DEFAULT } from '../../constants'
+import { UTM, ATTRIBUTION_REDIRECT_DEFAULT, QUERYSTRING_LICENCE_KEY } from '../../constants'
 import attributionHandler from '../attribution-handler'
+import { RENEWAL_BASE, IDENTIFY } from '../../uri'
 
 jest.mock('../../constants', () => ({
   UTM: {
@@ -9,7 +10,13 @@ jest.mock('../../constants', () => ({
     SOURCE: 'utmsource',
     TERM: 'utmterm'
   },
+  RENEWALS_CAMPAIGN_ID: 'RENEWALS_CAMPAIGN_ID',
   ATTRIBUTION_REDIRECT_DEFAULT: '/attribution/redirect/default'
+}))
+
+jest.mock('../../uri', () => ({
+  RENEWAL_BASE: { uri: '/licence-renew-url' },
+  IDENTIFY: { uri: '/renewal-url' }
 }))
 
 describe('The attribution handler', () => {
@@ -45,19 +52,22 @@ describe('The attribution handler', () => {
     })
   })
 
-  it("redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set", async () => {
-    delete process.env.ATTRIBUTION_REDIRECT
-    const query = {
-      [UTM.CAMPAIGN]: 'campaign-12',
-      [UTM.MEDIUM]: 'click_bait',
-      [UTM.CONTENT]: 'eieioh',
-      [UTM.SOURCE]: 'tomato',
-      [UTM.TERM]: 'Michaelmas'
+  it.each([['campaign-12'], ['sample-campaign'], ['important-campaign']])(
+    "redirects to ATTRIBUTION_REDIRECT_DEFAULT if ATTRIBUTION_REDIRECT env var isn't set",
+    async campaign => {
+      delete process.env.ATTRIBUTION_REDIRECT
+      const query = {
+        [UTM.CAMPAIGN]: campaign,
+        [UTM.MEDIUM]: 'click_bait',
+        [UTM.CONTENT]: 'eieioh',
+        [UTM.SOURCE]: 'tomato',
+        [UTM.TERM]: 'Michaelmas'
+      }
+      const responseToolkit = generateResponseToolkitMock()
+      await attributionHandler(generateRequestMock(query), responseToolkit)
+      expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
     }
-    const responseToolkit = generateResponseToolkitMock()
-    await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
-  })
+  )
 
   it("redirects to ATTRIBUTION_REDIRECT env var if it's set", async () => {
     const attributionRedirect = '/attribution/redirect'
@@ -74,6 +84,53 @@ describe('The attribution handler', () => {
     expect(responseToolkit.redirect).toHaveBeenCalledWith(attributionRedirect)
     delete process.env.ATTRIBUTION_REDIRECT
   })
+
+  it('redirects to RENEWAL_BASE if journey is renewal', async () => {
+    const query = {
+      [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
+      [UTM.MEDIUM]: 'click_bait',
+      [UTM.CONTENT]: 'eieioh',
+      [UTM.SOURCE]: 'tomato',
+      [UTM.TERM]: 'Michaelmas'
+    }
+    const responseToolkit = generateResponseToolkitMock()
+
+    await attributionHandler(generateRequestMock(query), responseToolkit)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY.uri)
+  })
+
+  it('redirects begins with { IDENTIFY } when journey is renewal', async () => {
+    const query = {
+      [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
+      [UTM.MEDIUM]: 'click_bait',
+      [UTM.CONTENT]: 'eieioh',
+      [UTM.SOURCE]: 'tomato',
+      [UTM.TERM]: 'Michaelmas'
+    }
+    const responseToolkit = generateResponseToolkitMock()
+    const regExMatch = new RegExp(`^${IDENTIFY.uri}`)
+
+    await attributionHandler(generateRequestMock(query), responseToolkit)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
+  })
+
+  it.each([['B2F11U'], ['AH56F6'], ['GH330P']])(
+    'test renewal includes reference number when journey is renewal and reference number exists',
+    async licenceKey => {
+      const query = {
+        [UTM.CAMPAIGN]: 'RENEWALS_CAMPAIGN_ID',
+        [UTM.MEDIUM]: 'click_bait',
+        [UTM.CONTENT]: 'eieioh',
+        [UTM.SOURCE]: 'tomato',
+        [UTM.TERM]: 'Michaelmas',
+        [QUERYSTRING_LICENCE_KEY]: licenceKey
+      }
+      const responseToolkit = generateResponseToolkitMock()
+      await attributionHandler(generateRequestMock(query), responseToolkit)
+      const regExMatch = new RegExp(`^${RENEWAL_BASE.uri}/${licenceKey}$`)
+      expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
+    }
+  )
 
   const generateRequestMock = (query, status = {}) => ({
     query,

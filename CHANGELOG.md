@@ -1,4 +1,238 @@
 
+## v1.22.0-rc.40 (2022-03-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1128](https://github.com/DEFRA/rod-licensing/pull/1128) Update find address hint text to be consistent ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.22.0-rc.39 (2022-03-03)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1126](https://github.com/DEFRA/rod-licensing/pull/1126) Fix for incorrect title on confirmation method page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.22.0-rc.38 (2022-03-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1123](https://github.com/DEFRA/rod-licensing/pull/1123) Replace footmarks with apostrophes ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.22.0-rc.36 (2022-03-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1122](https://github.com/DEFRA/rod-licensing/pull/1122) Update to licence details link to be more generic ([@MickStein](https://github.com/MickStein))
+  * [#1119](https://github.com/DEFRA/rod-licensing/pull/1119) Update how should we contact person page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.22.0-rc.35 (2022-03-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1120](https://github.com/DEFRA/rod-licensing/pull/1120) Follow-up update to licence conditions text ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+
+
+## v1.22.0-rc.31 (2022-02-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1111](https://github.com/DEFRA/rod-licensing/pull/1111) Update order complete page ([@jaucourt](https://github.com/jaucourt))
+  * [#1110](https://github.com/DEFRA/rod-licensing/pull/1110) Update licence details page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+## v1.22.0-rc.28 (2022-02-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1104](https://github.com/DEFRA/rod-licensing/pull/1104) Update text on licence complete confirmation page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.22.0-rc.26 (2022-02-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1093](https://github.com/DEFRA/rod-licensing/pull/1093) Remove additional logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1094](https://github.com/DEFRA/rod-licensing/pull/1094) Alternate image text for calendar ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.22.0-rc.23 (2022-02-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1074](https://github.com/DEFRA/rod-licensing/pull/1074) Easy renewals vanity URL ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1092](https://github.com/DEFRA/rod-licensing/pull/1092) Feature/iwtf 2744 content issue ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.22.0-rc.21 (2022-02-17)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#1087](https://github.com/DEFRA/rod-licensing/pull/1087) Upgrade OpenPGP Library ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.22.0-rc.20 (2022-02-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1088](https://github.com/DEFRA/rod-licensing/pull/1088) Update privacy policy ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.22.0-rc.19 (2022-02-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1084](https://github.com/DEFRA/rod-licensing/pull/1084) Missing content on page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.22.0-rc.18 (2022-02-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1086](https://github.com/DEFRA/rod-licensing/pull/1086) Update link to annual fishery report ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.22.0-rc.16 (2022-02-15)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1085](https://github.com/DEFRA/rod-licensing/pull/1085) Fix for back button from address lookup page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.22.0-rc.15 (2022-02-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1075](https://github.com/DEFRA/rod-licensing/pull/1075) Fix attribution redirect for renewals ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+
+## v1.22.0-rc.11 (2022-02-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1070](https://github.com/DEFRA/rod-licensing/pull/1070) Welsh translation - eligible ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1068](https://github.com/DEFRA/rod-licensing/pull/1068) Feature/iwtf 2671 licence start welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.22.0-rc.10 (2022-02-08)
+
+#### :rocket: Enhancement
+* [#1069](https://github.com/DEFRA/rod-licensing/pull/1069) Update readme for env var structure ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.22.0-rc.9 (2022-02-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1057](https://github.com/DEFRA/rod-licensing/pull/1057) Welsh translation for date of birth ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.22.0-rc.8 (2022-02-04)
+
+#### :rocket: Enhancement
+* [#1045](https://github.com/DEFRA/rod-licensing/pull/1045) Alter env var structure ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.22.0-rc.7 (2022-02-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1056](https://github.com/DEFRA/rod-licensing/pull/1056) Feature/iwtf 2647 easy renewal content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.22.0-rc.6 (2022-02-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1031](https://github.com/DEFRA/rod-licensing/pull/1031) Feature/iwtf 2590 attribution redirect ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.22.0-rc.5 (2022-02-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1053](https://github.com/DEFRA/rod-licensing/pull/1053) Reword fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+
+
+## v1.22.0-rc.0 (2021-11-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#973](https://github.com/DEFRA/rod-licensing/pull/973) Generic Notice of Service Error ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.21.0-rc.3 (2021-11-15)
 

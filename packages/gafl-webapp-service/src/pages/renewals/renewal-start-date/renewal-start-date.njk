@@ -1,14 +1,14 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
-{% set title = 'When would you like your licence to start?' %}
+{% set title = mssgs.renewal_start_date_title %}
 
 {%
     set errorMap = {
         'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: 'Not a valid date. Enter the date you want the licence to start on and include a day, month and year' },
-            'date.max': { ref: '#licence-start-date-day', text: 'Your new licence must start within ' + data.advancedPurchaseMaxDays + ' days of your current licence expiring. Enter a date up to and including ' + data.maxStartDate },
-            'date.min': { ref: '#licence-start-date-day', text: 'The licence must not start before your current licence has expired' }
+            'date.format': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_format },
+            'date.max': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_max_1 + data.advancedPurchaseMaxDays + mssgs.renewal_start_date_error_max_2 + data.maxStartDate },
+            'date.min': { ref: '#licence-start-date-day', text: mssgs.renewal_start_date_error_min }
         }
     }
 %}
@@ -33,15 +33,15 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">Your current licence {% if data.hasExpired %}expired on{% else %}expires{% endif %} on {{ data.expiryTimeString }}</p>
-    <p class="govuk-body-m">Your licence can start up to {{ data.advancedPurchaseMaxDays }} days after your current licence {% if data.hasExpired %}expired{% else %}expires{% endif %}</p>
+    <p class="govuk-body-m">{{ mssgs.renewal_start_date_expires_1 }}{% if data.hasExpired %}{{ mssgs.renewal_start_date_expires_2 }}{% else %}{{ mssgs.renewal_start_date_expires_3 }}{% endif %}{{ mssgs.renewal_start_date_expires_4 }}{{ data.expiryTimeString }}</p>
+    <p class="govuk-body-m">{{ mssgs.renewal_start_date_starts_1 }}{{ data.advancedPurchaseMaxDays }}{{ mssgs.renewal_start_date_starts_2 }}{% if data.hasExpired %}{{ mssgs.renewal_start_date_starts_3 }}{% else %}{{ mssgs.renewal_start_date_expires_3 }}{% endif %}</p>
     {{ govukDateInput({
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: "Enter a valid date in this range" } if error,
+      errorMessage: { text: mssgs.renewal_start_date_error_valid_date } if error,
       hint: {
-        text: "Enter a date between " + data.minStartDate + " and " + data.maxStartDate
+        text: mssgs.renewal_start_date_error_hint_1 + data.minStartDate + mssgs.and + data.maxStartDate
       }
     }) }}
 {% endblock %}

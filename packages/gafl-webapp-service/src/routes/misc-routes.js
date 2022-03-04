@@ -28,7 +28,14 @@ import attribution from '../handlers/attribution-handler.js'
 const simpleView = view => ({
   method: 'GET',
   path: view.uri,
-  handler: async (request, h) => h.view(view.page)
+  handler: async (request, h) => {
+    const mssgs = request.i18n.getCatalog()
+    const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+    return h.view(view.page, {
+      mssgs,
+      altLang
+    })
+  }
 })
 
 export default [
@@ -85,7 +92,9 @@ export default [
   {
     method: 'GET',
     path: COOKIES.uri,
-    handler: async (request, h) =>
+    handler: async (request, h) => {
+      const mssgs = request.i18n.getCatalog()
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
       h.view(COOKIES.page, {
         uri: {
           buy: CONTROLLER.uri
@@ -97,6 +106,11 @@ export default [
           albcors: ALBCORS_COOKIE_NAME
         }
       })
+      return h.view(COOKIES.page, {
+        mssgs,
+        altLang
+      })
+    }
   },
   {
     method: 'GET',

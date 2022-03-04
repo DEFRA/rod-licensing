@@ -24,7 +24,7 @@ import { getCountryDropDownOptions } from '../route'
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 const goodAddress = {
   premises: '14 HOWECROFT COURT',

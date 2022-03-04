@@ -3,68 +3,62 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
-{% set title = 'Which type of licence do you want?' %}
+{% set title = mssgs.licence_type_title_you if data.isLicenceForYou else mssgs.licence_type_title_other %}
 
 {%
     set errorMap = {
         'licence-type': {
-            'any.required': { ref: '#licence-type', text: 'Choose which type of fishing licence you want' }
+            'any.required': { ref: '#selector-' + data.licenseTypes.troutAndCoarse2Rod, text: mssgs.licence_type_error_choose }
         }
     }
 %}
 
 {% set troutAndCoarse2Rod %}
     <p class="govuk-body-m">
-        The 2 rods coarse licence is the simplest rod licence. 
-        This will cover you for all the forms of fishing with a rod and let you fish non-migratory trout and coarse fish. 
-        It will allow you to fish with 1 or 2 rods at the same time, subject to the 
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">rod fishing rules (opens in a new tab)</a> 
-        and <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">local fishing byelaws (opens in a new tab)</a>.
-    </p>
+        {{ mssgs.licence_type_troute_two_rod }} 
+        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_rules }}</a>{{ mssgs.and }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.period }}   
+     </p>
 {% endset -%}
 
 {% set troutAndCoarse3Rod %}
     <p class="govuk-body-m">
-        You will only need a 3 rod licence if you plan to fish with 3 rods at the same time. 
-        This may be for specialist carp fishing for example. 
-        This will cover you for all the forms of fishing with a rod and let you fish non-migratory trout and coarse fish, subject to the 
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">rod fishing rules (opens in a new tab)</a> 
-        and <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">local fishing byelaws (opens in a new tab)</a>.
+        {{ mssgs.licence_type_troute_three_rod }}
+        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_rules }}</a>{{ mssgs.and }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.period }}
     </p>
 {% endset -%}
 
 {% set salmonAndSeaTrout %}
-    {% if data.hasJunior %}<p class="govuk-body-m">You'll only need this licence if you are specifically fishing for salmon or sea trout.</p>{% endif %}
+    {% if data.hasJunior %}<p class="govuk-body-m">{{ mssgs.licence_type_salmon_junior }}</p>{% endif %}
     {{ govukWarningText({
-      text: "You will need to submit an annual catch return",
+      text: mssgs.licence_type_salmon_acr_warning,
       iconFallbackText: "Warning",
       classes: "govuk-!-margin-top-6"
     }) }}
     <p class="govuk-body-m">
-        You must by law <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">report a catch return (opens in a new tab)</a> 
-        of your yearly salmon and sea trout fishing activity in England and Wales, even if you do not catch anything or do not fish.</p>
+        {{ mssgs.licence_type_salmon_acr_note_1 }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_2 }}</a> 
+        {{ mssgs.licence_type_salmon_acr_note_3 }}</p>
 {% endset -%}
 
 {% set items = [
         {
             id: 'selector-' + data.licenseTypes.troutAndCoarse2Rod,
-            text: "Trout and coarse, up to 2 rods",
+            text: mssgs.licence_type_radio_trout_two_rod,
             value: data.licenseTypes.troutAndCoarse2Rod,
             checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse2Rod,
             conditional: { html: troutAndCoarse2Rod }
         },
         {
             id: 'selector-' + data.licenseTypes.troutAndCoarse3Rod,
-            text: "Trout and coarse, up to 3 rods",
+            text: mssgs.licence_type_radio_trout_three_rod,
             value: data.licenseTypes.troutAndCoarse3Rod,
             checked: payload['licence-type'] === data.licenseTypes.troutAndCoarse3Rod,
             conditional: { html: troutAndCoarse3Rod }
         },
         {
             id: 'selector-' + data.licenseTypes.salmonAndSeaTrout,
-            text: "Salmon and sea trout",
+            text: mssgs.licence_type_radio_salmon,
             value: "salmon-and-sea-trout",
-            hint: { text: "Includes trout and coarse, up to 3 rods" },
+            hint: { text: mssgs.licence_type_radio_salmon_hint },
             checked: payload['licence-type'] === data.licenseTypes.salmonAndSeaTrout,
             conditional: { html: salmonAndSeaTrout }
         }
@@ -72,22 +66,24 @@
 %}
 
 {% block pageContent %}
-    <p class="govuk-body-m">Rods are for use by the licence holder only and must be attended at all times.</p>
+    <p class="govuk-body-m">{{ mssgs.licence_type_attended_rods_note }}</p>
     {{ govukRadios({
         idPrefix: "licence-type",
         name: "licence-type",
         items: items,
-        errorMessage: { text: 'Choose which type of fishing licence you want' } if error
+        errorMessage: { text: mssgs.licence_type_error_choose } if error
     }) }}
 {% endblock %}
 
 {% block pricingSummary %}
     {{ pricingSummary(data.pricing.byType, {
-        '12M': { desc: '12 months' },
-        '8D': { desc: '8 days' },
-        '1D': { desc: '1 day' },
-        'no-short': 'Shorter lengths are not available for this licence type'
-    }) }}
+        '12M': { desc: mssgs.licence_type_12m },
+        '8D': { desc: mssgs.licence_type_8d },
+        '1D': { desc: mssgs.licence_type_1d },
+        'no-short': mssgs.licence_type_na
+    }, null,
+    mssgs
+    )}}
 {% endblock %}
 
 {% block bodyEnd %}

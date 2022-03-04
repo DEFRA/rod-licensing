@@ -3,17 +3,17 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 
-{% set title = 'Your payment has failed' %}
+{% set title = mssgs.payment_failed_title_3 %}
 
 {% if data['failure-code'] === data.codes.EXPIRED %}
-    {% set title = 'Your payment has expired' %}
+    {% set title = mssgs.payment_failed_title_1 %}
 {% elseif data['failure-code'] === data.codes.REJECTED %}
-    {% set title = 'Your payment was rejected' %}
+    {% set title = mssgs.payment_failed_title_2 %}
 {% else %}
-    {% set title = 'Your payment has failed' %}
+    {% set title = mssgs.payment_failed_title_3 %}
 {% endif %}
 
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -27,24 +27,24 @@
               }
             }) %}
                 {% if data['failure-code'] === data.codes.EXPIRED %}
-                    <p class="govuk-body-m">The payment was not completed within 90 minutes of being created</p>
+                    <p class="govuk-body-m">{{ mssgs.payment_failed_expired }}</p>
                 {% elseif data['failure-code'] === data.codes.REJECTED %}
-                    <p class="govuk-body-m">The payment was rejected by the payment provider. Please ensure that you entered your card details correctly and that you have sufficient funds in your account.</p>
+                    <p class="govuk-body-m">{{ mssgs.payment_failed_rejected }}</p>
                 {% endif %}
-                <p class="govuk-body-m">No money has been taken from your account.</p>
+                <p class="govuk-body-m">{{ mssgs.payment_failed_not_taken }}</p>
 
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
                     name: "continue",
-                    text: "Try payment again",
+                    text: mssgs.try_payment_again,
                     classes: "govuk-!-margin-top-5"
                 }) }}
             {% endcall %}
 
             {{ csrf() }}
         </form>
-        <a class="govuk-link" href="{{ data.uri.new }}">Buy another licence</a>
+        <a class="govuk-link" href="{{ data.uri.new }}">{{ mssgs.buy_another_licence }}</a>
     </div>
 </div>
 {% endblock %}

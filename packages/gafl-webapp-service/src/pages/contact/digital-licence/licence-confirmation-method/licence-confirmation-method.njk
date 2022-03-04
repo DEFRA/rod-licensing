@@ -2,9 +2,9 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 
-{% set errorMsg = 'Choose how you would like to receive the licence' %}
-{% set emailError = 'Enter an email address in the correct format' %}
-{% set mobileError = 'Enter your UK mobile phone number' %}
+{% set errorMsg = mssgs.licence_confirm_method_error_choose %}
+{% set emailError = mssgs.important_info_contact_error_email %}
+{% set mobileError = mssgs.important_info_contact_error_mobile %}
 
 {% set errorMap = {
         'licence-confirmation-method': {
@@ -33,10 +33,10 @@
           autocomplete: "email",
           errorMessage: { text: emailError } if error['email'],
           label: {
-            text: "Email address"
+            text: mssgs.important_info_contact_input_email
           },
           hint: {
-              text: "For example name@example.com"
+              text: mssgs.important_info_contact_input_email_hint
           },
           attributes: {
             spellcheck: "false",
@@ -46,9 +46,9 @@
         }) }}
     </div>
     <div id="email-ro" class="govuk-body-m initially-hidden">
-        Email address</br>
+        {{ mssgs.important_info_contact_input_email }}</br>
         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
-            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">Change</a>
+            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
         </span>
     </div>
 {% endset -%}
@@ -63,10 +63,10 @@
           classes: "govuk-!-width-one-third",
           errorMessage: { text: mobileError } if error['text'],
           label: {
-            text: "UK mobile phone number"
+            text: mssgs.important_info_contact_input_mobile
           },
           hint: {
-              text: "For example 07700 900 900"
+              text: mssgs.important_info_contact_input_mobile_hint
           },
           attributes: {
             maxlength: "16"
@@ -75,9 +75,9 @@
         }) }}
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
-         Mobile phone number</br>
+         {{ mssgs.important_info_contact_input_mobile_note }}</br>
          <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
-             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">Change</a>
+             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
          </span>
      </div>
 {% endset -%}
@@ -85,7 +85,7 @@
 {% set itemsArray = [
     {
         value: "email",
-        text: "Email",
+        text: mssgs.email_alt,
         checked: payload['licence-confirmation-method'] === 'email',
         conditional: {
             html: emailHtml
@@ -93,7 +93,7 @@
     },
     {
         value: "text",
-        text: "Text message",
+        text: mssgs.important_info_contact_item_txt,
         checked: payload['licence-confirmation-method'] === 'text',
         conditional: {
             html: textMessageHtml
@@ -102,19 +102,19 @@
 ] %}
 
 {% if data.licensee.postalFulfilment %}
-    {% set title = 'How do you want your fishing licence confirmation?' %}
-    {% set bodyText = 'This is where we will send confirmation of your fishing licence' %}
+    {% set title = mssgs.licence_confirm_method_how_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_how_title_other %}
+    {% set bodyText = mssgs.licence_confirm_method_how_body_text %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "none",
-            text: "I will make a note of my licence number",
+            text: mssgs.licence_confirm_method_how_body_item,
             checked: payload['licence-confirmation-method'] === 'none'
         }), itemsArray) 
     %}
 {% else %}
-    {% set title = 'Where should we send your fishing licence?' %}
-    {% set bodyText = 'This is where we will send the licence after payment.' %}
-    {% set hintText = 'You will receive your licence information by email or text message only. You will not receive a licence card. Your licence information can be used to verify your rod licence to enforcement officers.' %}
+    {% set title = mssgs.licence_confirm_method_where_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_where_title_other %}
+    {% set bodyText = mssgs.licence_confirm_method_where_body_text %}
+    {% set hintText = mssgs.licence_confirm_method_where_body_hint_you if data.isLicenceForYou else mssgs.licence_confirm_method_how_title_other %}
 {% endif %}
 
 {% block pageContent %}

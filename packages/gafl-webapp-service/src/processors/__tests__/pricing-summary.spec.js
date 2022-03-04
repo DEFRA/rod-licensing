@@ -19,7 +19,7 @@ mockSalesApi()
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll((d) => stop(d))
+afterAll(d => stop(d))
 
 const juniorPricingByType = {
   [licenseTypes.troutAndCoarse2Rod]: {

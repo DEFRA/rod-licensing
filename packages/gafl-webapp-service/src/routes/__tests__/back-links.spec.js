@@ -5,6 +5,7 @@ import {
   LICENCE_TO_START,
   DISABILITY_CONCESSION,
   LICENCE_TYPE,
+  LICENCE_FOR,
   LICENCE_LENGTH,
   LICENCE_START_TIME,
   NAME,
@@ -18,8 +19,8 @@ import {
 } from '../../uri.js'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../constants.js'
 
-describe('The date-of-birth page', () => {
-  const n = journeyDefinition.find(n => n.current.page === DATE_OF_BIRTH.page)
+describe('The licence-for page', () => {
+  const n = journeyDefinition.find(n => n.current.page === LICENCE_FOR.page)
   it('has no back-link on initial viewing', () => {
     expect(n.backLink({})).not.toBeTruthy()
   })
@@ -28,10 +29,20 @@ describe('The date-of-birth page', () => {
   })
 })
 
+describe('The date-of-birth page', () => {
+  const n = journeyDefinition.find(n => n.current.page === DATE_OF_BIRTH.page)
+  it('has a back-link to the name page on initial viewing', () => {
+    expect(n.backLink({})).toBe(NAME.uri)
+  })
+  it('has a back-link to the licence summary if the summary is seen', () => {
+    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  })
+})
+
 describe('The licence-to-start page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_TO_START.page)
-  it('has a back-link to the date-of-birth page on initial viewing', () => {
-    expect(n.backLink({})).toBe(DATE_OF_BIRTH.uri)
+  it('has a back-link to the disability concessions page on initial viewing', () => {
+    expect(n.backLink({})).toBe(DISABILITY_CONCESSION.uri)
   })
   it('has a back-link to the license summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
@@ -40,8 +51,8 @@ describe('The licence-to-start page', () => {
 
 describe('The disability-concession page', () => {
   const n = journeyDefinition.find(n => n.current.page === DISABILITY_CONCESSION.page)
-  it('has a back-link to the licence-to-start page on initial viewing', () => {
-    expect(n.backLink({})).toBe(LICENCE_TO_START.uri)
+  it('has a back-link to the date-of-birth page on initial viewing', () => {
+    expect(n.backLink({})).toBe(DATE_OF_BIRTH.uri)
   })
   it('has a back-link to the license summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
@@ -80,21 +91,18 @@ describe('The licence-start-time page', () => {
 
 describe('The name page', () => {
   const n = journeyDefinition.find(n => n.current.page === NAME.page)
-  it('has no back-link if viewed before summary', () => {
-    expect(n.backLink({})).not.toBeTruthy()
-  })
   it('has a back-link to the licence-summary page if the licence-summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
   })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  it('has a back-link to the licence-for page if the contact summary has not been seen', () => {
+    expect(n.backLink({})).toBe(LICENCE_FOR.uri)
   })
 })
 
 describe('The address-lookup page', () => {
   const n = journeyDefinition.find(n => n.current.page === ADDRESS_LOOKUP.page)
-  it('has a back-link to the name page if the contact summary has not been seen', () => {
-    expect(n.backLink({})).toBe(NAME.uri)
+  it('has a back-link to the licence-summary page if the contact summary has not been seen', () => {
+    expect(n.backLink({})).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
