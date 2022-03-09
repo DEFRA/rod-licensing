@@ -51,7 +51,9 @@ export default async (premises, postcode) => {
 }
 
 export const capitalise = (str) => {
-  if (str == null) return null
+  if (str == null) {
+    return null
+  }
   const words = str.split(' ')
   return words.map(word => word[0].toUpperCase() + word.toLowerCase().substring(1)).join(' ')
 }
@@ -61,5 +63,9 @@ export const formatAddress = (premises, streetAddress, locality, city, postcode)
   const capitalisedArray = addressArray.map(a => capitalise(a))
   capitalisedArray.push(postcode)
   const filtered = capitalisedArray.filter(Boolean)
-  return filtered.join(', ')
+  let fullAddress = filtered.join(', ')
+  if (fullAddress.match(/,.*,/)) { // Check if there are 2 commas
+    fullAddress = fullAddress.replace(',', '') // Remove the first one
+  }
+  return fullAddress
 }

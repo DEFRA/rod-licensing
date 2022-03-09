@@ -23,10 +23,11 @@ describe('Address lookup service', () => {
 
   it('returns the full address with capitalised formatting, except the postcode which is all caps', async () => {
     const premises = searchResultsOne.results[0].premises
+    console.log(premises)
     const streetAddress = searchResultsOne.results[0].street_address
     const locality = searchResultsOne.results[0].locality
     const city = searchResultsOne.results[0].city
     const postcode = searchResultsOne.results[0].postcode
-    expect(formatAddress(premises, streetAddress, locality, city, postcode)).toEqual('1 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ')
+    expect(formatAddress(premises, streetAddress, locality, city, postcode)).toEqual('1 Howecroft Court Eastmead Lane, Bristol, BS9 1HJ')
   })
 })
