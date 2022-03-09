@@ -21,40 +21,20 @@
           titleHtml: titleHtml,
           html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
         }) }}
-        {% if data.isPostalFulfilment %}
-            {% if data.contactMethod === data.howContacted['email'] %}
-                <p class="govuk-body">{{ mssgs.order_complete_email_conf }}</p>
-            {% endif %}
-            {% if data.contactMethod === data.howContacted['text'] %}
-                <p class="govuk-body">{{ mssgs.order_complete_text_conf }}</p>
-            {% endif %}
-            <p class="govuk-body">{{ mssgs.order_complete_post_conf }}</p>
-        {% else %}
-            {% if data.contactMethod === data.howContacted['email'] %}
-                <p class="govuk-body">{{ mssgs.order_complete_email_licence_1 }}</p>
-                <p class="govuk-body">{{ mssgs.order_complete_email_licence_2 }}</p>
-                <p class="govuk-body">{{ mssgs.order_complete_email_licence_3 }}</p>
-            {% endif %}
-            {% if data.contactMethod === data.howContacted['text'] %}
-                <p class="govuk-body">{{ mssgs.order_complete_text_licence_1 }}</p>
-                <p class="govuk-body">{{ mssgs.order_complete_email_licence_2 }}</p>
-                <p class="govuk-body">{{ mssgs.order_complete_email_licence_3 }}</p>
-            {% endif %}
-        {% endif %}
+        
 
         <div class="govuk-!-margin-bottom-9">
-            {% if data.contactMethod === data.howContacted['none'] %}
-                <p class="govuk-body">{{ mssgs.order_complete_no_contact_licence_1 }}</p>
-                <p class="govuk-body">{{ mssgs.order_complete_email_licence_3 }}</p>
-            {% endif %}
+            <p class="govuk-body">{{ mssgs.order_complete_conf_info_1 }}</p>
+            <p class="govuk-body">{{ mssgs.order_complete_conf_info_2 }}</p>
+            <p class="govuk-body">{{ mssgs.order_complete_conf_info_3 }}</p>
 
-        <div class="govuk-!-margin-bottom-3">
-            {{ govukButton({
-                href: data.uri.licenceDetails,
-                text: mssgs.order_complete_view_details,
-                classes: "govuk-button--secondary"
-            }) }}
-        </div>
+            <div class="govuk-!-margin-bottom-3">
+                {{ govukButton({
+                    href: data.uri.licenceDetails,
+                    text: mssgs.order_complete_view_details,
+                    classes: "govuk-button--secondary"
+                }) }}
+            </div>
                 
             {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
                 <div class="govuk-!-margin-bottom-3">
