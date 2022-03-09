@@ -36,9 +36,9 @@
   },
   "dependencies": {
     "@defra-fish/connectors-lib": "1.23.0-rc.1",
-    "debug": "^4.3.1",
-    "joi": "^17.3.0",
-    "node-fetch": "^2.6.1",
+    "debug": "^4.3.3",
+    "joi": "^17.6.0",
+    "node-fetch": "^2.6.7",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
