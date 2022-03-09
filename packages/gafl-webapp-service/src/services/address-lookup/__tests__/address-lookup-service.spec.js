@@ -23,7 +23,6 @@ describe('Address lookup service', () => {
 
   it('returns the full address with capitalised formatting, except the postcode which is all caps', async () => {
     const premises = searchResultsOne.results[0].premises
-    console.log(premises)
     const streetAddress = searchResultsOne.results[0].street_address
     const locality = searchResultsOne.results[0].locality
     const city = searchResultsOne.results[0].city
