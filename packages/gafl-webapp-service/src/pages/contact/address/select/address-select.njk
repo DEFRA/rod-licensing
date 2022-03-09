@@ -14,7 +14,7 @@
 
 {% for address in data.addresses %}
     {{ addressItems.push({
-        text: address.address,
+        text: address.address_full,
         id: address.id,
         value: address.id,
         checked: payload['address'] === address.id
