@@ -44,7 +44,7 @@
     "aws-sdk": "^2.1074.0",
     "babel-jest": "^27.5.1",
     "clone-deep": "^4.0.1",
-    "dynamics-web-api": "1.7.3",
+    "dynamics-web-api": "1.7.4",
     "eslint": "^7.32.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
