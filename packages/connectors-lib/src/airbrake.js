@@ -68,5 +68,8 @@ export const initialise = () => {
  * @returns {Promise<void>}
  */
 export const flush = async () => {
-  initialise() && (await airbrake.flush())
+  if (initialise()) {
+    await airbrake.flush()
+    airbrake.close()
+  }
 }
