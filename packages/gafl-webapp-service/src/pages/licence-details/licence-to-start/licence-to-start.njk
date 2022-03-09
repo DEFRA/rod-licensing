@@ -92,6 +92,7 @@
         calImageDiv.id = 'cal-image-div'
         const calImage = document.createElement('img')
         calImage.src = '/public/images/icon-calendar-2x.png'
+        calImage.alt = '{{ mssgs.licence_date_picker }}'
         calImageDiv.appendChild(calImage)
         calImageDiv.setAttribute('aria-hidden', true)
         dataInputDiv.appendChild(calImageDiv)

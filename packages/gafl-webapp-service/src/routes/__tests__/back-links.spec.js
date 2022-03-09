@@ -101,8 +101,8 @@ describe('The name page', () => {
 
 describe('The address-lookup page', () => {
   const n = journeyDefinition.find(n => n.current.page === ADDRESS_LOOKUP.page)
-  it('has a back-link to the name page if the contact summary has not been seen', () => {
-    expect(n.backLink({})).toBe(NAME.uri)
+  it('has a back-link to the licence-summary page if the contact summary has not been seen', () => {
+    expect(n.backLink({})).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)

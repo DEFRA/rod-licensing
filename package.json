@@ -19,6 +19,7 @@
   },
   "scripts": {
     "postinstall": "npm run lerna:bootstrap",
+    "prepare": "husky install",
     "test": "jest",
     "test:only-changed": "jest --changedSince develop",
     "test:watch": "jest --watch",
@@ -29,7 +30,9 @@
     "docker:build-dev": "TAG=dev PROJECT_DOCKERFILE=Dockerfile.dev docker-compose -f docker/services.build.yml build",
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
     "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build",
-    "docker:services": "docker stack deploy -c docker/services.yml rls"
+    "docker:services": "docker stack deploy -c docker/services.yml rls",
+    "pre-commit": "npm run test:only-changed && lint-staged",
+    "pre-push": "prettier-standard --check --lint --since develop"
   },
   "devDependencies": {
     "@babel/core": "^7.17.2",
@@ -43,7 +46,7 @@
     "clone-deep": "^4.0.1",
     "dynamics-web-api": "1.7.3",
     "eslint": "^7.32.0",
-    "husky": "^6.0.0",
+    "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
     "lerna": "^4.0.0",
@@ -70,13 +73,6 @@
     "env": {
       "node": true,
       "jest": true
-    }
-  },
-  "husky": {
-    "hooks": {
-      "post-merge": "git update-index --skip-worktree docker/env/*.secrets.env",
-      "pre-commit": "npm run test:only-changed && lint-staged",
-      "pre-push": "prettier-standard --check --lint --since develop"
     }
   },
   "lint-staged": {
