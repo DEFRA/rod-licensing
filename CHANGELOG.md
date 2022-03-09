@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.1 (2022-03-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1124](https://github.com/DEFRA/rod-licensing/pull/1124) Feature/iwtf 2369 console error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.22.0-rc.40 (2022-03-03)
 
