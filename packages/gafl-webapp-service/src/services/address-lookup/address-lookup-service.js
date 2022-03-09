@@ -50,7 +50,7 @@ export default async (premises, postcode) => {
     : []
 }
 
-export const capitalise = (str) => {
+export const capitalise = str => {
   if (str == null) {
     return null
   }
@@ -64,8 +64,8 @@ export const formatAddress = (premises, streetAddress, locality, city, postcode)
   capitalisedArray.push(postcode)
   const filtered = capitalisedArray.filter(Boolean)
   let fullAddress = filtered.join(', ')
-  if (fullAddress.match(/,.*,/)) { // Check if there are 2 commas
-    fullAddress = fullAddress.replace(',', '') // Remove the first one
+  if (fullAddress.match(/,.*,/)) {
+    fullAddress = fullAddress.replace(',', '')
   }
   return fullAddress
 }
