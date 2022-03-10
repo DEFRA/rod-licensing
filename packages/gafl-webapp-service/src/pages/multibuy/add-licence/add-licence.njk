@@ -14,7 +14,7 @@
     }
 %}
 
-{% set noOfLicencesText = mssgs.licence if data.numberOfLicences == 1 else mssgs.licences %}
+{% set noOfLicencesText = mssgs.add_licence if data.numberOfLicences == 1 else mssgs.add_licences %}
 
 {% set insetTextHtml %}
   {{mssgs.add_licence_added}} <a href="/buy/view-licences">{{data.numberOfLicences}} {{noOfLicencesText}}</a>
