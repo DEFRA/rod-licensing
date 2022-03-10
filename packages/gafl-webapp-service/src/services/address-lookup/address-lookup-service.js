@@ -34,6 +34,8 @@ export default async (premises, postcode) => {
 
   debug({ results })
 
+  console.log(results)
+
   // Map and enumerate the results
   return results
     ? results.map((r, idx) => ({
@@ -59,13 +61,10 @@ export const capitalise = str => {
 }
 
 export const formatAddress = (premises, streetAddress, locality, city, postcode) => {
-  const addressArray = [premises, streetAddress, locality, city]
+  const addressArray = [premises + ' ' + streetAddress, locality, city]
   const capitalisedArray = addressArray.map(a => capitalise(a))
   capitalisedArray.push(postcode)
   const filtered = capitalisedArray.filter(Boolean)
-  let fullAddress = filtered.join(', ')
-  if (fullAddress.match(/,.*,/)) {
-    fullAddress = fullAddress.replace(',', '')
-  }
+  const fullAddress = filtered.join(', ')
   return fullAddress
 }
