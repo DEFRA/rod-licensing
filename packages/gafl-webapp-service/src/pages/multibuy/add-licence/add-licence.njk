@@ -14,12 +14,10 @@
     }
 %}
 
+{% set noOfLicencesText = mssgs.licence if data.numberOfLicences == 1 else mssgs.licences %}
+
 {% set insetTextHtml %}
-  {% if data.numberOfLicences === 1 %} 
-    {{mssgs.add_licence_added}} <a href="/buy/view-licences">{{data.numberOfLicences}} {{mssgs.licence}}</a>
-  {% else %} 
-    {{mssgs.add_licence_added}} <a href="/buy/view-licences">{{data.numberOfLicences}} {{mssgs.licences}}</a>
-  {% endif %}
+  {{mssgs.add_licence_added}} <a href="/buy/view-licences">{{data.numberOfLicences}} {{noOfLicencesText}}</a>
 {% endset %}
 
 {% block pageContent %}
