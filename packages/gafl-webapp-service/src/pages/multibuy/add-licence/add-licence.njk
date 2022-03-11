@@ -1,0 +1,51 @@
+{% extends "standard-form.njk" %}
+
+{% from "inset-text/macro.njk" import govukInsetText %}
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = mssgs.add_licence_title %}
+
+{% set errorMsg = mssgs.add_licence_error %}
+
+{% set errorMap = {
+       'add-licence': {
+            'any.required': { ref: '#add-licence', text: errorMsg }
+       }
+    }
+%}
+
+{% set noOfLicencesText = mssgs.add_licence if data.numberOfLicences == 1 else mssgs.add_licences %}
+
+{% set insetTextHtml %}
+  {{mssgs.add_licence_added}} <a href="/buy/view-licences">{{data.numberOfLicences}} {{noOfLicencesText}}</a>
+{% endset %}
+
+{% block pageContent %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukInsetText({
+            html: insetTextHtml
+            }) }}
+        </div>
+    </div>
+    {{ govukRadios({
+        idPrefix: "add-licence",
+        name: "add-licence",
+        hint: { text: mssgs.add_licence_hint },
+        items: [
+            {
+                "id": "selector-yes",
+                value: "yes",
+                text: mssgs.add_licence_yes,
+                checked: payload['add-licence'] === 'yes'
+            },
+            {
+                "id": "selector-no",
+                value: "no",
+                text: mssgs.add_licence_no,
+                checked: payload['add-licence'] === 'no'
+            }
+        ],
+        errorMessage: { text: errorMsg } if error['add_licence']
+    }) }}
+{% endblock %}
