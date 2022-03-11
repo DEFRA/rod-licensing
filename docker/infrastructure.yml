@@ -21,9 +21,10 @@ services:
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
       - DYNAMODB_HEAP_SIZE=1G
+      - DYNAMODB_SHARE_DB=1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/localstack:/tmp/localstack
+      - localstack-vol:/tmp/localstack
       - ./resources/infrastructure/localstack/localstack-init.sh:/docker-entrypoint-initaws.d/init.sh
       - ./resources/infrastructure/localstack/localstack-cfn.yml:/docker-entrypoint-initaws.d/localstack-cfn.yml
     deploy:
@@ -135,3 +136,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+
+volumes:
+  localstack-vol:
