@@ -17,18 +17,33 @@ describe('address-lookup-service', () => {
       expect(results).toEqual([])
     })
 
-    it('if data is returned from the API, formatAddress is called', async () => {
+    it('if data is returned from the API, it maps the data correctly', async () => {
       fetch.mockResolvedValue({
-        json: () => Promise.resolve([{
-          premises: '1',
-          streetAddress: 'HOWECROFT COURT',
-          locality: 'EASTMEAD LANE',
-          city: 'BRISTOL',
-          postcode: 'BS9 1HJ'
-        }])
+        json: () => ({
+          results: [{
+            address: '1 HOWECROFT COURT, EASTMEAD LANE, BRISTOL',
+            premises: '1',
+            street_address: 'HOWECROFT COURT',
+            locality: 'EASTMEAD LANE',
+            city: 'BRISTOL',
+            postcode: 'BS9 1HJ'
+          }]
+        })
       })
       const results = await als()
-      expect(results).toEqual([])
+      expect(results).toStrictEqual([
+        {
+          id: 0,
+          address: '1 HOWECROFT COURT, EASTMEAD LANE, BRISTOL',
+          premises: '1',
+          street: 'HOWECROFT COURT',
+          locality: 'EASTMEAD LANE',
+          town: 'BRISTOL',
+          postcode: 'BS9 1HJ',
+          country: undefined,
+          address_full: '1 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ'
+        }
+      ])
     })
   })
 
