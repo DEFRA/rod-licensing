@@ -43,7 +43,7 @@
     "@hapi/inert": "^6.0.5",
     "@hapi/vision": "^6.1.0",
     "debug": "^4.3.3",
-    "dot-prop": "^6.0.1",
+    "dot-prop": "^7.2.0",
     "hapi-and-healthy": "^7.0.7",
     "hapi-swagger": "^14.2.5",
     "ioredis": "^4.28.5",
