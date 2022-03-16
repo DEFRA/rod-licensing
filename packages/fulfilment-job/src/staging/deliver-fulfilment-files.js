@@ -25,11 +25,19 @@ export const deliverFulfilmentFiles = async () => {
     if (config.pgp.sendUnencryptedFile) {
       await deliver(file.fileName, await createDataReadStream(file))
     }
-    await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
+    const encryptedDataReadStream = await createEncryptedDataReadStream(file)
+    debug('Retrieved encrypted data stream, delivering encrypted data file')
+    await deliver(`${file.fileName}.enc`, encryptedDataReadStream)
+    // await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
+    debug('delivery complete, upating delivery timestamp')
     file.deliveryTimestamp = moment().toISOString()
+    debug('delivery timestamp updated, updating file status')
     file.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Delivered')
+    debug('file status updated, updating file notes')
     file.notes = `The fulfilment file was successfully delivered at ${file.deliveryTimestamp}`
+    debug('file notes updated, persisting file object back to CRM')
     await persist([file])
+    debug('file object persisted in CRM, all finished!')
   }
 }
 
@@ -51,10 +59,17 @@ const createEncryptedDataReadStream = async file => {
   const encryptionKeys = await openpgp.readKey({
     armoredKey: config.pgp.publicKey
   })
+  debug('Encryption keys read, creating message stream')
+  const message = await openpgp.createMessage({ text: readableStream })
+  debug('Message stream created, encrypting...')
   return openpgp.encrypt({
-    message: await openpgp.createMessage({ text: readableStream }),
+    message,
     encryptionKeys
   })
+  // return openpgp.encrypt({
+  //   message: await openpgp.createMessage({ text: readableStream }),
+  //   encryptionKeys
+  // })
 }
 
 /**
@@ -69,9 +84,16 @@ const deliver = async (targetFileName, readableStream, ...transforms) => {
   const { s3WriteStream: s3DataStream, managedUpload: s3DataManagedUpload } = createS3WriteStream(targetFileName)
   const { ftpWriteStream: ftpDataStream, managedUpload: ftpDataManagedUpload } = createFtpWriteStream(targetFileName)
 
-  await Promise.all([
-    streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
-    s3DataManagedUpload,
-    ftpDataManagedUpload
-  ])
+  debug('awaiting stream helper pipeline promise')
+  await streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream])
+  debug('stream helper pipeline promise complete, awaiting s3 managed upload')
+  await s3DataManagedUpload
+  debug('s3 managed upload complete, awaiting ftp managed upload')
+  await ftpDataManagedUpload
+  debug('ftp managed upload complete')
+  // await Promise.all([
+  //   streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
+  //   s3DataManagedUpload,
+  //   ftpDataManagedUpload
+  // ])
 }
