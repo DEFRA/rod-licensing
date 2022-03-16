@@ -1,5 +1,4 @@
 import { Readable } from 'stream'
-import { createHash } from 'crypto'
 import merge2 from 'merge2'
 import moment from 'moment'
 import { executeQuery, persist, findFulfilmentFiles } from '@defra-fish/dynamics-lib'

@@ -36,7 +36,6 @@ describe('deliverFulfilmentFiles', () => {
   beforeEach(jest.clearAllMocks)
 
   it('delivers all fulfilment files marked with the Exported status to the fulfilment provider', async () => {
-    const fileShaHash = 'f89f5dd268a8b02758e08d3b806d0695da94b84978954e281ccaba7eb838791a'
     const mockFulfilmentRequestFile1 = await createMockFulfilmentRequestFile('EAFF202006180001.json', '2020-06-18T11:47:32.982Z')
     const mockFulfilmentRequestFile2 = await createMockFulfilmentRequestFile('EAFF202006180002.json', '2020-06-18T11:47:33.982Z')
 
