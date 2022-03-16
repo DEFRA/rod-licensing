@@ -23,6 +23,10 @@ export const createFtpWriteStream = filename => {
       .then(() =>
         debug('File successfully uploaded to fulfilment provider at sftp://%s:%s%s', config.ftp.host, config.ftp.port, remoteFilePath)
       )
-      .finally(() => sftp.end())
+      .finally(() => {
+        debug('ending sftp stream')
+        sftp.end()
+        debug('ended sftp stream')
+      })
   }
 }
