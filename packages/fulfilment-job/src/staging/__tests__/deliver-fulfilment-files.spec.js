@@ -46,17 +46,13 @@ describe('deliverFulfilmentFiles', () => {
     // Streams for file1
     const {
       s3DataStreamFile: s3DataStreamFile1,
-      ftpDataStreamFile: ftpDataStreamFile1,
-      s3HashStreamFile: s3HashStreamFile1,
-      ftpHashStreamFile: ftpHashStreamFile1
+      ftpDataStreamFile: ftpDataStreamFile1
     } = createMockFileStreams()
 
     // Streams for file2
     const {
       s3DataStreamFile: s3DataStreamFile2,
-      ftpDataStreamFile: ftpDataStreamFile2,
-      s3HashStreamFile: s3HashStreamFile2,
-      ftpHashStreamFile: ftpHashStreamFile2
+      ftpDataStreamFile: ftpDataStreamFile2
     } = createMockFileStreams()
 
     // Run the delivery
@@ -66,23 +62,15 @@ describe('deliverFulfilmentFiles', () => {
 
     // File 1 expectations
     expect(createS3WriteStream).toHaveBeenNthCalledWith(1, 'EAFF202006180001.json')
-    expect(createS3WriteStream).toHaveBeenNthCalledWith(3, 'EAFF202006180001.json.sha256')
     expect(createFtpWriteStream).toHaveBeenNthCalledWith(1, 'EAFF202006180001.json')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(3, 'EAFF202006180001.json.sha256')
     expect(JSON.parse(s3DataStreamFile1.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
     expect(JSON.parse(ftpDataStreamFile1.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
-    expect(s3HashStreamFile1.dataProcessed).toEqual(fileShaHash) // validated
-    expect(ftpHashStreamFile1.dataProcessed).toEqual(fileShaHash) // validated
 
     // File 2 expectations
-    expect(createS3WriteStream).toHaveBeenNthCalledWith(4, 'EAFF202006180002.json')
-    expect(createS3WriteStream).toHaveBeenNthCalledWith(6, 'EAFF202006180002.json.sha256')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(4, 'EAFF202006180002.json')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(6, 'EAFF202006180002.json.sha256')
+    expect(createS3WriteStream).toHaveBeenNthCalledWith(3, 'EAFF202006180002.json')
+    expect(createFtpWriteStream).toHaveBeenNthCalledWith(3, 'EAFF202006180002.json')
     expect(JSON.parse(s3DataStreamFile2.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
     expect(JSON.parse(ftpDataStreamFile2.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
-    expect(s3HashStreamFile2.dataProcessed).toEqual(fileShaHash) // validated
-    expect(ftpHashStreamFile2.dataProcessed).toEqual(fileShaHash) // validated
 
     // Persist to dynamics for file 1
     expect(persist).toHaveBeenNthCalledWith(1, [

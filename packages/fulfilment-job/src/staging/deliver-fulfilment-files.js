@@ -27,7 +27,6 @@ export const deliverFulfilmentFiles = async () => {
       await deliver(file.fileName, await createDataReadStream(file))
     }
     await deliver(`${file.fileName}.enc`, await createEncryptedDataReadStream(file))
-    await deliver(`${file.fileName}.sha256`, await createDataReadStream(file), createHash('sha256').setEncoding('hex'))
     file.deliveryTimestamp = moment().toISOString()
     file.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Delivered')
     file.notes = `The fulfilment file was successfully delivered at ${file.deliveryTimestamp}`
