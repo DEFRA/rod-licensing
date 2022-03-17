@@ -50,12 +50,12 @@ const createDataReadStream = async file => {
 
 const createEncryptedDataReadStream = async file => {
   const readableStream = await createDataReadStream(file)
-  const encryptionKeys = await openpgp.readKey({
+  const publicKeys = await openpgp.readKey({
     armoredKey: config.pgp.publicKey
   })
   return openpgp.encrypt({
-    message: await openpgp.createMessage({ text: readableStream }),
-    encryptionKeys
+    message: await openpgp.Message.fromText(readableStream),
+    publicKeys
   })
 }
 
