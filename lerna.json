@@ -12,7 +12,8 @@
     "version": {
       "allowBranch": [
         "master",
-        "develop"
+        "develop",
+        "hotfix/*"
       ],
       "message": "chore(release): publish %s"
     },
