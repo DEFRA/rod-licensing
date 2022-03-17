@@ -5,16 +5,20 @@ describe('plugins', () => {
 
   describe('initialiseHapiI18nPlugin', () => {
     it.each([
-      [['en'], undefined],
-      [['en'], false],
-      [['en'], 'false'],
-      [['en', 'cy'], true],
-      [['en', 'cy'], 'true']
-    ])('should return the local as %s if SHOW_WELSH_CONTENT is %s', async (expectedLocale, showWelshContent) => {
-      process.env.SHOW_WELSH_CONTENT = showWelshContent
-      const pluginArray = getPlugins()
-      const hapI18nPlugin = findPlugin(pluginArray, 'hapi-i18n')
-      expect(hapI18nPlugin.options.locales).toStrictEqual(expectedLocale)
-    })
+      [['en'], undefined, undefined],
+      [['en'], undefined, false],
+      [['en'], undefined, 'false'],
+      [['en', 'cy'], 'lang', true],
+      [['en', 'cy'], 'lang', 'true']
+    ])(
+      'should return the local as %s and queryParameter as %s if SHOW_WELSH_CONTENT is %s',
+      async (expectedLocale, expectedQueryParamter, showWelshContent) => {
+        process.env.SHOW_WELSH_CONTENT = showWelshContent
+        const pluginArray = getPlugins()
+        const hapI18nPlugin = findPlugin(pluginArray, 'hapi-i18n')
+        expect(hapI18nPlugin.options.locales).toStrictEqual(expectedLocale)
+        expect(hapI18nPlugin.options.queryParameter).toBe(expectedQueryParamter)
+      }
+    )
   })
 })
