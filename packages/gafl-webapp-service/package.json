@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "1.23.0-rc.4",
+  "version": "1.22.1",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -36,10 +36,10 @@
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "1.23.0-rc.4",
-    "@defra-fish/connectors-lib": "1.23.0-rc.4",
-    "@defra/hapi-gapi": "^1.2.1",
-    "@hapi/boom": "^9.1.4",
+    "@defra-fish/business-rules-lib": "1.22.1",
+    "@defra-fish/connectors-lib": "1.22.1",
+    "@defra/hapi-gapi": "^1.1.0",
+    "@hapi/boom": "^9.1.2",
     "@hapi/catbox-redis": "^6.0.2",
     "@hapi/cookie": "^11.0.2",
     "@hapi/crumb": "^8.0.1",
