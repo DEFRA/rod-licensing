@@ -11,7 +11,7 @@ describe('plugins', () => {
       [['en', 'cy'], 'lang', true],
       [['en', 'cy'], 'lang', 'true']
     ])(
-      'should return the local as %s and queryParameter as %s if SHOW_WELSH_CONTENT is %s',
+      'should return the locale as %s and queryParameter as %s, if SHOW_WELSH_CONTENT is %s',
       async (expectedLocale, expectedQueryParamter, showWelshContent) => {
         process.env.SHOW_WELSH_CONTENT = showWelshContent
         const pluginArray = getPlugins()
