@@ -9,7 +9,7 @@
 
 {% set errorMap = {
        'add-licence': {
-            'any.required': { ref: '#add-licence', text: errorMsg }
+            'any.required': { ref: '#selector-yes', text: errorMsg }
        }
     }
 %}
@@ -46,6 +46,6 @@
                 checked: payload['add-licence'] === 'no'
             }
         ],
-        errorMessage: { text: errorMsg } if error['add_licence']
+        errorMessage: { text: errorMsg } if error['add-licence']
     }) }}
 {% endblock %}
