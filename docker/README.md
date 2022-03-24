@@ -12,7 +12,7 @@ command (you'll only need to do this once):
 docker swarm init
 ```
 
-## Infrastructure
+## Infrastructure {#infrastructure}
 
 The [infrastructure.yml](infrastructure.yml) docker-compose file contains everything that the service depends on to run.
 
@@ -105,7 +105,28 @@ cp sqs_receiver.env.example .sqs_receiver.env
 
 There are a number of convenience scripts setup in the root `package.json`
 
-#### Production mode
+### How to upgrade Docker Desktop
+
+From time to time, new versions of Docker Desktop become available. Sometimes the upgrade process is almost seamless, but sometimes errors can occur.
+If problems should arise after doing an upgrade, try the following:
+
+- rollback to the last good version (previous versions can be downloaded from https://docs.docker.com/desktop/mac/install/)
+- run the following commands:
+
+```
+docker system prune -a && docker volume prune
+```
+
+- Update Docker
+- Run the following commands:
+
+```
+docker swarm leave --force && docker swarm init
+```
+
+- Then [restart the infrastructure stack](#infrastructure), rebuild and start the services stack, either in [Production mode](#production-mode) or [Development mode](#development-mode)
+
+#### Production mode {#production-mode}
 
 Building and running the images in production mode runs a full build of all services using the [rod_licensing/builder](../Dockerfile.build) image
 to execute any build steps before copying resources into an image based on the [rod_licensing/base](../Dockerfile.base). The base image only includes
@@ -129,7 +150,7 @@ To stop the running services
 docker stack rm rls
 ```
 
-#### Development mode
+#### Development mode {#development-mode}
 
 Building and running the images in development mode does not run any of the build steps and requires that the services are correctly built on the host
 system. In development mode, the host filesystem is mounted directly into the container for each service and the services are executed using pm2-dev
