@@ -12,7 +12,7 @@ command (you'll only need to do this once):
 docker swarm init
 ```
 
-## Infrastructure {#infrastructure}
+## Infrastructure
 
 The [infrastructure.yml](infrastructure.yml) docker-compose file contains everything that the service depends on to run.
 
@@ -124,9 +124,9 @@ docker system prune -a && docker volume prune
 docker swarm leave --force && docker swarm init
 ```
 
-- Then [restart the infrastructure stack](#infrastructure), rebuild and start the services stack, either in [Production mode](#production-mode) or [Development mode](#development-mode)
+- Then [restart the infrastructure stack](#Infrastructure), rebuild and start the services stack, either in [Production mode](#Production-mode) or [Development mode](#Development-mode)
 
-#### Production mode {#production-mode}
+#### Production mode
 
 Building and running the images in production mode runs a full build of all services using the [rod_licensing/builder](../Dockerfile.build) image
 to execute any build steps before copying resources into an image based on the [rod_licensing/base](../Dockerfile.base). The base image only includes
@@ -150,7 +150,7 @@ To stop the running services
 docker stack rm rls
 ```
 
-#### Development mode {#development-mode}
+#### Development mode
 
 Building and running the images in development mode does not run any of the build steps and requires that the services are correctly built on the host
 system. In development mode, the host filesystem is mounted directly into the container for each service and the services are executed using pm2-dev
@@ -206,3 +206,5 @@ This procedure will not work if the user is using Firefox. Firefox uses Mozilla'
 ## Logs
 
 To get the logs do `docker stack ps rls`, get the container id of the service you’re interested in, then do `docker service logs <id>`
+
+[See the great heading](#custom-id)
