@@ -105,6 +105,27 @@ cp sqs_receiver.env.example .sqs_receiver.env
 
 There are a number of convenience scripts setup in the root `package.json`
 
+### How to upgrade Docker Desktop
+
+From time to time, new versions of Docker Desktop become available. Sometimes the upgrade process is almost seamless, but sometimes errors can occur.
+If problems should arise after doing an upgrade, try the following:
+
+- rollback to the last good version (previous versions can be downloaded from https://docs.docker.com/desktop/mac/install/)
+- run the following commands:
+
+```
+docker system prune -a && docker volume prune
+```
+
+- Update Docker
+- Run the following commands:
+
+```
+docker swarm leave --force && docker swarm init
+```
+
+- Then [restart the infrastructure stack](#Infrastructure), rebuild and start the services stack, either in [Production mode](#Production-mode) or [Development mode](#Development-mode)
+
 #### Production mode
 
 Building and running the images in production mode runs a full build of all services using the [rod_licensing/builder](../Dockerfile.build) image
