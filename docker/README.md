@@ -206,5 +206,3 @@ This procedure will not work if the user is using Firefox. Firefox uses Mozilla'
 ## Logs
 
 To get the logs do `docker stack ps rls`, get the container id of the service you’re interested in, then do `docker service logs <id>`
-
-[See the great heading](#custom-id)
