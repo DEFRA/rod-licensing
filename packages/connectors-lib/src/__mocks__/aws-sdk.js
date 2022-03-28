@@ -1,3 +1,3 @@
 import { configureAwsSdkMock } from './aws-mock-helper.js'
-const AwsSdk = configureAwsSdkMock(jest.genMockFromModule('aws-sdk'))
+const AwsSdk = configureAwsSdkMock()
 export default AwsSdk

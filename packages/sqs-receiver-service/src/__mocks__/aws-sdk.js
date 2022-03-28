@@ -1,7 +1,8 @@
 'use strict'
 
 import { v4 as uuidv4 } from 'uuid'
-const AwsSdk = jest.genMockFromModule('aws-sdk')
+import { configureAwsSdkMock } from '@defra-fish/connectors-lib/src/__mocks__/aws-mock-helper.js'
+const AwsSdk = configureAwsSdkMock()
 
 let result
 let exception
