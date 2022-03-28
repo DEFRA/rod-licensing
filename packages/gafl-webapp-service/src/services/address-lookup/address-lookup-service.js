@@ -34,37 +34,17 @@ export default async (premises, postcode) => {
 
   debug({ results })
 
-  console.log(results)
-
   // Map and enumerate the results
   return results
     ? results.map((r, idx) => ({
       id: idx,
-      address: r.address,
+      address: `${r.address.replace(r.postcode, '').toLowerCase()}${r.postcode}`,
       premises: r.premises,
       street: r.street_address,
       locality: r.locality,
       town: r.city,
       postcode: r.postcode,
-      country: r.country,
-      address_full: formatAddress(r.premises, r.street_address, r.locality, r.city, r.postcode)
+      country: r.country
     }))
     : []
-}
-
-export const capitalise = str => {
-  if (str == null) {
-    return null
-  }
-  const words = str.split(' ')
-  return words.map(word => word[0].toUpperCase() + word.toLowerCase().substring(1)).join(' ')
-}
-
-export const formatAddress = (premises, streetAddress, locality, city, postcode) => {
-  const addressArray = [premises + ' ' + streetAddress, locality, city]
-  const capitalisedArray = addressArray.map(a => capitalise(a))
-  capitalisedArray.push(postcode)
-  const filtered = capitalisedArray.filter(Boolean)
-  const fullAddress = filtered.join(', ')
-  return fullAddress
 }

@@ -14,7 +14,7 @@
 
 {% for address in data.addresses %}
     {{ addressItems.push({
-        text: address.address_full,
+        text: address.address,
         id: address.id,
         value: address.id,
         checked: payload['address'] === address.id
@@ -32,7 +32,7 @@
 
     {{ govukRadios({
         idPrefix: "address",
-        classes: "capitalise",
+        classes: "address_list",
         name: "address",
         items: addressItems,
         errorMessage: { text: mssgs.address_select_error_choose } if error
