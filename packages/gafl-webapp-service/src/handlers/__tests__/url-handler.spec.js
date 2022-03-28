@@ -35,14 +35,12 @@ describe('The url handler', () => {
 
   it.each([['B2F11U'], ['AH56F6'], ['GH330P']])('6 digit reference number exists and returns ATTRIBUTION', async licenceKey => {
     const params = {
-      [UTM.CAMPAIGN]: 'renewals',
-      [UTM.SOURCE]: 'aen_invitation',
       [QUERYSTRING_LICENCE_KEY]: licenceKey
     }
     const responseToolkit = generateResponseToolkitMock()
     await urlHandler(generateRequestMock(params), responseToolkit)
-    // const regExMatch = new RegExp(`${ATTRIBUTION.uri}?${UTM.CAMPAIGN}=renewals&${UTM.SOURCE}=aen_invitation&reference=${licenceKey}`)
-    // expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
+    const regExMatch = new RegExp(`^/attribution-url\\?utmcampaign\\=renewals&utmsource\\=aen_invitation&reference\\=${licenceKey}$`)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
   })
 
   it.each([['B2F11UH5D'], ['AH56'], ['GH330PPTD']])('reference number is not 6 digits and returns back to IDENTIFY', async licenceKey => {
