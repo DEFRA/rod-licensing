@@ -126,6 +126,8 @@ docker swarm leave --force && docker swarm init
 
 - Then [restart the infrastructure stack](#Infrastructure), rebuild and start the services stack, either in [Production mode](#Production-mode) or [Development mode](#Development-mode)
 
+Volumes are stored in docker/volumes. If you find that the data in any of the containers are corrupted. Do a `docker system prune -a` then delete the data in the folders. E.g. if dynamodb doesn't allow you perform updates, run the prune command then delete the data folder in docker/volumes/localstack, leaving the README.md. Then rebuild and run the project.
+
 #### Production mode
 
 Building and running the images in production mode runs a full build of all services using the [rod_licensing/builder](../Dockerfile.build) image
