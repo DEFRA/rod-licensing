@@ -1,4 +1,12 @@
 
+## v1.23.0-rc.7 (2022-03-29)
+
+#### :memo: Documentation
+* [#1168](https://github.com/DEFRA/rod-licensing/pull/1168) Update documentation on volumes ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 
