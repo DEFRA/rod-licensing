@@ -32,6 +32,7 @@
 
     {{ govukRadios({
         idPrefix: "address",
+        classes: "address_list",
         name: "address",
         items: addressItems,
         errorMessage: { text: mssgs.address_select_error_choose } if error
