@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.9 (2022-03-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1133](https://github.com/DEFRA/rod-licensing/pull/1133) Update address lookup capital formatting ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.23.0-rc.7 (2022-03-29)
 
