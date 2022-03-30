@@ -61,6 +61,9 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: NAME
+      },
+      [CommonResults.MULTIBUY]: {
+        page: LICENCE_TO_START
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
@@ -187,6 +190,9 @@ export default [
         page: CONTACT_SUMMARY
       },
       [ShowDigitalLicencePages.YES]: {
+        page: LICENCE_FULFILMENT
+      },
+      [CommonResults.MULTIBUY]: {
         page: LICENCE_FULFILMENT
       }
     }
