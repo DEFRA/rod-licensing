@@ -1,4 +1,12 @@
 
+## v1.23.0-rc.10 (2022-03-31)
+
+#### :rocket: Enhancement
+* [#1176](https://github.com/DEFRA/rod-licensing/pull/1176) Change husky to run the full test suite ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.23.0-rc.9 (2022-03-30)
 
 #### :rocket: Enhancement
