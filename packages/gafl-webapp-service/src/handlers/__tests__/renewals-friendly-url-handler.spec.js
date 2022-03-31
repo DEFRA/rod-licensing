@@ -1,5 +1,5 @@
 import { UTM, QUERYSTRING_LICENCE_KEY } from '../../constants'
-import urlHandler from '../url-handler'
+import urlHandler from '../renewals-friendly-url-handler'
 import { IDENTIFY } from '../../uri'
 
 jest.mock('../../constants', () => ({
@@ -9,7 +9,10 @@ jest.mock('../../constants', () => ({
     CONTENT: 'utmcontent',
     SOURCE: 'utmsource',
     TERM: 'utmterm'
-  }
+  },
+  RENEWALS_CAMPAIGN_ID: 'renewals',
+  AEN_INVITATION_ID: 'aen_invitation',
+  QUERYSTRING_LICENCE_KEY: 'reference'
 }))
 
 jest.mock('../../uri', () => ({
@@ -34,7 +37,6 @@ describe('The url handler', () => {
 
   it.each([['B2F11U'], ['AH56F6'], ['GH330P']])('6 digit reference number exists and returns ATTRIBUTION', async licenceKey => {
     const params = {
-      [UTM.CAMPAIGN]: 'renewals',
       [QUERYSTRING_LICENCE_KEY]: licenceKey
     }
     const responseToolkit = generateResponseToolkitMock()

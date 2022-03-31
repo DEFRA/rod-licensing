@@ -25,7 +25,7 @@ import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 import attribution from '../handlers/attribution-handler.js'
-import urlHandler from '../handlers/url-handler.js'
+import urlHandler from '../handlers/renewals-friendly-url-handler.js'
 
 const simpleView = view => ({
   method: 'GET',

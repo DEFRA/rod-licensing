@@ -1,4 +1,4 @@
-import { QUERYSTRING_LICENCE_KEY, UTM } from '../constants.js'
+import { QUERYSTRING_LICENCE_KEY, UTM, RENEWALS_CAMPAIGN_ID, AEN_INVITATION_ID } from '../constants.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
 import { IDENTIFY, ATTRIBUTION } from '../uri.js'
 
@@ -14,7 +14,9 @@ export default async (request, h) => {
     const refNumber = request.params[QUERYSTRING_LICENCE_KEY]
     const sixDigit = /^[A-Za-z0-9]{6}$/.test(refNumber)
     if (sixDigit) {
-      return h.redirect(`${ATTRIBUTION.uri}?${UTM.CAMPAIGN}=renewals&${UTM.SOURCE}=aen_invitation&reference=${refNumber}`)
+      return h.redirect(
+        `${ATTRIBUTION.uri}?${UTM.CAMPAIGN}=${RENEWALS_CAMPAIGN_ID}&${UTM.SOURCE}=${AEN_INVITATION_ID}&${QUERYSTRING_LICENCE_KEY}=${refNumber}`
+      )
     }
   }
   return h.redirect(IDENTIFY.uri)

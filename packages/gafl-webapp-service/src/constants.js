@@ -14,6 +14,7 @@ export const FEEDBACK_URI_DEFAULT = '#'
 export const CHANNEL_DEFAULT = 'websales'
 export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-fishing-licence'
 export const RENEWALS_CAMPAIGN_ID = 'renewals'
+export const AEN_INVITATION_ID = 'aen_invitation'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
