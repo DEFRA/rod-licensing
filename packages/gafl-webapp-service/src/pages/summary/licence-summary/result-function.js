@@ -14,7 +14,9 @@ export default async request => {
     }
   }
 
-  if (CheckMultibuyForYou === true) {
+  const isMultibuyForYou = await CheckMultibuyForYou(request)
+
+  if (isMultibuyForYou === true) {
     return Multibuy.YES
   }
 

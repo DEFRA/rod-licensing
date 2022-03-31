@@ -15,6 +15,8 @@ import {
   TEST_TRANSACTION
 } from '../../../../../uri.js'
 
+import { Multibuy } from '../../../../../constants.js'
+import resultFunction from '../result-function'
 import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
 import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
@@ -104,6 +106,47 @@ describe('The licence fulfilment page', () => {
       const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+    })
+  })
+
+  describe('licence-for > result-function', () => {
+    const mockStatusCacheGet = jest.fn()
+    const mockTransactionCacheGet = jest.fn()
+
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          status: {
+            getCurrentPermission: mockStatusCacheGet
+          },
+          transaction: {
+            get: mockTransactionCacheGet
+          }
+        }
+      })
+    }
+
+    describe('multibuy licence for person', () => {
+      it('should return contact summary if multibuy and licence is for you', async () => {
+        mockStatusCacheGet.mockImplementationOnce(() => ({}))
+        mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 3, isLicenceForYou: true } }))
+        const result = await resultFunction(mockRequest)
+        expect(result).toBe(Multibuy.YES)
+      })
+
+      it('should not return isMultibuyForYou when licence is for someone else', async () => {
+        mockStatusCacheGet.mockImplementationOnce(() => ({}))
+        mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 3, isLicenceForYou: false } }))
+        const result = await resultFunction(mockRequest)
+        expect(result).not.toBe(Multibuy.YES)
+      })
+
+      it('should not return isMultibuyForYou when isnt licence in basket', async () => {
+        mockStatusCacheGet.mockImplementationOnce(() => ({}))
+        mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 0, isLicenceForYou: true } }))
+        const result = await resultFunction(mockRequest)
+        expect(result).not.toBe(Multibuy.YES)
+      })
     })
   })
 })

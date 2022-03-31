@@ -4,7 +4,9 @@ import { CheckMultibuyForYou } from '../../../../handlers/multibuy-handler.js'
 export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
 
-  if (CheckMultibuyForYou === true) {
+  const isMultibuyForYou = await CheckMultibuyForYou(request)
+
+  if (isMultibuyForYou === true) {
     return Multibuy.YES
   }
 

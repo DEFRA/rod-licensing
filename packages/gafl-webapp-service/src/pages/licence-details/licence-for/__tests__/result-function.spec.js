@@ -35,21 +35,21 @@ describe('licence-for > result-function', () => {
       expect(result).toBe(CommonResults.OK)
     })
 
-    it('should return ... if multibuy and licence is for you', async () => {
+    it('should return when licence to start if multibuy and licence is for you', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 3, isLicenceForYou: true } }))
       const result = await resultFunction(mockRequest)
       expect(result).toBe(Multibuy.YES)
     })
 
-    it('should return isMultibuyForYou when licence is for someone else', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: true }))
+    it('should not return isMultibuyForYou when licence is for someone else', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({}))
       mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 3, isLicenceForYou: false } }))
       const result = await resultFunction(mockRequest)
       expect(result).not.toBe(Multibuy.YES)
     })
 
-    it('should return isMultibuyForYou when isnt licence in basket', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: true }))
+    it('should not return isMultibuyForYou when isnt licence in basket', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({}))
       mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 0, isLicenceForYou: true } }))
       const result = await resultFunction(mockRequest)
       expect(result).not.toBe(Multibuy.YES)
