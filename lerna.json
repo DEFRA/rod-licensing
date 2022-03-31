@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "1.23.0-rc.9",
+  "version": "1.23.0-beta.1",
   "npmClient": "npm",
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
@@ -13,7 +13,8 @@
       "allowBranch": [
         "master",
         "develop",
-        "hotfix/*"
+        "hotfix/*",
+        "IWTF-2816-fix-husky-deploy"
       ],
       "message": "chore(release): publish %s"
     },
