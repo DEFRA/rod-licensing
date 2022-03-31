@@ -32,7 +32,7 @@ import {
   VIEW_LICENCES
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
+import { CommonResults, CONTACT_SUMMARY_SEEN, Multibuy, ShowDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
@@ -62,7 +62,7 @@ export default [
       [CommonResults.OK]: {
         page: NAME
       },
-      [CommonResults.MULTIBUY]: {
+      [Multibuy.YES]: {
         page: LICENCE_TO_START
       }
     },
@@ -192,7 +192,7 @@ export default [
       [ShowDigitalLicencePages.YES]: {
         page: LICENCE_FULFILMENT
       },
-      [CommonResults.MULTIBUY]: {
+      [Multibuy.YES]: {
         page: LICENCE_FULFILMENT
       }
     }
@@ -250,6 +250,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_CONFIRMATION_METHOD
+      },
+      [Multibuy.YES]: {
+        page: CONTACT_SUMMARY
       }
     },
     backLink: status => {

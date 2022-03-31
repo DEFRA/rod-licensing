@@ -50,6 +50,11 @@ export const CommonResults = {
   YES: 'yes'
 }
 
+export const Multibuy = {
+  YES: 'yes',
+  NO: 'no'
+}
+
 export const ShowDigitalLicencePages = {
   YES: 'show-digital-licence-yes',
   NO: 'show-digital-licence-no'

@@ -1,11 +1,13 @@
-import { CommonResults } from '../../../constants.js'
-import { CheckMultibuy } from '../../../src/handlders/multibuy-handler.js'
+import { CommonResults, Multibuy } from '../../../constants.js'
+import { CheckMultibuyForYou } from '../../../handlers/multibuy-handler.js'
 
 export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
 
-  if (CheckMultibuy) {
-    return CommonResults.MULTIBUY
+  const isMultibuyForYou = await CheckMultibuyForYou(request)
+
+  if (isMultibuyForYou === true) {
+    return Multibuy.YES
   }
 
   return status.fromSummary ? CommonResults.SUMMARY : CommonResults.OK
