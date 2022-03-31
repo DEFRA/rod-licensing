@@ -64,3 +64,4 @@ jobs:
           GITHUB_AUTH: ${{ secrets.GITHUB_TOKEN }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          HUSKY: 0
