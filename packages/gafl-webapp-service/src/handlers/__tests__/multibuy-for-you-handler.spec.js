@@ -1,4 +1,4 @@
-import { CheckMultibuyForYou } from '../multibuy-for-you-handler'
+import { isMultibuyForYou } from '../multibuy-for-you-handler'
 
 describe('The multibuy handler', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('The multibuy handler', () => {
         isLicenceForYou: true
       }
     }
-    const result = await CheckMultibuyForYou(generateRequestMock(transaction))
+    const result = await isMultibuyForYou(generateRequestMock(transaction))
     expect(result).toBeTruthy()
   })
 
@@ -23,7 +23,7 @@ describe('The multibuy handler', () => {
         isLicenceForYou: false
       }
     }
-    const result = await CheckMultibuyForYou(generateRequestMock(transaction))
+    const result = await isMultibuyForYou(generateRequestMock(transaction))
     expect(result).not.toBeTruthy()
   })
 
@@ -34,7 +34,7 @@ describe('The multibuy handler', () => {
         isLicenceForYou: true
       }
     }
-    const result = await CheckMultibuyForYou(generateRequestMock(transaction))
+    const result = await isMultibuyForYou(generateRequestMock(transaction))
     expect(result).not.toBeTruthy()
   })
 
