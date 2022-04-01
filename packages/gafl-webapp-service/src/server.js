@@ -70,20 +70,22 @@ export const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME |
 /**
  * Adds the uri's used by the layout page to each relevant response
  */
-const layoutContextAmalgamation = (request, h) => {
+export const layoutContextAmalgamation = (request, h) => {
   const response = request.response
   if (request.method === 'get' && response.variety === 'view') {
     Object.assign(response.source.context, {
       CSRF_TOKEN_NAME: getCsrfTokenCookieName(),
       CSRF_TOKEN_VALUE: response.source.context[getCsrfTokenCookieName()],
       TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
+      SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true',
       _uri: {
         cookies: COOKIES.uri,
         refunds: REFUND_POLICY.uri,
         accessibility: ACCESSIBILITY_STATEMENT.uri,
         privacy: PRIVACY_POLICY.uri,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-        clear: NEW_TRANSACTION.uri
+        clear: NEW_TRANSACTION.uri,
+        queryParams: request.query
       },
       credentials: request.auth.credentials
     })

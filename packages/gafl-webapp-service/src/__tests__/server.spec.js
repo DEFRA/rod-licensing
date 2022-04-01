@@ -1,4 +1,4 @@
-import { createServer, init, server } from '../server.js'
+import { createServer, init, server, layoutContextAmalgamation } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 
 jest.mock('@defra-fish/connectors-lib')
@@ -68,5 +68,49 @@ describe('The server', () => {
         done(e)
       }
     })
+  })
+
+  describe('layoutContextAmalgamation', () => {
+    it('should add query parameters to the response', () => {
+      const request = {
+        auth: {},
+        method: 'get',
+        response: {
+          variety: 'view',
+          source: {
+            context: {}
+          }
+        },
+        query: { lang: 'cy' }
+      }
+      const h = {}
+      layoutContextAmalgamation(request, h)
+      expect(request.response.source.context._uri.queryParams).toStrictEqual({ lang: 'cy' })
+    })
+
+    it.each([
+      ['true', true],
+      ['TRUE', true],
+      ['false', false],
+      ['FALSE', false]
+    ])(
+      'if SHOW_WELSH_CONTENT is %s, it should set SHOW_WELSH_CONTENT to %s in the response',
+      (inputShowWelshContent, outputShowWelshContent) => {
+        process.env.SHOW_WELSH_CONTENT = inputShowWelshContent
+        const request = {
+          auth: {},
+          method: 'get',
+          response: {
+            variety: 'view',
+            source: {
+              context: {}
+            }
+          }
+        }
+        const h = {}
+        layoutContextAmalgamation(request, h)
+        expect(request.response.source.context.SHOW_WELSH_CONTENT).toBe(outputShowWelshContent)
+      }
+    )
   })
 })
