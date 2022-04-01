@@ -50,7 +50,7 @@ export const CommonResults = {
   YES: 'yes'
 }
 
-export const Multibuy = {
+export const MultibuyForYou = {
   YES: 'yes',
   NO: 'no'
 }

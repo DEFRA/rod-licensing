@@ -4,4 +4,5 @@ export const CheckMultibuyForYou = async request => {
   if (transaction.permissions.length > 0 && transaction.permissions.isLicenceForYou) {
     return true
   }
+  return false
 }

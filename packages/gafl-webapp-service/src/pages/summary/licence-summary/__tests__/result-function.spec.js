@@ -1,5 +1,5 @@
 import resultFunction from '../result-function'
-import { CommonResults, ShowDigitalLicencePages, Multibuy } from '../../../../constants.js'
+import { CommonResults, ShowDigitalLicencePages, MultibuyForYou } from '../../../../constants.js'
 
 describe('licence-summary > result-function', () => {
   const mockStatusCacheGet = jest.fn()
@@ -68,25 +68,25 @@ describe('licence-summary > result-function', () => {
       expect(result).toBe(CommonResults.OK)
     })
 
-    it('should return LICENCE_FULFILMENT if multibuy and licence is for you', async () => {
+    it.each([[3], [4], [5]])('should return LICENCE_FULFILMENT if multibuy and licence is for you', async length => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 3, isLicenceForYou: true } }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: length, isLicenceForYou: true } }))
       const result = await resultFunction(mockRequest)
-      expect(result).toBe(Multibuy.YES)
+      expect(result).toBe(MultibuyForYou.YES)
     })
 
     it('should not return isMultibuyForYou when licence is for someone else', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
       mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 3, isLicenceForYou: false } }))
       const result = await resultFunction(mockRequest)
-      expect(result).not.toBe(Multibuy.YES)
+      expect(result).not.toBe(MultibuyForYou.YES)
     })
 
     it('should not return isMultibuyForYou when isnt licence in basket', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
       mockTransactionCacheGet.mockImplementationOnce(() => ({ permissions: { length: 0, isLicenceForYou: true } }))
       const result = await resultFunction(mockRequest)
-      expect(result).not.toBe(Multibuy.YES)
+      expect(result).not.toBe(MultibuyForYou.YES)
     })
   })
 })
