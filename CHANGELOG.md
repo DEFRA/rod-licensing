@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.13 (2022-04-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1180](https://github.com/DEFRA/rod-licensing/pull/1180) Add welsh lang translation to name page for someone else ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.12 (2022-04-01)
 
 #### :rocket: Enhancement
