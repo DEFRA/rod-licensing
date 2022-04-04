@@ -1,4 +1,22 @@
 
+## v1.23.0-rc.12 (2022-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1182](https://github.com/DEFRA/rod-licensing/pull/1182) Welsh Language toggle  ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.23.0-rc.11 (2022-04-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1179](https://github.com/DEFRA/rod-licensing/pull/1179) Iwtf 2709 welsh lang name page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.10 (2022-03-31)
 
 #### :rocket: Enhancement

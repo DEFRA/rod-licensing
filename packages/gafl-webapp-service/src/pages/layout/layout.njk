@@ -80,6 +80,17 @@
                 </span>
             </p>
         </div>
+        {% if SHOW_WELSH_CONTENT %}
+            <div class="govuk-width-container govuk-!-display-none-print govuk-!-margin-top-2">
+                <p class="govuk-body-s right-align govuk-!-margin-0">
+                    {% if _uri.queryParams.lang == 'cy' %}
+                        <a class="govuk-link govuk-!-margin-2" href="?lang=en">English</a> | <span class="govuk-body-s govuk-!-margin-2">Cymraeg</a>
+                    {% else %}
+                        <span class="govuk-body-s govuk-!-margin-2">English</span> | <a class="govuk-link govuk-!-margin-2" href="?lang=cy">Cymraeg</a>
+                    {% endif%}
+                </p>
+            </div>
+        {% endif%}
     {% endif %}
 {% endblock %}
 
