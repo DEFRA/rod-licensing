@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.14 (2022-04-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1191](https://github.com/DEFRA/rod-licensing/pull/1191) Fix for welsh translation on bobo name page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.13 (2022-04-04)
 
 #### :rocket: Enhancement
