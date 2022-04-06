@@ -24,7 +24,7 @@ describe('The multibuy handler', () => {
       }
     }
     const result = await isMultibuyForYou(generateRequestMock(transaction))
-    expect(result).not.toBeTruthy()
+    expect(result).toBeFalsy()
   })
 
   it('should not return isMultibuyForYou when isnt licence in basket', async () => {
@@ -35,7 +35,7 @@ describe('The multibuy handler', () => {
       }
     }
     const result = await isMultibuyForYou(generateRequestMock(transaction))
-    expect(result).not.toBeTruthy()
+    expect(result).toBeFalsy()
   })
 
   const generateRequestMock = (transaction = {}) => ({
