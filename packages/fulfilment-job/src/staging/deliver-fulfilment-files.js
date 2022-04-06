@@ -24,6 +24,9 @@ export const deliverFulfilmentFiles = async () => {
   for (const { entity: file } of results) {
     if (config.pgp.sendUnencryptedFile) {
       await deliver(file.fileName, await createDataReadStream(file))
+      debug('delivered unencrypted file')
+    } else {
+      debug('delivery of unencrypted files disabled')
     }
     const encryptedDataReadStream = await createEncryptedDataReadStream(file)
     debug('Retrieved encrypted data stream, delivering encrypted data file')
