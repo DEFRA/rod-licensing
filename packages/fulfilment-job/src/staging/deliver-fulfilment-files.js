@@ -88,7 +88,14 @@ const deliver = async (targetFileName, readableStream, ...transforms) => {
   const { ftpWriteStream: ftpDataStream, managedUpload: ftpDataManagedUpload } = createFtpWriteStream(targetFileName)
 
   debug('awaiting stream helper pipeline promise')
-  await streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream])
+  const promises = [s3DataManagedUpload, ftpDataManagedUpload]
+  try {
+    const shpp = streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream])
+    promises.push(shpp)
+    await shpp
+  } catch (e) {
+    debug('pipeline error:', e)
+  }
   debug('stream helper pipeline promise complete, awaiting s3 managed upload')
   await s3DataManagedUpload
   debug('s3 managed upload complete, awaiting ftp managed upload')
