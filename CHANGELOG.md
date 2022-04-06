@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.16 (2022-04-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1175](https://github.com/DEFRA/rod-licensing/pull/1175) Update url for renewals ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.15 (2022-04-06)
 
 #### :rocket: Enhancement
