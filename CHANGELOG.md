@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.17 (2022-04-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1189](https://github.com/DEFRA/rod-licensing/pull/1189) Update cy locales file to english translations ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.16 (2022-04-06)
 
 #### :bug: Bug Fix
