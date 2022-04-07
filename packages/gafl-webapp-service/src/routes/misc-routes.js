@@ -12,7 +12,8 @@ import {
   RENEWAL_PUBLIC,
   IDENTIFY,
   OS_TERMS,
-  ATTRIBUTION
+  ATTRIBUTION,
+  RENEWAL_LICENCE
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -24,6 +25,7 @@ import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 import attribution from '../handlers/attribution-handler.js'
+import urlHandler from '../handlers/renewals-friendly-url-handler.js'
 
 const simpleView = view => ({
   method: 'GET',
@@ -116,6 +118,11 @@ export default [
     method: 'GET',
     path: ATTRIBUTION.uri,
     handler: attribution
+  },
+  {
+    method: 'GET',
+    path: RENEWAL_LICENCE.uri,
+    handler: urlHandler
   },
   simpleView(ACCESSIBILITY_STATEMENT),
   simpleView(PRIVACY_POLICY),
