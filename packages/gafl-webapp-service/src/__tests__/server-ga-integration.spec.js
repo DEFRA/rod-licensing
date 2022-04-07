@@ -30,6 +30,9 @@ jest.mock('../constants', () => ({
   },
   ShowDigitalLicencePages: {
     YES: 'show-digital-licence-yes'
+  },
+  MultibuyForYou: {
+    YES: 'yes'
   }
 }))
 

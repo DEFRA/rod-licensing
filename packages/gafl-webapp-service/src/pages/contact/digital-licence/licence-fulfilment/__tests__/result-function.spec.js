@@ -1,8 +1,8 @@
-import resultFunction from '../result-function'
-import { CommonResults, MultibuyForYou } from '../../../../constants.js'
-import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
+import resultFunction from '../result-function.js'
+import { CommonResults, MultibuyForYou } from '../../../../../constants.js'
+import { isMultibuyForYou } from '../../../../../handlers/multibuy-for-you-handler.js'
 
-jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
+jest.mock('../../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
 }))
 
@@ -23,21 +23,21 @@ describe('licence-for > result-function', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return summary if fromSummary is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: true }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'contact-summary', CONTACT_SUMMARY_SEEN: 'contact-summary' }))
       isMultibuyForYou.mockImplementationOnce(() => false)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
     it('should return ok if fromSummary is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'not-contact-summary', CONTACT_SUMMARY_SEEN: 'contact-summary' }))
       isMultibuyForYou.mockImplementationOnce(() => false)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return isMultibuyForYou when is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({}))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'not-contact-summary', CONTACT_SUMMARY_SEEN: 'contact-summary' }))
       isMultibuyForYou.mockImplementationOnce(() => true)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(MultibuyForYou.YES)
