@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.21 (2022-04-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1196](https://github.com/DEFRA/rod-licensing/pull/1196) Easy Renewals Vanity URL ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.20 (2022-04-07)
 
 #### :rocket: Enhancement
