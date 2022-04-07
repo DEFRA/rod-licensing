@@ -1,4 +1,4 @@
-import { Readable } from 'stream'
+import { Readable, pipeline } from 'stream'
 import merge2 from 'merge2'
 import moment from 'moment'
 import { executeQuery, persist, findFulfilmentFiles } from '@defra-fish/dynamics-lib'
@@ -8,7 +8,7 @@ import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from './staging-c
 import db from 'debug'
 import openpgp from 'openpgp'
 import config from '../config.js'
-import streamHelper from './streamHelper.js'
+// import streamHelper from './streamHelper.js'
 
 const debug = db('fulfilment:staging')
 
@@ -90,7 +90,19 @@ const deliver = async (targetFileName, readableStream, ...transforms) => {
   debug('awaiting stream helper pipeline promise')
   const promises = [s3DataManagedUpload, ftpDataManagedUpload]
   try {
-    const shpp = streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream])
+    const shpp = new Promise((resolve, reject) => {
+      pipeline(readableStream, ...transforms, s3DataStream, ftpDataStream, (err, value) => {
+        debug('pipeline callback', err, value)
+        if (err) {
+          debug('rejecting...')
+          reject(err)
+        } else {
+          debug('resolving...')
+          resolve(value)
+        }
+      })
+    })
+    // const shpp = streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream])
     promises.push(shpp)
     await shpp
   } catch (e) {
