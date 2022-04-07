@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.19 (2022-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1185](https://github.com/DEFRA/rod-licensing/pull/1185) Add welsh translation for start-time page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.18 (2022-04-07)
 
 #### :rocket: Enhancement
