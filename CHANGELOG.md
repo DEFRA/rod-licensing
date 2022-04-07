@@ -1,4 +1,17 @@
 
+## v1.23.0-rc.22 (2022-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1197](https://github.com/DEFRA/rod-licensing/pull/1197) Minor updates to the 'When would you like your licence to start? ' ([@MickStein](https://github.com/MickStein))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1198](https://github.com/DEFRA/rod-licensing/pull/1198) Bug fix for licence start page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.21 (2022-04-07)
 
 #### :bug: Bug Fix
