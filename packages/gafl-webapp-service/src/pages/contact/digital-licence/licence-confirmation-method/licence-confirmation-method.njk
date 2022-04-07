@@ -114,7 +114,9 @@
 {% else %}
     {% set title = mssgs.licence_confirm_method_where_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_where_title_other %}
     {% set bodyText = mssgs.licence_confirm_method_where_body_text %}
-    {% set hintText = mssgs.licence_confirm_method_where_body_hint_you if data.isLicenceForYou else mssgs.licence_confirm_method_where_body_hint_other %}
+    {% if data.isLicenceForYou %}
+        {% set hintText = mssgs.licence_confirm_method_where_body_hint_you %}
+    {% endif %}   
 {% endif %}
 
 {% block pageContent %}
