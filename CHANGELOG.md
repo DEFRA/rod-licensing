@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.20 (2022-04-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1190](https://github.com/DEFRA/rod-licensing/pull/1190) Bobo - where send licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.19 (2022-04-07)
 
 #### :rocket: Enhancement
