@@ -1,4 +1,14 @@
 
+## v1.23.0-rc.27 (2022-04-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1216](https://github.com/DEFRA/rod-licensing/pull/1216) Bug fix for missing translations on for you licence-start page ([@MickStein](https://github.com/MickStein))
+  * [#1215](https://github.com/DEFRA/rod-licensing/pull/1215) Bug fix for start-page welsh translations ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.23.0-rc.25 (2022-04-11)
 
