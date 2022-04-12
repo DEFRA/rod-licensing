@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.32 (2022-04-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1221](https://github.com/DEFRA/rod-licensing/pull/1221) Welsh translation on find address page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.31 (2022-04-12)
 
 #### :rocket: Enhancement
