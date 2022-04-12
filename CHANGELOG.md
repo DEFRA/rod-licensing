@@ -1,4 +1,14 @@
 
+## v1.23.0-rc.33 (2022-04-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1222](https://github.com/DEFRA/rod-licensing/pull/1222) Welsh lang for BOBO find address page ([@MickStein](https://github.com/MickStein))
+  * [#1217](https://github.com/DEFRA/rod-licensing/pull/1217) Update welsh lang bobo licence type ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.32 (2022-04-12)
 
 #### :rocket: Enhancement
