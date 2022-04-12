@@ -167,7 +167,7 @@
   "disability_concession_12_month": "Gall deiliaid trwydded 12 mis fod yn gymwys i gael consesiynau anabledd.",
   "disability_concession_badge_error_msg": "Nodwch rif Bathodyn Glas deiliad y drwydded",
   "disability_concession_error_choose_option": "Dewiswch un o’r opsiynau.",
-  "disability_concession_error_ni_empty": "Rhowch rif Yswiriant Gwladol deiliad y drwydded",
+  "disability_concession_error_ni_empty": "Nodwch Rif Yswiriant Gwladol deiliad y drwydded",
   "disability_concession_error_ni_pattern": "Nid yw hwn yn edrych fel rhif yswiriant gwladol dilys yn y DU. Gwnewch yn siŵr eich bod wedi ei nodi’n gywir.",
   "disability_concession_ni_error_msg": "Nodwch Rif Yswiriant Gwladol deiliad y drwydded",
   "disability_concession_ni_hint_jr": "Er enghraifft ’QQ 12 34 56 C’",
