@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.31 (2022-04-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1212](https://github.com/DEFRA/rod-licensing/pull/1212) Welsh Translate - BOBO - receive any of following ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.30 (2022-04-12)
 
 #### :bug: Bug Fix
