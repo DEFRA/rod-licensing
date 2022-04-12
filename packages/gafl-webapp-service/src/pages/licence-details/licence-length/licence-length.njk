@@ -53,10 +53,20 @@
     }) }}
 {% endblock %}
 
+{% set licenceTypeSubHeading %}
+    {% if data.licenceTypeStr === 'Trout and coarse, up to 2 rods' %}
+        {{ mssgs.licence_type_radio_trout_two_rod }}
+    {% elseif data.licenceTypeStr === 'Trout and coarse, up to 3 rods' %}
+        {{ mssgs.licence_type_radio_trout_three_rod }}
+    {% elseif data.licenceTypeStr === 'Salmon and sea trout' %}
+        {{ mssgs.licence_type_radio_salmon }}
+    {% endif %}
+{% endset %}
+
 {% block pricingSummary %}
     {{ pricingSummary(data.pricing.byLength, {
         'total': { desc: mssgs.total }
-    }, data.licenceTypeStr,
+    }, licenceTypeSubHeading,
     mssgs
     )}}
 {% endblock %}
