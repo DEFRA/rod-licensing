@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.29 (2022-04-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1218](https://github.com/DEFRA/rod-licensing/pull/1218) Bug fix for cookies page backlink ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.23.0-rc.27 (2022-04-11)
 
