@@ -182,7 +182,7 @@
   "disability_concession_title_you": "Ydych chi’n derbyn unrhyw un o’r canlynol?",
   "dob_day": "Diwrnod",
   "dob_entry_hint": "Er enghraifft, 23 11 1979",
-  "dob_error_format_max": "The date of birth must be in the past",
+  "dob_error_format_max": "Mae'n rhaid i’r dyddiad geni fod yn y gorffennol",
   "dob_error_format_min": "Enter the date of birth and include a day, month and year",
   "dob_error_format": "Nodwch eich dyddiad geni a chynnwys y diwrnod, y mis a’r flwyddyn",
   "dob_error": "Nodwch eich dyddiad geni",
