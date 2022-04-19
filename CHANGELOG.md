@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.37 (2022-04-19)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1220](https://github.com/DEFRA/rod-licensing/pull/1220) Validation errors not handled for DD File ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.23.0-rc.36 (2022-04-14)
 
 #### :rocket: Enhancement
