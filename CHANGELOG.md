@@ -1,4 +1,99 @@
 
+## v1.23.0-rc.37 (2022-04-19)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1220](https://github.com/DEFRA/rod-licensing/pull/1220) Validation errors not handled for DD File ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.23.0-rc.36 (2022-04-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1224](https://github.com/DEFRA/rod-licensing/pull/1224) Welsh lang translation licence-for page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.23.0-rc.35 (2022-04-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1227](https://github.com/DEFRA/rod-licensing/pull/1227) Welsh lang DOB page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.23.0-rc.33 (2022-04-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1222](https://github.com/DEFRA/rod-licensing/pull/1222) Welsh lang for BOBO find address page ([@MickStein](https://github.com/MickStein))
+  * [#1217](https://github.com/DEFRA/rod-licensing/pull/1217) Update welsh lang bobo licence type ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.23.0-rc.32 (2022-04-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1221](https://github.com/DEFRA/rod-licensing/pull/1221) Welsh translation on find address page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.23.0-rc.31 (2022-04-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1212](https://github.com/DEFRA/rod-licensing/pull/1212) Welsh Translate - BOBO - receive any of following ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.23.0-rc.30 (2022-04-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1211](https://github.com/DEFRA/rod-licensing/pull/1211) Welsh translate - Do you receive any of the following? ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.23.0-rc.29 (2022-04-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1218](https://github.com/DEFRA/rod-licensing/pull/1218) Bug fix for cookies page backlink ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.23.0-rc.27 (2022-04-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1216](https://github.com/DEFRA/rod-licensing/pull/1216) Bug fix for missing translations on for you licence-start page ([@MickStein](https://github.com/MickStein))
+  * [#1215](https://github.com/DEFRA/rod-licensing/pull/1215) Bug fix for start-page welsh translations ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.23.0-rc.25 (2022-04-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1199](https://github.com/DEFRA/rod-licensing/pull/1199) Add Welsh translation on licence-type page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.23.0-rc.23 (2022-04-07)
 

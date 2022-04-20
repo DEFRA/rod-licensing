@@ -174,6 +174,12 @@ describe('staging exceptions handler', () => {
           await stagingExceptionsHandler({ payload: { transactionFileException, record } }, getMockResponseToolkit())
           expect(createPoclValidationError).toHaveBeenCalledWith(record, transactionFileException.transactionFile)
         })
+        it('and record is in payload, with a journalId, it creates a data validation error', async () => {
+          const recordJournalId = { ...record }
+          recordJournalId.createTransactionPayload.journalId = '123456'
+          await stagingExceptionsHandler({ payload: { transactionFileException, record: recordJournalId } }, getMockResponseToolkit())
+          expect(createPoclValidationError).toHaveBeenCalledWith(recordJournalId, transactionFileException.transactionFile)
+        })
       })
     })
 
