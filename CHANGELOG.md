@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.38 (2022-04-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1223](https://github.com/DEFRA/rod-licensing/pull/1223) Welsh - Choose your address ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.37 (2022-04-19)
 
 #### :bug: Bug Fix
