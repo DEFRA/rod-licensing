@@ -66,7 +66,7 @@ const getDataSource = children => {
 }
 
 export const convertDateTime = (dateTime, formats) => {
-  for(const format of formats) {
+  for (const format of formats) {
     const result = moment.tz(dateTime, format, true, SERVICE_LOCAL_TIME).utc().toISOString()
     if (result) return result
   }
@@ -137,7 +137,10 @@ export const Transaction = new Binding({
               postalFulfilment: permit?.isForFulfilment
             },
             issueDate: transactionDate,
-            startDate: convertDateTime(children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element], ['DD/MM/YYYYHH:mm','DD/MM/YYYYHH:mm:ss']),
+            startDate: convertDateTime(children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element], [
+              'DD/MM/YYYYHH:mm',
+              'DD/MM/YYYYHH:mm:ss'
+            ]),
             permitId: permit?.id,
             ...children[concessionBindings.SeniorConcession.element],
             ...children[concessionBindings.PipConcession.element],

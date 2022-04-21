@@ -132,18 +132,16 @@ describe('transaction.bindings', () => {
       )
     })
 
-    it('ignores journal id if it\'s not provided', async () => {
+    it("ignores journal id if it's not provided", async () => {
       const { createTransactionPayload } = await Transaction.transform(generateInputJSON())
 
       expect(Object.keys(createTransactionPayload).includes('journalId')).toBeFalsy()
     })
 
-    it.each([
-      ['123456'],
-      ['654321'],
-      ['A6B7C9']
-    ])('transforms a DDE record - includes DD_ID %s', async DD_ID => {
-      const { createTransactionPayload: { journalId } } = await Transaction.transform(
+    it.each([['123456'], ['654321'], ['A6B7C9']])('transforms a DDE record - includes DD_ID %s', async DD_ID => {
+      const {
+        createTransactionPayload: { journalId }
+      } = await Transaction.transform(
         generateInputJSON({
           DATA_SOURCE: { value: DIRECT_DEBIT_DATASOURCE },
           MOPEX: { value: '6' },
@@ -164,10 +162,9 @@ describe('transaction.bindings', () => {
       ['01/04/202200:00', '2022-03-31T23:00:00.000Z'],
       ['01/01/202203:00', '2022-01-01T03:00:00.000Z'],
       ['02/02/202216:00', '2022-02-02T16:00:00.000Z']
-    ])
-      ('should convert %s to %s', (input, output) => {
-        expect(convertDateTime(input, FORMATS)).toBe(output)
-      })
+    ])('should convert %s to %s', (input, output) => {
+      expect(convertDateTime(input, FORMATS)).toBe(output)
+    })
   })
 })
 
