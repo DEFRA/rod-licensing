@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.39 (2022-04-21)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#1240](https://github.com/DEFRA/rod-licensing/pull/1240) DD Import start date & time ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.23.0-rc.38 (2022-04-20)
 
 #### :rocket: Enhancement
