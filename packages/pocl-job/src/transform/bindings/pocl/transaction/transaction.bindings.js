@@ -65,6 +65,10 @@ const getDataSource = children => {
   return POST_OFFICE_DATASOURCE
 }
 
+export const convertDateTime = (dateTime, formats) => {
+  return formats.find(format => moment.tz(dateTime, format, true, SERVICE_LOCAL_TIME).utc().toISOString())
+}
+
 /**
  * Transaction record (the <REC> element)
  * @type {Binding}
