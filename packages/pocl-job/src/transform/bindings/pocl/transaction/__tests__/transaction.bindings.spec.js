@@ -155,12 +155,20 @@ describe('transaction.bindings', () => {
     })
   })
 
-  // describe('convertDateTime', () => {
-  //   const FORMATS = ['DD/MM/YYYYHH:mm', 'DD/MM/YYYYHH:mm:ss']
-  //   it('should convert', () => {
-  //     convertDateTime('01/04/202200:00:00', FORMATS)
-  //   })
-  // })
+  describe('convertDateTime', () => {
+    const FORMATS = ['DD/MM/YYYYHH:mm', 'DD/MM/YYYYHH:mm:ss']
+    it.each([
+      ['01/04/202200:00:00', '2022-03-31T23:00:00.000Z'],
+      ['01/01/202203:00:00', '2022-01-01T03:00:00.000Z'],
+      ['02/02/202216:00:00', '2022-02-02T16:00:00.000Z'],
+      ['01/04/202200:00', '2022-03-31T23:00:00.000Z'],
+      ['01/01/202203:00', '2022-01-01T03:00:00.000Z'],
+      ['02/02/202216:00', '2022-02-02T16:00:00.000Z']
+    ])
+      ('should convert %s to %s', (input, output) => {
+        expect(convertDateTime(input, FORMATS)).toBe(output)
+      })
+  })
 })
 
 const generateInputJSON = (overrides = {}) => ({
