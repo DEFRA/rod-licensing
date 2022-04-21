@@ -1,6 +1,6 @@
-import { CommonResults } from '../../../constants.js'
+import commonResultHandler from '../../../handlers/multibuy-amend-handler.js'
 
 export default async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  return status.fromSummary ? CommonResults.SUMMARY : CommonResults.OK
+  const routeDirection = commonResultHandler(request)
+  return routeDirection
 }

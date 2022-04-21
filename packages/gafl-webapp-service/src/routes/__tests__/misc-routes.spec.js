@@ -8,7 +8,8 @@ import {
   IDENTIFY,
   LICENCE_SUMMARY,
   OS_TERMS,
-  SET_CURRENT_PERMISSION
+  SET_CURRENT_PERMISSION,
+  CHANGE_LICENCE_OPTIONS
 } from '../../uri.js'
 import miscRoutes from '../misc-routes.js'
 import { createMockRequest, createMockRequestToolkit } from '../../__mocks__/request.js'
@@ -94,7 +95,15 @@ describe('SET_CURRENT_PERMISSION handler', () => {
 
   it('redirects to licence summary page', async () => {
     const mockToolkit = createMockRequestToolkit()
-    await currentPermissionHandler(createMockRequest(), mockToolkit)
+    const mockRequest = createMockRequest({ cache: { status: { set: jest.fn() } }, query: { fromLicenceOptions: 'notseen' } })
+    await currentPermissionHandler(mockRequest, mockToolkit)
     expect(mockToolkit.redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
+  })
+
+  it('redirects to change licence options page', async () => {
+    const mockToolkit = createMockRequestToolkit()
+    const mockRequest = createMockRequest({ cache: { status: { set: jest.fn() } }, query: { fromLicenceOptions: 'seen' } })
+    await currentPermissionHandler(mockRequest, mockToolkit)
+    expect(mockToolkit.redirect).toHaveBeenCalledWith(CHANGE_LICENCE_OPTIONS.uri)
   })
 })

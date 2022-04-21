@@ -29,7 +29,8 @@ import {
   RENEWAL_INACTIVE,
   RENEWAL_START_DATE,
   ADD_PERMISSION,
-  VIEW_LICENCES
+  VIEW_LICENCES,
+  CHANGE_LICENCE_OPTIONS
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
@@ -75,11 +76,23 @@ export default [
       [CommonResults.OK]: {
         page: DATE_OF_BIRTH
       },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
+      },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_FOR.uri)
+    backLink: s => {
+      const contactSummarySeen = s.fromSummary
+      const changeLicenceOptionsSeen = s.fromLicenceOptions
+      if (changeLicenceOptionsSeen) {
+        return CHANGE_LICENCE_OPTIONS.uri
+      } else if (contactSummarySeen) {
+        return LICENCE_SUMMARY.uri
+      }
+      return LICENCE_FOR.uri
+    }
   },
 
   {
@@ -93,9 +106,21 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : NAME.uri)
+    backLink: s => {
+      const contactSummarySeen = s.fromSummary
+      const changeLicenceOptionsSeen = s.fromLicenceOptions
+      if (changeLicenceOptionsSeen) {
+        return CHANGE_LICENCE_OPTIONS.uri
+      } else if (contactSummarySeen) {
+        return LICENCE_SUMMARY.uri
+      }
+      return NAME.uri
+    }
   },
 
   {
@@ -106,9 +131,21 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DATE_OF_BIRTH.uri)
+    backLink: s => {
+      const contactSummarySeen = s.fromSummary
+      const changeLicenceOptionsSeen = s.fromLicenceOptions
+      if (changeLicenceOptionsSeen) {
+        return CHANGE_LICENCE_OPTIONS.uri
+      } else if (contactSummarySeen) {
+        return LICENCE_SUMMARY.uri
+      }
+      return DATE_OF_BIRTH.uri
+    }
   },
 
   {
@@ -125,9 +162,21 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
+    backLink: s => {
+      const contactSummarySeen = s.fromSummary
+      const changeLicenceOptionsSeen = s.fromLicenceOptions
+      if (changeLicenceOptionsSeen) {
+        return CHANGE_LICENCE_OPTIONS.uri
+      } else if (contactSummarySeen) {
+        return LICENCE_SUMMARY.uri
+      }
+      return DISABILITY_CONCESSION.uri
+    }
   },
 
   {
@@ -146,9 +195,21 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
+    backLink: s => {
+      const contactSummarySeen = s.fromSummary
+      const changeLicenceOptionsSeen = s.fromLicenceOptions
+      if (changeLicenceOptionsSeen) {
+        return CHANGE_LICENCE_OPTIONS.uri
+      } else if (contactSummarySeen) {
+        return LICENCE_SUMMARY.uri
+      }
+      return LICENCE_TO_START.uri
+    }
   },
 
   {
@@ -162,9 +223,21 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TYPE.uri)
+    backLink: s => {
+      const contactSummarySeen = s.fromSummary
+      const changeLicenceOptionsSeen = s.fromLicenceOptions
+      if (changeLicenceOptionsSeen) {
+        return CHANGE_LICENCE_OPTIONS.uri
+      } else if (contactSummarySeen) {
+        return LICENCE_SUMMARY.uri
+      }
+      return LICENCE_TYPE.uri
+    }
   },
 
   {
@@ -175,6 +248,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: LICENCE_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_LICENCE_OPTIONS
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri)
@@ -344,14 +420,39 @@ export default [
         page: ADD_PERMISSION
       },
       [CommonResults.NO]: {
+        page: VIEW_LICENCES
+      }
+    }
+  },
+
+  {
+    current: VIEW_LICENCES,
+    next: {
+      [CommonResults.OK]: {
         page: TERMS_AND_CONDITIONS
       }
     }
   },
 
   {
-    current: VIEW_LICENCES
+    current: CHANGE_LICENCE_OPTIONS,
+    next: {
+      [CommonResults.OK]:
+      {
+        page: VIEW_LICENCES
+      }
+    }
   },
+
+  // {
+  //   current: CHANGE_CONTACT_OPTIONS,
+  //   next: {
+  //     [CommonResults.OK]:
+  //     {
+  //       page: VIEW_LICENCES
+  //     }
+  //   }
+  // },
 
   // This is the end of the journey. The rest is handled by the agreed handler
   // and the transaction is locked
@@ -362,7 +463,7 @@ export default [
         page: AGREED
       }
     },
-    backLink: CONTACT_SUMMARY.uri
+    backLink: VIEW_LICENCES.uri
   },
 
   {

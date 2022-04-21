@@ -45,6 +45,7 @@ export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'Y
 
 export const CommonResults = {
   SUMMARY: 'summary',
+  AMEND: 'amend',
   OK: 'ok',
   NO: 'no',
   YES: 'yes'
@@ -58,6 +59,11 @@ export const MultibuyForYou = {
 export const ShowDigitalLicencePages = {
   YES: 'show-digital-licence-yes',
   NO: 'show-digital-licence-no'
+}
+// If the user has seen the change licence options page this is set in the status
+export const CHANGE_LICENCE_OPTIONS_SEEN = {
+  SEEN: 'seen',
+  NOT_SEEN: 'not-seen'
 }
 
 // If the user has seen the summary page these are set in the status

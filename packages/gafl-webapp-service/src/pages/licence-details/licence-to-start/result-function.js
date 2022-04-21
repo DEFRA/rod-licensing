@@ -1,4 +1,4 @@
-import { CommonResults } from '../../../constants.js'
+import commonResultHandler from '../../../handlers/multibuy-amend-handler.js'
 import { ageConcessionResults } from '../../concessions/date-of-birth/result-function.js'
 import { licenceToStart } from './update-transaction.js'
 
@@ -8,7 +8,7 @@ export const licenceToStartResults = {
 
 export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const status = await request.cache().helpers.status.getCurrentPermission()
+  const routeDirection = commonResultHandler(request)
 
   if (permission.licensee.noLicenceRequired) {
     return ageConcessionResults.NO_LICENCE_REQUIRED
@@ -19,5 +19,5 @@ export default async request => {
     return licenceToStartResults.AND_START_TIME
   }
 
-  return status.fromSummary ? CommonResults.SUMMARY : CommonResults.OK
+  return routeDirection
 }
