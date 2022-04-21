@@ -165,6 +165,10 @@ describe('transaction.bindings', () => {
     ])('should convert %s to %s', (input, output) => {
       expect(convertDateTime(input, FORMATS)).toBe(output)
     })
+
+    it.each([[null], ['01/01/202203:00:00:00'], ['02/02/2022-16:00:00']])('should return null if it cannot convert %s', input => {
+      expect(convertDateTime(input, FORMATS)).toBe(null)
+    })
   })
 })
 
