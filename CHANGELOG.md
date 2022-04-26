@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.42 (2022-04-26)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1246](https://github.com/DEFRA/rod-licensing/pull/1246) Welsh lang BOBO update date of birth page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 
 ## v1.23.0-rc.39 (2022-04-21)
