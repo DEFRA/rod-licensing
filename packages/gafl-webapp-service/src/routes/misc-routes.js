@@ -95,22 +95,20 @@ export default [
     method: 'GET',
     path: COOKIES.uri,
     handler: async (request, h) => {
-      const mssgs = request.i18n.getCatalog()
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
-      h.view(COOKIES.page, {
-        uri: {
-          buy: CONTROLLER.uri
-        },
+
+      return h.view(COOKIES.page, {
+        altLang,
+        mssgs: request.i18n.getCatalog(),
         cookie: {
           csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
           sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,
           alb: ALB_COOKIE_NAME,
           albcors: ALBCORS_COOKIE_NAME
+        },
+        uri: {
+          buy: CONTROLLER.uri
         }
-      })
-      return h.view(COOKIES.page, {
-        mssgs,
-        altLang
       })
     }
   },
