@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/connectors-lib",
-  "version": "1.23.0-rc.42",
+  "version": "1.23.0-rc.44",
   "description": "Shared connectors",
   "type": "module",
   "engines": {
@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@airbrake/node": "^2.1.7",
-    "aws-sdk": "^2.1074.0",
+    "aws-sdk": "^2.1122.0",
     "debug": "^4.3.3",
     "ioredis": "^4.28.5",
     "node-fetch": "^2.6.7",
