@@ -1,10 +1,15 @@
-import { getFromSummary, getData } from '../route'
+import { getFromSummary, getData, checkMultibuyData } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
 import { NAME } from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
+import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
 import '../../find-permit.js'
 
 jest.mock('../../find-permit.js')
+
+jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
+  isMultibuyForYou: jest.fn()
+}))
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
@@ -47,7 +52,18 @@ describe('licence-summary > route', () => {
     }))
     const mockTransactionCacheSet = jest.fn()
 
-    const mockRequest = {
+    const generateRequestMock = (transaction = {}) => ({
+      cache: jest.fn(() => ({
+        helpers: {
+          transaction: {
+            get: jest.fn(() => transaction),
+            set: jest.fn()
+          }
+        }
+      }))
+    })
+
+    const mockRequest = (transaction = {}) => ({
       cache: () => ({
         helpers: {
           status: {
@@ -55,12 +71,13 @@ describe('licence-summary > route', () => {
             setCurrentPermission: mockStatusCacheSet
           },
           transaction: {
+            get: jest.fn(() => transaction),
             getCurrentPermission: mockTransactionCacheGet,
             setCurrentPermission: mockTransactionCacheSet
           }
         }
       })
-    }
+    })
 
     it('should return the name page uri', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({
@@ -77,15 +94,28 @@ describe('licence-summary > route', () => {
           cost: 6
         }
       }))
-      const result = await getData(mockRequest)
+      const transaction = {
+        permissions: {
+          length: 0,
+          isLicenceForYou: true
+        }
+      }
+      generateRequestMock(transaction)
+      const result = await getData(mockRequest(transaction))
       expect(result.uri.name).toBe(NAME.uri)
     })
 
     it('should return a redirect error if firstName is not included on the licensee', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: {} }))
+      const transaction = {
+        permissions: {
+          length: 0,
+          isLicenceForYou: false
+        }
+      }
       let error = false
       try {
-        await getData(mockRequest)
+        await getData(mockRequest(transaction))
       } catch (e) {
         error = e
       }
@@ -96,15 +126,90 @@ describe('licence-summary > route', () => {
 
     it('should return a redirect error if lastName is not included on the licensee', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: { firstName: 'John' } }))
+      const transaction = {
+        permissions: {
+          length: 0,
+          isLicenceForYou: false
+        }
+      }
       let error = false
       try {
-        await getData(mockRequest)
+        await getData(mockRequest(transaction))
       } catch (e) {
         error = e
       }
       expect(error).not.toBeFalsy()
       expect(error).toBeInstanceOf(GetDataRedirect)
       expect(error.redirectUrl).toBe(NAME.uri)
+    })
+
+    it('multibuy - should return the name page uri', async () => {
+      isMultibuyForYou.mockImplementationOnce(() => true)
+      const permission = [
+        {
+          licensee: {
+            firstName: 'Graham',
+            lastName: 'Willis',
+            birthDate: '1996-01-01',
+            isLicenceForYou: true
+          }
+        },
+        {
+          licensee: {
+            firstName: undefined,
+            lastName: undefined,
+            birthDate: undefined,
+            isLicenceForYou: true
+          }
+        }
+      ]
+      const transaction = {
+        permissions: {
+          filter: jest.fn(() => permission)
+        }
+      }
+      generateRequestMock(transaction)
+      const result = await getData(mockRequest(transaction))
+      expect(result.uri.name).toBe(NAME.uri)
+    })
+  })
+
+  describe('Multibuy', () => {
+    it('should update the multibuy name and birth details based on if multibuy and licence for you', () => {
+      const permission = [
+        {
+          licensee: {
+            firstName: 'Graham',
+            lastName: 'Willis',
+            birthDate: '1996-01-01',
+            isLicenceForYou: true
+          }
+        },
+        {
+          licensee: {
+            firstName: undefined,
+            lastName: undefined,
+            birthDate: undefined,
+            isLicenceForYou: true
+          }
+        }
+      ]
+      const multibuy = {
+        licensee: {
+          firstName: undefined,
+          lastName: undefined,
+          birthDate: undefined,
+          isLicenceForYou: true
+        }
+      }
+      const transaction = {
+        permissions: {
+          filter: jest.fn(() => permission)
+        }
+      }
+      isMultibuyForYou.mockImplementationOnce(() => true)
+      checkMultibuyData(transaction, multibuy)
+      expect(multibuy.licensee).toEqual(permission[0].licensee)
     })
   })
 })

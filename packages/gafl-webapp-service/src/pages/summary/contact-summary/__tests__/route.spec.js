@@ -1,6 +1,11 @@
-import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
+import { getLicenseeDetailsSummaryRows, checkNavigation, checkMultibuyData } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import { LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../../../uri.js'
+import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
+
+jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
+  isMultibuyForYou: jest.fn()
+}))
 
 const address = {
   firstName: 'Fester',
@@ -185,6 +190,51 @@ describe('contact-summary > route', () => {
       }
       const permission = { licenceLength: '12M' }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
+    })
+  })
+
+  describe('Multibuy', () => {
+    it('should update the multibuy address details based on if multibuy and licence for you', () => {
+      const permission = [
+        {
+          licensee: {
+            ...address,
+            isLicenceForYou: true
+          }
+        },
+        {
+          licensee: {
+            firstName: 'Fester',
+            lastName: 'Tester',
+            premises: undefined,
+            street: undefined,
+            locality: undefined,
+            town: undefined,
+            postcode: undefined,
+            isLicenceForYou: true
+          }
+        }
+      ]
+      const multibuy = {
+        licensee: {
+          firstName: 'Fester',
+          lastName: 'Tester',
+          premises: undefined,
+          street: undefined,
+          locality: undefined,
+          town: undefined,
+          postcode: undefined,
+          isLicenceForYou: true
+        }
+      }
+      const transaction = {
+        permissions: {
+          filter: jest.fn(() => permission)
+        }
+      }
+      isMultibuyForYou.mockImplementationOnce(() => true)
+      checkMultibuyData(transaction, multibuy)
+      expect(multibuy.licensee).toEqual(permission[0].licensee)
     })
   })
 })

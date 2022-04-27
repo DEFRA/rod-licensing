@@ -20,6 +20,7 @@ import { START_AFTER_PAYMENT_MINUTES, SERVICE_LOCAL_TIME } from '@defra-fish/bus
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
@@ -44,6 +45,16 @@ const checkNavigation = permission => {
   }
 }
 
+export const checkMultibuyData = (transaction, permission) => {
+  const licenceForYou = transaction.permissions.filter(function (permission) {
+    return permission.licensee.firstName !== undefined && permission.isLicenceForYou === true
+  })
+
+  permission.licensee.firstName = licenceForYou[0].licensee.firstName
+  permission.licensee.lastName = licenceForYou[0].licensee.lastName
+  permission.licensee.birthDate = licenceForYou[0].licensee.birthDate
+}
+
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -55,6 +66,17 @@ export const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary.
      */
+
+    const checkIsMultibuyForYou = await isMultibuyForYou(request)
+
+    if (checkIsMultibuyForYou === true) {
+      const transaction = await request.cache().helpers.transaction.get()
+
+      checkMultibuyData(transaction, permission)
+
+      await request.cache().helpers.transaction.setCurrentPermission(permission)
+    }
+
     checkNavigation(permission)
   }
 

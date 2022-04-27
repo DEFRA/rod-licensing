@@ -5,6 +5,7 @@ import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 
 import {
   CONTACT_SUMMARY,
@@ -39,9 +40,29 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
+export const checkMultibuyData = (transaction, permission) => {
+  const licenceForYou = transaction.permissions.filter(function (permission) {
+    return permission.licensee.premises !== undefined && permission.isLicenceForYou === true
+  })
+
+  permission.licensee.premises = licenceForYou[0].licensee.premises
+  permission.licensee.street = licenceForYou[0].licensee.street
+  permission.licensee.locality = licenceForYou[0].licensee.locality
+  permission.licensee.town = licenceForYou[0].licensee.town
+  permission.licensee.postcode = licenceForYou[0].licensee.postcode
+}
+
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  const checkIsMultibuyForYou = await isMultibuyForYou(request)
+
+  if (checkIsMultibuyForYou === true) {
+    const transaction = await request.cache().helpers.transaction.get()
+
+    checkMultibuyData(transaction, permission)
+  }
 
   checkNavigation(status, permission)
 
