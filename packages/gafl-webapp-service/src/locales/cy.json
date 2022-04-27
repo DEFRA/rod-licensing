@@ -185,7 +185,7 @@
   "dob_entry_hint": "Er enghraifft, 23 11 1979",
   "dob_error_format_max": "Mae'n rhaid i’r dyddiad geni fod yn y gorffennol",
   "dob_error_format_min": "Enter the date of birth and include a day, month and year",
-  "dob_error_format": "Nodwch eich dyddiad geni a chynnwys y diwrnod, y mis a’r flwyddyn",
+  "dob_error_format": "Nodwch ddyddiad geni deiliad y drwydded a chynnwys diwrnod, mis a blwyddyn",
   "dob_error": "Nodwch eich dyddiad geni",
   "dob_month": "Mis",
   "dob_privacy_link_prefix": "Darllenwch am ",
