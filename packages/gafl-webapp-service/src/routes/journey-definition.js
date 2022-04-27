@@ -208,7 +208,7 @@ export default [
       } else if (contactSummarySeen) {
         return LICENCE_SUMMARY.uri
       }
-      return LICENCE_TO_START.uri
+      return DISABILITY_CONCESSION.uri
     }
   },
 

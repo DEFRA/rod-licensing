@@ -97,6 +97,7 @@ describe('SET_CURRENT_PERMISSION handler', () => {
     const mockToolkit = createMockRequestToolkit()
     const mockRequest = createMockRequest({ cache: { status: { set: jest.fn() } }, query: { fromLicenceOptions: 'notseen' } })
     await currentPermissionHandler(mockRequest, mockToolkit)
+    console.log(mockRequest)
     expect(mockToolkit.redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
   })
 

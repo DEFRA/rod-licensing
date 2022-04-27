@@ -18,7 +18,7 @@ import {
   CHANGE_LICENCE_OPTIONS
 } from '../uri.js'
 
-import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME, CHANGE_LICENCE_OPTIONS_SEEN, LICENCE_SUMMARY_SEEN } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME, CHANGE_LICENCE_OPTIONS_SEEN } from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
 import newSessionHandler from '../handlers/new-session-handler.js'
@@ -124,13 +124,11 @@ export default [
     method: 'GET',
     path: SET_CURRENT_PERMISSION.uri,
     handler: async (request, h) => {
-      const status = await request.cache().helpers.status.getCurrentPermission()
-      await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
-      console.log(status.fromLicenceOptions)
-      console.log(CHANGE_LICENCE_OPTIONS_SEEN.SEEN)
-      if (status.fromLicenceOptions === CHANGE_LICENCE_OPTIONS_SEEN.SEEN) {
+      if (CHANGE_LICENCE_OPTIONS_SEEN) {
+        await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
         return h.redirect(CHANGE_LICENCE_OPTIONS.uri)
-      } else if (LICENCE_SUMMARY_SEEN) {
+      } else {
+        await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
         return h.redirect(LICENCE_SUMMARY.uri)
       }
     }
