@@ -55,9 +55,7 @@ describe('The page handler function', () => {
     const request = getSampleRequest({}, 'https://sampleurl.gov.uk/current/page?lang=cy')
     const toolkit = getSampleToolkit()
     await post(request, toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(
-      expect.stringMatching(/\/next\/page\?lang=cy/)
-    )
+    expect(toolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(/\/next\/page\?lang=cy/))
   })
 
   it('post redirects to an English page if the current page is in English', async () => {
@@ -65,20 +63,16 @@ describe('The page handler function', () => {
     const request = getSampleRequest()
     const toolkit = getSampleToolkit()
     await post(request, toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(
-      expect.stringMatching('/next/page')
-    )
+    expect(toolkit.redirect).toHaveBeenCalledWith(expect.stringMatching('/next/page'))
   })
 
-  it('redirects to an English page if request.info.referrer isn\'t available', async () => {
+  it("redirects to an English page if request.info.referrer isn't available", async () => {
     const { post } = pageHandler(null, 'view', '/next/page')
     const request = getSampleRequest()
     delete request.info
     const toolkit = getSampleToolkit()
     await post(request, toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(
-      expect.stringMatching('/next/page')
-    )
+    expect(toolkit.redirect).toHaveBeenCalledWith(expect.stringMatching('/next/page'))
   })
 })
 
