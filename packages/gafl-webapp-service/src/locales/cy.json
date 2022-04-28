@@ -186,7 +186,7 @@
   "dob_error_format_max": "Mae'n rhaid i’r dyddiad geni fod yn y gorffennol",
   "dob_error_format_min": "Nodwch eich dyddiad geni a chynnwys y diwrnod, y mis a’r flwyddyn",
   "dob_error_format": "Nodwch ddyddiad geni deiliad y drwydded a chynnwys diwrnod, mis a blwyddyn",
-  "dob_error": "Nodwch eich dyddiad geni",
+  "dob_error": "Rhowch y dyddiad geni",
   "dob_month": "Mis",
   "dob_privacy_link_prefix": "Darllenwch am ",
   "dob_privacy_link": "sut rydym yn defnyddio gwybodaeth bersonol",
