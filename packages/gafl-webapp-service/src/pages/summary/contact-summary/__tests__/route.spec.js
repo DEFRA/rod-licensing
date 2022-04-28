@@ -228,7 +228,11 @@ describe('contact-summary > route', () => {
         {
           licensee: {
             ...address,
-            isLicenceForYou: true
+            isLicenceForYou: true,
+            preferredMethodOfConfirmation: 'email',
+            email: 'example@email.com',
+            preferredMethodOfReminder: 'email',
+            preferredMethodOfNewsletter: 'email'
           }
         },
         {
@@ -240,7 +244,11 @@ describe('contact-summary > route', () => {
             locality: undefined,
             town: undefined,
             postcode: undefined,
-            isLicenceForYou: true
+            isLicenceForYou: true,
+            preferredMethodOfConfirmation: undefined,
+            email: undefined,
+            preferredMethodOfReminder: undefined,
+            preferredMethodOfNewsletter: undefined
           }
         }
       ]

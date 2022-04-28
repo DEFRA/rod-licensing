@@ -51,6 +51,7 @@ export const setMultibuyValues = transaction => {
 }
 
 export const getData = async request => {
+  console.log('DATA')
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -66,6 +67,21 @@ export const getData = async request => {
     permission.licensee.locality = multibuyLicence.locality
     permission.licensee.town = multibuyLicence.town
     permission.licensee.postcode = multibuyLicence.postcode
+    permission.licensee.countryCode = multibuyLicence.countryCode
+
+    status[ADDRESS_ENTRY.page] = true
+    status[ADDRESS_SELECT.page] = true
+
+    permission.licensee.preferredMethodOfConfirmation = multibuyLicence.preferredMethodOfConfirmation
+    permission.licensee.email = multibuyLicence.email
+    permission.licensee.text = multibuyLicence.text
+    permission.licensee.preferredMethodOfReminder = multibuyLicence.preferredMethodOfReminder
+    permission.licensee.preferredMethodOfNewsletter = multibuyLicence.preferredMethodOfNewsletter
+
+    status[CONTACT.page] = true
+    status[LICENCE_CONFIRMATION_METHOD.page] = true
+
+    await request.cache().helpers.transaction.setCurrentPermission(permission)
   }
 
   checkNavigation(status, permission)
