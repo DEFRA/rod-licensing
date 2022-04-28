@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.45 (2022-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1256](https://github.com/DEFRA/rod-licensing/pull/1256) Fix for missing translation on BOBO date of birth page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.44 (2022-04-27)
 
 #### :bug: Bug Fix
