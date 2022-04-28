@@ -40,19 +40,17 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-export const checkMultibuyData = (transaction, permission) => {
+export const setMultibuyValues = transaction => {
   const licenceForYou = transaction.permissions.filter(function (permission) {
     return permission.licensee.premises !== undefined && permission.isLicenceForYou === true
   })
 
-  permission.licensee.premises = licenceForYou[0].licensee.premises
-  permission.licensee.street = licenceForYou[0].licensee.street
-  permission.licensee.locality = licenceForYou[0].licensee.locality
-  permission.licensee.town = licenceForYou[0].licensee.town
-  permission.licensee.postcode = licenceForYou[0].licensee.postcode
+  const multibuyLicensee = licenceForYou[0].licensee
+
+  return multibuyLicensee
 }
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -61,7 +59,13 @@ const getData = async request => {
   if (checkIsMultibuyForYou === true) {
     const transaction = await request.cache().helpers.transaction.get()
 
-    checkMultibuyData(transaction, permission)
+    const multibuyLicence = setMultibuyValues(transaction)
+
+    permission.licensee.premises = multibuyLicence.premises
+    permission.licensee.street = multibuyLicence.street
+    permission.licensee.locality = multibuyLicence.locality
+    permission.licensee.town = multibuyLicence.town
+    permission.licensee.postcode = multibuyLicence.postcode
   }
 
   checkNavigation(status, permission)

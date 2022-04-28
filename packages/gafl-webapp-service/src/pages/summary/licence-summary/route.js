@@ -45,14 +45,14 @@ const checkNavigation = permission => {
   }
 }
 
-export const checkMultibuyData = (transaction, permission) => {
+export const setMultibuyValues = transaction => {
   const licenceForYou = transaction.permissions.filter(function (permission) {
     return permission.licensee.firstName !== undefined && permission.isLicenceForYou === true
   })
 
-  permission.licensee.firstName = licenceForYou[0].licensee.firstName
-  permission.licensee.lastName = licenceForYou[0].licensee.lastName
-  permission.licensee.birthDate = licenceForYou[0].licensee.birthDate
+  const multibuyLicensee = licenceForYou[0].licensee
+
+  return multibuyLicensee
 }
 
 export const getData = async request => {
@@ -72,7 +72,11 @@ export const getData = async request => {
     if (checkIsMultibuyForYou === true) {
       const transaction = await request.cache().helpers.transaction.get()
 
-      checkMultibuyData(transaction, permission)
+      const multibuyLicence = setMultibuyValues(transaction, permission)
+
+      permission.licensee.firstName = multibuyLicence.firstName
+      permission.licensee.lastName = multibuyLicence.lastName
+      permission.licensee.birthDate = multibuyLicence.birthDate
 
       await request.cache().helpers.transaction.setCurrentPermission(permission)
     }
