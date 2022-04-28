@@ -5,6 +5,7 @@ import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
+import url from 'url'
 
 const debug = db('webapp:page-handler')
 
@@ -46,6 +47,17 @@ const clearErrorsFromOtherPages = async (request, view) => {
     .map(entry => entry[0])
 
   await Promise.all(pagesWithError.map(async p => request.cache().helpers.page.setCurrentPermission(p, {})))
+}
+
+const getTarget = async (completion, request) => {
+  const completionResult = typeof completion === 'function' ? await completion(request) : completion
+  if (request?.info?.referrer) {
+    const referrer = new url.URL(request.info.referrer)
+    if (referrer?.search?.includes('lang=cy')) {
+      return `${completionResult}${referrer.search}`
+    }
+  }
+  return completionResult
 }
 
 /**
@@ -120,11 +132,8 @@ export default (path, view, completion, getData) => ({
     status[view] = PAGE_STATE.completed
     await request.cache().helpers.status.setCurrentPermission(status)
 
-    if (typeof completion === 'function') {
-      return h.redirect(await completion(request))
-    } else {
-      return h.redirect(completion)
-    }
+    const target = await getTarget(completion, request)
+    return h.redirect(target)
   },
   /**
    * Generic error handler for pages

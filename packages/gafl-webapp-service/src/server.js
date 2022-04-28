@@ -22,7 +22,6 @@ import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TR
 import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
 import { errorHandler } from './handlers/error-handler.js'
-import { languageHandler } from './handlers/language-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
@@ -156,9 +155,6 @@ const init = async () => {
   server.state(sessionCookieName, sessionCookieOptions)
 
   server.ext('onPreHandler', sessionManager(sessionCookieName))
-
-  // Add language parameter to url
-  server.ext('onRequest', languageHandler)
 
   // Mop up 400 and 500 errors. Make sure the status code in the header is set accordingly and provide
   // the error object to the templates for specific messaging e.g. on payment failures
