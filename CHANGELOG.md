@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.47 (2022-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1254](https://github.com/DEFRA/rod-licensing/pull/1254) Update address hints to lower case ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.46 (2022-04-28)
 
 #### :bug: Bug Fix
