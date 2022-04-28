@@ -13,7 +13,7 @@ describe('change-licence-options > route', () => {
     it('should set fromSummary to contact-summary, if fromSummary is contact-summary and it is not a renewal', async () => {
       const request = { fromSummary: CHANGE_LICENCE_OPTIONS_SEEN }
       const result = await getFromLicenceOptions(request)
-      expect(result).toBe(CHANGE_LICENCE_OPTIONS_SEEN)
+      expect(result).toBe(CHANGE_LICENCE_OPTIONS_SEEN.SEEN)
     })
   })
 

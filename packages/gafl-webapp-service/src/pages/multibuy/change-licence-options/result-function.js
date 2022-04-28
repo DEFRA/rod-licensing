@@ -20,5 +20,5 @@ export default async request => {
     return MultibuyForYou.YES
   }
 
-  return status.fromChangeLicenceOptions === CHANGE_LICENCE_OPTIONS_SEEN ? CommonResults.AMEND : CommonResults.OK
+  return status.fromChangeLicenceOptions === CHANGE_LICENCE_OPTIONS_SEEN.SEEN ? CommonResults.AMEND : CommonResults.OK
 }
