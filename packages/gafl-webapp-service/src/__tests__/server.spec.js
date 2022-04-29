@@ -114,12 +114,10 @@ describe('The server', () => {
         }
       })
       uris[uriConst] = { uri }
-      const regexMatch = new RegExp(`^${uri}\\?lang=cy\$`)
+      const regexMatch = new RegExp(`^${uri}\\?lang=cy$`)
       console.log('request?.url?.path?.search', request?.url?.path?.search)
       layoutContextAmalgamation(request, {})
-      expect(request.response.source.context._uri[element]).toEqual(
-        expect.stringMatching(regexMatch)
-      )
+      expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
     })
 
     it.each([
@@ -128,18 +126,16 @@ describe('The server', () => {
       ['accessibility', 'easy-to-use.uri', 'ACCESSIBILITY_STATEMENT'],
       ['privacy', 'private.uri', 'PRIVACY_POLICY'],
       ['clear', 'clear.url', 'NEW_TRANSACTION']
-    ])('should omit Welsh language code from _uri elements if the current page doesn\'t contain it', (element, uri, uriConst) => {
+    ])("should omit Welsh language code from _uri elements if the current page doesn't contain it", (element, uri, uriConst) => {
       const request = getSampleRequest({
         url: {
           search: ''
         }
       })
       uris[uriConst] = { uri }
-      const regexMatch = new RegExp(`^${uri}\$`)
+      const regexMatch = new RegExp(`^${uri}$`)
       layoutContextAmalgamation(request, {})
-      expect(request.response.source.context._uri[element]).toEqual(
-        expect.stringMatching(regexMatch)
-      )
+      expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
     })
 
     const getSampleRequest = (overrides = {}) => ({
