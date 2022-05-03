@@ -25,7 +25,6 @@ export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: 
  */
 const getBackReference = async (request, view) => {
   const current = journeyDefinition.find(p => p.current.page === view)
-
   if (!current || !current.backLink) {
     return null
   }
@@ -36,7 +35,7 @@ const getBackReference = async (request, view) => {
       await request.cache().helpers.transaction.getCurrentPermission()
     )
   } else {
-    return current.backLink
+    return `${current.backLink}${/\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''}`
   }
 }
 

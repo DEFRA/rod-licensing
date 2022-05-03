@@ -1,7 +1,9 @@
 import db from 'debug'
 import pageHandler from '../page-handler.js'
+import journeyDefinition from '../../routes/journey-definition.js'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
+jest.mock('../../routes/journey-definition.js', () => [])
 
 describe('The page handler function', () => {
   let fakeDebug
@@ -50,6 +52,25 @@ describe('The page handler function', () => {
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Transaction cache'))
   })
 
+  it.each([['?lang=cy'], ['?other-data=abc123&lang=cy'], ['?misc-info=123&extra-rods=2&lang=cy&rhubarb-crumble=yes-please']])(
+    'back ref includes welsh language code, but no other querystring arguments',
+    async queryString => {
+      const backLink = '/previous/page'
+      journeyDefinition.push({ current: { page: 'view' }, backLink })
+      const { get } = pageHandler(null, 'view', '/next/page')
+      const request = getSampleRequest(undefined, undefined, queryString)
+      const toolkit = getSampleToolkit()
+      await get(request, toolkit)
+      console.log(toolkit.view.mock.calls[0])
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          backRef: `${backLink}?lang=cy`
+        })
+      )
+    }
+  )
+
   it('post redirects to a Welsh page if the current page is in Welsh', async () => {
     const { post } = pageHandler(null, 'view', '/next/page')
     const request = getSampleRequest({}, 'https://sampleurl.gov.uk/current/page?lang=cy')
@@ -76,7 +97,7 @@ describe('The page handler function', () => {
   })
 })
 
-const getSampleRequest = (pageHelpers = {}, referrer = 'https://sampleurl.gov.uk/current/page') => ({
+const getSampleRequest = (pageHelpers = {}, referrer = 'https://sampleurl.gov.uk/current/page', search = '') => ({
   cache: () => ({
     helpers: {
       page: {
@@ -95,11 +116,20 @@ const getSampleRequest = (pageHelpers = {}, referrer = 'https://sampleurl.gov.uk
       }
     }
   }),
+  url: {
+    search
+  },
   info: {
     referrer
+  },
+  i18n: {
+    getCatalog: () => [],
+    getLocales: () => [],
+    getLocale: () => ''
   }
 })
 
 const getSampleToolkit = () => ({
-  redirect: jest.fn()
+  redirect: jest.fn(),
+  view: jest.fn()
 })
