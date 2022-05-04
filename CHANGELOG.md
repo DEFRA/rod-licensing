@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.50 (2022-05-04)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#1255](https://github.com/DEFRA/rod-licensing/pull/1255) International postcodes not accepted ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.23.0-rc.48 (2022-05-03)
 
