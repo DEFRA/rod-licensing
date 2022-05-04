@@ -1,4 +1,4 @@
-import { getLicenseeDetailsSummaryRows, checkNavigation, getData, setMultibuyValues } from '../route'
+import { getLicenseeDetailsSummaryRows, checkNavigation, getData } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import {
   ADDRESS_ENTRY,
@@ -9,6 +9,13 @@ import {
   LICENCE_SUMMARY
 } from '../../../../uri.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
+import '../../../../processors/refdata-helper.js'
+
+jest.mock('../../../../processors/refdata-helper.js', () => ({
+  countries: {
+    nameFromCode: () => 'United Kingdom'
+  }
+}))
 
 jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
@@ -222,47 +229,6 @@ describe('contact-summary > route', () => {
     })
   })
 
-  describe('Multibuy', () => {
-    it('should update the multibuy address details based on if multibuy and licence for you', () => {
-      const permission = [
-        {
-          licensee: {
-            ...address,
-            isLicenceForYou: true,
-            preferredMethodOfConfirmation: 'email',
-            email: 'example@email.com',
-            preferredMethodOfReminder: 'email',
-            preferredMethodOfNewsletter: 'email'
-          }
-        },
-        {
-          licensee: {
-            firstName: 'Fester',
-            lastName: 'Tester',
-            premises: undefined,
-            street: undefined,
-            locality: undefined,
-            town: undefined,
-            postcode: undefined,
-            isLicenceForYou: true,
-            preferredMethodOfConfirmation: undefined,
-            email: undefined,
-            preferredMethodOfReminder: undefined,
-            preferredMethodOfNewsletter: undefined
-          }
-        }
-      ]
-      const transaction = {
-        permissions: {
-          filter: jest.fn(() => permission)
-        }
-      }
-      isMultibuyForYou.mockImplementationOnce(() => true)
-      const result = setMultibuyValues(transaction)
-      expect(result).toEqual(permission[0].licensee)
-    })
-  })
-
   describe('getData', () => {
     const mockStatusCacheGet = jest.fn(() => ({}))
     const mockStatusCacheSet = jest.fn()
@@ -277,9 +243,9 @@ describe('contact-summary > route', () => {
             firstName: 'Graham',
             lastName: 'Willis',
             birthDate: '1946-01-01',
-            ...address,
-            isLicenceForYou: true
-          }
+            ...address
+          },
+          isLicenceForYou: true
         },
         {
           licensee: {
@@ -290,9 +256,9 @@ describe('contact-summary > route', () => {
             street: undefined,
             locality: undefined,
             town: undefined,
-            postcode: undefined,
-            isLicenceForYou: true
-          }
+            postcode: undefined
+          },
+          isLicenceForYou: true
         }
       ],
       permit: {
@@ -351,41 +317,38 @@ describe('contact-summary > route', () => {
           countryCode: 'GB'
         }
       }))
-      const permission = [
-        {
-          licensee: {
-            firstName: 'Graham',
-            lastName: 'Willis',
-            birthDate: '1946-01-01',
-            premises: '14 Howecroft Court',
-            street: 'Eastmead Lane',
-            locality: 'Bristolville',
-            town: 'Bristol',
-            postcode: 'BS9 1HJ',
-            countryCode: 'GB',
-            isLicenceForYou: true
-          }
-        },
-        {
-          licensee: {
-            firstName: 'Graham',
-            lastName: 'Willis',
-            birthDate: '1946-01-01',
-            premises: undefined,
-            street: undefined,
-            locality: undefined,
-            town: undefined,
-            postcode: undefined,
-            isLicenceForYou: true
-          }
-        }
-      ]
       const transaction = {
-        permissions: {
-          length: 1,
-          isLicenceForYou: true,
-          filter: jest.fn(() => permission)
-        }
+        permissions: [
+          {
+            licensee: {
+              firstName: 'Graham',
+              lastName: 'Willis',
+              birthDate: '1946-01-01',
+              premises: '14 Howecroft Court',
+              street: 'Eastmead Lane',
+              locality: 'Bristolville',
+              town: 'Bristol',
+              postcode: 'BS9 1HJ',
+              countryCode: 'GB'
+            },
+            isLicenceForYou: true
+          },
+          {
+            licensee: {
+              firstName: 'Graham',
+              lastName: 'Willis',
+              birthDate: '1946-01-01',
+              premises: undefined,
+              street: undefined,
+              locality: undefined,
+              town: undefined,
+              postcode: undefined,
+              countryCode: undefined
+            },
+            isLicenceForYou: true
+          }
+        ],
+        length: 2
       }
       isMultibuyForYou.mockImplementationOnce(() => true)
       generateRequestMock(transaction)

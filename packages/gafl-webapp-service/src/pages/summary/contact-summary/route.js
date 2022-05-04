@@ -40,18 +40,7 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-export const setMultibuyValues = transaction => {
-  const licenceForYou = transaction.permissions.filter(function (permission) {
-    return permission.licensee.premises !== undefined && permission.isLicenceForYou === true
-  })
-
-  const multibuyLicensee = licenceForYou[0].licensee
-
-  return multibuyLicensee
-}
-
 export const getData = async request => {
-  console.log('DATA')
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -60,26 +49,29 @@ export const getData = async request => {
   if (checkIsMultibuyForYou === true) {
     const transaction = await request.cache().helpers.transaction.get()
 
-    const multibuyLicence = setMultibuyValues(transaction)
+    const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
 
-    permission.licensee.premises = multibuyLicence.premises
-    permission.licensee.street = multibuyLicence.street
-    permission.licensee.locality = multibuyLicence.locality
-    permission.licensee.town = multibuyLicence.town
-    permission.licensee.postcode = multibuyLicence.postcode
-    permission.licensee.countryCode = multibuyLicence.countryCode
+    const xferProps = [
+      'premises',
+      'street',
+      'locality',
+      'town',
+      'postcode',
+      'countryCode',
+      'preferredMethodOfConfirmation',
+      'email',
+      'text',
+      'preferredMethodOfReminder',
+      'preferredMethodOfNewletter'
+    ]
+    for (const prop of xferProps) {
+      permission.licensee[prop] = getLicence.licensee[prop]
+    }
 
-    status[ADDRESS_ENTRY.page] = true
-    status[ADDRESS_SELECT.page] = true
-
-    permission.licensee.preferredMethodOfConfirmation = multibuyLicence.preferredMethodOfConfirmation
-    permission.licensee.email = multibuyLicence.email
-    permission.licensee.text = multibuyLicence.text
-    permission.licensee.preferredMethodOfReminder = multibuyLicence.preferredMethodOfReminder
-    permission.licensee.preferredMethodOfNewsletter = multibuyLicence.preferredMethodOfNewsletter
-
-    status[CONTACT.page] = true
-    status[LICENCE_CONFIRMATION_METHOD.page] = true
+    const pagesToSkip = [ADDRESS_ENTRY.page, ADDRESS_SELECT.page, CONTACT.page, LICENCE_CONFIRMATION_METHOD.page]
+    for (const page of pagesToSkip) {
+      status[page] = true
+    }
 
     await request.cache().helpers.transaction.setCurrentPermission(permission)
   }
@@ -89,7 +81,7 @@ export const getData = async request => {
   status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
-
+  console.log('countryName', countryName)
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
     uri: {

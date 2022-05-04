@@ -23,7 +23,7 @@ import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 
 // Extracted to keep sonar happy
-const checkNavigation = permission => {
+export const checkNavigation = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
     throw new GetDataRedirect(NAME.uri)
   }
@@ -45,20 +45,9 @@ const checkNavigation = permission => {
   }
 }
 
-export const setMultibuyValues = transaction => {
-  const licenceForYou = transaction.permissions.filter(function (permission) {
-    return permission.licensee.firstName !== undefined && permission.isLicenceForYou === true
-  })
-
-  const multibuyLicensee = licenceForYou[0].licensee
-
-  return multibuyLicensee
-}
-
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
   if (!status.renewal) {
     /*
      * Before we try and filter the permit it is necessary to check that the user has navigated through
@@ -72,11 +61,12 @@ export const getData = async request => {
     if (checkIsMultibuyForYou === true) {
       const transaction = await request.cache().helpers.transaction.get()
 
-      const multibuyLicence = setMultibuyValues(transaction, permission)
+      const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
 
-      permission.licensee.firstName = multibuyLicence.firstName
-      permission.licensee.lastName = multibuyLicence.lastName
-      permission.licensee.birthDate = multibuyLicence.birthDate
+      const xferProps = ['firstName', 'lastName', 'birthDate']
+      for (const prop of xferProps) {
+        permission.licensee[prop] = getLicence.licensee[prop]
+      }
 
       await request.cache().helpers.transaction.setCurrentPermission(permission)
     }
