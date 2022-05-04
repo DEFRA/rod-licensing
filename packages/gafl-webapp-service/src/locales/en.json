@@ -59,6 +59,7 @@
   "address_entry_content_name_num_hint": "For example, 47, Flat 2a or Rose Cottage",
   "address_entry_content_name_num": "Building number or name",
   "address_entry_content_postcode": "Postcode",
+  "address_entry_content_country": "Country",
   "address_entry_content_street_1": "Address line 1 (optional)",
   "address_entry_content_street_2": "Address line 2 (optional)",
   "address_entry_content_town": "Town or city",
