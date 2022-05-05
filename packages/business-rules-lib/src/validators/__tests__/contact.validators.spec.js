@@ -293,6 +293,12 @@ describe('contact validators', () => {
         '"value" is not allowed to be empty'
       )
     })
+    it('expects a maximum of 12 characters', async () => {
+      await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('123456789AAAA')).rejects.toThrow()
+    })
+    it('will not accept special characters', async () => {
+      await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('12£4')).rejects.toThrow()
+    })
   })
 
   describe('premisesValidator', () => {

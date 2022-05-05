@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`transaction transforms transforms a DDE record - gmt time, no concession, email contact 1`] = `
+exports[`transaction.bindings transaction transforms transforms a DDE record - gmt time, no concession, email contact 1`] = `
 Object {
   "createTransactionPayload": Object {
     "dataSource": "DDE File",
@@ -42,7 +42,7 @@ Object {
 }
 `;
 
-exports[`transaction transforms transforms a POCL record - bst time, senior concession, sms contact 1`] = `
+exports[`transaction.bindings transaction transforms transforms a POCL record - bst time, senior concession, sms contact 1`] = `
 Object {
   "createTransactionPayload": Object {
     "dataSource": "Post Office Sales",
@@ -93,7 +93,7 @@ Object {
 }
 `;
 
-exports[`transaction transforms transforms a POCL record - disabled concession (blue badge only), no contact 1`] = `
+exports[`transaction.bindings transaction transforms transforms a POCL record - disabled concession (blue badge only), no contact 1`] = `
 Object {
   "createTransactionPayload": Object {
     "dataSource": "Post Office Sales",
@@ -143,7 +143,7 @@ Object {
 }
 `;
 
-exports[`transaction transforms transforms a POCL record - disabled concession (both), letter contact 1`] = `
+exports[`transaction.bindings transaction transforms transforms a POCL record - disabled concession (both), letter contact 1`] = `
 Object {
   "createTransactionPayload": Object {
     "dataSource": "Post Office Sales",
@@ -193,7 +193,7 @@ Object {
 }
 `;
 
-exports[`transaction transforms transforms a POCL record - disabled concession (pip only), multiple contact 1`] = `
+exports[`transaction.bindings transaction transforms transforms a POCL record - disabled concession (pip only), multiple contact 1`] = `
 Object {
   "createTransactionPayload": Object {
     "dataSource": "Post Office Sales",
@@ -245,7 +245,7 @@ Object {
 }
 `;
 
-exports[`transaction transforms transforms a POCL record - gmt time, no concession, email contact 1`] = `
+exports[`transaction.bindings transaction transforms transforms a POCL record - gmt time, no concession, email contact 1`] = `
 Object {
   "createTransactionPayload": Object {
     "dataSource": "Post Office Sales",
