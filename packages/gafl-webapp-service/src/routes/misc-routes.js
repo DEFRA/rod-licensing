@@ -35,7 +35,8 @@ const simpleView = view => ({
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     return h.view(view.page, {
       mssgs,
-      altLang
+      altLang,
+      langCode: /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
     })
   }
 })
@@ -96,6 +97,7 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const langCode = /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
 
       return h.view(COOKIES.page, {
         altLang,
@@ -108,7 +110,8 @@ export default [
         },
         uri: {
           buy: CONTROLLER.uri
-        }
+        },
+        langCode
       })
     }
   },

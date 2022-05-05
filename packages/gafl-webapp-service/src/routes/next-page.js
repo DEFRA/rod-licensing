@@ -18,7 +18,7 @@ export const nextPage = async request => {
 
   // If the current page has an error then reload it.
   if (!status[status.currentPage] && currentPage !== 'start') {
-    return routeNode.current.uri
+    return `${routeNode.current.uri}${/\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''}`
   }
   // Update the transaction with the validated page details
   if (typeof updateTransactionFunctions[currentPage] === 'function') {
@@ -29,6 +29,5 @@ export const nextPage = async request => {
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
   // Locate the next page
-
-  return routeNode.next[result].page.uri
+  return `${routeNode.next[result].page.uri}${/\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''}`
 }

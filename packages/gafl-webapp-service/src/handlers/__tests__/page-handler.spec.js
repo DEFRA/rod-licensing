@@ -11,7 +11,10 @@ describe('The page handler function', () => {
   beforeAll(() => {
     fakeDebug = db.mock.results[0].value
   })
-  beforeEach(jest.clearAllMocks)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    journeyDefinition.length = 0
+  })
 
   it('the get method re-throws any exceptions which are not transaction errors ', async () => {
     const request = getSampleRequest()
@@ -60,12 +63,50 @@ describe('The page handler function', () => {
       const { get } = pageHandler(null, 'view', '/next/page')
       const request = getSampleRequest(undefined, undefined, queryString)
       const toolkit = getSampleToolkit()
+
       await get(request, toolkit)
-      console.log(toolkit.view.mock.calls[0])
+
       expect(toolkit.view).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           backRef: `${backLink}?lang=cy`
+        })
+      )
+    }
+  )
+
+  it.each([['?lang=cy'], ['?data=abc123&lang=cy'], ['?misc-info=123&extra-rods=2&lang=cy&sprout-surprise=no-thanks']])(
+    'back link function back ref includes welsh language code, but no other querystring arguments',
+    async queryString => {
+      const backLink = () => '/previous/page'
+      journeyDefinition.push({ current: { page: 'view' }, backLink })
+      const { get } = pageHandler(null, 'view', '/next/page')
+      const request = getSampleRequest(undefined, undefined, queryString)
+      const toolkit = getSampleToolkit()
+
+      await get(request, toolkit)
+
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          backRef: `${backLink()}?lang=cy`
+        })
+      )
+    }
+  )
+
+  it.each([[() => null], [null], [''], [() => '']])(
+    'if back link is null, back ref is null even if language is specified in querystring',
+    async backLink => {
+      journeyDefinition.push({ current: { page: 'view' }, backLink })
+      const { get } = pageHandler(null, 'view', '/next/page')
+      const request = getSampleRequest(undefined, undefined, '?lang=cy')
+      const toolkit = getSampleToolkit()
+      await get(request, toolkit)
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          backRef: null
         })
       )
     }
@@ -112,7 +153,8 @@ const getSampleRequest = (pageHelpers = {}, referrer = 'https://sampleurl.gov.uk
         get: () => ({})
       },
       transaction: {
-        get: () => ({})
+        get: () => ({}),
+        getCurrentPermission: () => {}
       }
     }
   }),

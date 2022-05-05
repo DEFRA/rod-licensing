@@ -29,13 +29,16 @@ const getBackReference = async (request, view) => {
     return null
   }
 
+  const queryString = /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
+
   if (typeof current.backLink === 'function') {
-    return current.backLink(
+    const backLink = current.backLink(
       await request.cache().helpers.status.getCurrentPermission(),
       await request.cache().helpers.transaction.getCurrentPermission()
     )
+    return backLink ? `${backLink}${queryString}` : null
   } else {
-    return `${current.backLink}${/\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''}`
+    return `${current.backLink}${queryString}`
   }
 }
 
