@@ -13,15 +13,15 @@ const validator = Joi.object({
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
+  const queryString = /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
   return {
     isLicenceForYou: permission.isLicenceForYou,
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
     isPhysical: isPhysical(permission),
     uri: {
-      entryPage: ADDRESS_ENTRY.uri,
-      osTerms: OS_TERMS.uri
+      entryPage: `${ADDRESS_ENTRY.uri}${queryString}`,
+      osTerms: `${OS_TERMS.uri}${queryString}`
     }
   }
 }
