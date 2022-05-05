@@ -5,7 +5,6 @@ import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
-import url from 'url'
 
 const debug = db('webapp:page-handler')
 
@@ -49,17 +48,6 @@ const clearErrorsFromOtherPages = async (request, view) => {
     .map(entry => entry[0])
 
   await Promise.all(pagesWithError.map(async p => request.cache().helpers.page.setCurrentPermission(p, {})))
-}
-
-const getTarget = async (completion, request) => {
-  const completionResult = typeof completion === 'function' ? await completion(request) : completion
-  if (request?.info?.referrer) {
-    const referrer = new url.URL(request.info.referrer)
-    if (referrer?.search?.includes('lang=cy')) {
-      return `${completionResult}${referrer.search}`
-    }
-  }
-  return completionResult
 }
 
 /**
@@ -128,14 +116,20 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*|Response>}
    */
   post: async (request, h) => {
+    console.log('post')
     await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload })
     const status = await request.cache().helpers.status.getCurrentPermission()
     status.currentPage = view
     status[view] = PAGE_STATE.completed
     await request.cache().helpers.status.setCurrentPermission(status)
 
-    const target = await getTarget(completion, request)
-    return h.redirect(target)
+    if (typeof completion === 'function') {
+      console.log('redirect 1')
+      return h.redirect(await completion(request))
+    } else {
+      console.log('redirect 2')
+      return h.redirect(completion)
+    }
   },
   /**
    * Generic error handler for pages
@@ -148,7 +142,8 @@ export default (path, view, completion, getData) => ({
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
-      return h.redirect(request.path).takeover()
+      const url = `${request.path}${/\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''}`
+      return h.redirect(url).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {

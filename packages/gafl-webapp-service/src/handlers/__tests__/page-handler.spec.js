@@ -17,7 +17,7 @@ describe('The page handler function', () => {
   })
 
   it('the get method re-throws any exceptions which are not transaction errors ', async () => {
-    const request = getSampleRequest()
+    const request = getMockRequest()
 
     const getData = async () => {
       throw new Error('Random exception')
@@ -31,10 +31,8 @@ describe('The page handler function', () => {
   })
 
   it('the error method re-throws any exceptions which are not transaction errors ', async () => {
-    const request = getSampleRequest({
-      setCurrentPermission: () => {
-        throw new Error('Random exception')
-      }
+    const request = getMockRequest(() => {
+      throw new Error('Random exception')
     })
     try {
       await pageHandler().error(request, null, { details: [] })
@@ -44,134 +42,70 @@ describe('The page handler function', () => {
   })
 
   it('logs the cache if getCurrentPermission throws an error', async () => {
-    const request = getSampleRequest({
-      getCurrentPermission: () => {
-        throw new Error('Random exception')
-      }
-    })
+    const request = {
+      cache: () => ({
+        helpers: {
+          page: {
+            getCurrentPermission: () => {
+              throw new Error('Random exception')
+            },
+            get: () => ({})
+          },
+          status: {
+            get: () => ({})
+          },
+          transaction: {
+            get: () => ({})
+          }
+        }
+      })
+    }
     await expect(pageHandler().get(request)).rejects.toThrow('Random exception')
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Page cache'))
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Status cache'))
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Transaction cache'))
   })
 
-  it.each([['?lang=cy'], ['?other-data=abc123&lang=cy'], ['?misc-info=123&extra-rods=2&lang=cy&rhubarb-crumble=yes-please']])(
-    'back ref includes welsh language code, but no other querystring arguments',
-    async queryString => {
-      const backLink = '/previous/page'
-      journeyDefinition.push({ current: { page: 'view' }, backLink })
-      const { get } = pageHandler(null, 'view', '/next/page')
-      const request = getSampleRequest(undefined, undefined, queryString)
-      const toolkit = getSampleToolkit()
-
-      await get(request, toolkit)
-
-      expect(toolkit.view).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          backRef: `${backLink}?lang=cy`
-        })
-      )
+  it.each([
+    ['?lang=cy', '\\?lang=cy'],
+    ['?other-info=abc123&lang=cy', '\\?lang=cy'],
+    ['?extra-info=123&extra-rods=2&lang=cy&cold-beer=yes-please', '\\?lang=cy'],
+    ['', ''],
+    ['?other-info=bbb-111', ''],
+    ['?misc-data=999&extra-rods=1&marmite=no-thanks', '']
+  ])('persists the lang code when reloading the page in the event of an error', async (search, expected) => {
+    console.log('expected', typeof expected)
+    const { error } = pageHandler('', 'view')
+    const mockToolkit = {
+      redirect: jest.fn(() => ({ takeover: () => {} }))
     }
-  )
-
-  it.each([['?lang=cy'], ['?data=abc123&lang=cy'], ['?misc-info=123&extra-rods=2&lang=cy&sprout-surprise=no-thanks']])(
-    'back link function back ref includes welsh language code, but no other querystring arguments',
-    async queryString => {
-      const backLink = () => '/previous/page'
-      journeyDefinition.push({ current: { page: 'view' }, backLink })
-      const { get } = pageHandler(null, 'view', '/next/page')
-      const request = getSampleRequest(undefined, undefined, queryString)
-      const toolkit = getSampleToolkit()
-
-      await get(request, toolkit)
-
-      expect(toolkit.view).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          backRef: `${backLink()}?lang=cy`
-        })
-      )
+    const mockRequest = {
+      ...getMockRequest(),
+      path: '/current/page',
+      url: {
+        search
+      }
     }
-  )
-
-  it.each([[() => null], [null], [''], [() => '']])(
-    'if back link is null, back ref is null even if language is specified in querystring',
-    async backLink => {
-      journeyDefinition.push({ current: { page: 'view' }, backLink })
-      const { get } = pageHandler(null, 'view', '/next/page')
-      const request = getSampleRequest(undefined, undefined, '?lang=cy')
-      const toolkit = getSampleToolkit()
-      await get(request, toolkit)
-      expect(toolkit.view).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          backRef: null
-        })
-      )
-    }
-  )
-
-  it('post redirects to a Welsh page if the current page is in Welsh', async () => {
-    const { post } = pageHandler(null, 'view', '/next/page')
-    const request = getSampleRequest({}, 'https://sampleurl.gov.uk/current/page?lang=cy')
-    const toolkit = getSampleToolkit()
-    await post(request, toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(/\/next\/page\?lang=cy/))
-  })
-
-  it('post redirects to an English page if the current page is in English', async () => {
-    const { post } = pageHandler(null, 'view', '/next/page')
-    const request = getSampleRequest()
-    const toolkit = getSampleToolkit()
-    await post(request, toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(expect.stringMatching('/next/page'))
-  })
-
-  it("redirects to an English page if request.info.referrer isn't available", async () => {
-    const { post } = pageHandler(null, 'view', '/next/page')
-    const request = getSampleRequest()
-    delete request.info
-    const toolkit = getSampleToolkit()
-    await post(request, toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(expect.stringMatching('/next/page'))
+    await error(mockRequest, mockToolkit, { details: [] })
+    expect(mockToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(new RegExp(`/current/page${expected}`)))
   })
 })
 
-const getSampleRequest = (pageHelpers = {}, referrer = 'https://sampleurl.gov.uk/current/page', search = '') => ({
+const getMockRequest = (setCurrentPermission = () => {}) => ({
   cache: () => ({
     helpers: {
       page: {
         getCurrentPermission: () => ({}),
-        get: () => ({}),
-        setCurrentPermission: () => {},
-        ...pageHelpers
+        setCurrentPermission
       },
       status: {
         getCurrentPermission: () => ({}),
-        setCurrentPermission: () => {},
-        get: () => ({})
-      },
-      transaction: {
-        get: () => ({}),
-        getCurrentPermission: () => {}
+        setCurrentPermission: () => {}
       }
     }
   }),
+  path: '/we/are/here',
   url: {
-    search
-  },
-  info: {
-    referrer
-  },
-  i18n: {
-    getCatalog: () => [],
-    getLocales: () => [],
-    getLocale: () => ''
+    search: ''
   }
-})
-
-const getSampleToolkit = () => ({
-  redirect: jest.fn(),
-  view: jest.fn()
 })
