@@ -1,5 +1,6 @@
 import { getData } from '../route'
 import uri from '../../../../../uri.js'
+import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
 
 jest.mock('../../../../../uri.js', () => ({
   ADDRESS_LOOKUP: { uri: '/address/lookup' },
@@ -8,9 +9,12 @@ jest.mock('../../../../../uri.js', () => ({
 }))
 jest.mock('../../../../../routes/next-page.js', () => ({ nextPage: () => {} }))
 jest.mock('../../../../../routes/page-route.js', () => () => {})
+jest.mock('../../../../../processors/uri-helper.js', () => ({ addLanguageCodeToUri: jest.fn() }))
 
 describe('address-lookup > route', () => {
   describe('getData', () => {
+    beforeEach(jest.clearAllMocks)
+
     it('return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
       const result = await getData(getMockRequest(() => ({ concessions: [], isLicenceForYou: true })))
       expect(result.isLicenceForYou).toBeTruthy()
@@ -25,22 +29,25 @@ describe('address-lookup > route', () => {
       ['entryPage', uri.ADDRESS_ENTRY.uri],
       ['osTerms', uri.OS_TERMS.uri]
     ])('uri tests', (linkKey, targetURL) => {
-      it.each([
-        ['?lang=cy', '\\?lang=cy'],
-        ['?other-info=abc123&lang=cy', '\\?lang=cy'],
-        ['?extra-info=123&extra-rods=2&lang=cy&cold-beer=yes-please', '\\?lang=cy'],
-        ['', ''],
-        ['?other-info=bbb-111', ''],
-        ['?misc-data=999&extra-rods=1&marmite=no-thanks', '']
-      ])(`appends Welsh language code to ${linkKey} link if necessary`, async (search, expectedQueryString) => {
-        const request = {
-          ...getMockRequest(),
-          url: {
-            search
-          }
-        }
-        const data = await getData(request)
-        expect(data.uri[linkKey]).toEqual(expect.stringMatching(`${targetURL}${expectedQueryString}`))
+      it(`calls addLanguageCodeToUri with ${linkKey} url`, async () => {
+        const mockRequest = getMockRequest()
+        await getData(mockRequest)
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, targetURL)
+      })
+
+      it('returns addLanguageCodeToUri value for uri', async () => {
+        const mockRequest = getMockRequest()
+        addLanguageCodeToUri.mockReturnValue(`here's your url: ${targetURL}, I hope you're happy`)
+
+        const data = await getData(mockRequest)
+
+        expect(data).toEqual(
+          expect.objectContaining({
+            uri: expect.objectContaining({
+              [linkKey]: `here's your url: ${targetURL}, I hope you're happy`
+            })
+          })
+        )
       })
     })
   })

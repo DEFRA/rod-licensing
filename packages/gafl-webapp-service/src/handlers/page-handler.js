@@ -1,10 +1,10 @@
 import db from 'debug'
-
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
 
@@ -28,16 +28,14 @@ const getBackReference = async (request, view) => {
     return null
   }
 
-  const queryString = /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
-
   if (typeof current.backLink === 'function') {
     const backLink = current.backLink(
       await request.cache().helpers.status.getCurrentPermission(),
       await request.cache().helpers.transaction.getCurrentPermission()
     )
-    return backLink ? `${backLink}${queryString}` : null
+    return backLink ? addLanguageCodeToUri(request, backLink) : null
   } else {
-    return `${current.backLink}${queryString}`
+    return addLanguageCodeToUri(request, current.backLink)
   }
 }
 
@@ -142,8 +140,8 @@ export default (path, view, completion, getData) => ({
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
-      const url = `${request.path}${/\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''}`
-      return h.redirect(url).takeover()
+
+      return h.redirect(addLanguageCodeToUri(request)).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {
