@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.53 (2022-05-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1265](https://github.com/DEFRA/rod-licensing/pull/1265) Do you want to go paperless? - welsh translation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 
 
 ## v1.23.0-rc.50 (2022-05-04)
