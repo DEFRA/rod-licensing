@@ -26,6 +26,7 @@ import authenticationHandler from '../handlers/authentication-handler.js'
 import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 import attribution from '../handlers/attribution-handler.js'
 import urlHandler from '../handlers/renewals-friendly-url-handler.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const simpleView = view => ({
   method: 'GET',
@@ -36,7 +37,9 @@ const simpleView = view => ({
     return h.view(view.page, {
       mssgs,
       altLang,
-      langCode: /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
+      uri: {
+        back: addLanguageCodeToUri(request, CONTROLLER.uri)
+      }
     })
   }
 })
@@ -97,7 +100,6 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
-      const langCode = /\?.*lang=cy.*$/.test(request.url.search) ? '?lang=cy' : ''
 
       return h.view(COOKIES.page, {
         altLang,
@@ -109,9 +111,8 @@ export default [
           albcors: ALBCORS_COOKIE_NAME
         },
         uri: {
-          buy: CONTROLLER.uri
-        },
-        langCode
+          back: addLanguageCodeToUri(request, CONTROLLER.uri)
+        }
       })
     }
   },
