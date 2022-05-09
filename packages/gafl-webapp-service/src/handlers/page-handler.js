@@ -90,7 +90,7 @@ export default (path, view, completion, getData) => ({
       } catch (err) {
         // If GetDataRedirect is thrown the getData function is requesting a redirect
         if (err instanceof GetDataRedirect) {
-          return h.redirect(err.redirectUrl)
+          return h.redirect(addLanguageCodeToUri(request, err.redirectUrl))
         }
 
         throw err
@@ -114,7 +114,6 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*|Response>}
    */
   post: async (request, h) => {
-    console.log('post')
     await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload })
     const status = await request.cache().helpers.status.getCurrentPermission()
     status.currentPage = view
@@ -122,10 +121,8 @@ export default (path, view, completion, getData) => ({
     await request.cache().helpers.status.setCurrentPermission(status)
 
     if (typeof completion === 'function') {
-      console.log('redirect 1')
       return h.redirect(await completion(request))
     } else {
-      console.log('redirect 2')
       return h.redirect(completion)
     }
   },

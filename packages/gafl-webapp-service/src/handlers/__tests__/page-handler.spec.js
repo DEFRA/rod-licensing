@@ -2,6 +2,7 @@ import db from 'debug'
 import pageHandler from '../page-handler.js'
 import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+import GetDataRedirect from '../get-data-redirect.js'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
@@ -116,6 +117,38 @@ describe('The page handler function', () => {
         backRef: null
       })
     )
+  })
+
+  it.each([['/go/somewhere'], ['/go/somewhere/else']])(
+    'GetDataRedirect being thrown will pass url to be decorated to addLanguageCodeToUri',
+    async redirectUri => {
+      journeyDefinition.push({ current: { page: 'view' }, backLink: '/previous/page' })
+      const getData = () => {
+        throw new GetDataRedirect(redirectUri)
+      }
+      const { get } = pageHandler(null, 'view', '/next/page', getData)
+      const toolkit = getMockToolkit()
+      const request = getMockRequest()
+
+      await get(request, toolkit)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, redirectUri)
+    }
+  )
+
+  it('GetDataRedirect being thrown will use addLanguageCodeToUri to decorate the redirect target', async () => {
+    journeyDefinition.push({ current: { page: 'view' }, backLink: '/previous/page' })
+    const getData = () => {
+      throw new GetDataRedirect('/go/somewhere/else')
+    }
+    const { get } = pageHandler(null, 'view', '/next/page', getData)
+    const returnValue = Symbol('/previous/page')
+    addLanguageCodeToUri.mockReturnValueOnce(returnValue)
+    const toolkit = getMockToolkit()
+
+    await get(getMockRequest(), toolkit)
+
+    expect(toolkit.redirect).toHaveBeenCalledWith(returnValue)
   })
 
   it('error calls addLanguageCodeToUri with request', async () => {
