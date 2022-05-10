@@ -72,6 +72,7 @@ export const getCsrfTokenCookieName = () => process.env.CSRF_TOKEN_COOKIE_NAME |
  */
 export const layoutContextAmalgamation = (request, h) => {
   const response = request.response
+  const queryString = /\?lang=cy/.test(request?.url?.search) ? '?lang=cy' : ''
   if (request.method === 'get' && response.variety === 'view') {
     Object.assign(response.source.context, {
       CSRF_TOKEN_NAME: getCsrfTokenCookieName(),
@@ -79,12 +80,12 @@ export const layoutContextAmalgamation = (request, h) => {
       TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
       SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true',
       _uri: {
-        cookies: COOKIES.uri,
-        refunds: REFUND_POLICY.uri,
-        accessibility: ACCESSIBILITY_STATEMENT.uri,
-        privacy: PRIVACY_POLICY.uri,
+        cookies: `${COOKIES.uri}${queryString}`,
+        refunds: `${REFUND_POLICY.uri}${queryString}`,
+        accessibility: `${ACCESSIBILITY_STATEMENT.uri}${queryString}`,
+        privacy: `${PRIVACY_POLICY.uri}${queryString}`,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-        clear: NEW_TRANSACTION.uri,
+        clear: `${NEW_TRANSACTION.uri}${queryString}`,
         queryParams: request.query
       },
       credentials: request.auth.credentials
