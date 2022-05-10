@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/payment-mop-up-job",
-  "version": "1.23.0-rc.56",
+  "version": "1.23.0-rc.57",
   "description": "Process incomplete web-sales",
   "type": "module",
   "engines": {
@@ -36,8 +36,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "1.23.0-rc.56",
-    "@defra-fish/connectors-lib": "1.23.0-rc.56",
+    "@defra-fish/business-rules-lib": "1.23.0-rc.57",
+    "@defra-fish/connectors-lib": "1.23.0-rc.57",
     "bottleneck": "^2.19.5",
     "debug": "^4.3.3",
     "moment": "^2.29.1"

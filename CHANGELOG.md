@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.57 (2022-05-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1275](https://github.com/DEFRA/rod-licensing/pull/1275) Welsh lang update for BOBO man address entry page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.56 (2022-05-10)
 
 #### :rocket: Enhancement
