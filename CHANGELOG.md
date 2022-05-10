@@ -1,4 +1,70 @@
 
+## v1.23.0-rc.53 (2022-05-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1265](https://github.com/DEFRA/rod-licensing/pull/1265) Do you want to go paperless? - welsh translation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+
+
+## v1.23.0-rc.50 (2022-05-04)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#1255](https://github.com/DEFRA/rod-licensing/pull/1255) International postcodes not accepted ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.23.0-rc.48 (2022-05-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1259](https://github.com/DEFRA/rod-licensing/pull/1259) Amend placement of warning on Licence conditions page ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.23.0-rc.47 (2022-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1254](https://github.com/DEFRA/rod-licensing/pull/1254) Update address hints to lower case ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.23.0-rc.46 (2022-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1253](https://github.com/DEFRA/rod-licensing/pull/1253) Result function not called for licence for page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.23.0-rc.45 (2022-04-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1256](https://github.com/DEFRA/rod-licensing/pull/1256) Fix for missing translation on BOBO date of birth page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.23.0-rc.44 (2022-04-27)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1249](https://github.com/DEFRA/rod-licensing/pull/1249) Bug fix for BOBO date of birth page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.23.0-rc.42 (2022-04-26)
 
