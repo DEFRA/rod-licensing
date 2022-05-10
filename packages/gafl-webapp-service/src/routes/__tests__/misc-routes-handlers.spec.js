@@ -224,23 +224,6 @@ describe('guidance page handlers', () => {
         })
       )
     })
-    // it.each([
-    //   ['?lang=cy', '?lang=cy'],
-    //   ['?other-data=abc123&lang=cy', '?lang=cy'],
-    //   ['?misc-info=123&extra-rods=2&lang=cy&rhubarb-crumble=yes-please', '?lang=cy'],
-    //   ['', ''],
-    //   ['?other-data=bbb-111', ''],
-    //   ['?misc-info=999&extra-rods=1&sprout-surprise=no-thanks', '']
-    // ])('populates langCode on pageData with welsh language code, where necessary', async (search, langCode) => {
-    //   const toolkit = getMockToolkit()
-    //   await pageHandler(getMockRequest({}, search), toolkit)
-    //   expect(toolkit.view).toHaveBeenCalledWith(
-    //     expect.any(String),
-    //     expect.objectContaining({
-    //       langCode
-    //     })
-    //   )
-    // })
   })
 
   const getMockRequest = (i18nValues, search = '') => {

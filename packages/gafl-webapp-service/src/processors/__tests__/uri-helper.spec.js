@@ -9,7 +9,6 @@ describe('URI Helpers: addLanguageCodeToURI', () => {
     ['?other-info=bbb-111', '^/any/page$', undefined],
     ['?misc-data=999&extra-rods=1&marmite=no-thanks', '^/any/old/page$', '/any/old/page']
   ])('persists the lang code when reloading the page in the event of an error', (search, expected, uri) => {
-    console.log(search, expected, uri)
     const mockRequest = {
       path: '/any/page',
       url: {
