@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.59 (2022-05-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1226](https://github.com/DEFRA/rod-licensing/pull/1226) Lang=cy is not persisting across pages ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.58 (2022-05-10)
 
 #### :rocket: Enhancement
