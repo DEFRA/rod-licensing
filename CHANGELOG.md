@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.56 (2022-05-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1270](https://github.com/DEFRA/rod-licensing/pull/1270) Is your email address correct - welsh translation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.23.0-rc.55 (2022-05-10)
 
 #### :rocket: Enhancement
