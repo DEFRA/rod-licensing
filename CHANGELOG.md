@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.63 (2022-05-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1266](https://github.com/DEFRA/rod-licensing/pull/1266) Feature/iwtf 2838 renew international licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.23.0-rc.60 (2022-05-11)
