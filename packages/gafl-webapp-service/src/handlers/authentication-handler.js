@@ -20,7 +20,7 @@ export default async (request, h) => {
   const dateOfBirth = await validation.contact
     .createBirthDateValidator(Joi)
     .validateAsync(`${payload['date-of-birth-year']}-${payload['date-of-birth-month']}-${payload['date-of-birth-day']}`)
-  const postcode = await validation.contact.createUKPostcodeValidator(Joi).validateAsync(payload.postcode)
+  const postcode = await validation.contact.createOverseasPostcodeValidator(Joi).validateAsync(payload.postcode)
 
   const permission = await request.cache().helpers.status.getCurrentPermission()
   const referenceNumber = payload.referenceNumber || permission.referenceNumber
