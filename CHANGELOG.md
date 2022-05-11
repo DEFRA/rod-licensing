@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.60 (2022-05-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1277](https://github.com/DEFRA/rod-licensing/pull/1277) Update welsh lang for BOBO go paperless page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.23.0-rc.59 (2022-05-10)
 
 #### :bug: Bug Fix
