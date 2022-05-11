@@ -15,7 +15,10 @@ describe('licence-length > route', () => {
           getCurrentPermission: mockTransactionCacheGet
         }
       }
-    })
+    }),
+    i18n: {
+      getCatalog: () => ({})
+    }
   }
 
   describe('getData', () => {

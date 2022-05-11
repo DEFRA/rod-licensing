@@ -67,7 +67,7 @@ export const getData = async request => {
     permission,
     startTimeString,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
-    licenceTypeStr: licenceTypeDisplay(permission),
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog()),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),

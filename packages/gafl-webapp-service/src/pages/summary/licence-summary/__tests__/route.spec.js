@@ -59,7 +59,12 @@ describe('licence-summary > route', () => {
             setCurrentPermission: mockTransactionCacheSet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => ({
+          licence_type_radio_salmon: 'Salmon and sea trout'
+        })
+      }
     }
 
     it('should return the name page uri', async () => {

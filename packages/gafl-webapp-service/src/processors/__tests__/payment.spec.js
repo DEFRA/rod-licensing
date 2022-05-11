@@ -5,6 +5,9 @@ jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
 
 const createRequest = (opts = {}) => ({
+  i18n: {
+    getCatalog: () => ({})
+  },
   headers: opts.headers || { 'x-forwarded-proto': 'https' },
   info: { host: opts.host || 'localhost:1234' },
   server: { info: { protocol: opts.protocol || '' } }
