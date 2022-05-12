@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.64 (2022-05-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1280](https://github.com/DEFRA/rod-licensing/pull/1280) Is the phone number correct - welsh translation ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.23.0-rc.63 (2022-05-11)
 
 #### :bug: Bug Fix
