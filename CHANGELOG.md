@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.65 (2022-05-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1286](https://github.com/DEFRA/rod-licensing/pull/1286) Find your address - missing welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.23.0-rc.64 (2022-05-12)
 
 #### :rocket: Enhancement
