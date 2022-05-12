@@ -95,41 +95,20 @@ describe('licence-summary > route', () => {
 
     it('should return a redirect error if firstName is not included on the licensee', async () => {
       const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: {} }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(NAME.uri)
+      const getDataRedirectError = new GetDataRedirect(NAME.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('should return a redirect error if lastName is not included on the licensee', async () => {
       const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: { firstName: 'John' } }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(NAME.uri)
+      const getDataRedirectError = new GetDataRedirect(NAME.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('should return a redirect error if date of birth is not included on the licensee', async () => {
       const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: { firstName: 'John', lastName: 'Smith' } }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(DATE_OF_BIRTH.uri)
+      const getDataRedirectError = new GetDataRedirect(DATE_OF_BIRTH.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('should return a redirect error if start date is not included on the licensee', async () => {
@@ -137,15 +116,8 @@ describe('licence-summary > route', () => {
         licensee: { firstName: 'John', lastName: 'Smith', birthDate: '1996-01-01' },
         licenceStartDate: null
       }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(LICENCE_TO_START.uri)
+      const getDataRedirectError = new GetDataRedirect(LICENCE_TO_START.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('should return a redirect error if number of rods is not included on the licensee', async () => {
@@ -154,15 +126,8 @@ describe('licence-summary > route', () => {
         licenceStartDate: '2025-01-01',
         licenceType: 'Salmon and sea trout'
       }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(LICENCE_TYPE.uri)
+      const getDataRedirectError = new GetDataRedirect(LICENCE_TYPE.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('should return a redirect error if licence type is not included on the licensee', async () => {
@@ -171,15 +136,8 @@ describe('licence-summary > route', () => {
         licenceStartDate: '2025-01-01',
         numberOfRods: '3'
       }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(LICENCE_TYPE.uri)
+      const getDataRedirectError = new GetDataRedirect(LICENCE_TYPE.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('should return a redirect error if licence length is not included on the licensee', async () => {
@@ -189,15 +147,8 @@ describe('licence-summary > route', () => {
         numberOfRods: '3',
         licenceType: 'Salmon and sea trout'
       }))
-      let error = false
-      try {
-        await getData(mockRequest(mockTransaction))
-      } catch (e) {
-        error = e
-      }
-      expect(error).not.toBeFalsy()
-      expect(error).toBeInstanceOf(GetDataRedirect)
-      expect(error.redirectUrl).toBe(LICENCE_LENGTH.uri)
+      const getDataRedirectError = new GetDataRedirect(LICENCE_LENGTH.uri)
+      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
     })
 
     it('multibuy - should return the name page uri', async () => {
