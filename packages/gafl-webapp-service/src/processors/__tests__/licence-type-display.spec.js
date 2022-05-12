@@ -38,47 +38,51 @@ describe('licenceTypeDisplay', () => {
     expect(result).toEqual('Over 65, Salmon and sea trout')
   })
 
-  it('returns Salmon and sea trout if type is Salmon and sea trout', () => {
-    permission.licenceType = 'Salmon and sea trout'
+  it.each([
+    ['Salmon and sea trout', null, 'Salmon and sea trout'],
+    ['Trout and coarse', '2', 'Trout and coarse, up to 2 rods'],
+    ['Trout and coarse', '3', 'Trout and coarse, up to 3 rods']
+  ])('returns correct licence type', (licenceType, numberOfRods, expected) => {
+    permission.licenceType = licenceType
+    permission.numberOfRods = numberOfRods
     const result = licenceTypeDisplay(permission, mssgs)
-    expect(result).toEqual('Salmon and sea trout')
-  })
-
-  it('returns Trout and coarse, up to 2 rods if type is Trout and coarse, up to 2 rods', () => {
-    permission.licenceType = 'Trout and coarse'
-    permission.numberOfRods = '2'
-    const result = licenceTypeDisplay(permission, mssgs)
-    expect(result).toEqual('Trout and coarse, up to 2 rods')
-  })
-
-  it('returns Trout and coarse, up to 3 rods if type is Trout and coarse, up to 3 rods', () => {
-    permission.licenceType = 'Trout and coarse'
-    permission.numberOfRods = '3'
-    const result = licenceTypeDisplay(permission, mssgs)
-    expect(result).toEqual('Trout and coarse, up to 3 rods')
+    expect(result).toEqual(expected)
   })
 })
 
 describe('licenceTypeAndLengthDisplay', () => {
-  it('returns 12 months if licence length is 12M', () => {
+  it.each([
+    ['12M', 'Salmon and sea trout', null, 'Salmon and sea trout, 12 months'],
+    ['12M', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 12 months'],
+    ['12M', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 12 months'],
+    ['8D', 'Salmon and sea trout', null, 'Salmon and sea trout, 8 days'],
+    ['8D', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 8 days'],
+    ['8D', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 8 days'],
+    ['1D', 'Salmon and sea trout', null, 'Salmon and sea trout, 1 day'],
+    ['1D', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 1 day'],
+    ['1D', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 1 day']
+  ])('returns correct licence length', (licenceLength, licenceType, numberOfRods, expected) => {
+    permission.licenceLength = licenceLength
+    permission.licenceType = licenceType
+    permission.numberOfRods = numberOfRods
+    const result = licenceTypeAndLengthDisplay(permission, mssgs)
+    expect(result).toEqual(expected)
+  })
+
+  it('returns junior if licence length is junior', () => {
+    hasJunior.mockImplementationOnce(() => true)
     permission.licenceLength = '12M'
     permission.licenceType = 'Salmon and sea trout'
     const result = licenceTypeAndLengthDisplay(permission, mssgs)
-    expect(result).toEqual('Salmon and sea trout, 12 months')
+    expect(result).toEqual('Junior, Salmon and sea trout, 12 months')
   })
 
-  it('returns 8 days if licence length is 8D', () => {
-    permission.licenceLength = '8D'
+  it('returns senior if licence length is senior', () => {
+    hasSenior.mockImplementationOnce(() => true)
+    permission.licenceLength = '12M'
     permission.licenceType = 'Salmon and sea trout'
     const result = licenceTypeAndLengthDisplay(permission, mssgs)
-    expect(result).toEqual('Salmon and sea trout, 8 days')
-  })
-
-  it('returns 1 day if licence length is 1D', () => {
-    permission.licenceLength = '1D'
-    permission.licenceType = 'Salmon and sea trout'
-    const result = licenceTypeAndLengthDisplay(permission, mssgs)
-    expect(result).toEqual('Salmon and sea trout, 1 day')
+    expect(result).toEqual('Over 65, Salmon and sea trout, 12 months')
   })
 })
 
