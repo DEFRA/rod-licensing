@@ -1,4 +1,13 @@
 
+## v1.23.0-rc.69 (2022-05-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1289](https://github.com/DEFRA/rod-licensing/pull/1289) Update OS Crown and Copyright ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.23.0-rc.66 (2022-05-12)
