@@ -8,10 +8,10 @@ describe('The multibuy handler', () => {
   it.each([[3], [4], [5]])('should return multibuy as yes if multibuy and licence is for you', async length => {
     const transaction = {
       permissions: {
-        length: length,
-        isLicenceForYou: true
+        length: length
       }
     }
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
     const result = await isMultibuyForYou(generateRequestMock(transaction))
     expect(result).toBeTruthy()
   })
@@ -19,10 +19,10 @@ describe('The multibuy handler', () => {
   it('should not return isMultibuyForYou when licence is for someone else', async () => {
     const transaction = {
       permissions: {
-        length: 2,
-        isLicenceForYou: false
+        length: 2
       }
     }
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
     const result = await isMultibuyForYou(generateRequestMock(transaction))
     expect(result).toBeFalsy()
   })
@@ -30,20 +30,23 @@ describe('The multibuy handler', () => {
   it('should not return isMultibuyForYou when isnt licence in basket', async () => {
     const transaction = {
       permissions: {
-        length: 0,
-        isLicenceForYou: true
+        length: 0
       }
     }
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
     const result = await isMultibuyForYou(generateRequestMock(transaction))
     expect(result).toBeFalsy()
   })
+
+  const mockTransactionCacheGet = jest.fn()
 
   const generateRequestMock = (transaction = {}) => ({
     cache: jest.fn(() => ({
       helpers: {
         transaction: {
           get: jest.fn(() => transaction),
-          set: jest.fn()
+          set: jest.fn(),
+          getCurrentPermission: mockTransactionCacheGet
         }
       }
     }))
