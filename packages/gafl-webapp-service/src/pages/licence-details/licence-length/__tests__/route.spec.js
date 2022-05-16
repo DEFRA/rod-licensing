@@ -40,7 +40,7 @@ describe('licence-length > route', () => {
       const sampleRequest = {
         ...mockRequest,
         i18n: {
-          getCatalog: () => (catalog)
+          getCatalog: () => catalog
         }
       }
       mockTransactionCacheGet.mockImplementationOnce(() => permission)
