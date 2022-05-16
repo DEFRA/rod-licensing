@@ -46,7 +46,7 @@ export default {
   [DISABILITY_CONCESSION.page]: disabilityConcession,
   [LICENCE_LENGTH.page]: licenceLength,
   [LICENCE_TYPE.page]: licenceType,
-  [LICENCE_FOR]: licenceFor,
+  [LICENCE_FOR.page]: licenceFor,
   [LICENCE_START_TIME.page]: licenceStartTime,
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_ENTRY.page]: addressEntry,

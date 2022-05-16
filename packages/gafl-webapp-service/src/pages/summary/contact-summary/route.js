@@ -5,6 +5,7 @@ import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 
 import {
   CONTACT_SUMMARY,
@@ -39,16 +40,47 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  const checkIsMultibuyForYou = await isMultibuyForYou(request)
+
+  if (checkIsMultibuyForYou === true) {
+    const transaction = await request.cache().helpers.transaction.get()
+
+    const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
+
+    const xferProps = [
+      'premises',
+      'street',
+      'locality',
+      'town',
+      'postcode',
+      'countryCode',
+      'preferredMethodOfConfirmation',
+      'email',
+      'text',
+      'preferredMethodOfReminder',
+      'preferredMethodOfNewletter'
+    ]
+    for (const prop of xferProps) {
+      permission.licensee[prop] = getLicence.licensee[prop]
+    }
+
+    const pagesToSkip = [ADDRESS_ENTRY.page, ADDRESS_SELECT.page, CONTACT.page, LICENCE_CONFIRMATION_METHOD.page]
+    for (const page of pagesToSkip) {
+      status[page] = true
+    }
+
+    await request.cache().helpers.transaction.setCurrentPermission(permission)
+  }
 
   checkNavigation(status, permission)
 
   status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
-
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
     uri: {
