@@ -114,22 +114,23 @@ describe('licence-summary > route', () => {
       expect(error.redirectUrl).toBe(NAME.uri)
     })
 
-    it.only('licenceTypeDisplay is called with the expected arguments', async () => {
+    it('licenceTypeDisplay is called with the expected arguments', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
       const catalog = Symbol('mock catalog')
-      const permission = Symbol('mock permission')
+      const permission = {
+        permit: {
+          cost: 1
+        },
+        licensee: {
+          birthDate: '1996-01-01'
+        }
+      }
       const sampleRequest = {
         ...mockRequest,
         i18n: {
-          getCatalog: () => (catalog)
+          getCatalog: () => catalog
         }
       }
-      // permission.permit = {
-      //   cost: 6
-      // }
-      // permission.licensee = {
-      //   birthDate: '1946-01-01'
-      // }
 
       mockTransactionCacheGet.mockImplementationOnce(() => permission)
 

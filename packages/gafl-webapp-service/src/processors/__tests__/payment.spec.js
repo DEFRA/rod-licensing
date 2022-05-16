@@ -67,6 +67,37 @@ describe('preparePayment', () => {
     expect(result.reference).toBe(transaction.id)
   })
 
+  it('licenceTypeAndLengthDisplay is called with the expected arguments', () => {
+    const catalog = {}
+    const permission = {
+      licensee: {
+        firstName: 'Lando',
+        lastName: 'Norris',
+        email: 'test@example.com',
+        premises: '4',
+        street: 'Buttercup lane',
+        locality: 'Clifton',
+        postcode: 'BS8 3TP',
+        town: 'Bristol',
+        country: 'GB-ENG'
+      }
+    }
+
+    preparePayment(request, transaction)
+
+    expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
+  })
+
+  it('return value of licenceTypeDisplay', () => {
+    const returnValue = Symbol('return value')
+    licenceTypeAndLengthDisplay.mockReturnValueOnce(returnValue)
+
+    const result = preparePayment(request, transaction)
+    const ret = result.description
+
+    expect(ret).toEqual(returnValue)
+  })
+
   describe('provides the correct description', () => {
     it('when there is only 1 permission', () => {
       expect(result.description).toBe('Trout and coarse, up to 2 rods, 8 day')
