@@ -81,7 +81,6 @@ export const getData = async request => {
   status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
-  console.log('countryName', countryName)
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
     uri: {
