@@ -48,6 +48,7 @@ export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
+  console.log(status)
   if (!status.renewal) {
     /*
      * Before we try and filter the permit it is necessary to check that the user has navigated through
@@ -55,6 +56,7 @@ export const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary.
      */
+    console.log('renewal')
     checkNavigation(permission)
   }
 

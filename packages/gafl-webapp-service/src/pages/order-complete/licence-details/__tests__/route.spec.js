@@ -1,12 +1,35 @@
 import { getData } from '../route'
-import '../../../../processors/pricing-summary.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+import { COMPLETION_STATUS } from '../../../../constants.js'
 
-jest.mock('../../../../processors/pricing-summary.js')
 jest.mock('../../../../processors/licence-type-display.js')
+jest.mock('../../../../constants', () => ({
+  COMPLETION_STATUS: {
+    agreed: 'agreed',
+    posted: 'posted',
+    finalised: 'finalised'
+  }
+}))
 
 describe('licence-length > route', () => {
   const mockTransactionCacheGet = jest.fn()
+
+  const generateRequestMock = (status = {}) => ({
+    cache: jest.fn(() => ({
+      helpers: {
+        status: {
+          get: jest.fn(() => status),
+          set: jest.fn()
+        },
+        transaction: {
+          getCurrentPermission: mockTransactionCacheGet
+        }
+      }
+    })),
+    i18n: {
+      getCatalog: () => ({})
+    }
+  })
 
   const mockRequest = {
     cache: () => ({
@@ -22,18 +45,6 @@ describe('licence-length > route', () => {
   }
 
   describe('getData', () => {
-    it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
-      const result = await getData(mockRequest)
-      expect(result.isLicenceForYou).toBeTruthy()
-    })
-
-    it('should return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
-      const result = await getData(mockRequest)
-      expect(result.isLicenceForYou).toBeFalsy()
-    })
-
     it('licenceTypeDisplay is called with the expected arguments', async () => {
       const catalog = Symbol('mock catalog')
       const permission = Symbol('mock permission')
@@ -50,10 +61,16 @@ describe('licence-length > route', () => {
       expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
     })
 
-    it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
+    it.only('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
       const returnValue = Symbol('return value')
       licenceTypeDisplay.mockReturnValueOnce(returnValue)
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
+
+      const query = {
+        [COMPLETION_STATUS.agreed]: 'agreed',
+        [COMPLETION_STATUS.posted]: 'posted',
+        [COMPLETION_STATUS.finalised]: 'finalised'
+      }
+      const mockRequest = generateRequestMock(query)
 
       const result = await getData(mockRequest)
       const ret = result.licenceTypeStr

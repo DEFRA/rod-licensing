@@ -3,8 +3,10 @@ import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constant
 import { NAME } from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
+import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 
 jest.mock('../../find-permit.js')
+jest.mock('../../../../processors/licence-type-display.js')
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
@@ -110,6 +112,40 @@ describe('licence-summary > route', () => {
       expect(error).not.toBeFalsy()
       expect(error).toBeInstanceOf(GetDataRedirect)
       expect(error.redirectUrl).toBe(NAME.uri)
+    })
+
+    it.only('licenceTypeDisplay is called with the expected arguments', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
+      const catalog = Symbol('mock catalog')
+      const permission = Symbol('mock permission')
+      const sampleRequest = {
+        ...mockRequest,
+        i18n: {
+          getCatalog: () => (catalog)
+        }
+      }
+      // permission.permit = {
+      //   cost: 6
+      // }
+      // permission.licensee = {
+      //   birthDate: '1946-01-01'
+      // }
+
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+
+      await getData(sampleRequest)
+
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
+    })
+
+    it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
+      const returnValue = Symbol('return value')
+      licenceTypeDisplay.mockReturnValueOnce(returnValue)
+
+      const result = await getData(mockRequest)
+      const ret = result.licenceTypeStr
+
+      expect(ret).toEqual(returnValue)
     })
   })
 })
