@@ -6,6 +6,7 @@ import resultFunctions from '../handlers/result-functions.js'
 import updateTransactionFunctions from '../handlers/update-transaction-functions.js'
 import journeyDefinition from './journey-definition.js'
 import { CommonResults } from '../constants.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const defaultResultFunction = () => CommonResults.OK
 
@@ -15,10 +16,9 @@ export const nextPage = async request => {
   // Determine the current page
   const currentPage = status.currentPage || 'start'
   const routeNode = journeyDefinition.find(p => p.current.page === currentPage)
-
   // If the current page has an error then reload it.
   if (!status[status.currentPage] && currentPage !== 'start') {
-    return routeNode.current.uri
+    return addLanguageCodeToUri(request, routeNode.current.uri)
   }
   // Update the transaction with the validated page details
   if (typeof updateTransactionFunctions[currentPage] === 'function') {
@@ -29,6 +29,5 @@ export const nextPage = async request => {
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
   // Locate the next page
-
-  return routeNode.next[result].page.uri
+  return addLanguageCodeToUri(request, routeNode.next[result].page.uri)
 }

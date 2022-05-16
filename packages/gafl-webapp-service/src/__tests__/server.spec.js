@@ -1,7 +1,16 @@
-import { createServer, init, server } from '../server.js'
+import { createServer, init, server, layoutContextAmalgamation } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
+import uris from '../uri.js'
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('../uri.js', () => ({
+  ...jest.requireActual('../uri.js'),
+  ACCESSIBILITY_STATEMENT: { uri: '/ACCESSIBILITY_STATEMENT' },
+  COOKIES: { uri: '/COOKIES' },
+  PRIVACY_POLICY: { uri: '/PRIVACY_POLICY' },
+  REFUND_POLICY: { uri: '/REFUND_POLICY' },
+  NEW_TRANSACTION: { uri: '/NEW_TRANSACTION' }
+}))
 
 export const catboxOptions = {
   port: 1234,
@@ -67,6 +76,82 @@ describe('The server', () => {
       } catch (e) {
         done(e)
       }
+    })
+  })
+
+  describe('layoutContextAmalgamation', () => {
+    it('should add query parameters to the response', () => {
+      const request = getSampleRequest()
+      layoutContextAmalgamation(request, {})
+      expect(request.response.source.context._uri.queryParams).toStrictEqual({ lang: 'cy' })
+    })
+
+    it.each([
+      ['true', true],
+      ['TRUE', true],
+      ['false', false],
+      ['FALSE', false]
+    ])(
+      'if SHOW_WELSH_CONTENT is %s, it should set SHOW_WELSH_CONTENT to %s in the response',
+      (inputShowWelshContent, outputShowWelshContent) => {
+        process.env.SHOW_WELSH_CONTENT = inputShowWelshContent
+        const request = getSampleRequest()
+        layoutContextAmalgamation(request, {})
+        expect(request.response.source.context.SHOW_WELSH_CONTENT).toBe(outputShowWelshContent)
+      }
+    )
+
+    it.each([
+      ['cookies', 'cookies.url', 'COOKIES'],
+      ['refunds', 'refunds.url', 'REFUND_POLICY'],
+      ['accessibility', 'access.ibility.uri', 'ACCESSIBILITY_STATEMENT'],
+      ['privacy', 'privacy.uri', 'PRIVACY_POLICY'],
+      ['clear', 'new-transaction.url', 'NEW_TRANSACTION']
+    ])('should append Welsh language code to _uri elements if the current page contains it', (element, uri, uriConst) => {
+      const request = getSampleRequest({
+        url: {
+          search: '?lang=cy'
+        }
+      })
+      uris[uriConst] = { uri }
+      const regexMatch = new RegExp(`^${uri}\\?lang=cy$`)
+      console.log('request?.url?.path?.search', request?.url?.path?.search)
+      layoutContextAmalgamation(request, {})
+      expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
+    })
+
+    it.each([
+      ['cookies', 'biscuits.url', 'COOKIES'],
+      ['refunds', 'i-want-my-money-back.url', 'REFUND_POLICY'],
+      ['accessibility', 'easy-to-use.uri', 'ACCESSIBILITY_STATEMENT'],
+      ['privacy', 'private.uri', 'PRIVACY_POLICY'],
+      ['clear', 'clear.url', 'NEW_TRANSACTION']
+    ])("should omit Welsh language code from _uri elements if the current page doesn't contain it", (element, uri, uriConst) => {
+      const request = getSampleRequest({
+        url: {
+          search: ''
+        }
+      })
+      uris[uriConst] = { uri }
+      const regexMatch = new RegExp(`^${uri}$`)
+      layoutContextAmalgamation(request, {})
+      expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
+    })
+
+    const getSampleRequest = (overrides = {}) => ({
+      auth: {},
+      method: 'get',
+      response: {
+        variety: 'view',
+        source: {
+          context: {}
+        }
+      },
+      query: { lang: 'cy' },
+      url: {
+        search: ''
+      },
+      ...overrides
     })
   })
 })

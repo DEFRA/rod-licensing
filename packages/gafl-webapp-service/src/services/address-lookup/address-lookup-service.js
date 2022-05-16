@@ -38,7 +38,7 @@ export default async (premises, postcode) => {
   return results
     ? results.map((r, idx) => ({
       id: idx,
-      address: r.address,
+      address: `${r.address.replace(r.postcode, '').toLowerCase()}${r.postcode}`,
       premises: r.premises,
       street: r.street_address,
       locality: r.locality,

@@ -28,13 +28,20 @@ describe('isStaticResource', () => {
 })
 
 describe('includesRegex', () => {
-  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/]
-  it.each(['/buy/renew/identify', '/renew/ABC123', '/renew/123123', '/renew/ABCDEF', '/renew/anytext'])(
-    'returns true if one of the regexes is matched %s',
-    async path => {
-      expect(includesRegex(path, regexArray)).toBeTruthy()
-    }
-  )
+  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/, /^\/renew-my-licence\/.*$/]
+  it.each([
+    '/buy/renew/identify',
+    '/renew/ABC123',
+    '/renew/123123',
+    '/renew/ABCDEF',
+    '/renew/anytext',
+    '/renew-my-licence/ABC123',
+    '/renew-my-licence/123123',
+    '/renew-my-licence/ABCDEF',
+    '/renew-my-licence/anytext'
+  ])('returns true if one of the regexes is matched %s', async path => {
+    expect(includesRegex(path, regexArray)).toBeTruthy()
+  })
 
   it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete'])('returns false if one of the regexes is not matched %s', async path => {
     expect(includesRegex(path, regexArray)).toBeFalsy()

@@ -35,6 +35,7 @@ const schemaObject = {
     id: Joi.string(),
     createTransactionPayload: Joi.object({
       dataSource: Joi.string(),
+      journalId: Joi.string().optional(),
       serialNumber: Joi.string(),
       permissions: Joi.array()
     }),
@@ -126,6 +127,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
     .example(uuidv4()),
   createTransactionPayload: {
     dataSource: Joi.string().optional(),
+    journalId: Joi.string().optional(),
     serialNumber: Joi.string()
       .trim()
       .required(),

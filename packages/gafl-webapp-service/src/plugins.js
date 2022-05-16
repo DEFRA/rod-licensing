@@ -97,13 +97,17 @@ const initialiseHapiGapiPlugin = () => {
   }
 }
 
-const initialiseHapiI18nPlugin = () => ({
-  plugin: HapiI18n,
-  options: {
-    locales: ['en'],
-    directory: path.join(Dirname, 'src/locales')
+const initialiseHapiI18nPlugin = () => {
+  const showWelshContent = process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true'
+  return {
+    plugin: HapiI18n,
+    options: {
+      locales: ['en', ...(showWelshContent ? ['cy'] : [])],
+      directory: path.join(Dirname, 'src/locales'),
+      ...(showWelshContent && { queryParameter: 'lang' })
+    }
   }
-})
+}
 
 export const getPlugins = () => {
   return [
