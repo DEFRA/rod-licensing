@@ -437,8 +437,7 @@ export default [
   {
     current: CHANGE_LICENCE_OPTIONS,
     next: {
-      [CommonResults.OK]:
-      {
+      [CommonResults.OK]: {
         page: VIEW_LICENCES
       }
     }

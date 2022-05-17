@@ -20,9 +20,7 @@ export const getData = async request => {
 }
 
 export const validator = Joi.object({
-  agree: Joi.string()
-    .valid('yes')
-    .required()
+  agree: Joi.string().valid('yes').required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 export default pageRoute(VIEW_LICENCES.page, VIEW_LICENCES.uri, validator, nextPage, getData)
