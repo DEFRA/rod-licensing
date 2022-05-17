@@ -1,4 +1,6 @@
-{% extends "standard-form.njk" %}
+{% extends "layout.njk" %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% if data.reason === 'not-due' %}
     {% set title = mssgs.renewal_inactive_title_1 %}
@@ -8,15 +10,36 @@
     {% set title = mssgs.renewal_inactive_title_3 %}
 {% endif %}
 
-{% block pageContent %}
-    {% if data.reason === 'not-due' %}
-           <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_not_due_2 }}{{ data.validTo }}</p>
-           <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_3 }}</p>
-    {% elseif data.reason === 'expired' %}
-           <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_has_expired_1 }}{{ data.validTo }}{{ mssgs.renewal_inactive_has_expired_2 }}</p>
-           <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_3 }}</p>
-    {% elseif data.reason === 'not-annual' %}
-           <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_not_annual_1 }}</p>
-           <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_3 }}</p>
-    {% endif %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if backRef %}
+                {{ govukBackLink({
+                    text: mssgs.back,
+                    href: backRef,
+                    classes: "govuk-!-margin-bottom-7"
+                }) }}
+            {% endif %}
+
+            {% call govukFieldset({
+                legend: {
+                    text: title,
+                    classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                    isPageHeading: true
+                }
+            }) %}
+      
+            {% if data.reason === 'not-due' %}
+                <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_not_due_2 }}{{ data.validTo }}</p>
+            {% elseif data.reason === 'expired' %}
+                <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_has_expired_1 }}{{ data.validTo }}{{ mssgs.renewal_inactive_has_expired_2 }}</p>
+            {% elseif data.reason === 'not-annual' %}
+                <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_not_annual_1 }}</p>
+            {% endif %}
+            <p class="govuk-body-l">{{ mssgs.renewal_inactive_title_4 }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.renewal_inactive_title_link }}</a></p>
+
+            {% endcall %}
+        </div>
+    </div>
 {% endblock %}
