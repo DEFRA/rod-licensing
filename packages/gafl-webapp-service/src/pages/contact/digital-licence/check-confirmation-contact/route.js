@@ -12,14 +12,14 @@ export const getData = async request => {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
+  const whatToChange = licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ? '?change=email' : '?change=mobile'
+  const change = addLanguageCodeToUri(request, `${LICENCE_CONFIRMATION_METHOD.uri}${whatToChange}`)
+
   return {
     licensee,
     uri: {
-      licenceConfirmationMethod: addLanguageCodeToUri(request, LICENCE_CONFIRMATION_METHOD.uri),
       contact: addLanguageCodeToUri(request, CONTACT.uri),
-      change: `${LICENCE_CONFIRMATION_METHOD.uri}${
-        licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ? '?change=email' : '?change=mobile'
-      }`
+      change
     }
   }
 }

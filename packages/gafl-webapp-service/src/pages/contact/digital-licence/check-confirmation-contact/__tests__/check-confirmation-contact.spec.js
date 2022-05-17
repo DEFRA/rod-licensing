@@ -43,24 +43,13 @@ describe('.getData', () => {
     await expect(func).rejects.toThrow(getDataRedirectError)
   })
 
-  it.each([
-    { preferredMethodOfConfirmation: HOW_CONTACTED.email, changeType: 'email' },
-    { preferredMethodOfConfirmation: HOW_CONTACTED.text, changeType: 'mobile' }
-  ])(
-    'appends ?change=$changeType to licenceConfirmationMethod url for changeLinkUrl',
-    async ({ preferredMethodOfConfirmation, changeType }) => {
-      const changeLinkURL = `${LICENCE_CONFIRMATION_METHOD.uri}?change=${changeType}`
-      const data = await getData(createRequestMock({ preferredMethodOfConfirmation }))
-      expect(data.uri.change).toEqual(changeLinkURL)
-    }
-  )
-
   describe.each([
-    { urlName: 'licenceConfirmationMethod', url: LICENCE_CONFIRMATION_METHOD.uri },
-    { urlName: 'contact', url: CONTACT.uri }
-  ])('$urlName is decorated by addLanguageCodeToUri', ({ urlName, url }) => {
+    { urlName: 'change', url: `${LICENCE_CONFIRMATION_METHOD.uri}?change=email`, preferredMethodOfConfirmation: HOW_CONTACTED.email },
+    { urlName: 'change', url: `${LICENCE_CONFIRMATION_METHOD.uri}?change=mobile`, preferredMethodOfConfirmation: HOW_CONTACTED.text },
+    { urlName: 'contact', url: CONTACT.uri, preferredMethodOfConfirmation: HOW_CONTACTED.email }
+  ])('$urlName $confirmation is decorated by addLanguageCodeToUri', ({ urlName, url, preferredMethodOfConfirmation }) => {
     it(`passes request and ${urlName} url to addLanguageCodeToUri`, async () => {
-      const request = createRequestMock()
+      const request = createRequestMock({ preferredMethodOfConfirmation })
       await getData(request)
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, url)
     })
@@ -81,6 +70,7 @@ describe('.getData', () => {
   })
 
   it('returns the expected data', async () => {
+    addLanguageCodeToUri.mockImplementation((_request, uri) => uri)
     expect(await getData(createRequestMock())).toMatchSnapshot()
   })
 })

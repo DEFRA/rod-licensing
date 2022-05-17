@@ -9,8 +9,7 @@ Object {
   },
   "uri": Object {
     "change": "licence-confirmation-method.url?change=mobile",
-    "contact": undefined,
-    "licenceConfirmationMethod": undefined,
+    "contact": "contact.url",
   },
 }
 `;
