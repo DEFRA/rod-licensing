@@ -68,7 +68,16 @@ describe('preparePayment', () => {
   })
 
   it('licenceTypeAndLengthDisplay is called with the expected arguments', () => {
-    const catalog = {}
+    const catalog = Symbol('mock catalog')
+    const createMockRequest = (opts = {}) => ({
+      i18n: {
+        getCatalog: () => catalog
+      },
+      headers: opts.headers || { 'x-forwarded-proto': 'https' },
+      info: { host: opts.host || 'localhost:1234' },
+      server: { info: { protocol: opts.protocol || '' } }
+    })
+    const request = createMockRequest()
     const permission = {
       licensee: {
         firstName: 'Lando',
