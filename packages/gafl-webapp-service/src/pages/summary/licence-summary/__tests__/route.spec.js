@@ -3,8 +3,10 @@ import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constant
 import { NAME } from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
+import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 
 jest.mock('../../find-permit.js')
+jest.mock('../../../../processors/licence-type-display.js')
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
@@ -59,7 +61,12 @@ describe('licence-summary > route', () => {
             setCurrentPermission: mockTransactionCacheSet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => ({
+          licence_type_radio_salmon: 'Salmon and sea trout'
+        })
+      }
     }
 
     it('should return the name page uri', async () => {
@@ -105,6 +112,41 @@ describe('licence-summary > route', () => {
       expect(error).not.toBeFalsy()
       expect(error).toBeInstanceOf(GetDataRedirect)
       expect(error.redirectUrl).toBe(NAME.uri)
+    })
+
+    it('licenceTypeDisplay is called with the expected arguments', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
+      const catalog = Symbol('mock catalog')
+      const permission = {
+        permit: {
+          cost: 1
+        },
+        licensee: {
+          birthDate: '1996-01-01'
+        }
+      }
+      const sampleRequest = {
+        ...mockRequest,
+        i18n: {
+          getCatalog: () => catalog
+        }
+      }
+
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+
+      await getData(sampleRequest)
+
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
+    })
+
+    it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
+      const returnValue = Symbol('return value')
+      licenceTypeDisplay.mockReturnValueOnce(returnValue)
+
+      const result = await getData(mockRequest)
+      const ret = result.licenceTypeStr
+
+      expect(ret).toEqual(returnValue)
     })
   })
 })
