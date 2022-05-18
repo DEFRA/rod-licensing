@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.0 (2022-05-18)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1295](https://github.com/DEFRA/rod-licensing/pull/1295) Contact confirmation doesn't persist language ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 
 ## v1.23.0-rc.69 (2022-05-13)
