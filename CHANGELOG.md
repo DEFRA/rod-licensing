@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.1 (2022-05-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1274](https://github.com/DEFRA/rod-licensing/pull/1274) Refactor licence type summary macro ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.24.0-rc.0 (2022-05-18)
 
 #### :bug: Bug Fix
