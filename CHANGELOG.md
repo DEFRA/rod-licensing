@@ -1,4 +1,40 @@
 
+## v1.24.0-rc.4 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1298](https://github.com/DEFRA/rod-licensing/pull/1298) Welsh - where send licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.3 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1297](https://github.com/DEFRA/rod-licensing/pull/1297) Welsh - how do you want fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.2 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1301](https://github.com/DEFRA/rod-licensing/pull/1301) Welsh - BOBO how long do they want licence for ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.1 (2022-05-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1274](https://github.com/DEFRA/rod-licensing/pull/1274) Refactor licence type summary macro ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.24.0-rc.0 (2022-05-18)
 
 #### :bug: Bug Fix

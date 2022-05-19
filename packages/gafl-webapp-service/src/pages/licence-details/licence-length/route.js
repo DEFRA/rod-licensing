@@ -18,7 +18,7 @@ export const getData = async request => {
   return {
     pricing,
     isLicenceForYou: permission.isLicenceForYou,
-    licenceTypeStr: licenceTypeDisplay(permission)
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog())
   }
 }
 
