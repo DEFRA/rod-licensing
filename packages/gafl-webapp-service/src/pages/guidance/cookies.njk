@@ -33,7 +33,7 @@
         {{ govukTable({
           caption: mssgs.cookies_security_caption,
           firstCellIsHeader: true,
-          head: [ { text: mssgs.licence_summary_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
+          head: [ { text: mssgs.cookies_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
           rows: [
             [ { text: cookie.sess }, { text: mssgs.cookies_security_table_row_1 }, { text: mssgs.cookies_security_table_row_2 } ],
             [ { text: cookie.csrf }, { text: mssgs.cookies_security_table_row_3 }, { text: mssgs.cookies_security_table_row_4 } ]
@@ -47,7 +47,7 @@
         {{ govukTable({
           caption: mssgs.cookies_intro_caption,
           firstCellIsHeader: true,
-          head: [ { text: mssgs.licence_summary_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
+          head: [ { text: mssgs.cookies_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
           rows: [
             [ { text: mssgs.cookies_intro_row_1 }, { text: mssgs.cookies_intro_row_2 }, { text: mssgs.cookies_intro_row_3 } ]
           ]
@@ -60,7 +60,7 @@
         {{ govukTable({
           caption: mssgs.cookies_infrastructure_caption,
           firstCellIsHeader: true,
-          head: [ { text: mssgs.licence_summary_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
+          head: [ { text: mssgs.cookies_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
           rows: [
             [ { text: cookie.alb }, { text: mssgs.cookies_infrastructure_row_1 }, { text: mssgs.cookies_infrastructure_row_2 } ],
             [ { text: cookie.albcors }, { text: mssgs.cookies_infrastructure_row_1 }, { text: mssgs.cookies_infrastructure_row_2 } ]
