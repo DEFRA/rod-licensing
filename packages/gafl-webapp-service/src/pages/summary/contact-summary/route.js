@@ -50,7 +50,7 @@ const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
-    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
+    summaryTable: getLicenseeDetailsSummaryRows(request, permission, countryName),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
     }
@@ -59,16 +59,18 @@ const getData = async request => {
 
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
-export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
+export const getLicenseeDetailsSummaryRows = (request, permission, countryName) => {
+  const mssgs = request.i18n.getCatalog()
   const licenseeSummaryArray = [
-    getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
-    ...getContactDetails(permission)
+    getRow(request, mssgs.address, getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
+    ...getContactDetails(request, permission)
   ]
 
   if (permission.isLicenceForYou) {
     licenseeSummaryArray.push(
       getRow(
-        'Newsletter',
+        request,
+        mssgs.contact_summary_newsletter,
         permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
         NEWSLETTER.uri,
         'newsletter',
@@ -80,41 +82,41 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
   return licenseeSummaryArray
 }
 
-const CONTACT_TEXT_DEFAULT = {
-  EMAIL: 'Email to ',
-  TEXT: 'Text message to ',
-  DEFAULT: 'Note of licence'
-}
-
-const CONTACT_TEXT_NON_PHYSICAL = {
-  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
-  TEXT: 'Text messages to ',
-  DEFAULT: 'Make a note on confirmation'
-}
-
-const CONTACT_TEXT_PHYSICAL = {
-  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
-  TEXT: 'Text messages to ',
-  DEFAULT: 'By post'
-}
-
 const CHANGE_CONTACT = 'change-contact'
 
-const getContactDetails = permission => {
+const getContactDetails = (request, permission) => {
+  const mssgs = request.i18n.getCatalog()
+  const CONTACT_TEXT_DEFAULT = {
+    EMAIL: mssgs.contact_summary_email_to,
+    TEXT: mssgs.contact_summary_texts_to,
+    DEFAULT: mssgs.contact_summary_default_make_note
+  }
+  const CONTACT_TEXT_NON_PHYSICAL = {
+    EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+    TEXT: CONTACT_TEXT_DEFAULT.TEXT,
+    DEFAULT: mssgs.contact_summary_default_make_note_on_conf
+  }
+  const CONTACT_TEXT_PHYSICAL = {
+    EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+    TEXT: CONTACT_TEXT_DEFAULT.TEXT,
+    DEFAULT: mssgs.contact_summary_by_post
+  }
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       return [
-        getRow('Licence', 'By post', LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
+        getRow(request, mssgs.contact_summary_licence, mssgs.contact_summary_by_post, LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
         getRow(
-          'Licence Confirmation',
-          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          request,
+          mssgs.contact_summary_licence_confirmation,
+          getContactText(request, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
           LICENCE_CONFIRMATION_METHOD.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
         getRow(
-          'Contact',
-          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          request,
+          mssgs.contact_summary_contact,
+          getContactText(request, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
           CONTACT.uri,
           'contact',
           CHANGE_CONTACT
@@ -123,15 +125,17 @@ const getContactDetails = permission => {
     } else {
       return [
         getRow(
-          'Licence',
-          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          request,
+          mssgs.contact_summary_licence,
+          getContactText(request, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
           LICENCE_FULFILMENT.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
         getRow(
-          'Contact',
-          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          request,
+          mssgs.contact_summary_contact,
+          getContactText(request, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
           CONTACT.uri,
           'contact',
           CHANGE_CONTACT
@@ -141,8 +145,9 @@ const getContactDetails = permission => {
   } else {
     return [
       getRow(
-        'Licence details',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
+        request,
+        mssgs.contact_summary_licence_details,
+        getContactText(request, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
         CONTACT.uri,
         'contact',
         CHANGE_CONTACT
@@ -156,7 +161,38 @@ const getAddressText = (licensee, countryName) =>
     .filter(Boolean)
     .join(', ')
 
-const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
+const getContactDisplayText = (request, contactMethod) => {
+  const mssgs = request.i18n.getCatalog()
+  let contactDisplayText = ''
+  const CONTACT_TEXT_DEFAULT = {
+    EMAIL: mssgs.contact_summary_email_to,
+    TEXT: mssgs.contact_summary_texts_to,
+    DEFAULT: mssgs.contact_summary_default_make_note
+  }
+
+  const CONTACT_TEXT_NON_PHYSICAL = {
+    EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+    TEXT: CONTACT_TEXT_DEFAULT.TEXT,
+    DEFAULT: mssgs.contact_summary_default_make_note_on_conf
+  }
+
+  const CONTACT_TEXT_PHYSICAL = {
+    EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+    TEXT: CONTACT_TEXT_DEFAULT.TEXT,
+    DEFAULT: mssgs.contact_summary_by_post
+  }
+  if (contactMethod === 'Prefer not to be contacted') {
+    contactDisplayText = CONTACT_TEXT_DEFAULT
+  } else if (contactMethod === 'Text') {
+    contactDisplayText = CONTACT_TEXT_NON_PHYSICAL
+  } else {
+    contactDisplayText = CONTACT_TEXT_PHYSICAL
+  }
+  return contactDisplayText
+}
+
+const getContactText = (request, contactMethod, licensee, contactText = null) => {
+  contactText = getContactDisplayText(request, contactMethod)
   switch (contactMethod) {
     case HOW_CONTACTED.email:
       return contactText.EMAIL + licensee.email
@@ -167,7 +203,8 @@ const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFA
   }
 }
 
-const getRow = (label, text, href, visuallyHiddenText, id) => {
+const getRow = (request, label, text, href, visuallyHiddenText, id) => {
+  const mssgs = request.i18n.getCatalog()
   return {
     key: {
       text: label
@@ -180,7 +217,7 @@ const getRow = (label, text, href, visuallyHiddenText, id) => {
         items: [
           {
             href,
-            text: 'Change',
+            text: mssgs.licence_summary_change,
             visuallyHiddenText: visuallyHiddenText,
             attributes: { id }
           }

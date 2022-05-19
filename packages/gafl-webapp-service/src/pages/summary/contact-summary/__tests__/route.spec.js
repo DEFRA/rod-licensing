@@ -12,9 +12,23 @@ const address = {
 }
 
 describe('contact-summary > route', () => {
+  const mockTransactionCacheGet = jest.fn()
+  const mockRequest = {
+    cache: () => ({
+      helpers: {
+        transaction: {
+          getCurrentPermission: mockTransactionCacheGet
+        }
+      }
+    }),
+    i18n: {
+      getCatalog: () => ({})
+    }
+  }
+
   describe('getLicenseeDetailsSummaryRows', () => {
     describe('when purchasing a 12 month (physical licence) with postal fulfilment', () => {
-      it('should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no', () => {
+      it.only('should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no', () => {
         const permission = {
           licenceLength: '12M',
           licensee: {
@@ -26,7 +40,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(mockRequest, permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
       })
 
