@@ -1,4 +1,4 @@
-import { getData, getBodyMessage } from '../route'
+import { getData, getTitleAndBodyMessage } from '../route'
 import { NEW_TRANSACTION } from '../../../../uri.js'
 import { RENEWAL_ERROR_REASON } from '../../../../constants'
 
@@ -43,7 +43,7 @@ describe('renewal-inactive > route', () => {
     })
   })
 
-  describe('getBodyMessage', () => {
+  describe('getTitleAndBodyMessage', () => {
     it.each([
       [
         'The licence ending in ABC123 does not expire until 13 December 2020',
@@ -87,14 +87,52 @@ describe('renewal-inactive > route', () => {
         '13 December 2020',
         welshTranslations
       ]
-    ])('should return the message %s if the reason is %s', (expected, reason, referenceNumber, validTo, translation) => {
-      const result = getBodyMessage(translation, reason, referenceNumber, validTo)
-      expect(result).toBe(expected)
+    ])('should return and object with bodyMessage as %s if the reason is %s', (expected, reason, referenceNumber, validTo, translation) => {
+      const result = getTitleAndBodyMessage(translation, reason, referenceNumber, validTo)
+      expect(result.bodyMessage).toBe(expected)
     })
 
-    it('should return an empty string if no reason is provided', () => {
-      const result = getBodyMessage(englishTranslations, undefined, 'ABC123', '13 December 2020')
-      expect(result).toBe('')
+    it.each([
+      [
+        'You are renewing this licence too early',
+        RENEWAL_ERROR_REASON.NOT_DUE,
+        englishTranslations
+      ],
+      [
+        'The licence renewal has expired',
+        RENEWAL_ERROR_REASON.EXPIRED,
+        englishTranslations
+      ],
+      [
+        'You cannot renew an 8 day or 1 day licence',
+        RENEWAL_ERROR_REASON.NOT_ANNUAL,
+        englishTranslations
+      ],
+      [
+        'You are renewing this licence too early',
+        RENEWAL_ERROR_REASON.NOT_DUE,
+        welshTranslations
+      ],
+      [
+        'The licence renewal has expired',
+        RENEWAL_ERROR_REASON.EXPIRED,
+        welshTranslations
+      ],
+      [
+        'You cannot renew an 8 day or 1 day licence',
+        RENEWAL_ERROR_REASON.NOT_ANNUAL,
+        welshTranslations
+      ],
+    ])('should return and object with title as %s if the reason is %s', (expected, reason, translation) => {
+      const result = getTitleAndBodyMessage(translation, reason, 'ABC123', '13 December 2020')
+      expect(result.title).toBe(expected)
+    })
+    
+
+    it('should return an object with bodyMessage and title as empty if no reason is provided', () => {
+      const result = getTitleAndBodyMessage(englishTranslations, undefined, 'ABC123', '13 December 2020')
+      expect(result.bodyMessage).toBe('')
+      expect(result.title).toBe('')
     })
   })
 })

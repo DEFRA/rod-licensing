@@ -2,13 +2,7 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% if data.reason === data.reasonCodes.NOT_DUE %}
-    {% set title = mssgs.renewal_inactive_title_1 %}
-{% elseif data.reason === data.reasonCodes.EXPIRED %}
-    {% set title =  mssgs.renewal_inactive_title_2 %}
-{% elseif data.reason === data.reasonCodes.NOT_ANNUAL %}
-    {% set title = mssgs.renewal_inactive_title_3 %}
-{% endif %}
+{% set title = data.title %}
 
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 {% block content %}
