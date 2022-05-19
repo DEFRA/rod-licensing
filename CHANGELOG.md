@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.6 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1296](https://github.com/DEFRA/rod-licensing/pull/1296) Short licence error page update - easy renewals ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.24.0-rc.5 (2022-05-19)
 
 #### :rocket: Enhancement
