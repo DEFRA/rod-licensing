@@ -93,41 +93,16 @@ describe('renewal-inactive > route', () => {
     })
 
     it.each([
-      [
-        'You are renewing this licence too early',
-        RENEWAL_ERROR_REASON.NOT_DUE,
-        englishTranslations
-      ],
-      [
-        'The licence renewal has expired',
-        RENEWAL_ERROR_REASON.EXPIRED,
-        englishTranslations
-      ],
-      [
-        'You cannot renew an 8 day or 1 day licence',
-        RENEWAL_ERROR_REASON.NOT_ANNUAL,
-        englishTranslations
-      ],
-      [
-        'You are renewing this licence too early',
-        RENEWAL_ERROR_REASON.NOT_DUE,
-        welshTranslations
-      ],
-      [
-        'The licence renewal has expired',
-        RENEWAL_ERROR_REASON.EXPIRED,
-        welshTranslations
-      ],
-      [
-        'You cannot renew an 8 day or 1 day licence',
-        RENEWAL_ERROR_REASON.NOT_ANNUAL,
-        welshTranslations
-      ],
+      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE, englishTranslations],
+      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED, englishTranslations],
+      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL, englishTranslations],
+      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE, welshTranslations],
+      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED, welshTranslations],
+      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL, welshTranslations]
     ])('should return and object with title as %s if the reason is %s', (expected, reason, translation) => {
       const result = getTitleAndBodyMessage(translation, reason, 'ABC123', '13 December 2020')
       expect(result.title).toBe(expected)
     })
-    
 
     it('should return an object with bodyMessage and title as empty if no reason is provided', () => {
       const result = getTitleAndBodyMessage(englishTranslations, undefined, 'ABC123', '13 December 2020')
