@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.5 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1299](https://github.com/DEFRA/rod-licensing/pull/1299) Welsh lang BOBO update where to send licence page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.24.0-rc.4 (2022-05-19)
 
 #### :rocket: Enhancement
