@@ -2,11 +2,11 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% if data.reason === 'not-due' %}
+{% if data.reason === data.reasonCodes.NOT_DUE %}
     {% set title = mssgs.renewal_inactive_title_1 %}
-{% elseif data.reason === 'expired' %}
+{% elseif data.reason === data.reasonCodes.EXPIRED %}
     {% set title =  mssgs.renewal_inactive_title_2 %}
-{% elseif data.reason === 'not-annual' %}
+{% elseif data.reason === data.reasonCodes.NOT_ANNUAL %}
     {% set title = mssgs.renewal_inactive_title_3 %}
 {% endif %}
 
@@ -29,14 +29,8 @@
                     isPageHeading: true
                 }
             }) %}
-      
-            {% if data.reason === 'not-due' %}
-                <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_not_due_2 }}{{ data.validTo }}</p>
-            {% elseif data.reason === 'expired' %}
-                <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_has_expired_1 }}{{ data.validTo }}{{ mssgs.renewal_inactive_has_expired_2 }}</p>
-            {% elseif data.reason === 'not-annual' %}
-                <p class="govuk-body-l">{{ mssgs.renewal_inactive_not_due_1 }}{{ data.referenceNumber }}{{ mssgs.renewal_inactive_not_annual_1 }}</p>
-            {% endif %}
+
+            <p class="govuk-body-l">{{data.bodyMessage}}</p>            
             <p class="govuk-body-l">{{ mssgs.renewal_inactive_title_4 }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.renewal_inactive_title_link }}</a></p>
 
             {% endcall %}
