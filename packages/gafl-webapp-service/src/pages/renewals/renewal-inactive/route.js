@@ -13,6 +13,8 @@ export const getBodyMessage = (mssgs, reason, referenceNumber, validTo) => {
       return `${mssgs.renewal_inactive_not_due_1}${referenceNumber}${mssgs.renewal_inactive_has_expired_1}${validTo}${mssgs.renewal_inactive_has_expired_2}`
     case RENEWAL_ERROR_REASON.NOT_ANNUAL:
       return `${mssgs.renewal_inactive_not_due_1}${referenceNumber}${mssgs.renewal_inactive_not_annual_1}`
+    default:
+      return ''
   }
 }
 
@@ -23,9 +25,9 @@ export const getData = async request => {
   const reason = authentication.reason
   const bodyMessage = getBodyMessage(mssgs, reason, referenceNumber, validTo)
   return {
+    bodyMessage,
     reason: authentication.reason,
     reasonCodes: RENEWAL_ERROR_REASON,
-    bodyMessage,
     uri: {
       new: NEW_TRANSACTION.uri
     }

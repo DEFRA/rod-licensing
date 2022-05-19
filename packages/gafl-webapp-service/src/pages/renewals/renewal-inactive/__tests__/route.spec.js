@@ -91,5 +91,10 @@ describe('renewal-inactive > route', () => {
       const result = getBodyMessage(translation, reason, referenceNumber, validTo)
       expect(result).toBe(expected)
     })
+
+    it('should return an empty string if no reason is provided', () => {
+      const result = getBodyMessage(englishTranslations, undefined, 'ABC123', '13 December 2020')
+      expect(result).toBe('')
+    })
   })
 })
