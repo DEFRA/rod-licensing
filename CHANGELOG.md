@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.7 (2022-05-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1304](https://github.com/DEFRA/rod-licensing/pull/1304) Fix failing test on short licence error page update  ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.24.0-rc.6 (2022-05-19)
 
 #### :rocket: Enhancement
