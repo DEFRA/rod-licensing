@@ -35,11 +35,11 @@ describe('renewal-inactive > route', () => {
 
     it('should return the body message', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({
-        authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE },
+        authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
         referenceNumber: 'ABC123'
       }))
       const result = await getData(mockRequest)
-      expect(result.bodyMessage).toBe('The licence ending in ABC123 does not expire until 19 May 2022')
+      expect(result.bodyMessage).toBe('The licence ending in ABC123 does not expire until 13 December 2020')
     })
   })
 
