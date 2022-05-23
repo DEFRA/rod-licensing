@@ -1,6 +1,7 @@
 {
   "access_statement_ability_net_link": "AbilityNet",
-  "access_statement_ability_net": " has advice on making your device easier to use if you have a disability.",
+  "access_statement_ability_net_1": " has advice on making your device easier to use if you have a disability.",
+  "access_statement_ability_net_2": " has advice on making your device easier to use if you have a disability.",
   "access_statement_body": "This service is run by the Environment Agency. We want as many people as possible to be able to use this website. For example, that means you should be able to:",
   "access_statement_bulletpoint_1": "change colours, contrast levels and fonts",
   "access_statement_bulletpoint_2": "zoom in up to 200% without the text spilling off the screen",
@@ -51,7 +52,8 @@
   "access_statement_title": "Accessibility statement - GOV.UK",
   "access_statement_visit_info_link": "office access and opening times",
   "access_statement_visit_info_text_serivce": "We do not currently have a text relay service for people who are deaf, hearing impaired or have a speech impediment.",
-  "access_statement_visit_info": "See the Environment Agency’s ",
+  "access_statement_visit_info_1": "See the Environment Agency’s ",
+  "access_statement_visit_info_2": ".",
   "access_statement_visit": "If you visit our offices and need assistance or a British Sign Language interpreter, you should contact us before you visit.",
   "account_disabled_body_1": "You were successfully signed in but your account is not enabled in Microsoft Dynamics.",
   "account_disabled_title": "Account not enabled",
