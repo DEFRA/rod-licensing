@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.10 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1312](https://github.com/DEFRA/rod-licensing/pull/1312) Welsh - Accessibility Statement ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.24.0-rc.9 (2022-05-23)
 
 #### :rocket: Enhancement
