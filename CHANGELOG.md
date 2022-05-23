@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.8 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1307](https://github.com/DEFRA/rod-licensing/pull/1307) Welsh - refund policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.24.0-rc.7 (2022-05-20)
 
 #### :bug: Bug Fix
