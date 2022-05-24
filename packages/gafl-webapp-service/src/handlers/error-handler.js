@@ -1,4 +1,5 @@
 import { AGREED, CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR } from '../uri.js'
+import { getPaymentStatus } from '../services/payment/govuk-pay-service.js'
 
 /**
  * Pre-response error handler server extension.
@@ -8,6 +9,9 @@ import { AGREED, CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR } from 
  * @returns {Promise<symbol|string|((key?: IDBValidKey) => void)|*>}
  */
 export const errorHandler = async (request, h) => {
+  const transaction = await request.cache().helpers.transaction.get()
+  const paymentInProgress = transaction?.payment?.payment_id !== undefined
+
   if (!request.response.isBoom) {
     return h.continue
   }
@@ -23,8 +27,14 @@ export const errorHandler = async (request, h) => {
         altLang,
         referer: request?.headers?.referer,
         clientError: request.response.output.payload,
+        paymentInProgress,
         path: request.path,
-        uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri, agreed: AGREED.uri }
+        uri: {
+          new: NEW_TRANSACTION.uri,
+          controller: CONTROLLER.uri,
+          agreed: AGREED.uri,
+          ...(transaction?.payment?.href ? { payment: transaction.payment.href } : {})
+        }
       })
       .code(request.response.output.statusCode)
   } else {
