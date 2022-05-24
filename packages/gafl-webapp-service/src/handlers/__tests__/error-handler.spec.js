@@ -1,13 +1,6 @@
 import { errorHandler } from '../error-handler.js'
 import { CLIENT_ERROR } from '../../uri.js'
 
-const mockView = jest.fn(() => ({
-  code: jest.fn()
-}))
-const h = {
-  view: mockView
-}
-
 describe('error-handler', () => {
   describe('errorHandler', () => {
     beforeEach(jest.clearAllMocks)

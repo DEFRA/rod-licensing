@@ -1,5 +1,4 @@
 import { AGREED, CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR } from '../uri.js'
-import { getPaymentStatus } from '../services/payment/govuk-pay-service.js'
 
 /**
  * Pre-response error handler server extension.
