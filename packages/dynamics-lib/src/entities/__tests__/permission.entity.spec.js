@@ -16,7 +16,8 @@ describe('permission entity', () => {
         defra_startdate: '2019-12-14T00:00:00Z',
         defra_enddate: '2020-12-13T23:59:59Z',
         defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
-        defra_datasource: 910400003
+        defra_datasource: 910400003,
+        defra_renewal: true
       },
       optionSetData
     )
@@ -28,7 +29,8 @@ describe('permission entity', () => {
       startDate: '2019-12-14T00:00:00Z',
       endDate: '2020-12-13T23:59:59Z',
       stagingId: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
-      dataSource: expect.objectContaining({ id: 910400003, label: 'Web Sales', description: 'Web Sales' })
+      dataSource: expect.objectContaining({ id: 910400003, label: 'Web Sales', description: 'Web Sales' }),
+      isRenewal: true
     }
 
     expect(permission).toBeInstanceOf(Permission)
@@ -71,6 +73,7 @@ describe('permission entity', () => {
     permission.endDate = '2020-12-13T23:59:59Z'
     permission.stagingId = '71ad9a25-2a03-406b-a0e3-f4ff37799374'
     permission.dataSource = optionSetData.defra_datasource.options['910400003']
+    permission.isRenewal = true
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -89,7 +92,8 @@ describe('permission entity', () => {
         'defra_PermitId@odata.bind': `/${Permit.definition.dynamicsCollection}(${permit.id})`,
         'defra_ContactId@odata.bind': `$${contact.uniqueContentId}`,
         'defra_Transaction@odata.bind': `$${transaction.uniqueContentId}`,
-        'defra_POCLFileId@odata.bind': `$${poclFile.uniqueContentId}`
+        'defra_POCLFileId@odata.bind': `$${poclFile.uniqueContentId}`,
+        defra_renewal: true
       })
     )
   })

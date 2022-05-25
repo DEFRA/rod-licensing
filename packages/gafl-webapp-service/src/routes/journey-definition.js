@@ -240,10 +240,10 @@ export default [
         page: LICENCE_CONFIRMATION_METHOD
       }
     },
-    backLink: status => {
+    backLink: (status, permission) => {
       if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
-      } else if (status.renewal) {
+      } else if (permission?.isRenewal) {
         return LICENCE_SUMMARY.uri
       } else {
         return ADDRESS_LOOKUP.uri

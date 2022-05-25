@@ -27,7 +27,8 @@ export const prepareApiTransactionPayload = async request => {
           startDate: advancePurchaseDateMoment(p)
             .utc()
             .toISOString()
-        })
+        }),
+        isRenewal: p.isRenewal
       }
 
       logStartDateError(permission, request)

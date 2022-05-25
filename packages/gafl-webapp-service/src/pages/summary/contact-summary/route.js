@@ -23,7 +23,7 @@ const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  if (!status.renewal) {
+  if (!permission.isRenewal) {
     if (!status[NAME.page]) {
       throw new GetDataRedirect(NAME.uri)
     }
