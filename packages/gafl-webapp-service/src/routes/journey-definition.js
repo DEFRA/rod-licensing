@@ -58,6 +58,9 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: NAME
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
