@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@defra-fish/connectors-lib": "1.24.0-rc.10",
-    "@defra-fish/dynamics-lib": "1.24.0-rc.10",
+    "@defra-fish/dynamics-lib": "nabeelamir-defra/dynamics-lib#main",
     "commander": "^7.2.0",
     "debug": "^4.3.3",
     "merge2": "^1.4.1",
