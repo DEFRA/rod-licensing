@@ -3,7 +3,7 @@ import * as sessionManager from '../../session-cache/session-manager'
 const spy = jest.spyOn(sessionManager, 'default')
 
 // Start application before running the test case
-beforeAll(d => start(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
 
 // Stop application after running the test case
 afterAll(d => stop(d))

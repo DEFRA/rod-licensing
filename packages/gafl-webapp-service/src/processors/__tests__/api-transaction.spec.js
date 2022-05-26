@@ -39,7 +39,8 @@ describe('prepareApiTransactionPayload', () => {
                     postalFulfilment: false
                   },
                   licenceToStart: licenceToStart.AFTER_PAYMENT,
-                  isRenewal: true
+                  isRenewal: true,
+                  isLicenceForYou: true
                 }
               ],
               cost: 0
@@ -71,7 +72,8 @@ describe('prepareApiTransactionPayload', () => {
           },
           issueDate: null,
           startDate: null,
-          isRenewal: true
+          isRenewal: true,
+          isLicenceForYou: true
         }
       ]
     })

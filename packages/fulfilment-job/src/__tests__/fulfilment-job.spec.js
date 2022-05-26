@@ -1,33 +1,35 @@
 import commander from 'commander'
 import { processFulfilment } from '../fulfilment-processor.js'
 
-jest.mock('../fulfilment-processor.js')
-
-jest.mock('commander', () => {
-  const commander = jest.requireActual('commander')
-  commander.args = ['test']
-  commander.parse = jest.fn()
-  commander.outputHelp = jest.fn()
-  commander.help = jest.fn()
-  return commander
+jest.mock('../fulfilment-processor.js', () => {
+  if (!global.processFulfilment) {
+    global.processFulfilment = jest.fn()
+  }
+  return { processFulfilment: global.processFulfilment }
 })
 
+jest.mock('commander', () => {
+  if (!global.commander) {
+    global.commander = jest.requireActual('commander')
+    global.commander.args = ['test']
+    global.commander.parse = jest.fn()
+    global.commander.outputHelp = jest.fn()
+    global.commander.help = jest.fn()
+  }
+  return global.commander
+})
 describe('fulfilment-job', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    commander.args = ['test']
   })
 
-  it('exposes an execute command to the cli', done => {
-    jest.isolateModules(async () => {
+  it('exposes an execute command to the cli', () => {
+    jest.isolateModules(() => {
       require('../fulfilment-job.js')
-      try {
-        expect(commander.commands[0].name()).toBe('execute')
-        commander.commands[0]._actionHandler([])
-        expect(processFulfilment).toHaveBeenCalled()
-        done()
-      } catch (e) {
-        done(e)
-      }
+      expect(commander.commands[0].name()).toBe('execute')
+      commander.commands[0]._actionHandler([])
+      expect(processFulfilment).toHaveBeenCalled()
     })
   })
 
@@ -42,7 +44,7 @@ describe('fulfilment-job', () => {
 
   it('outputs help if no arguments are present', async () => {
     jest.isolateModules(() => {
-      commander.args = []
+      commander.args.length = 0
       require('../fulfilment-job.js')
       expect(commander.outputHelp).toHaveBeenCalled()
     })

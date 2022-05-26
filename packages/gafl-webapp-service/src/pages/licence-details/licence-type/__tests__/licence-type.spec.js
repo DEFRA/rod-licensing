@@ -15,8 +15,8 @@ import { JUNIOR_TODAY, ADULT_TODAY, dobHelper } from '../../../../__mocks__/test
 import { licenceToStart } from '../../licence-to-start/update-transaction.js'
 import { disabilityConcessionTypes } from '../../../concessions/disability/update-transaction.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 mockSalesApi()

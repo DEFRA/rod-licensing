@@ -7,6 +7,7 @@ import disabilityConcession from '../pages/concessions/disability/update-transac
 
 import licenceLength from '../pages/licence-details/licence-length/update-transaction.js'
 import licenceType from '../pages/licence-details/licence-type/update-transaction.js'
+import licenceFor from '../pages/licence-details/licence-for/update-transaction.js'
 import licenceToStart from '../pages/licence-details/licence-to-start/update-transaction.js'
 import licenceStartTime from '../pages/licence-details/licence-start-time/update-transaction.js'
 
@@ -28,6 +29,7 @@ import renewalInactive from '../pages/renewals/renewal-inactive/update-transacti
 import {
   DATE_OF_BIRTH,
   LICENCE_TYPE,
+  LICENCE_FOR,
   LICENCE_LENGTH,
   LICENCE_TO_START,
   LICENCE_START_TIME,
@@ -52,6 +54,7 @@ export default {
   [DISABILITY_CONCESSION.page]: disabilityConcession,
   [LICENCE_LENGTH.page]: licenceLength,
   [LICENCE_TYPE.page]: licenceType,
+  [LICENCE_FOR.page]: licenceFor,
   [LICENCE_START_TIME.page]: licenceStartTime,
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_SELECT.page]: addressSelect,

@@ -17,18 +17,18 @@ const validator = Joi.object({
   }),
   'blue-badge-number': Joi.alternatives().conditional('disability-concession', {
     is: disabilityConcessionTypes.blueBadge,
-    then: Joi.string()
-      .max(25)
-      .required(),
+    then: Joi.string().max(25).required(),
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
   return {
     hasJunior: concessionHelper.hasJunior(permission),
     hasSenior: concessionHelper.hasSenior(permission),
+    isLicenceForYou: permission.isLicenceForYou,
     ...disabilityConcessionTypes
   }
 }

@@ -3,10 +3,10 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = 'How should we contact you?' %}
-{% set errorMsg = 'Choose how you would like to be contacted' %}
-{% set emailError = 'Enter your email address in the correct format, like name@example.com' %}
-{% set mobileError = "Enter your UK mobile number like '07700 900 900'" %}
+{% set title = mssgs.important_info_contact_title_you if data.isLicenceForYou else mssgs.important_info_contact_title_other %}
+{% set errorMsg = mssgs.important_info_contact_error_choose %}
+{% set emailError = mssgs.important_info_contact_error_email %}
+{% set mobileError = mssgs.important_info_contact_error_mobile %}
 
 {% set errorMap = {
         'how-contacted': {
@@ -25,7 +25,7 @@
     }
 %}
 
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set emailHtml %}
     <div id="email-rw" class="govuk-body-m">
@@ -35,12 +35,12 @@
           type: "email",
           classes: "govuk-!-width-two-thirds",
           autocomplete: "email",
-          errorMessage: { text: 'Enter your email address in the correct format' } if error['email'],
+          errorMessage: { text: mssgs.important_info_contact_error_email } if error['email'],
           label: {
-            text: "Email address"
+            text: mssgs.important_info_contact_input_email
           },
           hint: {
-              text: "For example name@example.com"
+              text: mssgs.important_info_contact_input_email_hint
           },
           attributes: {
             spellcheck: "false",
@@ -50,9 +50,9 @@
         }) }}
     </div>
     <div id="email-ro" class="govuk-body-m initially-hidden">
-        Email address</br>
+        {{ mssgs.important_info_contact_input_email }}</br>
         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
-            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">Change</a>
+            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
         </span>
     </div>
 {% endset -%}
@@ -65,12 +65,12 @@
           type: "tel",
           autocomplete: "tel",
           classes: "govuk-!-width-one-third",
-          errorMessage: { text: 'Enter your UK mobile phone number' } if error['text'],
+          errorMessage: { text: mssgs.important_info_contact_error_mobile } if error['text'],
           label: {
-            text: "UK mobile phone number"
+            text: mssgs.important_info_contact_input_mobile
           },
           hint: {
-              text: "For example 07700 900 900"
+              text: mssgs.important_info_contact_input_mobile_hint
           },
           attributes: {
             maxlength: "16"
@@ -79,25 +79,25 @@
         }) }}
      </div>
      <div id="text-ro" class="govuk-body-m initially-hidden">
-         Mobile phone number</br>
+         {{ mssgs.important_info_contact_input_mobile_note }}</br>
          <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
-             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">Change</a>
+             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
          </span>
      </div>
 {% endset -%}
 
 {% set postMessageHtml %}
-    <p class="govuk-body-m">If you want to fish before you receive the card you should make a note of the licence number after payment.</p>
+    <p class="govuk-body-m">{{ mssgs.important_info_contact_post_msg }}</p>
 {% endset -%}
 
 {% set noneMessageHtml %}
-    <p class="govuk-body-m">We will show you the licence number on confirmation.</p>
+    <p class="govuk-body-m">{{ mssgs.important_info_contact_none_msg }}</p>
 {% endset -%}
 
 {% set itemsArray = [
     {
         value: "email",
-        text: "Email",
+        text: mssgs.important_info_contact_item_email,
         checked: payload['how-contacted'] === 'email',
         conditional: {
             html: emailHtml
@@ -105,7 +105,7 @@
     },
     {
         value: "text",
-        text: "Text message",
+        text: mssgs.important_info_contact_item_txt,
         checked: payload['how-contacted'] === 'text',
         conditional: {
             html: textMessageHtml
@@ -118,7 +118,7 @@
         {% set itemsArray = (itemsArray.push(
             {
                 value: "none",
-                text: "Post",
+                text: mssgs.important_info_contact_post,
                 checked: payload['how-contacted'] === 'post'
             }), itemsArray) 
         %}
@@ -127,7 +127,7 @@
     {% set itemsArray = (itemsArray.push(
         {
             value: "none",
-            text: "Make a note of the licence number",
+            text: mssgs.important_info_contact_note_tip,
             checked: payload['how-contacted'] === 'none',
             conditional: {
                 html: noneMessageHtml
@@ -138,14 +138,15 @@
 
 {% block pageContent %}
     {% if data.isPhysical %}
-        <p class="govuk-body-m">This is where we will send important updates and renewal reminders when your licence is expiring.</p>
+        <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm }}</p>
+        <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm2 }}</p>
     {% else %}
         {% if data.isJunior %}
-            <p class="govuk-body-m">We don't provide physical cards for junior licences.</p>
-            <p class="govuk-body-m">You will need to confirm your licence number if asked by an enforcement officer.</p>
+            <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_jr }}</p>
+            <p class="govuk-body-m">{{ mssgs.important_info_contact_licence_needed }}</p>
         {% else %}
-            <p class="govuk-body-m">We don't provide physical cards for 1 or 8 day licences.</p>
-            <p class="govuk-body-m">You will need to confirm your licence number if asked by an enforcement officer.</p>
+            <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_8d }}</p>
+            <p class="govuk-body-m">{{ mssgs.important_info_contact_licence_needed }}</p>
         {% endif %}
     {% endif %}
 

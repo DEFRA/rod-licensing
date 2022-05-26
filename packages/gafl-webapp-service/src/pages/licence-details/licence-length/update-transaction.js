@@ -1,5 +1,5 @@
 import * as mappings from '../../../processors/mapping-constants.js'
-import { LICENCE_LENGTH } from '../../../uri.js'
+import { LICENCE_LENGTH, LICENCE_FULFILMENT } from '../../../uri.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
@@ -20,6 +20,7 @@ const checkContactDetails = permission => {
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.none || preferredMethodOfReminder === mappings.HOW_CONTACTED.none)
 
   if (physicalContactNone) {
+    permission.licensee.postalFulfilment = true
     permission.licensee.preferredMethodOfConfirmation = mappings.HOW_CONTACTED.letter
     permission.licensee.preferredMethodOfReminder = mappings.HOW_CONTACTED.letter
   }
@@ -29,6 +30,7 @@ const checkContactDetails = permission => {
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.letter || preferredMethodOfReminder === mappings.HOW_CONTACTED.letter)
 
   if (digitalContactLeter) {
+    permission.licensee.postalFulfilment = false
     permission.licensee.preferredMethodOfConfirmation = mappings.HOW_CONTACTED.none
     permission.licensee.preferredMethodOfReminder = mappings.HOW_CONTACTED.none
   }
@@ -42,11 +44,7 @@ const checkContactDetails = permission => {
 const checkLicenceToStart = permission => {
   if (permission.licenceLength === '12M') {
     permission.licenceStartTime = null
-    if (
-      moment(permission.licenceStartDate, cacheDateFormat)
-        .tz(SERVICE_LOCAL_TIME)
-        .isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')
-    ) {
+    if (moment(permission.licenceStartDate, cacheDateFormat).tz(SERVICE_LOCAL_TIME).isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')) {
       permission.licenceToStart = licenceToStart.AFTER_PAYMENT
     }
   }
@@ -89,5 +87,9 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.licenceLength = payload['licence-length']
   onLengthChange(permission)
+
+  // Clear the licence fulfilment here otherwise it can end up being set incorrectly
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page]: false })
+
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

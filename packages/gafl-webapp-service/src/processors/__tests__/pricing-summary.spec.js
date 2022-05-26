@@ -17,8 +17,8 @@ import { disabilityConcessionTypes } from '../../pages/concessions/disability/up
 
 mockSalesApi()
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 const juniorPricingByType = {

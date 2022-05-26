@@ -1,8 +1,8 @@
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
 import { NO_LICENCE_REQUIRED } from '../../../../uri.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 describe('The no licence required page', () => {

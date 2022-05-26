@@ -9,7 +9,6 @@ import { nextPage } from '../../../routes/next-page.js'
 import {
   CONTACT_SUMMARY,
   LICENCE_SUMMARY,
-  NAME,
   ADDRESS_ENTRY,
   ADDRESS_SELECT,
   ADDRESS_LOOKUP,
@@ -19,15 +18,8 @@ import {
   LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
-const getData = async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
+export const checkNavigation = (status, permission) => {
   if (!permission.isRenewal) {
-    if (!status[NAME.page]) {
-      throw new GetDataRedirect(NAME.uri)
-    }
-
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
     }
@@ -35,11 +27,23 @@ const getData = async request => {
     if (!status[CONTACT.page]) {
       throw new GetDataRedirect(CONTACT.uri)
     }
+  }
 
-    if (!status[NEWSLETTER.page]) {
-      throw new GetDataRedirect(NEWSLETTER.uri)
+  if (isPhysical(permission)) {
+    if (!status[LICENCE_FULFILMENT.page]) {
+      throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+    }
+    if (!status[LICENCE_CONFIRMATION_METHOD.page]) {
+      throw new GetDataRedirect(LICENCE_CONFIRMATION_METHOD.uri)
     }
   }
+}
+
+const getData = async request => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  checkNavigation(status, permission)
 
   status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
@@ -56,18 +60,24 @@ const getData = async request => {
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
 export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
-  return [
-    getRow('Name', `${permission.licensee.firstName} ${permission.licensee.lastName}`, NAME.uri, 'name', 'change-name'),
+  const licenseeSummaryArray = [
     getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
-    ...getContactDetails(permission),
-    getRow(
-      'Newsletter',
-      permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
-      NEWSLETTER.uri,
-      'newsletter',
-      'change-newsletter'
-    )
+    ...getContactDetails(permission)
   ]
+
+  if (permission.isLicenceForYou) {
+    licenseeSummaryArray.push(
+      getRow(
+        'Newsletter',
+        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
+        NEWSLETTER.uri,
+        'newsletter',
+        'change-newsletter'
+      )
+    )
+  }
+
+  return licenseeSummaryArray
 }
 
 const CONTACT_TEXT_DEFAULT = {
@@ -115,7 +125,7 @@ const getContactDetails = permission => {
         getRow(
           'Licence',
           getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          LICENCE_CONFIRMATION_METHOD.uri,
+          LICENCE_FULFILMENT.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),

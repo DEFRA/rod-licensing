@@ -1,5 +1,6 @@
 import {
   CONTACT,
+  LICENCE_FOR,
   LICENCE_LENGTH,
   CONTROLLER,
   DATE_OF_BIRTH,
@@ -22,8 +23,8 @@ import { ADULT_TODAY, dobHelper, JUNIOR_TODAY } from '../../../../__mocks__/test
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 const goodAddress = {
@@ -37,9 +38,8 @@ const goodAddress = {
 
 describe('The contact preferences page', () => {
   describe('where the prerequisite are not fulfilled', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', CONTROLLER.uri)
-      d()
     })
 
     it('redirects to the date-of-birth page if no date of birth has been set', async () => {
@@ -65,12 +65,11 @@ describe('The contact preferences page', () => {
   })
 
   describe('for a full 12 month licence, adult', () => {
-    beforeEach(async d => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-      d()
     })
 
     it('return the page on request', async () => {
@@ -154,25 +153,40 @@ describe('The contact preferences page', () => {
       expect(JSON.parse(payload).permissions[0].licensee.mobilePhone).toEqual(mobileNumbero)
     })
 
-    it('controller redirects to the newsletter page if an email is given', async () => {
+    it('controller redirects to the newsletter page if an email is given and licence is for you', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(NEWSLETTER.uri)
     })
 
-    it('controller redirects to the newsletter page if a text number is given', async () => {
+    it('controller redirects to the contact-summary page if an email is given and licence is for someone else', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'someone-else' })
+      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
+
+    it('controller redirects to the newsletter page if a text number is given and licence is for you', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(NEWSLETTER.uri)
     })
+
+    it('controller redirects to the contact-summary page if an text number is given and licence is for someone else', async () => {
+      await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'someone-else' })
+      const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
+      expect(response.statusCode).toBe(302)
+      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+    })
   })
 
   describe('for a junior licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      d()
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
@@ -184,12 +198,11 @@ describe('The contact preferences page', () => {
   })
 
   describe('for 1 day licence', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-      d()
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
@@ -201,7 +214,7 @@ describe('The contact preferences page', () => {
   })
 
   describe('if the contact summary has been seen', () => {
-    beforeAll(async d => {
+    beforeAll(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('GET', CONTROLLER.uri)
 
@@ -209,7 +222,7 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       await injectWithCookies('POST', LICENCE_SUMMARY.uri)
 
       // Set up the contact details
@@ -218,7 +231,6 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'new3@example.com' })
       await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', 'email-entry': 'no' })
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-      d()
     })
 
     it('controller redirects to the summary page', async () => {

@@ -1,10 +1,10 @@
 import db from 'debug'
-
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE } from '../constants.js'
 import { CONTROLLER } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
 
@@ -24,18 +24,18 @@ export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: 
  */
 const getBackReference = async (request, view) => {
   const current = journeyDefinition.find(p => p.current.page === view)
-
   if (!current || !current.backLink) {
     return null
   }
 
   if (typeof current.backLink === 'function') {
-    return current.backLink(
+    const backLink = current.backLink(
       await request.cache().helpers.status.getCurrentPermission(),
       await request.cache().helpers.transaction.getCurrentPermission()
     )
+    return backLink ? addLanguageCodeToUri(request, backLink) : null
   } else {
-    return current.backLink
+    return addLanguageCodeToUri(request, current.backLink)
   }
 }
 
@@ -90,7 +90,7 @@ export default (path, view, completion, getData) => ({
       } catch (err) {
         // If GetDataRedirect is thrown the getData function is requesting a redirect
         if (err instanceof GetDataRedirect) {
-          return h.redirect(err.redirectUrl)
+          return h.redirect(addLanguageCodeToUri(request, err.redirectUrl))
         }
 
         throw err
@@ -102,6 +102,8 @@ export default (path, view, completion, getData) => ({
     await clearErrorsFromOtherPages(request, view)
 
     // Calculate the back reference and add to page
+    pageData.mssgs = request.i18n.getCatalog()
+    pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
     return h.view(view, pageData)
   },
@@ -135,7 +137,8 @@ export default (path, view, completion, getData) => ({
     try {
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
-      return h.redirect(request.path).takeover()
+
+      return h.redirect(addLanguageCodeToUri(request)).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {

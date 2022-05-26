@@ -22,8 +22,8 @@ import { licenceToStart } from '../../../../licence-details/licence-to-start/upd
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 import { getCountryDropDownOptions } from '../route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 const goodAddress = {
@@ -198,7 +198,7 @@ describe('The manual address entry page', () => {
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await injectWithCookies('POST', LICENCE_SUMMARY.uri)
     await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
     await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)

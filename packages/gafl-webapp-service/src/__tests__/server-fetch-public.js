@@ -1,11 +1,10 @@
 import { start, stop, initialize, injectWithoutSessionCookie } from '../__mocks__/test-utils-system.js'
 
-beforeAll(d => {
-  start(d)
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
+afterAll(done => {
+  stop(done)
 })
-
-beforeAll(d => initialize(d))
-afterAll(d => stop(d))
 
 describe('Where the server is started', () => {
   it('serve public resources without the session cookie', async () => {

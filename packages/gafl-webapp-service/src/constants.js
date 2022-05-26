@@ -13,6 +13,8 @@ export const CSRF_TOKEN_COOKIE_NAME_DEFAULT = 'rlsctkn'
 export const FEEDBACK_URI_DEFAULT = '#'
 export const CHANNEL_DEFAULT = 'websales'
 export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-fishing-licence'
+export const RENEWALS_CAMPAIGN_ID = 'renewals'
+export const AEN_INVITATION_ID = 'aen_invitation'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
@@ -38,6 +40,8 @@ export const UTM = {
   CONTENT: 'utm_content'
 }
 
+export const QUERYSTRING_LICENCE_KEY = 'reference'
+
 export const dateFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
 
 export const CommonResults = {
@@ -50,6 +54,12 @@ export const CommonResults = {
 export const ShowDigitalLicencePages = {
   YES: 'show-digital-licence-yes',
   NO: 'show-digital-licence-no'
+}
+
+export const RENEWAL_ERROR_REASON = {
+  NOT_DUE: 'not-due',
+  EXPIRED: 'expired',
+  NOT_ANNUAL: 'not-annual'
 }
 
 // If the user has seen the summary page these are set in the status

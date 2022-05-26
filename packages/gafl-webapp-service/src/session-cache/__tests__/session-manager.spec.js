@@ -3,7 +3,7 @@ import { isStaticResource, useSessionCookie, includesRegex } from '../session-ma
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
   CONTROLLER,
-  DATE_OF_BIRTH,
+  LICENCE_FOR,
   LICENCE_TYPE,
   ORDER_COMPLETE,
   LICENCE_DETAILS,
@@ -28,13 +28,20 @@ describe('isStaticResource', () => {
 })
 
 describe('includesRegex', () => {
-  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/]
-  it.each(['/buy/renew/identify', '/renew/ABC123', '/renew/123123', '/renew/ABCDEF', '/renew/anytext'])(
-    'returns true if one of the regexes is matched %s',
-    async path => {
-      expect(includesRegex(path, regexArray)).toBeTruthy()
-    }
-  )
+  const regexArray = [/^\/buy\/renew\/identify$/, /^\/renew\/.*$/, /^\/renew-my-licence\/.*$/]
+  it.each([
+    '/buy/renew/identify',
+    '/renew/ABC123',
+    '/renew/123123',
+    '/renew/ABCDEF',
+    '/renew/anytext',
+    '/renew-my-licence/ABC123',
+    '/renew-my-licence/123123',
+    '/renew-my-licence/ABCDEF',
+    '/renew-my-licence/anytext'
+  ])('returns true if one of the regexes is matched %s', async path => {
+    expect(includesRegex(path, regexArray)).toBeTruthy()
+  })
 
   it.each(['/buy/renew', '/buy', '/rene', '/buy/order-complete'])('returns false if one of the regexes is not matched %s', async path => {
     expect(includesRegex(path, regexArray)).toBeFalsy()
@@ -55,8 +62,8 @@ describe('Use session cookie', () => {
 })
 
 describe('The user', () => {
-  beforeAll(d => start(d))
-  beforeAll(d => initialize(d))
+  beforeAll(() => new Promise(resolve => start(resolve)))
+  beforeAll(() => new Promise(resolve => initialize(resolve)))
   afterAll(d => stop(d))
 
   it('clearing the session cookie automatically creates a new cookie and cache', async () => {
@@ -69,7 +76,7 @@ describe('The user', () => {
     await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     const response = await injectWithCookies('GET', CONTROLLER.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(LICENCE_FOR.uri)
   })
 
   /*
@@ -81,7 +88,7 @@ describe('The user', () => {
     await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, {})
     const response = await injectWithCookies('GET', CONTROLLER.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(LICENCE_FOR.uri)
   })
 
   /*

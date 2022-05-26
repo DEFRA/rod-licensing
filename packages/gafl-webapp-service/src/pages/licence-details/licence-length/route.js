@@ -6,15 +6,18 @@ import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 
 const validator = Joi.object({
-  'licence-length': Joi.string()
-    .valid('12M', '8D', '1D')
-    .required()
+  'licence-length': Joi.string().valid('12M', '8D', '1D').required()
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const pricing = await pricingDetail(LICENCE_LENGTH.page, permission)
-  return { pricing, licenceTypeStr: licenceTypeDisplay(permission) }
+
+  return {
+    pricing,
+    isLicenceForYou: permission.isLicenceForYou,
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog())
+  }
 }
 
 export default pageRoute(LICENCE_LENGTH.page, LICENCE_LENGTH.uri, validator, nextPage, getData)

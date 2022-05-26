@@ -1,4 +1,4 @@
-import { LICENCE_FULFILMENT } from '../../../../uri.js'
+import { LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../../../uri.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_FULFILMENT.page)
@@ -12,6 +12,6 @@ export default async request => {
   if (licenceOption === 'paper-licence') {
     licensee.postalFulfilment = true
   }
-
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_CONFIRMATION_METHOD.page]: false })
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

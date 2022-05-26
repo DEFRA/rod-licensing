@@ -6,6 +6,7 @@ import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-
 import * as concessionHelper from '../../../processors/concession-helper.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
+  NAME,
   LICENCE_SUMMARY,
   LICENCE_LENGTH,
   LICENCE_TYPE,
@@ -22,6 +23,10 @@ import { nextPage } from '../../../routes/next-page.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
+  if (!permission.licensee.firstName || !permission.licensee.lastName) {
+    throw new GetDataRedirect(NAME.uri)
+  }
+
   if (!permission.licensee.birthDate) {
     throw new GetDataRedirect(DATE_OF_BIRTH.uri)
   }
@@ -53,7 +58,7 @@ export const getData = async request => {
     checkNavigation(permission)
   }
 
-  status.fromSummary = status.fromSummary || LICENCE_SUMMARY_SEEN
+  status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
   const startTimeString = displayStartTime(permission)
@@ -62,8 +67,8 @@ export const getData = async request => {
     permission,
     startTimeString,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
-    licenceTypeStr: licenceTypeDisplay(permission),
     isRenewal: permission.isRenewal,
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog()),
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),
     disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
@@ -72,6 +77,7 @@ export const getData = async request => {
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
     uri: {
+      name: NAME.uri,
       licenceLength: LICENCE_LENGTH.uri,
       licenceType: LICENCE_TYPE.uri,
       licenceToStart: LICENCE_TO_START.uri,
@@ -81,6 +87,16 @@ export const getData = async request => {
       clear: NEW_TRANSACTION.uri
     }
   }
+}
+
+export const getFromSummary = (fromSummary, isRenewal) => {
+  if (isRenewal) {
+    return LICENCE_SUMMARY_SEEN
+  }
+  if (fromSummary) {
+    return fromSummary
+  }
+  return LICENCE_SUMMARY_SEEN
 }
 
 export default pageRoute(LICENCE_SUMMARY.page, LICENCE_SUMMARY.uri, null, nextPage, getData)

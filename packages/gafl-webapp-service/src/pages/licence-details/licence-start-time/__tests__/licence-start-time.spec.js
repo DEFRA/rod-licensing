@@ -15,8 +15,8 @@ import { licenceToStart } from '../../licence-to-start/update-transaction'
 import moment from 'moment'
 import { licenseTypes } from '../../licence-type/route'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 describe('The licence start time page', () => {
@@ -75,11 +75,7 @@ describe('The licence start time page', () => {
       ...startDateHelper(moment())
     })
 
-    const minHour = moment()
-      .add(1, 'hour')
-      .add(30, 'minute')
-      .startOf('hour')
-      .hour()
+    const minHour = moment().add(1, 'hour').add(30, 'minute').startOf('hour').hour()
     const disabledFragment = `name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
     const enabledFragment = `name="licence-start-time" type="radio" value="${minHour}">`
 

@@ -1,8 +1,8 @@
 import { initialize, injectWithCookies, start, stop } from '../../../../__mocks__/test-utils-system.js'
 import { PAYMENT_FAILED } from '../../../../uri.js'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 describe('The payment failed handler', () => {

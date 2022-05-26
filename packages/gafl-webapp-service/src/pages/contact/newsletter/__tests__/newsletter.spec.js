@@ -16,8 +16,8 @@ import { start, stop, initialize, injectWithCookies } from '../../../../__mocks_
 import { ADULT_TODAY, dobHelper } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 describe('The newsletter page', () => {
@@ -39,14 +39,13 @@ describe('The newsletter page', () => {
     expect(response.headers.location).toBe(NEWSLETTER.uri)
   })
 
-  describe('if the user has set the preferred method of contact to email ', async () => {
-    beforeEach(async d => {
+  describe('if the user has set the preferred method of contact to email ', () => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
-      d()
     })
 
     it('if posting no it sets the newsletter contact method to none and preserves the contact methods and email', async () => {
@@ -123,14 +122,13 @@ describe('The newsletter page', () => {
     })
   })
 
-  describe('if the user has set the preferred method of contact to text ', async () => {
-    beforeEach(async d => {
+  describe('if the user has set the preferred method of contact to text ', () => {
+    beforeEach(async () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07900000000' })
-      d()
     })
 
     it('if posting no it sets the newsletter contact method to none and preserves the email address', async () => {

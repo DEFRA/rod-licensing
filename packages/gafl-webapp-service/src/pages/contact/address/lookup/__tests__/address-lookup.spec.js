@@ -6,8 +6,8 @@ import searchResultsNone from '../../../../../services/address-lookup/__mocks__/
 import { salesApi } from '@defra-fish/connectors-lib'
 import mockDefraCountries from '../../../../../__mocks__/data/defra-country'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 jest.mock('node-fetch')

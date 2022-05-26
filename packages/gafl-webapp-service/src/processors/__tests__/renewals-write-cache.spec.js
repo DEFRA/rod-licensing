@@ -3,7 +3,7 @@ import moment from 'moment'
 
 import { setUpCacheFromAuthenticationResult, setUpPayloads } from '../renewals-write-cache'
 import mockConcessions from '../../__mocks__/data/concessions'
-import { ADDRESS_LOOKUP, CONTACT, LICENCE_TYPE, NAME } from '../../uri'
+import { ADDRESS_LOOKUP, CONTACT, LICENCE_TYPE, NAME, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../uri'
 
 jest.mock('@defra-fish/connectors-lib')
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
@@ -66,7 +66,8 @@ describe('renewals-write-cache', () => {
             label: 'Salmon and sea trout'
           },
           numberOfRods: 1
-        }
+        },
+        isLicenceForYou: true
       }
     }
 
@@ -301,11 +302,28 @@ describe('renewals-write-cache', () => {
         })
       )
     })
+
+    it('should have isLicenceForYou set to true', async () => {
+      const isLicenceForYou = true
+      const mockPermissionAuthResult = {
+        permission: {
+          ...authenticationResult.permission,
+          isLicenceForYou
+        }
+      }
+      await setUpCacheFromAuthenticationResult(mockRequest, mockPermissionAuthResult)
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          isLicenceForYou: true
+        })
+      )
+    })
   })
 
   describe('setupPayloads', () => {
     const mockTransactionCacheGet = jest.fn()
     const mockPageCacheSet = jest.fn()
+    const mockStatusCacheSet = jest.fn()
 
     const mockRequest = {
       cache: () => ({
@@ -315,6 +333,9 @@ describe('renewals-write-cache', () => {
           },
           page: {
             setCurrentPermission: mockPageCacheSet
+          },
+          status: {
+            setCurrentPermission: mockStatusCacheSet
           }
         }
       })
@@ -436,6 +457,18 @@ describe('renewals-write-cache', () => {
           'how-contacted': 'none'
         }
       })
+    })
+
+    it('should set the licence-fulfilment to true on the status cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+      await setUpPayloads(mockRequest)
+      expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_FULFILMENT.page]: true })
+    })
+
+    it('should set the licence-confirmation-method to true on the status cache', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+      await setUpPayloads(mockRequest)
+      expect(mockStatusCacheSet).toBeCalledWith({ [LICENCE_CONFIRMATION_METHOD.page]: true })
     })
   })
 })

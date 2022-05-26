@@ -1,4 +1,6 @@
-import { getLicenseeDetailsSummaryRows } from '../route'
+import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
+import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
+import { LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../../../uri.js'
 
 const address = {
   firstName: 'Fester',
@@ -139,6 +141,48 @@ describe('contact-summary > route', () => {
         const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
         expect(summaryTable).toMatchSnapshot()
       })
+    })
+
+    it('should have the newsletter row if isLicenceForYou is true', () => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...address
+        },
+        isLicenceForYou: true
+      }
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+      expect(summaryTable).toMatchSnapshot()
+    })
+
+    it('should not have the newsletter row if isLicenceForYou is false', () => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...address
+        },
+        isLicenceForYou: false
+      }
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+      expect(summaryTable).toMatchSnapshot()
+    })
+  })
+
+  describe('checkNavigation', () => {
+    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', () => {
+      const status = {
+        [LICENCE_FULFILMENT.page]: false
+      }
+      const permission = { licenceLength: '12M', isRenewal: true }
+      expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if licence-confirmation page is false on the status', () => {
+      const status = {
+        [LICENCE_CONFIRMATION_METHOD.page]: false
+      }
+      const permission = { licenceLength: '12M', isRenewal: true }
+      expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
   })
 })

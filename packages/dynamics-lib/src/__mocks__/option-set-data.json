@@ -16091,6 +16091,152 @@
           }
         }
       ]
+    },
+    {
+      "@odata.type": "#Microsoft.Dynamics.CRM.OptionSetMetadata",
+      "ParentOptionSetName": null,
+      "IsCustomOptionSet": true,
+      "IsGlobal": true,
+      "IsManaged": false,
+      "Name": "defra_islicenceforyou",
+      "ExternalTypeName": "",
+      "OptionSetType": "Picklist",
+      "IntroducedVersion": "1.0.0.0",
+      "MetadataId": "9533ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+      "HasChanged": null,
+      "Options": [
+        {
+          "Value": 1,
+          "Color": "#0000ff",
+          "IsManaged": false,
+          "ExternalValue": "",
+          "ParentValues": [],
+          "MetadataId": null,
+          "HasChanged": null,
+          "Label": {
+            "LocalizedLabels": [
+              {
+                "Label": "Yes",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "9833ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "Yes",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "9833ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+              "HasChanged": null
+            }
+          },
+          "Description": {
+            "LocalizedLabels": [
+              {
+                "Label": "",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "9a33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "9a33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+              "HasChanged": null
+            }
+          }
+        },
+        {
+          "Value": 0,
+          "Color": "#0000ff",
+          "IsManaged": false,
+          "ExternalValue": "",
+          "ParentValues": [],
+          "MetadataId": null,
+          "HasChanged": null,
+          "Label": {
+            "LocalizedLabels": [
+              {
+                "Label": "No",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "9b33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "No",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "9b33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+              "HasChanged": null
+            }
+          },
+          "Description": {
+            "LocalizedLabels": [
+              {
+                "Label": "",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "9d33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "9d33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+              "HasChanged": null
+            }
+          }
+        }
+      ],
+      "Description": {
+        "LocalizedLabels": [
+          {
+            "Label": "Is Licence For You",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "a033ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Is Licence For You",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "a033ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+          "HasChanged": null
+        }
+      },
+      "DisplayName": {
+        "LocalizedLabels": [
+          {
+            "Label": "Is Licence For You",
+            "LanguageCode": 1033,
+            "IsManaged": false,
+            "MetadataId": "9f33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+            "HasChanged": null
+          }
+        ],
+        "UserLocalizedLabel": {
+          "Label": "Is Licence For You",
+          "LanguageCode": 1033,
+          "IsManaged": false,
+          "MetadataId": "9f33ca1b-ff6e-ec11-8943-000d3ab3e8bb",
+          "HasChanged": null
+        }
+      },
+      "IsCustomizable": {
+        "Value": true,
+        "CanBeChanged": true,
+        "ManagedPropertyLogicalName": "iscustomizable"
+      }
     }
   ]
 }

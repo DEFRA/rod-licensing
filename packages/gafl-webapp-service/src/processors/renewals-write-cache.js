@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import db from 'debug'
-import { LICENCE_TYPE, NAME, ADDRESS_LOOKUP, CONTACT } from '../uri.js'
+import { LICENCE_TYPE, NAME, ADDRESS_LOOKUP, CONTACT, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../uri.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
 import { ageConcessionHelper, addDisabled } from './concession-helper.js'
@@ -20,16 +20,14 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licenceLength = '12M' // Always for easy renewals
   permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
-
+  permission.isLicenceForYou = true
   const endDateMoment = moment.utc(authenticationResult.permission.endDate).tz(SERVICE_LOCAL_TIME)
 
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
 
   permission.licenceToStart = renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE
   permission.licenceStartDate = renewedHasExpired
-    ? moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .format(cacheDateFormat)
+    ? moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat)
     : endDateMoment.format(cacheDateFormat)
   permission.licenceStartTime = renewedHasExpired ? 0 : endDateMoment.hours()
   permission.renewedEndDate = endDateMoment.toISOString()
@@ -119,4 +117,7 @@ export const setUpPayloads = async request => {
       }
     })(permission.licensee)
   })
+
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page]: true })
+  await request.cache().helpers.status.setCurrentPermission({ [LICENCE_CONFIRMATION_METHOD.page]: true })
 }

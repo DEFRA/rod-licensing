@@ -1,22 +1,33 @@
-{% extends "standard-form.njk" %}
+{% extends "layout.njk" %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
-{% if data.reason === 'not-due' %}
-    {% set title = 'You are renewing this licence too early' %}
-{% elseif data.reason === 'expired' %}
-    {% set title =  'The licence renewal has expired' %}
-{% elseif data.reason === 'not-annual' %}
-    {% set title =  'You cannot renew an 8 day or 1 day licence' %}
-{% endif %}
+{% set title = data.title %}
 
-{% block pageContent %}
-    {% if data.reason === 'not-due' %}
-           <p class="govuk-body-l">The licence ending in {{ data.referenceNumber }} does not expire until {{ data.validTo }}</p>
-           <p class="govuk-body-l">Click continue to buy a another licence</p>
-    {% elseif data.reason === 'expired' %}
-           <p class="govuk-body-l">The licence ending in {{ data.referenceNumber }} has expired on {{ data.validTo }} and can no longer be renewed</p>
-           <p class="govuk-body-l">Click continue to buy a another licence</p>
-    {% elseif data.reason === 'not-annual' %}
-           <p class="govuk-body-l">The licence ending in {{ data.referenceNumber }} is not a 12 month licence and cannot be renewed</p>
-           <p class="govuk-body-l">Click continue to buy a another licence</p>
-    {% endif %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% if backRef %}
+                {{ govukBackLink({
+                    text: mssgs.back,
+                    href: backRef,
+                    classes: "govuk-!-margin-bottom-7"
+                }) }}
+            {% endif %}
+
+            {% call govukFieldset({
+                legend: {
+                    text: title,
+                    classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                    isPageHeading: true
+                }
+            }) %}
+
+            <p class="govuk-body-l">{{data.bodyMessage}}</p>            
+            <p class="govuk-body-l">{{ mssgs.renewal_inactive_title_4 }}<a href="{{ data.uri.new }}" class="govuk-link">{{ mssgs.renewal_inactive_title_link }}</a></p>
+
+            {% endcall %}
+        </div>
+    </div>
 {% endblock %}

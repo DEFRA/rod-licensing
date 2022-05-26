@@ -2,8 +2,8 @@ import { start, stop, injectWithCookies, initialize } from '../../__mocks__/test
 import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, RENEWAL_PUBLIC, IDENTIFY } from '../../uri.js'
 
 // Start application before running the test case
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 
 // Stop application after running the test case
 afterAll(d => stop(d))

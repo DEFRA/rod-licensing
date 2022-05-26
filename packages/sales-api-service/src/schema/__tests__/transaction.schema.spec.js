@@ -50,6 +50,26 @@ describe('createTransactionSchema', () => {
     const result = await createTransactionSchema.validateAsync(mockPayload)
     expect(result).toBeInstanceOf(Object)
   })
+
+  it('allows isLicenceForYou to be true', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.permissions[0].isLicenceForYou = true
+    const result = await createTransactionSchema.validateAsync(mockTransactionPayload())
+    expect(result).toBeInstanceOf(Object)
+  })
+
+  it('allows isLicenceForYou to be false', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.permissions[0].isLicenceForYou = false
+    const result = await createTransactionSchema.validateAsync(mockTransactionPayload())
+    expect(result).toBeInstanceOf(Object)
+  })
+
+  it('does not allow isLicenceForYou to be a string', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.permissions[0].isLicenceForYou = 'test'
+    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow('"permissions[0].isLicenceForYou" must be a boolean')
+  })
 })
 
 describe('createTransactionResponseSchema', () => {

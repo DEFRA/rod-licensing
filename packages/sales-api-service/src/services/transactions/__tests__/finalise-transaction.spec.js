@@ -7,19 +7,37 @@ import {
   mockStagedTransactionRecord
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../../config.js'
-import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import BusinessRulesLib from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import AwsMock from 'aws-sdk'
 import { TRANSACTION_STATUS } from '../constants.js'
+import permissionsService from '../../permissions.service.js'
+
+const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 
 jest.mock('../../permissions.service.js', () => ({
-  generatePermissionNumber: () => MOCK_PERMISSION_NUMBER,
-  calculateEndDate: () => MOCK_END_DATE
+  generatePermissionNumber: jest.fn(() => MOCK_PERMISSION_NUMBER),
+  calculateEndDate: jest.fn(() => MOCK_END_DATE)
 }))
 
 jest.mock('../../contacts.service.js', () => ({
   getObfuscatedDob: () => MOCK_OBFUSCATED_DOB
 }))
+
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  POCL_TRANSACTION_SOURCES: ['Post Office Sales', 'DDE File'],
+  START_AFTER_PAYMENT_MINUTES: 30
+}))
+
+const getStagedTransactionRecord = () => {
+  const record = mockStagedTransactionRecord()
+  const {
+    permissions: [permission]
+  } = record
+  permission.issueDate = moment(permission.issueDate).year(2021).toISOString()
+  permission.startDate = moment(permission.startDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
+  return record
+}
 
 describe('transaction service', () => {
   beforeAll(() => {
@@ -29,12 +47,13 @@ describe('transaction service', () => {
   beforeEach(AwsMock.__resetAll)
 
   describe('finaliseTransaction', () => {
+    beforeEach(jest.clearAllMocks)
     it.each([
-      ['records with a predetermined issue and start date', mockStagedTransactionRecord],
+      ['records with a predetermined issue and start date', getStagedTransactionRecord],
       [
         'records with a null issue and start date',
         () => {
-          const record = mockStagedTransactionRecord()
+          const record = getStagedTransactionRecord()
           record.permissions = record.permissions.map(p => ({ ...p, issueDate: null, startDate: null }))
           return record
         }
@@ -75,11 +94,7 @@ describe('transaction service', () => {
           ':permissions': mockRecord.permissions.map(p => ({
             ...p,
             issueDate: p.issueDate ?? completionFields.payment.timestamp,
-            startDate:
-              p.startDate ??
-              moment(completionFields.payment.timestamp)
-                .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
-                .toISOString(),
+            startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
             endDate: expect.any(String),
             referenceNumber: expect.any(String)
           })),
@@ -198,6 +213,235 @@ describe('transaction service', () => {
     it('throws exceptions back up the stack', async () => {
       AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('get')
       await expect(finaliseTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+    })
+  })
+
+  describe('finaliseTransaction adjusts licence times according to issue date and start date', () => {
+    beforeEach(() => {
+      BusinessRulesLib.START_AFTER_PAYMENT_MINUTES = 30
+      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
+      jest.clearAllMocks()
+    })
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 22, 'Web Sales'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 38, 'Web Sales'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z', '2021-09-08T21:44:01.892Z', 47, 'Web Sales'],
+      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 12, 'Telesales'],
+      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2022-11-30T22:22:01.892Z', 1, 'Telesales']
+    ])(
+      'adjusts startDate if startDate is less than 30 minutes after issueDate',
+      async (issueDate, startDate, endDate, startAfterPaymentMinutes, dataSource) => {
+        BusinessRulesLib.START_AFTER_PAYMENT_MINUTES = startAfterPaymentMinutes
+        const mockRecord = mockStagedTransactionRecord()
+        mockRecord.dataSource = dataSource
+        const [mockPermission] = mockRecord.permissions
+        mockPermission.issueDate = issueDate
+        mockPermission.startDate = startDate
+        mockPermission.endDate = endDate
+        const completionFields = getCompletionFields()
+        AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+          Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+        })
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+        await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+          expect.objectContaining({
+            ExpressionAttributeValues: expect.objectContaining({
+              ':permissions': expect.arrayContaining([
+                expect.objectContaining({
+                  permitId: mockPermission.permitId,
+                  startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString()
+                })
+              ])
+            })
+          })
+        )
+      }
+    )
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:44:02.892Z', '2022-09-30T17:44:02.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-10-01T09:00:00.000Z', '2022-10-01T09:00:00.000Z'],
+      ['2021-02-28T22:14:01.892Z', '2021-03-01T06:00:00.000Z', '2021-03-02T06:00:00.000Z']
+    ])('leaves startDate unmodified if it is more than 30 minutes after issueDate', async (issueDate, startDate, endDate) => {
+      const mockRecord = mockStagedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      mockPermission.issueDate = issueDate
+      mockPermission.startDate = startDate
+      mockPermission.endDate = endDate
+      const completionFields = getCompletionFields()
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+      })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+      await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ExpressionAttributeValues: expect.objectContaining({
+            ':permissions': expect.arrayContaining([
+              expect.objectContaining({
+                permitId: mockPermission.permitId,
+                startDate
+              })
+            ])
+          })
+        })
+      )
+    })
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2023-09-30T17:14:01.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2024-09-30T23:00:49.892Z'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T09:00:00.000Z', '2021-10-01T19:00:00.000Z'],
+      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2021-10-01T07:14:01.892Z'],
+      ['2021-11-30T23:14:01.892Z', '2021-11-30T22:22:01.892Z', '2021-11-08T12:22:01.892Z'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T22:45:00.000Z', '2021-10-01T02:45:00.000Z']
+    ])('uses endDate given by permissions end date calculator', async (issueDate, startDate, endDate) => {
+      permissionsService.calculateEndDate.mockReturnValueOnce(endDate)
+      const mockRecord = mockStagedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      mockPermission.issueDate = issueDate
+      mockPermission.startDate = startDate
+      const completionFields = getCompletionFields()
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+      })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+      await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ExpressionAttributeValues: expect.objectContaining({
+            ':permissions': expect.arrayContaining([
+              expect.objectContaining({
+                permitId: mockPermission.permitId,
+                endDate
+              })
+            ])
+          })
+        })
+      )
+    })
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:44:02.892Z', '2022-09-30T17:44:02.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-10-01T09:00:00.000Z', '2022-10-01T09:00:00.000Z'],
+      ['2021-02-28T22:14:01.892Z', '2021-03-01T06:00:00.000Z', '2021-03-02T06:00:00.000Z']
+    ])('leaves endDate unmodified if startDate is more than 30 minutes after issueDate', async (issueDate, startDate, endDate) => {
+      permissionsService.calculateEndDate.mockReturnValueOnce(endDate)
+      const mockRecord = mockStagedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      mockPermission.issueDate = issueDate
+      mockPermission.startDate = startDate
+      mockPermission.endDate = endDate
+      const completionFields = getCompletionFields()
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+      })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+      await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ExpressionAttributeValues: expect.objectContaining({
+            ':permissions': expect.arrayContaining([
+              expect.objectContaining({
+                permitId: mockPermission.permitId,
+                endDate
+              })
+            ])
+          })
+        })
+      )
+    })
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 'Post Office Sales'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z', '2022-09-30T23:00:49.892Z', 'Post Office Sales'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z', '2022-09-30T21:44:01.892Z', 'DDE File'],
+      ['2021-09-30T00:14:01.892Z', '2021-09-29T17:14:01.892Z', '2022-09-29T17:14:01.892Z', 'DDE File']
+    ])(
+      'leaves start and end time unmodified for any data source type other than Web Sales and Telesales',
+      async (issueDate, startDate, endDate, dataSource) => {
+        permissionsService.calculateEndDate.mockReturnValueOnce(endDate)
+        const mockRecord = mockStagedTransactionRecord()
+        mockRecord.dataSource = dataSource
+        const [mockPermission] = mockRecord.permissions
+        mockPermission.issueDate = issueDate
+        mockPermission.startDate = startDate
+        mockPermission.endDate = endDate
+        const completionFields = getCompletionFields()
+        AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+          Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+        })
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+        await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+          expect.objectContaining({
+            ExpressionAttributeValues: expect.objectContaining({
+              ':permissions': expect.arrayContaining([
+                expect.objectContaining({
+                  permitId: mockPermission.permitId,
+                  startDate,
+                  endDate
+                })
+              ])
+            })
+          })
+        )
+      }
+    )
+
+    it.each([
+      ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z'],
+      ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z'],
+      ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z']
+    ])('passes a permission with a start date when generating a permission number', async (issueDate, startDate) => {
+      const mockRecord = mockStagedTransactionRecord()
+      const [mockPermission] = mockRecord.permissions
+      const completionFields = getCompletionFields(issueDate)
+      mockPermission.issueDate = issueDate
+      delete mockPermission.startDate
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+      })
+      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
+      // have to do this as Jest holds calling arguments by reference, so we don't
+      // get the permission as it was when generatePermissionNumber was called but how it
+      // ends up by the end of finaliseTransaction...
+      let permission
+      permissionsService.generatePermissionNumber.mockImplementationOnce(p => {
+        permission = JSON.parse(JSON.stringify(p))
+        return startDate
+      })
+
+      await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
+      expect(permission).toEqual(
+        expect.objectContaining({
+          permitId: mockPermission.permitId,
+          startDate: moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
+        })
+      )
+    })
+
+    const getCompletionFields = (timestamp = new Date().toISOString()) => ({
+      payment: {
+        amount: 30,
+        timestamp,
+        type: 'Gov Pay',
+        method: 'Debit card'
+      }
     })
   })
 })

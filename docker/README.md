@@ -82,12 +82,51 @@ To support running the services locally using docker, there are three different 
   > Building the containers in production mode takes longer as all node modules need to be installed and additional build
   > steps such as compiling SASS need to be performed.
 
-In order to run the services locally, you'll need to insert the appropriate values into the environment files ending with .secrets.env
-in the [env](env) folder.
+In order to run the services locally, you'll need to to rename the env files in the in the [env](env) folder to include a leading dot and removing .example. You'll need to insert the appropriate values into the environment files ending with .secrets.env. Copy files as follows, then get values for secret files from gitlab repo fish/rod-licensing-env-vars.'
+
+To rename the files:
+
+```shell script
+cp fulfilment_job.env.example .fulfilment_job.env
+cp fulfilment_job.secrets.env.example .fulfilment_job.secrets.env
+cp gafl_webapp_telesales.env.example .gafl_webapp_telesales.env
+cp gafl_webapp_telesales.secrets.env.example .gafl_webapp_telesales.secrets.env
+cp gafl_webapp.env.example .gafl_webapp.env
+cp gafl_webapp.secrets.env.example .gafl_webapp.secrets.env
+cp payment_mop_up_job.env.example .payment_mop_up_job.env
+cp payment_mop_up_job.secrets.env.example .payment_mop_up_job.secrets.env
+cp pocl_job.env.example .pocl_job.env
+cp sales_api.env.example .sales_api.env
+cp sales_api.secrets.env.example .sales_api.secrets.env
+cp sqs_receiver.env.example .sqs_receiver.env
+```
 
 ### How to run
 
 There are a number of convenience scripts setup in the root `package.json`
+
+### How to upgrade Docker Desktop
+
+From time to time, new versions of Docker Desktop become available. Sometimes the upgrade process is almost seamless, but sometimes errors can occur.
+If problems should arise after doing an upgrade, try the following:
+
+- rollback to the last good version (previous versions can be downloaded from https://docs.docker.com/desktop/mac/install/)
+- run the following commands:
+
+```
+docker system prune -a && docker volume prune
+```
+
+- Update Docker
+- Run the following commands:
+
+```
+docker swarm leave --force && docker swarm init
+```
+
+- Then [restart the infrastructure stack](#Infrastructure), rebuild and start the services stack, either in [Production mode](#Production-mode) or [Development mode](#Development-mode)
+
+Volumes are stored in docker/volumes. If you find that the data in any of the containers are corrupted. Do a `docker system prune -a` then delete the data in the folders. E.g. if dynamodb doesn't allow you perform updates, run the prune command then delete the data folder in docker/volumes/localstack, leaving the README.md. Then rebuild and run the project.
 
 #### Production mode
 

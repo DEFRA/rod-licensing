@@ -2,7 +2,7 @@ import { start, stop, initialize, injectWithCookies } from '../../../../__mocks_
 import {
   LICENCE_TO_START,
   DATE_OF_BIRTH,
-  DISABILITY_CONCESSION,
+  LICENCE_TYPE,
   NO_LICENCE_REQUIRED,
   LICENCE_LENGTH,
   LICENCE_START_TIME,
@@ -20,8 +20,8 @@ import {
 import { licenceToStart } from '../update-transaction.js'
 import moment from 'moment'
 
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 const juniorIn16Days = moment()
@@ -71,13 +71,12 @@ describe("The 'when would you like you licence to start?' page", () => {
     expect(response.headers.location).toBe(LICENCE_TO_START.uri)
   })
 
-  describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, async () => {
-    beforeEach(async d => {
+  describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, () => {
+    beforeEach(async () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(juniorIn16Days))
-      d()
     })
 
-    it(`redirects to the disabled concessions page when posting a licence start date of ${moment()
+    it(`redirects to the licence type page when posting a licence start date of ${moment()
       .add(16, 'day')
       .format('YYYY-MM-DD')}`, async () => {
       const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
@@ -85,7 +84,7 @@ describe("The 'when would you like you licence to start?' page", () => {
         ...startDateHelper(moment().add(16, 'day'))
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+      expect(response.headers.location).toBe(LICENCE_TYPE.uri)
     })
 
     it(`redirects to the no licence required page when posting a licence start date of ${moment()
@@ -113,13 +112,13 @@ describe("The 'when would you like you licence to start?' page", () => {
 
   it(`for a user who is born on the ${JUNIOR_TODAY.format(
     'YYYY-MM-DD'
-  )} and when posting a licence starting immediately, it redirects to the disabled concessions`, async () => {
+  )} and when posting a licence starting immediately, it redirects to the licence type`, async () => {
     await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
     const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
       'licence-to-start': licenceToStart.AFTER_PAYMENT
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toBe(LICENCE_TYPE.uri)
   })
 
   it('redirects to the start-time page if it already known that this is a 1 or 8 day licence', async () => {
@@ -175,9 +174,7 @@ describe("The 'when would you like you licence to start?' page", () => {
         jest.mock('moment')
         const moment = require('moment')
         moment.mockImplementation(() => {
-          return jest
-            .requireActual('moment')()
-            .add(46, 'day')
+          return jest.requireActual('moment')().add(46, 'day')
         })
         const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
           'licence-to-start': licenceToStart.ANOTHER_DATE,

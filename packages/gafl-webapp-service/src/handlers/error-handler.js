@@ -11,13 +11,17 @@ export const errorHandler = async (request, h) => {
   if (!request.response.isBoom) {
     return h.continue
   }
-
+  const mssgs = request.i18n.getCatalog()
+  const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
   if (Math.floor(request.response.output.statusCode / 100) === 4) {
     /*
      * 4xx client errors and are not logged
      */
     return h
       .view(CLIENT_ERROR.page, {
+        mssgs,
+        altLang,
+        referer: request?.headers?.referer,
         clientError: request.response.output.payload,
         path: request.path,
         uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri, agreed: AGREED.uri }
@@ -41,6 +45,8 @@ export const errorHandler = async (request, h) => {
 
     return h
       .view(SERVER_ERROR.page, {
+        mssgs,
+        altLang,
         serverError: request.response.output.payload,
         uri: { new: NEW_TRANSACTION.uri, agreed: AGREED.uri }
       })

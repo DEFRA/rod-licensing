@@ -20,8 +20,8 @@ beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
   process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
 })
-beforeAll(d => start(d))
-beforeAll(d => initialize(d))
+beforeAll(() => new Promise(resolve => start(resolve)))
+beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 afterAll(() => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
@@ -36,11 +36,7 @@ describe('The easy renewal, change start date page', () => {
   describe('where the licence expires tomorrow', () => {
     beforeEach(async () => {
       const newAuthenticationResult = Object.assign({}, authenticationResult)
-      newAuthenticationResult.permission.endDate = moment()
-        .add(1, 'day')
-        .startOf('day')
-        .add(6, 'hours')
-        .toISOString()
+      newAuthenticationResult.permission.endDate = moment().add(1, 'day').startOf('day').add(6, 'hours').toISOString()
       salesApi.authenticate.mockResolvedValue(newAuthenticationResult)
       await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(ADULT_TODAY)))
       await injectWithCookies('GET', AUTHENTICATE.uri)
@@ -50,11 +46,7 @@ describe('The easy renewal, change start date page', () => {
     it('the correct default start date has been applied', async () => {
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
-      expect(permission.licenceStartDate).toBe(
-        moment()
-          .add(1, 'day')
-          .format('YYYY-MM-DD')
-      )
+      expect(permission.licenceStartDate).toBe(moment().add(1, 'day').format('YYYY-MM-DD'))
       expect(permission.licenceStartTime).toBe(6)
       expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
     })
@@ -95,11 +87,7 @@ describe('The easy renewal, change start date page', () => {
       await injectWithCookies(
         'POST',
         RENEWAL_START_DATE.uri,
-        startDateHelper(
-          moment()
-            .add(1, 'day')
-            .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-        )
+        startDateHelper(moment().add(1, 'day').add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
       )
       const response = await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       expect(response.statusCode).toBe(302)
@@ -111,11 +99,7 @@ describe('The easy renewal, change start date page', () => {
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
-      expect(permission.licenceStartDate).toBe(
-        moment()
-          .add(1, 'day')
-          .format('YYYY-MM-DD')
-      )
+      expect(permission.licenceStartDate).toBe(moment().add(1, 'day').format('YYYY-MM-DD'))
       expect(permission.licenceStartTime).toBe(6)
       expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
     })
@@ -125,11 +109,7 @@ describe('The easy renewal, change start date page', () => {
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
-      expect(permission.licenceStartDate).toBe(
-        moment()
-          .add(2, 'day')
-          .format('YYYY-MM-DD')
-      )
+      expect(permission.licenceStartDate).toBe(moment().add(2, 'day').format('YYYY-MM-DD'))
       expect(permission.licenceStartTime).toBe(0)
       expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
     })
@@ -138,9 +118,7 @@ describe('The easy renewal, change start date page', () => {
   describe('where the licence expires later today', () => {
     beforeEach(async () => {
       const newAuthenticationResult = Object.assign({}, authenticationResult)
-      newAuthenticationResult.permission.endDate = moment()
-        .add(2, 'hours')
-        .toISOString()
+      newAuthenticationResult.permission.endDate = moment().add(2, 'hours').toISOString()
       salesApi.authenticate.mockResolvedValue(newAuthenticationResult)
       await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(ADULT_TODAY)))
       await injectWithCookies('GET', AUTHENTICATE.uri)
@@ -177,11 +155,7 @@ describe('The easy renewal, change start date page', () => {
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
-      expect(permission.licenceStartDate).toBe(
-        moment()
-          .add(1, 'day')
-          .format('YYYY-MM-DD')
-      )
+      expect(permission.licenceStartDate).toBe(moment().add(1, 'day').format('YYYY-MM-DD'))
       expect(permission.licenceStartTime).toBe(0)
       expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
     })
@@ -219,23 +193,11 @@ describe('The easy renewal, change start date page', () => {
     })
     it('starting the licence tomorrow will start at the beginning of the day', async () => {
       await injectWithCookies('GET', RENEWAL_START_DATE.uri)
-      await injectWithCookies(
-        'POST',
-        RENEWAL_START_DATE.uri,
-        startDateHelper(
-          moment()
-            .set(PREFERRED_HOUR, 'hour')
-            .add(1, 'day')
-        )
-      ) // set time to 15:00 tomorrow
+      await injectWithCookies('POST', RENEWAL_START_DATE.uri, startDateHelper(moment().set(PREFERRED_HOUR, 'hour').add(1, 'day'))) // set time to 15:00 tomorrow
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
-      expect(permission.licenceStartDate).toBe(
-        moment()
-          .add(1, 'day')
-          .format('YYYY-MM-DD')
-      )
+      expect(permission.licenceStartDate).toBe(moment().add(1, 'day').format('YYYY-MM-DD'))
       expect(permission.licenceStartTime).toBe(0)
       expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
     })
@@ -243,9 +205,7 @@ describe('The easy renewal, change start date page', () => {
   describe('where the the licence expired yesterday', () => {
     beforeEach(async () => {
       const newAuthenticationResult = Object.assign({}, authenticationResult)
-      newAuthenticationResult.permission.endDate = moment()
-        .add(-1, 'day')
-        .toISOString()
+      newAuthenticationResult.permission.endDate = moment().add(-1, 'day').toISOString()
       salesApi.authenticate.mockResolvedValue(newAuthenticationResult)
       await injectWithCookies('POST', VALID_IDENTIFY, Object.assign({ postcode: 'BS9 1HJ' }, dobHelper(ADULT_TODAY)))
       await injectWithCookies('GET', AUTHENTICATE.uri)
@@ -272,11 +232,7 @@ describe('The easy renewal, change start date page', () => {
       await injectWithCookies('GET', RENEWAL_START_VALIDATE.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permission = JSON.parse(payload).permissions[0]
-      expect(permission.licenceStartDate).toBe(
-        moment()
-          .add(1, 'day')
-          .format('YYYY-MM-DD')
-      )
+      expect(permission.licenceStartDate).toBe(moment().add(1, 'day').format('YYYY-MM-DD'))
       expect(permission.licenceStartTime).toBe(0)
       expect(permission.licenceToStart).toBe(licenceToStart.ANOTHER_DATE)
     })

@@ -7,6 +7,7 @@ import {
   DISABILITY_CONCESSION,
   LICENCE_LENGTH,
   LICENCE_TYPE,
+  LICENCE_FOR,
   LICENCE_START_TIME,
   ADDRESS_LOOKUP,
   ADDRESS_SELECT,
@@ -22,6 +23,7 @@ import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
 import licenceToStart from '../pages/licence-details/licence-to-start/result-function.js'
 import disabilityConcession from '../pages/concessions/disability/result-function.js'
 import licenceType from '../pages/licence-details/licence-type/result-function.js'
+import licenceFor from '../pages/licence-details/licence-for/result-function.js'
 import licenceLength from '../pages/licence-details/licence-length/result-function.js'
 import licenceStartTime from '../pages/licence-details/licence-start-time/result-function.js'
 import contact from '../pages/contact/contact/result-function.js'
@@ -42,6 +44,7 @@ export default {
   [DISABILITY_CONCESSION.page]: disabilityConcession,
   [LICENCE_LENGTH.page]: licenceLength,
   [LICENCE_TYPE.page]: licenceType,
+  [LICENCE_FOR.page]: licenceFor,
   [LICENCE_START_TIME.page]: licenceStartTime,
   [ADDRESS_LOOKUP.page]: addressLookup,
   [ADDRESS_ENTRY.page]: addressEntry,

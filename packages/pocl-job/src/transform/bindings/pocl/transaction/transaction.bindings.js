@@ -55,13 +55,24 @@ export const MethodOfPayment = new Binding({
   transform: context => paymentMethods[Binding.TransformTextOnly(context)] || 'Other'
 })
 
-export const dataSourceBinding = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
+export const DataSourceBinding = new Binding({ element: 'DATA_SOURCE', transform: Binding.TransformTextOnly })
+export const DDIDBinding = new Binding({ element: 'DD_ID', transform: Binding.TransformTextOnly })
 
 const getDataSource = children => {
-  if (children[dataSourceBinding.element] && children[dataSourceBinding.element].value === DIRECT_DEBIT_DATASOURCE) {
+  if (children[DataSourceBinding.element] && children[DataSourceBinding.element] === DIRECT_DEBIT_DATASOURCE) {
     return DIRECT_DEBIT_DATASOURCE
   }
   return POST_OFFICE_DATASOURCE
+}
+
+export const convertDateTime = (dateTime, formats) => {
+  for (const format of formats) {
+    const result = moment.tz(dateTime, format, true, SERVICE_LOCAL_TIME).utc().toISOString()
+    if (result) {
+      return result
+    }
+  }
+  return null
 }
 
 /**
@@ -78,7 +89,9 @@ export const Transaction = new Binding({
     MethodOfPayment,
     AmountPaid,
     TransactionDate,
-    TransactionTime
+    TransactionTime,
+    DataSourceBinding,
+    DDIDBinding
   ],
   element: 'REC',
   transform: ({ children }) => {
@@ -104,11 +117,13 @@ export const Transaction = new Binding({
     const paymentSource = dataSource === DIRECT_DEBIT_DATASOURCE ? DIRECT_DEBIT_PAYMENTSOURCE : POST_OFFICE_DATASOURCE
     const serialNumber = children[SerialNumber.element]
     const permit = children[licenceBindings.Permit.element]
+    const journalId = children[DDIDBinding.element]
 
     return {
       id: serialNumber,
       createTransactionPayload: {
         dataSource,
+        ...(journalId && { journalId }),
         serialNumber,
         permissions: [
           {
@@ -125,15 +140,10 @@ export const Transaction = new Binding({
               postalFulfilment: permit?.isForFulfilment
             },
             issueDate: transactionDate,
-            startDate: moment
-              .tz(
-                children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element],
-                'DD/MM/YYYYHH:mm',
-                true,
-                SERVICE_LOCAL_TIME
-              )
-              .utc()
-              .toISOString(),
+            startDate: convertDateTime(children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element], [
+              'DD/MM/YYYYHH:mm',
+              'DD/MM/YYYYHH:mm:ss'
+            ]),
             permitId: permit?.id,
             ...children[concessionBindings.SeniorConcession.element],
             ...children[concessionBindings.PipConcession.element],

@@ -5,21 +5,24 @@ import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 import { nextPage } from '../../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 
 const validator = Joi.object({
   premises: validation.contact.createPremisesValidator(Joi),
   postcode: validation.contact.createUKPostcodeValidator(Joi)
 }).options({ abortEarly: false, allowUnknown: true })
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
   return {
+    isLicenceForYou: permission.isLicenceForYou,
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
     isPhysical: isPhysical(permission),
     uri: {
-      entryPage: ADDRESS_ENTRY.uri,
-      osTerms: OS_TERMS.uri
+      entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri),
+      osTerms: addLanguageCodeToUri(request, OS_TERMS.uri)
     }
   }
 }

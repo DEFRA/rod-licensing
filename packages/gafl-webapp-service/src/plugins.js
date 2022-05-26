@@ -6,9 +6,13 @@ import Blankie from 'blankie'
 import Crumb from '@hapi/crumb'
 import HapiGapi from '@defra/hapi-gapi'
 import Cookie from '@hapi/cookie'
+import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
+import Dirname from '../dirname.cjs'
+import path from 'path'
+
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
@@ -93,6 +97,18 @@ const initialiseHapiGapiPlugin = () => {
   }
 }
 
+const initialiseHapiI18nPlugin = () => {
+  const showWelshContent = process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true'
+  return {
+    plugin: HapiI18n,
+    options: {
+      locales: ['en', ...(showWelshContent ? ['cy'] : [])],
+      directory: path.join(Dirname, 'src/locales'),
+      ...(showWelshContent && { queryParameter: 'lang' })
+    }
+  }
+}
+
 export const getPlugins = () => {
   return [
     Inert,
@@ -102,6 +118,7 @@ export const getPlugins = () => {
     initialiseDisinfectPlugin(),
     initialiseBlankiePlugin(),
     initialiseCrumbPlugin(),
-    initialiseHapiGapiPlugin()
+    initialiseHapiGapiPlugin(),
+    initialiseHapiI18nPlugin()
   ]
 }

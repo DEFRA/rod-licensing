@@ -1,25 +1,25 @@
 {% extends "layout.njk" %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% block pageTitle %}Refund policy - GOV.UK{% endblock %}
+{% block pageTitle %}{{ mssgs.refund_title }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         {{ govukBackLink({
-          text: "Back",
-          href: "/buy",
+          text: mssgs.back,
+          href: uri.back,
           classes: "govuk-!-margin-bottom-7"
         }) }}
-        <h1 class="govuk-heading-l">Refund policy</h1>
-        <ol class="class="govuk-list govuk-list--number">
-            <li class="govuk-body">The Environment Agency can only refund the cost of a licence to the purchaser. All refund applications should be directed to the Environment Agency, except where the licence has been bought through a third party (other than the Post Office), in which case refund applications should be directed to them. Contact the Environment Agency on 03708 506506.</li>
-            <li class="govuk-body">The Environment Agency will not charge a fee when you purchase a licence through our <a href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">website</a> or the Post Office. We do not recommend purchasing your licence through third-party sites, which may charge a fee on top of the licence cost. If you purchased your licence through a third party, please contact them directly to request a refund of the licence cost and/or fee.  The Environment Agency will not refund licence holders for licences purchased through third parties.  </li>
-            <li class="govuk-body">If you purchase a licence in error or buy the wrong type of licence, for yourself or someone else, the purchaser can request a refund within 14 days of the original purchase date.</li>
-            <li class="govuk-body">Where an error has occurred that is attributable to the Environment Agency or the Post Office, please contact us directly within 14 days of the original purchase date to request a full refund. Contact the Environment Agency on 03708 506506.</li>
-            <li class="govuk-body">No refunds are offered on 1-day or 8-day licences. If you upgrade to a 12-month licence within 14 days of the expiry date of the short-term licence, we will refund the cost of the short-term licence after you have purchased the 12-month licence.</li>
-            <li class="govuk-body">You can request a refund if you upgrade a 2-rod licence to a 3-rod licence, within 14 days of the original purchase date. We will refund the cost of the 2-rod licence after you have purchased the 3-rod licence.</li>
-            <li class="govuk-body">You can request a refund if you upgrade a coarse fish licence to a salmon and sea trout licence within 14 days of the original purchase date. We will refund the cost of the coarse fish licence after you have purchased the salmon and sea trout licence.</li>
+        <h1 class="govuk-heading-l">{{ mssgs.refund_heading }}</h1>
+        <ol class="govuk-list govuk-list--number">
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_1 }}</li>
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_2_1 }}<a href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.refund_bulletpoint_2_link }}</a>{{ mssgs.refund_bulletpoint_2_2 }}</li>
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_3 }}</li>
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_4 }}</li>
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_5 }}</li>
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_6 }}</li>
+            <li class="govuk-body">{{ mssgs.refund_bulletpoint_7 }}</li>
         </ol>
     </div>
 </div>

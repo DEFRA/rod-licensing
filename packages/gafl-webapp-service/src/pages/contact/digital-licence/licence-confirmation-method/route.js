@@ -19,6 +19,7 @@ export const getData = async request => {
   }
 
   return {
+    isLicenceForYou: permission.isLicenceForYou,
     licensee: permission.licensee,
     howContacted: HOW_CONTACTED,
     ...(change === 'email' && { changeEmail: true }),
@@ -27,9 +28,7 @@ export const getData = async request => {
 }
 
 const validator = Joi.object({
-  'licence-confirmation-method': Joi.string()
-    .valid('email', 'text', 'none')
-    .required(),
+  'licence-confirmation-method': Joi.string().valid('email', 'text', 'none').required(),
   text: Joi.alternatives().conditional('licence-confirmation-method', {
     is: 'text',
     then: mobilePhoneValidator,

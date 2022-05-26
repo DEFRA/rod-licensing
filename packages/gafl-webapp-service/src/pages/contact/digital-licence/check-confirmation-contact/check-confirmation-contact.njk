@@ -1,40 +1,24 @@
 {% extends "standard-form.njk" %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set contactType %}
-  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-    email address
-  {% else %}
-    phone number
-  {% endif %}
-{% endset %}
+{% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
+  {% set contactType = mssgs.email_address %}
+  {% set contactInfo = data.licensee.email  %}
+{% else %}
+  {% set contactType = mssgs.phone_number  %}
+  {% set contactInfo = data.licensee.mobilePhone %}
+{% endif %}
 
-{% set contactInfo %}
-  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-   {{ data.licensee.email }}
-  {% else %}
-    {{ data.licensee.mobilePhone }}
-  {% endif %}
-{% endset %}
+{% set title = mssgs.check_conf_contact_title_1 + contactType + mssgs.check_conf_contact_title_2 %}
 
-{% set changeLinkUrl %}
-  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-   {{ data.uri.licenceConfirmationMethod }}?change=email
-  {% else %}
-    {{ data.uri.licenceConfirmationMethod }}?change=mobile
-  {% endif %}
-{% endset %}
-
-{% set title = 'Is your ' + contactType + ' correct?' %}
-
-{% block pageTitle %}{{ title }} - GOV.UK{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       {% if backRef %}
         {{ govukBackLink({
-          text: "Back",
+          text: mssgs.back,
           href: backRef,
           classes: "govuk-!-margin-bottom-7"
         }) }}
@@ -49,13 +33,13 @@
       </p>
 
       <p class="govuk-body govuk-!-margin-bottom-6">
-        <a class="govuk-link" href="{{ changeLinkUrl }}">
-          Change {{ contactType }}
+        <a class="govuk-link" href="{{ data.uri.change }}">
+          {{ mssgs.licence_summary_change }} {{ contactType }}
         </a>
       </p>
 
       {{ govukButton({
-        text: "It's correct",
+        text: mssgs.check_conf_contact_correct,
         classes: "govuk-!-margin-top-5",
         href: data.uri.contact
       }) }}    

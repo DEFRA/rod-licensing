@@ -69,5 +69,11 @@ const createMockRequest = status => ({
         }))
       }
     }
-  }))
+  })),
+  i18n: {
+    getCatalog: () => ({
+      over_65: 'Over 65',
+      licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+    })
+  }
 })
