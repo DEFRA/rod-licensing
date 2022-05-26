@@ -8,12 +8,11 @@ import { AGREED, CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR } from 
  * @returns {Promise<symbol|string|((key?: IDBValidKey) => void)|*>}
  */
 export const errorHandler = async (request, h) => {
-  const transaction = await request.cache().helpers.transaction.get()
-  const paymentInProgress = transaction?.payment?.payment_id !== undefined
-
   if (!request.response.isBoom) {
     return h.continue
   }
+  const transaction = await request.cache().helpers.transaction.get()
+  const paymentInProgress = transaction?.payment?.payment_id !== undefined
   const mssgs = request.i18n.getCatalog()
   const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
   if (Math.floor(request.response.output.statusCode / 100) === 4) {
