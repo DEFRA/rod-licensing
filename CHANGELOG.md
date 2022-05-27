@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.11 (2022-05-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1306](https://github.com/DEFRA/rod-licensing/pull/1306) Amend error page after going back during payment ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.24.0-rc.10 (2022-05-23)
 
 #### :rocket: Enhancement
