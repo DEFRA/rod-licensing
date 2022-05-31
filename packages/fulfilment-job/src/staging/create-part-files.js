@@ -56,7 +56,6 @@ const processQueryPage = async page => {
       licensee: result.expanded.permission.expanded.licensee.entity,
       permit: result.expanded.permission.expanded.permit.entity
     }))
-    debug(`writing ${itemsToWrite.length} items`)
     await writeS3PartFile(fulfilmentFile, partNumber, itemsToWrite)
 
     fulfilmentFile.numberOfRequests += itemsToWrite.length
@@ -71,29 +70,8 @@ const processQueryPage = async page => {
       return item.fulfilmentRequest
     })
     debug('Persisting updates to Dynamics')
-    await dodgyPersist([fulfilmentFile, ...fulfilmentRequestUpdates])
-    // await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
+    await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
   }
-}
-
-let beDodgy = true
-const dodgyPersist = async entities => {
-  try {
-    if (beDodgy) {
-      errorPersist(entities)
-    } else {
-      await persist(entities)
-    }
-  } finally {
-    beDodgy = !beDodgy
-  }
-}
-
-const errorPersist = (entities) => {
-  const error = new Error('Failed to execute query:  Error: socket hang up')
-  const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
-  console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
-  throw error
 }
 
 const getTargetFulfilmentFile = async () => {
