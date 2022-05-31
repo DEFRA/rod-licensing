@@ -14,7 +14,6 @@ import {
   OS_TERMS,
   ATTRIBUTION,
   SET_CURRENT_PERMISSION,
-  LICENCE_SUMMARY,
   CHANGE_LICENCE_OPTIONS
 } from '../uri.js'
 
@@ -22,8 +21,7 @@ import {
   SESSION_COOKIE_NAME_DEFAULT,
   CSRF_TOKEN_COOKIE_NAME_DEFAULT,
   ALB_COOKIE_NAME,
-  ALBCORS_COOKIE_NAME,
-  CHANGE_LICENCE_OPTIONS_SEEN
+  ALBCORS_COOKIE_NAME
 } from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
@@ -130,14 +128,8 @@ export default [
     method: 'GET',
     path: SET_CURRENT_PERMISSION.uri,
     handler: async (request, h) => {
-      const status = await request.cache().helpers.status.get()
-      if (status.fromChangeLicenceOptions === CHANGE_LICENCE_OPTIONS_SEEN.SEEN) {
-        await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
-        return h.redirect(CHANGE_LICENCE_OPTIONS.uri)
-      } else {
-        await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
-        return h.redirect(LICENCE_SUMMARY.uri)
-      }
+      await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
+      return h.redirect(CHANGE_LICENCE_OPTIONS.uri)
     }
   },
   simpleView(ACCESSIBILITY_STATEMENT),

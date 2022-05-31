@@ -443,18 +443,6 @@ export default [
     }
   },
 
-  // {
-  //   current: CHANGE_CONTACT_OPTIONS,
-  //   next: {
-  //     [CommonResults.OK]:
-  //     {
-  //       page: VIEW_LICENCES
-  //     }
-  //   }
-  // },
-
-  // This is the end of the journey. The rest is handled by the agreed handler
-  // and the transaction is locked
   {
     current: TERMS_AND_CONDITIONS,
     next: {

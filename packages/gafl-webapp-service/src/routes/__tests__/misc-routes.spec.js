@@ -6,7 +6,6 @@ import {
   PRIVACY_POLICY,
   RENEWAL_PUBLIC,
   IDENTIFY,
-  LICENCE_SUMMARY,
   OS_TERMS,
   SET_CURRENT_PERMISSION,
   CHANGE_LICENCE_OPTIONS
@@ -136,24 +135,6 @@ describe('SET_CURRENT_PERMISSION handler', () => {
         currentPermissionIdx
       })
     )
-  })
-
-  it('redirects to licence summary page', async () => {
-    const status = {
-      fromChangeLicenceOptions: 'not-seen'
-    }
-
-    const query = {
-      permissionIndex: '1'
-    }
-
-    mockStatusCacheGet.mockImplementationOnce(() => status)
-
-    const mockToolkit = createMockRequestToolkit()
-
-    await currentPermissionHandler(mockRequest(query), mockToolkit)
-
-    expect(mockToolkit.redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
   })
 
   it('redirects to licence options page', async () => {

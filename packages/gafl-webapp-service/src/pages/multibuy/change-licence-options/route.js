@@ -22,7 +22,7 @@ import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-consta
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
 // Extracted to keep sonar happy
-const checkNavigation = permission => {
+export const checkNavigation = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
     throw new GetDataRedirect(NAME.uri)
   }
@@ -90,7 +90,7 @@ export const getData = async request => {
 }
 
 export const getFromLicenceOptions = status => {
-  if (status.fromLicenceOptions) {
+  if (!status.fromLicenceOptions) {
     return status.fromLicenceOptions
   }
   return CHANGE_LICENCE_OPTIONS_SEEN.SEEN
