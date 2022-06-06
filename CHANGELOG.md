@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.12 (2022-06-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1300](https://github.com/DEFRA/rod-licensing/pull/1300) Update welsh lang on licence summary page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.24.0-rc.11 (2022-05-27)
 
 #### :rocket: Enhancement
