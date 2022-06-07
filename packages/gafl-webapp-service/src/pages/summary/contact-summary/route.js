@@ -39,7 +39,7 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
