@@ -18,23 +18,13 @@ const validator = payload => {
       'licence-to-start': payload['licence-to-start']
     },
     Joi.object({
-      'licence-to-start': Joi.string()
-        .valid('after-payment', 'another-date')
-        .required(),
+      'licence-to-start': Joi.string().valid('after-payment', 'another-date').required(),
       'licence-start-date': Joi.alternatives().conditional('licence-to-start', {
         is: 'another-date',
         then: JoiX.date()
           .format(dateFormats)
-          .min(
-            moment()
-              .tz(SERVICE_LOCAL_TIME)
-              .startOf('day')
-          )
-          .max(
-            moment()
-              .tz(SERVICE_LOCAL_TIME)
-              .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-          )
+          .min(moment().tz(SERVICE_LOCAL_TIME).startOf('day'))
+          .max(moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
           .required(),
         otherwise: Joi.string().empty('')
       })
@@ -48,17 +38,9 @@ export const getData = async request => {
 
   return {
     isLicenceForYou,
-    exampleStartDate: moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .add(1, 'days')
-      .format(fmt),
-    minStartDate: moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .format(fmt),
-    maxStartDate: moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-      .format(fmt),
+    exampleStartDate: moment().tz(SERVICE_LOCAL_TIME).add(1, 'days').format(fmt),
+    minStartDate: moment().tz(SERVICE_LOCAL_TIME).format(fmt),
+    maxStartDate: moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format(fmt),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
   }

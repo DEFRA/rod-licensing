@@ -51,6 +51,7 @@ export async function processQueue ({ id }) {
     issueDate,
     startDate,
     endDate,
+    isRenewal,
     isLicenceForYou
   } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
@@ -58,7 +59,16 @@ export async function processQueue ({ id }) {
 
     totalTransactionValue += permit.cost
 
-    const permission = await mapToPermission(referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou)
+    const permission = await mapToPermission(
+      referenceNumber,
+      transactionRecord,
+      issueDate,
+      startDate,
+      endDate,
+      dataSource,
+      isLicenceForYou,
+      isRenewal
+    )
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -102,7 +112,16 @@ export async function processQueue ({ id }) {
     .promise()
 }
 
-const mapToPermission = async (referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou) => {
+const mapToPermission = async (
+  referenceNumber,
+  transactionRecord,
+  issueDate,
+  startDate,
+  endDate,
+  dataSource,
+  isLicenceForYou,
+  isRenewal
+) => {
   const permission = new Permission()
   permission.referenceNumber = referenceNumber
   permission.stagingId = transactionRecord.id
@@ -110,6 +129,7 @@ const mapToPermission = async (referenceNumber, transactionRecord, issueDate, st
   permission.startDate = startDate
   permission.endDate = endDate
   permission.dataSource = dataSource
+  permission.isRenewal = isRenewal
   if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
     permission.isLicenceForYou = await getGlobalOptionSetValue(
       Permission.definition.mappings.isLicenceForYou.ref,
@@ -171,7 +191,7 @@ const createTransactionEntities = async transactionRecord => {
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
   if (POCL_TRANSACTION_SOURCES.includes(transactionRecord.dataSource) && type === 'Payment') {
     if (transactionRecord.dataSource === DDE_DATA_SOURCE && transactionRecord.journalId) {
-      return `DDE-${(new Date()).getFullYear()}-${transactionRecord.journalId}`
+      return `DDE-${new Date().getFullYear()}-${transactionRecord.journalId}`
     }
     return transactionRecord.serialNumber || transactionRecord.id
   }

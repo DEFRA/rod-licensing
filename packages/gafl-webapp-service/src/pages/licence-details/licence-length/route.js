@@ -6,9 +6,7 @@ import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 
 const validator = Joi.object({
-  'licence-length': Joi.string()
-    .valid('12M', '8D', '1D')
-    .required()
+  'licence-length': Joi.string().valid('12M', '8D', '1D').required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 export const getData = async request => {
