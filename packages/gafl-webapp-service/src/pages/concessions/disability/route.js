@@ -17,9 +17,7 @@ const validator = Joi.object({
   }),
   'blue-badge-number': Joi.alternatives().conditional('disability-concession', {
     is: disabilityConcessionTypes.blueBadge,
-    then: Joi.string()
-      .max(25)
-      .required(),
+    then: Joi.string().max(25).required(),
     otherwise: Joi.string().empty('')
   })
 }).options({ abortEarly: false, allowUnknown: true })

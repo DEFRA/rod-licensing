@@ -75,11 +75,7 @@ describe('The licence start time page', () => {
       ...startDateHelper(moment())
     })
 
-    const minHour = moment()
-      .add(1, 'hour')
-      .add(30, 'minute')
-      .startOf('hour')
-      .hour()
+    const minHour = moment().add(1, 'hour').add(30, 'minute').startOf('hour').hour()
     const disabledFragment = `name="licence-start-time" type="radio" value="${minHour - 1}" disabled>`
     const enabledFragment = `name="licence-start-time" type="radio" value="${minHour}">`
 

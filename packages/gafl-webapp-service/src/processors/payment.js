@@ -23,7 +23,10 @@ export const preparePayment = (request, transaction) => {
     return_url: url.href,
     amount: transaction.cost * 100,
     reference: transaction.id,
-    description: transaction.permissions.length === 1 ? licenceTypeAndLengthDisplay(transaction.permissions[0]) : 'Multiple permits',
+    description:
+      transaction.permissions.length === 1
+        ? licenceTypeAndLengthDisplay(transaction.permissions[0], request.i18n.getCatalog())
+        : 'Multiple permits',
     delayed_capture: false,
     moto: process.env.CHANNEL === 'telesales'
   }

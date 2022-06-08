@@ -22,9 +22,10 @@ describe('licence-summary > result-function', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: true }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ showDigitalLicencePages: true }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
+        isRenewal: true,
         licensee: {
           postalFulfilment: true
         }
@@ -34,9 +35,10 @@ describe('licence-summary > result-function', () => {
     })
 
     it('should return the summary screen, if licence is in renewal, is 12 months and showDigitalLicencePages is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: false }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ showDigitalLicencePages: false }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
+        isRenewal: true,
         licensee: {
           postalFulfilment: false
         }

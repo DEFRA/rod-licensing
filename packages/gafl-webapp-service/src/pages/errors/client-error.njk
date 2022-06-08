@@ -18,20 +18,32 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-            {% call govukFieldset({
-              legend: {
-                text: mssgs.client_error_content_msg,
-                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
-                isPageHeading: true
-              }
-            }) %}
-            <p class="govuk-body-m">
-                {{ mssgs.client_error_content_you_can }}<a class="govuk-link" href="{{referer if referer else 'javascript:history.back()'}}">{{ mssgs.client_error_content_try_another }}</a>
-            </p>
-            <p class="govuk-body">
-                {{ mssgs.client_error_content_if_not_working }}<a class="govuk-link" href="{{ uri.new }}">{{ mssgs.client_error_content_start_again }}</a>{{ mssgs.client_error_content_sorry }}
-            </p>
-            {% endcall %}
+        {% call govukFieldset({
+            legend: {
+            text: mssgs.client_error_content_msg,
+            classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6",
+            isPageHeading: true
+            }
+        }) %}
+            {% if paymentInProgress %}
+                <p class="govuk-body-m">
+                    {{ mssgs.client_error_back_during_payment }}
+                </p>
+                <p class="govuk-body-m">
+                    {{ mssgs.client_error_continue_with_payment_pre }}<a class="govuk-link" href="{{ uri.payment }}">{{ mssgs.client_error_continue_with_payment_link }}</a>
+                </p>
+                <p class="govuk-body">
+                    {{ mssgs.client_error_payment_start_again_pre }}<a class="govuk-link" href="{{ uri.new }}">{{ mssgs.client_error_content_start_again }}</a>
+                </p>
+            {% else %}
+                <p class="govuk-body-m">
+                    {{ mssgs.client_error_content_you_can }}<a class="govuk-link" href="{{referer if referer else 'javascript:history.back()'}}">{{ mssgs.client_error_content_try_another }}</a>
+                </p>
+                <p class="govuk-body">
+                    {{ mssgs.client_error_content_if_not_working }}<a class="govuk-link" href="{{ uri.new }}">{{ mssgs.client_error_content_start_again }}</a>{{ mssgs.client_error_content_sorry }}
+                </p>
+            {% endif %}
+        {% endcall %}
      </div>
 </div>
 {% endblock %}

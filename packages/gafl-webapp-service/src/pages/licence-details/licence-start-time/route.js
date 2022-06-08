@@ -8,20 +8,13 @@ import { nextPage } from '../../../routes/next-page.js'
 
 const getMinHour = permission => {
   const now = moment().tz(SERVICE_LOCAL_TIME)
-  const permissionStartsToday = moment(permission.licenceStartDate, cacheDateFormat)
-    .tz(SERVICE_LOCAL_TIME)
-    .isSame(now, 'day')
+  const permissionStartsToday = moment(permission.licenceStartDate, cacheDateFormat).tz(SERVICE_LOCAL_TIME).isSame(now, 'day')
   if (permissionStartsToday) {
-    const cantStartUntilTomorrow = moment(now)
-      .add(90, 'minute')
-      .isAfter(now, 'day')
+    const cantStartUntilTomorrow = moment(now).add(90, 'minute').isAfter(now, 'day')
     if (cantStartUntilTomorrow) {
       return 24
     }
-    return now
-      .add(90, 'minute')
-      .startOf('hour')
-      .hour()
+    return now.add(90, 'minute').startOf('hour').hour()
   }
   return 0
 }

@@ -1,4 +1,130 @@
 
+## v1.24.0-rc.13 (2022-06-08)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `dynamics-lib`, `gafl-webapp-service`, `payment-mop-up-job`, `sales-api-service`
+  * [#1317](https://github.com/DEFRA/rod-licensing/pull/1317) Feature/easy renewals enhancements ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.24.0-rc.12 (2022-06-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1300](https://github.com/DEFRA/rod-licensing/pull/1300) Update welsh lang on licence summary page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.24.0-rc.11 (2022-05-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1306](https://github.com/DEFRA/rod-licensing/pull/1306) Amend error page after going back during payment ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.24.0-rc.10 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1312](https://github.com/DEFRA/rod-licensing/pull/1312) Welsh - Accessibility Statement ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.9 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1311](https://github.com/DEFRA/rod-licensing/pull/1311) Welsh - how contact with reminders ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.8 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1307](https://github.com/DEFRA/rod-licensing/pull/1307) Welsh - refund policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.7 (2022-05-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1304](https://github.com/DEFRA/rod-licensing/pull/1304) Fix failing test on short licence error page update  ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.24.0-rc.6 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1296](https://github.com/DEFRA/rod-licensing/pull/1296) Short licence error page update - easy renewals ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.24.0-rc.5 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1299](https://github.com/DEFRA/rod-licensing/pull/1299) Welsh lang BOBO update where to send licence page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.24.0-rc.4 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1298](https://github.com/DEFRA/rod-licensing/pull/1298) Welsh - where send licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.3 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1297](https://github.com/DEFRA/rod-licensing/pull/1297) Welsh - how do you want fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.2 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1301](https://github.com/DEFRA/rod-licensing/pull/1301) Welsh - BOBO how long do they want licence for ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.1 (2022-05-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1274](https://github.com/DEFRA/rod-licensing/pull/1274) Refactor licence type summary macro ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.0 (2022-05-18)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1295](https://github.com/DEFRA/rod-licensing/pull/1295) Contact confirmation doesn't persist language ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 
 ## v1.23.0-rc.69 (2022-05-13)

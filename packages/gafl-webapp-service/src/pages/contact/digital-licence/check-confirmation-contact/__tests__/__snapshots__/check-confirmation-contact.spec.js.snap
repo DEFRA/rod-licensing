@@ -8,8 +8,8 @@ Object {
     "preferredMethodOfConfirmation": "email",
   },
   "uri": Object {
-    "contact": "/buy/contact",
-    "licenceConfirmationMethod": "/buy/confirmation-method",
+    "change": "licence-confirmation-method.url?change=mobile",
+    "contact": "contact.url",
   },
 }
 `;

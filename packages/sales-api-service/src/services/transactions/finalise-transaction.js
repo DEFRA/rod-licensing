@@ -15,9 +15,7 @@ const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {
   const startDateTooEarly = moment(startDate).isBefore(moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes'))
   const webOrTelesales = !POCL_TRANSACTION_SOURCES.includes(dataSource)
   if (startDateTooEarly && webOrTelesales) {
-    return moment(issueDate)
-      .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
-      .toISOString()
+    return moment(issueDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
   }
   return startDate
 }
@@ -39,11 +37,7 @@ export async function finaliseTransaction ({ id, ...payload }) {
   // Generate derived fields
   for (const permission of transactionRecord.permissions) {
     permission.issueDate = permission.issueDate ?? payload.payment.timestamp
-    const startDate =
-      permission.startDate ??
-      moment(payload.payment.timestamp)
-        .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
-        .toISOString()
+    const startDate = permission.startDate ?? moment(payload.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
     permission.startDate = getAdjustedStartDate({
       startDate,
       dataSource: transactionRecord.dataSource,

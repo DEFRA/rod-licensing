@@ -56,6 +56,12 @@ export const ShowDigitalLicencePages = {
   NO: 'show-digital-licence-no'
 }
 
+export const RENEWAL_ERROR_REASON = {
+  NOT_DUE: 'not-due',
+  EXPIRED: 'expired',
+  NOT_ANNUAL: 'not-annual'
+}
+
 // If the user has seen the summary page these are set in the status
 export const CONTACT_SUMMARY_SEEN = 'contact-summary'
 export const LICENCE_SUMMARY_SEEN = 'licence-summary'

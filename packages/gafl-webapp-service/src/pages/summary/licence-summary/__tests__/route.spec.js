@@ -3,28 +3,28 @@ import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constant
 import { NAME } from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
+import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 
 jest.mock('../../find-permit.js')
+jest.mock('../../../../processors/licence-type-display.js')
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('getFromSummary', () => {
     it('should return licence-summary, if it is a renewal', async () => {
-      const request = { renewal: true }
-      const result = await getFromSummary(request)
+      const result = await getFromSummary(undefined, true)
       expect(result).toBe(LICENCE_SUMMARY_SEEN)
     })
 
     it('should return licence-summary, if fromSummary has not been set and it is not a renewal', async () => {
-      const result = await getFromSummary({})
+      const result = await getFromSummary()
       expect(result).toBe(LICENCE_SUMMARY_SEEN)
     })
 
     it('should set fromSummary to contact-summary, if fromSummary is contact-summary and it is not a renewal', async () => {
-      const request = { fromSummary: CONTACT_SUMMARY_SEEN }
-      const result = await getFromSummary(request)
-      expect(result).toBe(CONTACT_SUMMARY_SEEN)
+      const result = await getFromSummary(CONTACT_SUMMARY_SEEN)
+      expect(result).toBe(CONTACT_SUMMARY_SEEN, false)
     })
   })
 
@@ -59,7 +59,12 @@ describe('licence-summary > route', () => {
             setCurrentPermission: mockTransactionCacheSet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => ({
+          licence_type_radio_salmon: 'Salmon and sea trout'
+        })
+      }
     }
 
     it('should return the name page uri', async () => {
@@ -105,6 +110,41 @@ describe('licence-summary > route', () => {
       expect(error).not.toBeFalsy()
       expect(error).toBeInstanceOf(GetDataRedirect)
       expect(error.redirectUrl).toBe(NAME.uri)
+    })
+
+    it('licenceTypeDisplay is called with the expected arguments', async () => {
+      const catalog = Symbol('mock catalog')
+      const permission = {
+        permit: {
+          cost: 1
+        },
+        licensee: {
+          birthDate: '1996-01-01'
+        },
+        isRenewal: true
+      }
+      const sampleRequest = {
+        ...mockRequest,
+        i18n: {
+          getCatalog: () => catalog
+        }
+      }
+
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+
+      await getData(sampleRequest)
+
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
+    })
+
+    it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
+      const returnValue = Symbol('return value')
+      licenceTypeDisplay.mockReturnValueOnce(returnValue)
+
+      const result = await getData(mockRequest)
+      const ret = result.licenceTypeStr
+
+      expect(ret).toEqual(returnValue)
     })
   })
 })
