@@ -1,4 +1,13 @@
 
+## v1.24.0-rc.13 (2022-06-08)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `dynamics-lib`, `gafl-webapp-service`, `payment-mop-up-job`, `sales-api-service`
+  * [#1317](https://github.com/DEFRA/rod-licensing/pull/1317) Feature/easy renewals enhancements ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.24.0-rc.12 (2022-06-06)
 
 #### :rocket: Enhancement
