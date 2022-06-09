@@ -1,4 +1,15 @@
 
+## v1.25.0-rc.0 (2022-06-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1330](https://github.com/DEFRA/rod-licensing/pull/1330) Update Welsh text when selecting licence start date ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1331](https://github.com/DEFRA/rod-licensing/pull/1331) Update button text for licence terms page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1332](https://github.com/DEFRA/rod-licensing/pull/1332) Update Welsh language title attribute for refund policy ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.24.0-rc.13 (2022-06-08)
 
