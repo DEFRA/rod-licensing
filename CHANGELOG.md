@@ -1,4 +1,17 @@
 
+## v1.25.0-rc.3 (2022-06-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1338](https://github.com/DEFRA/rod-licensing/pull/1338) Add Welsh translation for accessibility statement title ([@irisfaraway](https://github.com/irisfaraway))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1329](https://github.com/DEFRA/rod-licensing/pull/1329) Open OS terms footer link in a new tab ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 ## v1.25.0-rc.0 (2022-06-09)
