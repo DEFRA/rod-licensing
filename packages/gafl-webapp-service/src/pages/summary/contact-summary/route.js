@@ -39,26 +39,6 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-export const getData = async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
-  checkNavigation(status, permission)
-
-  status.fromSummary = CONTACT_SUMMARY_SEEN
-  await request.cache().helpers.status.setCurrentPermission(status)
-  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
-
-  return {
-    summaryTable: getLicenseeDetailsSummaryRows(request, permission, countryName),
-    uri: {
-      licenceSummary: LICENCE_SUMMARY.uri
-    }
-  }
-}
-
-export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
-
 export const getLicenseeDetailsSummaryRows = (request, permission, countryName) => {
   const mssgs = request.i18n.getCatalog()
   const licenseeSummaryArray = [
@@ -78,13 +58,12 @@ export const getLicenseeDetailsSummaryRows = (request, permission, countryName) 
       )
     )
   }
-
   return licenseeSummaryArray
 }
 
 const CHANGE_CONTACT = 'change-contact'
 
-const getContactDetails = (request, permission) => {
+export const getContactDetails = (request, permission) => {
   const mssgs = request.i18n.getCatalog()
   const CONTACT_TEXT_DEFAULT = {
     EMAIL: mssgs.contact_summary_email_to,
@@ -191,7 +170,7 @@ const getContactDisplayText = (request, contactMethod) => {
   return contactDisplayText
 }
 
-const getContactText = (request, contactMethod, licensee, contactText = null) => {
+export const getContactText = (request, contactMethod, licensee, contactText = null) => {
   contactText = getContactDisplayText(request, contactMethod)
   switch (contactMethod) {
     case HOW_CONTACTED.email:
@@ -226,3 +205,23 @@ const getRow = (request, label, text, href, visuallyHiddenText, id) => {
     })
   }
 }
+
+export const getData = async request => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  checkNavigation(status, permission)
+
+  status.fromSummary = CONTACT_SUMMARY_SEEN
+  await request.cache().helpers.status.setCurrentPermission(status)
+  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
+
+  return {
+    summaryTable: getLicenseeDetailsSummaryRows(request, permission, countryName),
+    uri: {
+      licenceSummary: LICENCE_SUMMARY.uri
+    }
+  }
+}
+
+export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
