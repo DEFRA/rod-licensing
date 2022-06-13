@@ -27,6 +27,26 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": "/buy/fulfilment",
+          "text": undefined,
+          "visuallyHiddenText": "licence confirmation option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": undefined,
+    },
+    "value": Object {
+      "text": undefined,
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
             "id": "change-contact",
           },
           "href": "/buy/contact",
@@ -92,6 +112,26 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": "/buy/fulfilment",
+          "text": undefined,
+          "visuallyHiddenText": "licence confirmation option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": undefined,
+    },
+    "value": Object {
+      "text": undefined,
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
             "id": "change-contact",
           },
           "href": "/buy/contact",
@@ -130,6 +170,26 @@ Array [
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": "/buy/fulfilment",
+          "text": undefined,
+          "visuallyHiddenText": "licence confirmation option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": undefined,
+    },
+    "value": Object {
+      "text": undefined,
     },
   },
   Object {
@@ -182,6 +242,26 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": "/buy/fulfilment",
+          "text": undefined,
+          "visuallyHiddenText": "licence confirmation option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": undefined,
+    },
+    "value": Object {
+      "text": "undefinednew3@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
             "id": "change-contact",
           },
           "href": "/buy/contact",
@@ -220,6 +300,26 @@ Array [
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": "/buy/fulfilment",
+          "text": undefined,
+          "visuallyHiddenText": "licence confirmation option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": undefined,
+    },
+    "value": Object {
+      "text": "undefined07700900900",
     },
   },
   Object {

@@ -1,6 +1,14 @@
-import { getLicenseeDetailsSummaryRows, checkNavigation, getData, getContactDetails, getContactText } from '../route'
+import { getLicenseeDetailsSummaryRows, checkNavigation, getData, getContactDetails } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
-import { LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD, ADDRESS_ENTRY, CONTACT, ADDRESS_SELECT, ADDRESS_LOOKUP, NEWSLETTER } from '../../../../uri.js'
+import {
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
+  ADDRESS_ENTRY,
+  CONTACT,
+  ADDRESS_SELECT,
+  ADDRESS_LOOKUP,
+  NEWSLETTER
+} from '../../../../uri.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 
 const address = {
@@ -15,60 +23,123 @@ const address = {
 jest.mock('../../../../processors/licence-type-display.js', () => ({
   isPhysical: jest.fn(() => true)
 }))
-const mockStatusCacheGet = jest.fn()
-const mocktransactionCacheGet = jest.fn()
 
-const getMockRequest = () => ({
-  cache: () => ({
-    helpers: {
-      status: {
-        getCurrentPermission: mockStatusCacheGet,
-      },
-      transaction: {
-        getCurrentPermission: mocktransactionCacheGet
-      }
-    }
-  })
-})
-
-describe('my tests', () => {
-  it('returns expected summary table result', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
-    const request = getMockRequest()
-    const result = await getData(request)
-    expect(result).toEqual(
-      expect.objectContaining({
-        summaryTable: {}
-      })
-    )
-  })
-})
-
-describe('contact-summary > route', () => {
-  const catalog = Symbol('mock catalog')
-  const mockStatusCacheGet = jest.fn(() => ({}))
-  const mockStatusCacheSet = jest.fn(() => ({}))
-  const mockTransactionCacheGet = jest.fn(() => ({}))
-  const mockTransactionCacheSet = jest.fn(() => ({}))
-  const mockRequest = {
-    cache: () => ({
-      helpers: {
-        status: {
-          getCurrentPermission: mockStatusCacheGet,
-          setCurrentPermission: mockStatusCacheSet
-        },
-        transaction: {
-          getCurrentPermission: mockTransactionCacheGet,
-          setCurrentPermission: mockTransactionCacheSet
-        }
-      }
-    }),
-    i18n: {
-      getCatalog: () => catalog
+jest.mock('../../../../processors/refdata-helper.js', () => ({
+  countries: {
+    nameFromCode: jest.fn()
+  },
+  local: {
+    countries: {
+      find: jest.fn(() => 'unikted kongdom')
     }
   }
+}))
+
+describe('contact-summary > route', () => {
+  describe('getData', () => {
+    it('should return a summary table with required data for page', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        renewal: true,
+        [LICENCE_FULFILMENT.page]: true,
+        [LICENCE_CONFIRMATION_METHOD.page]: true
+      }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        licensee: {
+          countryCode: 'uk'
+        }
+      }))
+      const result = await getData(getSampleRequest())
+      expect(result).toEqual(
+        expect.objectContaining({
+          summaryTable: [
+            {
+              actions: {
+                items: [
+                  {
+                    attributes: { id: 'change-address' },
+                    href: '/buy/find-address',
+                    text: undefined,
+                    visuallyHiddenText: 'address'
+                  }
+                ]
+              },
+              key: {
+                text: undefined
+              },
+              value: { text: '' }
+            },
+            {
+              actions: {
+                items: [
+                  {
+                    attributes: { id: 'change-licence-confirmation-option' },
+                    href: '/buy/fulfilment',
+                    text: undefined,
+                    visuallyHiddenText: 'licence confirmation option'
+                  }
+                ]
+              },
+              key: { text: undefined },
+              value: { text: undefined }
+            },
+            {
+              actions: {
+                items: [
+                  {
+                    attributes: {
+                      id: 'change-contact'
+                    },
+                    href: '/buy/contact',
+                    text: undefined,
+                    visuallyHiddenText: 'contact'
+                  }
+                ]
+              },
+              key: {
+                text: undefined
+              },
+              value: {
+                text: undefined
+              }
+            }
+          ],
+          uri: {
+            licenceSummary: '/buy/licence-summary'
+          }
+        })
+      )
+    })
+
+    const mockStatusCacheGet = jest.fn()
+    const mockTransactionCacheGet = jest.fn()
+    const mockStatusCacheSet = jest.fn()
+    const catalog = Symbol('mock catalog')
+
+    const getSampleRequest = () => ({
+      cache: () => ({
+        helpers: {
+          status: {
+            getCurrentPermission: mockStatusCacheGet,
+            setCurrentPermission: mockStatusCacheSet
+          },
+          transaction: {
+            getCurrentPermission: mockTransactionCacheGet
+          }
+        }
+      }),
+      i18n: {
+        getCatalog: () => catalog
+      }
+    })
+  })
 
   describe('getLicenseeDetailsSummaryRows', () => {
+    const catalog = Symbol('mock catalog')
+    const mockRequest = {
+      i18n: {
+        getCatalog: () => catalog
+      }
+    }
     describe('when purchasing a 12 month (physical licence) with postal fulfilment', () => {
       it('should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no', () => {
         const permission = {
@@ -272,42 +343,50 @@ describe('getLicenseeDetailsSummaryRows', () => {
   it('should return licenseeSummaryArray without newsletter array if licence is not for you', () => {
     const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(getSampleRequest(), getSamplePermission(), 'UNITED KONGDUM')
     expect(licenseeDetailsSummaryRows).toEqual(
-      expect.arrayContaining([{
-        key: { text: 'address' },
-        value: { text: '19, STREET, AREA, TOWN, PO5 7CO, UNITED KONGDUM' },
-        actions: {
-          items: [{
-            href: ADDRESS_LOOKUP.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'address',
-            attributes: { id: 'change-address' }
-          }]
+      expect.arrayContaining([
+        {
+          key: { text: 'address' },
+          value: { text: '19, STREET, AREA, TOWN, PO5 7CO, UNITED KONGDUM' },
+          actions: {
+            items: [
+              {
+                href: ADDRESS_LOOKUP.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'address',
+                attributes: { id: 'change-address' }
+              }
+            ]
+          }
+        },
+        {
+          key: { text: 'contact_summary_licence' },
+          value: { text: 'contact_summary_texts_to_0123456789' },
+          actions: {
+            items: [
+              {
+                href: LICENCE_FULFILMENT.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'licence confirmation option',
+                attributes: { id: 'change-licence-confirmation-option' }
+              }
+            ]
+          }
+        },
+        {
+          key: { text: 'contact_summary_contact' },
+          value: { text: 'contact_summary_texts_to_0123456789' },
+          actions: {
+            items: [
+              {
+                href: CONTACT.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'contact',
+                attributes: { id: 'change-contact' }
+              }
+            ]
+          }
         }
-      },
-      {
-        key: { text: 'contact_summary_licence' },
-        value: { text: 'contact_summary_texts_to_0123456789' },
-        actions: {
-          items: [{
-            href: LICENCE_FULFILMENT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'licence confirmation option',
-            attributes: { id: 'change-licence-confirmation-option' }
-          }]
-        }
-      },
-      {
-        key: { text: 'contact_summary_contact' },
-        value: { text: 'contact_summary_texts_to_0123456789' },
-        actions: {
-          items: [{
-            href: CONTACT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'contact',
-            attributes: { id: 'change-contact' }
-          }]
-        }
-      }])
+      ])
     )
   })
 
@@ -315,54 +394,64 @@ describe('getLicenseeDetailsSummaryRows', () => {
     mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
     const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(getSampleRequest(), getSamplePermission(), 'UNITED KONGDUM')
     expect(licenseeDetailsSummaryRows).toEqual(
-      expect.arrayContaining([{
-        key: { text: 'address' },
-        value: { text: '19, STREET, AREA, TOWN, PO5 7CO, UNITED KONGDUM' },
-        actions: {
-          items: [{
-            href: ADDRESS_LOOKUP.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'address',
-            attributes: { id: 'change-address' }
-          }]
+      expect.arrayContaining([
+        {
+          key: { text: 'address' },
+          value: { text: '19, STREET, AREA, TOWN, PO5 7CO, UNITED KONGDUM' },
+          actions: {
+            items: [
+              {
+                href: ADDRESS_LOOKUP.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'address',
+                attributes: { id: 'change-address' }
+              }
+            ]
+          }
+        },
+        {
+          key: { text: 'contact_summary_licence' },
+          value: { text: 'contact_summary_texts_to_0123456789' },
+          actions: {
+            items: [
+              {
+                href: LICENCE_FULFILMENT.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'licence confirmation option',
+                attributes: { id: 'change-licence-confirmation-option' }
+              }
+            ]
+          }
+        },
+        {
+          key: { text: 'contact_summary_contact' },
+          value: { text: 'contact_summary_texts_to_0123456789' },
+          actions: {
+            items: [
+              {
+                href: CONTACT.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'contact',
+                attributes: { id: 'change-contact' }
+              }
+            ]
+          }
+        },
+        {
+          key: { text: 'contact_summary_newsletter' },
+          value: { text: 'Yes' },
+          actions: {
+            items: [
+              {
+                href: NEWSLETTER.uri,
+                text: 'licence_summary_change',
+                visuallyHiddenText: 'newsletter',
+                attributes: { id: 'change-newsletter' }
+              }
+            ]
+          }
         }
-      },
-      {
-        key: { text: 'contact_summary_licence' },
-        value: { text: 'contact_summary_texts_to_0123456789' },
-        actions: {
-          items: [{
-            href: LICENCE_FULFILMENT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'licence confirmation option',
-            attributes: { id: 'change-licence-confirmation-option' }
-          }]
-        }
-      },
-      {
-        key: { text: 'contact_summary_contact' },
-        value: { text: 'contact_summary_texts_to_0123456789' },
-        actions: {
-          items: [{
-            href: CONTACT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'contact',
-            attributes: { id: 'change-contact' }
-          }]
-        }
-      },
-      {
-        key: { text: 'contact_summary_newsletter' },
-        value: { text: 'Yes' },
-        actions: {
-          items: [{
-            href: NEWSLETTER.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'newsletter',
-            attributes: { id: 'change-newsletter' }
-          }]
-        }
-      }])
+      ])
     )
   })
 
@@ -411,12 +500,14 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         key: { text: 'contact_summary_licence' },
         value: { text: 'contact_summary_by_post' },
         actions: {
-          items: [{
-            href: LICENCE_FULFILMENT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'licence fulfilment option',
-            attributes: { id: 'change-licence-fulfilment-option' }
-          }]
+          items: [
+            {
+              href: LICENCE_FULFILMENT.uri,
+              text: 'licence_summary_change',
+              visuallyHiddenText: 'licence fulfilment option',
+              attributes: { id: 'change-licence-fulfilment-option' }
+            }
+          ]
         }
       })
     )
@@ -429,12 +520,14 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         key: { text: 'contact_summary_licence_confirmation' },
         value: { text: 'contact_summary_by_post' },
         actions: {
-          items: [{
-            href: LICENCE_CONFIRMATION_METHOD.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'licence confirmation option',
-            attributes: { id: 'change-licence-confirmation-option' }
-          }]
+          items: [
+            {
+              href: LICENCE_CONFIRMATION_METHOD.uri,
+              text: 'licence_summary_change',
+              visuallyHiddenText: 'licence confirmation option',
+              attributes: { id: 'change-licence-confirmation-option' }
+            }
+          ]
         }
       })
     )
@@ -447,12 +540,14 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         key: { text: 'contact_summary_contact' },
         value: { text: 'contact_summary_by_post' },
         actions: {
-          items: [{
-            href: CONTACT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'contact',
-            attributes: { id: 'change-contact' }
-          }]
+          items: [
+            {
+              href: CONTACT.uri,
+              text: 'licence_summary_change',
+              visuallyHiddenText: 'contact',
+              attributes: { id: 'change-contact' }
+            }
+          ]
         }
       })
     )
@@ -465,12 +560,14 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         key: { text: 'contact_summary_licence' },
         value: { text: 'contact_summary_texts_to_0123456789' },
         actions: {
-          items: [{
-            href: LICENCE_FULFILMENT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'licence confirmation option',
-            attributes: { id: 'change-licence-confirmation-option' }
-          }]
+          items: [
+            {
+              href: LICENCE_FULFILMENT.uri,
+              text: 'licence_summary_change',
+              visuallyHiddenText: 'licence confirmation option',
+              attributes: { id: 'change-licence-confirmation-option' }
+            }
+          ]
         }
       })
     )
@@ -483,12 +580,14 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         key: { text: 'contact_summary_contact' },
         value: { text: 'contact_summary_texts_to_0123456789' },
         actions: {
-          items: [{
-            href: CONTACT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'contact',
-            attributes: { id: 'change-contact' }
-          }]
+          items: [
+            {
+              href: CONTACT.uri,
+              text: 'licence_summary_change',
+              visuallyHiddenText: 'contact',
+              attributes: { id: 'change-contact' }
+            }
+          ]
         }
       })
     )
@@ -502,12 +601,14 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         key: { text: 'contact_summary_licence_details' },
         value: { text: 'contact_summary_texts_to_0123456789' },
         actions: {
-          items: [{
-            href: CONTACT.uri,
-            text: 'licence_summary_change',
-            visuallyHiddenText: 'contact',
-            attributes: { id: 'change-contact' }
-          }]
+          items: [
+            {
+              href: CONTACT.uri,
+              text: 'licence_summary_change',
+              visuallyHiddenText: 'contact',
+              attributes: { id: 'change-contact' }
+            }
+          ]
         }
       })
     )
