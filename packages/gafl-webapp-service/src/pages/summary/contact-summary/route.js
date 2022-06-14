@@ -176,13 +176,12 @@ const getContactDisplayText = (mssgs, contactMethod) => {
 
 export const getContactText = (mssgs, contactMethod, licensee, contactText = null) => {
   contactText = getContactDisplayText(mssgs, contactMethod)
-  switch (contactMethod) {
-    case HOW_CONTACTED.email:
-      return contactText.EMAIL + licensee.email
-    case HOW_CONTACTED.text:
-      return contactText.TEXT + licensee.mobilePhone
-    default:
-      return contactText.DEFAULT
+  if (contactMethod === HOW_CONTACTED.email) {
+    return contactText.EMAIL + licensee.email
+  } else if (contactMethod === HOW_CONTACTED.text) {
+    return contactText.TEXT + licensee.mobilePhone
+  } else {
+    return contactText.DEFAULT
   }
 }
 
