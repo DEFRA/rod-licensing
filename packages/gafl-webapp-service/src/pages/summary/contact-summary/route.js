@@ -81,7 +81,14 @@ export const getContactDetails = (mssgs, permission) => {
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       return [
-        getRow(mssgs, mssgs.contact_summary_licence, mssgs.contact_summary_by_post, LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
+        getRow(
+          mssgs,
+          mssgs.contact_summary_licence,
+          mssgs.contact_summary_by_post,
+          LICENCE_FULFILMENT.uri,
+          'licence fulfilment option',
+          'change-licence-fulfilment-option'
+        ),
         getRow(
           mssgs,
           mssgs.contact_summary_licence_confirmation,
@@ -139,8 +146,6 @@ const getAddressText = (licensee, countryName) =>
     .join(', ')
 
 const getContactDisplayText = (mssgs, contactMethod) => {
-  console.log(mssgs.contact_summary_texts_to)
-
   let contactDisplayText = ''
   const CONTACT_TEXT_DEFAULT = {
     EMAIL: mssgs.contact_summary_email_to,

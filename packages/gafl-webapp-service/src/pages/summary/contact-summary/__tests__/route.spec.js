@@ -27,11 +27,6 @@ jest.mock('../../../../processors/licence-type-display.js', () => ({
 jest.mock('../../../../processors/refdata-helper.js', () => ({
   countries: {
     nameFromCode: jest.fn()
-  },
-  local: {
-    countries: {
-      find: jest.fn(() => 'unikted kongdom')
-    }
   }
 }))
 
@@ -339,9 +334,25 @@ describe('contact-summary > route', () => {
 })
 
 describe('getLicenseeDetailsSummaryRows', () => {
-  const mockTransactionCacheGet = jest.fn()
-  it.only('should return licenseeSummaryArray without newsletter array if licence is not for you', async () => {
-    const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(getSampleRequest(), getSamplePermission(), 'UNITED KONGDUM')
+  it('should return licenseeSummaryArray without newsletter array if licence is not for you', async () => {
+    const getSamplePermission = () => ({
+      isLicenceForYou: false,
+      licensee: {
+        premises: '19',
+        street: 'STREET',
+        locality: 'AREA',
+        town: 'TOWN',
+        postcode: 'PO5 7CO',
+        countryName: 'UNITED KONGDUM',
+        postalFulfilment: false,
+        preferredMethodOfConfirmation: 'Text',
+        preferredMethodOfReminder: 'Text',
+        preferredMethodOfNewsletter: 'Yes',
+        mobilePhone: '_0123456789'
+      }
+    })
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(mssgs, getSamplePermission(), 'UNITED KONGDUM')
     expect(licenseeDetailsSummaryRows).toEqual(
       expect.arrayContaining([
         {
@@ -391,8 +402,24 @@ describe('getLicenseeDetailsSummaryRows', () => {
   })
 
   it('should return licenseeSummaryArray with newsletter array if licence is for you', () => {
-    mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
-    const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(getSampleRequest(), getSamplePermission(), 'UNITED KONGDUM')
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const getSamplePermission = () => ({
+      isLicenceForYou: true,
+      licensee: {
+        premises: '19',
+        street: 'STREET',
+        locality: 'AREA',
+        town: 'TOWN',
+        postcode: 'PO5 7CO',
+        countryName: 'UNITED KONGDUM',
+        postalFulfilment: false,
+        preferredMethodOfConfirmation: 'Text',
+        preferredMethodOfReminder: 'Text',
+        preferredMethodOfNewsletter: 'Yes',
+        mobilePhone: '_0123456789'
+      }
+    })
+    const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(mssgs, getSamplePermission(), 'UNITED KONGDUM')
     expect(licenseeDetailsSummaryRows).toEqual(
       expect.arrayContaining([
         {
@@ -473,28 +500,12 @@ describe('getLicenseeDetailsSummaryRows', () => {
       })
     }
   })
-
-  const getSamplePermission = () => ({
-    isLicenceForYou: mockTransactionCacheGet,
-    licensee: {
-      premises: '19',
-      street: 'STREET',
-      locality: 'AREA',
-      town: 'TOWN',
-      postcode: 'PO5 7CO',
-      countryName: 'UNITED KONGDUM',
-      postalFulfilment: false,
-      preferredMethodOfConfirmation: 'Text',
-      preferredMethodOfReminder: 'Text',
-      preferredMethodOfNewsletter: 'Yes',
-      mobilePhone: '_0123456789'
-    }
-  })
 })
 
 describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   it('if is physical postal fulfilment then has link to summary change link', () => {
-    const contactDetails = getContactDetails(getSampleRequest(), getSamplePermissionPostal())
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const contactDetails = getContactDetails(mssgs, getSamplePermissionPostal())
     expect(contactDetails[0]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_licence' },
@@ -514,7 +525,8 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   })
 
   it('if is physical postal fulfilment then has link to licence confirmation option link', () => {
-    const contactDetails = getContactDetails(getSampleRequest(), getSamplePermissionPostal())
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const contactDetails = getContactDetails(mssgs, getSamplePermissionPostal())
     expect(contactDetails[1]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_licence_confirmation' },
@@ -534,7 +546,8 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   })
 
   it('if is physical postal fulfilment then has link to contact change link', () => {
-    const contactDetails = getContactDetails(getSampleRequest(), getSamplePermissionPostal())
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const contactDetails = getContactDetails(mssgs, getSamplePermissionPostal())
     expect(contactDetails[2]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_contact' },
@@ -554,7 +567,8 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   })
 
   it('if is physical but not a postal fulfilment then has link to summary change link', () => {
-    const contactDetails = getContactDetails(getSampleRequest(), getSamplePermissionNotPostal())
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const contactDetails = getContactDetails(mssgs, getSamplePermissionNotPostal())
     expect(contactDetails[0]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_licence' },
@@ -574,7 +588,8 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   })
 
   it('if is physical but not a postal fulfilment then has link to contact change link', () => {
-    const contactDetails = getContactDetails(getSampleRequest(), getSamplePermissionNotPostal())
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const contactDetails = getContactDetails(mssgs, getSamplePermissionNotPostal())
     expect(contactDetails[1]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_contact' },
@@ -594,8 +609,9 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   })
 
   it('if is not physical then has link to contact change link', () => {
+    const mssgs = getSampleRequest().i18n.getCatalog()
     isPhysical.mockReturnValueOnce(false)
-    const contactDetails = getContactDetails(getSampleRequest(), getSamplePermissionNotPostal())
+    const contactDetails = getContactDetails(mssgs, getSamplePermissionNotPostal())
     expect(contactDetails[0]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_licence_details' },
