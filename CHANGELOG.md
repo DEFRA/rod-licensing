@@ -1,4 +1,13 @@
 
+## v1.25.0-rc.5 (2022-06-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1314](https://github.com/DEFRA/rod-licensing/pull/1314) Welsh - NRW comments on who licence for ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.25.0-rc.3 (2022-06-09)
 
