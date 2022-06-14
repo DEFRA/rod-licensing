@@ -340,7 +340,7 @@ describe('contact-summary > route', () => {
 
 describe('getLicenseeDetailsSummaryRows', () => {
   const mockTransactionCacheGet = jest.fn()
-  it('should return licenseeSummaryArray without newsletter array if licence is not for you', () => {
+  it.only('should return licenseeSummaryArray without newsletter array if licence is not for you', async () => {
     const licenseeDetailsSummaryRows = getLicenseeDetailsSummaryRows(getSampleRequest(), getSamplePermission(), 'UNITED KONGDUM')
     expect(licenseeDetailsSummaryRows).toEqual(
       expect.arrayContaining([

@@ -39,17 +39,16 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-export const getLicenseeDetailsSummaryRows = (request, permission, countryName) => {
-  const mssgs = request.i18n.getCatalog()
+export const getLicenseeDetailsSummaryRows = (mssgs, permission, countryName) => {
   const licenseeSummaryArray = [
-    getRow(request, mssgs.address, getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
-    ...getContactDetails(request, permission)
+    getRow(mssgs, mssgs.address, getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
+    ...getContactDetails(mssgs, permission)
   ]
 
   if (permission.isLicenceForYou) {
     licenseeSummaryArray.push(
       getRow(
-        request,
+        mssgs,
         mssgs.contact_summary_newsletter,
         permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
         NEWSLETTER.uri,
@@ -63,8 +62,7 @@ export const getLicenseeDetailsSummaryRows = (request, permission, countryName) 
 
 const CHANGE_CONTACT = 'change-contact'
 
-export const getContactDetails = (request, permission) => {
-  const mssgs = request.i18n.getCatalog()
+export const getContactDetails = (mssgs, permission) => {
   const CONTACT_TEXT_DEFAULT = {
     EMAIL: mssgs.contact_summary_email_to,
     TEXT: mssgs.contact_summary_texts_to,
@@ -83,19 +81,19 @@ export const getContactDetails = (request, permission) => {
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       return [
-        getRow(request, mssgs.contact_summary_licence, mssgs.contact_summary_by_post, LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
+        getRow(mssgs, mssgs.contact_summary_licence, mssgs.contact_summary_by_post, LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
         getRow(
-          request,
+          mssgs,
           mssgs.contact_summary_licence_confirmation,
-          getContactText(request, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          getContactText(mssgs, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
           LICENCE_CONFIRMATION_METHOD.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
         getRow(
-          request,
+          mssgs,
           mssgs.contact_summary_contact,
-          getContactText(request, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          getContactText(mssgs, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
           CONTACT.uri,
           'contact',
           CHANGE_CONTACT
@@ -104,17 +102,17 @@ export const getContactDetails = (request, permission) => {
     } else {
       return [
         getRow(
-          request,
+          mssgs,
           mssgs.contact_summary_licence,
-          getContactText(request, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          getContactText(mssgs, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
           LICENCE_FULFILMENT.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
         getRow(
-          request,
+          mssgs,
           mssgs.contact_summary_contact,
-          getContactText(request, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          getContactText(mssgs, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
           CONTACT.uri,
           'contact',
           CHANGE_CONTACT
@@ -124,9 +122,9 @@ export const getContactDetails = (request, permission) => {
   } else {
     return [
       getRow(
-        request,
+        mssgs,
         mssgs.contact_summary_licence_details,
-        getContactText(request, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
+        getContactText(mssgs, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
         CONTACT.uri,
         'contact',
         CHANGE_CONTACT
@@ -140,8 +138,9 @@ const getAddressText = (licensee, countryName) =>
     .filter(Boolean)
     .join(', ')
 
-const getContactDisplayText = (request, contactMethod) => {
-  const mssgs = request.i18n.getCatalog()
+const getContactDisplayText = (mssgs, contactMethod) => {
+  console.log(mssgs.contact_summary_texts_to)
+
   let contactDisplayText = ''
   const CONTACT_TEXT_DEFAULT = {
     EMAIL: mssgs.contact_summary_email_to,
@@ -170,8 +169,8 @@ const getContactDisplayText = (request, contactMethod) => {
   return contactDisplayText
 }
 
-export const getContactText = (request, contactMethod, licensee, contactText = null) => {
-  contactText = getContactDisplayText(request, contactMethod)
+export const getContactText = (mssgs, contactMethod, licensee, contactText = null) => {
+  contactText = getContactDisplayText(mssgs, contactMethod)
   switch (contactMethod) {
     case HOW_CONTACTED.email:
       return contactText.EMAIL + licensee.email
@@ -182,8 +181,7 @@ export const getContactText = (request, contactMethod, licensee, contactText = n
   }
 }
 
-const getRow = (request, label, text, href, visuallyHiddenText, id) => {
-  const mssgs = request.i18n.getCatalog()
+const getRow = (mssgs, label, text, href, visuallyHiddenText, id) => {
   return {
     key: {
       text: label
@@ -209,6 +207,7 @@ const getRow = (request, label, text, href, visuallyHiddenText, id) => {
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
   checkNavigation(status, permission)
 
@@ -217,7 +216,7 @@ export const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
-    summaryTable: getLicenseeDetailsSummaryRows(request, permission, countryName),
+    summaryTable: getLicenseeDetailsSummaryRows(mssgs, permission, countryName),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
     }
