@@ -171,19 +171,17 @@ describe('contact-summary > route', () => {
   describe('checkNavigation', () => {
     it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', () => {
       const status = {
-        renewal: true,
         [LICENCE_FULFILMENT.page]: false
       }
-      const permission = { licenceLength: '12M' }
+      const permission = { licenceLength: '12M', isRenewal: true }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
 
     it('should throw a GetDataRedirect if licence-confirmation page is false on the status', () => {
       const status = {
-        renewal: true,
         [LICENCE_CONFIRMATION_METHOD.page]: false
       }
-      const permission = { licenceLength: '12M' }
+      const permission = { licenceLength: '12M', isRenewal: true }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
   })

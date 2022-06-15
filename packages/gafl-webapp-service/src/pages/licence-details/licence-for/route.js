@@ -4,9 +4,7 @@ import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 
 export const validator = Joi.object({
-  'licence-for': Joi.string()
-    .valid('you', 'someone-else')
-    .required()
+  'licence-for': Joi.string().valid('you', 'someone-else').required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 const route = pageRoute(LICENCE_FOR.page, LICENCE_FOR.uri, validator, nextPage)

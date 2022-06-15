@@ -18,9 +18,7 @@ export const getData = async request => {
 }
 
 const validator = Joi.object({
-  'licence-option': Joi.string()
-    .valid('digital', 'paper-licence')
-    .required()
+  'licence-option': Joi.string().valid('digital', 'paper-licence').required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 export default pageRoute(LICENCE_FULFILMENT.page, LICENCE_FULFILMENT.uri, validator, nextPage, getData)

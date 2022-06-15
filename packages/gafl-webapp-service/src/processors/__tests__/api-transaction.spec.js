@@ -39,6 +39,7 @@ describe('prepareApiTransactionPayload', () => {
                     postalFulfilment: false
                   },
                   licenceToStart: licenceToStart.AFTER_PAYMENT,
+                  isRenewal: true,
                   isLicenceForYou: true
                 }
               ],
@@ -71,6 +72,7 @@ describe('prepareApiTransactionPayload', () => {
           },
           issueDate: null,
           startDate: null,
+          isRenewal: true,
           isLicenceForYou: true
         }
       ]

@@ -11,6 +11,8 @@ export const errorHandler = async (request, h) => {
   if (!request.response.isBoom) {
     return h.continue
   }
+  const transaction = await request.cache().helpers.transaction.get()
+  const paymentInProgress = transaction?.payment?.payment_id !== undefined
   const mssgs = request.i18n.getCatalog()
   const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
   if (Math.floor(request.response.output.statusCode / 100) === 4) {
@@ -23,8 +25,14 @@ export const errorHandler = async (request, h) => {
         altLang,
         referer: request?.headers?.referer,
         clientError: request.response.output.payload,
+        paymentInProgress,
         path: request.path,
-        uri: { new: NEW_TRANSACTION.uri, controller: CONTROLLER.uri, agreed: AGREED.uri }
+        uri: {
+          new: NEW_TRANSACTION.uri,
+          controller: CONTROLLER.uri,
+          agreed: AGREED.uri,
+          ...(transaction?.payment?.href ? { payment: transaction.payment.href } : {})
+        }
       })
       .code(request.response.output.statusCode)
   } else {
