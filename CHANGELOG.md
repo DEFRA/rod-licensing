@@ -1,4 +1,13 @@
 
+## v1.25.0-rc.6 (2022-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1303](https://github.com/DEFRA/rod-licensing/pull/1303) Welsh - Cookies policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.25.0-rc.5 (2022-06-14)
 
 #### :rocket: Enhancement
