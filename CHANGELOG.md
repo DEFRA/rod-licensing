@@ -1,4 +1,13 @@
 
+## v1.25.0-rc.7 (2022-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1313](https://github.com/DEFRA/rod-licensing/pull/1313) Welsh - bobo fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.25.0-rc.6 (2022-06-15)
 
 #### :rocket: Enhancement
