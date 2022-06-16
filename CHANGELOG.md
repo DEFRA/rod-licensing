@@ -1,4 +1,13 @@
 
+## v1.25.0-rc.8 (2022-06-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1343](https://github.com/DEFRA/rod-licensing/pull/1343) Bug fix for Translation - Check the licence details missing translations ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.25.0-rc.7 (2022-06-15)
 
 #### :rocket: Enhancement
