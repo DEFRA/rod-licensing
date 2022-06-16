@@ -61,7 +61,7 @@ export const getData = async request => {
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
-  const startTimeString = displayStartTime(permission)
+  const startTimeString = displayStartTime(permission, request.i18n.getCatalog())
 
   return {
     permission,
