@@ -1,4 +1,13 @@
 
+## v1.25.0-rc.9 (2022-06-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1348](https://github.com/DEFRA/rod-licensing/pull/1348) Welsh translation for cookies ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.25.0-rc.8 (2022-06-16)
 
 #### :bug: Bug Fix
