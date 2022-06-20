@@ -232,11 +232,9 @@ describe('createPartFiles', () => {
       for (let x = 0; x < retries; x++) {
         persist.mockRejectedValueOnce(new Error('Socket error'))
       }
-      executePagedQuery.mockImplementation(
-        async (query, onPageReceived) => {
-          await onPageReceived([getMockFulfilmentRequestQueryResult()])
-        }
-      )
+      executePagedQuery.mockImplementation(async (query, onPageReceived) => {
+        await onPageReceived([getMockFulfilmentRequestQueryResult()])
+      })
       await createPartFiles()
       expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
     })
@@ -245,14 +243,12 @@ describe('createPartFiles', () => {
       for (let x = 0; x < retries; x++) {
         persist.mockRejectedValueOnce(new Error('Socket error'))
       }
-      executePagedQuery.mockImplementation(
-        async (query, onPageReceived) => {
-          await onPageReceived([getMockFulfilmentRequestQueryResult()])
-        }
-      )
+      executePagedQuery.mockImplementation(async (query, onPageReceived) => {
+        await onPageReceived([getMockFulfilmentRequestQueryResult()])
+      })
       await createPartFiles()
       expect(debugMock).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp((`^Error persisting, retrying \\(attempt ${retries}\\)`))),
+        expect.stringMatching(new RegExp(`^Error persisting, retrying \\(attempt ${retries}\\)`)),
         expect.any(Error)
       )
     })
@@ -263,17 +259,16 @@ describe('createPartFiles', () => {
     let tries = 0
     persist.mockImplementation(() => {
       tries++
-      if (tries <= expectedPersistCallCount) { // avoid infinite loop
+      if (tries <= expectedPersistCallCount) {
+        // avoid infinite loop
         return Promise.reject(Error('Socket error'))
       } else if (tries > expectedPersistCallCount) {
         return Promise.resolve()
       }
     })
-    executePagedQuery.mockImplementation(
-      async (query, onPageReceived) => {
-        await onPageReceived([getMockFulfilmentRequestQueryResult()])
-      }
-    )
+    executePagedQuery.mockImplementation(async (query, onPageReceived) => {
+      await onPageReceived([getMockFulfilmentRequestQueryResult()])
+    })
     await createPartFiles()
     expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
     persist.mockReset()
@@ -282,16 +277,11 @@ describe('createPartFiles', () => {
   it('logs error when retrying', async () => {
     const error = Symbol('I am an error')
     persist.mockRejectedValueOnce(error)
-    executePagedQuery.mockImplementation(
-      async (query, onPageReceived) => {
-        await onPageReceived([getMockFulfilmentRequestQueryResult()])
-      }
-    )
+    executePagedQuery.mockImplementation(async (query, onPageReceived) => {
+      await onPageReceived([getMockFulfilmentRequestQueryResult()])
+    })
     await createPartFiles()
-    expect(debugMock).toHaveBeenCalledWith(
-      expect.any(String),
-      error
-    )
+    expect(debugMock).toHaveBeenCalledWith(expect.any(String), error)
   })
 
   it.each([1, 2])('retries persist %d time(s) in the event of an error when marking fulfilment file as exported', async retries => {
@@ -308,7 +298,7 @@ describe('createPartFiles', () => {
   it('retries persist a maximum of three times in the event of an error when marking fulfilment file as exported', async () => {
     const expectedPersistCallCount = 3
     // need a way to differentiate between different calls
-    for (let x = 0; x < (expectedPersistCallCount + 1); x++) {
+    for (let x = 0; x < expectedPersistCallCount + 1; x++) {
       persist.mockRejectedValueOnce(new Error('Socket error'))
     }
     executeQuery.mockResolvedValue([{ entity: { status: { label: 'Pending' } } }])
