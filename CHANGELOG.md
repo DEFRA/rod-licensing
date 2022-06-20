@@ -1,4 +1,13 @@
 
+## v1.25.0-rc.10 (2022-06-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1342](https://github.com/DEFRA/rod-licensing/pull/1342) Open footer link to OS terms in same window ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.25.0-rc.9 (2022-06-17)
 
 #### :rocket: Enhancement
