@@ -20,10 +20,7 @@ export default pageRoute(
   ADDRESS_SELECT.page,
   ADDRESS_SELECT.uri,
   Joi.object({
-    address: Joi.number()
-      .integer()
-      .min(0)
-      .required()
+    address: Joi.number().integer().min(0).required()
   }).options({ abortEarly: false, allowUnknown: true }),
   nextPage,
   getData

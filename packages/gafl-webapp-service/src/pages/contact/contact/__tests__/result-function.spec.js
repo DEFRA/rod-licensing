@@ -46,13 +46,13 @@ describe('contact > result-function', () => {
     })
 
     it('should return ok if renewal is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ isRenewal: false }))
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return summary if renewal is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ isRenewal: true }))
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.SUMMARY)
     })

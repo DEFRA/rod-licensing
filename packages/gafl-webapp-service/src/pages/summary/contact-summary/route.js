@@ -19,7 +19,7 @@ import {
 } from '../../../uri.js'
 
 export const checkNavigation = (status, permission) => {
-  if (!status.renewal) {
+  if (!permission.isRenewal) {
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
     }
