@@ -48,7 +48,7 @@ export default [
   {
     method: 'GET',
     path: '/',
-    handler: async (request, h) => h.redirect(CONTROLLER.uri)
+    handler: async (request, h) => h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
   },
   {
     method: 'GET',
@@ -92,7 +92,7 @@ export default [
     path: ADD_PERMISSION.uri,
     handler: async (request, h) => {
       await addPermission(request)
-      return h.redirect(CONTROLLER.uri)
+      return h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
     }
   },
   {
