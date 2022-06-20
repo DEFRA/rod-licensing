@@ -16,24 +16,38 @@ const debug = db('fulfilment:staging')
 
 /** Date of execution */
 const EXECUTION_DATE = moment()
+const MAX_DYNAMICS_RETRIES = 3
 
 /**
  * Query dynamics for outstanding fulfilment requests and stage these into S3.
  *
  * @returns {Promise<void>}
  */
-export const createPartFiles = async () => {
+let xLog = false
+export const createPartFiles = async (extraLog = false) => {
+  xLog = extraLog
+  if (extraLog) console.log('extra log set to true')
   debug('Exporting fulfilment part files')
   const staged = await executePagedQuery(findUnassociatedFulfilmentRequests(), processQueryPage)
   debug('Staged %d fulfilment requests', staged)
 
   const toMarkAsExported = (await getFulfilmentFiles()).filter(f => f.status.label === 'Pending')
   if (toMarkAsExported.length) {
+    if (extraLog) console.log('marking fulfilment file as exported')
     for (const fulfilmentFile of toMarkAsExported) {
       fulfilmentFile.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
       fulfilmentFile.notes = `The fulfilment file finished exporting at ${moment().toISOString()}`
     }
-    await persist(toMarkAsExported)
+    const retries = new Retries(MAX_DYNAMICS_RETRIES)
+    while (retries.shouldRetry) {
+      try {
+        retries.attempt()
+        await persist(toMarkAsExported)
+        retries.success()
+      } catch (e) {
+        debug(`Error persisting, retrying (attempt ${retries.attempts})`, e)
+      }
+    }
   }
 }
 
@@ -69,8 +83,36 @@ const processQueryPage = async page => {
       item.fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.fulfilmentRequestFile, fulfilmentFile)
       return item.fulfilmentRequest
     })
-    debug('Persisting updates to Dynamics')
-    await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
+    const retries = new Retries(MAX_DYNAMICS_RETRIES)
+    while (retries.shouldRetry) {
+      try {
+        retries.attempt()
+        await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
+        retries.success()
+      } catch (e) {
+        console.log(`Error persisting, retrying (attempt ${retries.attempts})`, e)
+        debug(`Error persisting, retrying (attempt ${retries.attempts})`, e)
+      }
+    }
+  }
+}
+
+class Retries {
+  constructor (maximumAttempts) {
+    this.shouldRetry = true
+    this.attempts = 0
+    this.maximumAttempts = maximumAttempts
+  }
+
+  success () {
+    this.shouldRetry = false
+  }
+
+  attempt () {
+    this.attempts++
+    if (this.maximumAttempts === this.attempts) {
+      this.shouldRetry = false
+    }
   }
 }
 
