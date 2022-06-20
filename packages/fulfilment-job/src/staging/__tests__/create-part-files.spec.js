@@ -312,7 +312,7 @@ describe('createPartFiles', () => {
       persist.mockRejectedValueOnce(new Error('Socket error'))
     }
     executeQuery.mockResolvedValue([{ entity: { status: { label: 'Pending' } } }])
-    await createPartFiles(true)
+    await createPartFiles()
 
     expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
   })

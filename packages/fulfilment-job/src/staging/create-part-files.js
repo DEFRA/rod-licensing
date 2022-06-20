@@ -23,17 +23,13 @@ const MAX_DYNAMICS_RETRIES = 3
  *
  * @returns {Promise<void>}
  */
-let xLog = false
-export const createPartFiles = async (extraLog = false) => {
-  xLog = extraLog
-  if (extraLog) console.log('extra log set to true')
+export const createPartFiles = async () => {
   debug('Exporting fulfilment part files')
   const staged = await executePagedQuery(findUnassociatedFulfilmentRequests(), processQueryPage)
   debug('Staged %d fulfilment requests', staged)
 
   const toMarkAsExported = (await getFulfilmentFiles()).filter(f => f.status.label === 'Pending')
   if (toMarkAsExported.length) {
-    if (extraLog) console.log('marking fulfilment file as exported')
     for (const fulfilmentFile of toMarkAsExported) {
       fulfilmentFile.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
       fulfilmentFile.notes = `The fulfilment file finished exporting at ${moment().toISOString()}`
