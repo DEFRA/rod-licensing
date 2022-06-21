@@ -92,7 +92,6 @@ const processQueryPage = async page => {
     }
   }
 }
-
 class Retries {
   constructor (maximumAttempts) {
     this.shouldRetry = true
@@ -101,7 +100,9 @@ class Retries {
   }
 
   success () {
-    this.shouldRetry = false
+    if (this.attempts > 1) {
+      this.shouldRetry = false
+    }
   }
 
   attempt () {
