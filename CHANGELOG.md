@@ -1,4 +1,18 @@
 
+## v1.25.0-rc.11 (2022-06-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1305](https://github.com/DEFRA/rod-licensing/pull/1305) Welsh - Privacy policy ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1357](https://github.com/DEFRA/rod-licensing/pull/1357) Welsh - licence confirmation BOBO ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1360](https://github.com/DEFRA/rod-licensing/pull/1360) Cookies page welsh translations ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.25.0-rc.10 (2022-06-20)
 
 #### :rocket: Enhancement
