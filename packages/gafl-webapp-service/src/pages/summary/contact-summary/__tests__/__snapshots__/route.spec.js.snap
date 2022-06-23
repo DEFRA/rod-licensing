@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter row if isLicenceForYou is true 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter is set have preferred method and if isLicenceForYou is true 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -65,7 +65,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should not have the newsletter row if isLicenceForYou is false 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter set to no if have preferred method and if isLicenceForYou is true 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -105,6 +105,71 @@ Array [
     },
     "value": Object {
       "text": "Make a note on confirmation",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": "/buy/newsletter",
+          "text": "Change",
+          "visuallyHiddenText": "newsletter",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Newsletter",
+    },
+    "value": Object {
+      "text": "No",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should not have the newsletter row if isLicenceForYou is false 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": "/buy/find-address",
+          "text": "Change",
+          "visuallyHiddenText": "address",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Address",
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": "/buy/contact",
+          "text": "Change",
+          "visuallyHiddenText": "contact",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence details",
+    },
+    "value": Object {
+      "text": "Text messages to undefined",
     },
   },
 ]
@@ -239,7 +304,7 @@ Array [
       "text": "Licence details",
     },
     "value": Object {
-      "text": "Text messages to 07700900900",
+      "text": "Make a note on confirmation",
     },
   },
 ]
@@ -389,7 +454,7 @@ Array [
       "text": "Licence Confirmation",
     },
     "value": Object {
-      "text": "Text message to 07700900900",
+      "text": "Note of licence",
     },
   },
   Object {
@@ -409,7 +474,7 @@ Array [
       "text": "Contact",
     },
     "value": Object {
-      "text": "Text messages to 07700900900",
+      "text": "By post",
     },
   },
 ]
@@ -604,7 +669,7 @@ Array [
       "text": "Licence",
     },
     "value": Object {
-      "text": "Text message to 07700900900",
+      "text": "Note of licence",
     },
   },
   Object {
@@ -624,7 +689,7 @@ Array [
       "text": "Contact",
     },
     "value": Object {
-      "text": "Text messages to 07700900900",
+      "text": "By post",
     },
   },
 ]
