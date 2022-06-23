@@ -13,7 +13,10 @@ describe('address-select > route', () => {
           getCurrentPermission: jest.fn(() => ({}))
         }
       }
-    })
+    }),
+    url: {
+      search: ''
+    }
   }
 
   describe('getData', () => {

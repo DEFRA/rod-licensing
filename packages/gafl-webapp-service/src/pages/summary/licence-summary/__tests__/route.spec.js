@@ -64,6 +64,9 @@ describe('licence-summary > route', () => {
         getCatalog: () => ({
           licence_type_radio_salmon: 'Salmon and sea trout'
         })
+      },
+      url: {
+        search: ''
       }
     }
 

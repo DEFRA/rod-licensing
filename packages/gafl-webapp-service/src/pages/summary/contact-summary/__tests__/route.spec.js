@@ -11,6 +11,12 @@ const address = {
   postcode: 'BS9 1HJ'
 }
 
+const mockRequest = {
+  url: {
+    search: ''
+  }
+}
+
 describe('contact-summary > route', () => {
   describe('getLicenseeDetailsSummaryRows', () => {
     describe('when purchasing a 12 month (physical licence) with postal fulfilment', () => {
@@ -26,7 +32,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -42,7 +48,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -56,7 +62,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Letter'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -74,7 +80,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -87,10 +93,10 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
-            preferredMethodOfNewsletter: 'Yes'
+            preferredMethodOfNewsletter: 'Text'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -107,7 +113,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -123,7 +129,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -138,7 +144,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -151,7 +157,7 @@ describe('contact-summary > route', () => {
         },
         isLicenceForYou: true
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
       expect(summaryTable).toMatchSnapshot()
     })
 
@@ -163,7 +169,7 @@ describe('contact-summary > route', () => {
         },
         isLicenceForYou: false
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
       expect(summaryTable).toMatchSnapshot()
     })
   })
