@@ -273,7 +273,7 @@ describe('createPartFiles', () => {
     [3003, 995, 4],
     [4004, 995, 5],
     [4996, 4, 6]
-  ])('Unfilled part file before failure', (numberOfPreviousRequests, newRequestsToCreate, expectedCallIndex) => {
+  ])('When last run terminated with a socket error and part file was not full', (numberOfPreviousRequests, newRequestsToCreate, expectedCallIndex) => {
     beforeEach(() => {
       config.file.size = 5000
       config.file.partFileSize = 999
@@ -283,13 +283,13 @@ describe('createPartFiles', () => {
       )
     })
 
-    it('calculates part file number correctly when recovering from failure', async () => {
+    it('calculates part file number correctly', async () => {
       await createPartFiles()
 
       expect(writeS3PartFile).toHaveBeenCalledWith(expect.any(Object), expectedCallIndex, expect.any(Array))
     })
 
-    it('writes a debug log if we have an extra part file after an unfilled one', async () => {
+    it('writes a debug log', async () => {
       await createPartFiles()
 
       expect(debugMock).toHaveBeenCalledWith(
