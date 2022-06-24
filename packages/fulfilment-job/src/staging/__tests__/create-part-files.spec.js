@@ -273,30 +273,33 @@ describe('createPartFiles', () => {
     [3003, 995, 4],
     [4004, 995, 5],
     [4996, 4, 6]
-  ])('When last run terminated with a socket error and part file was not full', (numberOfPreviousRequests, newRequestsToCreate, expectedCallIndex) => {
-    beforeEach(() => {
-      config.file.size = 5000
-      config.file.partFileSize = 999
-      executeQuery.mockImplementation(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', numberOfPreviousRequests)])
-      executePagedQuery.mockImplementation((_query, onPageReceived) =>
-        onPageReceived(Array(newRequestsToCreate).fill(getMockFulfilmentRequestQueryResult()))
-      )
-    })
+  ])(
+    'When last run terminated with a socket error and part file was not full',
+    (numberOfPreviousRequests, newRequestsToCreate, expectedCallIndex) => {
+      beforeEach(() => {
+        config.file.size = 5000
+        config.file.partFileSize = 999
+        executeQuery.mockImplementation(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', numberOfPreviousRequests)])
+        executePagedQuery.mockImplementation((_query, onPageReceived) =>
+          onPageReceived(Array(newRequestsToCreate).fill(getMockFulfilmentRequestQueryResult()))
+        )
+      })
 
-    it('calculates part file number correctly', async () => {
-      await createPartFiles()
+      it('calculates part file number correctly', async () => {
+        await createPartFiles()
 
-      expect(writeS3PartFile).toHaveBeenCalledWith(expect.any(Object), expectedCallIndex, expect.any(Array))
-    })
+        expect(writeS3PartFile).toHaveBeenCalledWith(expect.any(Object), expectedCallIndex, expect.any(Array))
+      })
 
-    it('writes a debug log', async () => {
-      await createPartFiles()
+      it('writes a debug log', async () => {
+        await createPartFiles()
 
-      expect(debugMock).toHaveBeenCalledWith(
-        `Found existing unfilled part file part${expectedCallIndex - 1}, incrementing next part file number to part${expectedCallIndex}`
-      )
-    })
-  })
+        expect(debugMock).toHaveBeenCalledWith(
+          `Found existing unfilled part file part${expectedCallIndex - 1}, incrementing next part file number to part${expectedCallIndex}`
+        )
+      })
+    }
+  )
 })
 
 const createMockFulfilmentFileQueryResult = async (sequenceNo, statusLabel, numberOfRequests = 0) => ({
