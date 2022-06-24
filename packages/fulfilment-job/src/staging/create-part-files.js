@@ -83,6 +83,7 @@ const processQueryPage = async page => {
       return item.fulfilmentRequest
     })
 
+    debug('Persisting updates to Dynamics')
     await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
   }
 }
