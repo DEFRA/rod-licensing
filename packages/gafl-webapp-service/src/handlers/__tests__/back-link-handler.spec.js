@@ -1,10 +1,7 @@
-import backLinkHandler from "../back-link-handler"
-import {
-  CHANGE_LICENCE_OPTIONS,
-  LICENCE_SUMMARY
-} from '../../routes'
+import backLinkHandler from '../back-link-handler'
+import { CHANGE_LICENCE_OPTIONS } from '../../uri.js'
 
-describe('back-link-handler', async () => {
+describe('back-link-handler', () => {
   const mockStatusCacheGet = jest.fn()
 
   const mockRequest = {
