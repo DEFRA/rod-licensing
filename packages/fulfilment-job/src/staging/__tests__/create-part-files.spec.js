@@ -63,248 +63,239 @@ describe('createPartFiles', () => {
     executePagedQuery.mockReset()
     executeQuery.mockReset()
     executeQuery.mockImplementation(async () => [])
+    config.file.size = 1
+    config.file.partFileSize = 1
   })
 
-  it('queries dynamics for data and writes a part file', async () => {
-    const fulfilmentFileExpectations = expect.objectContaining({
+  const getFulfilmentFileExpectations = config =>
+    expect.objectContaining({
       fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
       date: expect.anything(),
       notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
       numberOfRequests: 1,
-      status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
+      status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' }),
+      ...config
     })
-    const fulfilmentRequestExpectations = expect.objectContaining(
+
+  const getFulfilmentRequestExpectations = () =>
+    expect.objectContaining(
       Object.assign(getMockFulfilmentRequest().toJSON(), {
         status: expect.objectContaining({ id: 910400001, label: 'Sent', description: 'Sent' })
       })
     )
 
-    executePagedQuery.mockImplementation(jest.fn(async (query, onPageReceived) => onPageReceived([getMockFulfilmentRequestQueryResult()])))
-    await expect(createPartFiles()).resolves.toBeUndefined()
-    expect(writeS3PartFile).toHaveBeenCalledWith(
-      fulfilmentFileExpectations,
-      0,
-      expect.arrayContaining([
-        {
-          fulfilmentRequest: fulfilmentRequestExpectations,
-          licensee: MOCK_EXISTING_CONTACT_ENTITY,
-          permission: MOCK_EXISTING_PERMISSION_ENTITY,
-          permit: MOCK_12MONTH_SENIOR_PERMIT
-        }
-      ])
-    )
-    expect(persist).toHaveBeenCalledTimes(1)
-    expect(persist).toHaveBeenCalledWith([fulfilmentFileExpectations, fulfilmentRequestExpectations])
-  })
-
-  it('calculates the next file in the sequence correctly', async () => {
-    const fulfilmentFileExpectations = expect.objectContaining({
-      fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1010.json`,
-      date: expect.anything(),
-      notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
-      numberOfRequests: 1,
-      status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
-    })
-    const fulfilmentRequestExpectations = expect.objectContaining(
-      Object.assign(getMockFulfilmentRequest().toJSON(), {
-        status: expect.objectContaining({ id: 910400001, label: 'Sent', description: 'Sent' })
-      })
-    )
-
-    executePagedQuery.mockImplementation(jest.fn(async (query, onPageReceived) => onPageReceived([getMockFulfilmentRequestQueryResult()])))
-    executeQuery.mockImplementation(
-      jest.fn(async () => [
-        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0003.json`, status: { label: 'Delivered' } } },
-        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0002.json`, status: { label: 'Delivered' } } },
-        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1009.json`, status: { label: 'Delivered' } } },
-        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`, status: { label: 'Delivered' } } },
-        { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0006.json`, status: { label: 'Delivered' } } }
-      ])
-    )
-    await expect(createPartFiles()).resolves.toBeUndefined()
-    expect(writeS3PartFile).toHaveBeenCalledWith(
-      fulfilmentFileExpectations,
-      0,
-      expect.arrayContaining([
-        {
-          fulfilmentRequest: fulfilmentRequestExpectations,
-          licensee: MOCK_EXISTING_CONTACT_ENTITY,
-          permission: MOCK_EXISTING_PERMISSION_ENTITY,
-          permit: MOCK_12MONTH_SENIOR_PERMIT
-        }
-      ])
-    )
-    expect(persist).toHaveBeenCalledTimes(1)
-    expect(persist).toHaveBeenCalledWith([fulfilmentFileExpectations, fulfilmentRequestExpectations])
-  })
-
-  it('will write multiple part files as necessary', async () => {
-    config.file.size = 2
-    const fulfilmentRequestExpectations = expect.objectContaining(
-      Object.assign(getMockFulfilmentRequest().toJSON(), {
-        status: expect.objectContaining({ id: 910400001, label: 'Sent', description: 'Sent' })
-      })
-    )
-
-    executePagedQuery.mockImplementation(
-      jest.fn(async (query, onPageReceived) => {
-        // Simulate multiple pages of data
-        await onPageReceived([getMockFulfilmentRequestQueryResult()])
-        await onPageReceived([getMockFulfilmentRequestQueryResult()])
-      })
-    )
-    executeQuery.mockImplementationOnce(jest.fn(async () => []))
-    executeQuery.mockImplementationOnce(jest.fn(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', 1)]))
-    executeQuery.mockImplementationOnce(jest.fn(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', 2)]))
-    await expect(createPartFiles()).resolves.toBeUndefined()
-    expect(writeS3PartFile).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({
-        fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
-        date: expect.anything(),
-        notes: expect.stringMatching(/^The fulfilment file is currently being populated prior to exporting.$/),
-        numberOfRequests: 1,
-        status: expect.objectContaining({ id: 910400000, label: 'Pending', description: 'Pending' })
-      }),
-      0,
-      expect.arrayContaining([
-        {
-          fulfilmentRequest: fulfilmentRequestExpectations,
-          licensee: MOCK_EXISTING_CONTACT_ENTITY,
-          permission: MOCK_EXISTING_PERMISSION_ENTITY,
-          permit: MOCK_12MONTH_SENIOR_PERMIT
-        }
-      ])
-    )
-    expect(writeS3PartFile).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
-        date: expect.anything(),
-        notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
-        numberOfRequests: 2,
-        status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
-      }),
-      1,
-      expect.arrayContaining([
-        {
-          fulfilmentRequest: fulfilmentRequestExpectations,
-          licensee: MOCK_EXISTING_CONTACT_ENTITY,
-          permission: MOCK_EXISTING_PERMISSION_ENTITY,
-          permit: MOCK_12MONTH_SENIOR_PERMIT
-        }
-      ])
-    )
-    expect(persist).toHaveBeenNthCalledWith(1, [
-      expect.objectContaining({
-        fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
-        date: expect.anything(),
-        notes: expect.stringMatching(/^The fulfilment file is currently being populated prior to exporting.$/),
-        numberOfRequests: 1,
-        status: expect.objectContaining({ id: 910400000, label: 'Pending', description: 'Pending' })
-      }),
-      fulfilmentRequestExpectations
-    ])
-    expect(persist).toHaveBeenNthCalledWith(2, [
-      expect.objectContaining({
-        fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
-        date: expect.anything(),
-        notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
-        numberOfRequests: 2,
-        status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
-      }),
-      fulfilmentRequestExpectations
-    ])
-    expect(persist).toHaveBeenNthCalledWith(3, [
-      expect.objectContaining({
-        fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
-        date: expect.anything(),
-        notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
-        numberOfRequests: 2,
-        status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
-      })
-    ])
-  })
-
-  describe.each([1, 2])('retry persist call to Dynamics for %d failure(s)', retries => {
-    it(`retries persist ${retries} time(s) in the event of an error when marking fulfilment requests as exported`, async () => {
-      const expectedPersistCallCount = retries + 1
-      for (let x = 0; x < retries; x++) {
-        persist.mockRejectedValueOnce(new Error('Socket error'))
+  const getS3DataExpectations = () =>
+    expect.arrayContaining([
+      {
+        fulfilmentRequest: getFulfilmentRequestExpectations(),
+        licensee: MOCK_EXISTING_CONTACT_ENTITY,
+        permission: MOCK_EXISTING_PERMISSION_ENTITY,
+        permit: MOCK_12MONTH_SENIOR_PERMIT
       }
-      executePagedQuery.mockImplementation(async (query, onPageReceived) => {
-        await onPageReceived([getMockFulfilmentRequestQueryResult()])
-      })
-      await createPartFiles()
-      expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
-    })
+    ])
 
-    it('logs each failure when retrying', async () => {
-      for (let x = 0; x < retries; x++) {
-        persist.mockRejectedValueOnce(new Error('Socket error'))
-      }
-      executePagedQuery.mockImplementation(async (query, onPageReceived) => {
-        await onPageReceived([getMockFulfilmentRequestQueryResult()])
-      })
-      await createPartFiles()
-      expect(debugMock).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`^Error persisting, retrying \\(attempt ${retries}\\)`)),
-        expect.any(Error)
+  describe('queries dynamics for data and writes a part file', () => {
+    beforeEach(() => {
+      executePagedQuery.mockImplementation(
+        jest.fn(async (query, onPageReceived) => onPageReceived([getMockFulfilmentRequestQueryResult()]))
       )
     })
+
+    it('createPartFiles has no return value', async () => {
+      await expect(createPartFiles()).resolves.toBeUndefined()
+    })
+
+    it('writes a part file', async () => {
+      await createPartFiles()
+      expect(writeS3PartFile).toHaveBeenCalledWith(getFulfilmentFileExpectations(), 0, getS3DataExpectations())
+    })
+
+    it('persist is only called once', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenCalledTimes(1)
+    })
+
+    it('persist is called according to expectations', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenCalledWith([getFulfilmentFileExpectations(), getFulfilmentRequestExpectations()])
+    })
   })
 
-  it('retries persist a maximum of three times in the event of an error when marking fulfilment requests as exported', async () => {
-    const expectedPersistCallCount = 3
-    let tries = 0
-    persist.mockImplementation(() => {
-      tries++
-      if (tries <= expectedPersistCallCount) {
-        // avoid infinite loop
-        return Promise.reject(Error('Socket error'))
-      } else if (tries > expectedPersistCallCount) {
-        return Promise.resolve()
+  it('part file number', async () => {
+    let fulfilmentFile
+    config.file.size = 5000
+    config.file.partFileSize = 999
+    const page = []
+    for (let x = 0; x < 1840; x++) {
+      page.push(getMockFulfilmentRequestQueryResult())
+    }
+    executePagedQuery.mockImplementation(jest.fn(async (_query, onPageReceived) => onPageReceived(page)))
+    executeQuery.mockImplementation(() => (fulfilmentFile ? [{ entity: fulfilmentFile }] : []))
+    persist.mockImplementation(data => {
+      const [potentialFulfilmentFile] = data
+      if (potentialFulfilmentFile.constructor.name === 'FulfilmentRequestFile') {
+        fulfilmentFile = potentialFulfilmentFile
       }
     })
-    executePagedQuery.mockImplementation(async (query, onPageReceived) => {
-      await onPageReceived([getMockFulfilmentRequestQueryResult()])
+    await createPartFiles()
+    expect(writeS3PartFile).toHaveBeenCalledWith(expect.any(Object), 0, expect.any(Object))
+    expect(writeS3PartFile).toHaveBeenCalledWith(expect.any(Object), 1, expect.any(Object))
+  })
+
+  describe('calculates the next file in the sequence correctly', () => {
+    beforeEach(() => {
+      executePagedQuery.mockImplementation(
+        jest.fn(async (query, onPageReceived) => onPageReceived([getMockFulfilmentRequestQueryResult()]))
+      )
+      executeQuery.mockImplementation(
+        jest.fn(async () => [
+          { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0003.json`, status: { label: 'Delivered' } } },
+          { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0002.json`, status: { label: 'Delivered' } } },
+          { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1009.json`, status: { label: 'Delivered' } } },
+          { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`, status: { label: 'Delivered' } } },
+          { entity: { fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0006.json`, status: { label: 'Delivered' } } }
+        ])
+      )
     })
-    await createPartFiles()
-    expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
-    persist.mockReset()
-  })
 
-  it('logs error when retrying', async () => {
-    const error = Symbol('I am an error')
-    persist.mockRejectedValueOnce(error)
-    executePagedQuery.mockImplementation(async (query, onPageReceived) => {
-      await onPageReceived([getMockFulfilmentRequestQueryResult()])
+    it('writes to s3 correctly', async () => {
+      await createPartFiles()
+      expect(writeS3PartFile).toHaveBeenCalledWith(
+        getFulfilmentFileExpectations({
+          fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1010.json`
+        }),
+        0,
+        getS3DataExpectations()
+      )
     })
-    await createPartFiles()
-    expect(debugMock).toHaveBeenCalledWith(expect.any(String), error)
+
+    it('calls persist once', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenCalledTimes(1)
+    })
+
+    it('calls persist with expected arguments', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenCalledWith([
+        getFulfilmentFileExpectations({
+          fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}1010.json`
+        }),
+        getFulfilmentRequestExpectations()
+      ])
+    })
   })
 
-  it.each([1, 2])('retries persist %d time(s) in the event of an error when marking fulfilment file as exported', async retries => {
-    const expectedPersistCallCount = retries + 1
-    for (let x = 0; x < retries; x++) {
-      persist.mockRejectedValueOnce(new Error('Socket error'))
-    }
-    executeQuery.mockResolvedValue([{ entity: { status: { label: 'Pending' } } }])
-    await createPartFiles()
+  describe('will write multiple part files as necessary', () => {
+    beforeEach(() => {
+      config.file.size = 2
+      executePagedQuery.mockImplementation(
+        jest.fn(async (query, onPageReceived) => {
+          // Simulate multiple pages of data
+          await onPageReceived([getMockFulfilmentRequestQueryResult()])
+          await onPageReceived([getMockFulfilmentRequestQueryResult()])
+        })
+      )
+      executeQuery.mockImplementationOnce(jest.fn(async () => []))
+      executeQuery.mockImplementationOnce(jest.fn(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', 1)]))
+      executeQuery.mockImplementationOnce(jest.fn(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', 2)]))
+    })
 
-    expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
+    it('first call to writeS3PartFile writes a pending record to s3', async () => {
+      await createPartFiles()
+      expect(writeS3PartFile).toHaveBeenNthCalledWith(
+        1,
+        getFulfilmentFileExpectations({
+          notes: expect.stringMatching(/^The fulfilment file is currently being populated prior to exporting.$/),
+          status: expect.objectContaining({ id: 910400000, label: 'Pending', description: 'Pending' })
+        }),
+        0,
+        getS3DataExpectations()
+      )
+    })
+
+    it('second call to writeS3PartFile writes finished record to s3', async () => {
+      await createPartFiles()
+      expect(writeS3PartFile).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
+          date: expect.anything(),
+          notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
+          numberOfRequests: 2,
+          status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
+        }),
+        1,
+        getS3DataExpectations()
+      )
+    })
+
+    it('writes pending part file record to Dynamics at start of export', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenNthCalledWith(1, [
+        getFulfilmentFileExpectations({
+          notes: expect.stringMatching(/^The fulfilment file is currently being populated prior to exporting.$/),
+          status: expect.objectContaining({ id: 910400000, label: 'Pending', description: 'Pending' })
+        }),
+        getFulfilmentRequestExpectations()
+      ])
+    })
+
+    it('writes finished part file record to Dynamics once export is finished', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenNthCalledWith(2, [
+        getFulfilmentFileExpectations({
+          numberOfRequests: 2
+        }),
+        getFulfilmentRequestExpectations()
+      ])
+    })
+
+    it('updates Dynamics with fulfilment file details once export is finished', async () => {
+      await createPartFiles()
+      expect(persist).toHaveBeenNthCalledWith(3, [
+        getFulfilmentFileExpectations({
+          numberOfRequests: 2
+        })
+      ])
+    })
   })
 
-  it('retries persist a maximum of three times in the event of an error when marking fulfilment file as exported', async () => {
-    const expectedPersistCallCount = 3
-    // need a way to differentiate between different calls
-    for (let x = 0; x < expectedPersistCallCount + 1; x++) {
-      persist.mockRejectedValueOnce(new Error('Socket error'))
-    }
-    executeQuery.mockResolvedValue([{ entity: { status: { label: 'Pending' } } }])
-    await createPartFiles()
+  /**
+   * Following tests are for the case where a call to Dynamics fails with a socket error, and the
+   * last part file wasn't full (i.e. number of fulfilment requests was less than the max for
+   * a part file). This was causing an existing part file to be overwritten, but the fulfilment
+   * requests would appear to have been sent...
+   */
+  describe.each([
+    [914, 2, 1], // taken from the failure on 21/5/2022
+    [1001, 20, 2],
+    [2002, 34, 3],
+    [3003, 995, 4],
+    [4004, 995, 5],
+    [4996, 4, 6]
+  ])('Unfilled part file before failure', (numberOfPreviousRequests, newRequestsToCreate, expectedCallIndex) => {
+    beforeEach(() => {
+      config.file.size = 5000
+      config.file.partFileSize = 999
+      executeQuery.mockImplementation(async () => [await createMockFulfilmentFileQueryResult(1, 'Pending', numberOfPreviousRequests)])
+      executePagedQuery.mockImplementation((_query, onPageReceived) =>
+        onPageReceived(Array(newRequestsToCreate).fill(getMockFulfilmentRequestQueryResult()))
+      )
+    })
 
-    expect(persist).toHaveBeenCalledTimes(expectedPersistCallCount)
+    it('calculates part file number correctly when recovering from failure', async () => {
+      await createPartFiles()
+
+      expect(writeS3PartFile).toHaveBeenCalledWith(expect.any(Object), expectedCallIndex, expect.any(Array))
+    })
+
+    it('writes a debug log if we have an extra part file after an unfilled one', async () => {
+      await createPartFiles()
+
+      expect(debugMock).toHaveBeenCalledWith(
+        `Found existing unfilled part file part${expectedCallIndex - 1}, incrementing next part file number to part${expectedCallIndex}`
+      )
+    })
   })
 })
 

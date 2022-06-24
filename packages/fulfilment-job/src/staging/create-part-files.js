@@ -16,7 +16,6 @@ const debug = db('fulfilment:staging')
 
 /** Date of execution */
 const EXECUTION_DATE = moment()
-const MAX_DYNAMICS_RETRIES = 3
 
 /**
  * Query dynamics for outstanding fulfilment requests and stage these into S3.
@@ -34,17 +33,21 @@ export const createPartFiles = async () => {
       fulfilmentFile.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
       fulfilmentFile.notes = `The fulfilment file finished exporting at ${moment().toISOString()}`
     }
-    const retries = new Retries(MAX_DYNAMICS_RETRIES)
-    while (retries.shouldRetry) {
-      try {
-        retries.attempt()
-        await persist(toMarkAsExported)
-        retries.success()
-      } catch (e) {
-        debug(`Error persisting, retrying (attempt ${retries.attempts})`, e)
-      }
-    }
+
+    await persist(toMarkAsExported)
   }
+}
+
+const getPartNumber = (numberOfRequests, partFileSize) => {
+  const partFileNumber = Math.floor(numberOfRequests / partFileSize)
+  const previousAttemptFailedWithPartiallyFilledPartFile = numberOfRequests > 0 && numberOfRequests % partFileSize !== 0
+
+  if (previousAttemptFailedWithPartiallyFilledPartFile) {
+    debug(`Found existing unfilled part file part${partFileNumber}, incrementing next part file number to part${partFileNumber + 1}`)
+    return partFileNumber + 1
+  }
+
+  return partFileNumber
 }
 
 /**
@@ -58,7 +61,7 @@ const processQueryPage = async page => {
   const fileExportedStatus = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
   while (page.length) {
     const fulfilmentFile = await getTargetFulfilmentFile()
-    const partNumber = Math.floor(fulfilmentFile.numberOfRequests / config.file.partFileSize)
+    const partNumber = getPartNumber(fulfilmentFile.numberOfRequests, config.file.partFileSize)
     const partFileSize = Math.min(config.file.partFileSize, config.file.size - fulfilmentFile.numberOfRequests)
     const itemsToWrite = page.splice(0, partFileSize).map(result => ({
       fulfilmentRequest: result.entity,
@@ -79,37 +82,8 @@ const processQueryPage = async page => {
       item.fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.fulfilmentRequestFile, fulfilmentFile)
       return item.fulfilmentRequest
     })
-    const retries = new Retries(MAX_DYNAMICS_RETRIES)
-    while (retries.shouldRetry) {
-      try {
-        retries.attempt()
-        await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
-        retries.success()
-      } catch (e) {
-        console.log(`Error persisting, retrying (attempt ${retries.attempts})`, e)
-        debug(`Error persisting, retrying (attempt ${retries.attempts})`, e)
-      }
-    }
-  }
-}
-class Retries {
-  constructor (maximumAttempts) {
-    this.shouldRetry = true
-    this.attempts = 0
-    this.maximumAttempts = maximumAttempts
-  }
 
-  success () {
-    if (this.attempts > 1) {
-      this.shouldRetry = false
-    }
-  }
-
-  attempt () {
-    this.attempts++
-    if (this.maximumAttempts === this.attempts) {
-      this.shouldRetry = false
-    }
+    await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
   }
 }
 
