@@ -45,14 +45,14 @@ describe('licence-length > result-function', () => {
       expect(result).toBe(CommonResults.OK)
     })
 
-    it.each([
-      ['8D'],
-      ['1D']
-    ])('should return require-time if fromSummary and fromLicenceOptions are false and licence starts later and is not 12M', async (length) => {
-      mockTransationCacheGet.mockImplementationOnce(() => ({ licenceLength: length }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false, fromLicenceOptions: false }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(licenceLengthResults.REQUIRE_TIME)
-    })
+    it.each([['8D'], ['1D']])(
+      'should return require-time if fromSummary and fromLicenceOptions are false and licence starts later and is not 12M',
+      async length => {
+        mockTransationCacheGet.mockImplementationOnce(() => ({ licenceLength: length }))
+        mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false, fromLicenceOptions: false }))
+        const result = await resultFunction(mockRequest)
+        expect(result).toBe(licenceLengthResults.REQUIRE_TIME)
+      }
+    )
   })
 })

@@ -17,12 +17,7 @@ import {
   CHANGE_LICENCE_OPTIONS
 } from '../uri.js'
 
-import {
-  SESSION_COOKIE_NAME_DEFAULT,
-  CSRF_TOKEN_COOKIE_NAME_DEFAULT,
-  ALB_COOKIE_NAME,
-  ALBCORS_COOKIE_NAME
-} from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
 import newSessionHandler from '../handlers/new-session-handler.js'
