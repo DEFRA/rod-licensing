@@ -219,7 +219,6 @@ describe('createPartFiles', () => {
         2,
         getFulfilmentFileExpectations({
           numberOfRequests: 2
-
         }),
         // expect.objectContaining({
         //   fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
