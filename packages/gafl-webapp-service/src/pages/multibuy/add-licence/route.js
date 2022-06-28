@@ -22,9 +22,7 @@ export const getData = async request => {
 }
 
 const validator = Joi.object({
-  'add-licence': Joi.string()
-    .valid('yes', 'no')
-    .required()
+  'add-licence': Joi.string().valid('yes', 'no').required()
 }).options({ abortEarly: false, allowUnknown: true })
 
 export default pageRoute(ADD_LICENCE.page, ADD_LICENCE.uri, validator, nextPage, getData)
