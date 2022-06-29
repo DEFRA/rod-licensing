@@ -87,7 +87,7 @@ export const getData = async request => {
       licenceStartDate: permission.isRenewal
         ? addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
         : addLanguageCodeToUri(request, LICENCE_TO_START.uri),
-      clear: NEW_TRANSACTION.uri
+      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

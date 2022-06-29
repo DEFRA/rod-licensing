@@ -9,7 +9,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -29,7 +29,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -49,7 +49,7 @@ Array [
           "attributes": Object {
             "id": "change-newsletter",
           },
-          "href": "/buy/newsletter",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "newsletter",
         },
@@ -74,7 +74,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -94,7 +94,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -114,7 +114,7 @@ Array [
           "attributes": Object {
             "id": "change-newsletter",
           },
-          "href": "/buy/newsletter",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "newsletter",
         },
@@ -139,7 +139,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -159,7 +159,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -184,7 +184,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -204,7 +204,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -229,7 +229,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -249,7 +249,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -274,7 +274,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -294,7 +294,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -319,7 +319,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -339,7 +339,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-fulfilment-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence fulfilment option",
         },
@@ -359,7 +359,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -379,7 +379,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -404,7 +404,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -424,7 +424,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-fulfilment-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence fulfilment option",
         },
@@ -444,7 +444,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -464,7 +464,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -489,7 +489,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -509,7 +509,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-fulfilment-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence fulfilment option",
         },
@@ -529,7 +529,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -549,7 +549,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -574,7 +574,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -594,7 +594,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -614,7 +614,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -639,7 +639,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -659,7 +659,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -679,7 +679,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },

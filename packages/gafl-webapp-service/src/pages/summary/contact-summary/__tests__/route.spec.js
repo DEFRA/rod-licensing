@@ -1,7 +1,12 @@
 import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
-import { LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD } from '../../../../uri.js'
+import { ADDRESS_LOOKUP, CONTACT, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD, NEWSLETTER } from '../../../../uri.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn(() => Symbol('addLanguageCodeToUri'))
+}))
 
 jest.mock('../../../../processors/mapping-constants', () => ({
   HOW_CONTACTED: {
@@ -206,6 +211,33 @@ describe('contact-summary > route', () => {
       }
       const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
       expect(summaryTable).toMatchSnapshot()
+    })
+
+    describe('addLanguageCodeToUri', () => {
+      beforeEach(jest.clearAllMocks)
+
+      it.each([[ADDRESS_LOOKUP.uri], [LICENCE_FULFILMENT.uri], [LICENCE_CONFIRMATION_METHOD.uri], [CONTACT.uri], [NEWSLETTER.uri]])(
+        'test addLanguageCodeToUri is called correctly',
+        async urlToCheck => {
+          const permission = {
+            permit: {
+              cost: 1
+            },
+            licenceLength: '12M',
+            isLicenceForYou: true,
+            licensee: {
+              birthDate: '1996-01-01',
+              postalFulfilment: true
+            }
+          }
+
+          const mockRequest = generateRequestMock
+
+          getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
+
+          expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, urlToCheck)
+        }
+      )
     })
   })
 
