@@ -220,13 +220,6 @@ describe('createPartFiles', () => {
         getFulfilmentFileExpectations({
           numberOfRequests: 2
         }),
-        // expect.objectContaining({
-        //   fileName: `EAFF${EXECUTION_DATE.format('YYYYMMDD')}0001.json`,
-        //   date: expect.anything(),
-        //   notes: expect.stringMatching(/^The fulfilment file finished exporting at .+/),
-        //   numberOfRequests: 2,
-        //   status: expect.objectContaining({ id: 910400004, label: 'Exported', description: 'Exported' })
-        // }),
         1,
         getS3DataExpectations()
       )
