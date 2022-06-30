@@ -88,7 +88,7 @@ const dodgyPersist = async entities => {
   }
 }
 
-const errorPersist = (entities) => {
+const errorPersist = entities => {
   const error = new Error('Failed to execute query:  Error: socket hang up')
   const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
   console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
