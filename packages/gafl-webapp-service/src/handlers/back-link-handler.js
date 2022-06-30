@@ -1,17 +1,21 @@
-import { CHANGE_LICENCE_OPTIONS, LICENCE_SUMMARY } from '../uri.js'
+import { CHANGE_LICENCE_OPTIONS, LICENCE_SUMMARY, CONTACT_SUMMARY } from '../uri.js'
+import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../constants.js'
 
-import currentPageAssigner from '../routes/journey-definition.js'
-
-export default async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  const contactSummarySeen = status.fromSummary
-  const changeLicenceOptionsSeen = status.fromLicenceOptions
-  const currentPage = currentPageAssigner.current
-
-  if (changeLicenceOptionsSeen) {
-    return CHANGE_LICENCE_OPTIONS.uri
-  } else if (contactSummarySeen) {
-    return LICENCE_SUMMARY.uri
+export default async (request, defaultUrl) => {
+  if (request.cache) {
+    const status = await request?.cache()?.helpers?.status?.getCurrentPermission()
+    const summarySeen = status.fromSummary
+    const changeLicenceOptionsSeen = status.fromLicenceOptions
+    if (changeLicenceOptionsSeen) {
+      return CHANGE_LICENCE_OPTIONS.uri
+    } else if (summarySeen === LICENCE_SUMMARY_SEEN) {
+      return LICENCE_SUMMARY.uri
+    } else if (summarySeen === CONTACT_SUMMARY_SEEN) {
+      return CONTACT_SUMMARY.uri
+    } else {
+      return defaultUrl
+    }
+  } else {
+    return defaultUrl
   }
-  return currentPage
 }

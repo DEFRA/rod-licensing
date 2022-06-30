@@ -40,6 +40,7 @@ import { addressLookupResults } from '../pages/contact/address/lookup/result-fun
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
 import { isPhysical } from '../processors/licence-type-display.js'
+import backLinkHandler from '../handlers/back-link-handler.js'
 
 /**
  * The structure of each atom is as follows
@@ -67,7 +68,10 @@ export default [
         page: LICENCE_TO_START
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
+    backLink: async s => {
+      const backLinkResult = await backLinkHandler(s, null)
+      return backLinkResult
+    }
   },
 
   {
@@ -83,15 +87,10 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => {
-      const contactSummarySeen = s.fromSummary
-      const changeLicenceOptionsSeen = s.fromLicenceOptions
-      if (changeLicenceOptionsSeen) {
-        return CHANGE_LICENCE_OPTIONS.uri
-      } else if (contactSummarySeen) {
-        return LICENCE_SUMMARY.uri
-      }
-      return LICENCE_FOR.uri
+    backLink: async s => {
+      console.log('this is s', s)
+      const backLinkResult = await backLinkHandler(s, LICENCE_FOR.uri)
+      return backLinkResult
     }
   },
 
@@ -111,15 +110,9 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => {
-      const contactSummarySeen = s.fromSummary
-      const changeLicenceOptionsSeen = s.fromLicenceOptions
-      if (changeLicenceOptionsSeen) {
-        return CHANGE_LICENCE_OPTIONS.uri
-      } else if (contactSummarySeen) {
-        return LICENCE_SUMMARY.uri
-      }
-      return NAME.uri
+    backLink: async s => {
+      const backLinkResult = await backLinkHandler(s, NAME.uri)
+      return backLinkResult
     }
   },
 
@@ -136,15 +129,9 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => {
-      const contactSummarySeen = s.fromSummary
-      const changeLicenceOptionsSeen = s.fromLicenceOptions
-      if (changeLicenceOptionsSeen) {
-        return CHANGE_LICENCE_OPTIONS.uri
-      } else if (contactSummarySeen) {
-        return LICENCE_SUMMARY.uri
-      }
-      return DATE_OF_BIRTH.uri
+    backLink: async s => {
+      const backLinkResult = await backLinkHandler(s, DATE_OF_BIRTH.uri)
+      return backLinkResult
     }
   },
 
@@ -167,15 +154,9 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => {
-      const contactSummarySeen = s.fromSummary
-      const changeLicenceOptionsSeen = s.fromLicenceOptions
-      if (changeLicenceOptionsSeen) {
-        return CHANGE_LICENCE_OPTIONS.uri
-      } else if (contactSummarySeen) {
-        return LICENCE_SUMMARY.uri
-      }
-      return DISABILITY_CONCESSION.uri
+    backLink: async s => {
+      const backLinkResult = await backLinkHandler(s, DISABILITY_CONCESSION.uri)
+      return backLinkResult
     }
   },
 
@@ -200,15 +181,9 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => {
-      const contactSummarySeen = s.fromSummary
-      const changeLicenceOptionsSeen = s.fromLicenceOptions
-      if (changeLicenceOptionsSeen) {
-        return CHANGE_LICENCE_OPTIONS.uri
-      } else if (contactSummarySeen) {
-        return LICENCE_SUMMARY.uri
-      }
-      return DISABILITY_CONCESSION.uri
+    backLink: async s => {
+      const backLinkResult = await backLinkHandler(s, DISABILITY_CONCESSION.uri)
+      return backLinkResult
     }
   },
 
@@ -228,15 +203,9 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => {
-      const contactSummarySeen = s.fromSummary
-      const changeLicenceOptionsSeen = s.fromLicenceOptions
-      if (changeLicenceOptionsSeen) {
-        return CHANGE_LICENCE_OPTIONS.uri
-      } else if (contactSummarySeen) {
-        return LICENCE_SUMMARY.uri
-      }
-      return LICENCE_TYPE.uri
+    backLink: async s => {
+      const backLinkResult = await backLinkHandler(s, LICENCE_TYPE.uri)
+      return backLinkResult
     }
   },
 

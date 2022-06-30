@@ -15,67 +15,145 @@ import {
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   CONTACT,
-  NEWSLETTER
+  NEWSLETTER,
+  CHANGE_LICENCE_OPTIONS
 } from '../../uri.js'
-import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../constants.js'
+import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN, CHANGE_LICENCE_OPTIONS_SEEN } from '../../constants.js'
 
 describe('The licence-for page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_FOR.page)
-  it('has no back-link on initial viewing', () => {
-    expect(n.backLink({})).not.toBeTruthy()
+  it('has no back-link on initial viewing', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({}))
+    const result = await n.backLink(mockRequest)
+    expect(result).not.toBeTruthy()
   })
-  it('has a back-link to the license summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: true }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
+  })
+})
+
+describe('The name page', () => {
+  const n = journeyDefinition.find(n => n.current.page === NAME.page)
+  it('has a back-link to the licence-summary page if the licence-summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to the change-options page if the change-options is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: true }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
+  })
+  it('has a back-link to the licence-for page if the contact, licence and options summary has not been seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false, fromLicenceOptions: false }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_FOR.uri)
+  })
+  it('has a back-link to the licence-for page if the request does not include cache function', async () => {
+    const result = await n.backLink({})
+    expect(result).toBe(LICENCE_FOR.uri)
   })
 })
 
 describe('The date-of-birth page', () => {
   const n = journeyDefinition.find(n => n.current.page === DATE_OF_BIRTH.page)
-  it('has a back-link to the name page on initial viewing', () => {
-    expect(n.backLink({})).toBe(NAME.uri)
+  it('has a back-link to the name page on initial viewing', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({}))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(NAME.uri)
   })
-  it('has a back-link to the licence summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
   })
-})
-
-describe('The licence-to-start page', () => {
-  const n = journeyDefinition.find(n => n.current.page === LICENCE_TO_START.page)
-  it('has a back-link to the disability concessions page on initial viewing', () => {
-    expect(n.backLink({})).toBe(DISABILITY_CONCESSION.uri)
-  })
-  it('has a back-link to the license summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
 })
 
 describe('The disability-concession page', () => {
   const n = journeyDefinition.find(n => n.current.page === DISABILITY_CONCESSION.page)
-  it('has a back-link to the date-of-birth page on initial viewing', () => {
-    expect(n.backLink({})).toBe(DATE_OF_BIRTH.uri)
+  it('has a back-link to the date-of-birth page on initial viewing', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({}))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(DATE_OF_BIRTH.uri)
   })
-  it('has a back-link to the license summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: true }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
+  })
+})
+
+describe('The licence-to-start page', () => {
+  const n = journeyDefinition.find(n => n.current.page === LICENCE_TO_START.page)
+  it('has a back-link to the disability concessions page on initial viewing', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({}))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(DISABILITY_CONCESSION.uri)
+  })
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: true }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
 })
 
 describe('The licence-type page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_TYPE.page)
-  it('has a back-link to the disability-concession page on initial viewing', () => {
-    expect(n.backLink({})).toBe(DISABILITY_CONCESSION.uri)
+  it('has a back-link to the disability-concession page on initial viewing', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({}))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(DISABILITY_CONCESSION.uri)
   })
-  it('has a back-link to the license summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: true }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
 })
 
 describe('The licence-length page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_LENGTH.page)
-  it('has a back-link to the licence-type page on initial viewing', () => {
-    expect(n.backLink({})).toBe(LICENCE_TYPE.uri)
+  it('has a back-link to the licence-type page on initial viewing', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({}))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_TYPE.uri)
   })
-  it('has a back-link to the license summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: LICENCE_SUMMARY_SEEN }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: true }))
+    const result = await n.backLink(mockRequest)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
 })
 
@@ -86,16 +164,6 @@ describe('The licence-start-time page', () => {
   })
   it('has a back-link to the licence-to-start page if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_TO_START.uri)
-  })
-})
-
-describe('The name page', () => {
-  const n = journeyDefinition.find(n => n.current.page === NAME.page)
-  it('has a back-link to the licence-summary page if the licence-summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
-  })
-  it('has a back-link to the licence-for page if the contact summary has not been seen', () => {
-    expect(n.backLink({})).toBe(LICENCE_FOR.uri)
   })
 })
 
@@ -180,3 +248,14 @@ describe('The newsletter page', () => {
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
   })
 })
+const mockStatusCacheGet = jest.fn()
+
+const mockRequest = {
+  cache: () => ({
+    helpers: {
+      status: {
+        getCurrentPermission: mockStatusCacheGet
+      }
+    }
+  })
+}
