@@ -21,11 +21,11 @@ export const errorHandler = async (request, h) => {
      */
     return h
       .view(CLIENT_ERROR.page, {
-        mssgs,
         altLang,
+        mssgs,
+        paymentInProgress,
         referer: request?.headers?.referer,
         clientError: request.response.output.payload,
-        paymentInProgress,
         path: request.path,
         uri: {
           new: NEW_TRANSACTION.uri,
