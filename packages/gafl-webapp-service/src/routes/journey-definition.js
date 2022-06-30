@@ -68,8 +68,8 @@ export default [
         page: LICENCE_TO_START
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, null)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, null)
       return backLinkResult
     }
   },
@@ -87,8 +87,8 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, LICENCE_FOR.uri)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, LICENCE_FOR.uri)
       return backLinkResult
     }
   },
@@ -109,8 +109,8 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, NAME.uri)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, NAME.uri)
       return backLinkResult
     }
   },
@@ -128,8 +128,8 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, DATE_OF_BIRTH.uri)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, DATE_OF_BIRTH.uri)
       return backLinkResult
     }
   },
@@ -153,8 +153,8 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, DISABILITY_CONCESSION.uri)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, DISABILITY_CONCESSION.uri)
       return backLinkResult
     }
   },
@@ -180,8 +180,8 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, DISABILITY_CONCESSION.uri)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, DISABILITY_CONCESSION.uri)
       return backLinkResult
     }
   },
@@ -202,8 +202,8 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async s => {
-      const backLinkResult = await backLinkHandler(s, LICENCE_TYPE.uri)
+    backLink: async status => {
+      const backLinkResult = await backLinkHandler(status, LICENCE_TYPE.uri)
       return backLinkResult
     }
   },
@@ -221,7 +221,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri)
+    backLink: status => (status.fromSummary ? LICENCE_TO_START.uri : LICENCE_LENGTH.uri)
   },
 
   {
@@ -252,7 +252,7 @@ export default [
         page: ADDRESS_ENTRY
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_SUMMARY.uri)
+    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_SUMMARY.uri)
   },
 
   {
@@ -268,7 +268,7 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -319,10 +319,10 @@ export default [
         page: CONTACT
       }
     },
-    backLink: s => {
-      const seenContactSummary = s.fromSummary === CONTACT_SUMMARY_SEEN
+    backLink: status => {
+      const seenContactSummary = status.fromSummary === CONTACT_SUMMARY_SEEN
       if (
-        ([LICENCE_FULFILMENT.page, LICENCE_CONFIRMATION_METHOD.page].includes(s.currentPage) && seenContactSummary) ||
+        ([LICENCE_FULFILMENT.page, LICENCE_CONFIRMATION_METHOD.page].includes(status.currentPage) && seenContactSummary) ||
         !seenContactSummary
       ) {
         return LICENCE_FULFILMENT.uri
@@ -369,7 +369,7 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : CONTACT.uri)
+    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : CONTACT.uri)
   },
 
   {
