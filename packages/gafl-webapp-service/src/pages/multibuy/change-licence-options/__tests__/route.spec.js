@@ -1,5 +1,4 @@
-import { getFromLicenceOptions, getData, checkNavigation } from '../route'
-import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../../../constants.js'
+import { getData, checkNavigation } from '../route'
 import {
   DATE_OF_BIRTH,
   LICENCE_LENGTH,
@@ -31,20 +30,6 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
 
 describe('change-licence-options > route', () => {
   beforeEach(jest.clearAllMocks)
-
-  describe('getFromLicenceOptions', () => {
-    it('should return change-licence-options seen, if fromLicenceOptions has been seen', async () => {
-      const request = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
-      const result = await getFromLicenceOptions(request)
-      expect(result).toBe(CHANGE_LICENCE_OPTIONS_SEEN.SEEN)
-    })
-
-    it('should return change-licence-options as false if fromLicenceOptions has not been seen', async () => {
-      const request = { getFromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
-      const result = await getFromLicenceOptions(request)
-      expect(result).toBeFalsy()
-    })
-  })
 
   describe('getData', () => {
     const mockStatusCacheGet = jest.fn(() => ({}))

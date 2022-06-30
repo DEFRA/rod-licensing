@@ -58,7 +58,7 @@ export const getData = async request => {
     checkNavigation(permission)
   }
 
-  status.fromLicenceOptions = getFromLicenceOptions(status)
+  status.fromLicenceOptions = CHANGE_LICENCE_OPTIONS_SEEN.SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
   const startTimeString = displayStartTime(permission)
@@ -87,13 +87,6 @@ export const getData = async request => {
       clear: NEW_TRANSACTION.uri
     }
   }
-}
-
-export const getFromLicenceOptions = status => {
-  if (!status.fromLicenceOptions) {
-    return status.fromLicenceOptions
-  }
-  return CHANGE_LICENCE_OPTIONS_SEEN.SEEN
 }
 
 export default pageRoute(CHANGE_LICENCE_OPTIONS.page, CHANGE_LICENCE_OPTIONS.uri, null, nextPage, getData)

@@ -88,7 +88,6 @@ export default [
       }
     },
     backLink: async s => {
-      console.log('this is s', s)
       const backLinkResult = await backLinkHandler(s, LICENCE_FOR.uri)
       return backLinkResult
     }
