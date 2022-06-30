@@ -60,13 +60,13 @@ class Config {
 
   async initialise () {
     this.file = {
-      size: Number.parseInt(process.env.FULFILMENT_FILE_SIZE),
+      size: 12,
       /**
        * Maximum buffer size before writing to a part file.
        * This is capped at 999 as the maximum size of a batch request to Dynamics is 1000 and we need to create the FulfilmentRequestFile entity as
        * part of the same request, leaving room to update 999 FulfilmentRequest entities
        */
-      partFileSize: Math.min(Number.parseInt(process.env.FULFILMENT_FILE_SIZE), 999)
+      partFileSize: 3
     }
     this.ftp = {
       host: process.env.FULFILMENT_FTP_HOST,

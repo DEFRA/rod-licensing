@@ -8,6 +8,7 @@ import { CacheableOperation } from './cache.js'
  * @param {string} createdBy the oid of the active directory user that is creating the entities
  * @returns {Promise<string[]>} resolving to the ids of the persisted entities
  */
+let throwError = false
 export async function persist (entities, createdBy) {
   try {
     dynamicsClient.startBatch()
@@ -18,14 +19,20 @@ export async function persist (entities, createdBy) {
         dynamicsClient.updateRequest(entity.toPersistRequest())
       }
     })
-    return await dynamicsClient.executeBatch({
-      impersonateAAD: createdBy
-    })
+    if (throwError) {
+      throw new Error('Socket error (Fake)')
+    } else {
+      return await dynamicsClient.executeBatch({
+        impersonateAAD: createdBy
+      })
+    }
   } catch (e) {
     const error = e.length ? e[0] : e
     const requestDetails = entities.map(entity => ({ [entity.isNew() ? 'createRequest' : 'updateRequest']: entity.toPersistRequest() }))
     console.error('Error persisting batch. Data: %j, Exception: %o', requestDetails, error)
     throw error
+  } finally {
+    throwError = !throwError
   }
 }
 
