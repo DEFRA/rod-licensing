@@ -1,11 +1,14 @@
-import { getData } from '../route.js'
+import { getData, validator } from '../route'
 import { createMockRequest } from '../../../../__mocks__/request.js'
+import pageRoute from '../../../../routes/page-route.js'
+import { nextPage } from '../../../../routes/next-page.js'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
+jest.mock('../../../../routes/page-route.js')
 
 licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
 licenceTypeAndLengthDisplay.mockReturnValue('8 days')
@@ -22,7 +25,13 @@ const permission = {
   permit: { cost: 12 }
 }
 
-describe('The view licences route .getData', () => {
+describe('view-licences > default', () => {
+  it('should call the pageRoute with view-licences, /buy/view-licences, validator and nextPage', async () => {
+    expect(pageRoute).toBeCalledWith('view-licences', '/buy/view-licences', validator, nextPage, getData)
+  })
+})
+
+describe('view licences > getData', () => {
   let data
   beforeAll(async () => {
     const mockRequest = createMockRequest({
