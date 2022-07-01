@@ -10,8 +10,9 @@ export const licenceTypeResults = {
 
 export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const routeDirection = commonResultHandler(request)
-  if (!CommonResults.OK) {
+  const routeDirection = await commonResultHandler(request)
+
+  if (routeDirection !== CommonResults.OK) {
     return routeDirection
   }
 
