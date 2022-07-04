@@ -6,8 +6,8 @@ describe('permission entity', () => {
     optionSetData = await retrieveGlobalOptionSets().cached()
   })
 
-  it('maps from dynamics', async () => {
-    const permission = Permission.fromResponse(
+  describe('maps from dynamics', () => {
+    const getPermission = () => Permission.fromResponse(
       {
         '@odata.etag': 'W/"186695153"',
         defra_permissionid: '347a9083-361e-ea11-a810-000d3a25c5d6',
@@ -17,12 +17,13 @@ describe('permission entity', () => {
         defra_enddate: '2020-12-13T23:59:59Z',
         defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
         defra_datasource: 910400003,
-        defra_licenceforyou: 1
+        defra_licenceforyou: 1,
+        defra_ismultibuy: false
       },
       optionSetData
     )
 
-    const expectedFields = {
+    const getExpectedFields = () => ({
       id: '347a9083-361e-ea11-a810-000d3a25c5d6',
       referenceNumber: '00000000-2WC3FDR-CD379B',
       issueDate: '2019-12-13T09:00:00Z',
@@ -31,12 +32,25 @@ describe('permission entity', () => {
       stagingId: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
       dataSource: expect.objectContaining({ id: 910400003, label: 'Web Sales', description: 'Web Sales' }),
       isLicenceForYou: expect.objectContaining({ id: 1, label: 'Yes', description: 'Yes' })
-    }
+    })
 
-    expect(permission).toBeInstanceOf(Permission)
-    expect(permission).toMatchObject(expect.objectContaining({ etag: 'W/"186695153"', ...expectedFields }))
-    expect(permission.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
-    expect(JSON.parse(permission.toString())).toMatchObject(expect.objectContaining(expectedFields))
+    it('is a Permission instance', () => {
+      expect(getPermission()).toBeInstanceOf(Permission)
+    })
+
+    it('matches etag and expected fields', () => {
+      expect(getPermission()).toMatchObject(
+        expect.objectContaining({
+          etag: 'W/"186695153"',
+          ...(getExpectedFields())
+        })
+      )
+    })
+
+    it('matches JSON representation', () => {
+      const json = JSON.parse(getPermission().toString())
+      expect(json).toMatchObject(expect.objectContaining(getExpectedFields()))
+    })
   })
 
   it('maps to dynamics', async () => {
@@ -74,6 +88,7 @@ describe('permission entity', () => {
     permission.stagingId = '71ad9a25-2a03-406b-a0e3-f4ff37799374'
     permission.dataSource = optionSetData.defra_datasource.options['910400003']
     permission.isLicenceForYou = optionSetData.defra_islicenceforyou.options['1']
+    permission.isMultiBuy = true
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -81,6 +96,7 @@ describe('permission entity', () => {
     permission.bindToEntity(Permission.definition.relationships.poclFile, poclFile)
 
     const dynamicsEntity = permission.toRequestBody()
+
     expect(dynamicsEntity).toMatchObject(
       expect.objectContaining({
         defra_name: '00000000-2WC3FDR-CD379B',
@@ -90,6 +106,7 @@ describe('permission entity', () => {
         defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
         defra_datasource: 910400003,
         defra_licenceforyou: 1,
+        defra_ismultibuy: true,
         'defra_PermitId@odata.bind': `/${Permit.definition.dynamicsCollection}(${permit.id})`,
         'defra_ContactId@odata.bind': `$${contact.uniqueContentId}`,
         'defra_Transaction@odata.bind': `$${transaction.uniqueContentId}`,

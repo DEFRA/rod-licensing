@@ -23,7 +23,8 @@ export class Permission extends BaseEntity {
       endDate: { field: 'defra_enddate', type: 'datetime' },
       stagingId: { field: 'defra_stagingid', type: 'string' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
-      isLicenceForYou: { field: 'defra_licenceforyou', type: 'optionset', ref: 'defra_islicenceforyou' }
+      isLicenceForYou: { field: 'defra_licenceforyou', type: 'optionset', ref: 'defra_islicenceforyou' },
+      isMultiBuy: { field: 'defra_ismultibuy', type: 'boolean' }
     },
     relationships: {
       licensee: { property: 'defra_ContactId', entity: Contact, parent: true },
@@ -124,5 +125,14 @@ export class Permission extends BaseEntity {
 
   set isLicenceForYou (isLicenceForYou) {
     super._setState('isLicenceForYou', isLicenceForYou)
+  }
+
+  get isMultiBuy () {
+    return super._getState('isMultiBuy')
+  }
+
+  set isMultiBuy (isMultiBuy) {
+    console.log('setting ismultibuy to ', isMultiBuy)
+    super._setState('isMultiBuy', isMultiBuy)
   }
 }
