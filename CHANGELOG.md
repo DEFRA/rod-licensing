@@ -1,5 +1,103 @@
 
 
+
+
+## v1.25.0-rc.11 (2022-06-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1305](https://github.com/DEFRA/rod-licensing/pull/1305) Welsh - Privacy policy ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1357](https://github.com/DEFRA/rod-licensing/pull/1357) Welsh - licence confirmation BOBO ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1360](https://github.com/DEFRA/rod-licensing/pull/1360) Cookies page welsh translations ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.10 (2022-06-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1342](https://github.com/DEFRA/rod-licensing/pull/1342) Open footer link to OS terms in same window ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.25.0-rc.9 (2022-06-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1348](https://github.com/DEFRA/rod-licensing/pull/1348) Welsh translation for cookies ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.8 (2022-06-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1343](https://github.com/DEFRA/rod-licensing/pull/1343) Bug fix for Translation - Check the licence details missing translations ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.25.0-rc.7 (2022-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1313](https://github.com/DEFRA/rod-licensing/pull/1313) Welsh - bobo fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.6 (2022-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1303](https://github.com/DEFRA/rod-licensing/pull/1303) Welsh - Cookies policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.5 (2022-06-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1314](https://github.com/DEFRA/rod-licensing/pull/1314) Welsh - NRW comments on who licence for ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.25.0-rc.3 (2022-06-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1338](https://github.com/DEFRA/rod-licensing/pull/1338) Add Welsh translation for accessibility statement title ([@irisfaraway](https://github.com/irisfaraway))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1329](https://github.com/DEFRA/rod-licensing/pull/1329) Open OS terms footer link in a new tab ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+
+## v1.25.0-rc.0 (2022-06-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1330](https://github.com/DEFRA/rod-licensing/pull/1330) Update Welsh text when selecting licence start date ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1331](https://github.com/DEFRA/rod-licensing/pull/1331) Update button text for licence terms page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1332](https://github.com/DEFRA/rod-licensing/pull/1332) Update Welsh language title attribute for refund policy ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
 ## v1.24.0-rc.13 (2022-06-08)
 
 #### :rocket: Enhancement
