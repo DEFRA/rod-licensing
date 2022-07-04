@@ -7,21 +7,22 @@ describe('permission entity', () => {
   })
 
   describe('maps from dynamics', () => {
-    const getPermission = () => Permission.fromResponse(
-      {
-        '@odata.etag': 'W/"186695153"',
-        defra_permissionid: '347a9083-361e-ea11-a810-000d3a25c5d6',
-        defra_name: '00000000-2WC3FDR-CD379B',
-        defra_issuedate: '2019-12-13T09:00:00Z',
-        defra_startdate: '2019-12-14T00:00:00Z',
-        defra_enddate: '2020-12-13T23:59:59Z',
-        defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
-        defra_datasource: 910400003,
-        defra_licenceforyou: 1,
-        defra_ismultibuy: false
-      },
-      optionSetData
-    )
+    const getPermission = () =>
+      Permission.fromResponse(
+        {
+          '@odata.etag': 'W/"186695153"',
+          defra_permissionid: '347a9083-361e-ea11-a810-000d3a25c5d6',
+          defra_name: '00000000-2WC3FDR-CD379B',
+          defra_issuedate: '2019-12-13T09:00:00Z',
+          defra_startdate: '2019-12-14T00:00:00Z',
+          defra_enddate: '2020-12-13T23:59:59Z',
+          defra_stagingid: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
+          defra_datasource: 910400003,
+          defra_licenceforyou: 1,
+          defra_ismultibuy: true
+        },
+        optionSetData
+      )
 
     const getExpectedFields = () => ({
       id: '347a9083-361e-ea11-a810-000d3a25c5d6',
@@ -31,7 +32,8 @@ describe('permission entity', () => {
       endDate: '2020-12-13T23:59:59Z',
       stagingId: '71ad9a25-2a03-406b-a0e3-f4ff37799374',
       dataSource: expect.objectContaining({ id: 910400003, label: 'Web Sales', description: 'Web Sales' }),
-      isLicenceForYou: expect.objectContaining({ id: 1, label: 'Yes', description: 'Yes' })
+      isLicenceForYou: expect.objectContaining({ id: 1, label: 'Yes', description: 'Yes' }),
+      isMultiBuy: true
     })
 
     it('is a Permission instance', () => {
@@ -42,7 +44,7 @@ describe('permission entity', () => {
       expect(getPermission()).toMatchObject(
         expect.objectContaining({
           etag: 'W/"186695153"',
-          ...(getExpectedFields())
+          ...getExpectedFields()
         })
       )
     })
