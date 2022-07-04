@@ -33,6 +33,7 @@ export const getTitleAndBodyMessage = (mssgs, reason, referenceNumber, validTo) 
 export const getData = async request => {
   const { referenceNumber, authentication } = await request.cache().helpers.status.getCurrentPermission()
   const mssgs = request.i18n.getCatalog()
+  moment.locale(request.locale)
   const validTo = moment(authentication.endDate).format(dateDisplayFormat)
   const reason = authentication.reason
   const titleAndBodyMessage = getTitleAndBodyMessage(mssgs, reason, referenceNumber, validTo)

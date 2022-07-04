@@ -8,13 +8,20 @@ import { nextPage } from '../../../routes/next-page.js'
 
 const getMinHour = permission => {
   const now = moment().tz(SERVICE_LOCAL_TIME)
-  const permissionStartsToday = moment(permission.licenceStartDate, cacheDateFormat).tz(SERVICE_LOCAL_TIME).isSame(now, 'day')
+  const permissionStartsToday = moment(permission.licenceStartDate, cacheDateFormat)
+    .tz(SERVICE_LOCAL_TIME)
+    .isSame(now, 'day')
   if (permissionStartsToday) {
-    const cantStartUntilTomorrow = moment(now).add(90, 'minute').isAfter(now, 'day')
+    const cantStartUntilTomorrow = moment(now)
+      .add(90, 'minute')
+      .isAfter(now, 'day')
     if (cantStartUntilTomorrow) {
       return 24
     }
-    return now.add(90, 'minute').startOf('hour').hour()
+    return now
+      .add(90, 'minute')
+      .startOf('hour')
+      .hour()
   }
   return 0
 }
@@ -39,6 +46,7 @@ const validator = (payload, options) => {
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  moment.locale(request.locale)
   const startDateStr = moment(permission.licenceStartDate, cacheDateFormat).format('dddd, Do MMMM, YYYY')
 
   return { startDateStr, minHour: getMinHour(permission) }
