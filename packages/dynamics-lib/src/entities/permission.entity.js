@@ -132,7 +132,6 @@ export class Permission extends BaseEntity {
   }
 
   set isMultiBuy (isMultiBuy) {
-    console.log('setting ismultibuy to ', isMultiBuy)
     super._setState('isMultiBuy', isMultiBuy)
   }
 }
