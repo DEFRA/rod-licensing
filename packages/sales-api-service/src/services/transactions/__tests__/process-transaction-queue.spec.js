@@ -270,7 +270,7 @@ describe('transaction service', () => {
         ['123456', 2020],
         ['654321', 2021],
         ['567890', 2022]
-      ])('and it\'s a DDE File, and has a journal id, returns journal id', (journalId, year) => {
+      ])("and it's a DDE File, and has a journal id, returns journal id", (journalId, year) => {
         jest.useFakeTimers()
         jest.setSystemTime(new Date(year, 1, 1, 10, 0, 0, 0))
         const mockRecord = getSampleRecord({
@@ -282,7 +282,7 @@ describe('transaction service', () => {
         jest.useRealTimers()
       })
 
-      it('and it\'s a POCL file, and has a journal id and a serial number, returns serial number', () => {
+      it("and it's a POCL file, and has a journal id and a serial number, returns serial number", () => {
         const mockRecord = getSampleRecord()
         mockRecord.journalId = '123456'
         const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')

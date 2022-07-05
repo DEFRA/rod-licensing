@@ -59,7 +59,16 @@ export async function processQueue ({ id }) {
 
     totalTransactionValue += permit.cost
 
-    const permission = await mapToPermission(referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou, isMultiBuy)
+    const permission = await mapToPermission(
+      referenceNumber,
+      transactionRecord,
+      issueDate,
+      startDate,
+      endDate,
+      dataSource,
+      isLicenceForYou,
+      isMultiBuy
+    )
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -103,7 +112,16 @@ export async function processQueue ({ id }) {
     .promise()
 }
 
-const mapToPermission = async (referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou, isMultiBuy) => {
+const mapToPermission = async (
+  referenceNumber,
+  transactionRecord,
+  issueDate,
+  startDate,
+  endDate,
+  dataSource,
+  isLicenceForYou,
+  isMultiBuy
+) => {
   const permission = new Permission()
   permission.referenceNumber = referenceNumber
   permission.stagingId = transactionRecord.id
@@ -173,7 +191,7 @@ const createTransactionEntities = async transactionRecord => {
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
   if (POCL_TRANSACTION_SOURCES.includes(transactionRecord.dataSource) && type === 'Payment') {
     if (transactionRecord.dataSource === DDE_DATA_SOURCE && transactionRecord.journalId) {
-      return `DDE-${(new Date()).getFullYear()}-${transactionRecord.journalId}`
+      return `DDE-${new Date().getFullYear()}-${transactionRecord.journalId}`
     }
     return transactionRecord.serialNumber || transactionRecord.id
   }
