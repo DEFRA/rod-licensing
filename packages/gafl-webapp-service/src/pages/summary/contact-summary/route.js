@@ -5,6 +5,7 @@ import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import {
   CONTACT_SUMMARY,
@@ -50,7 +51,7 @@ const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
-    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName),
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
     }
@@ -59,10 +60,16 @@ const getData = async request => {
 
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
-export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
+export const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const licenseeSummaryArray = [
-    getRow('Address', getAddressText(permission.licensee, countryName), ADDRESS_LOOKUP.uri, 'address', 'change-address'),
-    ...getContactDetails(permission)
+    getRow(
+      'Address',
+      getAddressText(permission.licensee, countryName),
+      addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
+      'address',
+      'change-address'
+    ),
+    ...getContactDetails(permission, request)
   ]
 
   if (permission.isLicenceForYou) {
@@ -70,7 +77,7 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName) => {
       getRow(
         'Newsletter',
         permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
-        NEWSLETTER.uri,
+        addLanguageCodeToUri(request, NEWSLETTER.uri),
         'newsletter',
         'change-newsletter'
       )
@@ -100,22 +107,28 @@ const CONTACT_TEXT_PHYSICAL = {
 
 const CHANGE_CONTACT = 'change-contact'
 
-const getContactDetails = permission => {
+const getContactDetails = (permission, request) => {
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       return [
-        getRow('Licence', 'By post', LICENCE_FULFILMENT.uri, 'licence fulfilment option', 'change-licence-fulfilment-option'),
+        getRow(
+          'Licence',
+          'By post',
+          addLanguageCodeToUri(request, LICENCE_FULFILMENT.uri),
+          'licence fulfilment option',
+          'change-licence-fulfilment-option'
+        ),
         getRow(
           'Licence Confirmation',
           getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          LICENCE_CONFIRMATION_METHOD.uri,
+          addLanguageCodeToUri(request, LICENCE_CONFIRMATION_METHOD.uri),
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
         getRow(
           'Contact',
           getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-          CONTACT.uri,
+          addLanguageCodeToUri(request, CONTACT.uri),
           'contact',
           CHANGE_CONTACT
         )
@@ -125,14 +138,14 @@ const getContactDetails = permission => {
         getRow(
           'Licence',
           getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          LICENCE_FULFILMENT.uri,
+          addLanguageCodeToUri(request, LICENCE_FULFILMENT.uri),
           'licence confirmation option',
           'change-licence-confirmation-option'
         ),
         getRow(
           'Contact',
           getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-          CONTACT.uri,
+          addLanguageCodeToUri(request, CONTACT.uri),
           'contact',
           CHANGE_CONTACT
         )
@@ -143,7 +156,7 @@ const getContactDetails = permission => {
       getRow(
         'Licence details',
         getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
-        CONTACT.uri,
+        addLanguageCodeToUri(request, CONTACT.uri),
         'contact',
         CHANGE_CONTACT
       )
