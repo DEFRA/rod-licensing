@@ -14,6 +14,7 @@ import {
 } from '@defra-fish/dynamics-lib'
 import {
   mockFinalisedTransactionRecord,
+  mockFinalisedPermissionRecord,
   MOCK_1DAY_SENIOR_PERMIT_ENTITY,
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_12MONTH_DISABLED_PERMIT,
@@ -218,6 +219,23 @@ describe('transaction service', () => {
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
+    })
+
+    it('sets multibuy to false if there is only one permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const [[persistMockFirstCall]] = persist.mock.calls
+      expect(persistMockFirstCall[4].isMultiBuy).toBeFalsy()
+    })
+
+    it('sets multibuy to true if there is more than one permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions.push(mockFinalisedPermissionRecord())
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const [[persistMockFirstCall]] = persist.mock.calls
+      expect(persistMockFirstCall[4].isMultiBuy).toBeTruthy()
     })
 
     it('handles requests which relate to an transaction file', async () => {
