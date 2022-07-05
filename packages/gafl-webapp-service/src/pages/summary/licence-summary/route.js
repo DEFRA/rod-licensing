@@ -20,6 +20,7 @@ import { START_AFTER_PAYMENT_MINUTES, SERVICE_LOCAL_TIME } from '@defra-fish/bus
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 // Extracted to keep sonar happy
 const checkNavigation = permission => {
@@ -77,14 +78,16 @@ export const getData = async request => {
     cost: permission.permit.cost,
     birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
     uri: {
-      name: NAME.uri,
-      licenceLength: LICENCE_LENGTH.uri,
-      licenceType: LICENCE_TYPE.uri,
-      licenceToStart: LICENCE_TO_START.uri,
-      dateOfBirth: DATE_OF_BIRTH.uri,
-      disabilityConcession: DISABILITY_CONCESSION.uri,
-      licenceStartDate: permission.isRenewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
-      clear: NEW_TRANSACTION.uri
+      name: addLanguageCodeToUri(request, NAME.uri),
+      licenceLength: addLanguageCodeToUri(request, LICENCE_LENGTH.uri),
+      licenceType: addLanguageCodeToUri(request, LICENCE_TYPE.uri),
+      licenceToStart: addLanguageCodeToUri(request, LICENCE_TO_START.uri),
+      dateOfBirth: addLanguageCodeToUri(request, DATE_OF_BIRTH.uri),
+      disabilityConcession: addLanguageCodeToUri(request, DISABILITY_CONCESSION.uri),
+      licenceStartDate: permission.isRenewal
+        ? addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
+        : addLanguageCodeToUri(request, LICENCE_TO_START.uri),
+      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
