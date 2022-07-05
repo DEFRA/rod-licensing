@@ -1,4 +1,21 @@
 
+## v1.26.0-rc.1 (2022-07-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1370](https://github.com/DEFRA/rod-licensing/pull/1370) Welsh - enter address manually ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1369](https://github.com/DEFRA/rod-licensing/pull/1369) Welsh - find their address heading ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1368](https://github.com/DEFRA/rod-licensing/pull/1368) Welsh translation - error messages find address ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1362](https://github.com/DEFRA/rod-licensing/pull/1362) Feature/iwtf 2916 change language persists ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1359](https://github.com/DEFRA/rod-licensing/pull/1359) Persist language in misc route ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1315](https://github.com/DEFRA/rod-licensing/pull/1315) Error when navigating to licence for from find your address ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 
