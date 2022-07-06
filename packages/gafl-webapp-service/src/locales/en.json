@@ -233,6 +233,10 @@
   "free": "free",
   "gov_uk": " - GOV.UK",
   "header_service_name": "Get a rod fishing licence",
+  "hidden_text_confirmation_option": "licence confirmation option",
+  "hidden_text_fulfilment_option": "licence fulfilment option",
+  "hidden_text_contact": "contact",
+  "hidden_text_newsletter": "newsletter",
   "identification": "Identification",
   "identify_body_protect_info": "To find your licence details we first need to identify you. This helps us protect your personal information.",
   "identify_error_empty_postcode": "You did not enter your postcode",
@@ -411,6 +415,7 @@
   "no_licence_req_body": "How much will this cost?",
   "no_licence_req_title": "You do not need a licence yet",
   "no": "No",
+  "no_2": "No",
   "order_complete_conf_1": "The licence number is ",
   "order_complete_conf_2": "Starts from ",
   "order_complete_conf_info_1": "If the paperless licence option has been selected, the licence will be sent by text or email. If the licence card option has been selected, the licence card will arrive in the post within 15 working days.",
@@ -587,5 +592,6 @@
   "twitter_bulletpoint": "Twitter: ",
   "view_page_in_alt_lang": "View page in Welsh",
   "warning": "Warning",
-  "yes": "Yes"
+  "yes": "Yes",
+  "yes_2": "Yes"
 }

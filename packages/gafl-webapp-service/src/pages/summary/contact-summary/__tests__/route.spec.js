@@ -53,7 +53,7 @@ describe('contact-summary > route', () => {
                   {
                     attributes: { id: 'change-address' },
                     href: '/buy/find-address',
-                    text: undefined,
+                    text: 'licence_summary_change',
                     visuallyHiddenText: 'address'
                   }
                 ]
@@ -69,13 +69,13 @@ describe('contact-summary > route', () => {
                   {
                     attributes: { id: 'change-licence-confirmation-option' },
                     href: '/buy/fulfilment',
-                    text: undefined,
-                    visuallyHiddenText: 'licence confirmation option'
+                    text: 'licence_summary_change',
+                    visuallyHiddenText: 'hidden_text_confirmation_option'
                   }
                 ]
               },
-              key: { text: undefined },
-              value: { text: undefined }
+              key: { text: 'contact_summary_licence' },
+              value: { text: 'contact_summary_by_post' }
             },
             {
               actions: {
@@ -85,16 +85,16 @@ describe('contact-summary > route', () => {
                       id: 'change-contact'
                     },
                     href: '/buy/contact',
-                    text: undefined,
-                    visuallyHiddenText: 'contact'
+                    text: 'licence_summary_change',
+                    visuallyHiddenText: 'hidden_text_contact'
                   }
                 ]
               },
               key: {
-                text: undefined
+                text: 'contact_summary_contact'
               },
               value: {
-                text: undefined
+                text: 'contact_summary_by_post'
               }
             }
           ],
@@ -108,7 +108,6 @@ describe('contact-summary > route', () => {
     const mockStatusCacheGet = jest.fn()
     const mockTransactionCacheGet = jest.fn()
     const mockStatusCacheSet = jest.fn()
-    const catalog = Symbol('mock catalog')
 
     const getSampleRequest = () => ({
       cache: () => ({
@@ -123,7 +122,21 @@ describe('contact-summary > route', () => {
         }
       }),
       i18n: {
-        getCatalog: () => catalog
+        getCatalog: () => ({
+          contact_summary_email_to: 'contact_summary_email_to',
+          contact_summary_texts_to: 'contact_summary_texts_to',
+          contact_summary_default_make_note: 'contact_summary_default_make_note',
+          contact_summary_default_make_note_on_conf: 'contact_summary_default_make_note_on_conf',
+          contact_summary_by_post: 'contact_summary_by_post',
+          contact_summary_licence: 'contact_summary_licence',
+          contact_summary_licence_confirmation: 'contact_summary_licence_confirmation',
+          contact_summary_licence_details: 'contact_summary_licence_details',
+          contact_summary_contact: 'contact_summary_contact',
+          licence_summary_change: 'licence_summary_change',
+          hidden_text_contact: 'hidden_text_contact',
+          hidden_text_confirmation_option: 'hidden_text_confirmation_option',
+          hidden_text_fulfilment_option: 'hidden_text_fulfilment_option'
+        })
       }
     })
   })
@@ -377,7 +390,7 @@ describe('getLicenseeDetailsSummaryRows', () => {
               {
                 href: LICENCE_FULFILMENT.uri,
                 text: 'licence_summary_change',
-                visuallyHiddenText: 'licence confirmation option',
+                visuallyHiddenText: 'hidden_text_confirmation_option',
                 attributes: { id: 'change-licence-confirmation-option' }
               }
             ]
@@ -391,7 +404,7 @@ describe('getLicenseeDetailsSummaryRows', () => {
               {
                 href: CONTACT.uri,
                 text: 'licence_summary_change',
-                visuallyHiddenText: 'contact',
+                visuallyHiddenText: 'hidden_text_contact',
                 attributes: { id: 'change-contact' }
               }
             ]
@@ -444,7 +457,7 @@ describe('getLicenseeDetailsSummaryRows', () => {
               {
                 href: LICENCE_FULFILMENT.uri,
                 text: 'licence_summary_change',
-                visuallyHiddenText: 'licence confirmation option',
+                visuallyHiddenText: 'hidden_text_confirmation_option',
                 attributes: { id: 'change-licence-confirmation-option' }
               }
             ]
@@ -458,7 +471,7 @@ describe('getLicenseeDetailsSummaryRows', () => {
               {
                 href: CONTACT.uri,
                 text: 'licence_summary_change',
-                visuallyHiddenText: 'contact',
+                visuallyHiddenText: 'hidden_text_contact',
                 attributes: { id: 'change-contact' }
               }
             ]
@@ -472,7 +485,7 @@ describe('getLicenseeDetailsSummaryRows', () => {
               {
                 href: NEWSLETTER.uri,
                 text: 'licence_summary_change',
-                visuallyHiddenText: 'newsletter',
+                visuallyHiddenText: 'hidden_text_newsletter',
                 attributes: { id: 'change-newsletter' }
               }
             ]
@@ -496,7 +509,11 @@ describe('getLicenseeDetailsSummaryRows', () => {
         contact_summary_licence_details: 'contact_summary_licence_details',
         contact_summary_contact: 'contact_summary_contact',
         licence_summary_change: 'licence_summary_change',
-        contact_summary_newsletter: 'contact_summary_newsletter'
+        contact_summary_newsletter: 'contact_summary_newsletter',
+        hidden_text_contact: 'hidden_text_contact',
+        hidden_text_confirmation_option: 'hidden_text_confirmation_option',
+        hidden_text_fulfilment_option: 'hidden_text_fulfilment_option',
+        hidden_text_newsletter: 'hidden_text_newsletter'
       })
     }
   })
@@ -515,7 +532,7 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
             {
               href: LICENCE_FULFILMENT.uri,
               text: 'licence_summary_change',
-              visuallyHiddenText: 'licence fulfilment option',
+              visuallyHiddenText: 'hidden_text_fulfilment_option',
               attributes: { id: 'change-licence-fulfilment-option' }
             }
           ]
@@ -536,7 +553,7 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
             {
               href: LICENCE_CONFIRMATION_METHOD.uri,
               text: 'licence_summary_change',
-              visuallyHiddenText: 'licence confirmation option',
+              visuallyHiddenText: 'hidden_text_confirmation_option',
               attributes: { id: 'change-licence-confirmation-option' }
             }
           ]
@@ -557,7 +574,7 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
             {
               href: CONTACT.uri,
               text: 'licence_summary_change',
-              visuallyHiddenText: 'contact',
+              visuallyHiddenText: 'hidden_text_contact',
               attributes: { id: 'change-contact' }
             }
           ]
@@ -578,7 +595,7 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
             {
               href: LICENCE_FULFILMENT.uri,
               text: 'licence_summary_change',
-              visuallyHiddenText: 'licence confirmation option',
+              visuallyHiddenText: 'hidden_text_confirmation_option',
               attributes: { id: 'change-licence-confirmation-option' }
             }
           ]
@@ -599,7 +616,7 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
             {
               href: CONTACT.uri,
               text: 'licence_summary_change',
-              visuallyHiddenText: 'contact',
+              visuallyHiddenText: 'hidden_text_contact',
               attributes: { id: 'change-contact' }
             }
           ]
@@ -621,7 +638,7 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
             {
               href: CONTACT.uri,
               text: 'licence_summary_change',
-              visuallyHiddenText: 'contact',
+              visuallyHiddenText: 'hidden_text_contact',
               attributes: { id: 'change-contact' }
             }
           ]
@@ -642,7 +659,11 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         contact_summary_licence_confirmation: 'contact_summary_licence_confirmation',
         contact_summary_licence_details: 'contact_summary_licence_details',
         contact_summary_contact: 'contact_summary_contact',
-        licence_summary_change: 'licence_summary_change'
+        licence_summary_change: 'licence_summary_change',
+        hidden_text_contact: 'hidden_text_contact',
+        hidden_text_confirmation_option: 'hidden_text_confirmation_option',
+        hidden_text_fulfilment_option: 'hidden_text_fulfilment_option',
+        hidden_text_newsletter: 'hidden_text_newsletter'
       })
     }
   })

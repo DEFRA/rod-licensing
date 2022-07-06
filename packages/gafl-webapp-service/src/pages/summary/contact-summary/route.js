@@ -52,7 +52,7 @@ export const getLicenseeDetailsSummaryRows = (mssgs, permission, countryName) =>
         mssgs.contact_summary_newsletter,
         permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
         NEWSLETTER.uri,
-        'newsletter',
+        mssgs.hidden_text_newsletter,
         'change-newsletter'
       )
     )
@@ -86,7 +86,7 @@ export const getContactDetails = (mssgs, permission) => {
           mssgs.contact_summary_licence,
           mssgs.contact_summary_by_post,
           LICENCE_FULFILMENT.uri,
-          'licence fulfilment option',
+          mssgs.hidden_text_fulfilment_option,
           'change-licence-fulfilment-option'
         ),
         getRow(
@@ -94,7 +94,7 @@ export const getContactDetails = (mssgs, permission) => {
           mssgs.contact_summary_licence_confirmation,
           getContactText(mssgs, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
           LICENCE_CONFIRMATION_METHOD.uri,
-          'licence confirmation option',
+          mssgs.hidden_text_confirmation_option,
           'change-licence-confirmation-option'
         ),
         getRow(
@@ -102,7 +102,7 @@ export const getContactDetails = (mssgs, permission) => {
           mssgs.contact_summary_contact,
           getContactText(mssgs, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
           CONTACT.uri,
-          'contact',
+          mssgs.hidden_text_contact,
           CHANGE_CONTACT
         )
       ]
@@ -113,7 +113,7 @@ export const getContactDetails = (mssgs, permission) => {
           mssgs.contact_summary_licence,
           getContactText(mssgs, permission.licensee.preferredMethodOfConfirmation, permission.licensee),
           LICENCE_FULFILMENT.uri,
-          'licence confirmation option',
+          mssgs.hidden_text_confirmation_option,
           'change-licence-confirmation-option'
         ),
         getRow(
@@ -121,7 +121,7 @@ export const getContactDetails = (mssgs, permission) => {
           mssgs.contact_summary_contact,
           getContactText(mssgs, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
           CONTACT.uri,
-          'contact',
+          mssgs.hidden_text_contact,
           CHANGE_CONTACT
         )
       ]
@@ -133,7 +133,7 @@ export const getContactDetails = (mssgs, permission) => {
         mssgs.contact_summary_licence_details,
         getContactText(mssgs, permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
         CONTACT.uri,
-        'contact',
+        mssgs.hidden_text_contact,
         CHANGE_CONTACT
       )
     ]
