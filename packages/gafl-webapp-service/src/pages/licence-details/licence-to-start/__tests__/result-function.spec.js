@@ -1,63 +1,70 @@
-import resultFunction from '../result-function'
-import { CommonResults } from '../../../../constants.js'
+import resultFunction, { licenceToStartResults } from '../result-function'
 import { ageConcessionResults } from '../../../concessions/date-of-birth/result-function.js'
-import { licenceToStart } from '../update-transaction.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
+
+import CommonResultHandler from '../../../../handlers/multibuy-amend-handler.js'
+
+jest.mock('../../../../handlers/multibuy-amend-handler.js', () => jest.fn(() => {}))
 
 jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
 }))
 
-describe('licence-to-start > result-function', () => {
-  const mockStatusCacheGet = jest.fn()
-  const mockTransactionCacheGet = jest.fn()
+jest.mock('../update-transaction.js', () => ({
+  licenceToStart: {
+    ANOTHER_DATE: 'some future date'
+  }
+}))
 
-  const mockRequest = {
+describe('licence-to-start > result-function', () => {
+  const getMockRequest = (licenceStartTimeNeeded, licenceLengthAmount) => ({
     cache: () => ({
       helpers: {
-        status: {
-          getCurrentPermission: mockStatusCacheGet
-        },
         transaction: {
-          getCurrentPermission: mockTransactionCacheGet
+          getCurrentPermission: async () => ({
+            licenceToStart: licenceStartTimeNeeded,
+            licenceLength: licenceLengthAmount,
+            licensee: {
+              noLicenceRequired: true
+            }
+          })
         }
       }
     })
-  }
+  })
 
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
-    it('should return summary if fromSummary is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: true }))
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceToStart: licenceToStart.ANOTHER_DATE, licenceLength: '12M' }))
+    it('should return the value of common result handler', async () => {
+      const commonResult = Symbol('Common Result')
+      CommonResultHandler.mockReturnValue(commonResult)
       isMultibuyForYou.mockImplementationOnce(() => true)
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.SUMMARY)
+      const result = await resultFunction(getMockRequest())
+      expect(result).toBe(commonResult)
     })
 
-    it('should return ok if fromSummary is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false }))
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceToStart: licenceToStart.ANOTHER_DATE, licenceLength: '12M' }))
-      isMultibuyForYou.mockImplementationOnce(() => true)
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.OK)
+    it('should pass request object to common result handler', async () => {
+      const request = getMockRequest()
+      await resultFunction(request)
+      expect(CommonResultHandler).toHaveBeenCalledWith(request)
+    })
+
+    it('should pass request object to is multibuy for you handler', async () => {
+      const request = getMockRequest()
+      await resultFunction(request)
+      expect(isMultibuyForYou).toHaveBeenCalledWith(request)
     })
 
     it('should return licenceToStartResults.AND_START_TIME if not 12 months lenghts and licence to start is another date', async () => {
-      const licenceToStartResults = {
-        AND_START_TIME: 'and-start-time'
-      }
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceToStart: licenceToStart.ANOTHER_DATE, licenceLength: '8D' }))
       isMultibuyForYou.mockImplementationOnce(() => true)
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest('some future date', '8D'))
       expect(result).toBe(licenceToStartResults.AND_START_TIME)
     })
 
     it('should return ageConcessionResults.NO_LICENCE_REQUIRED if no licence is required', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: { noLicenceRequired: true } }))
       isMultibuyForYou.mockImplementationOnce(() => false)
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe(ageConcessionResults.NO_LICENCE_REQUIRED)
     })
   })

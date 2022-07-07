@@ -12,7 +12,7 @@ export default async (status, defaultUrl) => {
     } else {
       return CONTACT_SUMMARY.uri
     }
-  } else {
-    return defaultUrl
   }
+
+  return defaultUrl
 }

@@ -37,7 +37,7 @@ describe('change-licence-options > route', () => {
     const mockTransactionCacheGet = jest.fn()
     const mockTransactionCacheSet = jest.fn()
 
-    const mockRequest = (transaction = {}) => ({
+    const mockRequest = () => ({
       cache: () => ({
         helpers: {
           status: {

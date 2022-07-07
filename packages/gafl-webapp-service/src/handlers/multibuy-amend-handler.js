@@ -6,7 +6,6 @@ export default async request => {
     return CommonResults.AMEND
   } else if (status.fromSummary) {
     return CommonResults.SUMMARY
-  } else {
-    return CommonResults.OK
   }
+  return CommonResults.OK
 }

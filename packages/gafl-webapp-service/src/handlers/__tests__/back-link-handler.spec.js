@@ -31,10 +31,5 @@ describe('back-link-handler', () => {
       const result = await backLinkHandler(status, 'aPage')
       expect(result).toBe(CONTACT_SUMMARY.uri)
     })
-
-    it('should return defaultUri if summary pages and licence options pages not seen', async () => {
-      const result = await backLinkHandler({}, 'aDefaultUrl')
-      expect(result).toBe('aDefaultUrl')
-    })
   })
 })

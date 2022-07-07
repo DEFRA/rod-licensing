@@ -1,49 +1,39 @@
 import resultFunction, { ageConcessionResults } from '../result-function'
-import { CommonResults } from '../../../../constants'
+import CommonResultHandler from '../../../../handlers/multibuy-amend-handler.js'
+
+jest.mock('../../../../handlers/multibuy-amend-handler.js', () => jest.fn(() => {}))
 
 describe('date-of-birth > result-function', () => {
-  const mockTransationCacheGet = jest.fn()
-  const mockStatusCacheGet = jest.fn()
-
-  const mockRequest = {
+  const getMockRequest = licenceRequired => ({
     cache: () => ({
       helpers: {
         transaction: {
-          getCurrentPermission: mockTransationCacheGet
-        },
-        status: {
-          getCurrentPermission: mockStatusCacheGet
+          getCurrentPermission: async () => ({
+            licensee: {
+              noLicenceRequired: licenceRequired
+            }
+          })
         }
       }
     })
-  }
+  })
 
   describe('default', () => {
-    it('should return summary if fromSummary is true', async () => {
-      mockTransationCacheGet.mockImplementationOnce(() => ({ licensee: { noLicenceRequired: false } }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: true, fromLicenceOptions: false }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.SUMMARY)
+    it('should return the value of common result handler', async () => {
+      const commonResult = Symbol('Common Result')
+      CommonResultHandler.mockReturnValue(commonResult)
+      const result = await resultFunction(getMockRequest(false))
+      expect(result).toEqual(commonResult)
     })
 
-    it('should return summary if fromlicenceOptions is true', async () => {
-      mockTransationCacheGet.mockImplementationOnce(() => ({ licensee: { noLicenceRequired: false } }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false, fromLicenceOptions: true }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.AMEND)
+    it('should pass request object to common result handler', async () => {
+      const request = getMockRequest(false)
+      await resultFunction(request)
+      expect(CommonResultHandler).toHaveBeenCalledWith(request)
     })
 
-    it('should return ok if both fromLicenceOptions and fromSummary are false', async () => {
-      mockTransationCacheGet.mockImplementationOnce(() => ({ licensee: { noLicenceRequired: false } }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false, fromLicenceOptions: false }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.OK)
-    })
-
-    it('should return noLicenceRequired if fromSummary is true', async () => {
-      mockTransationCacheGet.mockImplementationOnce(() => ({ licensee: { noLicenceRequired: true } }))
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: false, fromLicenceOptions: false }))
-      const result = await resultFunction(mockRequest)
+    it('should return noLicenceRequired if licensee noLicenceRequired flag is true', async () => {
+      const result = await resultFunction(getMockRequest(true))
       expect(result).toBe(ageConcessionResults.NO_LICENCE_REQUIRED)
     })
   })

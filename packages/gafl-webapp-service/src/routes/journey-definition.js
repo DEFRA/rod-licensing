@@ -68,10 +68,7 @@ export default [
         page: LICENCE_TO_START
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, null)
-      return backLinkResult
-    }
+    backLink: backLinkHandler
   },
 
   {
@@ -87,10 +84,7 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, LICENCE_FOR.uri)
-      return backLinkResult
-    }
+    backLink: status => backLinkHandler(status, LICENCE_FOR.uri)
   },
 
   {
@@ -109,10 +103,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, NAME.uri)
-      return backLinkResult
-    }
+    backLink: status => backLinkHandler(status, NAME.uri)
   },
 
   {
@@ -128,10 +119,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, DATE_OF_BIRTH.uri)
-      return backLinkResult
-    }
+    backLink: status => backLinkHandler(status, DATE_OF_BIRTH.uri)
   },
 
   {
@@ -153,10 +141,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, DISABILITY_CONCESSION.uri)
-      return backLinkResult
-    }
+    backLink: status => backLinkHandler(status, DISABILITY_CONCESSION.uri)
   },
 
   {
@@ -180,10 +165,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, DISABILITY_CONCESSION.uri)
-      return backLinkResult
-    }
+    backLink: status => backLinkHandler(status, DISABILITY_CONCESSION.uri)
   },
 
   {
@@ -202,10 +184,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: async status => {
-      const backLinkResult = await backLinkHandler(status, LICENCE_TYPE.uri)
-      return backLinkResult
-    }
+    backLink: status => backLinkHandler(status, LICENCE_TYPE.uri)
   },
 
   {

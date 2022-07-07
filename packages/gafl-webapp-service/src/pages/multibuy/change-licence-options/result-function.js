@@ -9,9 +9,8 @@ export default async request => {
   if (status.renewal) {
     if (isPhysical(permission) && status.showDigitalLicencePages) {
       return ShowDigitalLicencePages.YES
-    } else {
-      return CommonResults.SUMMARY
     }
+    return CommonResults.SUMMARY
   }
 
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
