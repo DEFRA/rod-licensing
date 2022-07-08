@@ -68,7 +68,7 @@ export default [
         page: LICENCE_TO_START
       }
     },
-    backLink: backLinkHandler
+    backLink: status => backLinkHandler(status)
   },
 
   {

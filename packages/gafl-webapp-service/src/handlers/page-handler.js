@@ -25,15 +25,16 @@ export const errorShimm = e => e.details.reduce((a, c) => ({ ...a, [c.path[0]]: 
 const getBackReference = async (request, view) => {
   const current = journeyDefinition.find(p => p.current.page === view)
   const { helpers } = await request.cache()
-  const status = helpers.status.getCurrentPermission()
-  const permission = helpers.transaction.getCurrentPermission()
 
   if (!current || !current.backLink) {
     return null
   }
 
   if (typeof current.backLink === 'function') {
-    return current.backLink(status, permission)
+    return current.backLink(
+      await helpers.status.getCurrentPermission(),
+      await helpers.transaction.getCurrentPermission()
+    )
   } else {
     return current.backLink
   }
