@@ -1,4 +1,4 @@
-import startTimePageRoute from '../route.js'
+import route from '../route.js'
 import moment from 'moment-timezone'
 import pageRoute from '../../../../routes/page-route.js'
 
@@ -12,6 +12,13 @@ jest.mock('../../../../routes/page-route.js', () =>
 )
 jest.mock('moment-timezone')
 const realMoment = jest.requireActual('moment-timezone')
+
+const getMomentMockImpl = (overrides = {}) =>
+  jest.fn(() => ({
+    tz: () => ({ isSame: () => {} }),
+    format: () => {},
+    ...overrides
+  }))
 
 describe('Licence start time data validation', () => {
   const validator = pageRoute.mock.calls[1][2]
@@ -108,7 +115,7 @@ describe('Licence start time data validation', () => {
 })
 
 describe('licenceStartTimeRoute > onPostAuth', () => {
-  const { onPostAuth } = startTimePageRoute.find(r => r.method === 'POST').options.ext
+  const { onPostAuth } = route.find(r => r.method === 'POST').options.ext
   it('returns reply.continue symbol', async () => {
     const mockResponseToolkit = getMockResponseToolkit()
     expect(await onPostAuth.method(getMockRequest(), mockResponseToolkit)).toEqual(mockResponseToolkit.continue)
@@ -135,5 +142,81 @@ describe('licenceStartTimeRoute > onPostAuth', () => {
         }
       }
     })
+  })
+})
+
+describe('getData', () => {
+  const getData = pageRoute.mock.calls[1][4]
+  const mockTransactionCacheGet = jest.fn()
+  const mockRequest = {
+    cache: () => ({
+      helpers: {
+        transaction: {
+          getCurrentPermission: mockTransactionCacheGet
+        }
+      }
+    }),
+    locale: 'en-gb'
+  }
+
+  it('startDateStr is result of moment().format()', async () => {
+    const formatSymbol = Symbol('formatResult')
+    moment.mockImplementation(
+      getMomentMockImpl({
+        format: () => formatSymbol
+      })
+    )
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate: '2020-01-01' }))
+    const { startDateStr } = await getData({
+      cache: () => ({
+        helpers: {
+          transaction: {
+            getCurrentPermission: mockTransactionCacheGet
+          }
+        }
+      }),
+      locale: 'anywhere'
+    })
+    expect(startDateStr).toEqual(formatSymbol)
+  })
+
+  it.each([['2020-07-06'], ['2020-01-01'], ['2022-07-09']])('permission licence start date is passed to moment', async licenceStartDate => {
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate }))
+    moment.mockImplementation(getMomentMockImpl())
+    await getData(mockRequest)
+    expect(moment).toHaveBeenCalledWith(licenceStartDate, 'YYYY-MM-DD', 'en-gb')
+  })
+
+  it('cacheDateFormat being what is expected', async () => {
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate: '2020-01-01' }))
+    moment.mockImplementation(getMomentMockImpl())
+    await getData(mockRequest)
+    expect(moment).toHaveBeenCalledWith('2020-01-01', 'YYYY-MM-DD', 'en-gb')
+  })
+
+  it('dddd, Do MMMM, YYYY is passed to format', async () => {
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate: '2020-01-01' }))
+    const format = jest.fn()
+    moment.mockImplementation(getMomentMockImpl({ format }))
+    await getData(mockRequest)
+    expect(format).toHaveBeenCalledWith('dddd, Do MMMM, YYYY')
+  })
+
+  it.each([['en-gb'], ['cy']])('locale is set on moment, to whatever the request.locale is', async language => {
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          transaction: {
+            getCurrentPermission: mockTransactionCacheGet
+          }
+        }
+      }),
+      locale: language
+    }
+    mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate: '2020-01-01' }))
+    const format = jest.fn()
+    moment.mockImplementation(getMomentMockImpl({ format }))
+    await getData(mockRequest)
+    expect(moment).toHaveBeenCalledWith('2020-01-01', 'YYYY-MM-DD', language)
   })
 })

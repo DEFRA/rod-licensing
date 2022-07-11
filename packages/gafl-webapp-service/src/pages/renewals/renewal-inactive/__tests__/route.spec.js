@@ -1,45 +1,225 @@
 import { getData, getTitleAndBodyMessage } from '../route'
 import { NEW_TRANSACTION } from '../../../../uri.js'
 import { RENEWAL_ERROR_REASON } from '../../../../constants'
+import moment from 'moment-timezone'
 
 import englishTranslations from '../../../../locales/en.json'
 import welshTranslations from '../../../../locales/cy.json'
 
-describe('renewal-inactive > route', () => {
-  const mockStatusCacheGet = jest.fn()
+jest.mock('moment-timezone')
+const getMomentMockImpl = (overrides = {}) =>
+  jest.fn(() => ({
+    format: () => {},
+    ...overrides
+  }))
 
-  const mockRequest = {
-    cache: () => ({
-      helpers: {
-        status: {
-          getCurrentPermission: mockStatusCacheGet
-        }
-      }
-    }),
-    i18n: {
-      getCatalog: jest.fn(() => englishTranslations)
-    }
-  }
+describe('renewal-inactive > route', () => {
   describe('getData', () => {
-    it('should return the reason the renewal is inactive', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE } }))
+    describe.each([
+      [
+        RENEWAL_ERROR_REASON.NOT_DUE,
+        'renewal_inactive_not_due_1 abc-123 renewal_inactive_not_due_2 12th Never',
+        { renewal_inactive_title_1: 'Renewal inactive title 1' },
+        'Renewal inactive title 1'
+      ],
+      [
+        RENEWAL_ERROR_REASON.EXPIRED,
+        'renewal_inactive_not_due_1 abc-123 renewal_inactive_has_expired_1 12th Never renewal_inactive_has_expired_2',
+        { renewal_inactive_title_2: 'Renewal inactive title 2' },
+        'Renewal inactive title 2'
+      ],
+      [
+        RENEWAL_ERROR_REASON.NOT_ANNUAL,
+        'renewal_inactive_not_due_1 abc-123 renewal_inactive_not_annual_1',
+        { renewal_inactive_title_3: 'Renewal inactive title 3' },
+        'Renewal inactive title 3'
+      ],
+      ['', '', {}, '']
+    ])('title and body message', (authReason, expectedBodyString, mssgOverrides, expectedTitle) => {
+      const getMessages = (overrides = {}) => ({
+        renewal_inactive_not_due_1: 'renewal_inactive_not_due_1 ',
+        renewal_inactive_not_due_2: ' renewal_inactive_not_due_2 ',
+        renewal_inactive_has_expired_1: ' renewal_inactive_has_expired_1 ',
+        renewal_inactive_has_expired_2: ' renewal_inactive_has_expired_2',
+        renewal_inactive_not_annual_1: ' renewal_inactive_not_annual_1',
+        renewal_inactive_title_1: 'renewal_inactive_title_1',
+        renewal_inactive_title_2: 'renewal_inactive_title_2',
+        renewal_inactive_title_3: 'renewal_inactive_title_3',
+        ...overrides
+      })
+
+      const getMockRequest = (authReason, messages = getMessages()) => ({
+        cache: () => ({
+          helpers: {
+            status: {
+              getCurrentPermission: async () => ({
+                referenceNumber: 'abc-123',
+                authentication: {
+                  endDate: '',
+                  reason: authReason
+                }
+              })
+            }
+          }
+        }),
+        i18n: {
+          getCatalog: () => messages
+        },
+        locale: 'en-gb'
+      })
+
+      it('body message is as expected', async () => {
+        const mockRequest = getMockRequest(authReason)
+        moment.mockImplementation(
+          getMomentMockImpl({
+            format: () => '12th Never'
+          })
+        )
+        const { bodyMessage } = await getData(mockRequest)
+        expect(bodyMessage).toEqual(expectedBodyString)
+      })
+
+      it('title is as expected', async () => {
+        const mockRequest = getMockRequest(authReason, getMessages(mssgOverrides))
+        moment.mockImplementation(getMomentMockImpl())
+        const { title } = await getData(mockRequest)
+        expect(title).toEqual(expectedTitle)
+      })
+    })
+
+    const mockStatusCacheGet = jest.fn()
+
+    const mockRequest = {
+      cache: () => ({
+        helpers: {
+          status: {
+            getCurrentPermission: mockStatusCacheGet
+          }
+        }
+      }),
+      i18n: {
+        getCatalog: jest.fn(() => englishTranslations)
+      },
+      locale: 'en-gb'
+    }
+
+    it.each([
+      [RENEWAL_ERROR_REASON.NOT_DUE, 'not-due'],
+      [RENEWAL_ERROR_REASON.EXPIRED, 'expired'],
+      [RENEWAL_ERROR_REASON.NOT_ANNUAL, 'not-annual']
+    ])('should return the reason', async (reason, expected) => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ authentication: { reason: reason } }))
+      moment.mockImplementation(getMomentMockImpl())
       const result = await getData(mockRequest)
-      expect(result.reason).toBe(RENEWAL_ERROR_REASON.NOT_DUE)
+      expect(result.reason).toBe(expected)
+    })
+
+    it('should return the reason codes', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE } }))
+      moment.mockImplementation(getMomentMockImpl())
+      const result = await getData(mockRequest)
+      expect(result.reasonCodes).toBe(RENEWAL_ERROR_REASON)
     })
 
     it('should return the new transation uri', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ authentication: {} }))
+      moment.mockImplementation(getMomentMockImpl())
       const result = await getData(mockRequest)
       expect(result.uri.new).toBe(NEW_TRANSACTION.uri)
     })
 
-    it('should return the body message', async () => {
+    it.each([
+      ['2020-12-13T23:59:59Z', RENEWAL_ERROR_REASON.NOT_DUE, 'ABV123'],
+      ['2020-01-13T23:59:59Z', RENEWAL_ERROR_REASON.NOT_DUE, 'LKJ234'],
+      ['2020-10-13T23:59:59Z', RENEWAL_ERROR_REASON.NOT_DUE, 'MHG356']
+    ])('titleAndBodyMessage is result of moment().format()', async (endDate, reason, referenceNumber) => {
+      const formatSymbol = Symbol('formatResult').toString()
+      moment.mockImplementation(
+        getMomentMockImpl({
+          format: () => formatSymbol
+        })
+      )
+
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        authentication: { reason, endDate },
+        referenceNumber
+      }))
+
+      const { ...titleAndBodyMessage } = await getData({
+        cache: () => ({
+          helpers: {
+            status: {
+              getCurrentPermission: mockStatusCacheGet
+            }
+          }
+        }),
+        i18n: {
+          getCatalog: jest.fn(() => englishTranslations)
+        },
+        locale: ''
+      })
+
+      const { bodyMessage } = getTitleAndBodyMessage(englishTranslations, reason, referenceNumber, formatSymbol)
+
+      expect(titleAndBodyMessage.bodyMessage).toEqual(bodyMessage)
+    })
+
+    it.each([['2020-12-13T23:59:59Z'], ['2020-01-13T23:59:59Z'], ['2020-10-13T23:59:59Z']])(
+      'endDate is passed to moment',
+      async endDate => {
+        mockStatusCacheGet.mockImplementationOnce(() => ({
+          authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate },
+          referenceNumber: 'ABC123'
+        }))
+        moment.mockImplementation(getMomentMockImpl())
+        await getData(mockRequest)
+        expect(moment).toHaveBeenCalledWith(endDate, 'YYYY-MM-DD', 'en-gb')
+      }
+    )
+
+    it('cacheDateFormat being what is expected', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({
         authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
         referenceNumber: 'ABC123'
       }))
-      const result = await getData(mockRequest)
-      expect(result.bodyMessage).toBe('The licence ending in ABC123 does not expire until 13 December 2020')
+      moment.mockImplementation(getMomentMockImpl())
+      await getData(mockRequest)
+      expect(moment).toHaveBeenCalledWith('2020-12-13T23:59:59Z', 'YYYY-MM-DD', 'en-gb')
+    })
+
+    it.each([['en-gb'], ['cy']])('locale is set on moment, to whatever the request.locale is', async language => {
+      const mockRequest = {
+        cache: () => ({
+          helpers: {
+            status: {
+              getCurrentPermission: mockStatusCacheGet
+            }
+          }
+        }),
+        i18n: {
+          getCatalog: jest.fn(() => englishTranslations)
+        },
+        locale: language
+      }
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
+        referenceNumber: 'ABC123'
+      }))
+      const format = jest.fn()
+      moment.mockImplementation(getMomentMockImpl({ format }))
+      await getData(mockRequest)
+      expect(moment).toHaveBeenCalledWith('2020-12-13T23:59:59Z', 'YYYY-MM-DD', language)
+    })
+
+    it('dateDisplayFormat is passed to format', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
+        referenceNumber: 'ABC123'
+      }))
+      const format = jest.fn()
+      moment.mockImplementation(getMomentMockImpl({ format }))
+      await getData(mockRequest)
+      expect(format).toHaveBeenCalledWith('D MMMM YYYY')
     })
   })
 

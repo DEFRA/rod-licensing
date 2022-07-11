@@ -46,9 +46,7 @@ const validator = (payload, options) => {
 
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  moment.locale(request.locale)
-  const startDateStr = moment(permission.licenceStartDate, cacheDateFormat).format('dddd, Do MMMM, YYYY')
-
+  const startDateStr = moment(permission.licenceStartDate, cacheDateFormat, request.locale).format('dddd, Do MMMM, YYYY')
   return { startDateStr, minHour: getMinHour(permission) }
 }
 
