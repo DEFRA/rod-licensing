@@ -13,6 +13,10 @@ import {
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js')
+addLanguageCodeToUri.mockReturnValue('/buy/order-complete')
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -134,6 +138,7 @@ describe('The agreed handler', () => {
     const response = await injectWithCookies('GET', AGREED.uri)
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalled()
     await injectWithCookies('GET', ORDER_COMPLETE.uri)
   })
 })

@@ -5,6 +5,9 @@ import { ADULT_FULL_1_DAY_LICENCE, MOCK_PAYMENT_RESPONSE } from '../../__mocks__
 
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, PAYMENT_FAILED, PAYMENT_CANCELLED } from '../../uri.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js')
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -96,6 +99,8 @@ describe('The agreed handler', () => {
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
   ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
+    addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
+
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
@@ -116,6 +121,7 @@ describe('The agreed handler', () => {
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(PAYMENT_FAILED.uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalled()
 
     // Ensure that the journal status has been updated correctly
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
@@ -135,6 +141,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
+    addLanguageCodeToUri.mockReturnValue('/buy/agreed')
     await injectWithCookies('GET', PAYMENT_FAILED.uri)
     const data4 = await injectWithCookies('POST', PAYMENT_FAILED.uri, {})
     expect(data4.statusCode).toBe(302)
@@ -151,6 +158,8 @@ describe('The agreed handler', () => {
   })
 
   it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
+    addLanguageCodeToUri.mockReturnValue('/buy/payment-cancelled')
+
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -172,6 +181,7 @@ describe('The agreed handler', () => {
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(302)
     expect(data2.headers.location).toBe(PAYMENT_CANCELLED.uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalled()
 
     // Ensure the the jounal status is set to cancelled
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
@@ -192,6 +202,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
     // Perform the redirect to the payment failed screen and attempt payment again
+    addLanguageCodeToUri.mockReturnValue('/buy/agreed')
     await injectWithCookies('GET', PAYMENT_CANCELLED.uri)
     const data3 = await injectWithCookies('POST', PAYMENT_CANCELLED.uri, {})
     expect(data3.statusCode).toBe(302)
