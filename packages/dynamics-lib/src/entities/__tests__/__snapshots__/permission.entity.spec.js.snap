@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`permission entity maps from dynamics matches JSON representation 1`] = `
+Object {
+  "dataSource": Object {
+    "description": "Door to door sales",
+    "id": "99999999",
+    "label": "Door to door sales",
+  },
+  "endDate": "2020-12-13T23:59:59Z",
+  "id": "347a9083-361e-ea11-a810-000d3a25c5d6",
+  "isLicenceForYou": Object {
+    "description": "Definitely maybe",
+    "id": "1",
+    "label": "Maybe",
+  },
+  "isMultiBuy": true,
+  "issueDate": "2019-12-13T09:00:00Z",
+  "referenceNumber": "00000000-2WC3FDR-CD379B",
+  "stagingId": "71ad9a25-2a03-406b-a0e3-f4ff37799374",
+  "startDate": "2019-12-14T00:00:00Z",
+}
+`;
+
+exports[`permission entity maps from dynamics matches JSON representation 2`] = `
+Object {
+  "dataSource": Object {
+    "description": "Door to door sales",
+    "id": "99999999",
+    "label": "Door to door sales",
+  },
+  "endDate": "2020-12-13T23:59:59Z",
+  "id": "347a9083-361e-ea11-a810-000d3a25c5d6",
+  "isLicenceForYou": Object {
+    "description": "Definitely maybe",
+    "id": "1",
+    "label": "Maybe",
+  },
+  "isMultiBuy": true,
+  "issueDate": "2019-12-13T09:00:00Z",
+  "referenceNumber": "00000000-2WC3FDR-CD379B",
+  "stagingId": "71ad9a25-2a03-406b-a0e3-f4ff37799374",
+  "startDate": "2019-12-14T00:00:00Z",
+}
+`;
+
+exports[`permission entity maps to dynamics 1`] = `
+Object {
+  "defra_ContactId@odata.bind": "$$45812ea6-991f-41b3-8760-03542f9cc133",
+  "defra_POCLFileId@odata.bind": "$$45812ea6-991f-41b3-8760-03542f9cc131",
+  "defra_PermitId@odata.bind": "/defra_permits(9d1b34a0-0c66-e611-80dc-c4346bad0190)",
+  "defra_Transaction@odata.bind": "$$45812ea6-991f-41b3-8760-03542f9cc132",
+  "defra_datasource": "99999999",
+  "defra_enddate": "2020-12-13T23:59:59Z",
+  "defra_ismultibuy": true,
+  "defra_issuedate": "2019-12-13T09:00:00Z",
+  "defra_licenceforyou": "1",
+  "defra_name": "00000000-2WC3FDR-CD379B",
+  "defra_stagingid": "71ad9a25-2a03-406b-a0e3-f4ff37799374",
+  "defra_startdate": "2019-12-14T00:00:00Z",
+}
+`;
