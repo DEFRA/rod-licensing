@@ -1,5 +1,3 @@
-import * as processor from '../processors/processor.js'
-
 global.simulateLockError = false
 global.lockReleased = false
 jest.mock('@defra-fish/connectors-lib', () => ({

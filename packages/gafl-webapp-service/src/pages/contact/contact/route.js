@@ -36,9 +36,7 @@ export const getData = async request => {
 }
 
 export const validator = Joi.object({
-  'how-contacted': Joi.string()
-    .valid('email', 'text', 'none')
-    .required(),
+  'how-contacted': Joi.string().valid('email', 'text', 'none').required(),
   email: Joi.alternatives().conditional('how-contacted', {
     is: 'email',
     then: validation.contact.createEmailValidator(Joi),

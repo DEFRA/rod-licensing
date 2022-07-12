@@ -66,7 +66,8 @@ export const mockPermissionPayload = () => ({
     }
   ],
   issueDate: MOCK_ISSUE_DATE,
-  startDate: MOCK_START_DATE
+  startDate: MOCK_START_DATE,
+  isRenewal: false
 })
 
 export const mockTransactionPayload = () => ({

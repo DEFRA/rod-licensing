@@ -174,9 +174,7 @@ describe("The 'when would you like you licence to start?' page", () => {
         jest.mock('moment')
         const moment = require('moment')
         moment.mockImplementation(() => {
-          return jest
-            .requireActual('moment')()
-            .add(46, 'day')
+          return jest.requireActual('moment')().add(46, 'day')
         })
         const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
           'licence-to-start': licenceToStart.ANOTHER_DATE,

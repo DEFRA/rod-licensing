@@ -1,4 +1,208 @@
 
+
+
+
+
+
+## v1.26.0-rc.1 (2022-07-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1370](https://github.com/DEFRA/rod-licensing/pull/1370) Welsh - enter address manually ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1369](https://github.com/DEFRA/rod-licensing/pull/1369) Welsh - find their address heading ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1368](https://github.com/DEFRA/rod-licensing/pull/1368) Welsh translation - error messages find address ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1362](https://github.com/DEFRA/rod-licensing/pull/1362) Feature/iwtf 2916 change language persists ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1359](https://github.com/DEFRA/rod-licensing/pull/1359) Persist language in misc route ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1315](https://github.com/DEFRA/rod-licensing/pull/1315) Error when navigating to licence for from find your address ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+
+
+
+## v1.25.0-rc.11 (2022-06-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1305](https://github.com/DEFRA/rod-licensing/pull/1305) Welsh - Privacy policy ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1357](https://github.com/DEFRA/rod-licensing/pull/1357) Welsh - licence confirmation BOBO ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1360](https://github.com/DEFRA/rod-licensing/pull/1360) Cookies page welsh translations ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.10 (2022-06-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1342](https://github.com/DEFRA/rod-licensing/pull/1342) Open footer link to OS terms in same window ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.25.0-rc.9 (2022-06-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1348](https://github.com/DEFRA/rod-licensing/pull/1348) Welsh translation for cookies ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.8 (2022-06-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1343](https://github.com/DEFRA/rod-licensing/pull/1343) Bug fix for Translation - Check the licence details missing translations ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.25.0-rc.7 (2022-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1313](https://github.com/DEFRA/rod-licensing/pull/1313) Welsh - bobo fishing licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.6 (2022-06-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1303](https://github.com/DEFRA/rod-licensing/pull/1303) Welsh - Cookies policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.25.0-rc.5 (2022-06-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1314](https://github.com/DEFRA/rod-licensing/pull/1314) Welsh - NRW comments on who licence for ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.25.0-rc.3 (2022-06-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1338](https://github.com/DEFRA/rod-licensing/pull/1338) Add Welsh translation for accessibility statement title ([@irisfaraway](https://github.com/irisfaraway))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1329](https://github.com/DEFRA/rod-licensing/pull/1329) Open OS terms footer link in a new tab ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+
+## v1.25.0-rc.0 (2022-06-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1330](https://github.com/DEFRA/rod-licensing/pull/1330) Update Welsh text when selecting licence start date ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1331](https://github.com/DEFRA/rod-licensing/pull/1331) Update button text for licence terms page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1332](https://github.com/DEFRA/rod-licensing/pull/1332) Update Welsh language title attribute for refund policy ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.24.0-rc.13 (2022-06-08)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `dynamics-lib`, `gafl-webapp-service`, `payment-mop-up-job`, `sales-api-service`
+  * [#1317](https://github.com/DEFRA/rod-licensing/pull/1317) Feature/easy renewals enhancements ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.24.0-rc.12 (2022-06-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1300](https://github.com/DEFRA/rod-licensing/pull/1300) Update welsh lang on licence summary page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.24.0-rc.11 (2022-05-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1306](https://github.com/DEFRA/rod-licensing/pull/1306) Amend error page after going back during payment ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.24.0-rc.10 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1312](https://github.com/DEFRA/rod-licensing/pull/1312) Welsh - Accessibility Statement ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.9 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1311](https://github.com/DEFRA/rod-licensing/pull/1311) Welsh - how contact with reminders ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.8 (2022-05-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1307](https://github.com/DEFRA/rod-licensing/pull/1307) Welsh - refund policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.24.0-rc.7 (2022-05-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1304](https://github.com/DEFRA/rod-licensing/pull/1304) Fix failing test on short licence error page update  ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.24.0-rc.6 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1296](https://github.com/DEFRA/rod-licensing/pull/1296) Short licence error page update - easy renewals ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.24.0-rc.5 (2022-05-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1299](https://github.com/DEFRA/rod-licensing/pull/1299) Welsh lang BOBO update where to send licence page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.24.0-rc.4 (2022-05-19)
 
 #### :rocket: Enhancement

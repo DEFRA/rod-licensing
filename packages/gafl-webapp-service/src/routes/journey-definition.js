@@ -58,6 +58,9 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: NAME
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY
       }
     },
     backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : null)
@@ -243,10 +246,10 @@ export default [
         page: LICENCE_CONFIRMATION_METHOD
       }
     },
-    backLink: status => {
+    backLink: (status, permission) => {
       if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
-      } else if (status.renewal) {
+      } else if (permission?.isRenewal) {
         return LICENCE_SUMMARY.uri
       } else {
         return ADDRESS_LOOKUP.uri

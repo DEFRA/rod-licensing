@@ -1,32 +1,41 @@
 import { getFromSummary, getData } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
-import { NAME } from '../../../../uri.js'
+import {
+  DATE_OF_BIRTH,
+  DISABILITY_CONCESSION,
+  LICENCE_LENGTH,
+  LICENCE_TO_START,
+  LICENCE_TYPE,
+  NAME,
+  NEW_TRANSACTION,
+  RENEWAL_START_DATE
+} from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 
 jest.mock('../../find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
+jest.mock('../../../../processors/uri-helper.js')
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('getFromSummary', () => {
     it('should return licence-summary, if it is a renewal', async () => {
-      const request = { renewal: true }
-      const result = await getFromSummary(request)
+      const result = await getFromSummary(undefined, true)
       expect(result).toBe(LICENCE_SUMMARY_SEEN)
     })
 
     it('should return licence-summary, if fromSummary has not been set and it is not a renewal', async () => {
-      const result = await getFromSummary({})
+      const result = await getFromSummary()
       expect(result).toBe(LICENCE_SUMMARY_SEEN)
     })
 
     it('should set fromSummary to contact-summary, if fromSummary is contact-summary and it is not a renewal', async () => {
-      const request = { fromSummary: CONTACT_SUMMARY_SEEN }
-      const result = await getFromSummary(request)
-      expect(result).toBe(CONTACT_SUMMARY_SEEN)
+      const result = await getFromSummary(CONTACT_SUMMARY_SEEN)
+      expect(result).toBe(CONTACT_SUMMARY_SEEN, false)
     })
   })
 
@@ -66,26 +75,39 @@ describe('licence-summary > route', () => {
         getCatalog: () => ({
           licence_type_radio_salmon: 'Salmon and sea trout'
         })
-      }
+      },
+      url: {
+        search: ''
+      },
+      path: ''
     }
 
-    it('should return the name page uri', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licenceStartDate: '2021-07-01',
-        numberOfRods: '3',
-        licenceType: 'Salmon and sea trout',
-        licenceLength: '12M',
-        licensee: {
-          firstName: 'Graham',
-          lastName: 'Willis',
-          birthDate: '1946-01-01'
-        },
+    it.each([
+      [NAME.uri],
+      [LICENCE_LENGTH.uri],
+      [LICENCE_TYPE.uri],
+      [LICENCE_TO_START.uri],
+      [DATE_OF_BIRTH.uri],
+      [DISABILITY_CONCESSION.uri],
+      [RENEWAL_START_DATE.uri],
+      [LICENCE_TO_START.uri],
+      [NEW_TRANSACTION.uri]
+    ])('addLanguageCodeToUri is called with the expected arguments', async uri => {
+      const permission = {
         permit: {
-          cost: 6
-        }
-      }))
-      const result = await getData(mockRequest)
-      expect(result.uri.name).toBe(NAME.uri)
+          cost: 1
+        },
+        licensee: {
+          birthDate: '1996-01-01'
+        },
+        isRenewal: true
+      }
+
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+
+      await getData(mockRequest)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
     })
 
     it('should return a redirect error if firstName is not included on the licensee', async () => {
@@ -115,7 +137,6 @@ describe('licence-summary > route', () => {
     })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true }))
       const catalog = Symbol('mock catalog')
       const permission = {
         permit: {
@@ -123,7 +144,8 @@ describe('licence-summary > route', () => {
         },
         licensee: {
           birthDate: '1996-01-01'
-        }
+        },
+        isRenewal: true
       }
       const sampleRequest = {
         ...mockRequest,
