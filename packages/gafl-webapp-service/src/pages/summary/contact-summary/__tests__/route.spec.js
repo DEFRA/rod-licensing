@@ -135,7 +135,8 @@ describe('contact-summary > route', () => {
           licence_summary_change: 'licence_summary_change',
           hidden_text_contact: 'hidden_text_contact',
           hidden_text_confirmation_option: 'hidden_text_confirmation_option',
-          hidden_text_fulfilment_option: 'hidden_text_fulfilment_option'
+          hidden_text_fulfilment_option: 'hidden_text_fulfilment_option',
+          yes_2: 'Yes'
         })
       }
     })
@@ -513,7 +514,8 @@ describe('getLicenseeDetailsSummaryRows', () => {
         hidden_text_contact: 'hidden_text_contact',
         hidden_text_confirmation_option: 'hidden_text_confirmation_option',
         hidden_text_fulfilment_option: 'hidden_text_fulfilment_option',
-        hidden_text_newsletter: 'hidden_text_newsletter'
+        hidden_text_newsletter: 'hidden_text_newsletter',
+        yes_2: 'Yes'
       })
     }
   })
@@ -663,7 +665,8 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
         hidden_text_contact: 'hidden_text_contact',
         hidden_text_confirmation_option: 'hidden_text_confirmation_option',
         hidden_text_fulfilment_option: 'hidden_text_fulfilment_option',
-        hidden_text_newsletter: 'hidden_text_newsletter'
+        hidden_text_newsletter: 'hidden_text_newsletter',
+        yes_2: 'Yes'
       })
     }
   })

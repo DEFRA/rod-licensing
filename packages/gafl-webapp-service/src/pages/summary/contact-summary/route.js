@@ -50,7 +50,7 @@ export const getLicenseeDetailsSummaryRows = (mssgs, permission, countryName) =>
       getRow(
         mssgs,
         mssgs.contact_summary_newsletter,
-        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
+        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? mssgs.yes_2 : mssgs.no_2,
         NEWSLETTER.uri,
         mssgs.hidden_text_newsletter,
         'change-newsletter'
