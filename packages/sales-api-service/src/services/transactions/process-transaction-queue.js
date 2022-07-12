@@ -43,6 +43,7 @@ export async function processQueue ({ id }) {
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
+  const isMultiBuy = transactionRecord.permissions.length > 1
   for (const {
     licensee,
     concessions,
@@ -58,7 +59,16 @@ export async function processQueue ({ id }) {
 
     totalTransactionValue += permit.cost
 
-    const permission = await mapToPermission(referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou)
+    const permission = await mapToPermission(
+      referenceNumber,
+      transactionRecord,
+      issueDate,
+      startDate,
+      endDate,
+      dataSource,
+      isLicenceForYou,
+      isMultiBuy
+    )
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -102,7 +112,16 @@ export async function processQueue ({ id }) {
     .promise()
 }
 
-const mapToPermission = async (referenceNumber, transactionRecord, issueDate, startDate, endDate, dataSource, isLicenceForYou) => {
+const mapToPermission = async (
+  referenceNumber,
+  transactionRecord,
+  issueDate,
+  startDate,
+  endDate,
+  dataSource,
+  isLicenceForYou,
+  isMultiBuy
+) => {
   const permission = new Permission()
   permission.referenceNumber = referenceNumber
   permission.stagingId = transactionRecord.id
@@ -110,6 +129,7 @@ const mapToPermission = async (referenceNumber, transactionRecord, issueDate, st
   permission.startDate = startDate
   permission.endDate = endDate
   permission.dataSource = dataSource
+  permission.isMultiBuy = isMultiBuy
   if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
     permission.isLicenceForYou = await getGlobalOptionSetValue(
       Permission.definition.mappings.isLicenceForYou.ref,
@@ -171,7 +191,7 @@ const createTransactionEntities = async transactionRecord => {
 export const getTransactionJournalRefNumber = (transactionRecord, type) => {
   if (POCL_TRANSACTION_SOURCES.includes(transactionRecord.dataSource) && type === 'Payment') {
     if (transactionRecord.dataSource === DDE_DATA_SOURCE && transactionRecord.journalId) {
-      return `DDE-${(new Date()).getFullYear()}-${transactionRecord.journalId}`
+      return `DDE-${new Date().getFullYear()}-${transactionRecord.journalId}`
     }
     return transactionRecord.serialNumber || transactionRecord.id
   }

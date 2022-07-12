@@ -14,6 +14,7 @@ import {
 } from '@defra-fish/dynamics-lib'
 import {
   mockFinalisedTransactionRecord,
+  mockFinalisedPermissionRecord,
   MOCK_1DAY_SENIOR_PERMIT_ENTITY,
   MOCK_12MONTH_SENIOR_PERMIT,
   MOCK_12MONTH_DISABLED_PERMIT,
@@ -220,6 +221,23 @@ describe('transaction service', () => {
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
     })
 
+    it('sets multibuy to false if there is only one permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const [[persistMockFirstCall]] = persist.mock.calls
+      expect(persistMockFirstCall[4].isMultiBuy).toBeFalsy()
+    })
+
+    it('sets multibuy to true if there is more than one permission', async () => {
+      const mockRecord = mockFinalisedTransactionRecord()
+      mockRecord.permissions.push(mockFinalisedPermissionRecord())
+      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      await processQueue({ id: mockRecord.id })
+      const [[persistMockFirstCall]] = persist.mock.calls
+      expect(persistMockFirstCall[4].isMultiBuy).toBeTruthy()
+    })
+
     it('handles requests which relate to an transaction file', async () => {
       const transactionFilename = 'test-file.xml'
       const mockRecord = mockFinalisedTransactionRecord()
@@ -252,7 +270,7 @@ describe('transaction service', () => {
         ['123456', 2020],
         ['654321', 2021],
         ['567890', 2022]
-      ])('and it\'s a DDE File, and has a journal id, returns journal id', (journalId, year) => {
+      ])("and it's a DDE File, and has a journal id, returns journal id", (journalId, year) => {
         jest.useFakeTimers()
         jest.setSystemTime(new Date(year, 1, 1, 10, 0, 0, 0))
         const mockRecord = getSampleRecord({
@@ -264,7 +282,7 @@ describe('transaction service', () => {
         jest.useRealTimers()
       })
 
-      it('and it\'s a POCL file, and has a journal id and a serial number, returns serial number', () => {
+      it("and it's a POCL file, and has a journal id and a serial number, returns serial number", () => {
         const mockRecord = getSampleRecord()
         mockRecord.journalId = '123456'
         const refNumber = getTransactionJournalRefNumber(mockRecord, 'Payment')
