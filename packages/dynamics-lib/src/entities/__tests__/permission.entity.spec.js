@@ -1,4 +1,4 @@
-import { Permission, Contact, Permit, PoclFile, Transaction, retrieveGlobalOptionSets } from '../../index.js'
+import { Permission, Contact, Permit, PoclFile, Transaction } from '../../index.js'
 
 const mockIds = [
   '$45812ea6-991f-41b3-8760-03542f9cc130',
@@ -78,7 +78,6 @@ describe('permission entity', () => {
         }
       }
     }
-
   })
 
   describe('maps from dynamics', () => {
