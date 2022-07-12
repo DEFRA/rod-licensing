@@ -703,21 +703,23 @@ describe('getContactDetails and getLicenseeDetailsSummaryRows', () => {
   it.only('if is not physical then has link to contact change link', () => {
     const mssgs = getSampleRequest().i18n.getCatalog()
     isPhysical.mockReturnValueOnce(false)
+    const languageCodeDecoratorMockValue = Symbol('decorate-uri')
+    addLanguageCodeToUri.mockReturnValueOnce(languageCodeDecoratorMockValue)
     const contactDetails = getContactDetails(mssgs, getSamplePermissionNotPostal(), generateRequestMock())
     expect(contactDetails[0]).toEqual(
       expect.objectContaining({
         key: { text: 'contact_summary_licence_details' },
         value: { text: 'contact_summary_texts_to_0123456789' },
-        actions: {
-          items: [
-            {
-              href: addLanguageCodeToUri(generateRequestMock(), CONTACT.uri),
+        actions: expect.objectContaining({
+          items: expect.arrayContaining([
+            expect.objectContaining({
+              href: languageCodeDecoratorMockValue, // addLanguageCodeToUri(generateRequestMock(), CONTACT.uri)
               text: 'licence_summary_change',
               visuallyHiddenText: 'hidden_text_contact',
               attributes: { id: 'change-contact' }
-            }
-          ]
-        }
+            })
+          ])
+        })
       })
     )
   })
