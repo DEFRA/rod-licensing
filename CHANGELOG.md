@@ -1,4 +1,18 @@
 
+## v1.26.0-rc.7 (2022-07-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1392](https://github.com/DEFRA/rod-licensing/pull/1392) Welsh - Enter address manual title ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1388](https://github.com/DEFRA/rod-licensing/pull/1388) Privacy policy - add missing welsh translations ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1389](https://github.com/DEFRA/rod-licensing/pull/1389) Accessibility - Phone error message ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 
