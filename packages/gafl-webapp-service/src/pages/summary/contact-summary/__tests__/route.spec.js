@@ -355,5 +355,85 @@ describe('contact-summary > route', () => {
       const result = await getData(mockRequest(transaction))
       expect(result.uri.licenceSummary).toBe(LICENCE_SUMMARY.uri)
     })
+
+    it('should set the licence information based on orginal licence info if isLicenceForYou is true for both', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        renewal: false,
+        [ADDRESS_ENTRY.page]: true,
+        [ADDRESS_SELECT.page]: true,
+        [CONTACT.page]: true,
+        [LICENCE_FULFILMENT.page]: true,
+        [LICENCE_CONFIRMATION_METHOD.page]: true
+      }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Graham',
+          lastName: 'Willis',
+          birthDate: '1946-01-01',
+          premises: '14 Howecroft Court',
+          street: 'Eastmead Lane',
+          locality: 'Bristolville',
+          town: 'Bristol',
+          postcode: 'BS9 1HJ',
+          countryCode: 'GB',
+          noLicenceRequired: true,
+          preferredMethodOfConfirmation: 'Email',
+          email: 'name@example.com',
+          text: undefined,
+          preferredMethodOfReminder: 'Email',
+          preferredMethodOfNewsletter: 'Prefer not to be contacted'
+        },
+        isLicenceForYou: true
+      }))
+      const transaction = {
+        permissions: [
+          {
+            licensee: {
+              firstName: 'Graham',
+              lastName: 'Willis',
+              birthDate: '1946-01-01',
+              premises: '14 Howecroft Court',
+              street: 'Eastmead Lane',
+              locality: 'Bristolville',
+              town: 'Bristol',
+              postcode: 'BS9 1HJ',
+              countryCode: 'GB',
+              noLicenceRequired: true,
+              preferredMethodOfConfirmation: 'Email',
+              email: 'name@example.com',
+              text: undefined,
+              preferredMethodOfReminder: 'Email',
+              preferredMethodOfNewsletter: 'Prefer not to be contacted'
+            },
+            isLicenceForYou: true
+          },
+          {
+            licensee: {
+              firstName: 'Graham',
+              lastName: 'Willis',
+              birthDate: '1946-01-01',
+              premises: undefined,
+              street: undefined,
+              locality: undefined,
+              town: undefined,
+              postcode: undefined,
+              countryCode: undefined,
+              noLicenceRequired: undefined,
+              preferredMethodOfConfirmation: undefined,
+              email: undefined,
+              text: undefined,
+              preferredMethodOfReminder: undefined,
+              preferredMethodOfNewsletter: undefined
+            },
+            isLicenceForYou: true
+          }
+        ],
+        length: 2
+      }
+      isMultibuyForYou.mockImplementationOnce(() => true)
+      generateRequestMock(transaction)
+      const { summaryTable } = await getData(mockRequest(transaction))
+      expect(summaryTable).toMatchSnapshot()
+    })
   })
 })

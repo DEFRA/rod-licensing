@@ -52,6 +52,7 @@ export const getData = async request => {
     const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
 
     const xferProps = [
+      'noLicenceRequired',
       'premises',
       'street',
       'locality',
