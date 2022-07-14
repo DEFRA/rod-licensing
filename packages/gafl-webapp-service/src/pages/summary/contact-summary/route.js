@@ -62,7 +62,7 @@ export const getData = async request => {
       'email',
       'text',
       'preferredMethodOfReminder',
-      'preferredMethodOfNewletter'
+      'preferredMethodOfNewsletter'
     ]
     for (const prop of xferProps) {
       permission.licensee[prop] = getLicence.licensee[prop]
