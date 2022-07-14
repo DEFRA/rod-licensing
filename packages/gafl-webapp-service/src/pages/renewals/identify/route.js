@@ -2,6 +2,7 @@ import { IDENTIFY, AUTHENTICATE, NEW_TRANSACTION } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
@@ -22,7 +23,7 @@ const getData = async request => {
   return {
     referenceNumber: permission.referenceNumber,
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

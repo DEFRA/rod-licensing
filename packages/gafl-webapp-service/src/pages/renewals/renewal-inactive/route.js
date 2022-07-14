@@ -4,6 +4,7 @@ import moment from 'moment'
 import { dateDisplayFormat } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { RENEWAL_ERROR_REASON } from '../../../constants.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 export const getTitleAndBodyMessage = (mssgs, reason, referenceNumber, validTo) => {
   switch (reason) {
@@ -41,7 +42,7 @@ export const getData = async request => {
     reason: authentication.reason,
     reasonCodes: RENEWAL_ERROR_REASON,
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
