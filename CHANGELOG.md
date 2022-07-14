@@ -1,4 +1,14 @@
 
+## v1.26.0-rc.10 (2022-07-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1391](https://github.com/DEFRA/rod-licensing/pull/1391) Modify Welsh text on concessions page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1390](https://github.com/DEFRA/rod-licensing/pull/1390) Update messages about postcode ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 ## v1.26.0-rc.7 (2022-07-13)
