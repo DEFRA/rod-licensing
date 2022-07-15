@@ -56,7 +56,7 @@ describe('licence-to-start > result-function', () => {
       expect(isMultibuyForYou).toHaveBeenCalledWith(request)
     })
 
-    it('should return licenceToStartResults.AND_START_TIME if not 12 months lenghts and licence to start is another date', async () => {
+    it('should return licenceToStartResults.AND_START_TIME if not 12 months lengths and licence to start is another date', async () => {
       isMultibuyForYou.mockImplementationOnce(() => true)
       const result = await resultFunction(getMockRequest('some future date', '8D'))
       expect(result).toBe(licenceToStartResults.AND_START_TIME)

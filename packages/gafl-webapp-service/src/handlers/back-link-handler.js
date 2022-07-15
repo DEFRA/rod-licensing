@@ -9,9 +9,8 @@ export default async (status, defaultUrl) => {
       return CHANGE_LICENCE_OPTIONS.uri
     } else if (summarySeen === LICENCE_SUMMARY_SEEN) {
       return LICENCE_SUMMARY.uri
-    } else {
-      return CONTACT_SUMMARY.uri
     }
+    return CONTACT_SUMMARY.uri
   }
 
   return defaultUrl

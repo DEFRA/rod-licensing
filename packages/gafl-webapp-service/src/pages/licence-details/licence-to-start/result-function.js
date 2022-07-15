@@ -9,8 +9,6 @@ export const licenceToStartResults = {
 
 export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const routeDirection = commonResultHandler(request)
-
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
   if (checkIsMultibuyForYou === false) {
@@ -24,5 +22,5 @@ export default async request => {
     return licenceToStartResults.AND_START_TIME
   }
 
-  return routeDirection
+  return commonResultHandler(request)
 }

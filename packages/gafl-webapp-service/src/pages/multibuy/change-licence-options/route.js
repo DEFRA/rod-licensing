@@ -24,6 +24,9 @@ import * as concessionHelper from '../../../processors/concession-helper.js'
 // Extracted to keep sonar happy
 export const checkNavigation = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
+    console.log('here')
+    console.log(permission.licensee.firstName)
+
     throw new GetDataRedirect(NAME.uri)
   }
 
@@ -40,6 +43,7 @@ export const checkNavigation = permission => {
   }
 
   if (!permission.licenceLength) {
+    console.log(permission.licensee.firstName)
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 }
