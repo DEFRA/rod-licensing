@@ -1,4 +1,4 @@
-import { CommonResults } from '../../../constants.js'
+import commonResultHandler from '../../../handlers/multibuy-amend-handler.js'
 import { ageConcessionResults } from '../../concessions/date-of-birth/result-function.js'
 import { licenceToStart } from './update-transaction.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
@@ -9,8 +9,6 @@ export const licenceToStartResults = {
 
 export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const status = await request.cache().helpers.status.getCurrentPermission()
-
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
   if (checkIsMultibuyForYou === false) {
@@ -24,5 +22,5 @@ export default async request => {
     return licenceToStartResults.AND_START_TIME
   }
 
-  return status.fromSummary ? CommonResults.SUMMARY : CommonResults.OK
+  return commonResultHandler(request)
 }

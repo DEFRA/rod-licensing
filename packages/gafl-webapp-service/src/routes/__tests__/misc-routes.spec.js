@@ -6,12 +6,13 @@ import {
   PRIVACY_POLICY,
   RENEWAL_PUBLIC,
   IDENTIFY,
-  LICENCE_SUMMARY,
   OS_TERMS,
-  SET_CURRENT_PERMISSION
+  SET_CURRENT_PERMISSION,
+  CHANGE_LICENCE_OPTIONS
 } from '../../uri.js'
+import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../constants.js'
 import miscRoutes from '../misc-routes.js'
-import { createMockRequest, createMockRequestToolkit } from '../../__mocks__/request.js'
+import { createMockRequestToolkit } from '../../__mocks__/request.js'
 
 // Start application before running the test case
 beforeAll(() => new Promise(resolve => start(resolve)))
@@ -72,9 +73,45 @@ describe('The miscellaneous route handlers', () => {
     const data = await injectWithCookies('GET', OS_TERMS.uri)
     expect(data.statusCode).toBe(200)
   })
+
+  it('redirects to the licence options page', async () => {
+    const data = await injectWithCookies('GET', SET_CURRENT_PERMISSION.uri)
+    const mockStatusCacheGet = jest.fn(() => ({}))
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: 'seen' }))
+    expect(data.statusCode).toBe(302)
+  })
+
+  it('redirects to the licence summary page', async () => {
+    const data = await injectWithCookies('GET', SET_CURRENT_PERMISSION.uri)
+    const mockStatusCacheGet = jest.fn(() => ({}))
+    mockStatusCacheGet.mockImplementationOnce(() => ({ fromLicenceOptions: 'not-seen' }))
+    expect(data.statusCode).toBe(302)
+  })
 })
 
 describe('SET_CURRENT_PERMISSION handler', () => {
+  jest.mock('../../constants', () => ({
+    CHANGE_LICENCE_OPTIONS_SEEN: {
+      SEEN: 'seen',
+      NOT_SEEN: 'not-seen'
+    }
+  }))
+
+  const mockStatusCacheGet = jest.fn()
+  const mockStatusCacheSet = jest.fn()
+
+  const mockRequest = (query = {}) => ({
+    cache: () => ({
+      helpers: {
+        status: {
+          get: mockStatusCacheGet,
+          set: mockStatusCacheSet
+        }
+      }
+    }),
+    query
+  })
+
   beforeEach(() => jest.clearAllMocks())
   const currentPermissionHandler = miscRoutes.find(r => r.path === SET_CURRENT_PERMISSION.uri).handler
   it.each([
@@ -83,18 +120,38 @@ describe('SET_CURRENT_PERMISSION handler', () => {
     ['7', 7],
     ['2', 2]
   ])('sets current permission index', async (permissionIndex, currentPermissionIdx) => {
-    const mockRequest = createMockRequest({ cache: { status: { set: jest.fn() } }, query: { permissionIndex } })
-    await currentPermissionHandler(mockRequest, createMockRequestToolkit())
-    expect(mockRequest.cache().helpers.status.set).toHaveBeenCalledWith(
+    const status = {
+      [CHANGE_LICENCE_OPTIONS_SEEN.SEEN]: 'seen'
+    }
+    const query = {
+      permissionIndex: permissionIndex
+    }
+
+    mockStatusCacheGet.mockImplementationOnce(() => status)
+
+    await currentPermissionHandler(mockRequest(query), createMockRequestToolkit())
+    expect(mockStatusCacheSet).toHaveBeenCalledWith(
       expect.objectContaining({
         currentPermissionIdx
       })
     )
   })
 
-  it('redirects to licence summary page', async () => {
+  it('redirects to licence options page', async () => {
+    const status = {
+      fromChangeLicenceOptions: 'seen'
+    }
+
+    const query = {
+      permissionIndex: '1'
+    }
+
+    mockStatusCacheGet.mockImplementationOnce(() => status)
+
     const mockToolkit = createMockRequestToolkit()
-    await currentPermissionHandler(createMockRequest(), mockToolkit)
-    expect(mockToolkit.redirect).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
+
+    await currentPermissionHandler(mockRequest(query), mockToolkit)
+
+    expect(mockToolkit.redirect).toHaveBeenCalledWith(CHANGE_LICENCE_OPTIONS.uri)
   })
 })
