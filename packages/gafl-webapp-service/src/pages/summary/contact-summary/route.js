@@ -52,6 +52,7 @@ export const getData = async request => {
     const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
 
     const xferProps = [
+      'noLicenceRequired',
       'premises',
       'street',
       'locality',
@@ -62,7 +63,7 @@ export const getData = async request => {
       'email',
       'text',
       'preferredMethodOfReminder',
-      'preferredMethodOfNewletter'
+      'preferredMethodOfNewsletter'
     ]
     for (const prop of xferProps) {
       permission.licensee[prop] = getLicence.licensee[prop]

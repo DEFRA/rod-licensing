@@ -1,5 +1,70 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`contact-summary > route getData should set the licence information based on orginal licence info if isLicenceForYou is true for both 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": "/buy/find-address",
+          "text": "Change",
+          "visuallyHiddenText": "address",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Address",
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristolville, Bristol, BS9 1HJ, UNITED KINGDOM",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": "/buy/contact",
+          "text": "Change",
+          "visuallyHiddenText": "contact",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence details",
+    },
+    "value": Object {
+      "text": "Email to name@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": "/buy/newsletter",
+          "text": "Change",
+          "visuallyHiddenText": "newsletter",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Newsletter",
+    },
+    "value": Object {
+      "text": "No",
+    },
+  },
+]
+`;
+
 exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter row if isLicenceForYou is true 1`] = `
 Array [
   Object {
