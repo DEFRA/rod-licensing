@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.12 (2022-07-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1399](https://github.com/DEFRA/rod-licensing/pull/1399) Easy renewals wording change renew rod licence? page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.26.0-rc.10 (2022-07-14)
 
