@@ -2,9 +2,15 @@ import { getData, getTitleAndBodyMessage } from '../route'
 import { NEW_TRANSACTION } from '../../../../uri.js'
 import { RENEWAL_ERROR_REASON } from '../../../../constants'
 import moment from 'moment-timezone'
+import { cacheDateFormat, dateDisplayFormat } from '../../../../processors/date-and-time-display.js'
 
 import englishTranslations from '../../../../locales/en.json'
 import welshTranslations from '../../../../locales/cy.json'
+
+jest.mock('../../../../processors/date-and-time-display.js', () => ({
+  cacheDateFormat: 'YYYY-MM-DD',
+  dateDisplayFormat: 'D MMMM YYYY'
+}))
 
 jest.mock('moment-timezone')
 const getMomentMockImpl = (overrides = {}) =>
@@ -164,18 +170,16 @@ describe('renewal-inactive > route', () => {
       expect(titleAndBodyMessage.bodyMessage).toEqual(bodyMessage)
     })
 
-    it.each([['2020-12-13T23:59:59Z'], ['2020-01-13T23:59:59Z'], ['2020-10-13T23:59:59Z']])(
-      'endDate is passed to moment',
-      async endDate => {
-        mockStatusCacheGet.mockImplementationOnce(() => ({
-          authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate },
-          referenceNumber: 'ABC123'
-        }))
-        moment.mockImplementation(getMomentMockImpl())
-        await getData(mockRequest)
-        expect(moment).toHaveBeenCalledWith(endDate, 'YYYY-MM-DD', 'en-gb')
-      }
-    )
+    it('endDate is passed to moment', async () => {
+      const endDate = Symbol('endDate')
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate },
+        referenceNumber: 'ABC123'
+      }))
+      moment.mockImplementation(getMomentMockImpl())
+      await getData(mockRequest)
+      expect(moment).toHaveBeenCalledWith(endDate, expect.any(String), expect.any(String))
+    })
 
     it('cacheDateFormat being what is expected', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({
@@ -184,10 +188,11 @@ describe('renewal-inactive > route', () => {
       }))
       moment.mockImplementation(getMomentMockImpl())
       await getData(mockRequest)
-      expect(moment).toHaveBeenCalledWith('2020-12-13T23:59:59Z', 'YYYY-MM-DD', 'en-gb')
+      expect(moment).toHaveBeenCalledWith(expect.any(String), cacheDateFormat, expect.any(String))
     })
 
-    it.each([['en-gb'], ['cy']])('locale is set on moment, to whatever the request.locale is', async language => {
+    it('locale is set on moment, to whatever the request.locale is', async () => {
+      const language = Symbol('endDate')
       const mockRequest = {
         cache: () => ({
           helpers: {
@@ -208,7 +213,7 @@ describe('renewal-inactive > route', () => {
       const format = jest.fn()
       moment.mockImplementation(getMomentMockImpl({ format }))
       await getData(mockRequest)
-      expect(moment).toHaveBeenCalledWith('2020-12-13T23:59:59Z', 'YYYY-MM-DD', language)
+      expect(moment).toHaveBeenCalledWith(expect.any(String), expect.any(String), language)
     })
 
     it('dateDisplayFormat is passed to format', async () => {
@@ -219,7 +224,7 @@ describe('renewal-inactive > route', () => {
       const format = jest.fn()
       moment.mockImplementation(getMomentMockImpl({ format }))
       await getData(mockRequest)
-      expect(format).toHaveBeenCalledWith('D MMMM YYYY')
+      expect(format).toHaveBeenCalledWith(dateDisplayFormat)
     })
   })
 
