@@ -1,6 +1,7 @@
 import route from '../route.js'
 import moment from 'moment-timezone'
 import pageRoute from '../../../../routes/page-route.js'
+import { cacheDateFormat } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../../../routes/page-route.js', () =>
   jest.fn(() => [
@@ -10,6 +11,11 @@ jest.mock('../../../../routes/page-route.js', () =>
     }
   ])
 )
+
+jest.mock('../../../../processors/date-and-time-display.js', () => ({
+  cacheDateFormat: 'YYYY-MM-DD'
+}))
+
 jest.mock('moment-timezone')
 const realMoment = jest.requireActual('moment-timezone')
 
@@ -180,18 +186,19 @@ describe('getData', () => {
     expect(startDateStr).toEqual(formatSymbol)
   })
 
-  it.each([['2020-07-06'], ['2020-01-01'], ['2022-07-09']])('permission licence start date is passed to moment', async licenceStartDate => {
+  it('permission licence start date is passed to moment', async () => {
+    const licenceStartDate = Symbol('licenceStartDate')
     mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate }))
     moment.mockImplementation(getMomentMockImpl())
     await getData(mockRequest)
-    expect(moment).toHaveBeenCalledWith(licenceStartDate, 'YYYY-MM-DD', 'en-gb')
+    expect(moment).toHaveBeenCalledWith(licenceStartDate, expect.any(String), expect.any(String))
   })
 
   it('cacheDateFormat being what is expected', async () => {
     mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceStartDate: '2020-01-01' }))
     moment.mockImplementation(getMomentMockImpl())
     await getData(mockRequest)
-    expect(moment).toHaveBeenCalledWith('2020-01-01', 'YYYY-MM-DD', 'en-gb')
+    expect(moment).toHaveBeenCalledWith(expect.any(String), cacheDateFormat, expect.any(String))
   })
 
   it('dddd, Do MMMM, YYYY is passed to format', async () => {
@@ -202,7 +209,8 @@ describe('getData', () => {
     expect(format).toHaveBeenCalledWith('dddd, Do MMMM, YYYY')
   })
 
-  it.each([['en-gb'], ['cy']])('locale is set on moment, to whatever the request.locale is', async language => {
+  it('locale is set on moment, to whatever the request.locale is', async () => {
+    const language = Symbol('locale')
     const mockRequest = {
       cache: () => ({
         helpers: {
@@ -217,6 +225,6 @@ describe('getData', () => {
     const format = jest.fn()
     moment.mockImplementation(getMomentMockImpl({ format }))
     await getData(mockRequest)
-    expect(moment).toHaveBeenCalledWith('2020-01-01', 'YYYY-MM-DD', language)
+    expect(moment).toHaveBeenCalledWith(expect.any(String), expect.any(String), language)
   })
 })
