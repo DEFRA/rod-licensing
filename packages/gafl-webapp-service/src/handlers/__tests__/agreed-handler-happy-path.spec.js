@@ -15,8 +15,9 @@ import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 
-jest.mock('../../processors/uri-helper.js')
-addLanguageCodeToUri.mockReturnValue('/buy/order-complete')
+jest.mock('../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn(() => '/buy/order-complete')
+}))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
