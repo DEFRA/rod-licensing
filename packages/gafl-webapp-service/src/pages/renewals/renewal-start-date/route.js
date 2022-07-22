@@ -23,7 +23,7 @@ const validator = payload => {
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  const expiryTimeString = displayExpiryDate(permission)
+  const expiryTimeString = displayExpiryDate(request, permission)
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
 
   return {
