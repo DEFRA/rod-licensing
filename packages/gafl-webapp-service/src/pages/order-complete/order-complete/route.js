@@ -8,7 +8,7 @@ import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.get()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -29,7 +29,6 @@ const getData = async request => {
 
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
-
   const startTimeStringTitle = displayStartTime(permission, request.i18n.getCatalog())
   return {
     permission,

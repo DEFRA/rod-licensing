@@ -14,34 +14,38 @@ import {
   NEW_TRANSACTION
 } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import pageRoute from '../../../../routes/page-route.js'
+import { getData } from '../route.js'
+import { COMPLETION_STATUS } from '../../../../constants.js'
 
-jest.mock('../../../../routes/page-route.js', () =>
-  jest.fn(() => [
-    {
-      method: 'POST',
-      options: {}
-    }
-  ])
-)
+jest.mock('../../../../processors/uri-helper.js')
 
-const getMockRequest = () => ({
+const mockStatusCacheGet = jest.fn()
+const mockTransactionCacheGet = jest.fn()
+
+const mockRequest = {
   cache: () => ({
     helpers: {
       status: {
+        get: mockStatusCacheGet,
         setCurrentPermission: async () => ({
           referenceNumber: 'abc-123'
         }),
         set: async () => ({
           referenceNumber: 'abc-123'
         })
+      },
+      transaction: {
+        getCurrentPermission: mockTransactionCacheGet
       }
     }
   }),
+  url: {
+    search: ''
+  },
   i18n: {
     getCatalog: () => 'messages'
   }
-})
+}
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
@@ -131,11 +135,20 @@ describe('The order completion handler', () => {
     expect(data.statusCode).toBe(200)
   })
 
-  it.only('addLanguageCodeToUri is called with the expected arguments', async () => {
-    const getData = pageRoute.mock.calls[1][4]
-    const { uri } = await getData(getMockRequest)
-    const language = addLanguageCodeToUri(getMockRequest, NEW_TRANSACTION.uri)
-    expect(uri.new).toEqual(language)
-    // expect(addLanguageCodeToUri).toHaveBeenCalled(getMockRequest, NEW_TRANSACTION.uri)
+  it('addLanguageCodeToUri is called with the expected arguments', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    }))
+    mockTransactionCacheGet.mockImplementationOnce(() => ({
+      startDate: '2019-12-14T00:00:00Z',
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    }))
+    await getData(mockRequest)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
   })
 })

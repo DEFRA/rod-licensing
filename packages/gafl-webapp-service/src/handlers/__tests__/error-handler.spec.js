@@ -1,5 +1,8 @@
 import { errorHandler } from '../error-handler.js'
-import { CLIENT_ERROR } from '../../uri.js'
+import { CLIENT_ERROR, NEW_TRANSACTION, CONTROLLER, AGREED } from '../../uri.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js')
 
 describe('error-handler', () => {
   describe('errorHandler', () => {
@@ -88,6 +91,16 @@ describe('error-handler', () => {
         }
       })
     })
+
+    it.each([[NEW_TRANSACTION.uri], [CONTROLLER.uri], [AGREED.uri]])(
+      'addLanguageCodeToUri is called with the expected arguments',
+      async urlToCheck => {
+        const request = getMockRequest()
+        const mockToolkit = getMockToolkit()
+        await errorHandler(request, mockToolkit)
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
+      }
+    )
   })
 
   const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
@@ -115,6 +128,9 @@ describe('error-handler', () => {
       output: {
         statusCode: 400
       }
+    },
+    url: {
+      search: ''
     }
   })
 })

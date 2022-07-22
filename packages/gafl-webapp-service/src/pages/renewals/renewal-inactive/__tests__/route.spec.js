@@ -1,9 +1,12 @@
 import { getData, getTitleAndBodyMessage } from '../route'
 import { NEW_TRANSACTION } from '../../../../uri.js'
 import { RENEWAL_ERROR_REASON } from '../../../../constants'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper'
 
 import englishTranslations from '../../../../locales/en.json'
 import welshTranslations from '../../../../locales/cy.json'
+
+jest.mock('../../../../processors/uri-helper.js')
 
 describe('renewal-inactive > route', () => {
   const mockStatusCacheGet = jest.fn()
@@ -18,6 +21,9 @@ describe('renewal-inactive > route', () => {
     }),
     i18n: {
       getCatalog: jest.fn(() => englishTranslations)
+    },
+    url: {
+      search: ''
     }
   }
   describe('getData', () => {
@@ -28,9 +34,12 @@ describe('renewal-inactive > route', () => {
     })
 
     it('should return the new transation uri', async () => {
+      const returnValue = Symbol('uri')
+      addLanguageCodeToUri.mockReturnValueOnce(returnValue)
       mockStatusCacheGet.mockImplementationOnce(() => ({ authentication: {} }))
       const result = await getData(mockRequest)
-      expect(result.uri.new).toBe(NEW_TRANSACTION.uri)
+      const ret = result.uri.new
+      expect(ret).toEqual(returnValue)
     })
 
     it('should return the body message', async () => {
@@ -108,6 +117,17 @@ describe('renewal-inactive > route', () => {
       const result = getTitleAndBodyMessage(englishTranslations, undefined, 'ABC123', '13 December 2020')
       expect(result.bodyMessage).toBe('')
       expect(result.title).toBe('')
+    })
+
+    it('addLanguageCodeToUri is called with the expected arguments', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({
+        authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
+        referenceNumber: 'ABC123'
+      }))
+
+      await getData(mockRequest)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
     })
   })
 })
