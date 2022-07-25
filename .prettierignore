@@ -43,4 +43,4 @@ lerna.json
 CHANGELOG.md
 
 # Camel case in error-handler
- packages/gafl-webapp-service/src/handlers/error-handler.js
+packages/gafl-webapp-service/src/handlers/error-handler.js
