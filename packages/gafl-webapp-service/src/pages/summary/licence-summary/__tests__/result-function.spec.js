@@ -27,9 +27,10 @@ describe('licence-summary > result-function', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: true }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ showDigitalLicencePages: true }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
+        isRenewal: true,
         licensee: {
           postalFulfilment: true
         }
@@ -39,9 +40,10 @@ describe('licence-summary > result-function', () => {
     })
 
     it('should return the summary screen, if licence is in renewal, is 12 months and showDigitalLicencePages is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: false }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ showDigitalLicencePages: false }))
       mockTransactionPageGet.mockImplementationOnce(() => ({
         licenceLength: '12M',
+        isRenewal: true,
         licensee: {
           postalFulfilment: false
         }
@@ -65,6 +67,13 @@ describe('licence-summary > result-function', () => {
 
     it('should return summary if fromSummary is true', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'contact-summary', CONTACT_SUMMARY_SEEN: 'contact-summary' }))
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        isRenewal: false,
+        licensee: {
+          postalFulfilment: false
+        }
+      }))
       isMultibuyForYou.mockImplementationOnce(() => false)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.SUMMARY)
@@ -72,6 +81,13 @@ describe('licence-summary > result-function', () => {
 
     it('should return ok if fromSummary is false', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'not-contact-summary', CONTACT_SUMMARY_SEEN: 'contact-summary' }))
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        isRenewal: false,
+        licensee: {
+          postalFulfilment: false
+        }
+      }))
       isMultibuyForYou.mockImplementationOnce(() => false)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.OK)
@@ -79,6 +95,13 @@ describe('licence-summary > result-function', () => {
 
     it('should return isMultibuyForYou when is true', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        isRenewal: false,
+        licensee: {
+          postalFulfilment: false
+        }
+      }))
       isMultibuyForYou.mockImplementationOnce(() => true)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(MultibuyForYou.YES)
@@ -86,6 +109,13 @@ describe('licence-summary > result-function', () => {
 
     it('should not return isMultibuyForYou when is false', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
+      mockTransactionPageGet.mockImplementationOnce(() => ({
+        licenceLength: '12M',
+        isRenewal: false,
+        licensee: {
+          postalFulfilment: false
+        }
+      }))
       isMultibuyForYou.mockImplementationOnce(() => false)
       const result = await resultFunction(mockRequest)
       expect(result).not.toBe(MultibuyForYou.YES)

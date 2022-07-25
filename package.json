@@ -31,7 +31,7 @@
     "docker:services-dev": "TAG=dev docker stack deploy -c docker/services.dev.yml rls",
     "docker:build": "PROJECT_DOCKERFILE=Dockerfile docker-compose -f docker/services.build.yml build",
     "docker:services": "docker stack deploy -c docker/services.yml rls",
-    "pre-commit": "npm run test:only-changed && lint-staged",
+    "pre-commit": "npm run test && lint-staged",
     "pre-push": "prettier-standard --check --lint --since develop"
   },
   "devDependencies": {

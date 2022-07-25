@@ -161,6 +161,7 @@ describe('permission entity', () => {
     permission.dataSource = { id: '99999999', label: 'Door to Door', description: 'Door to door sales' }
     permission.isLicenceForYou = { id: '1', label: 'Might be', description: 'Definitely maybe' }
     permission.isMultiBuy = true
+    permission.isRenewal = true
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)

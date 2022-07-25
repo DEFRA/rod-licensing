@@ -65,6 +65,19 @@ const getDataSource = children => {
   return POST_OFFICE_DATASOURCE
 }
 
+export const convertDateTime = (dateTime, formats) => {
+  for (const format of formats) {
+    const result = moment
+      .tz(dateTime, format, true, SERVICE_LOCAL_TIME)
+      .utc()
+      .toISOString()
+    if (result) {
+      return result
+    }
+  }
+  return null
+}
+
 /**
  * Transaction record (the <REC> element)
  * @type {Binding}
@@ -130,15 +143,10 @@ export const Transaction = new Binding({
               postalFulfilment: permit?.isForFulfilment
             },
             issueDate: transactionDate,
-            startDate: moment
-              .tz(
-                children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element],
-                'DD/MM/YYYYHH:mm',
-                true,
-                SERVICE_LOCAL_TIME
-              )
-              .utc()
-              .toISOString(),
+            startDate: convertDateTime(children[licenceBindings.StartDate.element] + children[licenceBindings.StartTime.element], [
+              'DD/MM/YYYYHH:mm',
+              'DD/MM/YYYYHH:mm:ss'
+            ]),
             permitId: permit?.id,
             ...children[concessionBindings.SeniorConcession.element],
             ...children[concessionBindings.PipConcession.element],

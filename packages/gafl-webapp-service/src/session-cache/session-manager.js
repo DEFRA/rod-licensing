@@ -37,8 +37,8 @@ const agreedHandlerProtectionExemptSet = [
   COOKIES.uri
 ]
 
-// regex for /renew/{referenceNumber?} and /buy/renew/identify
-const startProtectionExemptSet = [/^\/renew\/.*$/, /^\/buy\/renew\/identify$/]
+// regex for /renew/{referenceNumber?}, /buy/renew/identify and /renew-my-licence/{referenceNumber?}
+const startProtectionExemptSet = [/^\/renew\/.*$/, /^\/buy\/renew\/identify$/, /^\/renew-my-licence\/.*$/]
 
 const staticMatcherPublic = /^(?:\/public\/.*|\/robots.txt|\/favicon.ico)/
 const staticMatcherOidc = /^\/oidc\/.*/

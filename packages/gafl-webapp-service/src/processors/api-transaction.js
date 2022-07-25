@@ -27,6 +27,7 @@ export const prepareApiTransactionPayload = async request => {
             .utc()
             .toISOString()
         }),
+        isRenewal: p.isRenewal,
         isLicenceForYou: p.isLicenceForYou
       }
 

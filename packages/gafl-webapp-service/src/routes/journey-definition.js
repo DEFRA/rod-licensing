@@ -66,6 +66,9 @@ export default [
       },
       [MultibuyForYou.YES]: {
         page: LICENCE_TO_START
+      },
+      [CommonResults.SUMMARY]: {
+        page: LICENCE_SUMMARY
       }
     },
     backLink: status => backLinkHandler(status)
@@ -278,10 +281,10 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: status => {
+    backLink: (status, permission) => {
       if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
         return CONTACT_SUMMARY.uri
-      } else if (status.renewal) {
+      } else if (permission?.isRenewal) {
         return LICENCE_SUMMARY.uri
       } else {
         return ADDRESS_LOOKUP.uri

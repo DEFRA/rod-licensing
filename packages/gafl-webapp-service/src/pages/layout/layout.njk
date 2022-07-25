@@ -80,6 +80,17 @@
                 </span>
             </p>
         </div>
+        {% if SHOW_WELSH_CONTENT %}
+            <div class="govuk-width-container govuk-!-display-none-print govuk-!-margin-top-2">
+                <p class="govuk-body-s right-align govuk-!-margin-0">
+                    {% if _uri.queryParams.lang == 'cy' %}
+                        <a class="govuk-link govuk-!-margin-2" href="?lang=en">English</a> | <span class="govuk-body-s govuk-!-margin-2">Cymraeg</a>
+                    {% else %}
+                        <span class="govuk-body-s govuk-!-margin-2">English</span> | <a class="govuk-link govuk-!-margin-2" href="?lang=cy">Cymraeg</a>
+                    {% endif%}
+                </p>
+            </div>
+        {% endif%}
     {% endif %}
 {% endblock %}
 
@@ -88,6 +99,10 @@
 
 {% set footerHtml %}
     <div class="no-print">
+        {% if (title === mssgs.address_lookup_title_you) or (title === mssgs.address_lookup_title_other) %}
+            <p class="govuk-body-s">{{ mssgs.address_lookup_crown_copyright }}<a class="govuk-link" href="http://www.ordnancesurvey.co.uk" rel="noreferrer noopener" target="_blank">{{ mssgs.address_lookup_crown_copyright_new_tab }}</a> {{ mssgs.address_lookup_crown_copyright_ref }}
+            <br>{{ mssgs.address_lookup_crown_copyright_terms }} <a class="govuk-link" href="{{ data.uri.osTerms }}">{{ mssgs.address_lookup_crown_copyright_terms_link }}</a></p>
+        {% endif %}
         <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">{{ mssgs.footer_ea_helpline }} <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
         <p class="govuk-!-margin-top-0">{{ mssgs.footer_ea_helpline_opening_hours }}</p>
         <p class="govuk-!-margin-top-0"><a class="govuk-link" href="https://www.gov.uk/call-charges">{{ mssgs.footer_ea_helpline_charges_link }}</a></p>

@@ -317,7 +317,6 @@ describe('transaction service', () => {
       const [mockPermission] = mockRecord.permissions
       mockPermission.issueDate = issueDate
       mockPermission.startDate = startDate
-      const licenceLength = moment(endDate).subtract(moment(startDate))
       const completionFields = getCompletionFields()
       AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
         Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }

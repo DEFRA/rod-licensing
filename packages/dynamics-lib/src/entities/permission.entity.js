@@ -24,7 +24,8 @@ export class Permission extends BaseEntity {
       stagingId: { field: 'defra_stagingid', type: 'string' },
       dataSource: { field: 'defra_datasource', type: 'optionset', ref: 'defra_datasource' },
       isLicenceForYou: { field: 'defra_licenceforyou', type: 'optionset', ref: 'defra_islicenceforyou' },
-      isMultiBuy: { field: 'defra_ismultibuy', type: 'boolean' }
+      isMultiBuy: { field: 'defra_ismultibuy', type: 'boolean' },
+      isRenewal: { field: 'defra_renewal', type: 'boolean' }
     },
     relationships: {
       licensee: { property: 'defra_ContactId', entity: Contact, parent: true },
@@ -116,6 +117,18 @@ export class Permission extends BaseEntity {
   }
 
   /**
+   * Whether the permission is a renewal
+   * @type {boolean}
+   */
+  get isRenewal () {
+    return super._getState('isRenewal')
+  }
+
+  set isRenewal (isRenewal) {
+    super._setState('isRenewal', isRenewal)
+  }
+
+  /*
    * Whether the permission is for the user purchasing the licence or someone else
    * @type {boolean}
    */

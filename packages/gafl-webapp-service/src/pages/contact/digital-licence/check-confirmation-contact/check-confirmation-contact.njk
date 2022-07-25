@@ -1,29 +1,13 @@
 {% extends "standard-form.njk" %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
-{% set contactType %}
-  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-    {{ mssgs.email_address }}
-  {% else %}
-    {{ mssgs.phone_number }}
-  {% endif %}
-{% endset %}
-
-{% set contactInfo %}
-  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-   {{ data.licensee.email }}
-  {% else %}
-    {{ data.licensee.mobilePhone }}
-  {% endif %}
-{% endset %}
-
-{% set changeLinkUrl %}
-  {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
-   {{ data.uri.licenceConfirmationMethod }}?change=email
-  {% else %}
-    {{ data.uri.licenceConfirmationMethod }}?change=mobile
-  {% endif %}
-{% endset %}
+{% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
+  {% set contactType = mssgs.email_address %}
+  {% set contactInfo = data.licensee.email  %}
+{% else %}
+  {% set contactType = mssgs.phone_number  %}
+  {% set contactInfo = data.licensee.mobilePhone %}
+{% endif %}
 
 {% set title = mssgs.check_conf_contact_title_1 + contactType + mssgs.check_conf_contact_title_2 %}
 
@@ -49,7 +33,7 @@
       </p>
 
       <p class="govuk-body govuk-!-margin-bottom-6">
-        <a class="govuk-link" href="{{ changeLinkUrl }}">
+        <a class="govuk-link" href="{{ data.uri.change }}">
           {{ mssgs.licence_summary_change }} {{ contactType }}
         </a>
       </p>

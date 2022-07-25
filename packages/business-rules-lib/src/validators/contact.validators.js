@@ -182,6 +182,7 @@ export const createTownValidator = joi =>
     .example('Exampleton')
 
 export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s{0,6}([0-9][A-Z]{2})$/i
+export const overseasPostcodeRegex = /^([a-zA-Z0-9 ]{1,12})$/i
 
 /**
  * Create a validator to check a contact's postcode
@@ -213,8 +214,10 @@ export const createOverseasPostcodeValidator = joi =>
     .string()
     .trim()
     .min(1)
+    .max(12)
     .uppercase()
     .required()
+    .pattern(overseasPostcodeRegex)
 
 const nameStringSubstitutions = [
   /*

@@ -233,7 +233,7 @@ describe('The licence-fulfilment page', () => {
   })
   it('has a back-link to the licence-summary page if in renewal', () => {
     const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FULFILMENT.page)
-    expect(currentPage.backLink({ renewal: true })).toBe(LICENCE_SUMMARY.uri)
+    expect(currentPage.backLink({}, { isRenewal: true })).toBe(LICENCE_SUMMARY.uri)
   })
 })
 

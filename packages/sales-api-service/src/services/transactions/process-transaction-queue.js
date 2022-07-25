@@ -52,6 +52,7 @@ export async function processQueue ({ id }) {
     issueDate,
     startDate,
     endDate,
+    isRenewal,
     isLicenceForYou
   } of transactionRecord.permissions) {
     const contact = await resolveContactPayload(licensee)
@@ -67,7 +68,8 @@ export async function processQueue ({ id }) {
       endDate,
       dataSource,
       isLicenceForYou,
-      isMultiBuy
+      isMultiBuy,
+      isRenewal
     )
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
@@ -120,7 +122,8 @@ const mapToPermission = async (
   endDate,
   dataSource,
   isLicenceForYou,
-  isMultiBuy
+  isMultiBuy,
+  isRenewal
 ) => {
   const permission = new Permission()
   permission.referenceNumber = referenceNumber
@@ -130,6 +133,7 @@ const mapToPermission = async (
   permission.endDate = endDate
   permission.dataSource = dataSource
   permission.isMultiBuy = isMultiBuy
+  permission.isRenewal = isRenewal
   if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
     permission.isLicenceForYou = await getGlobalOptionSetValue(
       Permission.definition.mappings.isLicenceForYou.ref,

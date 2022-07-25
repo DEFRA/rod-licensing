@@ -6,10 +6,14 @@ import {
   CONTACT,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
-  LICENCE_SUMMARY
+  LICENCE_SUMMARY,
+  ADDRESS_LOOKUP,
+  NEWSLETTER
 } from '../../../../uri.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
 import '../../../../processors/refdata-helper.js'
+import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 
 jest.mock('../../../../processors/refdata-helper.js', () => ({
   countries: {
@@ -21,6 +25,17 @@ jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
 }))
 
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn(() => Symbol('addLanguageCodeToUri'))
+}))
+
+jest.mock('../../../../processors/mapping-constants', () => ({
+  HOW_CONTACTED: {
+    email: 'Email',
+    none: 'Prefer not to be contacted'
+  }
+}))
+
 const address = {
   firstName: 'Fester',
   lastName: 'Tester',
@@ -29,6 +44,13 @@ const address = {
   town: 'Bristol',
   postcode: 'BS9 1HJ'
 }
+
+const generateRequestMock = query => ({
+  query,
+  url: {
+    search: ''
+  }
+})
 
 describe('contact-summary > route', () => {
   describe('getLicenseeDetailsSummaryRows', () => {
@@ -45,7 +67,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -61,7 +83,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -75,7 +97,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Letter'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -93,7 +115,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -106,10 +128,10 @@ describe('contact-summary > route', () => {
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
-            preferredMethodOfNewsletter: 'Yes'
+            preferredMethodOfNewsletter: 'Text'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -126,7 +148,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -142,7 +164,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
 
@@ -157,20 +179,46 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
         expect(summaryTable).toMatchSnapshot()
       })
     })
 
-    it('should have the newsletter row if isLicenceForYou is true', () => {
+    it('should have the newsletter is set have preferred method and if isLicenceForYou is true', () => {
       const permission = {
         licenceLength: '1D',
         licensee: {
-          ...address
+          ...address,
+          postalFulfilment: false,
+          preferredMethodOfConfirmation: 'Prefer not to be contacted',
+          preferredMethodOfReminder: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Email'
         },
         isLicenceForYou: true
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+      const query = {
+        [HOW_CONTACTED.email]: 'Email'
+      }
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock(query))
+      expect(summaryTable).toMatchSnapshot()
+    })
+
+    it('should have the newsletter set to no if have preferred method and if isLicenceForYou is true', () => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...address,
+          postalFulfilment: false,
+          preferredMethodOfConfirmation: 'Prefer not to be contacted',
+          preferredMethodOfReminder: 'Prefer not to be contacted',
+          preferredMethodOfNewsletter: 'Prefer not to be contacted'
+        },
+        isLicenceForYou: true
+      }
+      const query = {
+        [HOW_CONTACTED.email]: 'Prefer not to be contacted'
+      }
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock(query))
       expect(summaryTable).toMatchSnapshot()
     })
 
@@ -182,18 +230,44 @@ describe('contact-summary > route', () => {
         },
         isLicenceForYou: false
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB')
+      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
       expect(summaryTable).toMatchSnapshot()
+    })
+
+    describe('addLanguageCodeToUri', () => {
+      beforeEach(jest.clearAllMocks)
+
+      it.each([[ADDRESS_LOOKUP.uri], [LICENCE_FULFILMENT.uri], [LICENCE_CONFIRMATION_METHOD.uri], [CONTACT.uri], [NEWSLETTER.uri]])(
+        'test addLanguageCodeToUri is called correctly',
+        async urlToCheck => {
+          const permission = {
+            permit: {
+              cost: 1
+            },
+            licenceLength: '12M',
+            isLicenceForYou: true,
+            licensee: {
+              birthDate: '1996-01-01',
+              postalFulfilment: true
+            }
+          }
+
+          const mockRequest = generateRequestMock
+
+          getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
+
+          expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, urlToCheck)
+        }
+      )
     })
   })
 
   describe('checkNavigation', () => {
     it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', () => {
       const status = {
-        renewal: true,
         [LICENCE_FULFILMENT.page]: false
       }
-      const permission = { licenceLength: '12M' }
+      const permission = { licenceLength: '12M', isRenewal: true }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
 
@@ -203,7 +277,7 @@ describe('contact-summary > route', () => {
         [LICENCE_FULFILMENT.page]: true,
         [LICENCE_CONFIRMATION_METHOD.page]: false
       }
-      const permission = { licenceLength: '12M' }
+      const permission = { licenceLength: '12M', isRenewal: true }
       expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
     })
 

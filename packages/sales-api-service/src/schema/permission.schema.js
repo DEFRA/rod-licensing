@@ -36,6 +36,7 @@ export const stagedPermissionSchema = Joi.object({
   concessions: concessionProofSchema.optional(),
   issueDate: issueDateSchema.allow(null),
   startDate: startDateSchema.allow(null),
+  isRenewal: Joi.boolean(),
   isLicenceForYou: Joi.boolean()
     .optional()
     .allow(null)

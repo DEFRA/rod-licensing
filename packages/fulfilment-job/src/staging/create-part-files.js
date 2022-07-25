@@ -33,8 +33,21 @@ export const createPartFiles = async () => {
       fulfilmentFile.status = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
       fulfilmentFile.notes = `The fulfilment file finished exporting at ${moment().toISOString()}`
     }
+
     await persist(toMarkAsExported)
   }
+}
+
+const getPartNumber = (numberOfRequests, partFileSize) => {
+  const partFileNumber = Math.floor(numberOfRequests / partFileSize)
+  const previousAttemptFailedWithPartiallyFilledPartFile = numberOfRequests > 0 && numberOfRequests % partFileSize !== 0
+
+  if (previousAttemptFailedWithPartiallyFilledPartFile) {
+    debug(`Found existing unfilled part file part${partFileNumber}, incrementing next part file number to part${partFileNumber + 1}`)
+    return partFileNumber + 1
+  }
+
+  return partFileNumber
 }
 
 /**
@@ -48,7 +61,7 @@ const processQueryPage = async page => {
   const fileExportedStatus = await getOptionSetEntry(FULFILMENT_FILE_STATUS_OPTIONSET, 'Exported')
   while (page.length) {
     const fulfilmentFile = await getTargetFulfilmentFile()
-    const partNumber = Math.floor(fulfilmentFile.numberOfRequests / config.file.partFileSize)
+    const partNumber = getPartNumber(fulfilmentFile.numberOfRequests, config.file.partFileSize)
     const partFileSize = Math.min(config.file.partFileSize, config.file.size - fulfilmentFile.numberOfRequests)
     const itemsToWrite = page.splice(0, partFileSize).map(result => ({
       fulfilmentRequest: result.entity,
@@ -69,6 +82,7 @@ const processQueryPage = async page => {
       item.fulfilmentRequest.bindToEntity(FulfilmentRequest.definition.relationships.fulfilmentRequestFile, fulfilmentFile)
       return item.fulfilmentRequest
     })
+
     debug('Persisting updates to Dynamics')
     await persist([fulfilmentFile, ...fulfilmentRequestUpdates])
   }

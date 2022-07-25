@@ -9,7 +9,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -29,7 +29,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -49,7 +49,7 @@ Array [
           "attributes": Object {
             "id": "change-newsletter",
           },
-          "href": "/buy/newsletter",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "newsletter",
         },
@@ -65,7 +65,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter row if isLicenceForYou is true 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter is set have preferred method and if isLicenceForYou is true 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -74,7 +74,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -94,7 +94,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -114,7 +114,7 @@ Array [
           "attributes": Object {
             "id": "change-newsletter",
           },
-          "href": "/buy/newsletter",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "newsletter",
         },
@@ -130,7 +130,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should not have the newsletter row if isLicenceForYou is false 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter set to no if have preferred method and if isLicenceForYou is true 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -139,7 +139,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -159,7 +159,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -170,6 +170,71 @@ Array [
     },
     "value": Object {
       "text": "Make a note on confirmation",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "newsletter",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Newsletter",
+    },
+    "value": Object {
+      "text": "No",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows should not have the newsletter row if isLicenceForYou is false 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "address",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Address",
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "contact",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence details",
+    },
+    "value": Object {
+      "text": "Text messages to undefined",
     },
   },
 ]
@@ -184,7 +249,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -204,7 +269,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -229,7 +294,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -249,7 +314,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -274,7 +339,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -294,7 +359,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -304,7 +369,7 @@ Array [
       "text": "Licence details",
     },
     "value": Object {
-      "text": "Text messages to 07700900900",
+      "text": "Make a note on confirmation",
     },
   },
 ]
@@ -319,7 +384,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -339,7 +404,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-fulfilment-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence fulfilment option",
         },
@@ -359,7 +424,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -379,7 +444,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -404,7 +469,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -424,7 +489,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-fulfilment-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence fulfilment option",
         },
@@ -444,92 +509,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/confirmation-method",
-          "text": "Change",
-          "visuallyHiddenText": "licence confirmation option",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Licence Confirmation",
-    },
-    "value": Object {
-      "text": "Text message to 07700900900",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": "/buy/contact",
-          "text": "Change",
-          "visuallyHiddenText": "contact",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Contact",
-    },
-    "value": Object {
-      "text": "Text messages to 07700900900",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) with postal fulfilment should display the Licence as post, Licence Confirmation as note of licence and Contact as post 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": "/buy/find-address",
-          "text": "Change",
-          "visuallyHiddenText": "address",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Address",
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": "/buy/fulfilment",
-          "text": "Change",
-          "visuallyHiddenText": "licence fulfilment option",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Licence",
-    },
-    "value": Object {
-      "text": "By post",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": "/buy/confirmation-method",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -549,7 +529,92 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "contact",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Contact",
+    },
+    "value": Object {
+      "text": "By post",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) with postal fulfilment should display the Licence as post, Licence Confirmation as note of licence and Contact as post 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "address",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Address",
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "licence fulfilment option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence",
+    },
+    "value": Object {
+      "text": "By post",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "Change",
+          "visuallyHiddenText": "licence confirmation option",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "Licence Confirmation",
+    },
+    "value": Object {
+      "text": "Note of licence",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -574,7 +639,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -594,7 +659,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -614,7 +679,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -639,7 +704,7 @@ Array [
           "attributes": Object {
             "id": "change-address",
           },
-          "href": "/buy/find-address",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "address",
         },
@@ -659,7 +724,7 @@ Array [
           "attributes": Object {
             "id": "change-licence-confirmation-option",
           },
-          "href": "/buy/fulfilment",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "licence confirmation option",
         },
@@ -669,7 +734,7 @@ Array [
       "text": "Licence",
     },
     "value": Object {
-      "text": "Text message to 07700900900",
+      "text": "Note of licence",
     },
   },
   Object {
@@ -679,7 +744,7 @@ Array [
           "attributes": Object {
             "id": "change-contact",
           },
-          "href": "/buy/contact",
+          "href": Symbol(addLanguageCodeToUri),
           "text": "Change",
           "visuallyHiddenText": "contact",
         },
@@ -689,7 +754,7 @@ Array [
       "text": "Contact",
     },
     "value": Object {
-      "text": "Text messages to 07700900900",
+      "text": "By post",
     },
   },
 ]

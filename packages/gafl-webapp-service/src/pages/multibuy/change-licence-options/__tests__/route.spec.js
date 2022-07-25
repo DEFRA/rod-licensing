@@ -51,7 +51,15 @@ describe('change-licence-options > route', () => {
             setCurrentPermission: mockTransactionCacheSet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => ({
+          licence_start_time_am_text_0: 'Test',
+          licence_type_radio_salmon: 'Salmon and sea trout',
+          licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
+          licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+        })
+      }
     })
 
     it('test output of getData', async () => {
@@ -334,17 +342,9 @@ describe('change-licence-options > route', () => {
     })
 
     it('should return LICENCE_TO_START uri as uri.licenceStartDate if renewal flag is not set', async () => {
-      const request = {
-        cache: () => ({
-          helpers: {
-            status: { getCurrentPermission: () => mockStatus },
-            transaction: { getCurrentPermission: () => mockTransaction }
-          }
-        })
-      }
-      const mockStatus = mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licenceStartDate: mockStatus.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
+      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        licenceStartDate: LICENCE_TO_START.uri,
         licensee: { firstName: 'John', lastName: 'Smith', birthDate: '1996-01-01' },
         numberOfRods: '3',
         licenceLength: '12M',
@@ -353,7 +353,7 @@ describe('change-licence-options > route', () => {
         },
         licenceType: 'Salmon and sea trout'
       }))
-      const result = await getData(mockRequest(request))
+      const result = await getData(mockRequest())
       expect(result.uri.licenceStartDate).toBe(LICENCE_TO_START.uri)
     })
   })

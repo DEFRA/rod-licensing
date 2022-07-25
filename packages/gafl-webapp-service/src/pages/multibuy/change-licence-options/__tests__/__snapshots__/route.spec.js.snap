@@ -55,7 +55,7 @@ Object {
     },
   },
   "startAfterPaymentMinutes": 30,
-  "startTimeString": "0.00am (first minute of the day) on 1 July 2021",
+  "startTimeString": "Test on 1 July 2021",
   "uri": Object {
     "clear": "/buy/new",
     "dateOfBirth": "/buy/date-of-birth",

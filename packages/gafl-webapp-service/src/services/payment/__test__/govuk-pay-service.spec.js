@@ -5,19 +5,56 @@ import { AGREED } from '../../../uri.js'
 describe('The govuk-pay-service', () => {
   it('prepares a correct payment response endpoint for http', async () => {
     expect(
-      preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'http' } }, mockTransaction).return_url
+      preparePayment(
+        {
+          i18n: {
+            getCatalog: () => ({
+              over_65: 'Over 65',
+              licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+            })
+          },
+          info: { host: '0.0.0.0:3000' },
+          headers: { 'x-forwarded-proto': 'http' }
+        },
+        mockTransaction
+      ).return_url
     ).toEqual('http://0.0.0.0:3000' + AGREED.uri)
   })
 
   it('prepares a correct payment response endpoint for https', async () => {
     expect(
-      preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'https' } }, mockTransaction).return_url
+      preparePayment(
+        {
+          i18n: {
+            getCatalog: () => ({
+              over_65: 'Over 65',
+              licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+            })
+          },
+          info: { host: '0.0.0.0:3000' },
+          headers: { 'x-forwarded-proto': 'https' }
+        },
+        mockTransaction
+      ).return_url
     ).toEqual('https://0.0.0.0:3000' + AGREED.uri)
   })
 
   it('prepares a correct payment creation object', async () => {
     expect(
-      preparePayment({ info: { host: '0.0.0.0:3000' }, headers: {}, server: { info: { protocol: 'https' } } }, mockTransaction)
+      preparePayment(
+        {
+          i18n: {
+            getCatalog: () => ({
+              over_65: 'Over 65',
+              licence_type_radio_salmon: 'Salmon and sea trout'
+            })
+          },
+          info: { host: '0.0.0.0:3000' },
+          headers: {},
+          server: { info: { protocol: 'https' } }
+        },
+        mockTransaction
+      )
     ).toEqual({
       amount: 5400,
       delayed_capture: false,
@@ -42,7 +79,21 @@ describe('The govuk-pay-service', () => {
     const mockTransaction2 = Object.assign({}, mockTransaction)
     mockTransaction2.permissions[0].licensee.locality = 'Stoke Bishop'
     mockTransaction2.permissions[0].licenceLength = '8D'
-    expect(preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'https' } }, mockTransaction2)).toEqual({
+    expect(
+      preparePayment(
+        {
+          i18n: {
+            getCatalog: () => ({
+              over_65: 'Over 65',
+              licence_type_radio_salmon: 'Salmon and sea trout'
+            })
+          },
+          info: { host: '0.0.0.0:3000' },
+          headers: { 'x-forwarded-proto': 'https' }
+        },
+        mockTransaction2
+      )
+    ).toEqual({
       amount: 5400,
       delayed_capture: false,
       description: 'Over 65, Salmon and sea trout, 8 days',

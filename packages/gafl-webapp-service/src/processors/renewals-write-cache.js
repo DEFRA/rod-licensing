@@ -16,6 +16,7 @@ const debug = db('webapp:renewals-write-cache')
 export const setUpCacheFromAuthenticationResult = async (request, authenticationResult) => {
   debug(`Set up cache from authentication result for renewal of ${authenticationResult.permission.referenceNumber}`)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  permission.isRenewal = true
   permission.licenceLength = '12M' // Always for easy renewals
   permission.licenceType = authenticationResult.permission.permit.permitSubtype.label
   permission.numberOfRods = authenticationResult.permission.permit.numberOfRods.toString()
@@ -67,7 +68,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   // Add appropriate age concessions
   ageConcessionHelper(permission)
   await request.cache().helpers.transaction.setCurrentPermission(permission)
-  await request.cache().helpers.status.setCurrentPermission({ renewal: true, showDigitalLicencePages })
+  await request.cache().helpers.status.setCurrentPermission({ showDigitalLicencePages })
 }
 
 export const setUpPayloads = async request => {

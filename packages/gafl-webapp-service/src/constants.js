@@ -14,6 +14,7 @@ export const FEEDBACK_URI_DEFAULT = '#'
 export const CHANNEL_DEFAULT = 'websales'
 export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-fishing-licence'
 export const RENEWALS_CAMPAIGN_ID = 'renewals'
+export const AEN_INVITATION_ID = 'aen_invitation'
 
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
@@ -64,6 +65,12 @@ export const ShowDigitalLicencePages = {
 export const CHANGE_LICENCE_OPTIONS_SEEN = {
   SEEN: 'seen',
   NOT_SEEN: 'not-seen'
+}
+
+export const RENEWAL_ERROR_REASON = {
+  NOT_DUE: 'not-due',
+  EXPIRED: 'expired',
+  NOT_ANNUAL: 'not-annual'
 }
 
 // If the user has seen the summary page these are set in the status

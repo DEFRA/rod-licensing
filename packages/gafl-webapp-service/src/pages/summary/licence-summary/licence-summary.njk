@@ -22,7 +22,7 @@
           {
             href: data.uri.name,
             text: mssgs.licence_summary_change,
-            visuallyHiddenText: "name",
+            visuallyHiddenText: mssgs.licence_summary_change,
             attributes: { id: 'change-name' }
           }
         ]
@@ -44,7 +44,7 @@
             items: [{
                 href: data.uri.dateOfBirth,
                 text: mssgs.licence_summary_change,
-                visuallyHiddenText: "date of birth",
+                visuallyHiddenText: mssgs.licence_summary_dob,
                 attributes: { id: 'change-birth-date' }
             }]
         }
@@ -63,7 +63,7 @@
         {
           href: data.uri.licenceType,
           text: mssgs.licence_summary_change,
-          visuallyHiddenText: "type",
+          visuallyHiddenText: mssgs.licence_summary_type,
           attributes: { id: 'change-licence-type' }
         }
       ]
@@ -82,7 +82,7 @@
       {
         href: data.uri.licenceLength,
         text: mssgs.licence_summary_change,
-        visuallyHiddenText: "length",
+        visuallyHiddenText: mssgs.licence_summary_length,
         attributes: { id: 'change-licence-length' }
       }
     ] if not data.hasJunior and not data.isRenewal
@@ -102,7 +102,7 @@
           {
             href:  data.uri.licenceStartDate if data.isRenewal else data.uri.licenceToStart,
             text: mssgs.licence_summary_change,
-            visuallyHiddenText: "start date",
+            visuallyHiddenText: mssgs.licence_summary_start_date,
             attributes: { id: 'change-licence-to-start' }
           }
         ]
@@ -133,10 +133,10 @@
 
 {{ licenseDetailsSummaryRows.push({
   key: {
-    text: "Cost"
+    text: mssgs.cost
   },
   value: {
-    text: "£" + data.cost if data.cost else "free"
+    text: mssgs.pound + data.cost if data.cost else mssgs.free
   }
 }) }}
 
