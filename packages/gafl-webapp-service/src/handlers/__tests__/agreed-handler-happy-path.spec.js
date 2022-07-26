@@ -14,6 +14,7 @@ import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+import agreedHandler from '../agreed-handler.js'
 
 jest.mock('../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn(() => '/buy/order-complete')
@@ -270,10 +271,44 @@ describe('The agreed handler', () => {
       expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
     })
 
+    const getMockRequest = (overrides = {}) => ({
+      cache: () => ({
+        helpers: {
+          transaction: {
+            get: async () => ({ cost: 0 })
+          },
+          status: {
+            get: async () => ({
+              [COMPLETION_STATUS.agreed]: true,
+              [COMPLETION_STATUS.posted]: true,
+              [COMPLETION_STATUS.finalised]: true
+            })
+          },
+          ...overrides
+        }
+      })
+    })
+
+    const getRequestToolkit = () => ({
+      redirect: jest.fn()
+    })
+
     it('calls addLanguageCodeToUri', async () => {
-      await injectWithCookies('GET', TEST_STATUS.uri)
-      await injectWithCookies('GET', AGREED.uri)
-      expect(addLanguageCodeToUri).toHaveBeenCalled()
+      const mockRequest = getMockRequest()
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, ORDER_COMPLETE.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
     })
   })
 })
