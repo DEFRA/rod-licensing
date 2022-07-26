@@ -19,6 +19,8 @@ const getMomentMockImpl = (overrides = {}) =>
   }))
 
 describe('renewal-inactive > route', () => {
+  beforeEach(jest.clearAllMocks)
+
   describe('getData', () => {
     describe.each([
       [
@@ -215,7 +217,7 @@ describe('renewal-inactive > route', () => {
       moment.mockImplementation(getMomentMockImpl({ format }))
       await getData(mockRequest)
       console.log('mock', mockRequest.locale)
-      expect(moment).toHaveBeenCalledWith(expect.any(String), expect.any(String), language)
+      expect(moment).toHaveBeenCalledWith(expect.any(String), expect.anything(), language)
     })
 
     it('dateDisplayFormat is passed to format', async () => {
