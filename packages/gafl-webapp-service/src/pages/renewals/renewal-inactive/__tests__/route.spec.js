@@ -2,11 +2,10 @@ import { getData, getTitleAndBodyMessage } from '../route'
 import { NEW_TRANSACTION } from '../../../../uri.js'
 import { RENEWAL_ERROR_REASON } from '../../../../constants'
 import moment from 'moment-timezone'
-import { cacheDateFormat, dateDisplayFormat } from '../../../../processors/date-and-time-display.js'
-
 import englishTranslations from '../../../../locales/en.json'
 import welshTranslations from '../../../../locales/cy.json'
 
+const dateTimeDisplayMock = jest.requireMock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/date-and-time-display.js', () => ({
   cacheDateFormat: 'YYYY-MM-DD',
   dateDisplayFormat: 'D MMMM YYYY'
@@ -182,17 +181,19 @@ describe('renewal-inactive > route', () => {
     })
 
     it('cacheDateFormat being what is expected', async () => {
+      const cacheSymbol = Symbol('cacheDate')
+      dateTimeDisplayMock.cacheDateFormat = cacheSymbol
       mockStatusCacheGet.mockImplementationOnce(() => ({
         authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
         referenceNumber: 'ABC123'
       }))
       moment.mockImplementation(getMomentMockImpl())
       await getData(mockRequest)
-      expect(moment).toHaveBeenCalledWith(expect.any(String), cacheDateFormat, expect.any(String))
+      expect(moment).toHaveBeenCalledWith(expect.any(String), cacheSymbol, expect.any(String))
     })
 
     it('locale is set on moment, to whatever the request.locale is', async () => {
-      const language = Symbol('endDate')
+      const language = Symbol('language')
       const mockRequest = {
         cache: () => ({
           helpers: {
@@ -213,10 +214,13 @@ describe('renewal-inactive > route', () => {
       const format = jest.fn()
       moment.mockImplementation(getMomentMockImpl({ format }))
       await getData(mockRequest)
+      console.log('mock', mockRequest.locale)
       expect(moment).toHaveBeenCalledWith(expect.any(String), expect.any(String), language)
     })
 
     it('dateDisplayFormat is passed to format', async () => {
+      const dateDisplaySymbol = Symbol('dateDisplay')
+      dateTimeDisplayMock.dateDisplayFormat = dateDisplaySymbol
       mockStatusCacheGet.mockImplementationOnce(() => ({
         authentication: { reason: RENEWAL_ERROR_REASON.NOT_DUE, endDate: '2020-12-13T23:59:59Z' },
         referenceNumber: 'ABC123'
@@ -224,7 +228,7 @@ describe('renewal-inactive > route', () => {
       const format = jest.fn()
       moment.mockImplementation(getMomentMockImpl({ format }))
       await getData(mockRequest)
-      expect(format).toHaveBeenCalledWith(dateDisplayFormat)
+      expect(format).toHaveBeenCalledWith(dateDisplaySymbol)
     })
   })
 
