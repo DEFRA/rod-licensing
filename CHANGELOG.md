@@ -1,4 +1,14 @@
 
+## v1.26.0-rc.13 (2022-07-26)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1402](https://github.com/DEFRA/rod-licensing/pull/1402) Feature/iwtf 2992 welsh renew rod licence ([@MickStein](https://github.com/MickStein))
+  * [#1404](https://github.com/DEFRA/rod-licensing/pull/1404) feature/iwtf 2993 Easy renewals check licence details welsh translation ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.12 (2022-07-19)
 
 #### :rocket: Enhancement
