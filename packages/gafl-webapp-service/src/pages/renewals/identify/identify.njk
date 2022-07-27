@@ -34,17 +34,20 @@
 
 {% set dateInputItems = [
     {
-      name: mssgs.dob_day,
+      label: mssgs.dob_day,
+      name: "day",
       classes: "govuk-input--width-2",
       value: payload['date-of-birth-day']
     },
     {
-      name: mssgs.dob_month,
+      label: mssgs.dob_month,
+      name: "month",
       classes: "govuk-input--width-2",
       value: payload['date-of-birth-month']
     },
     {
-      name: mssgs.dob_year,
+      label: mssgs.dob_year,
+      name: "year",
       classes: "govuk-input--width-4",
       value: payload['date-of-birth-year']
     }
