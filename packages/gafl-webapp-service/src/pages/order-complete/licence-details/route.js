@@ -25,7 +25,7 @@ export const getData = async request => {
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  const startTimeString = displayStartTime(permission, request.i18n.getCatalog())
+  const startTimeString = displayStartTime(request, permission)
   const endTimeString = displayEndTime(request, permission)
 
   return {
