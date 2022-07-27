@@ -15,25 +15,27 @@ export const advancePurchaseDateMoment = permission =>
  */
 export const displayStartTime = (permission, mssgs) => {
   const startMoment = permission.startDate ? moment.utc(permission.startDate).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
+  console.log('startmoment', startMoment)
   const timeComponent = startMoment
     .format('h:mma')
     .replace('12:00am', mssgs.licence_start_time_am_text_0)
     .replace('12:00pm', mssgs.licence_start_time_am_text_12)
-  return `${timeComponent} on ${startMoment.format(dateDisplayFormat)}`
+  return `${timeComponent} ${mssgs.renewal_start_date_expires_5} ${startMoment.format(dateDisplayFormat)}`
 }
 
-const endMomentStr = d => {
-  const m = moment.utc(d).tz(SERVICE_LOCAL_TIME)
-  const timeComponent = m
+const endMomentStr = (request, date) => {
+  const mssgs = request.i18n.getCatalog()
+  const momentLocales = moment.utc(date, null, request.locale).tz(SERVICE_LOCAL_TIME)
+  const timeComponent = momentLocales
     .format('h:mma')
     .replace('12:00am', () => {
-      m.subtract(1, 'days')
+      momentLocales.subtract(1, 'days')
       return '11:59pm'
     })
     .replace('12:00pm', '12:00pm (midday)')
-  return `${timeComponent} on ${m.format(dateDisplayFormat)}`
+  return `${timeComponent} ${mssgs.renewal_start_date_expires_5} ${momentLocales.format(dateDisplayFormat)}`
 }
 
 // For renewals
-export const displayExpiryDate = permission => endMomentStr(permission.renewedEndDate)
-export const displayEndTime = permission => endMomentStr(permission.endDate)
+export const displayExpiryDate = (request, permission) => endMomentStr(request, permission.renewedEndDate)
+export const displayEndTime = (request, permission) => endMomentStr(request, permission.endDate)
