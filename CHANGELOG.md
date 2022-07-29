@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.15 (2022-07-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1407](https://github.com/DEFRA/rod-licensing/pull/1407) bugfix/iwtf 2992 update example text and welsh dob error incorrect ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.26.0-rc.13 (2022-07-26)
 
