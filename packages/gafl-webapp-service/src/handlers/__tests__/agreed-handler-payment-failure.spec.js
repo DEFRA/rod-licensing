@@ -96,6 +96,51 @@ const paymentIncomplete = {
   }
 }
 
+const getMockRequest = () => ({
+  cache: () => ({
+    helpers: {
+      transaction: {
+        get: async () => ({
+          cost: 100,
+          payment: {
+            payment_id: 'abc-123'
+          }
+        })
+      },
+      status: {
+        get: async () => ({
+          [COMPLETION_STATUS.agreed]: true,
+          [COMPLETION_STATUS.posted]: true,
+          [COMPLETION_STATUS.paymentCreated]: true
+        }),
+        set: async () => ({})
+      }
+    }
+  }),
+  headers: { 'x-forwarded-proto': 'https' },
+  info: { host: 'localhost:1234' },
+  server: { info: { protocol: '' } }
+})
+
+const getRequestToolkit = () => ({
+  redirect: jest.fn()
+})
+
+const getSendPaymentMockImplementation = () => ({
+  payment_id: '',
+  created_date: '',
+  state: '',
+  payment_provider: '',
+  _links: {
+    next_url: {
+      href: ''
+    },
+    self: {
+      href: ''
+    }
+  }
+})
+
 describe('The agreed handler', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -170,36 +215,6 @@ describe('The agreed handler', () => {
   })
 
   describe('GOV.UK returns a failed response', () => {
-    const getMockRequest = () => ({
-      cache: () => ({
-        helpers: {
-          transaction: {
-            get: async () => ({
-              cost: 100,
-              payment: {
-                payment_id: 'abc-123'
-              }
-            })
-          },
-          status: {
-            get: async () => ({
-              [COMPLETION_STATUS.agreed]: true,
-              [COMPLETION_STATUS.posted]: true,
-              [COMPLETION_STATUS.paymentCreated]: true
-            }),
-            set: async () => ({})
-          }
-        }
-      }),
-      headers: { 'x-forwarded-proto': 'https' },
-      info: { host: 'localhost:1234' },
-      server: { info: { protocol: '' } }
-    })
-
-    const getRequestToolkit = () => ({
-      redirect: jest.fn()
-    })
-
     beforeEach(() => {
       getPaymentStatus.mockReturnValueOnce({
         state: {
@@ -222,20 +237,7 @@ describe('The agreed handler', () => {
 
     it('calls redirect correctly', async () => {
       preparePayment.mockImplementation(() => {})
-      sendPayment.mockImplementation(() => ({
-        payment_id: '',
-        created_date: '',
-        state: '',
-        payment_provider: '',
-        _links: {
-          next_url: {
-            href: ''
-          },
-          self: {
-            href: ''
-          }
-        }
-      }))
+      sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
       const requestToolkit = getRequestToolkit()
       const expectedPath = Symbol('expected path')
       addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
@@ -317,36 +319,6 @@ describe('The agreed handler', () => {
   })
 
   describe('GOV.UK returns a cancelled response', () => {
-    const getMockRequest = () => ({
-      cache: () => ({
-        helpers: {
-          transaction: {
-            get: async () => ({
-              cost: 100,
-              payment: {
-                payment_id: 'abc-123'
-              }
-            })
-          },
-          status: {
-            get: async () => ({
-              [COMPLETION_STATUS.agreed]: true,
-              [COMPLETION_STATUS.posted]: true,
-              [COMPLETION_STATUS.paymentCreated]: true
-            }),
-            set: async () => ({})
-          }
-        }
-      }),
-      headers: { 'x-forwarded-proto': 'https' },
-      info: { host: 'localhost:1234' },
-      server: { info: { protocol: '' } }
-    })
-
-    const getRequestToolkit = () => ({
-      redirect: jest.fn()
-    })
-
     beforeEach(() => {
       getPaymentStatus.mockReturnValueOnce({
         state: {
@@ -369,20 +341,7 @@ describe('The agreed handler', () => {
 
     it('calls redirect correctly', async () => {
       preparePayment.mockImplementation(() => {})
-      sendPayment.mockImplementation(() => ({
-        payment_id: '',
-        created_date: '',
-        state: '',
-        payment_provider: '',
-        _links: {
-          next_url: {
-            href: ''
-          },
-          self: {
-            href: ''
-          }
-        }
-      }))
+      sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
       const requestToolkit = getRequestToolkit()
       const expectedPath = Symbol('expected path')
       addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
