@@ -169,6 +169,83 @@ describe('The agreed handler', () => {
     expect(parsedStatus2[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
+  describe('GOV.UK returns a failed response', () => {
+    const getMockRequest = () => ({
+      cache: () => ({
+        helpers: {
+          transaction: {
+            get: async () => ({
+              cost: 100,
+              payment: {
+                payment_id: 'abc-123'
+              }
+            })
+          },
+          status: {
+            get: async () => ({
+              [COMPLETION_STATUS.agreed]: true,
+              [COMPLETION_STATUS.posted]: true,
+              [COMPLETION_STATUS.paymentCreated]: true
+            }),
+            set: async () => ({})
+          }
+        }
+      }),
+      headers: { 'x-forwarded-proto': 'https' },
+      info: { host: 'localhost:1234' },
+      server: { info: { protocol: '' } }
+    })
+
+    const getRequestToolkit = () => ({
+      redirect: jest.fn()
+    })
+
+    beforeEach(() => {
+      getPaymentStatus.mockReturnValueOnce({
+        state: {
+          finished: true,
+          status: 'failed',
+          code: GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED
+        }
+      })
+    })
+
+    it('calls addLanguageCodeToUri', async () => {
+      const mockRequest = getMockRequest()
+
+      addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      preparePayment.mockImplementation(() => {})
+      sendPayment.mockImplementation(() => ({
+        payment_id: '',
+        created_date: '',
+        state: '',
+        payment_provider: '',
+        _links: {
+          next_url: {
+            href: ''
+          },
+          self: {
+            href: ''
+          }
+        }
+      }))
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+    })
+  })
+
   it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
     addLanguageCodeToUri.mockReturnValue('/buy/payment-cancelled')
 
