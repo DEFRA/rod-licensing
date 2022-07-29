@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.16 (2022-07-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1387](https://github.com/DEFRA/rod-licensing/pull/1387) Include user's chosen language in GovPay return URL ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.26.0-rc.15 (2022-07-29)
 
 #### :bug: Bug Fix
