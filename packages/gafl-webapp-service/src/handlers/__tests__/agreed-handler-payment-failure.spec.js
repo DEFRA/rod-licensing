@@ -214,13 +214,47 @@ describe('The agreed handler', () => {
     expect(parsedStatus2[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
-  describe('GOV.UK returns a failed response', () => {
+  describe('GOV.UK returns an expired response', () => {
     beforeEach(() => {
       getPaymentStatus.mockReturnValueOnce({
         state: {
           finished: true,
           status: 'failed',
           code: GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED
+        }
+      })
+    })
+
+    it('calls addLanguageCodeToUri', async () => {
+      const mockRequest = getMockRequest()
+
+      addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      preparePayment.mockImplementation(() => {})
+      sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+    })
+  })
+
+  describe('GOV.UK returns a rejected response', () => {
+    beforeEach(() => {
+      getPaymentStatus.mockReturnValueOnce({
+        state: {
+          finished: true,
+          status: 'failed',
+          code: GOVUK_PAY_ERROR_STATUS_CODES.REJECTED
         }
       })
     })
