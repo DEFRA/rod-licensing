@@ -24,6 +24,17 @@ const getSampleRequest = () => ({
 })
 
 describe('displayStartTime', () => {
+  it('permission licence start date is passed to moment when start date is found', () => {
+    moment.utc.mockReturnValue({
+      tz: () => ({
+        format: () => ''
+      })
+    })
+    const startDate = Symbol('startDate')
+    displayStartTime(getSampleRequest(), { startDate })
+    expect(moment.utc).toHaveBeenCalledWith(startDate, null, expect.any(String))
+  })
+
   it.each([
     ['2021-01-01', '0.00am (first minute of the day) on 1 January 2021'], // no time given
     ['2021-01-01T00:00:00.000Z', '0.00am (first minute of the day) on 1 January 2021'], // where start time is midnight
@@ -31,15 +42,12 @@ describe('displayStartTime', () => {
     ['2021-01-01T12:00:00.000Z', '12:00pm (midday) on 1 January 2021'], // where start time is 12pm
     ['2021-01-01T15:00:00.000Z', '3:00pm on 1 January 2021'], // where start time is 3pm (UTC)
     ['2021-07-01T14:00:00.000Z', '3:00pm on 1 July 2021'] // where start time is 3pm (BST)
-  ])(
-    'displays the date in the correct format, when permission date is %s and current date and time is %s',
-    (startDate, expectedResult) => {
-      const realMoment = jest.requireActual('moment-timezone')
-      moment.utc.mockReturnValue(realMoment(startDate))
-      const startTime = displayStartTime(getSampleRequest(), { startDate })
-      return expect(startTime).toEqual(expectedResult)
-    }
-  )
+  ])('displays the date in the correct format, when permission date is %s and current date and time is %s', (startDate, expectedResult) => {
+    const realMoment = jest.requireActual('moment-timezone')
+    moment.utc.mockReturnValue(realMoment(startDate))
+    const startTime = displayStartTime(getSampleRequest(), { startDate })
+    return expect(startTime).toEqual(expectedResult)
+  })
 })
 
 describe('displayEndTime', () => {
@@ -60,15 +68,12 @@ describe('displayEndTime', () => {
     ['2020-01-01T00:00:00.000Z', '11:59pm on 31 December 2019'],
     ['2020-01-01T00:01:00.000Z', '12:01am on 1 January 2020'],
     ['2020-01-01T15:00:00.000Z', '3:00pm on 1 January 2020']
-  ])(
-    'displays the date in the correct format, when permission date is %s and current date and time is %s',
-    (endDate, expectedResult) => {
-      const realMoment = jest.requireActual('moment-timezone')
-      moment.utc.mockReturnValueOnce(realMoment(endDate))
-      const startTime = displayEndTime(getSampleRequest(), { endDate })
-      return expect(startTime).toEqual(expectedResult)
-    }
-  )
+  ])('displays the date in the correct format, when permission date is %s and current date and time is %s', (endDate, expectedResult) => {
+    const realMoment = jest.requireActual('moment-timezone')
+    moment.utc.mockReturnValueOnce(realMoment(endDate))
+    const startTime = displayEndTime(getSampleRequest(), { endDate })
+    return expect(startTime).toEqual(expectedResult)
+  })
 })
 
 describe('displayExpiryDate', () => {
@@ -82,11 +87,11 @@ describe('displayExpiryDate', () => {
 })
 
 describe('advancePurchaseDateMoment', () => {
-  it('returns the licence date as 0 hours', () => {
-    const startDate = null
+  it('returns the licence date with a start time of 0 hours', () => {
+    const licenceStartDate = '2020-01-06'
     const realMoment = jest.requireActual('moment-timezone')
-    moment.utc.mockReturnValueOnce(realMoment(startDate))
-    const returnDate = advancePurchaseDateMoment({ startDate })
-    expect(returnDate).toEqual('')
+    moment.tz.mockReturnValueOnce(realMoment(licenceStartDate))
+    const returnDate = advancePurchaseDateMoment(licenceStartDate)
+    expect(returnDate.format('YYYY-MM-DDTHH:mm:ss.SSS')).toStrictEqual('2020-01-06T00:00:00.000')
   })
 })
