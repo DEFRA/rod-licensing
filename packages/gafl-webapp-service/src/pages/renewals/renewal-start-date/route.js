@@ -13,9 +13,7 @@ const validator = payload => {
   Joi.assert(
     { 'licence-start-date': licenceStartDate },
     Joi.object({
-      'licence-start-date': JoiX.date()
-        .format(dateFormats)
-        .required()
+      'licence-start-date': JoiX.date().format(dateFormats).required()
     })
   )
 }
@@ -30,10 +28,7 @@ const getData = async request => {
     expiryTimeString,
     hasExpired: permission.renewedHasExpired,
     minStartDate: endDateMoment.format('DD MM YYYY'),
-    maxStartDate: endDateMoment
-      .clone()
-      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-      .format('DD MM YYYY'),
+    maxStartDate: endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format('DD MM YYYY'),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS
   }
 }
