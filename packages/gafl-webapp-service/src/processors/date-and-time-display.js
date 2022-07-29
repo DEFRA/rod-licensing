@@ -13,28 +13,27 @@ export const advancePurchaseDateMoment = permission =>
  * @param displayTimeFirst - whether to display the time before the date, default is false
  * @returns {string}
  */
-export const displayStartTime = (permission, request) => {
+export const displayStartTime = (request, permission) => {
   const mssgs = request.i18n.getCatalog()
-  console.log('utc(): ', moment.utc.tz())
-  const startMoment = permission.startDate ? moment.utc(permission.startDate, null, permission.locale).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
+  const startMoment = permission.startDate ? moment.utc(permission.startDate, null, request.locale).tz(SERVICE_LOCAL_TIME) : advancePurchaseDateMoment(permission)
   const timeComponent = startMoment
     .format('h:mma')
     .replace('12:00am', mssgs.licence_start_time_am_text_0)
     .replace('12:00pm', mssgs.licence_start_time_am_text_12)
-  return `${timeComponent} on ${startMoment.format(dateDisplayFormat)}`
+  return `${timeComponent} ${mssgs.renewal_start_date_expires_5} ${startMoment.format(dateDisplayFormat)}`
 }
 
-const endMomentStr = (request, d) => {
-  const m = moment.utc(d, null, request.locale).tz(SERVICE_LOCAL_TIME)
+const endMomentStr = (request, date) => {
   const mssgs = request.i18n.getCatalog()
-  const timeComponent = m
+  const endMoment = moment.utc(date, null, request.locale).tz(SERVICE_LOCAL_TIME)
+  const timeComponent = endMoment
     .format('h:mma')
     .replace('12:00am', () => {
-      m.subtract(1, 'days')
+      endMoment.subtract(1, 'days')
       return '11:59pm'
     })
     .replace('12:00pm', '12:00pm (midday)')
-  return `${timeComponent} ${mssgs.renewal_start_date_expires_5} ${m.format(dateDisplayFormat)}`
+  return `${timeComponent} ${mssgs.renewal_start_date_expires_5} ${endMoment.format(dateDisplayFormat)}`
 }
 
 // For renewals
