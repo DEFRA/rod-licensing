@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.18 (2022-08-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1410](https://github.com/DEFRA/rod-licensing/pull/1410) Pass current language to GOV.UK Pay API ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.26.0-rc.17 (2022-08-01)
 
 #### :rocket: Enhancement
