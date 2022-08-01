@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.17 (2022-08-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1403](https://github.com/DEFRA/rod-licensing/pull/1403) feature/iwtf 2995 Easy renewal, renewal start date welsh translation ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.16 (2022-07-29)
 
 #### :rocket: Enhancement
