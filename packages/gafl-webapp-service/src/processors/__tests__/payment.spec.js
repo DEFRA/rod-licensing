@@ -118,6 +118,16 @@ describe('preparePayment', () => {
     expect(ret).toEqual(returnValue)
   })
 
+  it.each([
+    ['when the language is set to Welsh', 'https://localhost:1234/buy/agreed?lang=cy', 'cy'],
+    ['when the language is set to English', 'https://localhost:1234/buy/agreed?lang=en', 'en'],
+    ['when the language is not set', 'https://localhost:1234/buy/agreed', 'en']
+  ])('provides the correct language %s', (_desc, decoratedUrl, expectedLanguageCode) => {
+    addLanguageCodeToUri.mockReturnValue(decoratedUrl)
+    const result = preparePayment(request, transaction)
+    expect(result.language).toEqual(expectedLanguageCode)
+  })
+
   describe('provides the correct description', () => {
     it('when there is only 1 permission', () => {
       expect(result.description).toBe('Trout and coarse, up to 2 rods, 8 day')

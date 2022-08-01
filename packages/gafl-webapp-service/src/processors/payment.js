@@ -30,7 +30,8 @@ export const preparePayment = (request, transaction) => {
         ? licenceTypeAndLengthDisplay(transaction.permissions[0], request.i18n.getCatalog())
         : 'Multiple permits',
     delayed_capture: false,
-    moto: process.env.CHANNEL === 'telesales'
+    moto: process.env.CHANNEL === 'telesales',
+    language: /\?.*lang=cy.*$/.test(url.search) ? 'cy' : 'en'
   }
 
   if (transaction.permissions.length === 1) {
