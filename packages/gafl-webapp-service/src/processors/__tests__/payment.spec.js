@@ -118,6 +118,35 @@ describe('preparePayment', () => {
     expect(ret).toEqual(returnValue)
   })
 
+  describe('provides the correct language', () => {
+    it('when the language is set to Welsh', () => {
+      addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed?lang=cy')
+
+      const result = preparePayment(request, transaction)
+      const ret = result.language
+
+      expect(ret).toEqual('cy')
+    })
+
+    it('when the language is set to English', () => {
+      addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed?lang=en')
+
+      const result = preparePayment(request, transaction)
+      const ret = result.language
+
+      expect(ret).toEqual('en')
+    })
+
+    it('when the language is not set', () => {
+      addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed')
+
+      const result = preparePayment(request, transaction)
+      const ret = result.language
+
+      expect(ret).toEqual('en')
+    })
+  })
+
   describe('provides the correct description', () => {
     it('when there is only 1 permission', () => {
       expect(result.description).toBe('Trout and coarse, up to 2 rods, 8 day')

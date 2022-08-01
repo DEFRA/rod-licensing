@@ -72,6 +72,7 @@ describe('The govuk-pay-service', () => {
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
       moto: false,
+      language: 'en',
       prefilled_cardholder_details: {
         cardholder_name: 'Graham Willis',
         billing_address: {
@@ -112,6 +113,7 @@ describe('The govuk-pay-service', () => {
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
       moto: false,
+      language: 'en',
       prefilled_cardholder_details: {
         cardholder_name: 'Graham Willis',
         billing_address: {
@@ -136,7 +138,8 @@ describe('The govuk-pay-service', () => {
       description: 'Multiple permits',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
-      moto: false
+      moto: false,
+      language: 'en'
     })
   })
 
