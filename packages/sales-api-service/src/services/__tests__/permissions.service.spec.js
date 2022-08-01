@@ -46,18 +46,12 @@ describe('permissions service', () => {
           licensee: {
             firstName: 'Fester',
             lastName: 'Tester',
-            birthDate: moment(now)
-              .subtract(JUNIOR_MAX_AGE, 'years')
-              .format('YYYY-MM-DD')
+            birthDate: moment(now).subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
           }
         },
         'Telesales'
       )
-      const block1 = moment(now)
-        .add(1, 'hour')
-        .startOf('hour')
-        .add(1, 'year')
-        .format('HHDDMMYY')
+      const block1 = moment(now).add(1, 'year').subtract(1, 'day').endOf('day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
@@ -79,11 +73,7 @@ describe('permissions service', () => {
         },
         'Web Sales'
       )
-      const block1 = moment(now)
-        .add(1, 'hour')
-        .startOf('hour')
-        .add(1, 'day')
-        .format('HHDDMMYY')
+      const block1 = moment(now).add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1JFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
@@ -98,41 +88,27 @@ describe('permissions service', () => {
           licensee: {
             firstName: 'Fester',
             lastName: 'Tester',
-            birthDate: moment(now)
-              .subtract(SENIOR_MIN_AGE, 'years')
-              .format('YYYY-MM-DD')
+            birthDate: moment(now).subtract(SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
           }
         },
         'Web Sales'
       )
-      const block1 = moment(now)
-        .add(1, 'hour')
-        .startOf('hour')
-        .add(1, 'day')
-        .format('HHDDMMYY')
+      const block1 = moment(now).add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
   })
 
   describe('calculateEndDate', () => {
-    it('calculates 365 days for 1 year licences outside of a leap year', async () => {
+    it('calculates 364 days for 1 year licences outside of a leap year', async () => {
       const startDate = moment('2019-01-01')
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
-      expect(endDate).toEqual(
-        moment(startDate)
-          .add(365, 'days')
-          .toISOString()
-      )
+      expect(endDate).toEqual(moment(startDate).add(364, 'days').endOf('day').toISOString())
     })
-    it('calculates 366 days for 1 year licences in a leap year', async () => {
+    it('calculates 365 days for 1 year licences in a leap year', async () => {
       const startDate = moment('2020-01-01')
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
-      expect(endDate).toEqual(
-        moment(startDate)
-          .add(366, 'days')
-          .toISOString()
-      )
+      expect(endDate).toEqual(moment(startDate).add(365, 'days').endOf('day').toISOString())
     })
   })
 
