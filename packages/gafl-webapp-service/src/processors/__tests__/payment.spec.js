@@ -118,33 +118,14 @@ describe('preparePayment', () => {
     expect(ret).toEqual(returnValue)
   })
 
-  describe('provides the correct language', () => {
-    it('when the language is set to Welsh', () => {
-      addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed?lang=cy')
-
-      const result = preparePayment(request, transaction)
-      const ret = result.language
-
-      expect(ret).toEqual('cy')
-    })
-
-    it('when the language is set to English', () => {
-      addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed?lang=en')
-
-      const result = preparePayment(request, transaction)
-      const ret = result.language
-
-      expect(ret).toEqual('en')
-    })
-
-    it('when the language is not set', () => {
-      addLanguageCodeToUri.mockReturnValue('https://localhost:1234/buy/agreed')
-
-      const result = preparePayment(request, transaction)
-      const ret = result.language
-
-      expect(ret).toEqual('en')
-    })
+  it.each([
+    ['when the language is set to Welsh', 'https://localhost:1234/buy/agreed?lang=cy', 'cy'],
+    ['when the language is set to English', 'https://localhost:1234/buy/agreed?lang=en', 'en'],
+    ['when the language is not set', 'https://localhost:1234/buy/agreed', 'en']
+  ])('provides the correct language %s', (_desc, decoratedUrl, expectedLanguageCode) => {
+    addLanguageCodeToUri.mockReturnValue(decoratedUrl)
+    const result = preparePayment(request, transaction)
+    expect(result.language).toEqual(expectedLanguageCode)
   })
 
   describe('provides the correct description', () => {
