@@ -5,6 +5,7 @@ import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS, SERVICE_LOCAL_TIME } f
 import Joi from 'joi'
 import { salesApi } from '@defra-fish/connectors-lib'
 import moment from 'moment-timezone'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
@@ -45,7 +46,9 @@ export default async (request, h) => {
     payload.referenceNumber = referenceNumber
     await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
     await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
-    return h.redirect(IDENTIFY.uri)
+    const decoratedUri = addLanguageCodeToUri(request, request.path)
+    console.log('request path auth handler: ', decoratedUri)
+    return h.redirect(addLanguageCodeToUri(request, IDENTIFY.uri))
   } else {
     // Test for 12 month licence
     const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().tz(SERVICE_LOCAL_TIME).startOf('day'), 'days')
