@@ -1,4 +1,19 @@
 
+## v1.26.0-rc.19 (2022-08-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1415](https://github.com/DEFRA/rod-licensing/pull/1415) feature/iwtf 3017 add full stop to licence for welsh lang ([@MickStein](https://github.com/MickStein))
+
+#### :bug: Bug Fix
+* `business-rules-lib`
+  * [#1414](https://github.com/DEFRA/rod-licensing/pull/1414) bugfix/iwtf 2967 find your addess max char error not showing ([@MickStein](https://github.com/MickStein))
+* `gafl-webapp-service`
+  * [#1412](https://github.com/DEFRA/rod-licensing/pull/1412) bugfix/iwtf 2995 incorrect error showing in welsh renewal identify page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.18 (2022-08-01)
 
 #### :rocket: Enhancement
