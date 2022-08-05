@@ -1,4 +1,12 @@
 
+## v1.26.0-rc.22 (2022-08-05)
+
+#### :bug: Bug Fix
+* [#1409](https://github.com/DEFRA/rod-licensing/pull/1409) bugfix/iwtf 2967 validation error for max char missing on find your a… ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 
 ## v1.26.0-rc.19 (2022-08-03)
