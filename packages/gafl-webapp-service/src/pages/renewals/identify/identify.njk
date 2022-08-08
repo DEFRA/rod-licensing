@@ -110,7 +110,7 @@
                             classes: "govuk-!-font-weight-bold govuk-label"
                       }
                   },
-                  errorMessage: { text: mssgs.enter_dob } if error['date-of-birth'] or error['referenceNumber'],
+                  errorMessage: { text: mssgs.enter_dob } if error['date-of-birth'],
                   hint: {
                     text: mssgs.enter_dob_example
                   }
@@ -128,7 +128,7 @@
                   autocomplete: 'postal-code',
                   classes: "govuk-input--width-10",
                   attributes: { maxlength: 10 },
-                  errorMessage: { text: mssgs.enter_postcode } if error['postcode'] or error['referenceNumber']
+                  errorMessage: { text: mssgs.enter_postcode } if error['postcode']
                 }) }}
 
                 {{ govukButton({
