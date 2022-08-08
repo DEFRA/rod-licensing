@@ -102,13 +102,17 @@ describe('permissions service', () => {
   describe('calculateEndDate', () => {
     it('calculates 364 days for 1 year licences outside of a leap year', async () => {
       const startDate = moment('2019-01-01')
+      const expectedEndDate = moment('2019-12-31').endOf('day')
+
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
-      expect(endDate).toEqual(moment(startDate).add(364, 'days').endOf('day').toISOString())
+      expect(endDate).toEqual(expectedEndDate.toISOString())
     })
     it('calculates 365 days for 1 year licences in a leap year', async () => {
       const startDate = moment('2020-01-01')
+      const expectedEndDate = moment('2020-12-31').endOf('day')
+
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
-      expect(endDate).toEqual(moment(startDate).add(365, 'days').endOf('day').toISOString())
+      expect(endDate).toEqual(expectedEndDate.toISOString())
     })
   })
 
