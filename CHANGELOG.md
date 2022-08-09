@@ -1,4 +1,18 @@
 
+## v1.26.0-rc.23 (2022-08-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1419](https://github.com/DEFRA/rod-licensing/pull/1419) feature/iwtf update privacy policy wording ([@MickStein](https://github.com/MickStein))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1420](https://github.com/DEFRA/rod-licensing/pull/1420) bugfix/iwtf 3006 remove persisting validation messages ([@MickStein](https://github.com/MickStein))
+  * [#1418](https://github.com/DEFRA/rod-licensing/pull/1418) bugfix/iwtf 3011 renewal page dob fields require char limit ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.22 (2022-08-05)
 
 #### :bug: Bug Fix
