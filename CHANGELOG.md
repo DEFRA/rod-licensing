@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.26 (2022-08-09)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1411](https://github.com/DEFRA/rod-licensing/pull/1411) Update end date and time rules for 12-month licences ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 ## v1.26.0-rc.23 (2022-08-09)
