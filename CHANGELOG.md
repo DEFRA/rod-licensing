@@ -1,4 +1,14 @@
 
+## v1.26.0-rc.28 (2022-08-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1423](https://github.com/DEFRA/rod-licensing/pull/1423) Welsh translation update to licence type page title ([@MickStein](https://github.com/MickStein))
+  * [#1422](https://github.com/DEFRA/rod-licensing/pull/1422) Update welsh translation for 'mobile phone' ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.26.0-rc.26 (2022-08-09)
 
