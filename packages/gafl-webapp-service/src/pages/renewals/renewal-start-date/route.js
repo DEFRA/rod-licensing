@@ -6,6 +6,7 @@ import Joi from 'joi'
 import JoiDate from '@hapi/joi-date'
 import moment from 'moment-timezone'
 import { displayExpiryDate } from '../../../processors/date-and-time-display.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 const JoiX = Joi.extend(JoiDate)
 
 const validator = payload => {
@@ -33,4 +34,10 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(RENEWAL_START_DATE.page, RENEWAL_START_DATE.uri, validator, RENEWAL_START_VALIDATE.uri, getData)
+export default pageRoute(
+  RENEWAL_START_DATE.page,
+  RENEWAL_START_DATE.uri,
+  validator,
+  request => addLanguageCodeToUri(request, RENEWAL_START_VALIDATE.uri),
+  getData
+)
