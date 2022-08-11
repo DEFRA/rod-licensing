@@ -14,9 +14,11 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import { displayStartTime } from '../../../../processors/date-and-time-display'
 
 jest.mock('../../find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
+jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
 
 describe('licence-summary > route', () => {
@@ -162,13 +164,14 @@ describe('licence-summary > route', () => {
     })
 
     it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
-      const returnValue = Symbol('return value')
-      licenceTypeDisplay.mockReturnValueOnce(returnValue)
-
+      const mockTypeDisplayValue = Symbol('type display return value')
+      const mockStartTimeValue = Symbol('start time return value')
+      licenceTypeDisplay.mockReturnValueOnce(mockTypeDisplayValue)
+      displayStartTime.mockReturnValueOnce(mockStartTimeValue)
       const result = await getData(mockRequest)
       const ret = result.licenceTypeStr
 
-      expect(ret).toEqual(returnValue)
+      expect(ret).toEqual(mockTypeDisplayValue)
     })
   })
 })

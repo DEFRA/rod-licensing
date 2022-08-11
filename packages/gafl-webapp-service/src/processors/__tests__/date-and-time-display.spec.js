@@ -9,6 +9,7 @@ jest.mock('moment-timezone', () => ({
     })
   })),
   format: () => {},
+  locale: jest.fn(),
   utc: jest.fn(() => ({ tz: () => {} }))
 }))
 
@@ -25,12 +26,9 @@ const getSampleRequest = () => ({
 
 describe('displayStartTime', () => {
   it('permission licence start date is passed to moment when start date is found', () => {
-    moment.utc.mockReturnValue({
-      tz: () => ({
-        format: () => ''
-      })
-    })
-    const startDate = Symbol('startDate')
+    const startDate = '2021-01-01'
+    const realMoment = jest.requireActual('moment-timezone')
+    moment.utc.mockReturnValueOnce(realMoment(startDate))
     displayStartTime(getSampleRequest(), { startDate })
     expect(moment.utc).toHaveBeenCalledWith(startDate, null, expect.any(String))
   })

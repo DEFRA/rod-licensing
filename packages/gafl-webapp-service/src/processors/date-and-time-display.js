@@ -19,6 +19,7 @@ export const displayStartTime = (request, permission) => {
     ? moment.utc(permission.startDate, null, request.locale).tz(SERVICE_LOCAL_TIME)
     : advancePurchaseDateMoment(permission)
   const timeComponent = startMoment
+    .locale(request.locale)
     .format('h:mma')
     .replace('12:00am', mssgs.licence_start_time_am_text_0)
     .replace('12:00pm', mssgs.licence_start_time_am_text_12)
