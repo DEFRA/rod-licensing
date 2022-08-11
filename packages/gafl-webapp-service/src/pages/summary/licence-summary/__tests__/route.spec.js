@@ -1,4 +1,4 @@
-import { getFromSummary, getData } from '../route'
+import { getFromSummary, getData, checkNavigation } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
 import {
   DATE_OF_BIRTH,
@@ -14,7 +14,7 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { displayStartTime } from '../../../../processors/date-and-time-display'
+import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
@@ -81,8 +81,56 @@ describe('licence-summary > route', () => {
       url: {
         search: ''
       },
-      path: ''
+      path: '',
+      locale: 'en'
     }
+
+    it('should return a summary table with required data for page', async () => {
+      const result = await getData(mockRequest)
+      expect(result).toEqual(
+        expect.objectContaining({
+          birthDateStr: '1st January 1946',
+          concessionProofs: {
+            NI: 'National Insurance Number',
+            blueBadge: 'Blue Badge',
+            none: 'No Proof'
+          },
+          cost: 6,
+          disabled: undefined,
+          hasExpired: false,
+          hasJunior: undefined,
+          isContinuing: false,
+          isRenewal: undefined,
+          licenceTypeStr: undefined,
+          permission: {
+            licenceLength: '12M',
+            licenceStartDate: '2021-07-01',
+            licenceType: 'Salmon and sea trout',
+            licensee: {
+              birthDate: '1946-01-01',
+              firstName: 'Graham',
+              lastName: 'Willis'
+            },
+            numberOfRods: '3',
+            permit: {
+              cost: 6
+            }
+          },
+          startAfterPaymentMinutes: 30,
+          startTimeString: undefined,
+          uri: {
+            clear: undefined,
+            dateOfBirth: undefined,
+            disabilityConcession: undefined,
+            licenceLength: undefined,
+            licenceStartDate: undefined,
+            licenceToStart: undefined,
+            licenceType: undefined,
+            name: undefined
+          }
+        })
+      )
+    })
 
     it.each([
       [NAME.uri],
@@ -170,8 +218,66 @@ describe('licence-summary > route', () => {
       displayStartTime.mockReturnValueOnce(mockStartTimeValue)
       const result = await getData(mockRequest)
       const ret = result.licenceTypeStr
-
       expect(ret).toEqual(mockTypeDisplayValue)
+    })
+  })
+
+  describe('checkNavigation', () => {
+    it('should throw a GetDataRedirect if no licensee first name or last name is found', () => {
+      const permission = { licensee: { firstName: undefined, lastName: undefined } }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no date of birth is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: undefined
+        }
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no licence start date is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: '1946-01-01'
+        },
+        licenceStartDate: undefined
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no number of rods or licence type is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: '1946-01-01'
+        },
+        licenceStartDate: '2021-07-01',
+        numberOfRods: undefined,
+        licenceType: undefined
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no licence length is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: '1946-01-01'
+        },
+        licenceStartDate: '2021-07-01',
+        numberOfRods: '3',
+        licenceType: 'Salmon and sea trout',
+        licenceLength: undefined
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
     })
   })
 })
