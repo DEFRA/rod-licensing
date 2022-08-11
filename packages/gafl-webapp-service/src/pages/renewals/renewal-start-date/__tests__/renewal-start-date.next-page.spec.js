@@ -15,7 +15,7 @@ describe('page route next', () => {
   beforeEach(jest.clearAllMocks)
 
   it('passes a function as the nextPage argument', () => {
-    expect(typeof (nextPage)).toBe('function')
+    expect(typeof nextPage).toBe('function')
   })
 
   it('calls addLanguageCodeToUri', () => {
@@ -26,19 +26,13 @@ describe('page route next', () => {
   it('passes request to addLanguageCodeToUri', () => {
     const request = Symbol('request')
     nextPage(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(
-      request,
-      expect.anything()
-    )
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
   })
 
   it('passes RENEWAL_START_VALIDATE to addLangaugeCodeToUri', () => {
     const request = Symbol('request')
     nextPage(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(
-      expect.anything(),
-      RENEWAL_START_VALIDATE.uri
-    )
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), RENEWAL_START_VALIDATE.uri)
   })
 
   it('next page returns result of addLanguageCodeToUri', () => {
