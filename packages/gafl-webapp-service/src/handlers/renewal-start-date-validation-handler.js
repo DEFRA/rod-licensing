@@ -37,6 +37,7 @@ export default async (request, h) => {
 
   const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
   const result = schema.validate({ 'licence-start-date': licenceStartDate })
+
   if (result.error) {
     await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, { payload, error: errorShimm(result.error) })
     await request
