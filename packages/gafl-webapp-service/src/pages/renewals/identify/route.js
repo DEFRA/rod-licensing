@@ -48,4 +48,4 @@ const validator = async payload => {
   )
 }
 
-export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, AUTHENTICATE.uri, getData)
+export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)
