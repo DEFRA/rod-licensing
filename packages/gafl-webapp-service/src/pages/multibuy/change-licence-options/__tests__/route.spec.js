@@ -27,6 +27,10 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
     none: 'Not Proof'
   }
 }))
+jest.mock('../../../../processors/date-and-time-display.js', () => ({
+  ...jest.requireActual('../../../../processors/date-and-time-display.js'),
+  displayStartTime: () => 'Test on 1 July 2021'
+}))
 
 describe('change-licence-options > route', () => {
   beforeEach(jest.clearAllMocks)
