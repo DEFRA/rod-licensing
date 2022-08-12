@@ -58,11 +58,7 @@ export default [
   {
     method: 'GET',
     path: AUTHENTICATE.uri,
-    handler: (request, h) => {
-      const decoratedUri = addLanguageCodeToUri(request, request.path)
-      console.log('miscroute: ', decoratedUri)
-      return authenticationHandler(request, h)
-    }
+    handler: authenticationHandler
   },
   {
     method: 'GET',
