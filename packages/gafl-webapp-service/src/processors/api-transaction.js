@@ -23,9 +23,7 @@ export const prepareApiTransactionPayload = async request => {
         issueDate: null,
         startDate: null,
         ...(p.licenceToStart === licenceToStart.ANOTHER_DATE && {
-          startDate: advancePurchaseDateMoment(p)
-            .utc()
-            .toISOString()
+          startDate: advancePurchaseDateMoment(p).utc().toISOString()
         }),
         isRenewal: p.isRenewal,
         isLicenceForYou: p.isLicenceForYou

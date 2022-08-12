@@ -84,12 +84,7 @@ const createDateStringValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.AnySchema}
  */
-export const createBirthDateValidator = joi =>
-  createDateStringValidator(joi)
-    .trim()
-    .birthDate(120)
-    .required()
-    .example('2000-01-01')
+export const createBirthDateValidator = joi => createDateStringValidator(joi).trim().birthDate(120).required().example('2000-01-01')
 
 /**
  * Create a validator to check a contact's mobile phone number
@@ -97,14 +92,7 @@ export const createBirthDateValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createEmailValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .email()
-    .max(100)
-    .lowercase()
-    .example('person@example.com')
+export const createEmailValidator = joi => joi.string().trim().email().max(100).lowercase().example('person@example.com')
 
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
 /**
@@ -113,12 +101,7 @@ export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createMobilePhoneValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .pattern(mobilePhoneRegex)
-    .example('+44 7700 900088')
+export const createMobilePhoneValidator = joi => joi.string().trim().pattern(mobilePhoneRegex).example('+44 7700 900088')
 
 /**
  * Create a validator to check a contact's address premises
@@ -127,14 +110,7 @@ export const createMobilePhoneValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createPremisesValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .min(1)
-    .max(100)
-    .external(toTitleCase())
-    .required()
-    .example('Example House')
+  joi.string().trim().min(1).max(100).external(toTitleCase()).required().example('Example House')
 
 /**
  * Create a validator to check a contact's address street
@@ -142,14 +118,7 @@ export const createPremisesValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createStreetValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .max(100)
-    .external(toTitleCase())
-    .empty('')
-    .example('Example Street')
+export const createStreetValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Example Street')
 
 /**
  * Create a validator to check a contact's address locality
@@ -157,14 +126,7 @@ export const createStreetValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createLocalityValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .max(100)
-    .external(toTitleCase())
-    .empty('')
-    .example('Near Sample')
+export const createLocalityValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Near Sample')
 
 /**
  * Create a validator to check a contact's address town
@@ -193,16 +155,7 @@ export const overseasPostcodeRegex = /^([a-zA-Z0-9 ]{1,12})$/i
  * @returns {Joi.StringSchema}
  */
 export const createUKPostcodeValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .min(1)
-    .max(12)
-    .required()
-    .pattern(ukPostcodeRegex)
-    .replace(ukPostcodeRegex, '$1 $2')
-    .uppercase()
-    .example('AB12 3CD')
+  joi.string().trim().min(1).max(12).required().pattern(ukPostcodeRegex).replace(ukPostcodeRegex, '$1 $2').uppercase().example('AB12 3CD')
 
 /**
  * Create a validator to check/format overseas postcodes
@@ -210,14 +163,7 @@ export const createUKPostcodeValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createOverseasPostcodeValidator = joi =>
-  joi
-    .string()
-    .trim()
-    .min(1)
-    .max(12)
-    .uppercase()
-    .required()
-    .pattern(overseasPostcodeRegex)
+  joi.string().trim().min(1).max(12).uppercase().required().pattern(overseasPostcodeRegex)
 
 const nameStringSubstitutions = [
   /*
@@ -327,13 +273,7 @@ const createNameStringValidator = (joi, { minimumLength }) =>
  * @returns {Joi.AnySchema}
  */
 export const createFirstNameValidator = (joi, { minimumLength = 2 } = {}) =>
-  createNameStringValidator(joi, { minimumLength })
-    .allowable()
-    .max(100)
-    .trim()
-    .external(toTitleCase())
-    .required()
-    .example('Fester')
+  createNameStringValidator(joi, { minimumLength }).allowable().max(100).trim().external(toTitleCase()).required().example('Fester')
 
 /**
  * Create a validator to check a contact's last name
@@ -359,7 +299,8 @@ export const createLastNameValidator = (joi, { minimumLength = 2 } = {}) =>
  * @returns {Joi.AnySchema}
  */
 
-const ukNINORegEx = /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])(?<!(?:BG|GB|KN|NK|NT|TN|ZZ))\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
+const ukNINORegEx =
+  /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])(?<!(?:BG|GB|KN|NK|NT|TN|ZZ))\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
 
 export const createNationalInsuranceNumberValidator = joi =>
   joi

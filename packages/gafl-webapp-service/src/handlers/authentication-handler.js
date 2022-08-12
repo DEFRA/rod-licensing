@@ -48,12 +48,7 @@ export default async (request, h) => {
     return h.redirect(IDENTIFY.uri)
   } else {
     // Test for 12 month licence
-    const daysDiff = moment(authenticationResult.permission.endDate).diff(
-      moment()
-        .tz(SERVICE_LOCAL_TIME)
-        .startOf('day'),
-      'days'
-    )
+    const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().tz(SERVICE_LOCAL_TIME).startOf('day'), 'days')
     if (
       authenticationResult.permission.permit.durationDesignator.description === 'M' &&
       authenticationResult.permission.permit.durationMagnitude === 12

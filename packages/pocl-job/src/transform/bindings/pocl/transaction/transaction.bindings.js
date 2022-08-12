@@ -67,10 +67,7 @@ const getDataSource = children => {
 
 export const convertDateTime = (dateTime, formats) => {
   for (const format of formats) {
-    const result = moment
-      .tz(dateTime, format, true, SERVICE_LOCAL_TIME)
-      .utc()
-      .toISOString()
+    const result = moment.tz(dateTime, format, true, SERVICE_LOCAL_TIME).utc().toISOString()
     if (result) {
       return result
     }

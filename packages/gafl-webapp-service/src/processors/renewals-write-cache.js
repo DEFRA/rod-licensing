@@ -27,9 +27,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   permission.licenceToStart = renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE
   permission.licenceStartDate = renewedHasExpired
-    ? moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .format(cacheDateFormat)
+    ? moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat)
     : endDateMoment.format(cacheDateFormat)
   permission.licenceStartTime = renewedHasExpired ? 0 : endDateMoment.hours()
   permission.renewedEndDate = endDateMoment.toISOString()

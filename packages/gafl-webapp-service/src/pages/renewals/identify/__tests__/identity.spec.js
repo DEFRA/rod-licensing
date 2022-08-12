@@ -104,9 +104,7 @@ describe('The easy renewal identification page', () => {
   ])('redirects to the controller on posting a valid response - (how contacted=%s), and shows both summary pages', async (name, fn) => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
-    newAuthenticationResult.permission.endDate = moment()
-      .startOf('day')
-      .toISOString()
+    newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
 
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
@@ -160,9 +158,7 @@ describe('The easy renewal identification page', () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.permit.numberOfRods = obj.numberOfRods
     newAuthenticationResult.permission.permit.permitSubtype = obj.subType
-    newAuthenticationResult.permission.endDate = moment()
-      .startOf('day')
-      .toISOString()
+    newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)
@@ -177,12 +173,8 @@ describe('The easy renewal identification page', () => {
 
   it('that an adult licence holder who is now over 65 gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
-    newAuthenticationResult.permission.endDate = moment()
-      .startOf('day')
-      .toISOString()
-    newAuthenticationResult.permission.licensee.birthDate = moment()
-      .add(-65, 'years')
-      .add(-1, 'days')
+    newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
+    newAuthenticationResult.permission.licensee.birthDate = moment().add(-65, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)

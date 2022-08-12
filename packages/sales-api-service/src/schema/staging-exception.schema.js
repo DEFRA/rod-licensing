@@ -6,10 +6,7 @@ import { concessionProofSchema } from './concession-proof.schema.js'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
 
-const dateSchema = Joi.string()
-  .isoDate()
-  .required()
-  .example(new Date().toISOString())
+const dateSchema = Joi.string().isoDate().required().example(new Date().toISOString())
 
 const TRANSACTION_DATE = dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed')
 
@@ -26,9 +23,7 @@ const schemaObject = {
     json: Joi.string().required(),
     notes: Joi.string(),
     type: buildJoiOptionSetValidator(PoclStagingException.definition.mappings.type.ref, 'Failure'),
-    transactionFile: Joi.string()
-      .external(createAlternateKeyValidator(PoclFile))
-      .required(),
+    transactionFile: Joi.string().external(createAlternateKeyValidator(PoclFile)).required(),
     permissionId: Joi.string()
   }),
   record: Joi.object({
@@ -80,77 +75,45 @@ export const poclValidationErrorItemSchema = Joi.object({
   postalFulfilment: Joi.boolean().required(),
   concessions: concessionProofSchema.optional(),
   startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
-  serialNumber: Joi.string()
-    .trim()
-    .required(),
-  transactionFile: Joi.string()
-    .trim()
-    .required(),
-  permitId: Joi.string()
-    .guid()
-    .required(),
+  serialNumber: Joi.string().trim().required(),
+  transactionFile: Joi.string().trim().required(),
+  permitId: Joi.string().guid().required(),
   amount: Joi.number().required(),
   transactionDate: TRANSACTION_DATE,
-  paymentSource: Joi.string()
-    .trim()
-    .required(),
-  channelId: Joi.string()
-    .trim()
-    .required()
-    .description('Channel specific identifier'),
+  paymentSource: Joi.string().trim().required(),
+  channelId: Joi.string().trim().required().description('Channel specific identifier'),
   methodOfPayment: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
   status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
   stateCode: Joi.number().required()
 }).label('pocl-validation-error-item')
 
-export const poclValidationErrorListSchema = Joi.array()
-  .items(poclValidationErrorItemSchema)
-  .label('pocl-validation-error-item-list')
+export const poclValidationErrorListSchema = Joi.array().items(poclValidationErrorItemSchema).label('pocl-validation-error-item-list')
 
 export const poclValidationErrorParamsSchema = Joi.object({
-  id: Joi.string()
-    .trim()
-    .guid()
-    .required()
-    .description('The POCL validation error identifier')
-    .example(uuidv4())
+  id: Joi.string().trim().guid().required().description('The POCL validation error identifier').example(uuidv4())
 })
 
 // There may be further issues in the record data at this point
 export const updatePoclValidationErrorPayload = Joi.object({
-  poclValidationErrorId: Joi.string()
-    .trim()
-    .guid()
-    .required()
-    .description('The POCL validation error identifier')
-    .example(uuidv4()),
+  poclValidationErrorId: Joi.string().trim().guid().required().description('The POCL validation error identifier').example(uuidv4()),
   createTransactionPayload: {
     dataSource: Joi.string().optional(),
     journalId: Joi.string().optional(),
-    serialNumber: Joi.string()
-      .trim()
-      .required(),
+    serialNumber: Joi.string().trim().required(),
     permissions: Joi.array().items(
       Joi.object({
         licensee: Joi.object(),
         issueDate: TRANSACTION_DATE,
         startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
-        permitId: Joi.string()
-          .guid()
-          .required(),
+        permitId: Joi.string().guid().required(),
         concessions: Joi.array()
           .items(
             Joi.object({
-              id: Joi.string()
-                .guid()
-                .required()
-                .example(uuidv4()),
+              id: Joi.string().guid().required().example(uuidv4()),
               proof: Joi.object({
                 type: Joi.string().required(),
-                referenceNumber: Joi.string()
-                  .optional()
-                  .example('QQ 12 34 56 C')
+                referenceNumber: Joi.string().optional().example('QQ 12 34 56 C')
               }).required()
             })
           )
@@ -163,16 +126,9 @@ export const updatePoclValidationErrorPayload = Joi.object({
     payment: {
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
-      source: Joi.string()
-        .trim()
-        .required(),
-      channelId: Joi.string()
-        .trim()
-        .required()
-        .description('Channel specific identifier'),
-      method: Joi.string()
-        .trim()
-        .required()
+      source: Joi.string().trim().required(),
+      channelId: Joi.string().trim().required().description('Channel specific identifier'),
+      method: Joi.string().trim().required()
     }
   },
   createTransactionError: Joi.object().optional(),

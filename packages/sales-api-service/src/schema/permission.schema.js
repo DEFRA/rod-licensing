@@ -37,25 +37,16 @@ export const stagedPermissionSchema = Joi.object({
   issueDate: issueDateSchema.allow(null),
   startDate: startDateSchema.allow(null),
   isRenewal: Joi.boolean(),
-  isLicenceForYou: Joi.boolean()
-    .optional()
-    .allow(null)
-    .example('true')
+  isLicenceForYou: Joi.boolean().optional().allow(null).example('true')
 }).label('staged-permission')
 
 export const finalisedPermissionSchemaContent = {
-  id: Joi.string()
-    .guid()
-    .required()
-    .example(uuid()),
+  id: Joi.string().guid().required().example(uuid()),
   referenceNumber: validation.permission.createPermissionNumberValidator(Joi),
   issueDate: issueDateSchema,
   startDate: startDateSchema,
   endDate: endDateSchema,
-  stagingId: Joi.string()
-    .guid()
-    .required()
-    .example(uuid()),
+  stagingId: Joi.string().guid().required().example(uuid()),
   dataSource: optionSetOption
 }
 
