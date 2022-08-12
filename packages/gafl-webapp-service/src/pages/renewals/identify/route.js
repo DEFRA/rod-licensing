@@ -9,8 +9,6 @@ import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
   const permission = await request.cache().helpers.status.getCurrentPermission()
-  const decoratedUri = addLanguageCodeToUri(request, request.path)
-  console.log('request path route: ', decoratedUri)
 
   if (permission.referenceNumber) {
     const validatePermissionNumber = validation.permission
