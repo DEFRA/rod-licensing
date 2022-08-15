@@ -13,9 +13,7 @@ const validator = payload => {
   Joi.assert(
     { 'licence-start-date': licenceStartDate },
     Joi.object({
-      'licence-start-date': JoiX.date()
-        .format(dateFormats)
-        .required()
+      'licence-start-date': JoiX.date().format(dateFormats).required()
     })
   )
 }
@@ -23,17 +21,14 @@ const validator = payload => {
 const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  const expiryTimeString = displayExpiryDate(permission)
-  const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
+  const expiryTimeString = displayExpiryDate(request, permission)
+  const endDateMoment = moment.utc(permission.renewedEndDate, null, request.locale).tz(SERVICE_LOCAL_TIME)
 
   return {
     expiryTimeString,
     hasExpired: permission.renewedHasExpired,
     minStartDate: endDateMoment.format('DD MM YYYY'),
-    maxStartDate: endDateMoment
-      .clone()
-      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-      .format('DD MM YYYY'),
+    maxStartDate: endDateMoment.clone().add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format('DD MM YYYY'),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS
   }
 }
