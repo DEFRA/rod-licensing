@@ -47,8 +47,6 @@ export const checkNavigation = permission => {
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const mssgs = request.i18n.getCatalog()
-  console.log(mssgs)
 
   if (!status.renewal) {
     /*
@@ -63,13 +61,13 @@ export const getData = async request => {
   status.fromLicenceOptions = CHANGE_LICENCE_OPTIONS_SEEN.SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
-  const startTimeString = displayStartTime(permission, mssgs)
+  const startTimeString = displayStartTime(request, permission)
 
   return {
     permission,
     startTimeString,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
-    licenceTypeStr: licenceTypeDisplay(permission, mssgs),
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog()),
     isRenewal: status.renewal,
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),

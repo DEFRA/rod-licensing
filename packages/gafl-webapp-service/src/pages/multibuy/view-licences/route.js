@@ -12,7 +12,7 @@ export const getData = async request => {
     licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
     type: licenceTypeDisplay(permission),
     length: licenceTypeAndLengthDisplay(permission),
-    start: displayStartTime(permission),
+    start: displayStartTime(request, permission),
     price: permission.permit.cost,
     index
   }))
