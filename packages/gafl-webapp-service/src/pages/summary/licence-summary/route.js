@@ -24,25 +24,33 @@ import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 // Extracted to keep sonar happy
-export const checkNavigation = permission => {
+const getErrorUri = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
-    throw new GetDataRedirect(NAME.uri)
+    return NAME.uri
   }
 
   if (!permission.licensee.birthDate) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+    return DATE_OF_BIRTH.uri
   }
 
   if (!permission.licenceStartDate) {
-    throw new GetDataRedirect(LICENCE_TO_START.uri)
+    return LICENCE_TO_START.uri
   }
 
   if (!permission.numberOfRods || !permission.licenceType) {
-    throw new GetDataRedirect(LICENCE_TYPE.uri)
+    return LICENCE_TYPE.uri
   }
 
   if (!permission.licenceLength) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
+    return LICENCE_LENGTH.uri
+  }
+
+  return false
+}
+export const checkNavigation = permission => {
+  const errorUri = getErrorUri(permission)
+  if (errorUri) {
+    throw new GetDataRedirect(errorUri)
   }
 }
 
