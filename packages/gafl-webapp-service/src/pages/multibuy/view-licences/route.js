@@ -7,12 +7,13 @@ import { nextPage } from '../../../routes/next-page.js'
 
 export const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
+  const mssgs = request.i18n.getCatalog()
 
   const licences = transaction.permissions.map((permission, index) => ({
     licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
-    type: licenceTypeDisplay(permission),
-    length: licenceTypeAndLengthDisplay(permission),
-    start: displayStartTime(permission),
+    type: licenceTypeDisplay(permission, mssgs),
+    length: licenceTypeAndLengthDisplay(permission, mssgs),
+    start: displayStartTime(permission, mssgs),
     price: permission.permit.cost,
     index
   }))

@@ -13,7 +13,8 @@ const createCache = (cache = {}) => ({
 export const createMockRequest = (opts = {}) => ({
   cache: () => createCache(opts.cache),
   payload: opts.payload || {},
-  query: opts.query || {}
+  query: opts.query || {},
+  i18n: opts.i18n || { getCatalog: () => ({}) }
 })
 
 export const createMockRequestToolkit = () => ({

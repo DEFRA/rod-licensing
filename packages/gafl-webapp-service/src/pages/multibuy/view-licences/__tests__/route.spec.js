@@ -39,6 +39,11 @@ describe('view licences > getData', () => {
         transaction: {
           permissions: [permission]
         }
+      },
+      i18n: {
+        getCatalog: () => ({
+          licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods'
+        })
       }
     })
 
