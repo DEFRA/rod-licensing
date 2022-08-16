@@ -24,6 +24,7 @@ import newsletter from '../pages/contact/newsletter/route.js'
 import addLicence from '../pages/multibuy/add-licence/route.js'
 import viewLicences from '../pages/multibuy/view-licences/route.js'
 import changeLicenceOptions from '../pages/multibuy/change-licence-options/route.js'
+import changeContactOptions from '../pages/multibuy/change-contact-options/route.js'
 
 import termsAndConditions from '../pages/terms-and-conditions/route.js'
 import orderComplete from '../pages/order-complete/order-complete/route.js'
@@ -64,6 +65,7 @@ const routes = [
   ...addLicence,
   ...viewLicences,
   ...changeLicenceOptions,
+  ...changeContactOptions,
   ...termsAndConditions,
   ...paymentCancelled,
   ...paymentFailed,

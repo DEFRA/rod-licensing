@@ -1,0 +1,238 @@
+import pageRoute from '../../../routes/page-route.js'
+import GetDataRedirect from '../../../handlers/get-data-redirect.js'
+import { countries } from '../../../processors/refdata-helper.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
+import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
+import { nextPage } from '../../../routes/next-page.js'
+import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+
+import {
+  CHANGE_CONTACT_OPTIONS,
+  ADDRESS_ENTRY,
+  ADDRESS_SELECT,
+  ADDRESS_LOOKUP,
+  CONTACT,
+  NEWSLETTER,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
+  CHANGE_LICENCE_OPTIONS
+} from '../../../uri.js'
+
+export const checkNavigation = (status, permission) => {
+  if (!permission.isRenewal) {
+    if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
+      throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
+    }
+
+    if (!status[CONTACT.page]) {
+      throw new GetDataRedirect(CONTACT.uri)
+    }
+  }
+
+  if (isPhysical(permission)) {
+    if (!status[LICENCE_FULFILMENT.page]) {
+      throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
+    }
+    if (!status[LICENCE_CONFIRMATION_METHOD.page]) {
+      throw new GetDataRedirect(LICENCE_CONFIRMATION_METHOD.uri)
+    }
+  }
+}
+
+export const getData = async request => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  const checkIsMultibuyForYou = await isMultibuyForYou(request)
+
+  if (checkIsMultibuyForYou === true) {
+    const transaction = await request.cache().helpers.transaction.get()
+
+    const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
+
+    const xferProps = [
+      'noLicenceRequired',
+      'premises',
+      'street',
+      'locality',
+      'town',
+      'postcode',
+      'countryCode',
+      'preferredMethodOfConfirmation',
+      'email',
+      'text',
+      'preferredMethodOfReminder',
+      'preferredMethodOfNewsletter'
+    ]
+    for (const prop of xferProps) {
+      permission.licensee[prop] = getLicence.licensee[prop]
+    }
+
+    const pagesToSkip = [ADDRESS_ENTRY.page, ADDRESS_SELECT.page, CONTACT.page, LICENCE_CONFIRMATION_METHOD.page]
+    for (const page of pagesToSkip) {
+      status[page] = true
+    }
+
+    await request.cache().helpers.transaction.setCurrentPermission(permission)
+  }
+
+  checkNavigation(status, permission)
+
+  status.fromSummary = CONTACT_SUMMARY_SEEN
+  await request.cache().helpers.status.setCurrentPermission(status)
+  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
+  return {
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
+    uri: {
+      changeContactOptions: CHANGE_CONTACT_OPTIONS.uri,
+      changeLicenceOptions: CHANGE_LICENCE_OPTIONS.uri
+    }
+  }
+}
+
+export default pageRoute(CHANGE_CONTACT_OPTIONS.page, CHANGE_CONTACT_OPTIONS.uri, null, nextPage, getData)
+
+export const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
+  const licenseeSummaryArray = [
+    getRow(
+      'Address',
+      getAddressText(permission.licensee, countryName),
+      addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
+      'address',
+      'change-address'
+    ),
+    ...getContactDetails(permission, request)
+  ]
+
+  if (permission.isLicenceForYou) {
+    licenseeSummaryArray.push(
+      getRow(
+        'Newsletter',
+        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
+        addLanguageCodeToUri(request, NEWSLETTER.uri),
+        'newsletter',
+        'change-newsletter'
+      )
+    )
+  }
+
+  return licenseeSummaryArray
+}
+
+const CONTACT_TEXT_DEFAULT = {
+  EMAIL: 'Email to ',
+  TEXT: 'Text message to ',
+  DEFAULT: 'Note of licence'
+}
+
+const CONTACT_TEXT_NON_PHYSICAL = {
+  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+  TEXT: 'Text messages to ',
+  DEFAULT: 'Make a note on confirmation'
+}
+
+const CONTACT_TEXT_PHYSICAL = {
+  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
+  TEXT: 'Text messages to ',
+  DEFAULT: 'By post'
+}
+
+const CHANGE_CONTACT = 'change-contact'
+
+const getContactDetails = (permission, request) => {
+  if (isPhysical(permission)) {
+    if (permission.licensee.postalFulfilment) {
+      return [
+        getRow(
+          'Licence',
+          'By post',
+          addLanguageCodeToUri(request, LICENCE_FULFILMENT.uri),
+          'licence fulfilment option',
+          'change-licence-fulfilment-option'
+        ),
+        getRow(
+          'Licence Confirmation',
+          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          addLanguageCodeToUri(request, LICENCE_CONFIRMATION_METHOD.uri),
+          'licence confirmation option',
+          'change-licence-confirmation-option'
+        ),
+        getRow(
+          'Contact',
+          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          addLanguageCodeToUri(request, CONTACT.uri),
+          'contact',
+          CHANGE_CONTACT
+        )
+      ]
+    } else {
+      return [
+        getRow(
+          'Licence',
+          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
+          addLanguageCodeToUri(request, LICENCE_FULFILMENT.uri),
+          'licence confirmation option',
+          'change-licence-confirmation-option'
+        ),
+        getRow(
+          'Contact',
+          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
+          addLanguageCodeToUri(request, CONTACT.uri),
+          'contact',
+          CHANGE_CONTACT
+        )
+      ]
+    }
+  } else {
+    return [
+      getRow(
+        'Licence details',
+        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
+        addLanguageCodeToUri(request, CONTACT.uri),
+        'contact',
+        CHANGE_CONTACT
+      )
+    ]
+  }
+}
+
+const getAddressText = (licensee, countryName) =>
+  [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+    .filter(Boolean)
+    .join(', ')
+
+const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
+  switch (contactMethod) {
+    case HOW_CONTACTED.email:
+      return contactText.EMAIL + licensee.email
+    case HOW_CONTACTED.text:
+      return contactText.TEXT + licensee.mobilePhone
+    default:
+      return contactText.DEFAULT
+  }
+}
+
+const getRow = (label, text, href, visuallyHiddenText, id) => {
+  return {
+    key: {
+      text: label
+    },
+    value: {
+      text
+    },
+    ...(href && {
+      actions: {
+        items: [
+          {
+            href,
+            text: 'Change',
+            visuallyHiddenText: visuallyHiddenText,
+            attributes: { id }
+          }
+        ]
+      }
+    })
+  }
+}

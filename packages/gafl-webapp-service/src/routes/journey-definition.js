@@ -30,7 +30,8 @@ import {
   RENEWAL_START_DATE,
   ADD_PERMISSION,
   VIEW_LICENCES,
-  CHANGE_LICENCE_OPTIONS
+  CHANGE_LICENCE_OPTIONS,
+  CHANGE_CONTACT_OPTIONS
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
@@ -234,7 +235,7 @@ export default [
         page: ADDRESS_ENTRY
       }
     },
-    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_SUMMARY.uri)
+    backLink: status => backLinkHandler(status, LICENCE_SUMMARY.uri)
   },
 
   {
@@ -250,7 +251,7 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : ADDRESS_LOOKUP.uri)
+    backLink: status => backLinkHandler(status, ADDRESS_LOOKUP.uri)
   },
 
   {
@@ -281,15 +282,8 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: (status, permission) => {
-      if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
-        return CONTACT_SUMMARY.uri
-      } else if (permission?.isRenewal) {
-        return LICENCE_SUMMARY.uri
-      } else {
-        return ADDRESS_LOOKUP.uri
-      }
-    }
+    backLink: (status, permission) => backLinkHandler(status, ADDRESS_LOOKUP.uri)
+
   },
   {
     current: LICENCE_CONFIRMATION_METHOD,
@@ -386,6 +380,15 @@ export default [
 
   {
     current: CHANGE_LICENCE_OPTIONS,
+    next: {
+      [CommonResults.OK]: {
+        page: VIEW_LICENCES
+      }
+    }
+  },
+
+  {
+    current: CHANGE_CONTACT_OPTIONS,
     next: {
       [CommonResults.OK]: {
         page: VIEW_LICENCES

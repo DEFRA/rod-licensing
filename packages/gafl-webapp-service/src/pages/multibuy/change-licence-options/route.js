@@ -14,7 +14,8 @@ import {
   DISABILITY_CONCESSION,
   DATE_OF_BIRTH,
   RENEWAL_START_DATE,
-  NEW_TRANSACTION
+  NEW_TRANSACTION,
+  CHANGE_CONTACT_OPTIONS
 } from '../../../uri.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { START_AFTER_PAYMENT_MINUTES, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
@@ -43,7 +44,6 @@ export const checkNavigation = permission => {
   }
 
   if (!permission.licenceLength) {
-    console.log(permission.licensee.firstName)
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 }
@@ -89,7 +89,8 @@ export const getData = async request => {
       dateOfBirth: DATE_OF_BIRTH.uri,
       disabilityConcession: DISABILITY_CONCESSION.uri,
       licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
-      clear: NEW_TRANSACTION.uri
+      clear: NEW_TRANSACTION.uri,
+      changeContactOptions: CHANGE_CONTACT_OPTIONS.uri
     }
   }
 }

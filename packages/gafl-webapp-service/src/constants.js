@@ -67,6 +67,12 @@ export const CHANGE_LICENCE_OPTIONS_SEEN = {
   NOT_SEEN: 'not-seen'
 }
 
+// If the user has seen the change contact options page this is set in the status
+export const CHANGE_CONTACT_OPTIONS_SEEN = {
+  SEEN: 'seen',
+  NOT_SEEN: 'not-seen'
+}
+
 export const RENEWAL_ERROR_REASON = {
   NOT_DUE: 'not-due',
   EXPIRED: 'expired',
