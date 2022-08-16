@@ -1,7 +1,7 @@
 {% from "button/macro.njk" import govukButton %}
 
 {% macro analytics(mssgs) %}
-    <form method="post" novalidate action='packages/gafl-webapp-service/src/pages/analytics/result-function.js'>
+    <form method="post" novalidate action='analyticsFormAction'>
         {% if not analyticsMessageDisplay %}
             <div id="cookie-banner" class="cookie-banner no-print" role="region" aria-label="cookie banner">
                 <div id="cookie-message" class="cookie-message no-print" role="region" aria-label="cookie message">

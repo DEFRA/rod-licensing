@@ -16,8 +16,7 @@ import {
   LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   LICENCE_SUMMARY,
-  NAME,
-  ANALYTICS
+  NAME
 } from '../uri.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
@@ -35,7 +34,6 @@ import addressLookup from '../pages/contact/address/lookup/result-function.js'
 import addressSelect from '../pages/contact/address/select/result-function.js'
 import addressEntry from '../pages/contact/address/entry/result-function.js'
 import licenceSummary from '../pages/summary/licence-summary/result-function.js'
-import analytics from '../pages/analytics/result-function.js'
 
 /**
  * The result function determines the navigation in the route definition
@@ -55,6 +53,5 @@ export default {
   [LICENCE_FULFILMENT.page]: licenceFulfilment,
   [LICENCE_CONFIRMATION_METHOD.page]: licenceConfirmationMethod,
   [NAME.page]: name,
-  [LICENCE_SUMMARY.page]: licenceSummary,
-  [ANALYTICS.page]: analytics
+  [LICENCE_SUMMARY.page]: licenceSummary
 }
