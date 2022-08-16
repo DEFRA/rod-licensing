@@ -105,6 +105,13 @@ export default (path, view, completion, getData) => ({
     pageData.mssgs = request.i18n.getCatalog()
     pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
+
+    const status = request.cache().helpers.status.get()
+
+    pageData.acceptedTracking = status.acceptedTracking
+    pageData.analyticsSelected = status.analyticsSelected
+    pageData.analyticsMessageDisplay = status.analyticsMessageDisplay
+
     return h.view(view, pageData)
   },
   /**

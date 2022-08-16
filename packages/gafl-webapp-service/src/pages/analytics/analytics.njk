@@ -1,0 +1,155 @@
+{% from "button/macro.njk" import govukButton %}
+
+{% macro analytics(mssgs) %}
+    <form method="post" novalidate action='packages/gafl-webapp-service/src/pages/analytics/result-function.js'>
+        {% if not analyticsMessageDisplay %}
+            <div id="cookie-banner" class="cookie-banner no-print" role="region" aria-label="cookie banner">
+                <div id="cookie-message" class="cookie-message no-print" role="region" aria-label="cookie message">
+                    <div class="govuk-width-container">
+                        <h2 class="govuk-cookie-banner__heading govuk-heading-m">
+                            {{ mssgs.analytics_banner_title }}
+                        </h2>
+                        <div class="govuk-cookie-banner__content">
+                            <p class="govuk-body">
+                            {{ mssgs.analytics_banner_preamble_1 }}
+                            </p>
+                            <p class="govuk-body">
+                            {{ mssgs.analytics_banner_preamble_2 }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
+                            </p>
+                        </div>
+                        <div class="govuk-button-group">
+                            {{ govukButton({
+                                attributes: { id: 'accept' },
+                                preventDoubleClick: true,
+                                name: "accept",
+                                text: mssgs.analytics_banner_accept,
+                                value: payload['analytics-response'] === true
+                            }) }}
+                            {{ govukButton({
+                                attributes: { id: 'reject' },
+                                preventDoubleClick: true,
+                                name: "reject",
+                                text: mssgs.analytics_banner_reject,
+                                value: payload['analytics-response'] === false
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if analyticsMessageDisplay %}
+            {% if analyticsSelected %}
+                {% if acceptedTracking %}
+                    <div id="cookie-hide" class="cookie-hide no-print" role="region" aria-label="cookie accept">
+                        <div class="govuk-width-container">
+                            <div class="govuk-cookie-hide__content">
+                                <p class="govuk-body" id="cookie-acceptance">
+                                    {{ mssgs.analytics_banner_acceptance }}
+                                </p>
+                            </div>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    attributes: { id: 'hide' },
+                                    preventDoubleClick: true,
+                                    name: "hide",
+                                    text: mssgs.analytics_banner_hide,
+                                    value: payload['analytics-seen'] === true
+                                }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if not acceptedTracking %}
+                    <div id="cookie-hide" class="cookie-hide initially-hidden" role="region" aria-label="cookie reject">
+                        <div class="govuk-width-container">
+                            <div class="govuk-cookie-hide__content">
+                                <p class="govuk-body" id="cookie-rejection">
+                                    {{ mssgs.analytics_banner_rejection }}
+                                </p>
+                            </div>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    attributes: { id: 'hide' },
+                                    preventDoubleClick: true,
+                                    name: "hide",
+                                    text: mssgs.analytics_banner_hide,
+                                    value: payload['analytics-seen'] === true
+                                }) }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %} 
+        {% endif %}
+    </form>
+{% endmacro %}
+
+{# {% macro analyticsScript(nonce) %}
+    <script nonce={{nonce}} type="text/javascript">
+        function seenCookies () {
+        const expiry = new Date()
+        expiry.setDate(expiry.getDate() + 90)
+        document.cookie = 'seenCookieMessage=true; expires=' + expiry.toUTCString() + '; path=/;'
+        removeCookieMessage()
+        }
+
+        function removeCookieMessage () {
+        const elem = document.getElementById('cookie-banner')
+            if (elem.parentNode) {
+                elem.parentNode.removeChild(elem)
+            }
+        }
+
+        window.onload = function () {
+          'use strict'
+          const seenCookieMessage = /(^|;)\s*seenCookieMessage=/.test(document.cookie)
+            if (seenCookieMessage) {
+                removeCookieMessage()
+            }
+        }
+
+        const cookieButtons = document.getElementById('cookie-buttons')
+
+        const acceptButton = document.getElementById('accept_analytics')
+        const rejectButton = document.getElementById('reject_analytics')
+
+        const message = document.getElementById('cookie-message')
+        const hide = document.getElementById('cookie-hide')
+        const reject = document.getElementById('cookie-rejection')
+        const accept = document.getElementById('cookie-acceptance')
+
+        if (cookieButtons) {
+        // ACCEPT
+        acceptButton.addEventListener('click', function (e) {
+            e.preventDefault()
+
+            message.style.display = 'none'
+            hide.style.display = 'block'
+            reject.style.display = 'none'
+            accept.style.display = 'block'
+        })
+
+        //  REJECT
+        rejectButton.addEventListener('click', function (e) {
+            e.preventDefault()
+
+            message.style.display = 'none'
+            hide.style.display = 'block'
+            reject.style.display = 'block'
+            accept.style.display = 'none'
+        })
+        }
+
+        //  CLOSE
+        const hideMessage = document.getElementById('hide-message')
+        hideMessage.addEventListener('click', function (e) {
+        e.preventDefault()
+        
+        // seenCookies()
+
+        hide.style.display = 'none'
+        })
+    </script>
+{% endmacro %} #}

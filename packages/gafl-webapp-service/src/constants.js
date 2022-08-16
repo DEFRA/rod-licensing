@@ -69,3 +69,8 @@ export const LICENCE_SUMMARY_SEEN = 'licence-summary'
 // These cookies are used by the load balancer
 export const ALB_COOKIE_NAME = 'AWSALBTG'
 export const ALBCORS_COOKIE_NAME = 'AWSALBTGCORS'
+
+export const ANALYTICS_SEEN = {
+  YES: 'yes',
+  NO: 'no'
+}

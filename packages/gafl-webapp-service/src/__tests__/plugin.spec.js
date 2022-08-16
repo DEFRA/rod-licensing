@@ -21,4 +21,42 @@ describe('plugins', () => {
       }
     )
   })
+
+  describe('userAgreedToTracking', () => {
+    beforeEach(jest.clearAllMocks)
+    it('AGREE_ANALYTICS set to false so initialiseHapiGapiPlugin is not called', async () => {
+      process.env.AGREE_ANALYTICS = false
+
+      const pluginArray = getPlugins()
+      const hapiGapiPlugin = pluginArray[7]
+
+      expect(hapiGapiPlugin.options.propertySettings).toBeUndefined()
+    })
+
+    it('AGREE_ANALYTICS set to true so initialiseHapiGapiPlugin is called', async () => {
+      process.env.AGREE_ANALYTICS = true
+      process.env.ANALYTICS_PRIMARY_PROPERTY = true
+      process.env.ANALYTICS_XGOV_PROPERTY = true
+
+      const pluginArray = getPlugins()
+      const hapiGapiPlugin = pluginArray[7]
+
+      expect(hapiGapiPlugin.options.propertySettings).toBeDefined()
+    })
+
+    it.each([
+      ['development', true, 'Session is being tracked.'],
+      ['test', true, 'Session is being tracked.'],
+      ['development', false, 'Session is not being tracked.'],
+      ['test', false, 'Session is not being tracked.']
+    ])('log matches whether session is being tracked if dev/test environment', async (env, analytics, log) => {
+      process.env.NODE_ENV = env
+      process.env.AGREE_ANALYTICS = analytics
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+      getPlugins()
+
+      expect(consoleLogSpy).toHaveBeenCalledWith(log)
+    })
+  })
 })

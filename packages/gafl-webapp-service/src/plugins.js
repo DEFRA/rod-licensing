@@ -10,6 +10,7 @@ import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
+// import { checkAnalytics } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
 
@@ -122,3 +123,37 @@ export const getPlugins = () => {
     initialiseHapiI18nPlugin()
   ]
 }
+
+// export const getPlugins = () => {
+//   const analytics = checkAnalytics
+//   if (analytics === 'true') {
+//     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+//       console.log('Session is being tracked.')
+//     }
+//     return [
+//       Inert,
+//       Vision,
+//       Scooter,
+//       Cookie,
+//       initialiseDisinfectPlugin(),
+//       initialiseBlankiePlugin(),
+//       initialiseCrumbPlugin(),
+//       initialiseHapiGapiPlugin(),
+//       initialiseHapiI18nPlugin()
+//     ]
+//   } else {
+//     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+//       console.log('Session is not being tracked.')
+//     }
+//     return [
+//       Inert,
+//       Vision,
+//       Scooter,
+//       Cookie,
+//       initialiseDisinfectPlugin(),
+//       initialiseBlankiePlugin(),
+//       initialiseCrumbPlugin(),
+//       initialiseHapiI18nPlugin()
+//     ]
+//   }
+// }
