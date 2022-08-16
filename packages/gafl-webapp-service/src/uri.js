@@ -1,7 +1,7 @@
 /*
  * Page locations, templates
  */
-export const ANALYTICS = { page: 'analytics' }
+export const PROCESS_ANALYTICS_PREFERENCES = { uri: '/buy/process-analytics-preferences', page: 'process-analytics-preferences' }
 
 export const LICENCE_FOR = { uri: '/buy/licence-for', page: 'licence-for' }
 export const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }

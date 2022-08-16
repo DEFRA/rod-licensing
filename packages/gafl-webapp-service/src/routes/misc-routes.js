@@ -13,7 +13,8 @@ import {
   IDENTIFY,
   OS_TERMS,
   ATTRIBUTION,
-  RENEWAL_LICENCE
+  RENEWAL_LICENCE,
+  PROCESS_ANALYTICS_PREFERENCES
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -27,6 +28,7 @@ import renewalValidationHandler from '../handlers/renewal-start-date-validation-
 import attribution from '../handlers/attribution-handler.js'
 import urlHandler from '../handlers/renewals-friendly-url-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
+import analytics from '../handlers/analytics-handler.js'
 
 const simpleView = view => ({
   method: 'GET',
@@ -125,6 +127,11 @@ export default [
     method: 'GET',
     path: RENEWAL_LICENCE.uri,
     handler: urlHandler
+  },
+  {
+    method: 'GET',
+    path: PROCESS_ANALYTICS_PREFERENCES.uri,
+    handler: analytics
   },
   simpleView(ACCESSIBILITY_STATEMENT),
   simpleView(PRIVACY_POLICY),

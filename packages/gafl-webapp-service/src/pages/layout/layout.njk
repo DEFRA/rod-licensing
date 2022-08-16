@@ -3,7 +3,7 @@
 
 {% from "header/macro.njk" import govukHeader %}
 {% from "footer/macro.njk" import govukFooter %}
-{% from "analytics.njk" import analytics %}
+{% from "process-analytics-preferences.njk" import analytics %}
 
 {% macro csrf() %}
 <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
