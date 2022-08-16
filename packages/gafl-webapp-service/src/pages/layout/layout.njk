@@ -1,8 +1,9 @@
 {% extends "template.njk" %}
 {% set assetPath = "/public" %}
 
-{% from "footer/macro.njk" import govukFooter %}
 {% from "header/macro.njk" import govukHeader %}
+{% from "footer/macro.njk" import govukFooter %}
+{% from "analytics.njk" import analytics %}
 
 {% macro csrf() %}
 <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
@@ -15,49 +16,17 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 {% endblock %}
-
 {% block header %}
-    <div id="global-cookie-message" class="cookie-banner no-print" role="region" aria-label="cookie banner">
-      <div class="govuk-width-container">
-        <p class="govuk-body">
-          {{ mssgs.cookie_banner_preamble }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
-        </p>
-        <button id="close-global-cookie-message" class="govuk-button govuk-!-margin-bottom-0" type="submit">
-            {{ mssgs.cookie_banner_close }}<span class="govuk-visually-hidden"> {{ mssgs.cookie_banner_close_ex }}</span>
-        </button>
-      </div>
-    </div>
-    <script nonce={{nonce}} type="text/javascript">
-        function removeCookieMessage() {
-            var elem = document.getElementById('global-cookie-message')
-            if (elem.parentNode) {
-                elem.parentNode.removeChild(elem)
-            }
-        }
-        (function () {
-            'use strict'
-            var seen_cookie_message = /(^|\;)\s*seen_cookie_message=/.test(document.cookie)
-            if (seen_cookie_message) {
-                removeCookieMessage()
-            } else {
-                document.getElementById('close-global-cookie-message').addEventListener('click', function() {
-                    var expiry = new Date()
-                    expiry.setDate(expiry.getDate() + 90)
-                    document.cookie = 'seen_cookie_message=true; expires=' + expiry.toUTCString() + '; path=/;'
-                    removeCookieMessage()
-                })
-            }
-        })()
-    </script>
+    {{ analytics(mssgs) }}
+
     {{ govukHeader({
-            assetsPath: assetPath + '/images',
-            homepageUrl: "https://www.gov.uk/",
-            serviceUrl: "/",
-            classes: "no-print",
-            containerClasses: "govuk-width-container",
-            serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)"
-        })
-    }}
+        assetsPath: assetPath + '/images',
+        homepageUrl: "https://www.gov.uk/",
+        serviceUrl: "/",
+        classes: "no-print",
+        containerClasses: "govuk-width-container",
+        serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)"
+    }) }}
 {% endblock %}
 
 {% block beforeContent %}
