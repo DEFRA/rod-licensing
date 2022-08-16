@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.31 (2022-08-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1413](https://github.com/DEFRA/rod-licensing/pull/1413) Welsh not persisting when unauthenticated error ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.30 (2022-08-16)
 
 #### :bug: Bug Fix
