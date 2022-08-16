@@ -7,6 +7,7 @@
 
 export default async (request, h) => {
   console.log('handler')
+  return h.redirect('/buy')
   // const status = request.cache().helpers.status.get()
   // const currentPage = status.currentPage || 'start'
 

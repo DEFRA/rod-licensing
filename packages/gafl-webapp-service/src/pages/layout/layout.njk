@@ -17,7 +17,7 @@
 <meta http-equiv="Expires" content="-1">
 {% endblock %}
 {% block header %}
-    {{ analytics(mssgs) }}
+    {{ analytics(mssgs, uri) }}
 
     {{ govukHeader({
         assetsPath: assetPath + '/images',
