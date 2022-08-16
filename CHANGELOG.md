@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.30 (2022-08-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1425](https://github.com/DEFRA/rod-licensing/pull/1425) Language doesn't persist on Renewals licence start ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.26.0-rc.28 (2022-08-09)
 
