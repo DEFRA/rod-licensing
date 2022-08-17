@@ -57,6 +57,7 @@ Object {
   "startAfterPaymentMinutes": 30,
   "startTimeString": "Test on 1 July 2021",
   "uri": Object {
+    "changeContactOptions": "/buy/change-contact-options",
     "clear": "/buy/new",
     "dateOfBirth": "/buy/date-of-birth",
     "disabilityConcession": "/buy/disability-concession",
