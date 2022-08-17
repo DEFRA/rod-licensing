@@ -1,7 +1,7 @@
-import { CHANGE_CONTACT_OPTIONS, CHANGE_LICENCE_OPTIONS, LICENCE_SUMMARY, CONTACT_SUMMARY } from '../uri.js'
+import { CHANGE_LICENCE_OPTIONS, LICENCE_SUMMARY, CONTACT_SUMMARY, CHANGE_CONTACT_OPTIONS } from '../uri.js'
 import { LICENCE_SUMMARY_SEEN } from '../constants.js'
 
-export default async (status, defaultUri) => {
+export default (status, defaultUri) => {
   const summarySeen = status.fromSummary
   const changeLicenceOptionsSeen = status.fromLicenceOptions
   const changeContactOptionsSeen = status.fromContactOptions
