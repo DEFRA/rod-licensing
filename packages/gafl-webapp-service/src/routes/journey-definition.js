@@ -283,7 +283,6 @@ export default [
       }
     },
     backLink: (status, permission) => backLinkHandler(status, ADDRESS_LOOKUP.uri)
-
   },
   {
     current: LICENCE_CONFIRMATION_METHOD,
