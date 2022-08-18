@@ -1,5 +1,14 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
-import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical } from '../licence-type-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, getErrorPage } from '../licence-type-display.js'
+import { NAME, DATE_OF_BIRTH, LICENCE_TO_START, LICENCE_TYPE, LICENCE_LENGTH } from '../../uri.js'
+
+jest.mock('../../uri.js', () => ({
+  NAME: { uri: Symbol('name') },
+  DATE_OF_BIRTH: { uri: Symbol('date of birth') },
+  LICENCE_TO_START: { uri: Symbol('licence to start') },
+  LICENCE_TYPE: { uri: Symbol('licence type') },
+  LICENCE_LENGTH: { uri: Symbol('licence length') }
+}))
 
 const permission = {}
 
@@ -100,4 +109,45 @@ describe('isPhysical', () => {
     const result = isPhysical(permission)
     expect(result).toEqual(false)
   })
+})
+
+describe('getErrorPage', () => {
+  it.each([
+    ['NAME.uri when firstName', { firstName: false }, NAME.uri],
+    ['NAME.uri when lastName', { lastName: false }, NAME.uri],
+    ['DATE_OF_BIRTH.uri when birthDate', { birthDate: false }, DATE_OF_BIRTH.uri],
+    ['LICENCE_TO_START.uri when licenceStartDate', { licenceStartDate: false }, LICENCE_TO_START.uri],
+    ['LICENCE_TYPE.uri when numberOfRods', { numberOfRods: false }, LICENCE_TYPE.uri],
+    ['LICENCE_TYPE.uri when licenceType', { licenceType: false }, LICENCE_TYPE.uri],
+    ['LICENCE_LENGTH.uri when licenceLength', { licenceLength: false }, LICENCE_LENGTH.uri],
+    ['false when nothing', {}, false]
+  ])('returns %s is omitted', (_description, spec, expectedUri) => {
+    const permission = getSamplePermission(spec)
+    const errorPage = getErrorPage(permission)
+    expect(errorPage).toEqual(expectedUri)
+  })
+
+  const getSamplePermission = spec => {
+    const parsedSpec = {
+      firstName: true,
+      lastName: true,
+      birthDate: true,
+      licenceStartDate: true,
+      numberOfRods: true,
+      licenceType: true,
+      licenceLength: true,
+      ...spec
+    }
+    return {
+      licensee: {
+        firstName: parsedSpec.firstName ? 'firstName' : undefined,
+        lastName: parsedSpec.lastName ? 'lastName' : undefined,
+        birthDate: parsedSpec.birthDate ? '01/01/1970' : undefined
+      },
+      licenceStartDate: parsedSpec.licenceStartDate ? '01/01/2022' : undefined,
+      numberOfRods: parsedSpec.numberOfRods ? 2 : undefined,
+      licenceType: parsedSpec.licenceType ? 'Salmon & Sea Trout' : undefined,
+      licenceLength: parsedSpec.licenceLength ? '12M' : undefined
+    }
+  }
 })

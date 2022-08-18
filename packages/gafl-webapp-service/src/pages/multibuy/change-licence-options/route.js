@@ -1,6 +1,6 @@
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { licenceTypeDisplay, getErrorPage } from '../../../processors/licence-type-display.js'
 import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import findPermit from '../../summary/find-permit.js'
 import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../../constants.js'
@@ -21,29 +21,6 @@ import { START_AFTER_PAYMENT_MINUTES, SERVICE_LOCAL_TIME } from '@defra-fish/bus
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
-// Extracted to keep sonar happy
-export const checkNavigation = permission => {
-  if (!permission.licensee.firstName || !permission.licensee.lastName) {
-    throw new GetDataRedirect(NAME.uri)
-  }
-
-  if (!permission.licensee.birthDate) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
-  }
-
-  if (!permission.licenceStartDate) {
-    throw new GetDataRedirect(LICENCE_TO_START.uri)
-  }
-
-  if (!permission.numberOfRods || !permission.licenceType) {
-    throw new GetDataRedirect(LICENCE_TYPE.uri)
-  }
-
-  if (!permission.licenceLength) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
-  }
-}
-
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -55,7 +32,10 @@ export const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary.
      */
-    checkNavigation(permission)
+    const errorOnPage = getErrorPage(status)
+    if (errorOnPage) {
+      throw new GetDataRedirect(errorOnPage)
+    }
   }
 
   status.fromLicenceOptions = CHANGE_LICENCE_OPTIONS_SEEN.SEEN
