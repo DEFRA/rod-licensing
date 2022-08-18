@@ -1,5 +1,30 @@
 import * as concessionHelper from './concession-helper.js'
 import * as mappings from './mapping-constants.js'
+import { NAME, DATE_OF_BIRTH, LICENCE_TO_START, LICENCE_TYPE, LICENCE_LENGTH } from '../uri.js'
+
+export const getErrorPage = permission => {
+  if (!permission.licensee.firstName || !permission.licensee.lastName) {
+    return NAME.uri
+  }
+
+  if (!permission.licensee.birthDate) {
+    return DATE_OF_BIRTH.uri
+  }
+
+  if (!permission.licenceStartDate) {
+    return LICENCE_TO_START.uri
+  }
+
+  if (!permission.numberOfRods || !permission.licenceType) {
+    return LICENCE_TYPE.uri
+  }
+
+  if (!permission.licenceLength) {
+    return LICENCE_LENGTH.uri
+  }
+
+  return false
+}
 
 export const licenceTypeDisplay = (permission, mssgs) => {
   const typesStrArr = []

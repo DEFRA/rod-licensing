@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`change-licence-options > route getData test output of getData 1`] = `
+exports[`change-licence-options > route getData test output of getData for a continuing, expired permission 1`] = `
 Object {
   "birthDateStr": "1st January 1946",
   "concessionProofs": Object {
@@ -10,49 +10,113 @@ Object {
   },
   "cost": 6,
   "disabled": undefined,
-  "hasExpired": false,
+  "hasExpired": true,
   "hasJunior": undefined,
-  "isContinuing": false,
+  "isContinuing": true,
   "isRenewal": undefined,
-  "licenceTypeStr": "Salmon and sea trout",
+  "licenceTypeStr": Symbol(Salmon and sea trout),
   "permission": Object {
-    "birthDateStr": "1st January 1946",
-    "concessionProofs": Object {
-      "NI": "National Insurance Number",
-      "blueBadge": "Blue Badge",
-      "none": "No Proof",
-    },
-    "cost": 6,
-    "disabled": true,
-    "hasExpired": false,
-    "hasJunior": false,
-    "isContinuing": false,
-    "isRenewal": true,
-    "licenceLength": "12M",
     "licenceStartDate": "2021-07-01",
     "licenceType": "Salmon and sea trout",
-    "licenceTypeStr": "Salmon and sea trout",
     "licensee": Object {
       "birthDate": "1946-01-01",
-      "firstName": "Graham",
-      "lastName": "Willis",
     },
     "numberOfRods": "3",
     "permit": Object {
       "cost": 6,
     },
-    "startAfterPaymentMinute": 30,
-    "startTimeString": "0.00am (first minute of the day) on 1 July 2021",
-    "uri": Object {
-      "clear": "/buy/new",
-      "dateOfBirth": "/buy/date-of-birth",
-      "disabilityConcession": "/buy/disability-concession",
-      "licenceLength": "/buy/licence-length",
-      "licenceStartDate": "/buy/start-kind",
-      "licenceToStart": "/buy/start-kind",
-      "licenceType": "/buy/licence-type",
-      "name": "/buy/name",
+    "renewedEndDate": "2021-07-01",
+  },
+  "startAfterPaymentMinutes": 30,
+  "startTimeString": "Test on 1 July 2021",
+  "uri": Object {
+    "clear": "/buy/new",
+    "dateOfBirth": "/buy/date-of-birth",
+    "disabilityConcession": "/buy/disability-concession",
+    "licenceLength": "/buy/licence-length",
+    "licenceStartDate": "/buy/start-kind",
+    "licenceToStart": "/buy/start-kind",
+    "licenceType": "/buy/licence-type",
+    "name": "/buy/name",
+  },
+}
+`;
+
+exports[`change-licence-options > route getData test output of getData for a disabled permission 1`] = `
+Object {
+  "birthDateStr": "1st January 1946",
+  "concessionProofs": Object {
+    "NI": "NIN",
+    "blueBadge": "BB",
+    "none": "Not Proof",
+  },
+  "cost": 6,
+  "disabled": Object {
+    "type": "Disabled person",
+  },
+  "hasExpired": true,
+  "hasJunior": false,
+  "isContinuing": false,
+  "isRenewal": undefined,
+  "licenceTypeStr": Symbol(Salmon and sea trout),
+  "permission": Object {
+    "concessions": Array [
+      Object {
+        "type": "Disabled person",
+      },
+    ],
+    "licenceStartDate": "2021-07-01",
+    "licenceType": "Salmon and sea trout",
+    "licensee": Object {
+      "birthDate": "1946-01-01",
     },
+    "numberOfRods": "3",
+    "permit": Object {
+      "cost": 6,
+    },
+    "renewedEndDate": "2021-07-02",
+  },
+  "startAfterPaymentMinutes": 30,
+  "startTimeString": "Test on 1 July 2021",
+  "uri": Object {
+    "clear": "/buy/new",
+    "dateOfBirth": "/buy/date-of-birth",
+    "disabilityConcession": "/buy/disability-concession",
+    "licenceLength": "/buy/licence-length",
+    "licenceStartDate": "/buy/start-kind",
+    "licenceToStart": "/buy/start-kind",
+    "licenceType": "/buy/licence-type",
+    "name": "/buy/name",
+  },
+}
+`;
+
+exports[`change-licence-options > route getData test output of getData for a standard permission 1`] = `
+Object {
+  "birthDateStr": "1st January 1946",
+  "concessionProofs": Object {
+    "NI": "NIN",
+    "blueBadge": "BB",
+    "none": "Not Proof",
+  },
+  "cost": 6,
+  "disabled": undefined,
+  "hasExpired": true,
+  "hasJunior": undefined,
+  "isContinuing": false,
+  "isRenewal": undefined,
+  "licenceTypeStr": Symbol(Salmon and sea trout),
+  "permission": Object {
+    "licenceStartDate": "2021-07-01",
+    "licenceType": "Salmon and sea trout",
+    "licensee": Object {
+      "birthDate": "1946-01-01",
+    },
+    "numberOfRods": "3",
+    "permit": Object {
+      "cost": 6,
+    },
+    "renewedEndDate": "2021-07-02",
   },
   "startAfterPaymentMinutes": 30,
   "startTimeString": "Test on 1 July 2021",
