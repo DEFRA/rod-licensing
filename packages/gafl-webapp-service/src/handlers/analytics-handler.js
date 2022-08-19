@@ -7,8 +7,9 @@ import { ANALYTICS } from '../constants.js'
  */
 
 export default async (request, h) => {
+  console.log('request.payload', request.payload)
   // const payload = request.payload
-  const analytics = request.cache().helpers.analytics.get()
+  const analytics = await request.cache().helpers.analytics.get()
 
   // if (status.analyticsSelected !== true) {
   //   status.acceptedTracking = payload.analyticsResponse
@@ -23,7 +24,7 @@ export default async (request, h) => {
 
   await request.cache().helpers.analytics.set({ [ANALYTICS.selected]: true })
 
-  const newAnalytics = request.cache().helpers.analytics.get()
+  const newAnalytics = await request.cache().helpers.analytics.get()
   console.log('analytics:', analytics.selected)
   console.log('new analytics:', newAnalytics.selected)
 
