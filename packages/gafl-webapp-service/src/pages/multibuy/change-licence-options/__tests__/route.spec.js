@@ -128,7 +128,8 @@ describe('change-licence-options > route', () => {
     it('passes permission to getErrorPage', async () => {
       const permission = Symbol('permission')
       const request = getSampleRequest({
-        getCurrentStatusPermission: () => permission
+        getCurrentStatusPermission: () => ({ renewal: false }),
+        getCurrentTransactionPermission: () => permission
       })
       const runGetData = async () => {
         try {
