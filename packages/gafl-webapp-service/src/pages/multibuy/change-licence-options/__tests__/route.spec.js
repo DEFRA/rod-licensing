@@ -2,7 +2,6 @@ import { getData } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import { CONCESSION } from '../../../../processors/mapping-constants.js'
 import { licenceTypeDisplay, getErrorPage } from '../../../../processors/licence-type-display.js'
-import { displayStartTime } from '../../../../processors/date-and-time-display'
 import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../../../constants.js'
 import findPermit from '../../../summary/find-permit'
 
@@ -33,7 +32,7 @@ jest.mock('../../../../processors/licence-type-display.js', () => ({
 }))
 jest.mock('../../../summary/find-permit')
 
-const getSamplePermission = (overrides) => ({
+const getSamplePermission = overrides => ({
   licenceStartDate: '2021-07-01',
   renewedEndDate: '2021-07-02',
   permit: {
@@ -64,7 +63,7 @@ describe('change-licence-options > route', () => {
       expect(result).toMatchSnapshot()
     })
 
-    it('throws a GetDataRedirect if getErrorPage returns a value and it isn\'t a renewal', async () => {
+    it("throws a GetDataRedirect if getErrorPage returns a value and it isn't a renewal", async () => {
       const request = getSampleRequest({
         getCurrentStatusPermission: () => ({ renewal: false })
       })
@@ -75,7 +74,7 @@ describe('change-licence-options > route', () => {
       await expect(testFunction).rejects.toThrow(GetDataRedirect)
     })
 
-    it('doesn\'t throw a GetDataRedirect if getErrorPage returns null', async () => {
+    it("doesn't throw a GetDataRedirect if getErrorPage returns null", async () => {
       const request = getSampleRequest({
         getCurrentStatusPermission: () => ({ renewal: false })
       })
@@ -92,7 +91,7 @@ describe('change-licence-options > route', () => {
       await expect(result).toBeUndefined()
     })
 
-    it('doesn\'t throw a GetDataRedirect if getErrorPage returns a value but it\'s a renewal', async () => {
+    it("doesn't throw a GetDataRedirect if getErrorPage returns a value but it's a renewal", async () => {
       const request = getSampleRequest({
         getCurrentStatusPermission: () => ({ renewal: true })
       })
@@ -149,9 +148,7 @@ describe('change-licence-options > route', () => {
       const getCurrentStatusPermission = () => permission
       const setCurrentStatusPermission = jest.fn()
       await getData(getSampleRequest({ getCurrentStatusPermission, setCurrentStatusPermission }))
-      expect(setCurrentStatusPermission).toHaveBeenCalledWith(
-        expect.objectContaining(permission)
-      )
+      expect(setCurrentStatusPermission).toHaveBeenCalledWith(expect.objectContaining(permission))
     })
 
     it('sets fromLicenceOptions before updating current status permission', async () => {
