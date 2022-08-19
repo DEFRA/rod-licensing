@@ -120,7 +120,7 @@ describe('getErrorPage', () => {
     ['LICENCE_TYPE.uri when numberOfRods', { numberOfRods: false }, LICENCE_TYPE.uri],
     ['LICENCE_TYPE.uri when licenceType', { licenceType: false }, LICENCE_TYPE.uri],
     ['LICENCE_LENGTH.uri when licenceLength', { licenceLength: false }, LICENCE_LENGTH.uri],
-    ['false when nothing', {}, false]
+    ['empty string when nothing', {}, '']
   ])('returns %s is omitted', (_description, spec, expectedUri) => {
     const permission = getSamplePermission(spec)
     const errorPage = getErrorPage(permission)
