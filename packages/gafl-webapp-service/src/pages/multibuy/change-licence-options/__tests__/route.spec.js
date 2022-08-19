@@ -28,7 +28,7 @@ jest.mock('../../../../processors/date-and-time-display.js', () => ({
 }))
 jest.mock('../../../../processors/licence-type-display.js', () => ({
   licenceTypeDisplay: jest.fn(),
-  getErrorPage: jest.fn(() => null)
+  getErrorPage: jest.fn(() => '')
 }))
 jest.mock('../../../summary/find-permit')
 
@@ -74,7 +74,7 @@ describe('change-licence-options > route', () => {
       await expect(testFunction).rejects.toThrow(GetDataRedirect)
     })
 
-    it("doesn't throw a GetDataRedirect if getErrorPage returns null", async () => {
+    it("doesn't throw a GetDataRedirect if getErrorPage returns an empty string", async () => {
       const request = getSampleRequest({
         getCurrentStatusPermission: () => ({ renewal: false })
       })
