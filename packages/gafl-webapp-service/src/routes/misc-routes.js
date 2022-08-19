@@ -129,7 +129,7 @@ export default [
     handler: urlHandler
   },
   {
-    method: 'GET',
+    method: 'POST',
     path: PROCESS_ANALYTICS_PREFERENCES.uri,
     handler: analytics
   },

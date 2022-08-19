@@ -85,6 +85,7 @@ const cacheDecorator = sessionCookieName =>
         transaction: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'transaction', id, idx),
         status: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'status', id, idx),
         addressLookup: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'addressLookup', id, idx),
+        analytics: cacheOfCurrentPermissionAndContext(this.server.app.cache, 'analytics', id, idx),
 
         // This one differs in that it has an individual segment for each page
         page: {

@@ -2,11 +2,11 @@
 {% set assetPath = "/public" %}
 
 {% from "header/macro.njk" import govukHeader %}
+{% from "button/macro.njk" import govukButton %}
 {% from "footer/macro.njk" import govukFooter %}
-{% from "process-analytics-preferences.njk" import analytics %}
 
 {% macro csrf() %}
-<div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
+    <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
 {% endmacro %}
 
 {% block head %}
@@ -16,8 +16,92 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
 {% endblock %}
+
 {% block header %}
-    {{ analytics(mssgs, uri) }}
+    {% if not analyticsMessageDisplayed %}
+        <form method="POST" novalidate action='{{ uri.analyticsFormAction }}'>
+            {% if not analyticsSelected %}
+                <div id="cookie-banner" class="cookie-banner no-print" role="region" aria-label="cookie banner">
+                    <div id="cookie-message" class="cookie-message no-print" role="region" aria-label="cookie message">
+                        <div class="govuk-width-container">
+                            <h2 class="govuk-cookie-banner__heading govuk-heading-m">
+                                {{ mssgs.analytics_banner_title }}
+                            </h2>
+                            <div class="govuk-cookie-banner__content">
+                                <p class="govuk-body">
+                                {{ mssgs.analytics_banner_preamble_1 }}
+                                </p>
+                                <p class="govuk-body">
+                                {{ mssgs.analytics_banner_preamble_2 }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
+                                </p>
+                            </div>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    attributes: { id: 'accept' },
+                                    preventDoubleClick: true,
+                                    name: "analyticsResponse",
+                                    text: mssgs.analytics_banner_accept,
+                                    value: 'accept'
+                                }) }}
+                                {{ govukButton({
+                                    attributes: { id: 'reject' },
+                                    preventDoubleClick: true,
+                                    name: "analyticsResponse",
+                                    text: mssgs.analytics_banner_reject,
+                                    value: 'reject'
+                                }) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if analyticsSelected %}
+                {% if acceptedTracking === 'accept' %}
+                    <div id="cookie-hide" class="cookie-hide no-print" role="region" aria-label="cookie accept">
+                        <div class="govuk-width-container">
+                            <div class="govuk-cookie-hide__content">
+                                <p class="govuk-body" id="cookie-acceptance">
+                                    {{ mssgs.analytics_banner_acceptance }}
+                                </p>
+                            </div>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    attributes: { id: 'hide' },
+                                    preventDoubleClick: true,
+                                    name: "hide",
+                                    text: mssgs.analytics_banner_hide,
+                                    value: true
+                                }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if not acceptedTracking === 'reject' %}
+                    <div id="cookie-hide" class="cookie-hide initially-hidden" role="region" aria-label="cookie reject">
+                        <div class="govuk-width-container">
+                            <div class="govuk-cookie-hide__content">
+                                <p class="govuk-body" id="cookie-rejection">
+                                    {{ mssgs.analytics_banner_rejection }}
+                                </p>
+                            </div>
+                            <div class="govuk-button-group">
+                                {{ govukButton({
+                                    attributes: { id: 'hide' },
+                                    preventDoubleClick: true,
+                                    name: "hideMessage",
+                                    text: mssgs.analytics_banner_hide,
+                                    value: true
+                                }) }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+        {{ csrf() }}
+        </form>
+    {% endif %}
 
     {{ govukHeader({
         assetsPath: assetPath + '/images',
@@ -64,7 +148,6 @@
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}
-
 
 {% set footerHtml %}
     <div class="no-print">
