@@ -107,12 +107,45 @@ describe('permissions service', () => {
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
       expect(endDate).toEqual(expectedEndDate.toISOString())
     })
+
     it('calculates 365 days for 1 year licences in a leap year', async () => {
       const startDate = moment('2020-01-01')
       const expectedEndDate = moment('2020-12-31').endOf('day')
 
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
       expect(endDate).toEqual(expectedEndDate.toISOString())
+    })
+
+    describe('when the licence starts and finishes during BST', () => {
+      it('finishes just before midnight in BST', async () => {
+        const startDate = moment('2020-06-01')
+        const expectedEndDate = moment.utc('2021-05-31').endOf('day').subtract(1, 'hours')
+
+        const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
+        expect(endDate).toEqual(expectedEndDate.toISOString())
+      })
+    })
+
+    // In 2018, BST starts on 25 March. In 2019, BST starts on 31 March.
+    describe('when the licence starts during BST and finishes during GMT', () => {
+      it('finishes just before midnight in GMT', async () => {
+        const startDate = moment('2018-03-27')
+        const expectedEndDate = moment.utc('2019-03-26').endOf('day')
+
+        const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
+        expect(endDate).toEqual(expectedEndDate.toISOString())
+      })
+    })
+
+    // In 2020, BST ends on 25 October. In 2021, BST ends on 31 October.
+    describe('when the licence starts during GMT and finishes during BST', () => {
+      it('finishes just before midnight in BST', async () => {
+        const startDate = moment('2020-10-26')
+        const expectedEndDate = moment.utc('2021-10-25').endOf('day').subtract(1, 'hours')
+
+        const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
+        expect(endDate).toEqual(expectedEndDate.toISOString())
+      })
     })
   })
 

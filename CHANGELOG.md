@@ -1,4 +1,31 @@
 
+## v1.26.0-rc.32 (2022-08-18)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1431](https://github.com/DEFRA/rod-licensing/pull/1431) Include BST when calculating year-long licence end times ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.26.0-rc.31 (2022-08-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1413](https://github.com/DEFRA/rod-licensing/pull/1413) Welsh not persisting when unauthenticated error ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.26.0-rc.30 (2022-08-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1425](https://github.com/DEFRA/rod-licensing/pull/1425) Language doesn't persist on Renewals licence start ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.26.0-rc.28 (2022-08-09)
 

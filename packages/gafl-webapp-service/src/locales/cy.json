@@ -246,7 +246,7 @@
   "identify_error_enter_bday_min": "Mae eich dyddiad geni yn rhy bell yn ôl",
   "identify_error_enter_bday": "Nodwch eich dyddiad geni a chynnwys y diwrnod, y mis a’r flwyddyn",
   "identify_error_invalid_1": "Nid oes gennym gofnod o rif trwydded sy'n gorffen gyda ",
-  "identify_error_invalid_2": "sy’n cyd-fynd â'r manylion hyn.",
+  "identify_error_invalid_2": " sy’n cyd-fynd â'r manylion hyn.",
   "identify_error_pattern_postcode": "Your postcode doesn’t look right. Check and enter again",
   "identify_error_pattern": "Nid yw chwe nodyn olaf eich trwydded yn edrych yn gywir. Gwiriwch a rhowch gynnig arall arni",
   "identify_label_last_six_hint": "Er enghraifft F4A315",
