@@ -14,6 +14,7 @@ export default async request => {
   const page = await request.cache().helpers.page.get()
   const status = await request.cache().helpers.status.get()
   const addressLookup = await request.cache().helpers.addressLookup.get()
+  const analytics = await request.cache().helpers.analytics.get()
 
   if (transaction.permissions.length >= MAX_PERMISSIONS_PER_TRANSACTION) {
     throw boom.badRequest('Too many permissions')
@@ -24,11 +25,13 @@ export default async request => {
   page.permissions.push({})
   status.permissions.push({})
   addressLookup.permissions.push({})
+  analytics.permissions.push({})
 
   await request.cache().helpers.transaction.set(transaction)
   await request.cache().helpers.page.set(page)
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.addressLookup.set(addressLookup)
+  await request.cache().helpers.analytics.set(analytics)
 
   await request.cache().helpers.status.set({ currentPermissionIdx: transaction.permissions.length - 1 })
 }

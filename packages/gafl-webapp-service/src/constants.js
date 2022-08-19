@@ -16,6 +16,10 @@ export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-f
 export const RENEWALS_CAMPAIGN_ID = 'renewals'
 export const AEN_INVITATION_ID = 'aen_invitation'
 
+export const ANALYTICS = {
+  selected: 'selected'
+}
+
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
   posted: 'posted',
@@ -69,8 +73,3 @@ export const LICENCE_SUMMARY_SEEN = 'licence-summary'
 // These cookies are used by the load balancer
 export const ALB_COOKIE_NAME = 'AWSALBTG'
 export const ALBCORS_COOKIE_NAME = 'AWSALBTGCORS'
-
-export const ANALYTICS_SEEN = {
-  YES: 'yes',
-  NO: 'no'
-}

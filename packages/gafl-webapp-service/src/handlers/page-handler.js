@@ -1,6 +1,6 @@
 import db from 'debug'
 import { CacheError } from '../session-cache/cache-manager.js'
-import { PAGE_STATE } from '../constants.js'
+import { PAGE_STATE, ANALYTICS } from '../constants.js'
 import { CONTROLLER, PROCESS_ANALYTICS_PREFERENCES } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
@@ -107,11 +107,12 @@ export default (path, view, completion, getData) => ({
     pageData.backRef = await getBackReference(request, view)
     pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: PROCESS_ANALYTICS_PREFERENCES.uri }
 
-    const status = request.cache().helpers.status.get()
+    const analytics = request.cache().helpers.analytics.get()
 
-    pageData.acceptedTracking = status.acceptedTracking
-    pageData.analyticsSelected = status.analyticsSelected
-    pageData.analyticsMessageDisplay = status.analyticsMessageDisplay
+    // console.log('selected:', status.analyticsSelected)
+    pageData.acceptedTracking = analytics.acceptedTracking
+    pageData.analyticsSelected = analytics[ANALYTICS.selected]
+    pageData.analyticsMessageDisplay = analytics.analyticsMessageDisplay
 
     return h.view(view, pageData)
   },

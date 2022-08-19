@@ -1,3 +1,4 @@
+import { ANALYTICS } from '../constants.js'
 /**
  * Analytics route handler
  * @param request
@@ -6,41 +7,35 @@
  */
 
 export default async (request, h) => {
-  console.log('handler')
-  return h.redirect('/buy')
-  // const status = request.cache().helpers.status.get()
-  // const currentPage = status.currentPage || 'start'
+  // const payload = request.payload
+  const analytics = request.cache().helpers.analytics.get()
 
-  // setAnalytics(request)
-
-  // const { payload } = await request.cache().helpers.page.getCurrentPermission('analytics')
-  // const analyticsMessageDisplay = payload['analytics-response']
-  // if (analyticsMessageDisplay === false) {
-  //   status.analyticsMessageDisplay = false
-  //   await request.cache().helpers.status.set(status)
+  // if (status.analyticsSelected !== true) {
+  //   status.acceptedTracking = payload.analyticsResponse
+  //   status.analyticsSelected = true
+  // } else if (status.analyticsSelected === true) {
+  //   status.analyticsMessageDisplay = payload.hideMessage
   // }
 
-  // return h.redirect(currentPage)
+  // analytics.analyticsSelected = true
+
+  analytics[ANALYTICS.selected] = true
+
+  await request.cache().helpers.analytics.set({ [ANALYTICS.selected]: true })
+
+  const newAnalytics = request.cache().helpers.analytics.get()
+  console.log('analytics:', analytics.selected)
+  console.log('new analytics:', newAnalytics.selected)
+
+  return h.redirect('/buy')
 }
 
-// export const checkAnalytics = async (request) => {
-//   const status = await request.cache().helpers.status.get()
+export const checkAnalytics = async (request) => {
+  const status = await request.cache().helpers.status.get()
 
-//   if (status.acceptedTracking === true) {
-//     return true
-//   }
+  if (status.acceptedTracking === true) {
+    return true
+  }
 
-//   return false
-// }
-
-// export const setAnalytics = async (request) => {
-// const { payload } = await request.cache().helpers.page.getCurrentPermission('analytics')
-// const status = request.cache().helpers.status.get()
-
-// status.acceptedTracking = payload['analytics-response']
-// status.analyticsSelected = true
-// status.analyticsMessageDisplay = payload['analytics-seen']
-// await request.cache().helpers.status.set(status)
-
-//   console.log('test')
-// }
+  return false
+}
