@@ -32,7 +32,7 @@ export const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary.
      */
-    const errorOnPage = getErrorPage(status)
+    const errorOnPage = getErrorPage(permission)
     if (errorOnPage) {
       throw new GetDataRedirect(errorOnPage)
     }
