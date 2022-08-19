@@ -23,7 +23,7 @@ export const getErrorPage = permission => {
     return LICENCE_LENGTH.uri
   }
 
-  return false
+  return ''
 }
 
 export const licenceTypeDisplay = (permission, mssgs) => {
