@@ -30,8 +30,7 @@ jest.mock('moment-timezone', () =>
   jest.fn(() => ({
     tz: () => ({ isAfter: () => {} }),
     isAfter: () => false,
-    locale: () => ({ format: () => '1st January 1946' }),
-    key: 10
+    locale: () => ({ format: () => '1st January 1946' })
   }))
 )
 
@@ -249,26 +248,6 @@ describe('licence-summary > route', () => {
       const ret = result.licenceTypeStr
       expect(ret).toEqual(mockTypeDisplayValue)
     })
-
-    // it.only('request.locale language code should be called on moment.locale', async () => {
-    //   const language = Symbol('locale')
-    //   mockTransactionCacheGet.mockImplementationOnce(() => ({
-    //     isRenewal: true,
-    //     licenceStartDate: '2020-01-01',
-    //     permit: {
-    //       cost: 6
-    //     },
-    //     licensee: {
-    //       firstName: 'Graham',
-    //       lastName: 'Willis',
-    //       birthDate: '1946-01-01'
-    //     }
-    //   }))
-    //   moment.mockImplementation(getMomentMockImpl())
-    //   const result = await getData(mockRequest)
-    //   console.log(result)
-    //   expect(moment.locale).toHaveBeenCalledWith(mockRequest.locale)
-    // })
 
     it('birthDateStr should return locale-specific date string', async () => {
       const expectedLocale = Symbol('expected locale')
