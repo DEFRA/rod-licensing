@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.33 (2022-08-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1434](https://github.com/DEFRA/rod-licensing/pull/1434) Welsh transaltion update for cancelled payment page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.32 (2022-08-18)
 
 #### :rocket: Enhancement
