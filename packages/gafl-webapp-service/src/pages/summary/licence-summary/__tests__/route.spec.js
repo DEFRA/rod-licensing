@@ -14,7 +14,7 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import moment, { locale } from 'moment-timezone'
+import moment from 'moment-timezone'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../find-permit.js')
@@ -26,15 +26,14 @@ jest.mock('../../../../processors/date-and-time-display.js', () => ({
   cacheDateFormat: 'YYYY-MM-DD'
 }))
 
-jest.mock('moment-timezone')
-
-const getMomentMockImpl = (overrides = {}) =>
+jest.mock('moment-timezone', () =>
   jest.fn(() => ({
     tz: () => ({ isAfter: () => {} }),
-    isAfter: jest.fn(),
-    locale: jest.fn(() => ({ format: () => 'your formatted date string' })),
-    ...overrides
+    isAfter: () => false,
+    locale: () => ({ format: () => '1st January 1946' }),
+    key: 10
   }))
+)
 
 jest.mock('../../../../processors/mapping-constants.js', () => ({
   CONCESSION: {
@@ -251,24 +250,50 @@ describe('licence-summary > route', () => {
       expect(ret).toEqual(mockTypeDisplayValue)
     })
 
-    it.only('request.locale language code should be called on moment.locale', async () => {
-      const language = Symbol('locale')
+    // it.only('request.locale language code should be called on moment.locale', async () => {
+    //   const language = Symbol('locale')
+    //   mockTransactionCacheGet.mockImplementationOnce(() => ({
+    //     isRenewal: true,
+    //     licenceStartDate: '2020-01-01',
+    //     permit: {
+    //       cost: 6
+    //     },
+    //     licensee: {
+    //       firstName: 'Graham',
+    //       lastName: 'Willis',
+    //       birthDate: '1946-01-01'
+    //     }
+    //   }))
+    //   moment.mockImplementation(getMomentMockImpl())
+    //   const result = await getData(mockRequest)
+    //   console.log(result)
+    //   expect(moment.locale).toHaveBeenCalledWith(mockRequest.locale)
+    // })
+
+    it('birthDateStr should return locale-specific date string', async () => {
+      const expectedLocale = Symbol('expected locale')
       mockTransactionCacheGet.mockImplementationOnce(() => ({
         isRenewal: true,
-        licenceStartDate: '2020-01-01',
-        permit: {
-          cost: 6
-        },
+        permit: { cost: 1 },
         licensee: {
-          firstName: 'Graham',
-          lastName: 'Willis',
-          birthDate: '1946-01-01'
+          birthDate: '1970-01-01'
         }
       }))
-      moment.mockImplementation(getMomentMockImpl())
-      const result = await getData(mockRequest)
-      console.log(result)
-      expect(moment.locale).toHaveBeenCalledWith(mockRequest.locale)
+      const locale = jest.fn(() => ({ format: () => 'locale-aware birth date' }))
+      moment.mockImplementation(() => ({
+        tz: () => ({ isAfter: () => {} }),
+        isAfter: jest.fn(),
+        locale
+      }))
+      const originalLocale = mockRequest.locale
+      mockRequest.locale = expectedLocale
+
+      await getData(mockRequest)
+
+      expect(locale).toHaveBeenCalledWith(expectedLocale)
+
+      mockRequest.locale = originalLocale
+      moment.mockReset()
     })
   })
 
