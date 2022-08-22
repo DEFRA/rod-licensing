@@ -14,12 +14,27 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import moment, { locale } from 'moment-timezone'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
+jest.mock('../../../../processors/date-and-time-display.js', () => ({
+  displayStartTime: jest.fn(),
+  cacheDateFormat: 'YYYY-MM-DD'
+}))
+
+jest.mock('moment-timezone')
+
+const getMomentMockImpl = (overrides = {}) =>
+  jest.fn(() => ({
+    tz: () => ({ isAfter: () => {} }),
+    isAfter: jest.fn(),
+    locale: jest.fn(() => ({ format: () => 'your formatted date string' })),
+    ...overrides
+  }))
 
 jest.mock('../../../../processors/mapping-constants.js', () => ({
   CONCESSION: {
@@ -234,6 +249,26 @@ describe('licence-summary > route', () => {
       const result = await getData(mockRequest)
       const ret = result.licenceTypeStr
       expect(ret).toEqual(mockTypeDisplayValue)
+    })
+
+    it.only('request.locale language code should be called on moment.locale', async () => {
+      const language = Symbol('locale')
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        isRenewal: true,
+        licenceStartDate: '2020-01-01',
+        permit: {
+          cost: 6
+        },
+        licensee: {
+          firstName: 'Graham',
+          lastName: 'Willis',
+          birthDate: '1946-01-01'
+        }
+      }))
+      moment.mockImplementation(getMomentMockImpl())
+      const result = await getData(mockRequest)
+      console.log(result)
+      expect(moment.locale).toHaveBeenCalledWith(mockRequest.locale)
     })
   })
 
