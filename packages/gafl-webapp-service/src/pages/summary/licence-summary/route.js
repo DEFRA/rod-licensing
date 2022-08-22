@@ -4,7 +4,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
 import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { getErrorPage, licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
   NAME,
   LICENCE_SUMMARY,
@@ -22,29 +22,6 @@ import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-consta
 import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-
-// Extracted to keep sonar happy
-export const checkNavigation = permission => {
-  if (!permission.licensee.firstName || !permission.licensee.lastName) {
-    throw new GetDataRedirect(NAME.uri)
-  }
-
-  if (!permission.licensee.birthDate) {
-    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
-  }
-
-  if (!permission.licenceStartDate) {
-    throw new GetDataRedirect(LICENCE_TO_START.uri)
-  }
-
-  if (!permission.numberOfRods || !permission.licenceType) {
-    throw new GetDataRedirect(LICENCE_TYPE.uri)
-  }
-
-  if (!permission.licenceLength) {
-    throw new GetDataRedirect(LICENCE_LENGTH.uri)
-  }
-}
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
@@ -73,7 +50,10 @@ export const getData = async request => {
       await request.cache().helpers.transaction.setCurrentPermission(permission)
     }
 
-    checkNavigation(permission)
+    const errorPage = getErrorPage(permission)
+    if (errorPage) {
+      throw new GetDataRedirect(errorPage)
+    }
   }
 
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)

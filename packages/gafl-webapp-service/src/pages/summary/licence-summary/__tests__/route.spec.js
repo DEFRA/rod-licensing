@@ -1,4 +1,4 @@
-import { getFromSummary, getData, checkNavigation } from '../route'
+import { getFromSummary, getData } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
 import {
   DATE_OF_BIRTH,
@@ -11,7 +11,7 @@ import {
 } from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
-import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+import { licenceTypeDisplay, getErrorPage } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
 
@@ -43,70 +43,17 @@ describe('licence-summary > route', () => {
   })
 
   describe('getData', () => {
-    const mockStatusCacheGet = jest.fn(() => ({}))
-    const mockStatusCacheSet = jest.fn()
-    const mockTransactionCacheGet = jest.fn(() => ({
-      licenceStartDate: '2021-07-01',
-      numberOfRods: '3',
-      licenceType: 'Salmon and sea trout',
-      licenceLength: '12M',
-      licensee: {
-        firstName: 'Graham',
-        lastName: 'Willis',
-        birthDate: '1946-01-01'
-      },
-      permit: {
-        cost: 6
-      }
-    }))
-    const mockTransactionCacheSet = jest.fn()
-
-    const mockRequest = (transaction = {}) => ({
-      cache: () => ({
-        helpers: {
-          status: {
-            getCurrentPermission: mockStatusCacheGet,
-            setCurrentPermission: mockStatusCacheSet
-          },
-          transaction: {
-            get: jest.fn(() => transaction),
-            set: jest.fn(),
-            getCurrentPermission: mockTransactionCacheGet,
-            setCurrentPermission: mockTransactionCacheSet
-          }
-        }
-      }),
-      i18n: {
-        getCatalog: () => ({
-          licence_type_radio_salmon: 'Salmon and sea trout'
-        })
-      },
-      url: {
-        search: ''
-      },
-      path: ''
-    })
+    beforeEach(getErrorPage.mockReset)
 
     it('should return the name page uri', async () => {
-      const transaction = {
-        permissions: [
-          {
-            licensee: {
-              firstName: 'Graham',
-              lastName: 'Willis',
-              birthDate: '1996-01-01'
-            },
-            isLicenceForYou: true
-          }
-        ]
-      }
-      const returnValue = Symbol('return value')
-      addLanguageCodeToUri.mockReturnValueOnce(returnValue)
+      const expectedUri = Symbol('name page uri')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
 
-      const result = await getData(mockRequest(transaction))
-      const ret = result.uri.name
+      const {
+        uri: { name }
+      } = await getData(getSampleRequest())
 
-      expect(ret).toEqual(returnValue)
+      expect(name).toEqual(expectedUri)
     })
 
     it.each([
@@ -119,247 +66,32 @@ describe('licence-summary > route', () => {
       [LICENCE_TO_START.uri],
       [NEW_TRANSACTION.uri]
     ])('addLanguageCodeToUri is called with the expected arguments', async uri => {
-      const permission = {
-        permit: {
-          cost: 1
-        },
-        licensee: {
-          birthDate: '1996-01-01'
-        },
-        isRenewal: false
-      }
-
-      const transaction = {
-        permissions: [
-          {
-            permission
-          }
-        ]
-      }
-
-      const mockedRequest = mockRequest(transaction)
+      const mockedRequest = getSampleRequest()
 
       await getData(mockedRequest)
 
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockedRequest, uri)
     })
 
-    it('should return a redirect error if firstName is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: {} }))
-      const getDataRedirectError = new GetDataRedirect(NAME.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
-    it('should return a redirect error if lastName is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: { firstName: 'John' } }))
-      const getDataRedirectError = new GetDataRedirect(NAME.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
-    it('should return a redirect error if date of birth is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({ licensee: { firstName: 'John', lastName: 'Smith' } }))
-      const getDataRedirectError = new GetDataRedirect(DATE_OF_BIRTH.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
-    it('should return a redirect error if start date is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licensee: { firstName: 'John', lastName: 'Smith', birthDate: '1996-01-01' },
-        licenceStartDate: null
-      }))
-      const getDataRedirectError = new GetDataRedirect(LICENCE_TO_START.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
-    it('should return a redirect error if number of rods is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licensee: { firstName: 'John', lastName: 'Smith', birthDate: '1996-01-01' },
-        licenceStartDate: '2025-01-01',
-        licenceType: 'Salmon and sea trout'
-      }))
-      const getDataRedirectError = new GetDataRedirect(LICENCE_TYPE.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
-    it('should return a redirect error if licence type is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licensee: { firstName: 'John', lastName: 'Smith', birthDate: '1996-01-01' },
-        licenceStartDate: '2025-01-01',
-        numberOfRods: '3'
-      }))
-      const getDataRedirectError = new GetDataRedirect(LICENCE_TYPE.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
-    it('should return a redirect error if licence length is not included on the licensee', async () => {
-      const mockTransaction = mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licensee: { firstName: 'John', lastName: 'Smith', birthDate: '1996-01-01' },
-        licenceStartDate: '2025-01-01',
-        numberOfRods: '3',
-        licenceType: 'Salmon and sea trout'
-      }))
-      const getDataRedirectError = new GetDataRedirect(LICENCE_LENGTH.uri)
-      await expect(getData(mockRequest(mockTransaction))).rejects.toThrow(getDataRedirectError)
-    })
-
     it('multibuy - should return the name page uri', async () => {
       isMultibuyForYou.mockImplementationOnce(() => true)
-      const transaction = {
-        permissions: [
-          {
-            licensee: {
-              firstName: 'Graham',
-              lastName: 'Willis',
-              birthDate: '1996-01-01'
-            },
-            isLicenceForYou: true
-          },
-          {
-            licensee: {
-              firstName: undefined,
-              lastName: undefined,
-              birthDate: undefined
-            },
-            isLicenceForYou: true
-          }
-        ]
-      }
+      const expectedUri = Symbol('return value')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
 
-      const returnValue = Symbol('return value')
-      addLanguageCodeToUri.mockReturnValueOnce(returnValue)
+      const {
+        uri: { name }
+      } = await getData(getSampleRequest())
 
-      const result = await getData(mockRequest(transaction))
-      const ret = result.uri.name
-
-      expect(ret).toEqual(returnValue)
-    })
-  })
-
-  describe('CheckNavigation', () => {
-    const mockStatusCacheGet = jest.fn(() => ({}))
-    const mockStatusCacheSet = jest.fn()
-    const mockTransactionCacheGet = jest.fn(() => ({
-      licenceStartDate: '2021-07-01',
-      numberOfRods: '3',
-      licenceType: 'Salmon and sea trout',
-      licenceLength: '12M',
-      licensee: {
-        firstName: 'Graham',
-        lastName: 'Willis',
-        birthDate: '1946-01-01'
-      },
-      permit: {
-        cost: 6
-      }
-    }))
-    const mockTransactionCacheSet = jest.fn()
-
-    const mockRequest = (transaction = {}) => ({
-      cache: () => ({
-        helpers: {
-          status: {
-            getCurrentPermission: mockStatusCacheGet,
-            setCurrentPermission: mockStatusCacheSet
-          },
-          transaction: {
-            get: jest.fn(() => transaction),
-            set: jest.fn(),
-            getCurrentPermission: mockTransactionCacheGet,
-            setCurrentPermission: mockTransactionCacheSet
-          }
-        }
-      }),
-      i18n: {
-        getCatalog: () => ({
-          licence_type_radio_salmon: 'Salmon and sea trout'
-        })
-      },
-      url: {
-        search: ''
-      },
-      path: ''
-    })
-
-    it('should return a redirect error if firstName is not included on the licensee', async () => {
-      const permission = { licensee: { firstName: null } }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should return a redirect error if lastName is not included on the licensee', async () => {
-      const permission = { licensee: { firstName: 'Scott', lastName: null } }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should return a redirect error if date of birth is not included on the licensee', async () => {
-      const permission = { licensee: { firstName: 'Scott', lastName: 'Michael', birthDate: null } }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should return a redirect error if start date is not included on the licensee', async () => {
-      const permission = {
-        licensee: { firstName: 'Scott', lastName: 'Michael', birthDate: '1996-01-01' },
-        licenceStartDate: null
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should return a redirect error if number of rods is not included on the licensee', async () => {
-      const permission = {
-        licensee: { firstName: 'Scott', lastName: 'Michael', birthDate: '1996-01-01' },
-        licenceStartDate: '2022-07-01',
-        numberOfRods: null
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should return a redirect error if licence type is not included on the licensee', async () => {
-      const permission = {
-        licensee: { firstName: 'Scott', lastName: 'Michael', birthDate: '1996-01-01' },
-        licenceStartDate: '2022-07-01',
-        numberOfRods: 3,
-        licenceType: null
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should return a redirect error if licence length is not included on the licensee', async () => {
-      const permission = {
-        licensee: { firstName: 'Scott', lastName: 'Michael', birthDate: '1996-01-01' },
-        licenceStartDate: '2022-07-01',
-        numberOfRods: 3,
-        licenceType: 'Salmon and sea trout',
-        licenceLength: null
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+      expect(name).toEqual(expectedUri)
     })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
       const catalog = Symbol('mock catalog')
-      const permission = {
-        permit: {
-          cost: 1
-        },
-        licensee: {
-          birthDate: '1996-01-01'
-        },
-        isRenewal: true
-      }
-
-      const transaction = {
-        permissions: [
-          {
-            permission
-          }
-        ]
-      }
-      const sampleRequest = {
-        ...mockRequest(transaction),
-        i18n: {
-          getCatalog: () => catalog
-        }
-      }
-
-      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+      const permission = getSamplePermission()
+      const sampleRequest = getSampleRequest({
+        getTransaction: () => ({ permissions: [permission] }),
+        getCatalog: () => catalog
+      })
 
       await getData(sampleRequest)
 
@@ -367,29 +99,144 @@ describe('licence-summary > route', () => {
     })
 
     it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
-      const returnValue = Symbol('return value')
+      const expectedLicenceType = Symbol('expected licence type')
+      licenceTypeDisplay.mockReturnValueOnce(expectedLicenceType)
 
-      const transaction = {
-        permissions: [
-          {
-            licensee: {
-              firstName: 'Graham',
-              lastName: 'Willis',
-              birthDate: '1996-01-01'
-            },
-            isLicenceForYou: true
-          }
-        ]
+      const result = await getData(getSampleRequest())
+
+      expect(result.licenceTypeStr).toEqual(expectedLicenceType)
+    })
+
+    it("throws a GetDataRedirect if getErrorPage returns a value and it isn't a renewal", async () => {
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: false })
+      })
+      getErrorPage.mockReturnValueOnce('error page')
+
+      const testFunction = async () => getData(request)
+
+      await expect(testFunction).rejects.toThrow(GetDataRedirect)
+    })
+
+    it("doesn't throw a GetDataRedirect if getErrorPage returns an empty string", async () => {
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: false })
+      })
+      getErrorPage.mockReturnValueOnce('')
+      const getDataResult = async () => {
+        try {
+          await getData(request)
+        } catch (e) {
+          return e
+        }
       }
 
-      licenceTypeDisplay.mockReturnValueOnce(returnValue)
-      mockStatusCacheGet.mockImplementationOnce()
+      const result = await getDataResult()
 
-      mockRequest(transaction)
-      const result = await getData(mockRequest(transaction))
-      const ret = result.licenceTypeStr
+      await expect(result).toBeUndefined()
+    })
 
-      expect(ret).toEqual(returnValue)
+    it("doesn't throw a GetDataRedirect if getErrorPage returns a value but it's a renewal", async () => {
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: true })
+      })
+      getErrorPage.mockReturnValueOnce('error page')
+      const getDataResult = async () => {
+        try {
+          await getData(request)
+        } catch (e) {
+          return e
+        }
+      }
+
+      const result = await getDataResult()
+
+      await expect(result instanceof GetDataRedirect).toBeFalsy()
+    })
+
+    it('passes return value of getErrorPage to thrown GetDataRedirect', async () => {
+      const expectedRedirectUrl = Symbol('error page')
+      getErrorPage.mockReturnValueOnce(expectedRedirectUrl)
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: false })
+      })
+      const runGetData = async () => {
+        try {
+          await getData(request)
+        } catch (e) {
+          return e
+        }
+      }
+      const thrownError = await runGetData()
+      expect(thrownError.redirectUrl).toEqual(expectedRedirectUrl)
+    })
+
+    it('passes permission to getErrorPage', async () => {
+      const permission = getSamplePermission({ isRenewal: false })
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => permission
+      })
+      const runGetData = async () => {
+        try {
+          await getData(request)
+        } catch (e) {
+          return e
+        }
+      }
+
+      await runGetData()
+
+      expect(getErrorPage).toHaveBeenCalledWith(permission)
     })
   })
+})
+
+const getSampleRequest = ({
+  getCurrentStatusPermission = () => ({}),
+  setCurrentStatusPermission = () => {},
+  getCurrentTransactionPermission = () => getSamplePermission(),
+  setCurrentTransactionPermission = () => {},
+  getTransaction = () => ({ permissions: [getSamplePermission()] }),
+  getCatalog = () => ({
+    licence_type_radio_salmon: 'Salmon and sea trout'
+  })
+} = {}) => ({
+  cache: () => ({
+    helpers: {
+      status: {
+        getCurrentPermission: getCurrentStatusPermission,
+        setCurrentPermission: setCurrentStatusPermission
+      },
+      transaction: {
+        get: getTransaction,
+        set: () => {},
+        getCurrentPermission: getCurrentTransactionPermission,
+        setCurrentPermission: setCurrentTransactionPermission
+      }
+    }
+  }),
+  i18n: {
+    getCatalog
+  },
+  url: {
+    search: ''
+  },
+  path: ''
+})
+
+const getSamplePermission = (overrides = {}) => ({
+  isLicenceForYou: true,
+  licenceStartDate: '2021-07-01',
+  numberOfRods: '3',
+  licenceType: 'Salmon and sea trout',
+  licenceLength: '12M',
+  licensee: {
+    firstName: 'Brenin',
+    lastName: 'Pysgotwr',
+    birthDate: '1946-01-01'
+  },
+  permit: {
+    cost: 6
+  },
+  ...overrides
 })

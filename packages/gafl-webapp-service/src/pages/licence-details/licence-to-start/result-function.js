@@ -11,10 +11,8 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
-  if (checkIsMultibuyForYou === false) {
-    if (permission.licensee.noLicenceRequired) {
-      return ageConcessionResults.NO_LICENCE_REQUIRED
-    }
+  if (checkIsMultibuyForYou === false && permission.licensee.noLicenceRequired) {
+    return ageConcessionResults.NO_LICENCE_REQUIRED
   }
 
   // If we already know its a 1 or 8 day licence then always jump to the time-of-day
