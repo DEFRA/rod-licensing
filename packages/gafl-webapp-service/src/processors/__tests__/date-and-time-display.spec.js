@@ -5,7 +5,7 @@ jest.mock('moment-timezone', () => ({
   tz: () => ({
     isSame: () => {},
     add: () => ({
-      format: () => '',
+      format: () => '2020-01-06T00:00:00.000',
       locale: () => ({ format: () => ({ replace: () => {} }) })
     })
   }),
@@ -112,8 +112,6 @@ describe('displayExpiryDate', () => {
 describe('advancePurchaseDateMoment', () => {
   it('returns the licence date with a start time of 0 hours', () => {
     const licenceStartDate = '2020-01-06'
-    const realMoment = jest.requireActual('moment-timezone')
-    moment.tz.mockReturnValueOnce(realMoment(licenceStartDate))
     const returnDate = advancePurchaseDateMoment(licenceStartDate)
     expect(returnDate.format('YYYY-MM-DDTHH:mm:ss.SSS')).toStrictEqual('2020-01-06T00:00:00.000')
   })
