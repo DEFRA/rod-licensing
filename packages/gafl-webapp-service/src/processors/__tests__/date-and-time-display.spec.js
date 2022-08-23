@@ -2,12 +2,13 @@ import { displayStartTime, displayEndTime, displayExpiryDate, advancePurchaseDat
 import moment from 'moment-timezone'
 
 jest.mock('moment-timezone', () => ({
-  tz: jest.fn(() => ({
+  tz: () => ({
     isSame: () => {},
     add: () => ({
-      format: () => ''
+      format: () => '',
+      locale: () => ({ format: () => ({ replace: () => {} }) })
     })
-  })),
+  }),
   format: () => {},
   locale: jest.fn(),
   utc: jest.fn(() => ({ tz: () => {} }))
@@ -44,7 +45,31 @@ describe('displayStartTime', () => {
     const realMoment = jest.requireActual('moment-timezone')
     moment.utc.mockReturnValue(realMoment(startDate))
     const startTime = displayStartTime(getSampleRequest(), { startDate })
-    return expect(startTime).toEqual(expectedResult)
+    expect(startTime).toEqual(expectedResult)
+  })
+
+  it('should return locale-specific date string', () => {
+    const expectedLocale = Symbol('expected locale')
+    const locale = jest.fn(() => ({ format: () => 'locale-aware birth date' }))
+    const startDate = '2021-01-01T00:00:00.000Z'
+    const mockRequest = {
+      i18n: {
+        getCatalog: () => ({
+          licence_start_time_am_text_0: '0.00am (first minute of the day)',
+          licence_start_time_am_text_12: '12:00pm (midday)',
+          renewal_start_date_expires_5: 'on'
+        })
+      },
+      locale: expectedLocale
+    }
+    moment.utc.mockImplementation(() => ({
+      tz: () => ({
+        locale,
+        format: () => {}
+      })
+    }))
+    displayStartTime(mockRequest, { startDate })
+    expect(locale).toHaveBeenCalledWith(expectedLocale)
   })
 })
 
