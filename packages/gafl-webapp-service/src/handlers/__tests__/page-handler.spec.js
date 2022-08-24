@@ -59,6 +59,9 @@ describe('The page handler function', () => {
           },
           transaction: {
             get: () => ({})
+          },
+          analytics: {
+            get: () => ({})
           }
         }
       })
@@ -67,6 +70,7 @@ describe('The page handler function', () => {
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Page cache'))
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Status cache'))
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Transaction cache'))
+    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Analytics cache'))
   })
 
   it.each([['/previous/page'], ['/last/page']])('get calls addLanguageCodeToUri with request and backLink', async previousPage => {

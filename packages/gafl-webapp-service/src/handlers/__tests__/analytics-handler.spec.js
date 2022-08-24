@@ -5,7 +5,6 @@ jest.mock('../../constants', () => ({
   ANALYTICS: {
     selected: 'selected',
     acceptTracking: 'accepted-tracking',
-    rejectTracking: 'rejected-tracking',
     seenMessage: 'seen-message'
   }
 }))
@@ -35,14 +34,14 @@ describe('The analytics handler', () => {
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: true }))
   })
 
-  it('selected not true and response is reject sets selected to true and rejectTracking to true', async () => {
+  it('selected not true and response is reject sets selected to true', async () => {
     const payload = {
       analyticsResponse: 'reject'
     }
     const request = generateRequestMock(payload)
     await analyticsHandlder(request, generateResponseToolkitMock())
 
-    expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.rejectTracking]: true }))
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true }))
   })
 
   it('selected is true sets seenMessage to true', async () => {

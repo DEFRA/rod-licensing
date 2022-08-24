@@ -1,6 +1,14 @@
 import { createServer, init, server } from '../server.js'
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
-import { TEST_TRANSACTION, TEST_STATUS, TEST_ANALYTICS, GET_PRICING_TYPES, GET_PRICING_LENGTHS, LICENCE_LENGTH, LICENCE_TYPE } from '../uri.js'
+import {
+  TEST_TRANSACTION,
+  TEST_STATUS,
+  TEST_ANALYTICS,
+  GET_PRICING_TYPES,
+  GET_PRICING_LENGTHS,
+  LICENCE_LENGTH,
+  LICENCE_TYPE
+} from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
 import { salesApi } from '@defra-fish/connectors-lib'

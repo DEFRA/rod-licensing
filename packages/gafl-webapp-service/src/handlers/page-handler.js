@@ -77,6 +77,9 @@ export default (path, view, completion, getData) => ({
       const transactionCache = await request.cache().helpers.transaction.get()
       debug(`Transaction cache - ${JSON.stringify(transactionCache)}`)
 
+      const analyticsCache = await request.cache().helpers.analytics.get()
+      debug(`Analytics cache - ${JSON.stringify(analyticsCache)}`)
+
       throw err
     }
 
@@ -112,7 +115,6 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsMessageDisplayed = analytics[ANALYTICS.seenMessage]
     pageData.analyticsSelected = analytics[ANALYTICS.selected]
     pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
-    pageData.rejectedTracking = analytics[ANALYTICS.rejectTracking]
 
     return h.view(view, pageData)
   },
