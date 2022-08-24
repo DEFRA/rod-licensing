@@ -10,7 +10,7 @@ import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
-// import { checkAnalytics } from '../src/handlers/analytics-handler.js'
+import { checkAnalytics } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
 
@@ -70,6 +70,9 @@ const initialiseHapiGapiPlugin = () => {
     plugin: HapiGapi,
     options: {
       propertySettings: hapiGapiPropertySettings,
+      trackAnalytics: async request => {
+        checkAnalytics(request)
+      },
       sessionIdProducer: async request => {
         let sessionId = null
         if (useSessionCookie(request)) {
@@ -124,36 +127,19 @@ export const getPlugins = () => {
   ]
 }
 
-// export const getPlugins = () => {
-//   const analytics = checkAnalytics
-//   if (analytics === 'true') {
-//     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-//       console.log('Session is being tracked.')
-//     }
-//     return [
-//       Inert,
-//       Vision,
-//       Scooter,
-//       Cookie,
-//       initialiseDisinfectPlugin(),
-//       initialiseBlankiePlugin(),
-//       initialiseCrumbPlugin(),
-//       initialiseHapiGapiPlugin(),
-//       initialiseHapiI18nPlugin()
-//     ]
-//   } else {
-//     if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-//       console.log('Session is not being tracked.')
-//     }
-//     return [
-//       Inert,
-//       Vision,
-//       Scooter,
-//       Cookie,
-//       initialiseDisinfectPlugin(),
-//       initialiseBlankiePlugin(),
-//       initialiseCrumbPlugin(),
-//       initialiseHapiI18nPlugin()
-//     ]
-//   }
+// const plugins = [
+//   Inert,
+//   Vision,
+//   Scooter,
+//   Cookie,
+//   initialiseDisinfectPlugin(),
+//   initialiseBlankiePlugin(),
+//   initialiseCrumbPlugin(),
+//   initialiseHapiI18nPlugin()
+// ]
+
+// if (checkAnalytics(request)) {
+//   plugins.push(initialiseHapiGapiPlugin())
 // }
+
+// export const getPlugins = () => plugins

@@ -45,7 +45,6 @@ describe('Server GA integration', () => {
   beforeEach(() => {
     process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
     process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
-    process.env.AGREE_ANALYTICS = true
     jest.clearAllMocks()
     createServer()
   })

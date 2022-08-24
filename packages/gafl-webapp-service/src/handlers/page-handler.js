@@ -107,12 +107,12 @@ export default (path, view, completion, getData) => ({
     pageData.backRef = await getBackReference(request, view)
     pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: PROCESS_ANALYTICS_PREFERENCES.uri }
 
-    const analytics = request.cache().helpers.analytics.get()
+    const analytics = await request.cache().helpers.analytics.get()
 
-    // console.log('selected:', status.analyticsSelected)
-    pageData.acceptedTracking = analytics.acceptedTracking
+    pageData.analyticsMessageDisplayed = analytics[ANALYTICS.seenMessage]
     pageData.analyticsSelected = analytics[ANALYTICS.selected]
-    pageData.analyticsMessageDisplay = analytics.analyticsMessageDisplay
+    pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
+    pageData.rejectedTracking = analytics[ANALYTICS.rejectTracking]
 
     return h.view(view, pageData)
   },

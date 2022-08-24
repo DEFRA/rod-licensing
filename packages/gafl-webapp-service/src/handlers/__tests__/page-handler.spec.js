@@ -180,6 +180,9 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/we/are/here') 
       },
       transaction: {
         getCurrentPermission: () => {}
+      },
+      analytics: {
+        get: () => ({})
       }
     }
   }),

@@ -56,10 +56,10 @@
                 </div>
             {% endif %}
             {% if analyticsSelected %}
-                {% if acceptedTracking === 'accept' %}
-                    <div id="cookie-hide" class="cookie-hide no-print" role="region" aria-label="cookie accept">
+                {% if acceptedTracking %}
+                    <div id="cookie-accept" class="cookie-message" role="region" aria-label="cookie accept">
                         <div class="govuk-width-container">
-                            <div class="govuk-cookie-hide__content">
+                            <div class="govuk-cookie-banner__content">
                                 <p class="govuk-body" id="cookie-acceptance">
                                     {{ mssgs.analytics_banner_acceptance }}
                                 </p>
@@ -77,12 +77,12 @@
                         </div>
                     </div>
                 {% endif %}
-                {% if not acceptedTracking === 'reject' %}
-                    <div id="cookie-hide" class="cookie-hide initially-hidden" role="region" aria-label="cookie reject">
+                {% if rejectedTracking %}
+                    <div id="cookie-reject" class="cookie-banner no-print" role="region">
                         <div class="govuk-width-container">
-                            <div class="govuk-cookie-hide__content">
-                                <p class="govuk-body" id="cookie-rejection">
-                                    {{ mssgs.analytics_banner_rejection }}
+                            <div class="govuk-cookie-banner__content">
+                                <p class="govuk-body">
+                                    {{ mssgs.analytics_banner_rejection }}  
                                 </p>
                             </div>
                             <div class="govuk-button-group">
