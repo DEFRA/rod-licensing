@@ -1,7 +1,21 @@
 import { getPlugins } from '../plugins'
+import { ANALYTICS } from '../constants.js'
+
+jest.mock('../constants', () => ({
+  ANALYTICS: {
+    acceptTracking: 'accepted-tracking'
+  },
+  CommonResults: {
+    OK: 'ok'
+  },
+  ShowDigitalLicencePages: {
+    YES: 'show-digital-licence-yes'
+  }
+}))
 
 describe('plugins', () => {
   const findPlugin = (pluginArray, pluginName) => pluginArray.find(plugin => plugin?.plugin?.plugin?.name === pluginName)
+  const findPlugins = (pluginArray, pluginName) => pluginArray.find(plugin => plugin?.plugin?.plugin?.pkg?.name === pluginName)
 
   describe('initialiseHapiI18nPlugin', () => {
     it.each([
@@ -22,41 +36,48 @@ describe('plugins', () => {
     )
   })
 
-  // describe('userAgreedToTracking', () => {
-  //   beforeEach(jest.clearAllMocks)
-  //   it('AGREE_ANALYTICS set to false so initialiseHapiGapiPlugin is not called', async () => {
-  //     process.env.AGREE_ANALYTICS = false
+  describe('initialiseHapiGapiPlugin', () => {
+    const generateRequestMock = (analytics = {}) => ({
+      cache: jest.fn(() => ({
+        helpers: {
+          analytics: {
+            get: jest.fn(() => analytics)
+          }
+        }
+      }))
+    })
 
-  //     const pluginArray = getPlugins()
-  //     const hapiGapiPlugin = pluginArray[7]
+    beforeEach(jest.clearAllMocks)
 
-  //     expect(hapiGapiPlugin.options.propertySettings).toBeUndefined()
-  //   })
+    const pluginArray = getPlugins()
+    const hapiGapiPlugin = findPlugins(pluginArray, '@defra/hapi-gapi')
 
-  //   it('AGREE_ANALYTICS set to true so initialiseHapiGapiPlugin is called', async () => {
-  //     process.env.AGREE_ANALYTICS = true
-  //     process.env.ANALYTICS_PRIMARY_PROPERTY = true
-  //     process.env.ANALYTICS_XGOV_PROPERTY = true
+    it('trackAnalytics to be set to true', async () => {
+      const analytics = {
+        [ANALYTICS.acceptTracking]: true
+      }
 
-  //     const pluginArray = getPlugins()
-  //     const hapiGapiPlugin = pluginArray[7]
+      jest.mock('../handlers/analytics-handler.js', () => ({
+        checkAnalytics: jest.fn(async () => true)
+      }))
 
-  //     expect(hapiGapiPlugin.options.propertySettings).toBeDefined()
-  //   })
+      const result = await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
 
-  //   it.each([
-  //     ['development', true, 'Session is being tracked.'],
-  //     ['test', true, 'Session is being tracked.'],
-  //     ['development', false, 'Session is not being tracked.'],
-  //     ['test', false, 'Session is not being tracked.']
-  //   ])('log matches whether session is being tracked if dev/test environment', async (env, analytics, log) => {
-  //     process.env.NODE_ENV = env
-  //     process.env.AGREE_ANALYTICS = analytics
-  //     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+      expect(result).toBe(true)
+    })
 
-  //     getPlugins()
+    it('trackAnalytics to be set to false', async () => {
+      const analytics = {
+        [ANALYTICS.acceptTracking]: false
+      }
 
-  //     expect(consoleLogSpy).toHaveBeenCalledWith(log)
-  //   })
-  // })
+      jest.mock('../handlers/analytics-handler.js', () => ({
+        checkAnalytics: jest.fn(async () => false)
+      }))
+
+      const result = await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
+
+      expect(result).toBe(false)
+    })
+  })
 })

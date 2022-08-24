@@ -71,12 +71,13 @@ const initialiseHapiGapiPlugin = () => {
     options: {
       propertySettings: hapiGapiPropertySettings,
       trackAnalytics: async request => {
-        checkAnalytics(request)
-        if (checkAnalytics(request) === true) {
+        const canTrack = await checkAnalytics(request)
+        if (canTrack === true) {
           console.log('session is tracked')
         } else {
-          console.log('session is not tracked')
+          // console.log('session is not tracked')
         }
+        return canTrack
       },
       sessionIdProducer: async request => {
         let sessionId = null

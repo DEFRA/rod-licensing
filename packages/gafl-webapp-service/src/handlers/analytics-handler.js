@@ -18,8 +18,7 @@ export default async (request, h) => {
       })
     } else if (payload.analyticsResponse === 'reject') {
       await request.cache().helpers.analytics.set({
-        [ANALYTICS.selected]: true,
-        [ANALYTICS.rejectTracking]: true
+        [ANALYTICS.selected]: true
       })
     }
   } else if (analytics[ANALYTICS.selected] === true) {
@@ -31,12 +30,14 @@ export default async (request, h) => {
   return h.redirect('/buy')
 }
 
-export const checkAnalytics = async (request) => {
-  console.log('request:')
-  const analytics = await request.cache().helpers.analytics.get()
-
-  if (analytics[ANALYTICS.acceptTracking] === true) {
-    console.log('true')
+export const checkAnalytics = async request => {
+  let analytics
+  try {
+    analytics = await request.cache().helpers.analytics.get()
+  } catch {
+    return false
+  }
+  if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
     return true
   }
 
