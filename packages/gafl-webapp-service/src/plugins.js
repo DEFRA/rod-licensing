@@ -72,6 +72,11 @@ const initialiseHapiGapiPlugin = () => {
       propertySettings: hapiGapiPropertySettings,
       trackAnalytics: async request => {
         checkAnalytics(request)
+        if (checkAnalytics(request) === true) {
+          console.log('session is tracked')
+        } else {
+          console.log('session is not tracked')
+        }
       },
       sessionIdProducer: async request => {
         let sessionId = null
@@ -126,20 +131,3 @@ export const getPlugins = () => {
     initialiseHapiI18nPlugin()
   ]
 }
-
-// const plugins = [
-//   Inert,
-//   Vision,
-//   Scooter,
-//   Cookie,
-//   initialiseDisinfectPlugin(),
-//   initialiseBlankiePlugin(),
-//   initialiseCrumbPlugin(),
-//   initialiseHapiI18nPlugin()
-// ]
-
-// if (checkAnalytics(request)) {
-//   plugins.push(initialiseHapiGapiPlugin())
-// }
-
-// export const getPlugins = () => plugins
