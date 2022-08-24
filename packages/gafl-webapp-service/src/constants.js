@@ -17,7 +17,10 @@ export const RENEWALS_CAMPAIGN_ID = 'renewals'
 export const AEN_INVITATION_ID = 'aen_invitation'
 
 export const ANALYTICS = {
-  selected: 'selected'
+  selected: 'selected',
+  acceptTracking: 'accepted-tracking',
+  rejectTracking: 'rejected-tracking',
+  seenMessage: 'seen-message'
 }
 
 export const COMPLETION_STATUS = {
