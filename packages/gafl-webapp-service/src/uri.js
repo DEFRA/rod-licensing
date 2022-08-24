@@ -74,6 +74,7 @@ export const OS_TERMS = { uri: '/guidance/os-terms', page: 'os-terms' }
  */
 export const TEST_STATUS = { uri: '/buy/status' }
 export const TEST_TRANSACTION = { uri: '/buy/transaction' }
+export const TEST_ANALYTICS = { uri: '/buy/analytics' }
 export const GET_PRICING_TYPES = { uri: '/buy/get-pricing/types' }
 export const GET_PRICING_LENGTHS = { uri: '/buy/get-pricing/lengths' }
 

@@ -32,9 +32,11 @@ export default async (request, h) => {
 }
 
 export const checkAnalytics = async (request) => {
+  console.log('request:')
   const analytics = await request.cache().helpers.analytics.get()
 
   if (analytics[ANALYTICS.acceptTracking] === true) {
+    console.log('true')
     return true
   }
 
