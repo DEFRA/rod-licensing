@@ -20,7 +20,6 @@ const getMomentMockImpl = (overrides = {}) =>
 
 describe('renewal-inactive > route', () => {
   beforeEach(jest.clearAllMocks)
-
   describe('getData', () => {
     describe.each([
       [
@@ -216,7 +215,6 @@ describe('renewal-inactive > route', () => {
       const format = jest.fn()
       moment.mockImplementation(getMomentMockImpl({ format }))
       await getData(mockRequest)
-      console.log('mock', mockRequest.locale)
       expect(moment).toHaveBeenCalledWith(expect.any(String), expect.anything(), language)
     })
 
