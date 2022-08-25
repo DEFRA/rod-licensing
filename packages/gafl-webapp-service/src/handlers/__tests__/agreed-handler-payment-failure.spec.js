@@ -1,10 +1,18 @@
 import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
-import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { GOVUK_PAY_ERROR_STATUS_CODES, PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../__mocks__/test-utils-system'
 import { ADULT_FULL_1_DAY_LICENCE, MOCK_PAYMENT_RESPONSE } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, PAYMENT_FAILED, PAYMENT_CANCELLED } from '../../uri.js'
+
+import agreedHandler from '../agreed-handler.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+import { getPaymentStatus, sendPayment } from '../../services/payment/govuk-pay-service.js'
+import { preparePayment } from '../../processors/payment.js'
+jest.mock('../../services/payment/govuk-pay-service.js')
+jest.mock('../../processors/uri-helper.js')
+jest.mock('../../processors/payment.js')
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -88,14 +96,69 @@ const paymentIncomplete = {
   }
 }
 
+const getMockRequest = () => ({
+  cache: () => ({
+    helpers: {
+      transaction: {
+        get: async () => ({
+          cost: 100,
+          payment: {
+            payment_id: 'abc-123'
+          }
+        })
+      },
+      status: {
+        get: async () => ({
+          [COMPLETION_STATUS.agreed]: true,
+          [COMPLETION_STATUS.posted]: true,
+          [COMPLETION_STATUS.paymentCreated]: true
+        }),
+        set: async () => ({})
+      }
+    }
+  }),
+  headers: { 'x-forwarded-proto': 'https' },
+  info: { host: 'localhost:1234' },
+  server: { info: { protocol: '' } }
+})
+
+const getRequestToolkit = () => ({
+  redirect: jest.fn()
+})
+
+const getSendPaymentMockImplementation = () => ({
+  payment_id: '',
+  created_date: '',
+  state: '',
+  payment_provider: '',
+  _links: {
+    next_url: {
+      href: ''
+    },
+    self: {
+      href: ''
+    }
+  }
+})
+
 describe('The agreed handler', () => {
-  beforeEach(jest.clearAllMocks)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    const { sendPayment: realSendPayment, getPaymentStatus: realGetPaymentStatus } = jest.requireActual(
+      '../../services/payment/govuk-pay-service.js'
+    )
+    const { preparePayment: realPreparePayment } = jest.requireActual('../../processors/payment.js')
+    getPaymentStatus.mockImplementation(paymentId => realGetPaymentStatus(paymentId))
+    preparePayment.mockImplementation((request, transaction) => realPreparePayment(request, transaction))
+    sendPayment.mockImplementation(preparedPayment => realSendPayment(preparedPayment))
+  })
 
   it.each([
     ['rejected', paymentStatusRejected],
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
   ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
+    addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
@@ -135,6 +198,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
+    addLanguageCodeToUri.mockReturnValue('/buy/agreed')
     await injectWithCookies('GET', PAYMENT_FAILED.uri)
     const data4 = await injectWithCookies('POST', PAYMENT_FAILED.uri, {})
     expect(data4.statusCode).toBe(302)
@@ -150,7 +214,77 @@ describe('The agreed handler', () => {
     expect(parsedStatus2[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
+  describe('GOV.UK returns an expired response', () => {
+    beforeEach(() => {
+      getPaymentStatus.mockReturnValueOnce({
+        state: {
+          finished: true,
+          status: 'failed',
+          code: GOVUK_PAY_ERROR_STATUS_CODES.EXPIRED
+        }
+      })
+    })
+
+    it('calls addLanguageCodeToUri', async () => {
+      const mockRequest = getMockRequest()
+
+      addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      preparePayment.mockImplementation(() => {})
+      sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+    })
+  })
+
+  describe('GOV.UK returns a rejected response', () => {
+    beforeEach(() => {
+      getPaymentStatus.mockReturnValueOnce({
+        state: {
+          finished: true,
+          status: 'failed',
+          code: GOVUK_PAY_ERROR_STATUS_CODES.REJECTED
+        }
+      })
+    })
+
+    it('calls addLanguageCodeToUri', async () => {
+      const mockRequest = getMockRequest()
+
+      addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      preparePayment.mockImplementation(() => {})
+      sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+    })
+  })
+
   it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
+    addLanguageCodeToUri.mockReturnValue('/buy/payment-cancelled')
+
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -192,6 +326,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
     // Perform the redirect to the payment failed screen and attempt payment again
+    addLanguageCodeToUri.mockReturnValue('/buy/agreed')
     await injectWithCookies('GET', PAYMENT_CANCELLED.uri)
     const data3 = await injectWithCookies('POST', PAYMENT_CANCELLED.uri, {})
     expect(data3.statusCode).toBe(302)
@@ -214,6 +349,40 @@ describe('The agreed handler', () => {
       paymentReference: MOCK_PAYMENT_RESPONSE.payment_id,
       paymentTimestamp: MOCK_PAYMENT_RESPONSE.created_date,
       paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+    })
+  })
+
+  describe('GOV.UK returns a cancelled response', () => {
+    beforeEach(() => {
+      getPaymentStatus.mockReturnValueOnce({
+        state: {
+          finished: true,
+          status: 'failed',
+          code: GOVUK_PAY_ERROR_STATUS_CODES.USER_CANCELLED
+        }
+      })
+    })
+
+    it('calls addLanguageCodeToUri', async () => {
+      const mockRequest = getMockRequest()
+
+      addLanguageCodeToUri.mockReturnValue('/buy/payment-cancelled')
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_CANCELLED.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      preparePayment.mockImplementation(() => {})
+      sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
     })
   })
 

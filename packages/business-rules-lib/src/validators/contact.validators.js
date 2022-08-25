@@ -109,8 +109,7 @@ export const createMobilePhoneValidator = joi => joi.string().trim().pattern(mob
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createPremisesValidator = joi =>
-  joi.string().trim().min(1).max(100).external(toTitleCase()).required().example('Example House')
+export const createPremisesValidator = joi => joi.string().trim().min(1).max(50).external(toTitleCase()).required().example('Example House')
 
 /**
  * Create a validator to check a contact's address street

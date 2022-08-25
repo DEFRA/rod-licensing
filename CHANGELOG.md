@@ -1,4 +1,138 @@
 
+## v1.26.0-rc.33 (2022-08-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1434](https://github.com/DEFRA/rod-licensing/pull/1434) Welsh transaltion update for cancelled payment page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.26.0-rc.32 (2022-08-18)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1431](https://github.com/DEFRA/rod-licensing/pull/1431) Include BST when calculating year-long licence end times ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.26.0-rc.31 (2022-08-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1413](https://github.com/DEFRA/rod-licensing/pull/1413) Welsh not persisting when unauthenticated error ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.26.0-rc.30 (2022-08-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1425](https://github.com/DEFRA/rod-licensing/pull/1425) Language doesn't persist on Renewals licence start ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.26.0-rc.28 (2022-08-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1423](https://github.com/DEFRA/rod-licensing/pull/1423) Welsh translation update to licence type page title ([@MickStein](https://github.com/MickStein))
+  * [#1422](https://github.com/DEFRA/rod-licensing/pull/1422) Update welsh translation for 'mobile phone' ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.26.0-rc.26 (2022-08-09)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1411](https://github.com/DEFRA/rod-licensing/pull/1411) Update end date and time rules for 12-month licences ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+
+## v1.26.0-rc.23 (2022-08-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1419](https://github.com/DEFRA/rod-licensing/pull/1419) feature/iwtf update privacy policy wording ([@MickStein](https://github.com/MickStein))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1420](https://github.com/DEFRA/rod-licensing/pull/1420) bugfix/iwtf 3006 remove persisting validation messages ([@MickStein](https://github.com/MickStein))
+  * [#1418](https://github.com/DEFRA/rod-licensing/pull/1418) bugfix/iwtf 3011 renewal page dob fields require char limit ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.26.0-rc.22 (2022-08-05)
+
+#### :bug: Bug Fix
+* [#1409](https://github.com/DEFRA/rod-licensing/pull/1409) bugfix/iwtf 2967 validation error for max char missing on find your a… ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+
+## v1.26.0-rc.19 (2022-08-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1415](https://github.com/DEFRA/rod-licensing/pull/1415) feature/iwtf 3017 add full stop to licence for welsh lang ([@MickStein](https://github.com/MickStein))
+
+#### :bug: Bug Fix
+* `business-rules-lib`
+  * [#1414](https://github.com/DEFRA/rod-licensing/pull/1414) bugfix/iwtf 2967 find your addess max char error not showing ([@MickStein](https://github.com/MickStein))
+* `gafl-webapp-service`
+  * [#1412](https://github.com/DEFRA/rod-licensing/pull/1412) bugfix/iwtf 2995 incorrect error showing in welsh renewal identify page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.26.0-rc.18 (2022-08-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1410](https://github.com/DEFRA/rod-licensing/pull/1410) Pass current language to GOV.UK Pay API ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.26.0-rc.17 (2022-08-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1403](https://github.com/DEFRA/rod-licensing/pull/1403) feature/iwtf 2995 Easy renewal, renewal start date welsh translation ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.26.0-rc.16 (2022-07-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1387](https://github.com/DEFRA/rod-licensing/pull/1387) Include user's chosen language in GovPay return URL ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.26.0-rc.15 (2022-07-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1407](https://github.com/DEFRA/rod-licensing/pull/1407) bugfix/iwtf 2992 update example text and welsh dob error incorrect ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.26.0-rc.13 (2022-07-26)
 

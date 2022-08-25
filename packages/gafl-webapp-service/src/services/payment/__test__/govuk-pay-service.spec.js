@@ -1,9 +1,14 @@
 import mockTransaction from './data/mock-transaction.js'
 import { preparePayment } from '../../../processors/payment.js'
 import { AGREED } from '../../../uri.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+
+jest.mock('../../../processors/uri-helper.js')
 
 describe('The govuk-pay-service', () => {
   it('prepares a correct payment response endpoint for http', async () => {
+    addLanguageCodeToUri.mockReturnValue('http://0.0.0.0:3000/buy/agreed')
+
     expect(
       preparePayment(
         {
@@ -22,6 +27,8 @@ describe('The govuk-pay-service', () => {
   })
 
   it('prepares a correct payment response endpoint for https', async () => {
+    addLanguageCodeToUri.mockReturnValue('https://0.0.0.0:3000/buy/agreed')
+
     expect(
       preparePayment(
         {
@@ -40,6 +47,8 @@ describe('The govuk-pay-service', () => {
   })
 
   it('prepares a correct payment creation object', async () => {
+    addLanguageCodeToUri.mockReturnValue('https://0.0.0.0:3000/buy/agreed')
+
     expect(
       preparePayment(
         {
@@ -63,6 +72,7 @@ describe('The govuk-pay-service', () => {
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
       moto: false,
+      language: 'en',
       prefilled_cardholder_details: {
         cardholder_name: 'Graham Willis',
         billing_address: {
@@ -76,6 +86,8 @@ describe('The govuk-pay-service', () => {
   })
 
   it('prepares a correct payment creation object - with locality', async () => {
+    addLanguageCodeToUri.mockReturnValue('https://0.0.0.0:3000/buy/agreed')
+
     const mockTransaction2 = Object.assign({}, mockTransaction)
     mockTransaction2.permissions[0].licensee.locality = 'Stoke Bishop'
     mockTransaction2.permissions[0].licenceLength = '8D'
@@ -101,6 +113,7 @@ describe('The govuk-pay-service', () => {
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
       moto: false,
+      language: 'en',
       prefilled_cardholder_details: {
         cardholder_name: 'Graham Willis',
         billing_address: {
@@ -115,6 +128,8 @@ describe('The govuk-pay-service', () => {
   })
 
   it('prepares a correct payment creation object where there are multiple licences', async () => {
+    addLanguageCodeToUri.mockReturnValue('https://0.0.0.0:3000/buy/agreed')
+
     const newMockTransaction = Object.assign({}, mockTransaction)
     newMockTransaction.permissions.push(mockTransaction.permissions[0])
     expect(preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'https' } }, newMockTransaction)).toEqual({
@@ -123,11 +138,14 @@ describe('The govuk-pay-service', () => {
       description: 'Multiple permits',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
-      moto: false
+      moto: false,
+      language: 'en'
     })
   })
 
   it('posts the prepared payment to the GOV.PAY api', async () => {
+    addLanguageCodeToUri.mockReturnValue('https://0.0.0.0:3000/buy/agreed')
+
     const preparedPayment = preparePayment({ info: { host: '0.0.0.0:3000' }, headers: { 'x-forwarded-proto': 'https' } }, mockTransaction)
     console.log(preparedPayment)
   })
