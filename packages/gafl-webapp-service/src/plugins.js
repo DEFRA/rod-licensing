@@ -75,7 +75,7 @@ const initialiseHapiGapiPlugin = () => {
         if (canTrack === true) {
           console.log('session is tracked')
         } else {
-          // console.log('session is not tracked')
+          console.log('session is not tracked')
         }
         return canTrack
       },
