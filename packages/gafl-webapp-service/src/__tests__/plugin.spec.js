@@ -39,6 +39,7 @@ describe('plugins', () => {
   describe('initialiseHapiGapiPlugin', () => {
     const generateRequestMock = (analytics = {}) => ({
       cache: jest.fn(() => ({
+        hasSession: () => true,
         helpers: {
           analytics: {
             get: jest.fn(() => analytics)

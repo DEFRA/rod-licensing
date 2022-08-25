@@ -23,13 +23,14 @@ describe('checkAnalytics', () => {
     expect(result).toEqual(trackingResult)
   })
 
-  it('undefined analytics returns false', async () => {
-    const result = await checkAnalytics()
+  it('empty session cache returns false', async () => {
+    const result = await checkAnalytics({ cache: () => ({ hasSession: () => false }) })
     expect(result).toEqual(false)
   })
 
   const generateRequestMock = (analytics = {}) => ({
     cache: jest.fn(() => ({
+      hasSession: () => true,
       helpers: {
         analytics: {
           get: jest.fn(() => analytics),
