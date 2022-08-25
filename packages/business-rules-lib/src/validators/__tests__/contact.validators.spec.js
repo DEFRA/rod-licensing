@@ -304,8 +304,8 @@ describe('contact validators', () => {
     })
 
     it('throws where the premises exceeds the maximum allowed length', async () => {
-      await expect(contactValidation.createPremisesValidator(Joi).validateAsync('A'.repeat(101))).rejects.toThrow(
-        '"value" length must be less than or equal to 100 characters long'
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync('A'.repeat(51))).rejects.toThrow(
+        '"value" length must be less than or equal to 50 characters long'
       )
     })
   })
