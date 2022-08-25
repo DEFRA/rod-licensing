@@ -31,14 +31,11 @@ export default async (request, h) => {
 }
 
 export const checkAnalytics = async request => {
-  let analytics
-  try {
-    analytics = await request.cache().helpers.analytics.get()
-  } catch {
-    return false
-  }
-  if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
-    return true
+  if (request.cache().hasSession()) {
+    const analytics = await request.cache().helpers.analytics.get()
+    if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
+      return true
+    }
   }
 
   return false
