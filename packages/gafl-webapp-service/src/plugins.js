@@ -19,6 +19,19 @@ import debug from 'debug'
 // script. It needs the quotes.
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
+const trackAnalytics = async request => {
+  const canTrack = await checkAnalytics(request)
+  if (process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING === 'true') {
+    const sessionId = await getAnalyticsSessionId(request)
+    if (canTrack === true) {
+      debug('Session is being tracked for: ' + sessionId)
+    } else {
+      debug('Session is not being tracked for: ' + sessionId)
+    }
+  }
+  return canTrack
+}
+
 const initialiseDisinfectPlugin = () => ({
   plugin: Disinfect,
   options: {
@@ -71,18 +84,7 @@ const initialiseHapiGapiPlugin = () => {
     plugin: HapiGapi,
     options: {
       propertySettings: hapiGapiPropertySettings,
-      trackAnalytics: async request => {
-        const canTrack = await checkAnalytics(request)
-        if (process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING === 'true') {
-          const sessionId = await getAnalyticsSessionId(request)
-          if (canTrack === true) {
-            debug('Session is being tracked for: ' + sessionId)
-          } else {
-            debug('Session is not being tracked for: ' + sessionId)
-          }
-        }
-        return canTrack
-      },
+      trackAnalytics,
       sessionIdProducer: async request => {
         let sessionId = null
         if (useSessionCookie(request)) {
