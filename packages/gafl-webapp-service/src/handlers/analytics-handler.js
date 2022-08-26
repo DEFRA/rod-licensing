@@ -6,6 +6,26 @@ import { ANALYTICS } from '../constants.js'
  * @returns {Promise}
  */
 
+export const checkAnalytics = async request => {
+  if (request.cache().hasSession()) {
+    const analytics = await request.cache().helpers.analytics.get()
+    if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
+      return true
+    }
+  }
+
+  return false
+}
+
+export const getAnalyticsSessionId = async request => {
+  if (request.cache().hasSession()) {
+    const sessionId = await request.cache().getId()
+    return sessionId
+  }
+
+  return null
+}
+
 export default async (request, h) => {
   const payload = request.payload
   const analytics = await request.cache().helpers.analytics.get()
@@ -18,7 +38,8 @@ export default async (request, h) => {
       })
     } else if (payload.analyticsResponse === 'reject') {
       await request.cache().helpers.analytics.set({
-        [ANALYTICS.selected]: true
+        [ANALYTICS.selected]: true,
+        [ANALYTICS.acceptTracking]: false
       })
     }
   } else if (analytics[ANALYTICS.selected] === true) {
@@ -28,15 +49,4 @@ export default async (request, h) => {
   }
 
   return h.redirect('/buy')
-}
-
-export const checkAnalytics = async request => {
-  if (request.cache().hasSession()) {
-    const analytics = await request.cache().helpers.analytics.get()
-    if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
-      return true
-    }
-  }
-
-  return false
 }

@@ -1,11 +1,12 @@
 import { ANALYTICS } from '../../constants.js'
-import { checkAnalytics } from '../analytics-handler.js'
+import { checkAnalytics, getAnalyticsSessionId } from '../analytics-handler.js'
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
     acceptTracking: 'accepted-tracking'
   }
 }))
+
 describe('checkAnalytics', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -27,16 +28,33 @@ describe('checkAnalytics', () => {
     const result = await checkAnalytics({ cache: () => ({ hasSession: () => false }) })
     expect(result).toEqual(false)
   })
+})
 
-  const generateRequestMock = (analytics = {}) => ({
-    cache: jest.fn(() => ({
-      hasSession: () => true,
-      helpers: {
-        analytics: {
-          get: jest.fn(() => analytics),
-          set: jest.fn()
-        }
-      }
-    }))
+describe('getAnalyticsSessionId', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
+
+  it.each([['session_id_example'], ['testing_session_id'], ['example_session_id']])('returns the value sessionId', async id => {
+    const result = await getAnalyticsSessionId(generateRequestMock(null, id))
+    expect(result).toEqual(id)
+  })
+
+  it('empty session cache returns false', async () => {
+    const result = await getAnalyticsSessionId({ cache: () => ({ hasSession: () => false }) })
+    expect(result).toEqual(null)
+  })
+})
+
+const generateRequestMock = (analytics, getId = {}) => ({
+  cache: jest.fn(() => ({
+    hasSession: () => true,
+    getId: jest.fn(() => getId),
+    helpers: {
+      analytics: {
+        get: jest.fn(() => analytics),
+        set: jest.fn()
+      }
+    }
+  }))
 })

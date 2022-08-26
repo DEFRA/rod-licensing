@@ -25,7 +25,6 @@ export default async request => {
   page.permissions.push({})
   status.permissions.push({})
   addressLookup.permissions.push({})
-  analytics.permissions.push({})
 
   await request.cache().helpers.transaction.set(transaction)
   await request.cache().helpers.page.set(page)

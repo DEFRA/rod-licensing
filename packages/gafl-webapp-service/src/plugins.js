@@ -10,9 +10,10 @@ import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
-import { checkAnalytics } from '../src/handlers/analytics-handler.js'
+import { checkAnalytics, getAnalyticsSessionId } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
+import debug from 'debug'
 
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
@@ -72,10 +73,13 @@ const initialiseHapiGapiPlugin = () => {
       propertySettings: hapiGapiPropertySettings,
       trackAnalytics: async request => {
         const canTrack = await checkAnalytics(request)
-        if (canTrack === true) {
-          console.log('session is tracked')
-        } else {
-          console.log('session is not tracked')
+        if (process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING === 'true') {
+          const sessionId = await getAnalyticsSessionId(request)
+          if (canTrack === true) {
+            debug('Session is being tracked for: ' + sessionId)
+          } else {
+            debug('Session is not being tracked for: ' + sessionId)
+          }
         }
         return canTrack
       },

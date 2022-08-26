@@ -14,7 +14,7 @@ describe('The analytics handler', () => {
     jest.clearAllMocks()
   })
 
-  it('returns /buy', async () => {
+  it('redirects to /buy', async () => {
     const payload = {
       analyticsResponse: 'accept'
     }
@@ -34,14 +34,16 @@ describe('The analytics handler', () => {
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: true }))
   })
 
-  it('selected not true and response is reject sets selected to true', async () => {
+  it('selected not true and response is reject sets selected to true and acceptTracking to false', async () => {
     const payload = {
       analyticsResponse: 'reject'
     }
     const request = generateRequestMock(payload)
     await analyticsHandlder(request, generateResponseToolkitMock())
 
-    expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true }))
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(
+      expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: false })
+    )
   })
 
   it('selected is true sets seenMessage to true', async () => {
