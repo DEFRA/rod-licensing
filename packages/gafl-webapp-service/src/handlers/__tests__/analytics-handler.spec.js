@@ -41,7 +41,9 @@ describe('The analytics handler', () => {
     const request = generateRequestMock(payload)
     await analyticsHandlder(request, generateResponseToolkitMock())
 
-    expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: false }))
+    expect(mockAnalyticsSet).toHaveBeenCalledWith(
+      expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: false })
+    )
   })
 
   it('selected is true sets seenMessage to true', async () => {
