@@ -84,7 +84,7 @@ const initialiseHapiGapiPlugin = () => {
     plugin: HapiGapi,
     options: {
       propertySettings: hapiGapiPropertySettings,
-      trackAnalytics,
+      trackAnalytics: trackAnalytics,
       sessionIdProducer: async request => {
         let sessionId = null
         if (useSessionCookie(request)) {
