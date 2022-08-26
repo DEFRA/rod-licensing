@@ -13,6 +13,7 @@ import { getCsrfTokenCookieName } from './server.js'
 import { checkAnalytics } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
+import debug from 'debug'
 
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
@@ -66,16 +67,20 @@ const initialiseHapiGapiPlugin = () => {
     console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
   }
 
+  const db = debug('webapp:analytics-handler')
+
   return {
     plugin: HapiGapi,
     options: {
       propertySettings: hapiGapiPropertySettings,
       trackAnalytics: async request => {
         const canTrack = await checkAnalytics(request)
-        if (canTrack === true) {
-          console.log('session is tracked')
-        } else {
-          console.log('session is not tracked')
+        if (process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING === 'true') {
+          if (canTrack === true) {
+            // db('Session is being tracked for: ${SESSION_ID}')
+          } else {
+            db('Session is not being tracked for: ', 'SESSION ID')
+          }
         }
         return canTrack
       },

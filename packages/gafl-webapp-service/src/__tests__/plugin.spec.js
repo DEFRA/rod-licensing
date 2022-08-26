@@ -1,5 +1,6 @@
 import { getPlugins } from '../plugins'
 import { ANALYTICS } from '../constants.js'
+import { checkAnalytics } from '../handlers/analytics-handler.js'
 
 jest.mock('../constants', () => ({
   ANALYTICS: {
@@ -12,6 +13,8 @@ jest.mock('../constants', () => ({
     YES: 'show-digital-licence-yes'
   }
 }))
+
+jest.mock('..handlers/analytics-handler.js')
 
 describe('plugins', () => {
   const findPlugin = (pluginArray, pluginName) => pluginArray.find(plugin => plugin?.plugin?.plugin?.name === pluginName)
@@ -53,32 +56,18 @@ describe('plugins', () => {
     const pluginArray = getPlugins()
     const hapiGapiPlugin = findPlugins(pluginArray, '@defra/hapi-gapi')
 
-    it('trackAnalytics to be set to true', async () => {
+    it.each([
+      [true, true],
+      [false, false]
+    ])('trackAnalytics to be set to value of checkAnalytics', async (tracking, expectedResult) => {
       const analytics = {
-        [ANALYTICS.acceptTracking]: true
+        [ANALYTICS.acceptTracking]: tracking
       }
-
-      jest.mock('../handlers/analytics-handler.js', () => ({
-        checkAnalytics: jest.fn(async () => true)
-      }))
+      checkAnalytics.mockReturnValueOnce(tracking)
 
       const result = await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
 
-      expect(result).toBe(true)
-    })
-
-    it('trackAnalytics to be set to false', async () => {
-      const analytics = {
-        [ANALYTICS.acceptTracking]: false
-      }
-
-      jest.mock('../handlers/analytics-handler.js', () => ({
-        checkAnalytics: jest.fn(async () => false)
-      }))
-
-      const result = await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
-
-      expect(result).toBe(false)
+      expect(result).toBe(expectedResult)
     })
   })
 })

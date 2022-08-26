@@ -116,6 +116,7 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsSelected = analytics[ANALYTICS.selected]
     pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
 
+    console.log(pageData)
     return h.view(view, pageData)
   },
   /**

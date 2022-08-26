@@ -3,10 +3,19 @@ import pageHandler from '../page-handler.js'
 import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import GetDataRedirect from '../get-data-redirect.js'
+import { ANALYTICS } from '../../constants.js'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
+
+jest.mock('../../constants', () => ({
+  ANALYTICS: {
+    selected: 'selected',
+    acceptTracking: 'accepted-tracking',
+    seenMessage: 'seen-message'
+  }
+}))
 
 describe('The page handler function', () => {
   let fakeDebug
@@ -169,7 +178,23 @@ describe('The page handler function', () => {
     await error(getMockRequest(undefined, url), toolkit, { details: [] })
     expect(toolkit.redirect).toHaveBeenCalledWith(`Redirect to url ${url}`)
   })
+
+  it.only('sets the value of pageData', async () => {
+    mockAnalyticsCacheGet.mockImplementationOnce(() => ({
+      [ANALYTICS.selected]: 'selected',
+      [ANALYTICS.acceptTracking]: 'accepted-tracking',
+      [ANALYTICS.seenMessage]: 'seen-message'
+    }))
+
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    await get(getMockRequest(), toolkit)
+    console.log(toolkit.view)
+    expect(toolkit.view).toMatchSnapshot()
+  })
 })
+
+const mockAnalyticsCacheGet = jest.fn(() => ({}))
 
 const getMockRequest = (setCurrentPermission = () => {}, path = '/we/are/here') => ({
   cache: () => ({
@@ -186,7 +211,7 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/we/are/here') 
         getCurrentPermission: () => {}
       },
       analytics: {
-        get: () => ({})
+        get: mockAnalyticsCacheGet
       }
     }
   }),
