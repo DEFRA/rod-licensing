@@ -1,4 +1,5 @@
 import { ANALYTICS } from '../../constants.js'
+import { CacheError } from '../../session-cache/cache-manager.js'
 import { checkAnalytics, getAnalyticsSessionId } from '../analytics-handler.js'
 
 jest.mock('../../constants', () => ({
@@ -17,15 +18,19 @@ describe('checkAnalytics', () => {
     [false, false],
     [undefined, false]
   ])('returns value of [ANALYTICS.acceptTracking]', async (acceptTracking, trackingResult) => {
-    const analytics = {
+    const analytics = () => ({
       [ANALYTICS.acceptTracking]: acceptTracking
-    }
+    })
     const result = await checkAnalytics(generateRequestMock(analytics))
     expect(result).toEqual(trackingResult)
   })
 
   it('empty session cache returns false', async () => {
-    const result = await checkAnalytics({ cache: () => ({ hasSession: () => false }) })
+    const result = await checkAnalytics(
+      generateRequestMock(() => {
+        throw new CacheError()
+      })
+    )
     expect(result).toEqual(false)
   })
 })
@@ -36,23 +41,34 @@ describe('getAnalyticsSessionId', () => {
   })
 
   it.each([['session_id_example'], ['testing_session_id'], ['example_session_id']])('returns the value sessionId', async id => {
-    const result = await getAnalyticsSessionId(generateRequestMock(null, id))
+    const result = await getAnalyticsSessionId(
+      generateRequestMock(
+        () => null,
+        () => id
+      )
+    )
     expect(result).toEqual(id)
   })
 
   it('empty session cache returns false', async () => {
-    const result = await getAnalyticsSessionId({ cache: () => ({ hasSession: () => false }) })
+    const result = await getAnalyticsSessionId(
+      generateRequestMock(
+        () => null,
+        () => {
+          throw new CacheError()
+        }
+      )
+    )
     expect(result).toEqual(null)
   })
 })
 
-const generateRequestMock = (analytics, getId = {}) => ({
+const generateRequestMock = (analytics = () => {}, getId = () => {}) => ({
   cache: jest.fn(() => ({
-    hasSession: () => true,
-    getId: jest.fn(() => getId),
+    getId: jest.fn(getId),
     helpers: {
       analytics: {
-        get: jest.fn(() => analytics),
+        get: jest.fn(analytics),
         set: jest.fn()
       }
     }

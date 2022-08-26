@@ -70,7 +70,7 @@ const cacheDecorator = sessionCookieName =>
     return {
       getId: () => id(),
 
-      hasSession: () => !!this.state[sessionCookieName],
+      // hasSession: () => !!this.state[sessionCookieName],
 
       initialize: async () => {
         debug(`Initializing cache for key: ${id()}`)
