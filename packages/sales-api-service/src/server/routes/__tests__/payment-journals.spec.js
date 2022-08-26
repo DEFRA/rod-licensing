@@ -57,7 +57,7 @@ describe('payment journals handlers', () => {
       })
     })
 
-    it('returns 409 response if the journal for the given id already exists', async () => {
+    it.skip('returns 409 response if the journal for the given id already exists', async () => {
       createPaymentJournal.mockRejectedValueOnce(Object.assign(new Error(), { code: 'ConditionalCheckFailedException' }))
       const result = await server.inject({
         method: 'PUT',
