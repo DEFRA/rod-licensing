@@ -15,7 +15,7 @@ describe('payment journals handlers', () => {
   afterAll(async () => {
     await server.stop()
   })
-  beforeEach(jest.clearAllMocks)
+  beforeEach(jest.resetAllMocks)
 
   describe('getPaymentJournal', () => {
     it('returns the result of the getPaymentJournal service method', async () => {
@@ -57,7 +57,7 @@ describe('payment journals handlers', () => {
       })
     })
 
-    it.skip('returns 409 response if the journal for the given id already exists', async () => {
+    it('returns 409 response if the journal for the given id already exists', async () => {
       createPaymentJournal.mockRejectedValueOnce(Object.assign(new Error(), { code: 'ConditionalCheckFailedException' }))
       const result = await server.inject({
         method: 'PUT',
