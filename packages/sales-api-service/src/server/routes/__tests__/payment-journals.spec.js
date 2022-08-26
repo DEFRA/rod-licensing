@@ -8,7 +8,7 @@ import initialiseServer from '../../server.js'
 jest.mock('../../../services/paymentjournals/payment-journals.service.js')
 
 let server = null
-describe('payment journals handlers', () => {
+describe.skip('payment journals handlers', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
   })
