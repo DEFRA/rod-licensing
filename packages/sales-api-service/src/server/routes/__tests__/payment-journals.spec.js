@@ -15,7 +15,7 @@ describe('payment journals handlers', () => {
   afterAll(async () => {
     await server.stop()
   })
-  beforeEach(jest.resetAllMocks)
+  beforeEach(jest.clearAllMocks)
 
   describe('getPaymentJournal', () => {
     it('returns the result of the getPaymentJournal service method', async () => {
