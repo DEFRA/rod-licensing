@@ -17,6 +17,15 @@ export const checkAnalytics = async request => {
   return false
 }
 
+export const getAnalyticsSessionId = async request => {
+  if (request.cache().hasSession()) {
+    const sessionId = await request.cache().getId()
+    return sessionId
+  }
+
+  return null
+}
+
 export default async (request, h) => {
   const payload = request.payload
   const analytics = await request.cache().helpers.analytics.get()

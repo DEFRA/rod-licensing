@@ -10,7 +10,7 @@ import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
-import { checkAnalytics } from '../src/handlers/analytics-handler.js'
+import { checkAnalytics, getAnalyticsSessionId } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
 import debug from 'debug'
@@ -67,8 +67,6 @@ const initialiseHapiGapiPlugin = () => {
     console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
   }
 
-  const db = debug('webapp:analytics-handler')
-
   return {
     plugin: HapiGapi,
     options: {
@@ -76,10 +74,11 @@ const initialiseHapiGapiPlugin = () => {
       trackAnalytics: async request => {
         const canTrack = await checkAnalytics(request)
         if (process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING === 'true') {
+          const sessionId = await getAnalyticsSessionId(request)
           if (canTrack === true) {
-            // db('Session is being tracked for: ${SESSION_ID}')
+            debug('Session is being tracked for: ' + sessionId)
           } else {
-            db('Session is not being tracked for: ', 'SESSION ID')
+            debug('Session is not being tracked for: ' + sessionId)
           }
         }
         return canTrack
