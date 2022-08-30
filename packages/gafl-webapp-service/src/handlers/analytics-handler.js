@@ -6,17 +6,6 @@ import { ANALYTICS } from '../constants.js'
  * @returns {Promise}
  */
 
-// export const checkAnalytics = async request => {
-//   if (request.cache().hasSession()) {
-//     const analytics = await request.cache().helpers.analytics.get()
-//     if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
-//       return true
-//     }
-//   }
-
-//   return false
-// }
-
 export const checkAnalytics = async request => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
@@ -27,15 +16,6 @@ export const checkAnalytics = async request => {
 
   return false
 }
-
-// export const getAnalyticsSessionId = async request => {
-//   if (request.cache().hasSession()) {
-//     const sessionId = await request.cache().getId()
-//     return sessionId
-//   }
-
-//   return null
-// }
 
 export const getAnalyticsSessionId = async request => {
   try {
