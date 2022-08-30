@@ -1,6 +1,6 @@
 import { getData } from '../route'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
-import { ADDRESS_LOOKUP } from '../../../../../uri.js'
+import { ADDRESS_ENTRY, ADDRESS_LOOKUP } from '../../../../../uri.js'
 
 jest.mock('../../../../../processors/uri-helper.js')
 
@@ -67,6 +67,14 @@ describe('address-select > route', () => {
       await getData(mockRequest)
 
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, ADDRESS_LOOKUP.uri)
+    })
+
+    it('addLanguageCodeToUri is called with the expected arguments for manual address entry', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
+
+      await getData(mockRequest)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, ADDRESS_ENTRY.uri)
     })
   })
 })
