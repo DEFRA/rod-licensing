@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.34 (2022-08-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#1436](https://github.com/DEFRA/rod-licensing/pull/1436) Feature/iwtf 2961 analytics permission banner ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.26.0-rc.33 (2022-08-22)
 
 #### :rocket: Enhancement
