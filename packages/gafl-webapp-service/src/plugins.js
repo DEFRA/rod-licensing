@@ -21,7 +21,8 @@ const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
 const trackAnalytics = async request => {
   const canTrack = await checkAnalytics(request)
-  if (process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING === 'true') {
+  const optDebug = process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING?.toLowerCase() === 'true'
+  if (optDebug) {
     const sessionId = await getAnalyticsSessionId(request)
     if (canTrack === true) {
       debug('Session is being tracked for: ' + sessionId)
