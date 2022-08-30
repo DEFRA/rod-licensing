@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.38 (2022-08-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1441](https://github.com/DEFRA/rod-licensing/pull/1441) Welsh - BOBO - 'Which type of licence do they want?' ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.26.0-rc.37 (2022-08-30)
 
 #### :rocket: Enhancement
