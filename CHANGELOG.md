@@ -1,4 +1,30 @@
 
+## v1.26.0-rc.37 (2022-08-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1444](https://github.com/DEFRA/rod-licensing/pull/1444) Amend Welsh translation on licence type page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1447](https://github.com/DEFRA/rod-licensing/pull/1447) Amend Welsh translation for manual address link in BOBO journey ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.26.0-rc.35 (2022-08-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1446](https://github.com/DEFRA/rod-licensing/pull/1446) Amend Welsh translation on licence start page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1445](https://github.com/DEFRA/rod-licensing/pull/1445) Update Welsh translation on disability concession page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1443](https://github.com/DEFRA/rod-licensing/pull/1443) Amend Welsh translation on address lookup page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1442](https://github.com/DEFRA/rod-licensing/pull/1442) Fix typo in Welsh translation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.26.0-rc.34 (2022-08-30)
 
 #### :rocket: Enhancement
