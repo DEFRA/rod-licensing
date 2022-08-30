@@ -1,6 +1,14 @@
 import { createServer, init, server } from '../server.js'
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT } from '../constants.js'
-import { TEST_TRANSACTION, TEST_STATUS, GET_PRICING_TYPES, GET_PRICING_LENGTHS, LICENCE_LENGTH, LICENCE_TYPE } from '../uri.js'
+import {
+  TEST_TRANSACTION,
+  TEST_STATUS,
+  TEST_ANALYTICS,
+  GET_PRICING_TYPES,
+  GET_PRICING_LENGTHS,
+  LICENCE_LENGTH,
+  LICENCE_TYPE
+} from '../uri.js'
 
 import CatboxMemory from '@hapi/catbox-memory'
 import { salesApi } from '@defra-fish/connectors-lib'
@@ -38,6 +46,12 @@ const start = async done => {
     method: 'GET',
     path: TEST_STATUS.uri,
     handler: async request => request.cache().helpers.status.get()
+  })
+
+  server.route({
+    method: 'GET',
+    path: TEST_ANALYTICS.uri,
+    handler: async request => request.cache().helpers.analytics.get()
   })
 
   server.route({
