@@ -1,4 +1,14 @@
 
+## v1.26.0-rc.37 (2022-08-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1444](https://github.com/DEFRA/rod-licensing/pull/1444) Amend Welsh translation on licence type page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1447](https://github.com/DEFRA/rod-licensing/pull/1447) Amend Welsh translation for manual address link in BOBO journey ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.26.0-rc.35 (2022-08-30)
 
