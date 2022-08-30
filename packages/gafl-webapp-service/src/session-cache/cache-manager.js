@@ -4,12 +4,14 @@
  * (2) Status - pages completed, flags
  * (3) Transaction - the validated set of data making up the licence purchase
  * (4) Address lookup - stores the result of the OS spaces lookup
+ * (5) Analytics - stores whether selected an option for accepting/rejecting analytics
  */
 const contexts = {
   page: { identifier: 'page-context', initializer: { permissions: [] } },
   transaction: { identifier: 'transaction-context', initializer: { payment: {}, permissions: [] } },
   status: { identifier: 'status-context', initializer: { permissions: [], currentPermissionIdx: -1 } },
-  addressLookup: { identifier: 'address-lookup-context', initializer: { permissions: [] } }
+  addressLookup: { identifier: 'address-lookup-context', initializer: { permissions: [] } },
+  analytics: { identifier: 'analytics-context', initializer: { permissions: [] } }
 }
 
 class CacheError extends Error {}
