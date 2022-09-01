@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.43 (2022-09-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1456](https://github.com/DEFRA/rod-licensing/pull/1456) Welsh translation for cookies banner ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.26.0-rc.42 (2022-09-01)
 
 #### :rocket: Enhancement
