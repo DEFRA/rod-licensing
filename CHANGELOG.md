@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.42 (2022-09-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1448](https://github.com/DEFRA/rod-licensing/pull/1448) Add Welsh translations to contact method page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.26.0-rc.40 (2022-08-30)
 
