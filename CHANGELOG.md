@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.44 (2022-09-02)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1451](https://github.com/DEFRA/rod-licensing/pull/1451) Keep selected language when clicking manual address link ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.26.0-rc.43 (2022-09-01)
 
 #### :rocket: Enhancement
