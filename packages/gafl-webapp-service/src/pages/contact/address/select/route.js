@@ -13,7 +13,7 @@ export const getData = async request => {
     addresses,
     searchTerms,
     lookupPage: addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
-    entryPage: ADDRESS_ENTRY.uri
+    entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri)
   }
 }
 
