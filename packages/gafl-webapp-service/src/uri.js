@@ -1,6 +1,8 @@
 /*
  * Page locations, templates
  */
+export const PROCESS_ANALYTICS_PREFERENCES = { uri: '/buy/process-analytics-preferences', page: 'process-analytics-preferences' }
+
 export const LICENCE_FOR = { uri: '/buy/licence-for', page: 'licence-for' }
 export const LICENCE_LENGTH = { uri: '/buy/licence-length', page: 'licence-length' }
 export const LICENCE_TYPE = { uri: '/buy/licence-type', page: 'licence-type' }
@@ -72,6 +74,7 @@ export const OS_TERMS = { uri: '/guidance/os-terms', page: 'os-terms' }
  */
 export const TEST_STATUS = { uri: '/buy/status' }
 export const TEST_TRANSACTION = { uri: '/buy/transaction' }
+export const TEST_ANALYTICS = { uri: '/buy/analytics' }
 export const GET_PRICING_TYPES = { uri: '/buy/get-pricing/types' }
 export const GET_PRICING_LENGTHS = { uri: '/buy/get-pricing/lengths' }
 
