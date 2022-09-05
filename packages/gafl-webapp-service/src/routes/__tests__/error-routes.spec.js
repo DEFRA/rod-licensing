@@ -1,4 +1,6 @@
 import { setupEnvironment } from '../../__mocks__/openid-client.js'
+import { CLIENT_ERROR, SERVER_ERROR } from '../../uri.js'
+import errorRoutes from '../error-routes'
 
 let TestUtils = null
 
@@ -11,12 +13,14 @@ describe('Error route handlers', () => {
       TestUtils.start(() => {})
     })
   })
+  beforeEach(jest.clearAllMocks)
 
+  // Stop application after running the test case
   afterAll(async () => {
     TestUtils.stop(() => {})
   })
 
-  it('redirects to the error page when error is thrown', async () => {
+  it('redirects to the client error page when client error is thrown', async () => {
     const data = await TestUtils.server.inject({
       method: 'GET',
       url: '/buy/client-error'
@@ -24,11 +28,132 @@ describe('Error route handlers', () => {
     expect(data.statusCode).toBe(302)
   })
 
-  it('redirects to the error page when error is thrown', async () => {
+  it('redirects to the server error page when server error is thrown', async () => {
     const data = await TestUtils.server.inject({
       method: 'GET',
       url: '/buy/server-error'
     })
     expect(data.statusCode).toBe(302)
   })
+
+  describe('CLIENT_ERROR route', () => {
+    it('should pass the catalog and language to the view if it is present', async () => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      const clientError = errorRoutes[0].handler
+      await clientError(request, mockToolkit)
+      expect(mockToolkit.view).toBeCalledWith(
+        CLIENT_ERROR.page,
+        expect.objectContaining({
+          mssgs: [],
+          altLang: []
+        })
+      )
+    })
+
+    describe.each([
+      [true, { payment_id: 'abc123', href: 'gov.pay.url' }],
+      [true, { payment_id: 'def456', href: 'gov-pay-url' }],
+      [false, {}]
+    ])('includes correct data when paymentInProgress is %p', (paymentInProgress, payment) => {
+      it(`includes paymentInProgress flag with value set to ${paymentInProgress} to correspond to presence of payment_id ${payment.payment_id}`, async () => {
+        const request = getMockRequest(payment)
+        const mockToolkit = getMockToolkit()
+        const clientError = errorRoutes[0].handler
+        await clientError(request, mockToolkit)
+        expect(mockToolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            paymentInProgress
+          })
+        )
+      })
+
+      it(`${paymentInProgress ? 'includes' : 'excludes'} govpay url`, async () => {
+        const request = getMockRequest(payment)
+        const mockToolkit = getMockToolkit()
+        const clientError = errorRoutes[0].handler
+        await clientError(request, mockToolkit)
+        if (paymentInProgress) {
+          expect(mockToolkit.view).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              uri: expect.objectContaining({
+                payment: payment.href
+              })
+            })
+          )
+        } else {
+          expect(mockToolkit.view).not.toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              uri: expect.objectContaining({
+                payment: payment.href
+              })
+            })
+          )
+        }
+      })
+    })
+  })
+
+  describe('SERVER_ERROR route', () => {
+    it('should return a console error', async () => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      const serverError = errorRoutes[1].handler
+      await serverError(request, mockToolkit)
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+
+    it('should pass the catalog and language to the view if it is present', async () => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      const serverError = errorRoutes[1].handler
+      await serverError(request, mockToolkit)
+      expect(mockToolkit.view).toBeCalledWith(
+        SERVER_ERROR.page,
+        expect.objectContaining({
+          mssgs: [],
+          altLang: []
+        })
+      )
+    })
+  })
+})
+
+const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
+  view
+})
+
+const getMockRequest = (payment = {}) => ({
+  cache: () => ({
+    helpers: {
+      transaction: {
+        get: () =>
+          Promise.resolve({
+            payment
+          })
+      }
+    }
+  }),
+  headers: {},
+  i18n: {
+    getCatalog: () => [],
+    getLocales: () => []
+  },
+  response: {
+    isBoom: true,
+    output: {
+      statusCode: 400
+    }
+  },
+  url: 'url',
+  path: 'path',
+  query: 'query',
+  params: 'params',
+  payload: 'payload',
+  state: 'state',
+  method: 'method'
 })
