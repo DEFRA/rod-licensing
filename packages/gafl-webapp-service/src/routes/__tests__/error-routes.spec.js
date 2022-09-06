@@ -28,14 +28,6 @@ describe('Error route handlers', () => {
     expect(data.statusCode).toBe(302)
   })
 
-  it('redirects to the server error page when server error is thrown', async () => {
-    const data = await TestUtils.server.inject({
-      method: 'GET',
-      url: '/buy/server-error'
-    })
-    expect(data.statusCode).toBe(302)
-  })
-
   describe('CLIENT_ERROR route', () => {
     it('should pass the catalog and language to the view if it is present', async () => {
       const request = getMockRequest()
