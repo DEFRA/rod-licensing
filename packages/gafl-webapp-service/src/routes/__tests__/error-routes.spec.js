@@ -43,6 +43,19 @@ describe('Error route handlers', () => {
       )
     })
 
+    it('should respond with the output of the client error to the view if it is present', async () => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      const clientError = errorRoutes[0].handler
+      await clientError(request, mockToolkit)
+      expect(mockToolkit.view).toBeCalledWith(
+        CLIENT_ERROR.page,
+        expect.objectContaining({
+          clientError: 'payload'
+        })
+      )
+    })
+
     describe.each([
       [true, { payment_id: 'abc123', href: 'gov.pay.url' }],
       [true, { payment_id: 'def456', href: 'gov-pay-url' }],
@@ -113,14 +126,8 @@ const getMockRequest = (payment = {}) => ({
   response: {
     isBoom: true,
     output: {
-      statusCode: 400
+      statusCode: 400,
+      payload: 'payload'
     }
-  },
-  url: 'url',
-  path: 'path',
-  query: 'query',
-  params: 'params',
-  payload: 'payload',
-  state: 'state',
-  method: 'method'
+  }
 })
