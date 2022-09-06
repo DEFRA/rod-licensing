@@ -1,4 +1,14 @@
 
+## v1.26.0-rc.45 (2022-09-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1462](https://github.com/DEFRA/rod-licensing/pull/1462) Amend Welsh translation for disability concession text ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1460](https://github.com/DEFRA/rod-licensing/pull/1460) Fix Welsh heading for licence type page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.26.0-rc.44 (2022-09-02)
 
 #### :bug: Bug Fix
