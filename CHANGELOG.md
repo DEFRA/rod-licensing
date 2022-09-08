@@ -1,4 +1,15 @@
 
+## v1.26.0-rc.47 (2022-09-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1464](https://github.com/DEFRA/rod-licensing/pull/1464) Accessibility - phone number on contact ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1463](https://github.com/DEFRA/rod-licensing/pull/1463) Bugfix for welsh lang not persisting on cookies banner ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 2
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.26.0-rc.45 (2022-09-06)
 
