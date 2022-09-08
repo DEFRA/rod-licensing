@@ -202,7 +202,7 @@ describe('The page handler function', () => {
       [ANALYTICS.acceptTracking]: 'accepted-tracking',
       [ANALYTICS.seenMessage]: 'seen-message'
     }))
-
+    addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest(), toolkit)

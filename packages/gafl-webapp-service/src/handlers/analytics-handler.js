@@ -1,4 +1,5 @@
 import { ANALYTICS } from '../constants.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 /**
  * Analytics route handler
  * @param request
@@ -46,6 +47,5 @@ export default async (request, h) => {
       [ANALYTICS.seenMessage]: true
     })
   }
-
-  return h.redirect('/buy')
+  return h.redirect(addLanguageCodeToUri(request, '/buy'))
 }

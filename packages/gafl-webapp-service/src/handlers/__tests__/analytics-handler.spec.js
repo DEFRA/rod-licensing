@@ -1,5 +1,8 @@
 import { ANALYTICS } from '../../constants.js'
-import analyticsHandlder from '../analytics-handler.js'
+import analyticsHandler from '../analytics-handler.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js')
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -20,8 +23,21 @@ describe('The analytics handler', () => {
     }
     const request = generateRequestMock(payload)
     const responseToolkit = generateResponseToolkitMock()
-    await analyticsHandlder(request, responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith('/buy')
+    await analyticsHandler(request, responseToolkit)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, '/buy'))
+  })
+
+  it('get calls addLanguageCodeToUri with request and /buy', async () => {
+    const buyUri = '/buy'
+    const payload = {
+      analyticsResponse: 'accept'
+    }
+    const responseToolkit = generateResponseToolkitMock()
+    const request = generateRequestMock(payload)
+
+    await analyticsHandler(request, responseToolkit)
+
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, buyUri)
   })
 
   it('selected not true and response is accept sets selected to true and acceptTracking to true', async () => {
@@ -30,7 +46,7 @@ describe('The analytics handler', () => {
     }
 
     const request = generateRequestMock(payload)
-    await analyticsHandlder(request, generateResponseToolkitMock())
+    await analyticsHandler(request, generateResponseToolkitMock())
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: true }))
   })
 
@@ -39,7 +55,7 @@ describe('The analytics handler', () => {
       analyticsResponse: 'reject'
     }
     const request = generateRequestMock(payload)
-    await analyticsHandlder(request, generateResponseToolkitMock())
+    await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
       expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: false })
@@ -52,7 +68,7 @@ describe('The analytics handler', () => {
     }
 
     const request = generateRequestMock('payload', analytics)
-    await analyticsHandlder(request, generateResponseToolkitMock())
+    await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.seenMessage]: true }))
   })
@@ -61,6 +77,9 @@ describe('The analytics handler', () => {
 
   const generateRequestMock = (payload, analytics = {}) => ({
     payload,
+    url: {
+      search: ''
+    },
     cache: jest.fn(() => ({
       helpers: {
         analytics: {
