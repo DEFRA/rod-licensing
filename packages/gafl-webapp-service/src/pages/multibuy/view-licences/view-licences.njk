@@ -3,6 +3,8 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
 
+{% set title = mssgs.multibuy_view_licences_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 
