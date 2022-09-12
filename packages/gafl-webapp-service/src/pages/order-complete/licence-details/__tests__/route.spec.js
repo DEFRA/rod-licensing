@@ -3,6 +3,7 @@ import { licenceTypeDisplay } from '../../../../processors/licence-type-display.
 import { COMPLETION_STATUS, CommonResults, ShowDigitalLicencePages } from '../../../../constants.js'
 
 jest.mock('../../../../processors/licence-type-display.js')
+jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../constants', () => ({
   COMPLETION_STATUS: {
     agreed: 'agreed',
