@@ -3,13 +3,15 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
 
+{% set title = mssgs.multibuy_view_licences_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <h1 class="govuk-heading-l">Selected Licences</h1>
+        <h1 class="govuk-heading-l"> {{ mssgs.multibuy_view_licences_title }} </h1>
 
           {% for licence in data.licences %}
 
