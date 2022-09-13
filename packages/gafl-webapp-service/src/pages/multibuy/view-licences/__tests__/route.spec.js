@@ -10,10 +10,6 @@ jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
 
-licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
-licenceTypeAndLengthDisplay.mockReturnValue('8 days')
-displayStartTime.mockReturnValue('9:32am on 23 June 2021')
-
 const permission = {
   licensee: {
     firstName: 'Turanga',
@@ -24,6 +20,8 @@ const permission = {
   licenceLength: '8D',
   permit: { cost: 12 }
 }
+
+const catalog = Symbol('mock catalog')
 
 describe('view-licences > default', () => {
   it('should call the pageRoute with view-licences, /buy/view-licences, validator and nextPage', async () => {
@@ -42,7 +40,18 @@ describe('view licences > getData', () => {
       }
     })
 
-    data = await getData(mockRequest)
+    const sampleRequest = {
+      ...mockRequest,
+      i18n: {
+        getCatalog: () => catalog
+      }
+    }
+
+    licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
+    licenceTypeAndLengthDisplay.mockReturnValue('8 days')
+    displayStartTime.mockReturnValue('9:32am on 23 June 2021')
+
+    data = await getData(sampleRequest)
   })
 
   beforeEach(() => jest.clearAllMocks())
@@ -70,6 +79,69 @@ describe('view licences > getData', () => {
 
     it('index', async () => {
       expect(data.licences[0].index).toBe(0)
+    })
+  })
+
+  describe('getData', () => {
+    const mockRequest = createMockRequest({
+      cache: {
+        transaction: {
+          permissions: [permission]
+        }
+      }
+    })
+
+    const sampleRequest = {
+      ...mockRequest,
+      i18n: {
+        getCatalog: () => catalog
+      }
+    }
+
+    it('licenceTypeDisplay is called with the expected arguments', async () => {
+      await getData(sampleRequest)
+
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
+    })
+
+    it('return value of licenceTypeDisplay is used for type', async () => {
+      const returnValue = Symbol('return value')
+      licenceTypeDisplay.mockReturnValueOnce(returnValue)
+
+      const result = await getData(sampleRequest)
+      const ret = result.licences[0].type
+
+      expect(ret).toEqual(returnValue)
+    })
+
+    it('licenceTypeAndLengthDisplay is called with the expected arguments', async () => {
+      await getData(sampleRequest)
+      expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
+    })
+
+    it('return value of licenceTypeAndLengthDisplay is used for length', async () => {
+      const returnValue = Symbol('return value')
+      licenceTypeAndLengthDisplay.mockReturnValueOnce(returnValue)
+
+      const result = await getData(sampleRequest)
+      const ret = result.licences[0].length
+
+      expect(ret).toEqual(returnValue)
+    })
+
+    it('displayStartTime is called with the expected arguments', async () => {
+      await getData(sampleRequest)
+      expect(displayStartTime).toHaveBeenCalledWith(sampleRequest, permission)
+    })
+
+    it('return value of displayStartTime is used for start', async () => {
+      const returnValue = Symbol('return value')
+      displayStartTime.mockReturnValueOnce(returnValue)
+
+      const result = await getData(sampleRequest)
+      const ret = result.licences[0].start
+
+      expect(ret).toEqual(returnValue)
     })
   })
 })
