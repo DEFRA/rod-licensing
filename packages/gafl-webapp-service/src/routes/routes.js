@@ -68,7 +68,7 @@ const routes = [
   ...renewalStartDate
 ]
 
-if (process.env.CHANNEL === undefined) {
+if (process.env.CHANNEL === 'telesales') {
   routes.push(...telesalesRoutes)
 }
 

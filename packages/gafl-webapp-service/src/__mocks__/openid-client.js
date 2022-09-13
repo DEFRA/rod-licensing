@@ -6,10 +6,7 @@ export const mockSettings = {
     OIDC_CLIENT_SECRET: 'client-secret',
     OIDC_SESSION_COOKIE_NAME: 'oidc-cookie-name',
     OIDC_SESSION_COOKIE_PASSWORD: 'open-sesame',
-    OIDC_REQUIRE_DYNAMICS_ROLE: 'Telesales-role',
-    SHOW_WELSH_CONTENT: true,
-    ERROR_PAGE_ROUTE: false,
-    CHANNEL: 'telesales'
+    OIDC_REQUIRE_DYNAMICS_ROLE: 'Telesales-role'
   },
   TEST_AUTH_ENDPOINT: 'https://oauth-endpoint/token-endpoint',
   TEST_AUTH_ISSUER: 'https://oauth-endpoint/issuer',
