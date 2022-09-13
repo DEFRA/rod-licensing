@@ -5,6 +5,7 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 export const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
@@ -16,7 +17,7 @@ export const getData = async request => {
       .validate(permission.referenceNumber)
     if (validatePermissionNumber.error) {
       await request.cache().helpers.status.setCurrentPermission({ referenceNumber: null })
-      throw new GetDataRedirect(IDENTIFY.uri)
+      throw new GetDataRedirect(addLanguageCodeToUri(request, IDENTIFY.uri))
     }
   }
 
@@ -46,4 +47,4 @@ const validator = async payload => {
   )
 }
 
-export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, AUTHENTICATE.uri, getData)
+export default pageRoute(IDENTIFY.page, IDENTIFY.uri, validator, request => addLanguageCodeToUri(request, AUTHENTICATE.uri), getData)

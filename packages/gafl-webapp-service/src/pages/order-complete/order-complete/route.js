@@ -29,7 +29,8 @@ export const getData = async request => {
 
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
-  const startTimeStringTitle = displayStartTime(permission, request.i18n.getCatalog())
+  const startTimeStringTitle = displayStartTime(request, permission)
+
   return {
     permission,
     startTimeStringTitle,

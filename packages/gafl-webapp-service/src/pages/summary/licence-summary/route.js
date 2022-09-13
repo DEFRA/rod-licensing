@@ -23,7 +23,7 @@ import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 // Extracted to keep sonar happy
-const checkNavigation = permission => {
+export const checkNavigation = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
     throw new GetDataRedirect(NAME.uri)
   }
@@ -62,7 +62,7 @@ export const getData = async request => {
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
-  const startTimeString = displayStartTime(permission, request.i18n.getCatalog())
+  const startTimeString = displayStartTime(request, permission)
 
   return {
     permission,
@@ -76,7 +76,7 @@ export const getData = async request => {
     concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).locale(request.locale).format('Do MMMM YYYY'),
     uri: {
       name: addLanguageCodeToUri(request, NAME.uri),
       licenceLength: addLanguageCodeToUri(request, LICENCE_LENGTH.uri),

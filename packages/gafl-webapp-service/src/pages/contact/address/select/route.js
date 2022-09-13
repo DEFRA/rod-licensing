@@ -13,7 +13,7 @@ export const getData = async request => {
     addresses,
     searchTerms,
     lookupPage: addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
-    entryPage: ADDRESS_ENTRY.uri
+    entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri)
   }
 }
 
@@ -21,10 +21,7 @@ export default pageRoute(
   ADDRESS_SELECT.page,
   ADDRESS_SELECT.uri,
   Joi.object({
-    address: Joi.number()
-      .integer()
-      .min(0)
-      .required()
+    address: Joi.number().integer().min(0).required()
   }).options({ abortEarly: false, allowUnknown: true }),
   nextPage,
   getData

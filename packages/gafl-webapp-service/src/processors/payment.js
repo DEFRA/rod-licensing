@@ -1,6 +1,7 @@
 import { AGREED } from '../uri.js'
 import db from 'debug'
 import { licenceTypeAndLengthDisplay } from './licence-type-display.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 const debug = db('webapp:payment-processors')
 
 /**
@@ -17,7 +18,8 @@ const getAddressLine1 = licensee => (licensee.street ? `${licensee.premises} ${l
  * @returns {{reference: *, delayed_capture: boolean, amount: number, return_url: string, description: string}}
  */
 export const preparePayment = (request, transaction) => {
-  const url = new URL(AGREED.uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
+  const uri = addLanguageCodeToUri(request, AGREED.uri)
+  const url = new URL(uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
 
   const result = {
     return_url: url.href,
@@ -28,7 +30,8 @@ export const preparePayment = (request, transaction) => {
         ? licenceTypeAndLengthDisplay(transaction.permissions[0], request.i18n.getCatalog())
         : 'Multiple permits',
     delayed_capture: false,
-    moto: process.env.CHANNEL === 'telesales'
+    moto: process.env.CHANNEL === 'telesales',
+    language: /\?.*lang=cy.*$/.test(url.search) ? 'cy' : 'en'
   }
 
   if (transaction.permissions.length === 1) {
