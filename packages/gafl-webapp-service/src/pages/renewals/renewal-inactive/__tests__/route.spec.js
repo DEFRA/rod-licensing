@@ -9,7 +9,7 @@ jest.mock('../../../../processors/date-and-time-display.js', () => ({
   dateDisplayFormat: 'D MMMM YYYY'
 }))
 
-const englishTranslations = {
+const getMessages = (overrides = {}) => ({
   renewal_inactive_title_1: 'You are renewing this licence too early',
   renewal_inactive_title_2: 'The licence renewal has expired',
   renewal_inactive_title_3: 'You cannot renew an 8 day or 1 day licence',
@@ -17,19 +17,9 @@ const englishTranslations = {
   renewal_inactive_not_due_2: ' does not expire until ',
   renewal_inactive_has_expired_1: ' has expired on ',
   renewal_inactive_has_expired_2: ' and can no longer be renewed',
-  renewal_inactive_not_annual_1: ' is not a 12 month licence and cannot be renewed.'
-}
-
-const welshTranslations = {
-  renewal_inactive_title_1: 'You are renewing this licence too early',
-  renewal_inactive_title_2: 'The licence renewal has expired',
-  renewal_inactive_title_3: 'You cannot renew an 8 day or 1 day licence',
-  renewal_inactive_not_due_1: 'The licence ending in ',
-  renewal_inactive_not_due_2: ' does not expire until ',
-  renewal_inactive_has_expired_1: ' has expired on ',
-  renewal_inactive_has_expired_2: ' and can no longer be renewed',
-  renewal_inactive_not_annual_1: ' is not a 12 month licence and cannot be renewed.'
-}
+  renewal_inactive_not_annual_1: ' is not a 12 month licence and cannot be renewed.',
+  ...overrides
+})
 
 jest.mock('moment-timezone')
 const getMomentMockImpl = (overrides = {}) =>
@@ -60,36 +50,24 @@ describe('renewal-inactive > route', () => {
     describe.each([
       [
         RENEWAL_ERROR_REASON.NOT_DUE,
-        'renewal_inactive_not_due_1 abc-123 renewal_inactive_not_due_2 12th Never',
+        'The licence ending in abc-123 does not expire until 12th Never',
         { renewal_inactive_title_1: 'Renewal inactive title 1' },
         'Renewal inactive title 1'
       ],
       [
         RENEWAL_ERROR_REASON.EXPIRED,
-        'renewal_inactive_not_due_1 abc-123 renewal_inactive_has_expired_1 12th Never renewal_inactive_has_expired_2',
+        'The licence ending in abc-123 has expired on 12th Never and can no longer be renewed',
         { renewal_inactive_title_2: 'Renewal inactive title 2' },
         'Renewal inactive title 2'
       ],
       [
         RENEWAL_ERROR_REASON.NOT_ANNUAL,
-        'renewal_inactive_not_due_1 abc-123 renewal_inactive_not_annual_1',
+        'The licence ending in abc-123 is not a 12 month licence and cannot be renewed.',
         { renewal_inactive_title_3: 'Renewal inactive title 3' },
         'Renewal inactive title 3'
       ],
       ['', '', {}, '']
     ])('title and body message', (authReason, expectedBodyString, mssgOverrides, expectedTitle) => {
-      const getMessages = (overrides = {}) => ({
-        renewal_inactive_not_due_1: 'renewal_inactive_not_due_1 ',
-        renewal_inactive_not_due_2: ' renewal_inactive_not_due_2 ',
-        renewal_inactive_has_expired_1: ' renewal_inactive_has_expired_1 ',
-        renewal_inactive_has_expired_2: ' renewal_inactive_has_expired_2',
-        renewal_inactive_not_annual_1: ' renewal_inactive_not_annual_1',
-        renewal_inactive_title_1: 'renewal_inactive_title_1',
-        renewal_inactive_title_2: 'renewal_inactive_title_2',
-        renewal_inactive_title_3: 'renewal_inactive_title_3',
-        ...overrides
-      })
-
       it('body message is as expected', async () => {
         moment.mockImplementation(
           getMomentMockImpl({
@@ -160,9 +138,9 @@ describe('renewal-inactive > route', () => {
         referenceNumber: referenceNumber
       }))
 
-      const { ...titleAndBodyMessage } = await getData(getMockRequest('en-gb', englishTranslations))
+      const { ...titleAndBodyMessage } = await getData(getMockRequest('en-gb', getMessages()))
 
-      const { bodyMessage } = getTitleAndBodyMessage(englishTranslations, RENEWAL_ERROR_REASON.NOT_DUE, referenceNumber, formatSymbol)
+      const { bodyMessage } = getTitleAndBodyMessage(getMessages(), RENEWAL_ERROR_REASON.NOT_DUE, referenceNumber, formatSymbol)
 
       expect(titleAndBodyMessage.bodyMessage).toEqual(bodyMessage)
     })
@@ -223,62 +201,59 @@ describe('renewal-inactive > route', () => {
         RENEWAL_ERROR_REASON.NOT_DUE,
         'ABC123',
         '13 December 2020',
-        englishTranslations
+        getMessages()
       ],
       [
         'The licence ending in ABC123 has expired on 13 December 2020 and can no longer be renewed',
         RENEWAL_ERROR_REASON.EXPIRED,
         'ABC123',
         '13 December 2020',
-        englishTranslations
+        getMessages()
       ],
       [
         'The licence ending in ABC123 is not a 12 month licence and cannot be renewed.',
         RENEWAL_ERROR_REASON.NOT_ANNUAL,
         'ABC123',
         '13 December 2020',
-        englishTranslations
+        getMessages()
       ],
       [
         'The licence ending in ABC123 does not expire until 13 December 2020',
         RENEWAL_ERROR_REASON.NOT_DUE,
         'ABC123',
         '13 December 2020',
-        welshTranslations
+        getMessages()
       ],
       [
         'The licence ending in ABC123 has expired on 13 December 2020 and can no longer be renewed',
         RENEWAL_ERROR_REASON.EXPIRED,
         'ABC123',
         '13 December 2020',
-        welshTranslations
+        getMessages()
       ],
       [
         'The licence ending in ABC123 is not a 12 month licence and cannot be renewed.',
         RENEWAL_ERROR_REASON.NOT_ANNUAL,
         'ABC123',
         '13 December 2020',
-        welshTranslations
+        getMessages()
       ]
-    ])('should return and object with bodyMessage as %s if the reason is %s', (expected, reason, referenceNumber, validTo, translation) => {
-      const result = getTitleAndBodyMessage(translation, reason, referenceNumber, validTo)
+    ])('should return and object with bodyMessage as %s if the reason is %s', (expected, reason, referenceNumber, validTo, mssgs) => {
+      const result = getTitleAndBodyMessage(mssgs, reason, referenceNumber, validTo)
       expect(result.bodyMessage).toBe(expected)
     })
 
     it.each([
-      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE, englishTranslations],
-      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED, englishTranslations],
-      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL, englishTranslations],
-      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE, welshTranslations],
-      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED, welshTranslations],
-      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL, welshTranslations]
-    ])('should return and object with title as %s if the reason is %s', (expected, reason, translation) => {
-      const result = getTitleAndBodyMessage(translation, reason, 'ABC123', '13 December 2020')
+      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE, getMessages()],
+      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED, getMessages()],
+      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL, getMessages()]
+    ])('should return and object with title as %s if the reason is %s', (expected, reason, mssgs) => {
+      const result = getTitleAndBodyMessage(mssgs, reason, 'ABC123', '13 December 2020')
       expect(result.title).toBe(expected)
     })
 
     it('should return an object with bodyMessage and title as empty if no reason is provided', () => {
-      const result = getTitleAndBodyMessage(englishTranslations, undefined, 'ABC123', '13 December 2020')
+      const result = getTitleAndBodyMessage(getMessages(), undefined, 'ABC123', '13 December 2020')
       expect(result.bodyMessage).toBe('')
       expect(result.title).toBe('')
     })
