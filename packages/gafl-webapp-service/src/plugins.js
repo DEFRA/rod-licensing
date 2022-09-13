@@ -27,7 +27,6 @@ const trackAnalytics = async request => {
   if (optDebug) {
     const sessionId = await getAnalyticsSessionId(request)
     if (canTrack === true) {
-      console.log('SHOULD LOG')
       debug(`Session is being tracked for: ${sessionId}`)
     } else {
       debug(`Session is not being tracked for: ${sessionId}`)
