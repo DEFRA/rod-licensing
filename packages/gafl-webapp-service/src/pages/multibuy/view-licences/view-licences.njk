@@ -22,8 +22,6 @@
                 ]
               %}
 
-              <section class="govuk-!-margin-bottom-6">
-
                 {{ govukSummaryList({
                   rows: licenceInfo
                 }) }}
@@ -31,11 +29,10 @@
                 {{ govukButton({
                   text: "Change",
                   href: "/buy/set-current-permission?permissionIndex=" + licence.index,
-                  attributes: { 'aria-label': "Change licence options" },
+                  attributes: { 'aria-label': "Change licence" },
                   classes: "govuk-button--secondary"
                 })}}
 
-              </section>
             {% endfor %}
     </div>
 </div>
