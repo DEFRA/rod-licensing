@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.50 (2022-09-15)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1472](https://github.com/DEFRA/rod-licensing/pull/1472) Feature/iwtf 2961 analytics track ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.26.0-rc.49 (2022-09-12)
 
 #### :rocket: Enhancement
