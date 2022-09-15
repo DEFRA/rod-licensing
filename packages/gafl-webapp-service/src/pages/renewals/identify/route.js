@@ -3,9 +3,7 @@ import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 export const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400

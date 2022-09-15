@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-
+import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
 import {
@@ -17,6 +17,8 @@ import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
 import { COMPLETION_STATUS } from '../../../../constants.js'
 
+beforeEach(jest.clearAllMocks)
+jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
 
 const mockStatusCacheGet = jest.fn()
@@ -85,6 +87,7 @@ describe('The order completion handler', () => {
   })
 
   it('responds with the order completed page if the journey has finished', async () => {
+    addLanguageCodeToUri.mockReturnValue('/buy/order-complete')
     await JUNIOR_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
@@ -148,6 +151,9 @@ describe('The order completion handler', () => {
         preferredMethodOfConfirmation: 'test'
       }
     }))
+
+    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
+
     await getData(mockRequest)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
   })

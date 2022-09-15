@@ -6,7 +6,7 @@ import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import { COMPLETION_STATUS } from '../../../constants.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.get()
 
   // If the payment created flag is not set to true then throw an exception
