@@ -1,7 +1,7 @@
 import { getPlugins } from '../plugins'
 import { ANALYTICS } from '../constants.js'
 import { checkAnalytics, getAnalyticsSessionId } from '../handlers/analytics-handler.js'
-import debug from 'debug'
+import db from 'debug'
 
 jest.mock('../constants', () => ({
   ANALYTICS: {
@@ -16,8 +16,11 @@ jest.mock('../constants', () => ({
 }))
 
 jest.mock('../handlers/analytics-handler.js')
-
-jest.mock('debug')
+jest.mock('../server.js', () => ({
+  getCsrfTokenCookieName: jest.fn()
+}))
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:plugin')]
 
 describe('plugins', () => {
   const findPlugin = (pluginArray, pluginName) => pluginArray.find(plugin => plugin?.plugin?.plugin?.name === pluginName)

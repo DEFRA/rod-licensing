@@ -1,3 +1,4 @@
+import db from 'debug'
 import Inert from '@hapi/inert'
 import Vision from '@hapi/vision'
 import Disinfect from 'disinfect'
@@ -13,7 +14,8 @@ import { getCsrfTokenCookieName } from './server.js'
 import { checkAnalytics, getAnalyticsSessionId } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
-import debug from 'debug'
+
+const debug = db('webapp:plugin')
 
 // This is a hash of the inline script at line 31 of the GDS template. It is added to the CSP to except the in-line
 // script. It needs the quotes.
@@ -25,9 +27,9 @@ const trackAnalytics = async request => {
   if (optDebug) {
     const sessionId = await getAnalyticsSessionId(request)
     if (canTrack === true) {
-      debug('Session is being tracked for: ' + sessionId)
+      debug(`Session is being tracked for: ${sessionId}`)
     } else {
-      debug('Session is not being tracked for: ' + sessionId)
+      debug(`Session is not being tracked for: ${sessionId}`)
     }
   }
   return canTrack
