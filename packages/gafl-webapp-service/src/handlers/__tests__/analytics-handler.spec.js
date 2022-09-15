@@ -26,28 +26,30 @@ describe('The analytics handler', () => {
       'https://testserver-example-fish',
       '/buy/renew/identify'
     ]
-  ])('redirects to correct page if url matches header', async (origin, referer, host, redirect) => {
+  ])('redirects to correct page if the HTTP_REFERER host matchesthe host of the current page', async (origin, referer, host, redirect) => {
     const payload = {
       analyticsResponse: 'accept'
     }
     const request = generateRequestMock(payload, 'analytics', origin, referer, host)
     const responseToolkit = generateResponseToolkitMock()
+    addLanguageCodeToUri.mockReturnValueOnce(redirect)
     await analyticsHandler(request, responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, redirect))
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(redirect)
   })
 
   it.each([
     ['https://localhost:3000', 'https://localhost:3000/buy/name', 'https://localhost:3047'],
     ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', 'https://notsamehost:1234'],
     ['https://testserver-example-fish', 'https://testserver-example-fish/buy/renew/identify', 'https://hdfhdskfhs-ghj-vgjh']
-  ])('redirects to correct page if url matches header', async (origin, referer, host) => {
+  ])('redirects to /buy if the HTTP_REFERER host does not match the host of the current page', async (origin, referer, host) => {
     const payload = {
       analyticsResponse: 'accept'
     }
     const request = generateRequestMock(payload, 'analytics', origin, referer, host)
     const responseToolkit = generateResponseToolkitMock()
+    addLanguageCodeToUri.mockReturnValueOnce('/buy')
     await analyticsHandler(request, responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, '/buy'))
+    expect(responseToolkit.redirect).toHaveBeenCalledWith('/buy')
   })
 
   it('get calls addLanguageCodeToUri with request and /buy', async () => {
