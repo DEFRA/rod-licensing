@@ -18,17 +18,36 @@ describe('The analytics handler', () => {
   })
 
   it.each([
-    ['https://localhost:3000', 'https://localhost:3000/buy/name', '/buy/name'],
-    ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', '/example/test/redirect'],
-    ['https://testserver-example-fish', 'https://testserver-example-fish/buy/renew/identify', '/buy/renew/identify']
-  ])('redirects to correct page', async (origin, referer, redirect) => {
+    ['https://localhost:3000', 'https://localhost:3000/buy/name', 'https://localhost:3000', '/buy/name'],
+    ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', 'https://localhost:1234', '/example/test/redirect'],
+    [
+      'https://testserver-example-fish',
+      'https://testserver-example-fish/buy/renew/identify',
+      'https://testserver-example-fish',
+      '/buy/renew/identify'
+    ]
+  ])('redirects to correct page if url matches header', async (origin, referer, host, redirect) => {
     const payload = {
       analyticsResponse: 'accept'
     }
-    const request = generateRequestMock(payload, 'analytics', origin, referer)
+    const request = generateRequestMock(payload, 'analytics', origin, referer, host)
     const responseToolkit = generateResponseToolkitMock()
     await analyticsHandler(request, responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, redirect))
+  })
+
+  it.each([
+    ['https://localhost:3000', 'https://localhost:3000/buy/name', 'https://localhost:3047'],
+    ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', 'https://notsamehost:1234'],
+    ['https://testserver-example-fish', 'https://testserver-example-fish/buy/renew/identify', 'https://hdfhdskfhs-ghj-vgjh']
+  ])('redirects to correct page if url matches header', async (origin, referer, host) => {
+    const payload = {
+      analyticsResponse: 'accept'
+    }
+    const request = generateRequestMock(payload, 'analytics', origin, referer, host)
+    const responseToolkit = generateResponseToolkitMock()
+    await analyticsHandler(request, responseToolkit)
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, '/buy'))
   })
 
   it('get calls addLanguageCodeToUri with request and /buy', async () => {
@@ -81,7 +100,7 @@ describe('The analytics handler', () => {
 
   const mockAnalyticsSet = jest.fn()
 
-  const generateRequestMock = (payload, analytics, origin, referer = {}) => ({
+  const generateRequestMock = (payload, analytics, origin, referer, host = {}) => ({
     payload,
     url: {
       search: ''
@@ -97,6 +116,9 @@ describe('The analytics handler', () => {
     headers: {
       origin,
       referer
+    },
+    _url: {
+      host
     }
   })
 
