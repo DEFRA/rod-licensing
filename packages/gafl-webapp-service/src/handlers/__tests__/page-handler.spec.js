@@ -212,7 +212,7 @@ describe('The page handler function', () => {
 
 const mockAnalyticsCacheGet = jest.fn(() => ({}))
 
-const getMockRequest = (setCurrentPermission = () => {}, path = '/we/are/here') => ({
+const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/here') => ({
   cache: () => ({
     helpers: {
       page: {

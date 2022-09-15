@@ -116,6 +116,11 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsSelected = analytics[ANALYTICS.selected]
     pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
 
+    pageData.displayAnalytics = false
+    if (request.path.startsWith('/buy')) {
+      pageData.displayAnalytics = true
+    }
+
     return h.view(view, pageData)
   },
   /**
