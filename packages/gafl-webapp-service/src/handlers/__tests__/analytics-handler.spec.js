@@ -17,27 +17,33 @@ describe('The analytics handler', () => {
     jest.clearAllMocks()
   })
 
-  it('redirects to /buy', async () => {
+  it.each([
+    ['https://localhost:3000', 'https://localhost:3000/buy/name', '/buy/name'],
+    ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', '/example/test/redirect'],
+    ['https://testserver-example-fish', 'https://testserver-example-fish/buy/renew/identify', '/buy/renew/identify']
+  ])('redirects to correct page', async (origin, referer, redirect) => {
     const payload = {
       analyticsResponse: 'accept'
     }
-    const request = generateRequestMock(payload)
+    const request = generateRequestMock(payload, 'analytics', origin, referer)
     const responseToolkit = generateResponseToolkitMock()
     await analyticsHandler(request, responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, '/buy'))
+    expect(responseToolkit.redirect).toHaveBeenCalledWith(addLanguageCodeToUri(request, redirect))
   })
 
   it('get calls addLanguageCodeToUri with request and /buy', async () => {
-    const buyUri = '/buy'
+    const origin = 'https://localhost:3000'
+    const referer = 'https://localhost:3000/buy'
+    const redirect = '/buy'
     const payload = {
       analyticsResponse: 'accept'
     }
     const responseToolkit = generateResponseToolkitMock()
-    const request = generateRequestMock(payload)
+    const request = generateRequestMock(payload, 'analytics', origin, referer)
 
     await analyticsHandler(request, responseToolkit)
 
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, buyUri)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, redirect)
   })
 
   it('selected not true and response is accept sets selected to true and acceptTracking to true', async () => {
@@ -45,7 +51,7 @@ describe('The analytics handler', () => {
       analyticsResponse: 'accept'
     }
 
-    const request = generateRequestMock(payload)
+    const request = generateRequestMock(payload, 'analytics', 'origin', 'referer')
     await analyticsHandler(request, generateResponseToolkitMock())
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.selected]: true, [ANALYTICS.acceptTracking]: true }))
   })
@@ -54,7 +60,7 @@ describe('The analytics handler', () => {
     const payload = {
       analyticsResponse: 'reject'
     }
-    const request = generateRequestMock(payload)
+    const request = generateRequestMock(payload, 'analytics', 'origin', 'referer')
     await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(
@@ -67,7 +73,7 @@ describe('The analytics handler', () => {
       [ANALYTICS.selected]: true
     }
 
-    const request = generateRequestMock('payload', analytics)
+    const request = generateRequestMock('payload', analytics, 'origin', 'referer')
     await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.seenMessage]: true }))
@@ -75,7 +81,7 @@ describe('The analytics handler', () => {
 
   const mockAnalyticsSet = jest.fn()
 
-  const generateRequestMock = (payload, analytics = {}) => ({
+  const generateRequestMock = (payload, analytics, origin, referer = {}) => ({
     payload,
     url: {
       search: ''
@@ -87,7 +93,11 @@ describe('The analytics handler', () => {
           set: mockAnalyticsSet
         }
       }
-    }))
+    })),
+    headers: {
+      origin,
+      referer
+    }
   })
 
   const generateResponseToolkitMock = () => ({

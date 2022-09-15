@@ -47,5 +47,12 @@ export default async (request, h) => {
       [ANALYTICS.seenMessage]: true
     })
   }
-  return h.redirect(addLanguageCodeToUri(request, '/buy'))
+
+  // https://localhost:3043/buy/name
+  const origin = request.headers.origin
+  const referer = request.headers.referer
+  const redirect = referer.replace(origin, '')
+  console.log('referrer:', redirect)
+
+  return h.redirect(addLanguageCodeToUri(request, redirect))
 }
