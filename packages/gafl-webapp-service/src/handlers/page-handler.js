@@ -7,12 +7,7 @@ import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
-const pagesToOmitAnalyticsBanner = [
-  AGREED.uri,
-  ORDER_COMPLETE.uri,
-  PAYMENT_CANCELLED.uri,
-  PAYMENT_FAILED.uri
-]
+const pagesToOmitAnalyticsBanner = [AGREED.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
 
 const displayAnalytics = request => {
   if (pagesToOmitAnalyticsBanner.includes(request.path)) {
