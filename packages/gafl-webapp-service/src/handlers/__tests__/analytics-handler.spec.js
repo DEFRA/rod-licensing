@@ -3,7 +3,7 @@ import analyticsHandler from '../analytics-handler.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 
 jest.mock('../../processors/uri-helper.js', () => ({
-  addLanguageCodeToUri: (_request, uri) => uri
+  addLanguageCodeToUri: jest.fn((_request, uri) => uri)
 }))
 
 jest.mock('../../constants', () => ({
@@ -62,7 +62,7 @@ describe('The analytics handler', () => {
     expect(responseToolkit.redirect).toHaveBeenCalledWith('/buy')
   })
 
-  it.only('calls addLanguageCodeToUri with request and /buy', async () => {
+  it('calls addLanguageCodeToUri with request and /buy', async () => {
     const headers = {
       origin: 'https://localhost:3000',
       referer: 'https://localhost:3000/buy'
