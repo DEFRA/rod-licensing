@@ -2,7 +2,9 @@ import { ANALYTICS } from '../../constants.js'
 import analyticsHandler from '../analytics-handler.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 
-jest.mock('../../processors/uri-helper.js')
+jest.mock('../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: (_request, uri) => uri
+}))
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -26,41 +28,52 @@ describe('The analytics handler', () => {
       'https://testserver-example-fish',
       '/buy/renew/identify'
     ]
-  ])('redirects to correct page if the HTTP_REFERER host matchesthe host of the current page', async (origin, referer, host, redirect) => {
+  ])('redirects to correct page if the HTTP_REFERER host matches the host of the current page', async (origin, referer, host, redirect) => {
     const payload = {
       analyticsResponse: 'accept'
     }
-    const request = generateRequestMock(payload, 'analytics', origin, referer, host)
+    const headers = {
+      origin: origin,
+      referer: referer,
+      host: host
+    }
+    const request = generateRequestMock(payload, 'analytics', headers, host)
     const responseToolkit = generateResponseToolkitMock()
-    addLanguageCodeToUri.mockReturnValueOnce(redirect)
     await analyticsHandler(request, responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith(redirect)
   })
 
   it.each([
-    ['https://localhost:3000', 'https://localhost:3000/buy/name', 'https://localhost:3047'],
-    ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', 'https://notsamehost:1234'],
-    ['https://testserver-example-fish', 'https://testserver-example-fish/buy/renew/identify', 'https://hdfhdskfhs-ghj-vgjh']
-  ])('redirects to /buy if the HTTP_REFERER host does not match the host of the current page', async (origin, referer, host) => {
+    ['https://localhost:3000', 'https://localhost:3000/buy/name', 'https://localhost:3000', 'https://localhost:3047'],
+    ['https://localhost:1234', 'https://localhost:1234/example/test/redirect', 'https://localhost:1234', 'https://notsamehost:1234'],
+    ['https://testserver-example-fish', 'https://testserver-example-fish/buy/renew/identify', 'https://testserver-example-fish', 'https://hdfhdskfhs-ghj-vgjh']
+  ])('redirects to /buy if the HTTP_REFERER host does not match the host of the current page', async (origin, referer, headersHost, host) => {
     const payload = {
       analyticsResponse: 'accept'
     }
-    const request = generateRequestMock(payload, 'analytics', origin, referer, host)
+    const headers = {
+      origin: origin,
+      referer: referer,
+      host: headersHost
+    }
+    const request = generateRequestMock(payload, 'analytics', headers, host)
     const responseToolkit = generateResponseToolkitMock()
-    addLanguageCodeToUri.mockReturnValueOnce('/buy')
     await analyticsHandler(request, responseToolkit)
     expect(responseToolkit.redirect).toHaveBeenCalledWith('/buy')
   })
 
-  it('get calls addLanguageCodeToUri with request and /buy', async () => {
-    const origin = 'https://localhost:3000'
-    const referer = 'https://localhost:3000/buy'
+  it.only('calls addLanguageCodeToUri with request and /buy', async () => {
+    const headers = {
+      origin: 'https://localhost:3000',
+      referer: 'https://localhost:3000/buy'
+    }
+
     const redirect = '/buy'
     const payload = {
       analyticsResponse: 'accept'
     }
     const responseToolkit = generateResponseToolkitMock()
-    const request = generateRequestMock(payload, 'analytics', origin, referer)
+    const request = generateRequestMock(payload, 'analytics', headers)
 
     await analyticsHandler(request, responseToolkit)
 
@@ -102,7 +115,7 @@ describe('The analytics handler', () => {
 
   const mockAnalyticsSet = jest.fn()
 
-  const generateRequestMock = (payload, analytics, origin, referer, host = {}) => ({
+  const generateRequestMock = (payload, analytics, headers, host = {}) => ({
     payload,
     url: {
       search: ''
@@ -115,10 +128,7 @@ describe('The analytics handler', () => {
         }
       }
     })),
-    headers: {
-      origin,
-      referer
-    },
+    headers,
     _url: {
       host
     }
