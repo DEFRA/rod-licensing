@@ -56,10 +56,6 @@ export default async (request, h) => {
     const referer = headers.referer
     const redirect = referer.replace(origin, '')
 
-    console.log(origin)
-    console.log(referer)
-    console.log(redirect)
-    console.log(addLanguageCodeToUri(request, redirect))
     return h.redirect(addLanguageCodeToUri(request, redirect))
   }
 
