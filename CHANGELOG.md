@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.53 (2022-09-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1478](https://github.com/DEFRA/rod-licensing/pull/1478) Hide analytics banner ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.26.0-rc.52 (2022-09-16)
 
 #### :bug: Bug Fix
