@@ -116,6 +116,8 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsSelected = analytics[ANALYTICS.selected]
     pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
 
+    pageData.displayAnalytics = request.path.startsWith('/buy')
+
     return h.view(view, pageData)
   },
   /**
