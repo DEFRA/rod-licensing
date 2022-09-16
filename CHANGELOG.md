@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.51 (2022-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1477](https://github.com/DEFRA/rod-licensing/pull/1477) analytics banner only /buy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.26.0-rc.50 (2022-09-15)
 
 #### :bug: Bug Fix
