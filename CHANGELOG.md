@@ -1,4 +1,13 @@
 
+## v1.26.0-rc.52 (2022-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1476](https://github.com/DEFRA/rod-licensing/pull/1476) Cannot accept/reject analytics on renewal ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.26.0-rc.51 (2022-09-16)
 
 #### :bug: Bug Fix
