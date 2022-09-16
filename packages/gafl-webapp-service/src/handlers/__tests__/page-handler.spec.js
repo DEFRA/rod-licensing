@@ -196,7 +196,7 @@ describe('The page handler function', () => {
     expect(toolkit.redirect).toHaveBeenCalledWith(`Redirect to url ${url}`)
   })
 
-  it('sets the value of pageData', async () => {
+  it('sets the value of pageData with displayAnalytics true', async () => {
     mockAnalyticsCacheGet.mockImplementationOnce(() => ({
       [ANALYTICS.selected]: 'selected',
       [ANALYTICS.acceptTracking]: 'accepted-tracking',
@@ -206,6 +206,19 @@ describe('The page handler function', () => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest(), toolkit)
+    expect(toolkit.view).toMatchSnapshot()
+  })
+
+  it('sets the value of pageData with displayAnalytics false', async () => {
+    mockAnalyticsCacheGet.mockImplementationOnce(() => ({
+      [ANALYTICS.selected]: 'selected',
+      [ANALYTICS.acceptTracking]: 'accepted-tracking',
+      [ANALYTICS.seenMessage]: 'seen-message'
+    }))
+    addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    await get(getMockRequest(null, '/we/are/here'), toolkit)
     expect(toolkit.view).toMatchSnapshot()
   })
 })
