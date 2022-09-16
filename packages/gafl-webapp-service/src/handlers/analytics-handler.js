@@ -47,5 +47,17 @@ export default async (request, h) => {
       [ANALYTICS.seenMessage]: true
     })
   }
+
+  const urlHost = request._url.host
+  const headers = request.headers
+
+  if (urlHost === headers.host) {
+    const origin = headers.origin
+    const referer = headers.referer
+    const redirect = referer.replace(origin, '')
+
+    return h.redirect(addLanguageCodeToUri(request, redirect))
+  }
+
   return h.redirect(addLanguageCodeToUri(request, '/buy'))
 }
