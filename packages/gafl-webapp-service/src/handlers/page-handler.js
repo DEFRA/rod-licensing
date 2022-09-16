@@ -1,12 +1,25 @@
 import db from 'debug'
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE, ANALYTICS } from '../constants.js'
-import { CONTROLLER, PROCESS_ANALYTICS_PREFERENCES } from '../uri.js'
+import { AGREED, CONTROLLER, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, PROCESS_ANALYTICS_PREFERENCES } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
+const pagesToOmitAnalyticsBanner = [
+  AGREED.uri,
+  ORDER_COMPLETE.uri,
+  PAYMENT_CANCELLED.uri,
+  PAYMENT_FAILED.uri
+]
+
+const displayAnalytics = request => {
+  if (pagesToOmitAnalyticsBanner.includes(request.path)) {
+    return false
+  }
+  return request.path.startsWith('/buy')
+}
 
 /**
  * Flattens the error structure from joi for use in the templates
@@ -116,7 +129,7 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsSelected = analytics[ANALYTICS.selected]
     pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
 
-    pageData.displayAnalytics = request.path.startsWith('/buy')
+    pageData.displayAnalytics = displayAnalytics(request)
 
     return h.view(view, pageData)
   },
