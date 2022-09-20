@@ -1,4 +1,14 @@
 
+## v1.26.0-rc.54 (2022-09-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1483](https://github.com/DEFRA/rod-licensing/pull/1483) Hide analytics banner on licence details page ([@jaucourt](https://github.com/jaucourt))
+  * [#1481](https://github.com/DEFRA/rod-licensing/pull/1481) Actioning analytics banner throws an error ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.26.0-rc.53 (2022-09-16)
 
 #### :rocket: Enhancement
