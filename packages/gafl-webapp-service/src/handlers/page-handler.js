@@ -1,13 +1,21 @@
 import db from 'debug'
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE, ANALYTICS } from '../constants.js'
-import { AGREED, CONTROLLER, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED, PROCESS_ANALYTICS_PREFERENCES } from '../uri.js'
+import {
+  AGREED,
+  CONTROLLER,
+  LICENCE_DETAILS,
+  ORDER_COMPLETE,
+  PAYMENT_CANCELLED,
+  PAYMENT_FAILED,
+  PROCESS_ANALYTICS_PREFERENCES
+} from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
-const pagesToOmitAnalyticsBanner = [AGREED.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
+const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
 
 const displayAnalytics = request => {
   if (pagesToOmitAnalyticsBanner.includes(request.path)) {
