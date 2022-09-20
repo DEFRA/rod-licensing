@@ -27,7 +27,7 @@ export const getAnalyticsSessionId = async request => {
 }
 
 export default async (request, h) => {
-  const payload = request.payload
+  const { payload } = request
   const analytics = await request.cache().helpers.analytics.get()
 
   if (analytics[ANALYTICS.selected] !== true) {
@@ -48,12 +48,13 @@ export default async (request, h) => {
     })
   }
 
-  const urlHost = request._url.host
-  const headers = request.headers
+  const {
+    url: { host },
+    headers: { origin, referer }
+  } = request
+  const referrerHost = new URL(referer).host
 
-  if (urlHost === headers.host) {
-    const origin = headers.origin
-    const referer = headers.referer
+  if (host === referrerHost) {
     const redirect = referer.replace(origin, '')
 
     return h.redirect(addLanguageCodeToUri(request, redirect))
