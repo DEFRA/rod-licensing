@@ -4,7 +4,7 @@ import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
-import { AGREED, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
+import { AGREED, LICENCE_DETAILS, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
@@ -21,6 +21,7 @@ jest.mock('../../constants', () => ({
 
 jest.mock('../../uri.js', () => ({
   AGREED: { uri: '/buy/agreed/page' },
+  LICENCE_DETAILS: { uri: '/buy/licence/details' },
   ORDER_COMPLETE: { uri: '/buy/order/complete/page' },
   PAYMENT_CANCELLED: { uri: '/buy/payment/cancelled/page' },
   PAYMENT_FAILED: { uri: '/buy/payment/failed/page' },
@@ -209,7 +210,8 @@ describe('The page handler function', () => {
     ['payment cancelled', PAYMENT_CANCELLED.uri],
     ['payment failed', PAYMENT_FAILED.uri],
     ['agreed', AGREED.uri],
-    ['order complete', ORDER_COMPLETE.uri]
+    ['order complete', ORDER_COMPLETE.uri],
+    ['licence details', LICENCE_DETAILS.uri]
   ])('hides the analytics banner for %s page', async (_pageLabel, pageUri) => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
