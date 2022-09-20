@@ -48,6 +48,8 @@ export default async (request, h) => {
     })
   }
 
+  console.log('request.url', request.url)
+  console.log('request.headers', request.headers)
   const {
     url: { host },
     headers: { origin, referer }
