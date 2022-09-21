@@ -1,5 +1,5 @@
 import { setupEnvironment } from '../../__mocks__/openid-client.js'
-import { CLIENT_ERROR } from '../../uri.js'
+import { CLIENT_ERROR, SERVER_ERROR } from '../../uri.js'
 import errorRoutes from '../error-routes'
 
 let TestUtils = null
@@ -24,6 +24,14 @@ describe('Error route handlers', () => {
     const data = await TestUtils.server.inject({
       method: 'GET',
       url: '/buy/client-error'
+    })
+    expect(data.statusCode).toBe(302)
+  })
+
+  it('redirects to the server error page when server error is thrown', async () => {
+    const data = await TestUtils.server.inject({
+      method: 'GET',
+      url: '/buy/server-error'
     })
     expect(data.statusCode).toBe(302)
   })
@@ -99,6 +107,31 @@ describe('Error route handlers', () => {
           )
         }
       })
+    })
+  })
+
+  describe('SERVER_ERROR route', () => {
+    it('should return a console error', async () => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+      const serverError = errorRoutes[1].handler
+      await serverError(request, mockToolkit)
+      expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+
+    it('should pass the catalog and language to the view if it is present', async () => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      const serverError = errorRoutes[1].handler
+      await serverError(request, mockToolkit)
+      expect(mockToolkit.view).toBeCalledWith(
+        SERVER_ERROR.page,
+        expect.objectContaining({
+          mssgs: [],
+          altLang: []
+        })
+      )
     })
   })
 })
