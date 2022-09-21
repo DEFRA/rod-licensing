@@ -1,5 +1,9 @@
 import { preparePayment } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
+import { addLanguageCodeToUri } from '../uri-helper.js'
+import { AGREED } from '../../uri.js'
+
+jest.mock('../uri-helper.js')
 
 jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
@@ -43,6 +47,7 @@ describe('preparePayment', () => {
 
   describe('provides the correct return url', () => {
     it.each(['http', 'https'])('uses SSL when "x-forwarded-proto" header is present, proto "%s"', proto => {
+      addLanguageCodeToUri.mockReturnValue(proto + '://localhost:1234/buy/agreed')
       const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
       result = preparePayment(request, transaction)
       expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
@@ -53,9 +58,15 @@ describe('preparePayment', () => {
       ['https', 'otherhost:8888'],
       ['http', 'samplehost:4444']
     ])('uses request data when "x-forwarded-proto" header is not present, protocol "%s", host "%s"', (protocol, host) => {
+      addLanguageCodeToUri.mockReturnValue(protocol + '://' + host + '/buy/agreed')
       const request = createRequest({ headers: {}, protocol, host })
       result = preparePayment(request, transaction)
       expect(result.return_url).toBe(`${protocol}://${host}/buy/agreed`)
+    })
+
+    it('calls addLanguageCodeToUri with correct arguments', () => {
+      preparePayment(request, transaction)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, AGREED.uri)
     })
   })
 
@@ -105,6 +116,16 @@ describe('preparePayment', () => {
     const ret = result.description
 
     expect(ret).toEqual(returnValue)
+  })
+
+  it.each([
+    ['when the language is set to Welsh', 'https://localhost:1234/buy/agreed?lang=cy', 'cy'],
+    ['when the language is set to English', 'https://localhost:1234/buy/agreed?lang=en', 'en'],
+    ['when the language is not set', 'https://localhost:1234/buy/agreed', 'en']
+  ])('provides the correct language %s', (_desc, decoratedUrl, expectedLanguageCode) => {
+    addLanguageCodeToUri.mockReturnValue(decoratedUrl)
+    const result = preparePayment(request, transaction)
+    expect(result.language).toEqual(expectedLanguageCode)
   })
 
   describe('provides the correct description', () => {

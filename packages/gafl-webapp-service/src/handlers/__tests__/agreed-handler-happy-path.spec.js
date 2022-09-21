@@ -13,6 +13,12 @@ import {
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+import agreedHandler from '../agreed-handler.js'
+
+jest.mock('../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn(() => '/buy/order-complete')
+}))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -49,91 +55,260 @@ describe('The agreed handler', () => {
     expect(response.statusCode).toBe(403)
   })
 
-  it.each([
+  describe.each([
     ['adult full 1 day licence', ADULT_FULL_1_DAY_LICENCE],
     ['adult disabled 12 month licence', ADULT_DISABLED_12_MONTH_LICENCE],
     ['senior 12 month licence', SENIOR_12_MONTH_LICENCE]
-  ])('processes the series of steps necessary to complete a successful payment journey - %s', async (desc, journey) => {
-    await journey.setup()
+  ])('payment journey %s', (desc, journey) => {
+    beforeEach(async () => {
+      await journey.setup()
 
-    salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
-    govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
-    govUkPayApi.fetchPaymentStatus.mockResolvedValue({ json: () => paymentStatusSuccess(journey.cost), ok: true, status: 201 })
-    salesApi.getPaymentJournal.mockResolvedValue(false)
-    salesApi.updatePaymentJournal.mockImplementation(jest.fn())
-    salesApi.createPaymentJournal.mockImplementation(jest.fn())
-
-    const response = await injectWithCookies('GET', AGREED.uri)
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
-
-    // Check the journal creation
-    expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
-    expect(salesApi.getPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id)
-    expect(salesApi.createPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
-      paymentReference: MOCK_PAYMENT_RESPONSE.payment_id,
-      paymentTimestamp: MOCK_PAYMENT_RESPONSE.created_date,
-      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
+      salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
+      govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
+      govUkPayApi.fetchPaymentStatus.mockResolvedValue({ json: () => paymentStatusSuccess(journey.cost), ok: true, status: 201 })
+      salesApi.getPaymentJournal.mockResolvedValue(false)
+      salesApi.updatePaymentJournal.mockImplementation(jest.fn())
+      salesApi.createPaymentJournal.mockImplementation(jest.fn())
     })
 
-    // On return from the GOV.UK Payment pages
-    const response2 = await injectWithCookies('GET', AGREED.uri)
-    expect(response2.statusCode).toBe(302)
-    expect(response2.headers.location).toBe(ORDER_COMPLETE.uri)
-
-    // Check that the journal entry is updated with the complete status
-    // salesApi.updatePaymentJournal = jest.fn()
-    expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
-      paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
+    it('gives a 302 response', async () => {
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.statusCode).toBe(302)
     })
 
-    // Check the cache status
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(journey.transactionResponse.id)
-    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
-    expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    it('redirects to the correct location', async () => {
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
+    })
 
-    const response3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(response3.statusCode).toBe(200)
+    it('does not call updatePaymentJournal during journal creation', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
+    })
+
+    it('calls getPaymentJournal with the correct arguments during journal creation', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      expect(salesApi.getPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id)
+    })
+
+    it('calls createPaymentJournal with the correct arguments during journal creation', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      expect(salesApi.createPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
+        paymentReference: MOCK_PAYMENT_RESPONSE.payment_id,
+        paymentTimestamp: MOCK_PAYMENT_RESPONSE.created_date,
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.InProgress
+      })
+    })
+
+    it('gives a 302 response on return from the GOV.UK Payment pages', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.statusCode).toBe(302)
+    })
+
+    it('loads the order complete page on return from the GOV.UK Payment pages', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+    })
+
+    it('updates the journal entry with the complete status', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
+        paymentStatus: PAYMENT_JOURNAL_STATUS_CODES.Completed
+      })
+    })
+
+    it('updates the cache', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      expect(JSON.parse(payload).id).toBe(journey.transactionResponse.id)
+    })
+
+    it('sets the completion status to agreed', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
+    })
+
+    it('sets the completion status to posted', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
+    })
+
+    it('sets the completion status to payment created', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).toBeTruthy()
+    })
+
+    it('sets the completion status to payment completed', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
+    })
+
+    it('sets the completion status to finalised', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    })
+
+    it('returns a 200 status code when getting the order complete page', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      await injectWithCookies('GET', TEST_STATUS.uri)
+      const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+      expect(response.statusCode).toBe(200)
+    })
   })
 
-  it.each([
+  describe.each([
     ['junior', JUNIOR_LICENCE],
     ['junior, disabled', JUNIOR_DISABLED_LICENCE]
-  ])('processes the series of steps necessary to complete a successful no-payment journey: %s', async (desc, journey) => {
-    await journey.setup()
-    salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
-    const response1 = await injectWithCookies('GET', AGREED.uri)
-    expect(response1.statusCode).toBe(302)
-    expect(response1.headers.location).toBe(ORDER_COMPLETE.uri)
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).id).toBe(JUNIOR_LICENCE.transactionResponse.id)
-    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
-    expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
-    expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
-    const response3 = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(response3.statusCode).toBe(200)
+  ])('no-payment journey %s', (desc, journey) => {
+    beforeEach(async () => {
+      await journey.setup()
+      salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
+      salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
+    })
+
+    it('returns a 302 status code', async () => {
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.statusCode).toBe(302)
+    })
+
+    it('redirects to the order complete page', async () => {
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+    })
+
+    it('updates the cache', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      expect(JSON.parse(payload).id).toBe(JUNIOR_LICENCE.transactionResponse.id)
+    })
+
+    it('sets the completion status to agreed', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
+    })
+
+    it('sets the completion status to posted', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
+    })
+
+    it('does not set the completion status to payment created', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).not.toBeTruthy()
+    })
+
+    it('does not set the completion status to payment completed', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
+    })
+
+    it('sets the completion status to finalised', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    })
+
+    it('returns a 200 status code when getting the order complete page', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+      expect(response.statusCode).toBe(200)
+    })
   })
 
-  it('redirects to order-completed for finalized transactions', async () => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    await injectWithCookies('GET', AGREED.uri)
-    const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
-    expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
-    const response = await injectWithCookies('GET', AGREED.uri)
-    expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
-    await injectWithCookies('GET', ORDER_COMPLETE.uri)
+  describe('finalised transactions', () => {
+    beforeEach(async () => {
+      await JUNIOR_LICENCE.setup()
+      salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+      salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
+      await injectWithCookies('GET', AGREED.uri)
+    })
+
+    it('sets the completion status to finalised', async () => {
+      const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+      expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
+    })
+
+    it('returns a 302 status code', async () => {
+      await injectWithCookies('GET', TEST_STATUS.uri)
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.statusCode).toBe(302)
+    })
+
+    it('loads the order complete page', async () => {
+      await injectWithCookies('GET', TEST_STATUS.uri)
+      const response = await injectWithCookies('GET', AGREED.uri)
+      expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+    })
+
+    const getMockRequest = (overrides = {}) => ({
+      cache: () => ({
+        helpers: {
+          transaction: {
+            get: async () => ({ cost: 0 })
+          },
+          status: {
+            get: async () => ({
+              [COMPLETION_STATUS.agreed]: true,
+              [COMPLETION_STATUS.posted]: true,
+              [COMPLETION_STATUS.finalised]: true
+            })
+          },
+          ...overrides
+        }
+      })
+    })
+
+    const getRequestToolkit = () => ({
+      redirect: jest.fn()
+    })
+
+    it('calls addLanguageCodeToUri', async () => {
+      const mockRequest = getMockRequest()
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, ORDER_COMPLETE.uri)
+    })
+
+    it('calls redirect correctly', async () => {
+      const requestToolkit = getRequestToolkit()
+      const expectedPath = Symbol('expected path')
+      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+
+      await agreedHandler(getMockRequest(), requestToolkit)
+
+      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+    })
   })
 })

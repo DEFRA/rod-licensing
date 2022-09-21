@@ -1,12 +1,28 @@
 import db from 'debug'
 import { CacheError } from '../session-cache/cache-manager.js'
-import { PAGE_STATE } from '../constants.js'
-import { CONTROLLER } from '../uri.js'
+import { PAGE_STATE, ANALYTICS } from '../constants.js'
+import {
+  AGREED,
+  CONTROLLER,
+  LICENCE_DETAILS,
+  ORDER_COMPLETE,
+  PAYMENT_CANCELLED,
+  PAYMENT_FAILED,
+  PROCESS_ANALYTICS_PREFERENCES
+} from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
+const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
+
+const displayAnalytics = request => {
+  if (pagesToOmitAnalyticsBanner.includes(request.path)) {
+    return false
+  }
+  return request.path.startsWith('/buy')
+}
 
 /**
  * Flattens the error structure from joi for use in the templates
@@ -77,6 +93,9 @@ export default (path, view, completion, getData) => ({
       const transactionCache = await request.cache().helpers.transaction.get()
       debug(`Transaction cache - ${JSON.stringify(transactionCache)}`)
 
+      const analyticsCache = await request.cache().helpers.analytics.get()
+      debug(`Analytics cache - ${JSON.stringify(analyticsCache)}`)
+
       throw err
     }
 
@@ -105,6 +124,16 @@ export default (path, view, completion, getData) => ({
     pageData.mssgs = request.i18n.getCatalog()
     pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
+    pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: addLanguageCodeToUri(request, PROCESS_ANALYTICS_PREFERENCES.uri) }
+
+    const analytics = await request.cache().helpers.analytics.get()
+
+    pageData.analyticsMessageDisplayed = analytics[ANALYTICS.seenMessage]
+    pageData.analyticsSelected = analytics[ANALYTICS.selected]
+    pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
+
+    pageData.displayAnalytics = displayAnalytics(request)
+
     return h.view(view, pageData)
   },
   /**

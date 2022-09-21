@@ -1,12 +1,55 @@
-import { getFromSummary, getData } from '../route'
+import { getFromSummary, getData, checkNavigation } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
-import { NAME } from '../../../../uri.js'
+import {
+  DATE_OF_BIRTH,
+  DISABILITY_CONCESSION,
+  LICENCE_LENGTH,
+  LICENCE_TO_START,
+  LICENCE_TYPE,
+  NAME,
+  NEW_TRANSACTION,
+  RENEWAL_START_DATE
+} from '../../../../uri.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import moment from 'moment-timezone'
+import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
+jest.mock('../../../../processors/date-and-time-display.js')
+jest.mock('../../../../processors/uri-helper.js')
+jest.mock('../../../../processors/date-and-time-display.js', () => ({
+  displayStartTime: jest.fn(),
+  cacheDateFormat: 'YYYY-MM-DD'
+}))
+
+jest.mock('moment-timezone', () =>
+  jest.fn(() => ({
+    tz: () => ({ isAfter: () => {} }),
+    isAfter: () => false,
+    locale: () => ({ format: () => '1st January 1946' })
+  }))
+)
+
+jest.mock('../../../../processors/mapping-constants.js', () => ({
+  CONCESSION: {
+    SENIOR: 'Senior person',
+    JUNIOR: 'Junior person',
+    DISABLED: 'Disabled person'
+  },
+  LICENCE_TYPE: {
+    'trout-and-coarse': 'Trout and coarse',
+    'salmon-and-sea-trout': 'Salmon and sea trout'
+  },
+  CONCESSION_PROOF: {
+    NI: 'NIN',
+    blueBadge: 'BB',
+    none: 'Not Proof'
+  }
+}))
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
@@ -31,20 +74,7 @@ describe('licence-summary > route', () => {
   describe('getData', () => {
     const mockStatusCacheGet = jest.fn(() => ({}))
     const mockStatusCacheSet = jest.fn()
-    const mockTransactionCacheGet = jest.fn(() => ({
-      licenceStartDate: '2021-07-01',
-      numberOfRods: '3',
-      licenceType: 'Salmon and sea trout',
-      licenceLength: '12M',
-      licensee: {
-        firstName: 'Graham',
-        lastName: 'Willis',
-        birthDate: '1946-01-01'
-      },
-      permit: {
-        cost: 6
-      }
-    }))
+    const mockTransactionCacheGet = jest.fn()
     const mockTransactionCacheSet = jest.fn()
 
     const mockRequest = {
@@ -64,26 +94,84 @@ describe('licence-summary > route', () => {
         getCatalog: () => ({
           licence_type_radio_salmon: 'Salmon and sea trout'
         })
-      }
+      },
+      url: {
+        search: ''
+      },
+      path: '',
+      locale: 'en'
     }
 
-    it('should return the name page uri', async () => {
+    it('should return a summary table with required data for page', async () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licenceStartDate: '2021-07-01',
-        numberOfRods: '3',
-        licenceType: 'Salmon and sea trout',
-        licenceLength: '12M',
-        licensee: {
-          firstName: 'Graham',
-          lastName: 'Willis',
-          birthDate: '1946-01-01'
+        birthDateStr: '1st January 1946',
+        concessionProofs: {
+          NI: 'National Insurance Number',
+          blueBadge: 'Blue Badge',
+          none: 'No Proof'
         },
+        cost: 6,
+        disabled: true,
+        hasExpired: false,
+        hasJunior: false,
+        isContinuing: false,
+        isRenewal: true,
+        licenceLength: '12M',
+        licenceStartDate: '2021-07-01',
+        licenceType: 'Salmon and sea trout',
+        licenceTypeStr: 'Salmon and sea trout',
+        licensee: {
+          birthDate: '1946-01-01',
+          firstName: 'Graham',
+          lastName: 'Willis'
+        },
+        numberOfRods: '3',
         permit: {
           cost: 6
+        },
+        startAfterPaymentMinute: 30,
+        startTimeString: '0.00am (first minute of the day) on 1 July 2021',
+        uri: {
+          clear: '/buy/new',
+          dateOfBirth: '/buy/date-of-birth',
+          disabilityConcession: '/buy/disability-concession',
+          licenceLength: '/buy/licence-length',
+          licenceStartDate: '/buy/start-kind',
+          licenceToStart: '/buy/start-kind',
+          licenceType: '/buy/licence-type',
+          name: '/buy/name'
         }
       }))
       const result = await getData(mockRequest)
-      expect(result.uri.name).toBe(NAME.uri)
+      expect(result).toMatchSnapshot()
+    })
+
+    it.each([
+      [NAME.uri],
+      [LICENCE_LENGTH.uri],
+      [LICENCE_TYPE.uri],
+      [LICENCE_TO_START.uri],
+      [DATE_OF_BIRTH.uri],
+      [DISABILITY_CONCESSION.uri],
+      [RENEWAL_START_DATE.uri],
+      [LICENCE_TO_START.uri],
+      [NEW_TRANSACTION.uri]
+    ])('addLanguageCodeToUri is called with the expected arguments', async uri => {
+      const permission = {
+        permit: {
+          cost: 1
+        },
+        licensee: {
+          birthDate: '1996-01-01'
+        },
+        isRenewal: true
+      }
+
+      mockTransactionCacheGet.mockImplementationOnce(() => permission)
+
+      await getData(mockRequest)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
     })
 
     it('should return a redirect error if firstName is not included on the licensee', async () => {
@@ -138,13 +226,112 @@ describe('licence-summary > route', () => {
     })
 
     it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
-      const returnValue = Symbol('return value')
-      licenceTypeDisplay.mockReturnValueOnce(returnValue)
-
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        licenceStartDate: '2021-07-01',
+        numberOfRods: '3',
+        licenceType: 'Salmon and sea trout',
+        licenceLength: '12M',
+        licensee: {
+          firstName: 'Graham',
+          lastName: 'Willis',
+          birthDate: '1946-01-01'
+        },
+        permit: {
+          cost: 6
+        }
+      }))
+      const mockTypeDisplayValue = Symbol('type display return value')
+      const mockStartTimeValue = Symbol('start time return value')
+      licenceTypeDisplay.mockReturnValueOnce(mockTypeDisplayValue)
+      displayStartTime.mockReturnValueOnce(mockStartTimeValue)
       const result = await getData(mockRequest)
       const ret = result.licenceTypeStr
+      expect(ret).toEqual(mockTypeDisplayValue)
+    })
 
-      expect(ret).toEqual(returnValue)
+    it('birthDateStr should return locale-specific date string', async () => {
+      const expectedLocale = Symbol('expected locale')
+      mockTransactionCacheGet.mockImplementationOnce(() => ({
+        isRenewal: true,
+        permit: { cost: 1 },
+        licensee: {
+          birthDate: '1970-01-01'
+        }
+      }))
+      const locale = jest.fn(() => ({ format: () => 'locale-aware birth date' }))
+      moment.mockImplementation(() => ({
+        tz: () => ({ isAfter: () => {} }),
+        isAfter: jest.fn(),
+        locale
+      }))
+      const originalLocale = mockRequest.locale
+      mockRequest.locale = expectedLocale
+
+      await getData(mockRequest)
+
+      expect(locale).toHaveBeenCalledWith(expectedLocale)
+
+      mockRequest.locale = originalLocale
+      moment.mockReset()
+    })
+  })
+
+  describe('checkNavigation', () => {
+    it('should throw a GetDataRedirect if no licensee first name or last name is found', () => {
+      const permission = { licensee: { firstName: undefined, lastName: undefined } }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no date of birth is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: undefined
+        }
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no licence start date is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: '1946-01-01'
+        },
+        licenceStartDate: undefined
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no number of rods or licence type is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: '1946-01-01'
+        },
+        licenceStartDate: '2021-07-01',
+        numberOfRods: undefined,
+        licenceType: undefined
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    })
+
+    it('should throw a GetDataRedirect if no licence length is found', () => {
+      const permission = {
+        licensee: {
+          firstName: 'Barry',
+          lastName: 'Scott',
+          birthDate: '1946-01-01'
+        },
+        licenceStartDate: '2021-07-01',
+        numberOfRods: '3',
+        licenceType: 'Salmon and sea trout',
+        licenceLength: undefined
+      }
+      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
     })
   })
 })

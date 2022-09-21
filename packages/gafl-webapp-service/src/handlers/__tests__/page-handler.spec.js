@@ -3,10 +3,30 @@ import pageHandler from '../page-handler.js'
 import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import GetDataRedirect from '../get-data-redirect.js'
+import { ANALYTICS } from '../../constants.js'
+import { AGREED, LICENCE_DETAILS, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
+
+jest.mock('../../constants', () => ({
+  ANALYTICS: {
+    selected: 'selected',
+    acceptTracking: 'accepted-tracking',
+    seenMessage: 'seen-message'
+  },
+  PAGE_STATE: { completed: true, error: false }
+}))
+
+jest.mock('../../uri.js', () => ({
+  AGREED: { uri: '/buy/agreed/page' },
+  LICENCE_DETAILS: { uri: '/buy/licence/details' },
+  ORDER_COMPLETE: { uri: '/buy/order/complete/page' },
+  PAYMENT_CANCELLED: { uri: '/buy/payment/cancelled/page' },
+  PAYMENT_FAILED: { uri: '/buy/payment/failed/page' },
+  PROCESS_ANALYTICS_PREFERENCES: { uri: '/buy/process/analytics/preferences/page' }
+}))
 
 describe('The page handler function', () => {
   let fakeDebug
@@ -59,6 +79,9 @@ describe('The page handler function', () => {
           },
           transaction: {
             get: () => ({})
+          },
+          analytics: {
+            get: () => ({})
           }
         }
       })
@@ -67,6 +90,7 @@ describe('The page handler function', () => {
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Page cache'))
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Status cache'))
     expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Transaction cache'))
+    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Analytics cache'))
   })
 
   it.each([['/previous/page'], ['/last/page']])('get calls addLanguageCodeToUri with request and backLink', async previousPage => {
@@ -165,9 +189,40 @@ describe('The page handler function', () => {
     await error(getMockRequest(undefined, url), toolkit, { details: [] })
     expect(toolkit.redirect).toHaveBeenCalledWith(`Redirect to url ${url}`)
   })
+
+  it('sets the value of pageData with displayAnalytics true', async () => {
+    addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    await get(getMockRequest(), toolkit)
+    expect(toolkit.view).toMatchSnapshot()
+  })
+
+  it('sets the value of pageData with displayAnalytics false', async () => {
+    addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    await get(getMockRequest(null, '/we/are/here'), toolkit)
+    expect(toolkit.view).toMatchSnapshot()
+  })
+
+  it.each([
+    ['payment cancelled', PAYMENT_CANCELLED.uri],
+    ['payment failed', PAYMENT_FAILED.uri],
+    ['agreed', AGREED.uri],
+    ['order complete', ORDER_COMPLETE.uri],
+    ['licence details', LICENCE_DETAILS.uri]
+  ])('hides the analytics banner for %s page', async (_pageLabel, pageUri) => {
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    const mockRequest = getMockRequest(null, pageUri)
+    await get(mockRequest, toolkit)
+    const pageData = toolkit.view.mock.calls[0][1]
+    expect(pageData.displayAnalytics).toBeFalsy()
+  })
 })
 
-const getMockRequest = (setCurrentPermission = () => {}, path = '/we/are/here') => ({
+const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/here') => ({
   cache: () => ({
     helpers: {
       page: {
@@ -180,6 +235,13 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/we/are/here') 
       },
       transaction: {
         getCurrentPermission: () => {}
+      },
+      analytics: {
+        get: () => ({
+          [ANALYTICS.selected]: 'selected',
+          [ANALYTICS.acceptTracking]: 'accepted-tracking',
+          [ANALYTICS.seenMessage]: 'seen-message'
+        })
       }
     }
   }),

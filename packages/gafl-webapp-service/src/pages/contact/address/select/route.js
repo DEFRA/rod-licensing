@@ -2,6 +2,7 @@ import { ADDRESS_SELECT, ADDRESS_LOOKUP, ADDRESS_ENTRY } from '../../../../uri.j
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { nextPage } from '../../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 
 export const getData = async request => {
   const { addresses, searchTerms } = await request.cache().helpers.addressLookup.getCurrentPermission()
@@ -11,8 +12,8 @@ export const getData = async request => {
     isLicenceForYou,
     addresses,
     searchTerms,
-    lookupPage: ADDRESS_LOOKUP.uri,
-    entryPage: ADDRESS_ENTRY.uri
+    lookupPage: addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
+    entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri)
   }
 }
 
