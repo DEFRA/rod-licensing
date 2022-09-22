@@ -23,7 +23,7 @@ const getData = async request => {
   return {
     referenceNumber: permission.referenceNumber,
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
