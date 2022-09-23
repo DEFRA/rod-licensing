@@ -21,10 +21,12 @@ import * as constants from '../../../../processors/mapping-constants.js'
 import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import pageRoute from '../../../../routes/page-route.js'
 
 jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
 }))
+jest.mock('../../../../routes/page-route.js', () => jest.fn(jest.requireActual('../../../../routes/page-route.js').default))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -100,6 +102,43 @@ describe('The easy renewal identification page', () => {
     expect(data2.headers.location).toBe(IDENTIFY.uri)
     const data3 = await injectWithCookies('GET', IDENTIFY.uri)
     expect(data3.statusCode).toBe(200)
+  })
+
+  describe('getData', () => {
+    const getData = pageRoute.mock.calls.find(c => c[0] === IDENTIFY.page)[4]
+
+    const getMockRequest = () => ({
+      cache: () => ({
+        helpers: {
+          status: {
+            getCurrentPermission: async () => ({
+              referenceNumber: 'ABC123'
+            }),
+            setCurrentPermission: () => {}
+          }
+        }
+      })
+    })
+
+    it('passes request to addLanguageCodeToUri', async () => {
+      const request = getMockRequest()
+      await getData(request)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.any(String))
+    })
+
+    it('passes NEW_TRANSACTION.uri to addLanguageCodeToUri', async () => {
+      await getData(getMockRequest())
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), NEW_TRANSACTION.uri)
+    })
+
+    it('sets uri.new to be result of addLanguageCodeToUri', async () => {
+      const decoratedUri = Symbol('new transaction uri')
+      addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+
+      const data = await getData(getMockRequest())
+
+      expect(data.uri.new).toEqual(decoratedUri)
+    })
   })
 
   describe.each([
@@ -183,18 +222,6 @@ describe('The easy renewal identification page', () => {
       const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
 
       expect(data.statusCode).toBe(200)
-    })
-
-    it('calls addLanguageCodeToUri', async () => {
-      addLanguageCodeToUri.mockReturnValueOnce('/buy/new')
-
-      await injectWithCookies(
-        'POST',
-        IDENTIFY.uri,
-        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-      )
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), NEW_TRANSACTION.uri)
     })
   })
 
