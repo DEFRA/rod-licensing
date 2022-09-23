@@ -196,59 +196,23 @@ describe('renewal-inactive > route', () => {
 
   describe('getTitleAndBodyMessage', () => {
     it.each([
-      [
-        'The licence ending in ABC123 does not expire until 13 December 2020',
-        RENEWAL_ERROR_REASON.NOT_DUE,
-        'ABC123',
-        '13 December 2020',
-        getMessages()
-      ],
-      [
-        'The licence ending in ABC123 has expired on 13 December 2020 and can no longer be renewed',
-        RENEWAL_ERROR_REASON.EXPIRED,
-        'ABC123',
-        '13 December 2020',
-        getMessages()
-      ],
-      [
-        'The licence ending in ABC123 is not a 12 month licence and cannot be renewed.',
-        RENEWAL_ERROR_REASON.NOT_ANNUAL,
-        'ABC123',
-        '13 December 2020',
-        getMessages()
-      ],
-      [
-        'The licence ending in ABC123 does not expire until 13 December 2020',
-        RENEWAL_ERROR_REASON.NOT_DUE,
-        'ABC123',
-        '13 December 2020',
-        getMessages()
-      ],
-      [
-        'The licence ending in ABC123 has expired on 13 December 2020 and can no longer be renewed',
-        RENEWAL_ERROR_REASON.EXPIRED,
-        'ABC123',
-        '13 December 2020',
-        getMessages()
-      ],
-      [
-        'The licence ending in ABC123 is not a 12 month licence and cannot be renewed.',
-        RENEWAL_ERROR_REASON.NOT_ANNUAL,
-        'ABC123',
-        '13 December 2020',
-        getMessages()
-      ]
-    ])('should return and object with bodyMessage as %s if the reason is %s', (expected, reason, referenceNumber, validTo, mssgs) => {
-      const result = getTitleAndBodyMessage(mssgs, reason, referenceNumber, validTo)
+      ['The licence ending in ABC123 does not expire until 13 December 2020', RENEWAL_ERROR_REASON.NOT_DUE],
+      ['The licence ending in ABC123 has expired on 13 December 2020 and can no longer be renewed', RENEWAL_ERROR_REASON.EXPIRED],
+      ['The licence ending in ABC123 is not a 12 month licence and cannot be renewed.', RENEWAL_ERROR_REASON.NOT_ANNUAL],
+      ['The licence ending in ABC123 does not expire until 13 December 2020', RENEWAL_ERROR_REASON.NOT_DUE],
+      ['The licence ending in ABC123 has expired on 13 December 2020 and can no longer be renewed', RENEWAL_ERROR_REASON.EXPIRED],
+      ['The licence ending in ABC123 is not a 12 month licence and cannot be renewed.', RENEWAL_ERROR_REASON.NOT_ANNUAL]
+    ])('should return and object with bodyMessage as %s if the reason is %s', (expected, reason) => {
+      const result = getTitleAndBodyMessage(getMessages(), reason, 'ABC123', '13 December 2020')
       expect(result.bodyMessage).toBe(expected)
     })
 
     it.each([
-      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE, getMessages()],
-      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED, getMessages()],
-      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL, getMessages()]
-    ])('should return and object with title as %s if the reason is %s', (expected, reason, mssgs) => {
-      const result = getTitleAndBodyMessage(mssgs, reason, 'ABC123', '13 December 2020')
+      ['You are renewing this licence too early', RENEWAL_ERROR_REASON.NOT_DUE],
+      ['The licence renewal has expired', RENEWAL_ERROR_REASON.EXPIRED],
+      ['You cannot renew an 8 day or 1 day licence', RENEWAL_ERROR_REASON.NOT_ANNUAL]
+    ])('should return and object with title as %s if the reason is %s', (expected, reason) => {
+      const result = getTitleAndBodyMessage(getMessages(), reason, 'ABC123', '13 December 2020')
       expect(result.title).toBe(expected)
     })
 
