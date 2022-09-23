@@ -1,110 +1,90 @@
-import { setupEnvironment } from '../../__mocks__/openid-client.js'
-import { CLIENT_ERROR } from '../../uri.js'
 import errorRoutes from '../error-routes'
-
-let TestUtils = null
+import { CLIENT_ERROR } from '../../uri.js'
 
 describe('Error route handlers', () => {
-  beforeAll(async () => {
-    jest.isolateModules(() => {
-      process.env.ERROR_PAGE_ROUTE = 'true'
-      setupEnvironment()
-      TestUtils = require('../../__mocks__/test-utils-system.js')
-      TestUtils.start(() => {})
-    })
-  })
-  beforeEach(jest.clearAllMocks)
-
-  // Stop application after running the test case
-  afterAll(async () => {
-    TestUtils.stop(() => {})
-  })
-
-  it('redirects to the client error page when client error is thrown', async () => {
-    const data = await TestUtils.server.inject({
-      method: 'GET',
-      url: '/buy/client-error'
-    })
-    expect(data.statusCode).toBe(302)
-  })
-
   describe('CLIENT_ERROR route', () => {
-    it('should pass the catalog and language to the view if it is present', async () => {
-      const request = getMockRequest()
-      const mockToolkit = getMockToolkit()
-      const clientError = errorRoutes[0].handler
-      await clientError(request, mockToolkit)
-      expect(mockToolkit.view).toBeCalledWith(
-        CLIENT_ERROR.page,
-        expect.objectContaining({
-          mssgs: [],
-          altLang: []
-        })
-      )
+    it('has a return value with a method of GET and path of /buy/client-error', async () => {
+      expect(errorRoutes).toMatchSnapshot()
     })
 
-    it('should respond with the output of the client error to the view if it is present', async () => {
-      const request = getMockRequest()
-      const mockToolkit = getMockToolkit()
-      const clientError = errorRoutes[0].handler
-      await clientError(request, mockToolkit)
-      expect(mockToolkit.view).toBeCalledWith(
-        CLIENT_ERROR.page,
-        expect.objectContaining({
-          clientError: 'payload'
-        })
-      )
-    })
-
-    describe.each([
-      [true, { payment_id: 'abc123', href: 'gov.pay.url' }],
-      [true, { payment_id: 'def456', href: 'gov-pay-url' }],
-      [false, {}]
-    ])('includes correct data when paymentInProgress is %p', (paymentInProgress, payment) => {
-      it(`includes paymentInProgress flag with value set to ${paymentInProgress} to correspond to presence of payment_id ${payment.payment_id}`, async () => {
-        const request = getMockRequest(payment)
+    describe('handler', () => {
+      it('should pass the catalog and language to the view if it is present', async () => {
+        const request = getMockRequest()
         const mockToolkit = getMockToolkit()
         const clientError = errorRoutes[0].handler
         await clientError(request, mockToolkit)
-        expect(mockToolkit.view).toHaveBeenCalledWith(
-          expect.any(String),
+        expect(mockToolkit.view).toBeCalledWith(
+          CLIENT_ERROR.page,
           expect.objectContaining({
-            paymentInProgress
+            mssgs: [],
+            altLang: []
           })
         )
       })
 
-      it(`${paymentInProgress ? 'includes' : 'excludes'} govpay url`, async () => {
-        const request = getMockRequest(payment)
+      it('should respond with the output of the client error to the view if it is present', async () => {
+        const request = getMockRequest()
         const mockToolkit = getMockToolkit()
         const clientError = errorRoutes[0].handler
         await clientError(request, mockToolkit)
-        if (paymentInProgress) {
+        expect(mockToolkit.view).toBeCalledWith(
+          CLIENT_ERROR.page,
+          expect.objectContaining({
+            clientError: 'payload'
+          })
+        )
+      })
+
+      describe.each([
+        [true, { payment_id: 'abc123', href: 'gov.pay.url' }],
+        [true, { payment_id: 'def456', href: 'gov-pay-url' }],
+        [false, {}]
+      ])('includes correct data when paymentInProgress is %p', (paymentInProgress, payment) => {
+        it(`includes paymentInProgress flag with value set to ${paymentInProgress} to correspond to presence of payment_id ${payment.payment_id}`, async () => {
+          const request = getMockRequest(payment)
+          const mockToolkit = getMockToolkit()
+          const clientError = errorRoutes[0].handler
+          await clientError(request, mockToolkit)
           expect(mockToolkit.view).toHaveBeenCalledWith(
             expect.any(String),
             expect.objectContaining({
-              uri: expect.objectContaining({
-                payment: payment.href
-              })
+              paymentInProgress
             })
           )
-        } else {
-          expect(mockToolkit.view).not.toHaveBeenCalledWith(
-            expect.any(String),
-            expect.objectContaining({
-              uri: expect.objectContaining({
-                payment: payment.href
+        })
+
+        it(`${paymentInProgress ? 'includes' : 'excludes'} govpay url`, async () => {
+          const request = getMockRequest(payment)
+          const mockToolkit = getMockToolkit()
+          const clientError = errorRoutes[0].handler
+          await clientError(request, mockToolkit)
+          if (paymentInProgress) {
+            expect(mockToolkit.view).toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                uri: expect.objectContaining({
+                  payment: payment.href
+                })
               })
-            })
-          )
-        }
+            )
+          } else {
+            expect(mockToolkit.view).not.toHaveBeenCalledWith(
+              expect.any(String),
+              expect.objectContaining({
+                uri: expect.objectContaining({
+                  payment: payment.href
+                })
+              })
+            )
+          }
+        })
       })
     })
   })
-})
 
-const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
-  view
+  const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
+    view
+  })
 })
 
 const getMockRequest = (payment = {}) => ({
