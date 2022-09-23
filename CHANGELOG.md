@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.0 (2022-09-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1376](https://github.com/DEFRA/rod-licensing/pull/1376) Feature/iwtf 2934 welsh month and days ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.26.0-rc.54 (2022-09-20)
