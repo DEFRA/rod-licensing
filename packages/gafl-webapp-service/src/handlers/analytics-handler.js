@@ -27,7 +27,7 @@ export const getAnalyticsSessionId = async request => {
 }
 
 export default async (request, h) => {
-  const payload = request.payload
+  const { payload } = request
   const analytics = await request.cache().helpers.analytics.get()
 
   if (analytics[ANALYTICS.selected] !== true) {
@@ -47,5 +47,18 @@ export default async (request, h) => {
       [ANALYTICS.seenMessage]: true
     })
   }
+
+  const {
+    url: { host },
+    headers: { origin, referer }
+  } = request
+  const referrerHost = new URL(referer).host
+
+  if (host === referrerHost) {
+    const redirect = referer.replace(origin, '')
+
+    return h.redirect(addLanguageCodeToUri(request, redirect))
+  }
+
   return h.redirect(addLanguageCodeToUri(request, '/buy'))
 }

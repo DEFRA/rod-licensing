@@ -1,4 +1,61 @@
 
+## v1.27.0-rc.0 (2022-09-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1376](https://github.com/DEFRA/rod-licensing/pull/1376) Feature/iwtf 2934 welsh month and days ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.26.0-rc.54 (2022-09-20)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1483](https://github.com/DEFRA/rod-licensing/pull/1483) Hide analytics banner on licence details page ([@jaucourt](https://github.com/jaucourt))
+  * [#1481](https://github.com/DEFRA/rod-licensing/pull/1481) Actioning analytics banner throws an error ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.26.0-rc.53 (2022-09-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1478](https://github.com/DEFRA/rod-licensing/pull/1478) Hide analytics banner ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.26.0-rc.52 (2022-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1476](https://github.com/DEFRA/rod-licensing/pull/1476) Cannot accept/reject analytics on renewal ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.26.0-rc.51 (2022-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1477](https://github.com/DEFRA/rod-licensing/pull/1477) analytics banner only /buy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.26.0-rc.50 (2022-09-15)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1472](https://github.com/DEFRA/rod-licensing/pull/1472) Feature/iwtf 2961 analytics track ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.26.0-rc.49 (2022-09-12)
 
 #### :rocket: Enhancement

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`The page handler function sets the value of pageData 1`] = `
+exports[`The page handler function sets the value of pageData with displayAnalytics false 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -11,6 +11,35 @@ exports[`The page handler function sets the value of pageData 1`] = `
         "analyticsMessageDisplayed": "seen-message",
         "analyticsSelected": "selected",
         "backRef": null,
+        "displayAnalytics": false,
+        "mssgs": undefined,
+        "uri": Object {
+          "analyticsFormAction": "/buy/process-analytics-preferences",
+        },
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
+
+exports[`The page handler function sets the value of pageData with displayAnalytics true 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "view",
+      Object {
+        "acceptedTracking": "accepted-tracking",
+        "altLang": Array [],
+        "analyticsMessageDisplayed": "seen-message",
+        "analyticsSelected": "selected",
+        "backRef": null,
+        "displayAnalytics": true,
         "mssgs": undefined,
         "uri": Object {
           "analyticsFormAction": "/buy/process-analytics-preferences",
