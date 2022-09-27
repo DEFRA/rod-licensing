@@ -1,4 +1,14 @@
 
+## v1.27.0-rc.1 (2022-09-27)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1485](https://github.com/DEFRA/rod-licensing/pull/1485) Use chosen language when moving from renewals to new licence journey ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.27.0-rc.0 (2022-09-23)
 
 #### :rocket: Enhancement
