@@ -8,7 +8,8 @@ import {
   RENEWAL_PUBLIC,
   RENEWAL_INACTIVE,
   LICENCE_LENGTH,
-  CONTACT_SUMMARY
+  CONTACT_SUMMARY,
+  NEW_TRANSACTION
 } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
@@ -19,6 +20,13 @@ import { authenticationResult } from '../__mocks__/data/authentication-result.js
 import * as constants from '../../../../processors/mapping-constants.js'
 import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import pageRoute from '../../../../routes/page-route.js'
+
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
+}))
+jest.mock('../../../../routes/page-route.js', () => jest.fn(jest.requireActual('../../../../routes/page-route.js').default))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -96,37 +104,125 @@ describe('The easy renewal identification page', () => {
     expect(data3.statusCode).toBe(200)
   })
 
-  it.each([
+  describe('getData', () => {
+    const getData = pageRoute.mock.calls.find(c => c[0] === IDENTIFY.page)[4]
+
+    const getMockRequest = () => ({
+      cache: () => ({
+        helpers: {
+          status: {
+            getCurrentPermission: async () => ({
+              referenceNumber: 'ABC123'
+            }),
+            setCurrentPermission: () => {}
+          }
+        }
+      })
+    })
+
+    it('passes request to addLanguageCodeToUri', async () => {
+      const request = getMockRequest()
+      await getData(request)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.any(String))
+    })
+
+    it('passes NEW_TRANSACTION.uri to addLanguageCodeToUri', async () => {
+      await getData(getMockRequest())
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), NEW_TRANSACTION.uri)
+    })
+
+    it('sets uri.new to be result of addLanguageCodeToUri', async () => {
+      const decoratedUri = Symbol('new transaction uri')
+      addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+
+      const data = await getData(getMockRequest())
+
+      expect(data.uri.new).toEqual(decoratedUri)
+    })
+  })
+
+  describe.each([
     ['email', constants.HOW_CONTACTED.email],
     ['text', constants.HOW_CONTACTED.text],
     ['none', constants.HOW_CONTACTED.none],
     ['letter', constants.HOW_CONTACTED.letter]
-  ])('redirects to the controller on posting a valid response - (how contacted=%s), and shows both summary pages', async (name, fn) => {
-    const newAuthenticationResult = Object.assign({}, authenticationResult)
-    newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
-    newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
-    salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
+  ])('valid response - (how contacted=%s)', (name, fn) => {
+    beforeEach(async () => {
+      const newAuthenticationResult = Object.assign({}, authenticationResult)
+      newAuthenticationResult.permission.licensee.preferredMethodOfConfirmation.label = fn
+      newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
+      salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
 
-    await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
-    await injectWithCookies('GET', IDENTIFY.uri)
-    const data = await injectWithCookies(
-      'POST',
-      IDENTIFY.uri,
-      Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
-    )
-    expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(AUTHENTICATE.uri)
+      await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
+      await injectWithCookies('GET', IDENTIFY.uri)
+    })
 
-    const data2 = await injectWithCookies('GET', AUTHENTICATE.uri)
-    expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(CONTROLLER.uri)
-    await injectWithCookies('GET', CONTROLLER.uri)
+    it('returns a 302 status code on a POST request to the identify uri', async () => {
+      const data = await injectWithCookies(
+        'POST',
+        IDENTIFY.uri,
+        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
+      )
+      expect(data.statusCode).toBe(302)
+    })
 
-    const data4 = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-    expect(data4.statusCode).toBe(200)
+    it('redirects to the authentication uri on a POST request to the identify uri', async () => {
+      const data = await injectWithCookies(
+        'POST',
+        IDENTIFY.uri,
+        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
+      )
+      expect(data.headers.location).toBe(AUTHENTICATE.uri)
+    })
 
-    const data5 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
-    expect(data5.statusCode).toBe(200)
+    it('returns a 302 status code on a GET request to the authenticate uri', async () => {
+      await injectWithCookies(
+        'POST',
+        IDENTIFY.uri,
+        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
+      )
+      const data = await injectWithCookies('GET', AUTHENTICATE.uri)
+      expect(data.statusCode).toBe(302)
+    })
+
+    it('redirects to the controller uri on a GET request to the authenticate uri', async () => {
+      await injectWithCookies(
+        'POST',
+        IDENTIFY.uri,
+        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
+      )
+      const data = await injectWithCookies('GET', AUTHENTICATE.uri)
+      expect(data.headers.location).toBe(CONTROLLER.uri)
+    })
+
+    it('returns a 200 status code on a GET request to the licence summary', async () => {
+      await injectWithCookies(
+        'POST',
+        IDENTIFY.uri,
+        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
+      )
+      await injectWithCookies('GET', AUTHENTICATE.uri)
+      await injectWithCookies('GET', CONTROLLER.uri)
+
+      const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+
+      expect(data.statusCode).toBe(200)
+    })
+
+    it('returns a 200 status code on a GET request to the contact summary', async () => {
+      await injectWithCookies(
+        'POST',
+        IDENTIFY.uri,
+        Object.assign({ postcode: 'BS9 1HJ', referenceNumber: 'AAAAAA' }, dobHelper(ADULT_TODAY))
+      )
+      await injectWithCookies('GET', AUTHENTICATE.uri)
+      await injectWithCookies('GET', CONTROLLER.uri)
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+
+      const data = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
+
+      expect(data.statusCode).toBe(200)
+    })
   })
 
   const salmonAndSeaTroutPermitSubtype = {
