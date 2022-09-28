@@ -127,10 +127,9 @@ export default (path, view, completion, getData) => ({
     pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: addLanguageCodeToUri(request, PROCESS_ANALYTICS_PREFERENCES.uri) }
 
     const analytics = await request.cache().helpers.analytics.get()
-
-    pageData.analyticsMessageDisplayed = analytics[ANALYTICS.seenMessage]
-    pageData.analyticsSelected = analytics[ANALYTICS.selected]
-    pageData.acceptedTracking = analytics[ANALYTICS.acceptTracking]
+    pageData.analyticsMessageDisplayed = analytics ? analytics[ANALYTICS.seenMessage] : false
+    pageData.analyticsSelected = analytics ? analytics[ANALYTICS.selected] : false
+    pageData.acceptedTracking = analytics ? analytics[ANALYTICS.acceptTracking] : false
 
     pageData.displayAnalytics = displayAnalytics(request)
 

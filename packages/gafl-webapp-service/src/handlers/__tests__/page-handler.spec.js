@@ -220,9 +220,24 @@ describe('The page handler function', () => {
     const pageData = toolkit.view.mock.calls[0][1]
     expect(pageData.displayAnalytics).toBeFalsy()
   })
+
+  it.only('sets analytics values to default values if analytics key is not set', async () => {
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    const mockRequest = getMockRequest(null, '/current/page', false)
+    await get(mockRequest, toolkit)
+    const pageData = toolkit.view.mock.calls[0][1]
+    expect(pageData).toEqual(
+      expect.objectContaining({
+        analyticsMessageDisplayed: false,
+        analyticsSelected: false,
+        acceptedTracking: false
+      })
+    )
+  })
 })
 
-const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/here') => ({
+const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/here', includeAnalytics = true) => ({
   cache: () => ({
     helpers: {
       page: {
@@ -237,11 +252,14 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/her
         getCurrentPermission: () => {}
       },
       analytics: {
-        get: () => ({
-          [ANALYTICS.selected]: 'selected',
-          [ANALYTICS.acceptTracking]: 'accepted-tracking',
-          [ANALYTICS.seenMessage]: 'seen-message'
-        })
+        get: () =>
+          includeAnalytics
+            ? ({
+                [ANALYTICS.selected]: 'selected',
+                [ANALYTICS.acceptTracking]: 'accepted-tracking',
+                [ANALYTICS.seenMessage]: 'seen-message'
+              })
+            : undefined
       }
     }
   }),
