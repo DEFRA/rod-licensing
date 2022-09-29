@@ -221,7 +221,7 @@ describe('The page handler function', () => {
     expect(pageData.displayAnalytics).toBeFalsy()
   })
 
-  it.only('sets analytics values to default values if analytics key is not set', async () => {
+  it('sets analytics values to default values if analytics key is not set', async () => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     const mockRequest = getMockRequest(null, '/current/page', false)
@@ -254,11 +254,11 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/her
       analytics: {
         get: () =>
           includeAnalytics
-            ? ({
+            ? {
                 [ANALYTICS.selected]: 'selected',
                 [ANALYTICS.acceptTracking]: 'accepted-tracking',
                 [ANALYTICS.seenMessage]: 'seen-message'
-              })
+              }
             : undefined
       }
     }
