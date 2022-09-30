@@ -72,6 +72,7 @@ if (process.env.CHANNEL === 'telesales') {
   routes.push(...telesalesRoutes)
 }
 
+console.log(process.env.ERROR_PAGE_ROUTE)
 if (process.env.ERROR_PAGE_ROUTE === 'true') {
   routes.push(...errorRoutes)
 }

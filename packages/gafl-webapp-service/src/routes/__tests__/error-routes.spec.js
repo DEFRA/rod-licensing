@@ -1,5 +1,5 @@
 import errorRoutes from '../error-routes'
-import { CLIENT_ERROR } from '../../uri.js'
+import { CLIENT_ERROR, NEW_TRANSACTION } from '../../uri.js'
 
 describe('Error route handlers', () => {
   describe('CLIENT_ERROR route', () => {
@@ -8,11 +8,36 @@ describe('Error route handlers', () => {
     })
 
     describe('handler', () => {
-      it('should pass the catalog and language to the view if it is present', async () => {
-        const request = getMockRequest()
+      const clientError = errorRoutes[0].handler
+
+      it('handler should return correct values', async () => {
         const mockToolkit = getMockToolkit()
-        const clientError = errorRoutes[0].handler
-        await clientError(request, mockToolkit)
+        await clientError(getMockRequest(), mockToolkit)
+        expect(mockToolkit.view).toMatchSnapshot()
+      })
+
+      it('second argument of handler return correct values', async () => {
+        const href = Symbol('gov.pay.url')
+        const payment = { payment_id: 'abc123', href: href }
+        const mockToolkit = getMockToolkit()
+        await clientError(getMockRequest(payment), mockToolkit)
+        expect(mockToolkit.view).toBeCalledWith(
+          CLIENT_ERROR.page,
+          {
+            paymentInProgress: true,
+            clientError: 'payload',
+            mssgs: [],
+            altLang: [],
+            uri: {
+              new: NEW_TRANSACTION.uri,
+              payment: href
+            }
+          })
+      })
+
+      it('should pass the catalog and language to the view if it is present', async () => {
+        const mockToolkit = getMockToolkit()
+        await clientError(getMockRequest(), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(
           CLIENT_ERROR.page,
           expect.objectContaining({
@@ -23,10 +48,8 @@ describe('Error route handlers', () => {
       })
 
       it('should respond with the output of the client error to the view if it is present', async () => {
-        const request = getMockRequest()
         const mockToolkit = getMockToolkit()
-        const clientError = errorRoutes[0].handler
-        await clientError(request, mockToolkit)
+        await clientError(getMockRequest(), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(
           CLIENT_ERROR.page,
           expect.objectContaining({
