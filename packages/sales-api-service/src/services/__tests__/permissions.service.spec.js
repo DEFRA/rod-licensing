@@ -46,18 +46,12 @@ describe('permissions service', () => {
           licensee: {
             firstName: 'Fester',
             lastName: 'Tester',
-            birthDate: moment(now)
-              .subtract(JUNIOR_MAX_AGE, 'years')
-              .format('YYYY-MM-DD')
+            birthDate: moment(now).subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
           }
         },
         'Telesales'
       )
-      const block1 = moment(now)
-        .add(1, 'hour')
-        .startOf('hour')
-        .add(1, 'year')
-        .format('HHDDMMYY')
+      const block1 = moment(now).add(1, 'year').subtract(1, 'day').endOf('day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
@@ -79,11 +73,7 @@ describe('permissions service', () => {
         },
         'Web Sales'
       )
-      const block1 = moment(now)
-        .add(1, 'hour')
-        .startOf('hour')
-        .add(1, 'day')
-        .format('HHDDMMYY')
+      const block1 = moment(now).add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1JFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
@@ -98,41 +88,64 @@ describe('permissions service', () => {
           licensee: {
             firstName: 'Fester',
             lastName: 'Tester',
-            birthDate: moment(now)
-              .subtract(SENIOR_MIN_AGE, 'years')
-              .format('YYYY-MM-DD')
+            birthDate: moment(now).subtract(SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
           }
         },
         'Web Sales'
       )
-      const block1 = moment(now)
-        .add(1, 'hour')
-        .startOf('hour')
-        .add(1, 'day')
-        .format('HHDDMMYY')
+      const block1 = moment(now).add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
   })
 
   describe('calculateEndDate', () => {
-    it('calculates 365 days for 1 year licences outside of a leap year', async () => {
+    it('calculates 364 days for 1 year licences outside of a leap year', async () => {
       const startDate = moment('2019-01-01')
+      const expectedEndDate = moment('2019-12-31').endOf('day')
+
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
-      expect(endDate).toEqual(
-        moment(startDate)
-          .add(365, 'days')
-          .toISOString()
-      )
+      expect(endDate).toEqual(expectedEndDate.toISOString())
     })
-    it('calculates 366 days for 1 year licences in a leap year', async () => {
+
+    it('calculates 365 days for 1 year licences in a leap year', async () => {
       const startDate = moment('2020-01-01')
+      const expectedEndDate = moment('2020-12-31').endOf('day')
+
       const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
-      expect(endDate).toEqual(
-        moment(startDate)
-          .add(366, 'days')
-          .toISOString()
-      )
+      expect(endDate).toEqual(expectedEndDate.toISOString())
+    })
+
+    describe('when the licence starts and finishes during BST', () => {
+      it('finishes just before midnight in BST', async () => {
+        const startDate = moment('2020-06-01')
+        const expectedEndDate = moment.utc('2021-05-31').endOf('day').subtract(1, 'hours')
+
+        const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
+        expect(endDate).toEqual(expectedEndDate.toISOString())
+      })
+    })
+
+    // In 2018, BST starts on 25 March. In 2019, BST starts on 31 March.
+    describe('when the licence starts during BST and finishes during GMT', () => {
+      it('finishes just before midnight in GMT', async () => {
+        const startDate = moment('2018-03-27')
+        const expectedEndDate = moment.utc('2019-03-26').endOf('day')
+
+        const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
+        expect(endDate).toEqual(expectedEndDate.toISOString())
+      })
+    })
+
+    // In 2020, BST ends on 25 October. In 2021, BST ends on 31 October.
+    describe('when the licence starts during GMT and finishes during BST', () => {
+      it('finishes just before midnight in BST', async () => {
+        const startDate = moment('2020-10-26')
+        const expectedEndDate = moment.utc('2021-10-25').endOf('day').subtract(1, 'hours')
+
+        const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
+        expect(endDate).toEqual(expectedEndDate.toISOString())
+      })
     })
   })
 

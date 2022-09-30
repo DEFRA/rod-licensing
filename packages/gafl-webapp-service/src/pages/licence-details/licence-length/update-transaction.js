@@ -44,11 +44,7 @@ const checkContactDetails = permission => {
 const checkLicenceToStart = permission => {
   if (permission.licenceLength === '12M') {
     permission.licenceStartTime = null
-    if (
-      moment(permission.licenceStartDate, cacheDateFormat)
-        .tz(SERVICE_LOCAL_TIME)
-        .isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')
-    ) {
+    if (moment(permission.licenceStartDate, cacheDateFormat).tz(SERVICE_LOCAL_TIME).isSame(moment().tz(SERVICE_LOCAL_TIME), 'day')) {
       permission.licenceToStart = licenceToStart.AFTER_PAYMENT
     }
   }

@@ -2,8 +2,10 @@ import { getData } from '../route.js'
 import Boom from '@hapi/boom'
 import { COMPLETION_STATUS } from '../../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
+import { displayStartTime, displayEndTime } from '../../../../processors/date-and-time-display.js'
 
 beforeEach(jest.clearAllMocks)
+jest.mock('../../../../processors/date-and-time-display.js')
 
 describe('The licence details page', () => {
   describe('.getData', () => {
@@ -33,6 +35,10 @@ describe('The licence details page', () => {
         [COMPLETION_STATUS.posted]: true,
         [COMPLETION_STATUS.finalised]: true
       })
+      const startTimeString = '1:00am on 6 June 2020'
+      const endTimeString = '1:00am on 5 June 2021'
+      displayStartTime.mockReturnValueOnce(startTimeString)
+      displayEndTime.mockReturnValueOnce(endTimeString)
       const result = await getData(mockRequest)
       expect(result).toMatchSnapshot()
     })
@@ -69,5 +75,12 @@ const createMockRequest = status => ({
         }))
       }
     }
-  }))
+  })),
+  i18n: {
+    getCatalog: () => ({
+      over_65: 'Over 65',
+      licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods',
+      renewal_start_date_expires_5: 'on'
+    })
+  }
 })

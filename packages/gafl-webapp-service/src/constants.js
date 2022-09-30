@@ -16,6 +16,12 @@ export const SERVICE_PAGE_DEFAULT = 'https://www.gov.uk/fishing-licences/buy-a-f
 export const RENEWALS_CAMPAIGN_ID = 'renewals'
 export const AEN_INVITATION_ID = 'aen_invitation'
 
+export const ANALYTICS = {
+  selected: 'selected',
+  acceptTracking: 'accepted-tracking',
+  seenMessage: 'seen-message'
+}
+
 export const COMPLETION_STATUS = {
   agreed: 'agreed',
   posted: 'posted',
@@ -54,6 +60,12 @@ export const CommonResults = {
 export const ShowDigitalLicencePages = {
   YES: 'show-digital-licence-yes',
   NO: 'show-digital-licence-no'
+}
+
+export const RENEWAL_ERROR_REASON = {
+  NOT_DUE: 'not-due',
+  EXPIRED: 'expired',
+  NOT_ANNUAL: 'not-annual'
 }
 
 // If the user has seen the summary page these are set in the status

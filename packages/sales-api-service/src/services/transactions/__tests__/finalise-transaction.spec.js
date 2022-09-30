@@ -34,12 +34,8 @@ const getStagedTransactionRecord = () => {
   const {
     permissions: [permission]
   } = record
-  permission.issueDate = moment(permission.issueDate)
-    .year(2021)
-    .toISOString()
-  permission.startDate = moment(permission.startDate)
-    .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
-    .toISOString()
+  permission.issueDate = moment(permission.issueDate).year(2021).toISOString()
+  permission.startDate = moment(permission.startDate).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
   return record
 }
 
@@ -98,11 +94,7 @@ describe('transaction service', () => {
           ':permissions': mockRecord.permissions.map(p => ({
             ...p,
             issueDate: p.issueDate ?? completionFields.payment.timestamp,
-            startDate:
-              p.startDate ??
-              moment(completionFields.payment.timestamp)
-                .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
-                .toISOString(),
+            startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
             endDate: expect.any(String),
             referenceNumber: expect.any(String)
           })),
@@ -261,9 +253,7 @@ describe('transaction service', () => {
               ':permissions': expect.arrayContaining([
                 expect.objectContaining({
                   permitId: mockPermission.permitId,
-                  startDate: moment(issueDate)
-                    .add(startAfterPaymentMinutes, 'minutes')
-                    .toISOString()
+                  startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString()
                 })
               ])
             })
@@ -317,7 +307,6 @@ describe('transaction service', () => {
       const [mockPermission] = mockRecord.permissions
       mockPermission.issueDate = issueDate
       mockPermission.startDate = startDate
-      const licenceLength = moment(endDate).subtract(moment(startDate))
       const completionFields = getCompletionFields()
       AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
         Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
@@ -441,9 +430,7 @@ describe('transaction service', () => {
       expect(permission).toEqual(
         expect.objectContaining({
           permitId: mockPermission.permitId,
-          startDate: moment(completionFields.payment.timestamp)
-            .add(START_AFTER_PAYMENT_MINUTES, 'minutes')
-            .toISOString()
+          startDate: moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
         })
       )
     })

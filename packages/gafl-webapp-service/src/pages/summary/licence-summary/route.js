@@ -20,9 +20,10 @@ import { START_AFTER_PAYMENT_MINUTES, SERVICE_LOCAL_TIME } from '@defra-fish/bus
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 // Extracted to keep sonar happy
-const checkNavigation = permission => {
+export const checkNavigation = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
     throw new GetDataRedirect(NAME.uri)
   }
@@ -48,7 +49,7 @@ export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  if (!status.renewal) {
+  if (!permission.isRenewal) {
     /*
      * Before we try and filter the permit it is necessary to check that the user has navigated through
      * the journey in such a way as to have gather all the required data. They may have manipulated the
@@ -58,43 +59,45 @@ export const getData = async request => {
     checkNavigation(permission)
   }
 
-  status.fromSummary = getFromSummary(status)
+  status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
-  const startTimeString = displayStartTime(permission)
+  const startTimeString = displayStartTime(request, permission)
 
   return {
     permission,
     startTimeString,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
-    licenceTypeStr: licenceTypeDisplay(permission),
-    isRenewal: status.renewal,
+    isRenewal: permission.isRenewal,
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog()),
     isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
     hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),
     disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
     concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).locale(request.locale).format('Do MMMM YYYY'),
     uri: {
-      name: NAME.uri,
-      licenceLength: LICENCE_LENGTH.uri,
-      licenceType: LICENCE_TYPE.uri,
-      licenceToStart: LICENCE_TO_START.uri,
-      dateOfBirth: DATE_OF_BIRTH.uri,
-      disabilityConcession: DISABILITY_CONCESSION.uri,
-      licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
-      clear: NEW_TRANSACTION.uri
+      name: addLanguageCodeToUri(request, NAME.uri),
+      licenceLength: addLanguageCodeToUri(request, LICENCE_LENGTH.uri),
+      licenceType: addLanguageCodeToUri(request, LICENCE_TYPE.uri),
+      licenceToStart: addLanguageCodeToUri(request, LICENCE_TO_START.uri),
+      dateOfBirth: addLanguageCodeToUri(request, DATE_OF_BIRTH.uri),
+      disabilityConcession: addLanguageCodeToUri(request, DISABILITY_CONCESSION.uri),
+      licenceStartDate: permission.isRenewal
+        ? addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
+        : addLanguageCodeToUri(request, LICENCE_TO_START.uri),
+      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
 
-export const getFromSummary = status => {
-  if (status.renewal) {
+export const getFromSummary = (fromSummary, isRenewal) => {
+  if (isRenewal) {
     return LICENCE_SUMMARY_SEEN
   }
-  if (status.fromSummary) {
-    return status.fromSummary
+  if (fromSummary) {
+    return fromSummary
   }
   return LICENCE_SUMMARY_SEEN
 }

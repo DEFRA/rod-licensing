@@ -18,4 +18,31 @@ describe('URI Helpers: addLanguageCodeToURI', () => {
     const result = addLanguageCodeToUri(mockRequest, uri)
     expect(result).toEqual(expect.stringMatching(new RegExp(expected)))
   })
+
+  describe.each([
+    ['https://my-url.com/path?data=true', 'https://my-url.com/path?data=true&lang=cy'],
+    ['https://my-url.com/path?data-1=false&data-2=9', 'https://my-url.com/path?data-1=false&data-2=9&lang=cy']
+  ])('', (urlToDecorate, decoratedUrl) => {
+    it('if the supplied url has a querystring already, the language parameter is added to the end with an ampersand', () => {
+      const mockRequest = {
+        path: '/any/page',
+        url: {
+          search: '?lang=cy'
+        }
+      }
+      const result = addLanguageCodeToUri(mockRequest, urlToDecorate)
+      expect(result).toEqual(decoratedUrl)
+    })
+
+    it('if the request.path is used instead of a url and has a querystring, the language parameter is added to the end with an ampersand', () => {
+      const mockRequest = {
+        path: urlToDecorate,
+        url: {
+          search: '?lang=cy'
+        }
+      }
+      const result = addLanguageCodeToUri(mockRequest, urlToDecorate)
+      expect(result).toEqual(decoratedUrl)
+    })
+  })
 })

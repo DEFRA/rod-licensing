@@ -36,22 +36,15 @@ describe('contact validators', () => {
 
     it("throws if given tommorow's date", async () => {
       await expect(
-        contactValidation.createBirthDateValidator(Joi).validateAsync(
-          moment()
-            .add(1, 'days')
-            .format('YYYY-MM-DD')
-        )
+        contactValidation.createBirthDateValidator(Joi).validateAsync(moment().add(1, 'days').format('YYYY-MM-DD'))
       ).rejects.toThrow('"value" must be less than or equal to "now"')
     })
 
     it('throws if given a date of a person aged over 120', async () => {
       await expect(
-        contactValidation.createBirthDateValidator(Joi).validateAsync(
-          moment()
-            .subtract(120, 'years')
-            .subtract(1, 'days')
-            .format('YYYY-MM-DD')
-        )
+        contactValidation
+          .createBirthDateValidator(Joi)
+          .validateAsync(moment().subtract(120, 'years').subtract(1, 'days').format('YYYY-MM-DD'))
       ).rejects.toThrow('"value" date before minimum allowed')
     })
   })
@@ -311,8 +304,8 @@ describe('contact validators', () => {
     })
 
     it('throws where the premises exceeds the maximum allowed length', async () => {
-      await expect(contactValidation.createPremisesValidator(Joi).validateAsync('A'.repeat(101))).rejects.toThrow(
-        '"value" length must be less than or equal to 100 characters long'
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync('A'.repeat(51))).rejects.toThrow(
+        '"value" length must be less than or equal to 50 characters long'
       )
     })
   })

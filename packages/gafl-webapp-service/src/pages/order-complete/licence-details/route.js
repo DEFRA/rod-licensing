@@ -25,8 +25,8 @@ export const getData = async request => {
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  const startTimeString = displayStartTime(permission)
-  const endTimeString = displayEndTime(permission)
+  const startTimeString = displayStartTime(request, permission)
+  const endTimeString = displayEndTime(request, permission)
 
   return {
     permission,
@@ -34,7 +34,7 @@ export const getData = async request => {
     endTimeString,
     disabled: concessionHelper.hasDisabled(permission),
     ageConcession: concessionHelper.getAgeConcession(permission),
-    licenceTypeStr: licenceTypeDisplay(permission)
+    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog())
   }
 }
 

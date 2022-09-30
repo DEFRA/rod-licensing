@@ -6,6 +6,10 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
+{% set title = mssgs.address_lookup_title_you if data.isLicenceForYou else mssgs.address_lookup_title_other %}
+
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+
 {% set errorMap = {
         'premises': {
             'string.empty': { ref: '#premises', text: mssgs.address_lookup_error_empty_name_num },
@@ -33,7 +37,7 @@
 
             {% call govukFieldset({
               legend: {
-                text: mssgs.address_lookup_title_you if data.isLicenceForYou else mssgs.address_lookup_title_other,
+                text: title,
                 classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
                 isPageHeading: true
               }
@@ -80,12 +84,10 @@
 
             {% endcall %}
             <p class="govuk-body-m">
-                <a class="govuk-link" href="{{ data.uri.entryPage }}">{{ mssgs.address_lookup_manually_enter }}</a>
+                <a class="govuk-link" href="{{ data.uri.entryPage }}">{{ mssgs.address_lookup_manually_enter_you if data.isLicenceForYou else mssgs.address_lookup_manually_enter_other }}</a>
             </p>
             {{ csrf() }}
         </form>
-      <p class="govuk-body-s">{{ mssgs.address_lookup_crown_copyright }}<a class="govuk-link" href="http://www.ordnancesurvey.co.uk" rel="noreferrer noopener" target="_blank">{{ mssgs.address_lookup_crown_copyright_new_tab }}</a> {{ mssgs.address_lookup_crown_copyright_ref }}
-      <br>{{ mssgs.address_lookup_crown_copyright_terms }} <a class="govuk-link" href="{{ data.uri.osTerms }}">{{ mssgs.address_lookup_crown_copyright_terms_link }}</a></p>
     </div>
 </div>
 {% endblock %}

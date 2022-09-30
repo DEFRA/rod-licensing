@@ -2,7 +2,7 @@ import { Permission, Permit } from '@defra-fish/dynamics-lib'
 import { isJunior, isSenior } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import { redis } from './ioredis.service.js'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 const DICTIONARIES = [
   'ABCDEFGHJKLMNPQRSTUVWXYZ1234567890',
@@ -31,9 +31,10 @@ export const generatePermissionNumber = async (
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
   const endDate = await calculateEndDateMoment({ permitId, startDate })
-  const endTime = moment(endDate)
-    .add(1, 'hour')
-    .startOf('hour')
+  const endTime =
+    permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M'
+      ? moment(endDate)
+      : moment(endDate).add(1, 'hour').startOf('hour')
   const block1 = endTime.format('HH') + endDate.format('DDMMYY')
 
   const dataSourceOptionSetValue = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, dataSource)
@@ -61,6 +62,9 @@ export const generatePermissionNumber = async (
 export const calculateEndDateMoment = async ({ permitId, startDate }) => {
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
   const duration = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`)
+  if (permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M') {
+    return moment(startDate).add(duration).subtract(1, 'day').tz('Europe/London').endOf('day')
+  }
   return moment(startDate).add(duration)
 }
 

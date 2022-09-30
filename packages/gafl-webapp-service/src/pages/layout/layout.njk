@@ -1,11 +1,12 @@
 {% extends "template.njk" %}
 {% set assetPath = "/public" %}
 
-{% from "footer/macro.njk" import govukFooter %}
 {% from "header/macro.njk" import govukHeader %}
+{% from "button/macro.njk" import govukButton %}
+{% from "footer/macro.njk" import govukFooter %}
 
 {% macro csrf() %}
-<div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
+    <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
 {% endmacro %}
 
 {% block head %}
@@ -17,47 +18,100 @@
 {% endblock %}
 
 {% block header %}
-    <div id="global-cookie-message" class="cookie-banner no-print" role="region" aria-label="cookie banner">
-      <div class="govuk-width-container">
-        <p class="govuk-body">
-          {{ mssgs.cookie_banner_preamble }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
-        </p>
-        <button id="close-global-cookie-message" class="govuk-button govuk-!-margin-bottom-0" type="submit">
-            {{ mssgs.cookie_banner_close }}<span class="govuk-visually-hidden"> {{ mssgs.cookie_banner_close_ex }}</span>
-        </button>
-      </div>
-    </div>
-    <script nonce={{nonce}} type="text/javascript">
-        function removeCookieMessage() {
-            var elem = document.getElementById('global-cookie-message')
-            if (elem.parentNode) {
-                elem.parentNode.removeChild(elem)
-            }
-        }
-        (function () {
-            'use strict'
-            var seen_cookie_message = /(^|\;)\s*seen_cookie_message=/.test(document.cookie)
-            if (seen_cookie_message) {
-                removeCookieMessage()
-            } else {
-                document.getElementById('close-global-cookie-message').addEventListener('click', function() {
-                    var expiry = new Date()
-                    expiry.setDate(expiry.getDate() + 90)
-                    document.cookie = 'seen_cookie_message=true; expires=' + expiry.toUTCString() + '; path=/;'
-                    removeCookieMessage()
-                })
-            }
-        })()
-    </script>
+    {% if displayAnalytics %}
+        {% if not analyticsMessageDisplayed %}
+            <form method="POST" novalidate action='{{ uri.analyticsFormAction }}'>
+                {% if not analyticsSelected %}
+                    <div id="cookie-banner" class="cookie-banner no-print" role="region" aria-label="cookie banner">
+                        <div id="cookie-message" class="cookie-message no-print" role="region" aria-label="cookie message">
+                            <div class="govuk-width-container">
+                                <h2 class="govuk-cookie-banner__heading govuk-heading-m">
+                                    {{ mssgs.analytics_banner_title }}
+                                </h2>
+                                <div class="govuk-cookie-banner__content">
+                                    <p class="govuk-body">
+                                    {{ mssgs.analytics_banner_preamble_1 }}
+                                    </p>
+                                    <p class="govuk-body">
+                                    {{ mssgs.analytics_banner_preamble_2 }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
+                                    </p>
+                                </div>
+                                <div class="govuk-button-group">
+                                    {{ govukButton({
+                                        attributes: { id: 'accept' },
+                                        preventDoubleClick: true,
+                                        name: "analyticsResponse",
+                                        text: mssgs.analytics_banner_accept,
+                                        value: 'accept'
+                                    }) }}
+                                    {{ govukButton({
+                                        attributes: { id: 'reject' },
+                                        preventDoubleClick: true,
+                                        name: "analyticsResponse",
+                                        text: mssgs.analytics_banner_reject,
+                                        value: 'reject'
+                                    }) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if analyticsSelected %}
+                    {% if acceptedTracking %}
+                        <div id="cookie-accept" class="cookie-message" role="region" aria-label="cookie accept">
+                            <div class="govuk-width-container">
+                                <div class="govuk-cookie-banner__content">
+                                    <p class="govuk-body" id="cookie-acceptance">
+                                        {{ mssgs.analytics_banner_acceptance }}
+                                    </p>
+                                </div>
+                                <div class="govuk-button-group">
+                                    {{ govukButton({
+                                        attributes: { id: 'hide' },
+                                        preventDoubleClick: true,
+                                        name: "hide",
+                                        text: mssgs.analytics_banner_hide,
+                                        value: true
+                                    }) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div id="cookie-reject" class="cookie-banner no-print" role="region">
+                            <div class="govuk-width-container">
+                                <div class="govuk-cookie-banner__content">
+                                    <p class="govuk-body">
+                                        {{ mssgs.analytics_banner_rejection }}  
+                                    </p>
+                                </div>
+                                <div class="govuk-button-group">
+                                    {{ govukButton({
+                                        attributes: { id: 'hide' },
+                                        preventDoubleClick: true,
+                                        name: "hideMessage",
+                                        text: mssgs.analytics_banner_hide,
+                                        value: true
+                                    }) }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+            {{ csrf() }}
+            </form>
+        {% endif %}
+    {% endif %}
+
     {{ govukHeader({
-            assetsPath: assetPath + '/images',
-            homepageUrl: "https://www.gov.uk/",
-            serviceUrl: "/",
-            classes: "no-print",
-            containerClasses: "govuk-width-container",
-            serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)"
-        })
-    }}
+        assetsPath: assetPath + '/images',
+        homepageUrl: "https://www.gov.uk/",
+        serviceUrl: "/",
+        classes: "no-print",
+        containerClasses: "govuk-width-container",
+        serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)"
+    }) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -96,9 +150,12 @@
 
 {% block bodyStart %}{% endblock %}
 
-
 {% set footerHtml %}
     <div class="no-print">
+        {% if (title === mssgs.address_lookup_title_you) or (title === mssgs.address_lookup_title_other) %}
+            <p class="govuk-body-s">{{ mssgs.address_lookup_crown_copyright }}<a class="govuk-link" href="http://www.ordnancesurvey.co.uk" rel="noreferrer noopener" target="_blank">{{ mssgs.address_lookup_crown_copyright_new_tab }}</a> {{ mssgs.address_lookup_crown_copyright_ref }}
+            <br>{{ mssgs.address_lookup_crown_copyright_terms }} <a class="govuk-link" href="{{ data.uri.osTerms }}">{{ mssgs.address_lookup_crown_copyright_terms_link }}</a></p>
+        {% endif %}
         <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">{{ mssgs.footer_ea_helpline }} <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
         <p class="govuk-!-margin-top-0">{{ mssgs.footer_ea_helpline_opening_hours }}</p>
         <p class="govuk-!-margin-top-0"><a class="govuk-link" href="https://www.gov.uk/call-charges">{{ mssgs.footer_ea_helpline_charges_link }}</a></p>

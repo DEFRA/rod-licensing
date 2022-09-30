@@ -29,10 +29,7 @@ const createTransactionRequestSchemaContent = {
   dataSource: buildJoiOptionSetValidator('defra_datasource', 'Web Sales'),
   serialNumber: Joi.when('dataSource', {
     is: Joi.valid(...POCL_TRANSACTION_SOURCES),
-    then: Joi.string()
-      .trim()
-      .min(1)
-      .required()
+    then: Joi.string().trim().min(1).required()
   }),
   createdBy: Joi.string().optional(),
   journalId: Joi.string().optional()
@@ -55,33 +52,19 @@ export const createTransactionSchema = Joi.object(createTransactionRequestSchema
 export const createTransactionBatchSchema = Joi.array()
   .min(1)
   .max(BATCH_CREATE_MAX_COUNT)
-  .items(
-    Joi.object()
-      .required()
-      .label('create-transaction-batch-item')
-      .description('See create-transaction-request for proper structure')
-  )
+  .items(Joi.object().required().label('create-transaction-batch-item').description('See create-transaction-request for proper structure'))
   .required()
   .label('create-transaction-batch-request')
 
 const createTransactionResponseSchemaContent = {
-  id: Joi.string()
-    .trim()
-    .guid()
-    .required(),
+  id: Joi.string().trim().guid().required(),
   expires: Joi.number().required(),
   ...createTransactionRequestSchemaContent,
-  permissions: Joi.array()
-    .min(1)
-    .items(stagedPermissionSchema)
-    .required()
-    .label('create-transaction-response-permissions'),
+  permissions: Joi.array().min(1).items(stagedPermissionSchema).required().label('create-transaction-response-permissions'),
   cost: Joi.number().required(),
   isRecurringPaymentSupported: Joi.boolean().required(),
   status: Joi.object({
-    id: Joi.string()
-      .valid('STAGED')
-      .required()
+    id: Joi.string().valid('STAGED').required()
   })
     .label('create-transaction-status')
     .required()
@@ -101,9 +84,7 @@ export const createTransactionBatchResponseSchema = Joi.array()
   .items(
     Joi.object({
       statusCode: Joi.number().required(),
-      response: Joi.object(createTransactionResponseSchemaContent)
-        .label('create-transaction-batch-item-response')
-        .optional(),
+      response: Joi.object(createTransactionResponseSchemaContent).label('create-transaction-batch-item-response').optional(),
       error: Joi.string().optional(),
       message: Joi.string().optional()
     }).label('create-transaction-batch-response-item')
@@ -122,21 +103,12 @@ const finaliseTransactionRequestSchemaContent = {
       .description('An ISO8601 compatible date string defining when the transaction was completed')
       .example(new Date().toISOString()),
     source: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Gov Pay'),
-    channelId: Joi.string()
-      .trim()
-      .optional()
-      .description('Channel specific identifier'),
+    channelId: Joi.string().trim().optional().description('Channel specific identifier'),
     method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
     recurring: Joi.object({
       payer: contactRequestSchema,
-      referenceNumber: Joi.string()
-        .required()
-        .description('The reference number associated with the recurring payment')
-        .example(uuidv4()),
-      mandate: Joi.string()
-        .required()
-        .description('The mandate identifier associated with the recurring payment')
-        .example(uuidv4())
+      referenceNumber: Joi.string().required().description('The reference number associated with the recurring payment').example(uuidv4()),
+      mandate: Joi.string().required().description('The mandate identifier associated with the recurring payment').example(uuidv4())
     })
       .label('finalise-transaction-recurring-payment-details')
       .description('Used to establish a recurring payment (e.g. via Direct Debit)')
@@ -155,15 +127,9 @@ export const finaliseTransactionRequestSchema = Joi.object(finaliseTransactionRe
 export const finaliseTransactionResponseSchema = Joi.object({
   ...createTransactionResponseSchemaContent,
   ...finaliseTransactionRequestSchemaContent,
-  permissions: Joi.array()
-    .min(1)
-    .items(finalisePermissionResponseSchema)
-    .required()
-    .label('finalise-transaction-response-permissions'),
+  permissions: Joi.array().min(1).items(finalisePermissionResponseSchema).required().label('finalise-transaction-response-permissions'),
   status: Joi.object({
-    id: Joi.string()
-      .valid('FINALISED')
-      .required(),
+    id: Joi.string().valid('FINALISED').required(),
     messageId: Joi.string().required()
   })
     .required()
