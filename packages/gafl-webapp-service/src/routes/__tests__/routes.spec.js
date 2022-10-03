@@ -5,7 +5,10 @@ const mockTelesalesRoutes = [Symbol('telesales')]
 jest.mock('../telesales-routes.js', () => mockTelesalesRoutes)
 
 describe('route', () => {
-  beforeEach(jest.clearAllMocks)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    jest.resetModules()
+  })
 
   it('if CHANNEL environment variables are for telesales then telesales route is added to the routes array', async () => {
     process.env.CHANNEL = 'telesales'
