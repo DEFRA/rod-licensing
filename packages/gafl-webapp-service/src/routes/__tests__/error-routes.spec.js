@@ -21,18 +21,16 @@ describe('Error route handlers', () => {
         const payment = { payment_id: 'abc123', href: href }
         const mockToolkit = getMockToolkit()
         await clientError(getMockRequest(payment), mockToolkit)
-        expect(mockToolkit.view).toBeCalledWith(
-          CLIENT_ERROR.page,
-          {
-            paymentInProgress: true,
-            clientError: 'payload',
-            mssgs: [],
-            altLang: [],
-            uri: {
-              new: NEW_TRANSACTION.uri,
-              payment: href
-            }
-          })
+        expect(mockToolkit.view).toBeCalledWith(CLIENT_ERROR.page, {
+          paymentInProgress: true,
+          clientError: 'payload',
+          mssgs: [],
+          altLang: [],
+          uri: {
+            new: NEW_TRANSACTION.uri,
+            payment: href
+          }
+        })
       })
 
       it('should pass the catalog and language to the view if it is present', async () => {
