@@ -19,67 +19,58 @@ import {
   LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
-class Row {
-  constructor (request, label, text, href, visuallyHiddenText, id) {
-    this._label = label
-    this._text = text
-    this._href = addLanguageCodeToUri(request, href)
-    this._visuallyHiddenText = visuallyHiddenText
-    this._id = id
+class RowGenerator {
+  constructor (request, permission) {
+    this.request = request
+    this.permission = permission
   }
 
-  toSummaryRow () {
+  _getContactText (contactTextSpec) {
+    switch (this.permission.licensee.preferredMethodOfReminder) {
+      case HOW_CONTACTED.email:
+        return contactTextSpec.EMAIL + this.permission.licensee.email
+      case HOW_CONTACTED.text:
+        return contactTextSpec.TEXT + this.permission.licensee.mobilePhone
+      default:
+        return contactTextSpec.DEFAULT
+    }
+  }
+
+  generateRow (label, text, rawHref, visuallyHiddenText, id) {
+    const href = addLanguageCodeToUri(this.request, rawHref)
     return {
       key: {
-        text: this._label
+        text: label
       },
       value: {
-        text: this._text
+        text: text
       },
-      ...(this._href && {
+      ...(href && {
         actions: {
           items: [
             {
-              href: this._href,
+              href: href,
               text: 'Change',
-              visuallyHiddenText: this._visuallyHiddenText,
-              attributes: { id: this._id }
+              visuallyHiddenText: visuallyHiddenText,
+              attributes: { id: id }
             }
           ]
         }
       })
     }
   }
-}
 
-class AddressRow extends Row {
-  constructor (request, licensee, countryName) {
-    super(request, 'Address', null, ADDRESS_LOOKUP.uri, 'address', 'change-address')
-    this._text = this._getText(licensee, countryName)
-  }
-
-  _getText (licensee, countryName) {
-    return [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+  generateAddressRow (countryName) {
+    const { licensee } = this.permission
+    const text = [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
       .filter(Boolean)
       .join(', ')
-  }
-}
 
-class ContactRow extends Row {
-  constructor (request, label, href, visuallyHiddenText, id, permission, contactTextSpec = CONTACT_TEXT_DEFAULT) {
-    super(request, label, null, href, visuallyHiddenText, id)
-    this._text = this._getText(permission, contactTextSpec)
+    return this.generateRow('Address', text, ADDRESS_LOOKUP.uri, 'address', 'change-address')
   }
 
-  _getText (permission, contactTextSpec) {
-    switch (permission.licensee.preferredMethodOfReminder) {
-      case HOW_CONTACTED.email:
-        return contactTextSpec.EMAIL + permission.licensee.email
-      case HOW_CONTACTED.text:
-        return contactTextSpec.TEXT + permission.licensee.mobilePhone
-      default:
-        return contactTextSpec.DEFAULT
-    }
+  generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
+    return this.generateRow(label, this._getContactText(contactTextSpec), href, visuallyHiddenText, id)
   }
 }
 
@@ -125,23 +116,51 @@ const getData = async request => {
 export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
 
 export const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
-  // (label, text, href, visuallyHiddenText, id)
+  const rowGenerator = new RowGenerator(request, permission)
+
   const licenseeSummaryArray = [
-    (new AddressRow(request, permission.licensee, countryName)).toSummaryRow(),
-    ...getContactDetails(permission, request)
+    rowGenerator.generateAddressRow(countryName)
   ]
+  if (isPhysical(permission)) {
+    if (permission.licensee.postalFulfilment) {
+      licenseeSummaryArray.push(
+        rowGenerator.generateRow(
+          'Licence',
+          'By post',
+          LICENCE_FULFILMENT.uri,
+          'licence fulfilment option',
+          'change-licence-fulfilment-option'
+        ),
+        rowGenerator.generateContactRow(
+          'Licence Confirmation',
+          LICENCE_CONFIRMATION_METHOD.uri,
+          'licence confirmation option',
+          'change-licence-confirmation-option'
+        )
+      )
+    } else {
+      licenseeSummaryArray.push(
+        rowGenerator.generateContactRow(
+          'Licence',
+          LICENCE_FULFILMENT.uri,
+          'licence confirmation option',
+          'change-licence-confirmation-option'
+        )
+      )
+    }
+
+    licenseeSummaryArray.push(
+      rowGenerator.generateContactRow('Contact', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_PHYSICAL)
+    )
+  } else {
+    licenseeSummaryArray.push(
+      rowGenerator.generateContactRow('Licence details', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_NON_PHYSICAL)
+    )
+  }
 
   if (permission.isLicenceForYou) {
-    licenseeSummaryArray.push(
-      (new Row(
-        request,
-        'Newsletter',
-        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
-        NEWSLETTER.uri,
-        'newsletter',
-        'change-newsletter'
-      )).toSummaryRow()
-    )
+    const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No'
+    licenseeSummaryArray.push(rowGenerator.generateRow('Newsletter', text, NEWSLETTER.uri, 'newsletter', 'change-newsletter'))
   }
 
   return licenseeSummaryArray
@@ -166,108 +185,3 @@ const CONTACT_TEXT_PHYSICAL = {
 }
 
 const CHANGE_CONTACT = 'change-contact'
-
-const getContactDetails = (permission, request) => {
-  if (isPhysical(permission)) {
-    if (permission.licensee.postalFulfilment) {
-      return [
-        (new Row(
-          request,
-          'Licence',
-          'By post',
-          LICENCE_FULFILMENT.uri,
-          'licence fulfilment option',
-          'change-licence-fulfilment-option'
-        )).toSummaryRow(),
-        (new ContactRow(
-          request,
-          'Licence Confirmation',
-          LICENCE_CONFIRMATION_METHOD.uri,
-          'licence confirmation option',
-          'change-licence-confirmation-option',
-          permission
-        )).toSummaryRow(),
-        (new ContactRow(
-          request,
-          'Contact',
-          CONTACT.uri,
-          'contact',
-          CHANGE_CONTACT,
-          permission,
-          CONTACT_TEXT_PHYSICAL
-        )).toSummaryRow()
-      ]
-    } else {
-      return [
-        (new ContactRow(
-          request,
-          'Licence',
-          LICENCE_FULFILMENT.uri,
-          'licence confirmation option',
-          'change-licence-confirmation-option',
-          permission
-        )).toSummaryRow(),
-        (new ContactRow(
-          request,
-          'Contact',
-          CONTACT.uri,
-          'contact',
-          CHANGE_CONTACT,
-          permission,
-          CONTACT_TEXT_PHYSICAL
-        )).toSummaryRow()
-      ]
-    }
-  } else {
-    return [
-      (new ContactRow(
-        request,
-        'Licence details',
-        CONTACT.uri,
-        'contact',
-        CHANGE_CONTACT,
-        permission,
-        CONTACT_TEXT_NON_PHYSICAL
-      )).toSummaryRow()
-    ]
-  }
-}
-
-const getAddressText = (licensee, countryName) =>
-  [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
-    .filter(Boolean)
-    .join(', ')
-
-const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
-  switch (contactMethod) {
-    case HOW_CONTACTED.email:
-      return contactText.EMAIL + licensee.email
-    case HOW_CONTACTED.text:
-      return contactText.TEXT + licensee.mobilePhone
-    default:
-      return contactText.DEFAULT
-  }
-}
-
-const getRow = (label, text, href, visuallyHiddenText, id) => {
-  return {
-    key: {
-      text: label
-    },
-    value: {
-      text
-    },
-    ...(href && {
-      actions: {
-        items: [
-          {
-            href,
-            text: 'Change',
-            visuallyHiddenText: visuallyHiddenText,
-            attributes: { id }
-          }
-        ]
-      }
-    })
-  }
-}
