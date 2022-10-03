@@ -92,15 +92,30 @@ describe('error-handler', () => {
       })
     })
 
-    it.each([[NEW_TRANSACTION.uri], [CONTROLLER.uri], [AGREED.uri]])(
-      'addLanguageCodeToUri is called with the expected arguments',
-      async urlToCheck => {
+    describe.each([[NEW_TRANSACTION.uri], [CONTROLLER.uri], [AGREED.uri]])('addLanguageCodeToUri', urlToCheck => {
+      it('called with expected arguments', async () => {
         const request = getMockRequest()
         const mockToolkit = getMockToolkit()
         await errorHandler(request, mockToolkit)
         expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
-      }
-    )
+      })
+
+      // it.only('uri object returns correct', async () => {
+      //   const decoratedUri = Symbol('uri')
+      //   addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+      //   const request = getMockRequest()
+      //   const mockToolkit = getMockToolkit()
+      //   await errorHandler(request, mockToolkit)
+      //   expect(mockToolkit.view).toHaveBeenCalledWith(
+      //     expect.any(String),
+      //     expect.objectContaining({
+      //       uri: expect.objectContaining({
+      //         decoratedUri
+      //       })
+      //     })
+      //   )
+      // })
+    })
   })
 
   const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({

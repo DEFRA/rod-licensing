@@ -157,4 +157,27 @@ describe('The order completion handler', () => {
     await getData(mockRequest)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
   })
+
+  it('addLanguageCodeToUri outputs correct value', async () => {
+    mockStatusCacheGet.mockImplementationOnce(() => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    }))
+    mockTransactionCacheGet.mockImplementationOnce(() => ({
+      startDate: '2019-12-14T00:00:00Z',
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    }))
+
+    const decoratedUri = Symbol('order complete uri')
+    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+
+    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
+
+    const data = await getData(mockRequest)
+    expect(data.uri.new).toEqual(decoratedUri)
+  })
 })

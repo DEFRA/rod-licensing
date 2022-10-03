@@ -6,37 +6,30 @@ import { COMPLETION_STATUS } from '../../../../constants.js'
 beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/uri-helper.js')
 
-const mockStatusCacheGet = jest.fn()
-
-const mockRequest = {
+const getMockRequest = () => ({
   cache: () => ({
     helpers: {
       status: {
-        get: mockStatusCacheGet
+        get: () => ({
+          [COMPLETION_STATUS.paymentCreated]: true
+        })
       }
     }
   })
-}
+})
 
 describe('getData', () => {
   it('addLanguageCodeToUri is called with the expected arguments', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
-      [COMPLETION_STATUS.paymentCreated]: true
-    }))
-
-    await getData(mockRequest)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
+    const request = getMockRequest()
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
   })
 
   it('getData returns correct URI', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
-      [COMPLETION_STATUS.paymentCreated]: true
-    }))
-
     const expectedUri = Symbol('decorated uri')
     addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
 
-    const result = await getData(mockRequest)
+    const result = await getData(getMockRequest())
     expect(result.uri.new).toEqual(expectedUri)
   })
 })

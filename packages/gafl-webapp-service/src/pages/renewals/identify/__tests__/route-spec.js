@@ -4,27 +4,44 @@ import { NEW_TRANSACTION } from '../../../../uri.js'
 
 jest.mock('../../../../processors/uri-helper.js')
 
-const mockStatusCacheGet = jest.fn()
-const mockStatusCacheSet = jest.fn()
+// const getMockRequest = () => ({
+//   cache: () => ({
+//     helpers: {
+//       status: {
+//         getCurrentPermission: mockStatusCacheGet,
+//         setCurrentPermission: mockStatusCacheSet
+//       }
+//     }
+//   }),
+//   url: {
+//     search: ''
+//   }
+// })
 
-const mockRequest = {
+const getMockRequest = () => ({
   cache: () => ({
     helpers: {
       status: {
-        getCurrentPermission: mockStatusCacheGet,
-        setCurrentPermission: mockStatusCacheSet
+        getCurrentPermission: () => ({
+          referenceNumber: '013AH6'
+        })
       }
     }
-  }),
-  url: {
-    search: ''
-  }
-}
+  })
+})
 
 describe('getData', () => {
   it('addLanguageCodeToUri is called with the expected arguments', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({ referenceNumber: '013AH6' }))
-    await getData(mockRequest)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
+    const request = getMockRequest()
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
+  })
+
+  it('getData returns correct URI', async () => {
+    const expectedUri = Symbol('decorated uri')
+    addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
+
+    const result = await getData(getMockRequest())
+    expect(result.uri.new).toEqual(expectedUri)
   })
 })

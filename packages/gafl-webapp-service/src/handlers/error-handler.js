@@ -12,6 +12,7 @@ export const errorHandler = async (request, h) => {
   if (!request.response.isBoom) {
     return h.continue
   }
+  console.log('hit')
   const transaction = await request.cache().helpers.transaction.get()
   const paymentInProgress = transaction?.payment?.payment_id !== undefined
   const mssgs = request.i18n.getCatalog()

@@ -41,6 +41,3 @@ lerna.json
 
 # Don't format the changelog
 CHANGELOG.md
-
-# Camel case in error-handler
-packages/gafl-webapp-service/src/handlers/error-handler.js

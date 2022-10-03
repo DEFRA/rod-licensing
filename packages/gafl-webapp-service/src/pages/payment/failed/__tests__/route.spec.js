@@ -7,60 +7,43 @@ import { GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/uri-helper.js')
 
-const mockStatusCacheGet = jest.fn()
-
-const mockRequest = {
+const getMockRequest = code => ({
   cache: () => ({
     helpers: {
       status: {
-        get: mockStatusCacheGet
+        get: () => ({
+          [COMPLETION_STATUS.paymentFailed]: true,
+          payment: {
+            code: code
+          }
+        })
       }
     }
   })
-}
+})
 
 describe('getData', () => {
   it('addLanguageCodeToUri is called with the expected arguments', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
-      [COMPLETION_STATUS.paymentFailed]: true,
-      payment: { code: 'code' }
-    }))
-
-    await getData(mockRequest)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
+    const request = getMockRequest()
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
   })
 
   it('returns correct URI', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
-      [COMPLETION_STATUS.paymentFailed]: true,
-      payment: { code: 'code' }
-    }))
-
     const expectedUri = Symbol('decorated uri')
     addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
 
-    const result = await getData(mockRequest)
+    const result = await getData(getMockRequest())
     expect(result.uri.new).toEqual(expectedUri)
   })
 
   it.each(['738483', '123454', '2983923'])('returns correct failure code', async failureCode => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
-      [COMPLETION_STATUS.paymentFailed]: true,
-      payment: { code: failureCode }
-    }))
-
-    const result = await getData(mockRequest)
+    const result = await getData(getMockRequest(failureCode))
     expect(result['failure-code']).toEqual(failureCode)
   })
 
   it('returns GOVUK codes', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
-      [COMPLETION_STATUS.paymentFailed]: true,
-      payment: { code: 'code' }
-    }))
-
-    const result = await getData(mockRequest)
+    const result = await getData(getMockRequest())
     expect(result.codes).toEqual(GOVUK_PAY_ERROR_STATUS_CODES)
   })
-  // codes: GOVUK_PAY_ERROR_STATUS_CODES,
 })
