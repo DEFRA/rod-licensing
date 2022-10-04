@@ -29,21 +29,26 @@ const addressAndContact = {
 const generateRequestMock = query => ({
   i18n: {
     getCatalog: () => ({
-      contact_summary_title: Symbol('contact-summary-title'),
+      contact_summary_email: 'contact-summary-email',
+      contact_summary_hidden_address: Symbol('contact-summary-hidden-address'),
+      contact_summary_hidden_licence_fulfilment: Symbol('contact-summary-hidden-licence-fulfilment'),
+      contact_summary_hidden_licence_confirmation: Symbol('contact-summary-hidden-licence-confirmation'),
+      contact_summary_hidden_contact: Symbol('contact-summary-hidden-contact'),
+      contact_summary_hidden_newsletter: Symbol('contact-summary-hidden-newsletter'),
+      contact_summary_license_default: 'contact-summary-license-default',
+      contact_summary_license_non_physical: 'contact-summary-license-non-physical',
+      contact_summary_license_physical: 'contact-summary-license-physical',
       contact_summary_row_address: Symbol('contact-summary-row-address'),
       contact_summary_row_licence: Symbol('contact-summary-row-licence'),
       contact_summary_row_licence_conf: Symbol('contact-summary-row-licence-conf'),
       contact_summary_row_contact: Symbol('contact-summary-row-contact'),
       contact_summary_row_licence_details: Symbol('contact-summary-row-licence-details'),
       contact_summary_row_newsletter: Symbol('contact-summary-row-newsletter'),
-      contact_summary_email: 'contact-summary-email',
       contact_summary_text_sngl: 'contact-summary-text-sngl',
       contact_summary_text_plrl: 'contact-summary-text-plrl',
-      contact_summary_license_default: 'contact-summary-license-default',
-      contact_summary_license_non_physical: 'contact-summary-license-non-physical',
-      contact_summary_license_physical: 'contact-summary-license-physical',
-      yes: 'aye',
-      no: 'negative, Ghost Rider'
+      contact_summary_title: Symbol('contact-summary-title'),
+      no: 'negative, Ghost Rider',
+      yes: 'aye'
     })
   },
   query,
@@ -219,7 +224,6 @@ describe('contact-summary > route', () => {
         [HOW_CONTACTED.email]: 'Prefer not to be contacted'
       }
       const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock(query))
-      console.log('summaryTable', JSON.stringify(summaryTable, undefined, '\t'))
       expect(summaryTable).toMatchSnapshot()
     })
 
