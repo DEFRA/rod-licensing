@@ -29,22 +29,22 @@ class RowGenerator {
   _getContactText (contactTextSpec) {
     switch (this.permission.licensee.preferredMethodOfReminder) {
       case HOW_CONTACTED.email:
-        return contactTextSpec.EMAIL + this.permission.licensee.email
+        return `${this.labels[contactTextSpec.EMAIL]}${this.permission.licensee.email}`
       case HOW_CONTACTED.text:
-        return contactTextSpec.TEXT + this.permission.licensee.mobilePhone
+        return `${this.labels[contactTextSpec.TEXT]}${this.permission.licensee.mobilePhone}`
       default:
-        return contactTextSpec.DEFAULT
+        return this.labels[contactTextSpec.DEFAULT]
     }
   }
 
-  generateRow (label, text, rawHref, visuallyHiddenText, id) {
+  _generateRow (label, text, rawHref, visuallyHiddenText, id) {
     const href = addLanguageCodeToUri(this.request, rawHref)
     return {
       key: {
-        text: this.labels[label]
+        text: label
       },
       value: {
-        text: text
+        text
       },
       ...(href && {
         actions: {
@@ -52,13 +52,17 @@ class RowGenerator {
             {
               href: href,
               text: 'Change',
-              visuallyHiddenText: visuallyHiddenText,
-              attributes: { id: id }
+              visuallyHiddenText,
+              attributes: { id }
             }
           ]
         }
       })
     }
+  }
+
+  generateRow (label, text, rawHref, visuallyHiddenText, id) {
+    return this._generateRow(this.labels[label], this.labels[text], rawHref, visuallyHiddenText, id)
   }
 
   generateAddressRow (countryName) {
@@ -67,11 +71,11 @@ class RowGenerator {
       .filter(Boolean)
       .join(', ')
 
-    return this.generateRow('contact_summary_row_address', text, ADDRESS_LOOKUP.uri, 'address', 'change-address')
+    return this._generateRow(this.labels.contact_summary_row_address, text, ADDRESS_LOOKUP.uri, 'address', 'change-address')
   }
 
   generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
-    return this.generateRow(label, this._getContactText(contactTextSpec), href, visuallyHiddenText, id)
+    return this._generateRow(this.labels[label], this._getContactText(contactTextSpec), href, visuallyHiddenText, id)
   }
 }
 
@@ -125,7 +129,7 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
       licenseeSummaryArray.push(
         rowGenerator.generateRow(
           'contact_summary_row_licence',
-          'By post',
+          'contact_summary_license_physical',
           LICENCE_FULFILMENT.uri,
           'licence fulfilment option',
           'change-licence-fulfilment-option'
@@ -164,7 +168,7 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
   }
 
   if (permission.isLicenceForYou) {
-    const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No'
+    const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'yes' : 'no'
     licenseeSummaryArray.push(
       rowGenerator.generateRow('contact_summary_row_newsletter', text, NEWSLETTER.uri, 'newsletter', 'change-newsletter')
     )
@@ -174,21 +178,21 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
 }
 
 const CONTACT_TEXT_DEFAULT = {
-  EMAIL: 'Email to ',
-  TEXT: 'Text message to ',
-  DEFAULT: 'Note of licence'
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_sngl',
+  DEFAULT: 'contact_summary_license_default'
 }
 
 const CONTACT_TEXT_NON_PHYSICAL = {
-  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
-  TEXT: 'Text messages to ',
-  DEFAULT: 'Make a note on confirmation'
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_plrl',
+  DEFAULT: 'contact_summary_license_non_physical'
 }
 
 const CONTACT_TEXT_PHYSICAL = {
-  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
-  TEXT: 'Text messages to ',
-  DEFAULT: 'By post'
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_plrl',
+  DEFAULT: 'contact_summary_license_physical'
 }
 
 const CHANGE_CONTACT = 'change-contact'
