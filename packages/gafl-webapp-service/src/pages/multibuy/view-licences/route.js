@@ -4,6 +4,7 @@ import { VIEW_LICENCES } from '../../../uri.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { checkDuplicates } from '../../../handlers/multibuy-duplicate-handler.js'
 
 export const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
@@ -18,7 +19,10 @@ export const getData = async request => {
     index
   }))
 
-  return { licences }
+  const duplicate = await checkDuplicates(licences)
+  console.log('duplicate: ', duplicate)
+
+  return { licences, duplicate }
 }
 
 export const validator = Joi.object({

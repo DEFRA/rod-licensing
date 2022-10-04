@@ -2,6 +2,7 @@
 
 {% from "button/macro.njk" import govukButton %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = mssgs.multibuy_view_licences_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -12,6 +13,13 @@
     <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-l"> {{ mssgs.multibuy_view_licences_title }} </h1>
+
+        {% if data.duplicate === true %}
+          {{ govukWarningText({
+            text: mssgs.multibuy_licences_warning_duplicate,
+            iconFallbackText: "Warning"
+          }) }}
+        {% endif %}
 
           {% for licence in data.licences %}
 
