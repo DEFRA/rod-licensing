@@ -92,29 +92,29 @@ describe('error-handler', () => {
       })
     })
 
-    describe.each([[NEW_TRANSACTION.uri], [CONTROLLER.uri], [AGREED.uri]])('addLanguageCodeToUri', urlToCheck => {
-      it('called with expected arguments', async () => {
-        const request = getMockRequest()
-        const mockToolkit = getMockToolkit()
-        await errorHandler(request, mockToolkit)
-        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
-      })
+    it.each([[NEW_TRANSACTION.uri], [CONTROLLER.uri], [AGREED.uri]])('called with expected arguments', async urlToCheck => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      await errorHandler(request, mockToolkit)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
+    })
 
-      // it.only('uri object returns correct', async () => {
-      //   const decoratedUri = Symbol('uri')
-      //   addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
-      //   const request = getMockRequest()
-      //   const mockToolkit = getMockToolkit()
-      //   await errorHandler(request, mockToolkit)
-      //   expect(mockToolkit.view).toHaveBeenCalledWith(
-      //     expect.any(String),
-      //     expect.objectContaining({
-      //       uri: expect.objectContaining({
-      //         decoratedUri
-      //       })
-      //     })
-      //   )
-      // })
+    it('uri object returns correct', async () => {
+      const decoratedUri = Symbol('uri')
+      addLanguageCodeToUri.mockReturnValue(decoratedUri)
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      await errorHandler(request, mockToolkit)
+      expect(mockToolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          uri: expect.objectContaining({
+            new: decoratedUri,
+            controller: decoratedUri,
+            agreed: decoratedUri
+          })
+        })
+      )
     })
   })
 

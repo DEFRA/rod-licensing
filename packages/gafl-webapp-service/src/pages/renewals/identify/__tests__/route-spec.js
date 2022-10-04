@@ -4,20 +4,6 @@ import { NEW_TRANSACTION } from '../../../../uri.js'
 
 jest.mock('../../../../processors/uri-helper.js')
 
-// const getMockRequest = () => ({
-//   cache: () => ({
-//     helpers: {
-//       status: {
-//         getCurrentPermission: mockStatusCacheGet,
-//         setCurrentPermission: mockStatusCacheSet
-//       }
-//     }
-//   }),
-//   url: {
-//     search: ''
-//   }
-// })
-
 const getMockRequest = () => ({
   cache: () => ({
     helpers: {

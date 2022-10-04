@@ -19,7 +19,9 @@ import { COMPLETION_STATUS } from '../../../../constants.js'
 
 beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/date-and-time-display.js')
-jest.mock('../../../../processors/uri-helper.js')
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
+}))
 
 const mockStatusCacheGet = jest.fn()
 const mockTransactionCacheGet = jest.fn()
