@@ -20,7 +20,6 @@ export const getData = async request => {
   }))
 
   const duplicate = await checkDuplicates(licences)
-  console.log('duplicate: ', duplicate)
 
   return { licences, duplicate }
 }
