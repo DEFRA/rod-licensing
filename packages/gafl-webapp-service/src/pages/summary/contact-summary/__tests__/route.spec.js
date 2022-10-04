@@ -25,6 +25,23 @@ const address = {
 }
 
 const generateRequestMock = query => ({
+  i18n: {
+    getCatalog: () => ({
+      contact_summary_title: Symbol('contact_summary_title'),
+      contact_summary_row_address: Symbol('contact_summary_row_address'),
+      contact_summary_row_licence: Symbol('contact_summary_row_licence'),
+      contact_summary_row_licence_conf: Symbol('contact_summary_row_licence_conf'),
+      contact_summary_row_contact: Symbol('contact_summary_row_contact'),
+      contact_summary_row_licence_details: Symbol('contact_summary_row_licence_details'),
+      contact_summary_row_newsletter: Symbol('contact_summary_row_newsletter'),
+      contact_summary_email: Symbol('contact_summary_email'),
+      contact_summary_text_sngl: Symbol('contact_summary_text_sngl'),
+      contact_summary_text_plrl: Symbol('contact_summary_text_plrl'),
+      contact_summary_license_default: Symbol('contact_summary_license_default'),
+      contact_summary_license_non_physical: Symbol('contact_summary_license_non_physical'),
+      contact_summary_license_physical: Symbol('contact_summary_license_physical')
+    })
+  },
   query,
   url: {
     search: ''
@@ -231,7 +248,7 @@ describe('contact-summary > route', () => {
             }
           }
 
-          const mockRequest = generateRequestMock
+          const mockRequest = generateRequestMock()
 
           getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
 

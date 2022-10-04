@@ -23,6 +23,7 @@ class RowGenerator {
   constructor (request, permission) {
     this.request = request
     this.permission = permission
+    this.labels = request.i18n.getCatalog()
   }
 
   _getContactText (contactTextSpec) {
@@ -40,7 +41,7 @@ class RowGenerator {
     const href = addLanguageCodeToUri(this.request, rawHref)
     return {
       key: {
-        text: label
+        text: this.labels[label]
       },
       value: {
         text: text
@@ -66,7 +67,7 @@ class RowGenerator {
       .filter(Boolean)
       .join(', ')
 
-    return this.generateRow('Address', text, ADDRESS_LOOKUP.uri, 'address', 'change-address')
+    return this.generateRow('contact_summary_row_address', text, ADDRESS_LOOKUP.uri, 'address', 'change-address')
   }
 
   generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
@@ -123,14 +124,14 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
         rowGenerator.generateRow(
-          'Licence',
+          'contact_summary_row_licence',
           'By post',
           LICENCE_FULFILMENT.uri,
           'licence fulfilment option',
           'change-licence-fulfilment-option'
         ),
         rowGenerator.generateContactRow(
-          'Licence Confirmation',
+          'contact_summary_row_licence_conf',
           LICENCE_CONFIRMATION_METHOD.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
@@ -139,7 +140,7 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
     } else {
       licenseeSummaryArray.push(
         rowGenerator.generateContactRow(
-          'Licence',
+          'contact_summary_row_licence',
           LICENCE_FULFILMENT.uri,
           'licence confirmation option',
           'change-licence-confirmation-option'
@@ -147,16 +148,26 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
       )
     }
 
-    licenseeSummaryArray.push(rowGenerator.generateContactRow('Contact', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_PHYSICAL))
+    licenseeSummaryArray.push(
+      rowGenerator.generateContactRow('contact_summary_row_contact', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_PHYSICAL)
+    )
   } else {
     licenseeSummaryArray.push(
-      rowGenerator.generateContactRow('Licence details', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_NON_PHYSICAL)
+      rowGenerator.generateContactRow(
+        'contact_summary_row_licence_details',
+        CONTACT.uri,
+        'contact',
+        CHANGE_CONTACT,
+        CONTACT_TEXT_NON_PHYSICAL
+      )
     )
   }
 
   if (permission.isLicenceForYou) {
     const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No'
-    licenseeSummaryArray.push(rowGenerator.generateRow('Newsletter', text, NEWSLETTER.uri, 'newsletter', 'change-newsletter'))
+    licenseeSummaryArray.push(
+      rowGenerator.generateRow('contact_summary_row_newsletter', text, NEWSLETTER.uri, 'newsletter', 'change-newsletter')
+    )
   }
 
   return licenseeSummaryArray

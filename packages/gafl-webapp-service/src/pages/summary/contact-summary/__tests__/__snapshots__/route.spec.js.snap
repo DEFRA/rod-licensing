@@ -16,7 +16,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -36,7 +36,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact_summary_row_licence_details),
     },
     "value": Object {
       "text": "Make a note on confirmation",
@@ -56,7 +56,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Newsletter",
+      "text": Symbol(contact_summary_row_newsletter),
     },
     "value": Object {
       "text": "Yes",
@@ -81,7 +81,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -101,7 +101,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact_summary_row_licence_details),
     },
     "value": Object {
       "text": "Make a note on confirmation",
@@ -121,7 +121,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Newsletter",
+      "text": Symbol(contact_summary_row_newsletter),
     },
     "value": Object {
       "text": "No",
@@ -146,7 +146,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -166,7 +166,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact_summary_row_licence_details),
     },
     "value": Object {
       "text": "Text messages to undefined",
@@ -191,7 +191,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -211,7 +211,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact_summary_row_licence_details),
     },
     "value": Object {
       "text": "Make a note on confirmation",
@@ -236,7 +236,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -256,7 +256,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact_summary_row_licence_details),
     },
     "value": Object {
       "text": "Email to new3@example.com",
@@ -281,7 +281,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -301,7 +301,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact_summary_row_licence_details),
     },
     "value": Object {
       "text": "Make a note on confirmation",
@@ -326,7 +326,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -346,7 +346,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact_summary_row_licence),
     },
     "value": Object {
       "text": "By post",
@@ -366,7 +366,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence Confirmation",
+      "text": Symbol(contact_summary_row_licence_conf),
     },
     "value": Object {
       "text": "Email to new3@example.com",
@@ -386,7 +386,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact_summary_row_contact),
     },
     "value": Object {
       "text": "Email to new3@example.com",
@@ -411,7 +411,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -431,7 +431,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact_summary_row_licence),
     },
     "value": Object {
       "text": "By post",
@@ -451,7 +451,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence Confirmation",
+      "text": Symbol(contact_summary_row_licence_conf),
     },
     "value": Object {
       "text": "Note of licence",
@@ -471,7 +471,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact_summary_row_contact),
     },
     "value": Object {
       "text": "By post",
@@ -496,7 +496,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -516,7 +516,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact_summary_row_licence),
     },
     "value": Object {
       "text": "By post",
@@ -536,7 +536,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence Confirmation",
+      "text": Symbol(contact_summary_row_licence_conf),
     },
     "value": Object {
       "text": "Note of licence",
@@ -556,7 +556,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact_summary_row_contact),
     },
     "value": Object {
       "text": "By post",
@@ -581,7 +581,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -601,7 +601,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact_summary_row_licence),
     },
     "value": Object {
       "text": "Email to new3@example.com",
@@ -621,7 +621,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact_summary_row_contact),
     },
     "value": Object {
       "text": "Email to new3@example.com",
@@ -646,7 +646,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact_summary_row_address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -666,7 +666,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact_summary_row_licence),
     },
     "value": Object {
       "text": "Note of licence",
@@ -686,7 +686,7 @@ Array [
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact_summary_row_contact),
     },
     "value": Object {
       "text": "By post",
