@@ -118,9 +118,7 @@ export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPa
 export const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const rowGenerator = new RowGenerator(request, permission)
 
-  const licenseeSummaryArray = [
-    rowGenerator.generateAddressRow(countryName)
-  ]
+  const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
@@ -149,9 +147,7 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
       )
     }
 
-    licenseeSummaryArray.push(
-      rowGenerator.generateContactRow('Contact', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_PHYSICAL)
-    )
+    licenseeSummaryArray.push(rowGenerator.generateContactRow('Contact', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_PHYSICAL))
   } else {
     licenseeSummaryArray.push(
       rowGenerator.generateContactRow('Licence details', CONTACT.uri, 'contact', CHANGE_CONTACT, CONTACT_TEXT_NON_PHYSICAL)
