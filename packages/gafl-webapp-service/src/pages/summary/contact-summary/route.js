@@ -19,6 +19,26 @@ import {
   LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
+const CONTACT_TEXT_DEFAULT = {
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_sngl',
+  DEFAULT: 'contact_summary_license_default'
+}
+
+const CONTACT_TEXT_NON_PHYSICAL = {
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_plrl',
+  DEFAULT: 'contact_summary_license_non_physical'
+}
+
+const CONTACT_TEXT_PHYSICAL = {
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_plrl',
+  DEFAULT: 'contact_summary_license_physical'
+}
+
+const CHANGE_CONTACT = 'change-contact'
+
 class RowGenerator {
   constructor (request, permission) {
     this.request = request
@@ -85,7 +105,7 @@ class RowGenerator {
   }
 }
 
-export const checkNavigation = (status, permission) => {
+const checkNavigation = (status, permission) => {
   if (!permission.isRenewal) {
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
@@ -106,27 +126,7 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-const getData = async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
-  checkNavigation(status, permission)
-
-  status.fromSummary = CONTACT_SUMMARY_SEEN
-  await request.cache().helpers.status.setCurrentPermission(status)
-  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
-
-  return {
-    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
-    uri: {
-      licenceSummary: LICENCE_SUMMARY.uri
-    }
-  }
-}
-
-export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
-
-export const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
+const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const rowGenerator = new RowGenerator(request, permission)
 
   const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
@@ -195,22 +195,22 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
   return licenseeSummaryArray
 }
 
-const CONTACT_TEXT_DEFAULT = {
-  EMAIL: 'contact_summary_email',
-  TEXT: 'contact_summary_text_sngl',
-  DEFAULT: 'contact_summary_license_default'
+const getData = async request => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+
+  checkNavigation(status, permission)
+
+  status.fromSummary = CONTACT_SUMMARY_SEEN
+  await request.cache().helpers.status.setCurrentPermission(status)
+  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
+
+  return {
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
+    uri: {
+      licenceSummary: LICENCE_SUMMARY.uri
+    }
+  }
 }
 
-const CONTACT_TEXT_NON_PHYSICAL = {
-  EMAIL: 'contact_summary_email',
-  TEXT: 'contact_summary_text_plrl',
-  DEFAULT: 'contact_summary_license_non_physical'
-}
-
-const CONTACT_TEXT_PHYSICAL = {
-  EMAIL: 'contact_summary_email',
-  TEXT: 'contact_summary_text_plrl',
-  DEFAULT: 'contact_summary_license_physical'
-}
-
-const CHANGE_CONTACT = 'change-contact'
+export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)

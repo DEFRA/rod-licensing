@@ -1,8 +1,16 @@
-import { getLicenseeDetailsSummaryRows, checkNavigation } from '../route'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
-import { ADDRESS_LOOKUP, CONTACT, LICENCE_FULFILMENT, LICENCE_CONFIRMATION_METHOD, NEWSLETTER } from '../../../../uri.js'
+import {
+  ADDRESS_ENTRY,
+  ADDRESS_LOOKUP,
+  ADDRESS_SELECT,
+  CONTACT,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
+  NEWSLETTER
+} from '../../../../uri.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import pageRoute from '../../../../routes/page-route.js'
 
 jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn(() => Symbol('addLanguageCodeToUri'))
@@ -15,6 +23,17 @@ jest.mock('../../../../processors/mapping-constants', () => ({
   }
 }))
 
+jest.mock('../../../../processors/refdata-helper.js', () => ({
+  countries: {
+    nameFromCode: async () => 'GB'
+  }
+}))
+
+const mockRoute = Symbol('mock-route')
+const route = require('../route.js').default
+jest.mock('../../../../routes/page-route.js', () => jest.fn(() => mockRoute))
+const getData = pageRoute.mock.calls[1][4]
+
 const addressAndContact = {
   firstName: 'Fester',
   lastName: 'Tester',
@@ -26,7 +45,25 @@ const addressAndContact = {
   mobilePhone: '01234567890'
 }
 
-const generateRequestMock = query => ({
+const generateRequestMock = (permission, query, status = {}) => ({
+  cache: () => ({
+    helpers: {
+      status: {
+        getCurrentPermission: async () => ({
+          [ADDRESS_ENTRY.page]: true,
+          [ADDRESS_SELECT.page]: true,
+          [CONTACT.page]: true,
+          [LICENCE_FULFILMENT.page]: true,
+          [LICENCE_CONFIRMATION_METHOD.page]: true,
+          ...status
+        }),
+        setCurrentPermission: () => {}
+      },
+      transaction: {
+        getCurrentPermission: async () => permission
+      }
+    }
+  }),
   i18n: {
     getCatalog: () => ({
       contact_summary_change: 'contact-summary-change',
@@ -59,9 +96,13 @@ const generateRequestMock = query => ({
 })
 
 describe('contact-summary > route', () => {
+  it('should return result of pageRoute call', () => {
+    expect(route).toEqual(mockRoute)
+  })
+
   describe('getLicenseeDetailsSummaryRows', () => {
     describe('when purchasing a 12 month (physical licence) with postal fulfilment', () => {
-      it('should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no', () => {
+      it('should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no', async () => {
         const permission = {
           licenceLength: '12M',
           licensee: {
@@ -73,11 +114,14 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
 
-      it('should display the Licence as post, Licence Confirmation and Contact as the phone number and Newsletter as yes', () => {
+      it('should display the Licence as post, Licence Confirmation and Contact as the phone number and Newsletter as yes', async () => {
         const permission = {
           licenceLength: '12M',
           licensee: {
@@ -89,11 +133,14 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
 
-      it('should display the Licence as post, Licence Confirmation as note of licence and Contact as post', () => {
+      it('should display the Licence as post, Licence Confirmation as note of licence and Contact as post', async () => {
         const permission = {
           licenceLength: '12M',
           licensee: {
@@ -103,13 +150,16 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder: 'Letter'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
     })
 
     describe('when purchasing a 12 month (physical licence) without postal fulfilment', () => {
-      it('should display the Licence and Contact as the email and Newsletter as no', () => {
+      it('should display the Licence and Contact as the email and Newsletter as no', async () => {
         const permission = {
           licenceLength: '12M',
           licensee: {
@@ -121,11 +171,14 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
 
-      it('should display the Licence and Contact as the phone number and Newsletter as yes', () => {
+      it('should display the Licence and Contact as the phone number and Newsletter as yes', async () => {
         const permission = {
           licenceLength: '12M',
           licensee: {
@@ -137,13 +190,16 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Text'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
     })
 
     describe('when purchasing a 1 day (non physical licence)', () => {
-      it('should display the Contact as the email and Newsletter as no', () => {
+      it('should display the Contact as the email and Newsletter as no', async () => {
         const permission = {
           licenceLength: '1D',
           licensee: {
@@ -154,11 +210,14 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Prefer not to be contacted'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
 
-      it('should display the Contact as the phone number and Newsletter as yes', () => {
+      it('should display the Contact as the phone number and Newsletter as yes', async () => {
         const permission = {
           licenceLength: '1D',
           licensee: {
@@ -170,11 +229,14 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
 
-      it('should display the Contact as Make a note on confirmation', () => {
+      it('should display the Contact as Make a note on confirmation', async () => {
         const permission = {
           licenceLength: '1D',
           licensee: {
@@ -185,12 +247,15 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter: 'Yes'
           }
         }
-        const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
         expect(summaryTable).toMatchSnapshot()
       })
     })
 
-    it('should have the newsletter is set have preferred method and if isLicenceForYou is true', () => {
+    it('should have the newsletter is set have preferred method and if isLicenceForYou is true', async () => {
       const permission = {
         licenceLength: '1D',
         licensee: {
@@ -205,11 +270,14 @@ describe('contact-summary > route', () => {
       const query = {
         [HOW_CONTACTED.email]: 'Email'
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock(query))
+      const sampleRequest = generateRequestMock(permission, query)
+
+      const { summaryTable } = await getData(sampleRequest)
+
       expect(summaryTable).toMatchSnapshot()
     })
 
-    it('should have the newsletter set to no if have preferred method and if isLicenceForYou is true', () => {
+    it('should have the newsletter set to no if have preferred method and if isLicenceForYou is true', async () => {
       const permission = {
         licenceLength: '1D',
         licensee: {
@@ -224,11 +292,14 @@ describe('contact-summary > route', () => {
       const query = {
         [HOW_CONTACTED.email]: 'Prefer not to be contacted'
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock(query))
+      const sampleRequest = generateRequestMock(permission, query)
+
+      const { summaryTable } = await getData(sampleRequest)
+
       expect(summaryTable).toMatchSnapshot()
     })
 
-    it('should not have the newsletter row if isLicenceForYou is false', () => {
+    it('should not have the newsletter row if isLicenceForYou is false', async () => {
       const permission = {
         licenceLength: '1D',
         licensee: {
@@ -236,7 +307,10 @@ describe('contact-summary > route', () => {
         },
         isLicenceForYou: false
       }
-      const summaryTable = getLicenseeDetailsSummaryRows(permission, 'GB', generateRequestMock())
+      const sampleRequest = generateRequestMock(permission)
+
+      const { summaryTable } = await getData(sampleRequest)
+
       expect(summaryTable).toMatchSnapshot()
     })
 
@@ -258,31 +332,35 @@ describe('contact-summary > route', () => {
             }
           }
 
-          const mockRequest = generateRequestMock()
+          const sampleRequest = generateRequestMock(permission)
 
-          getLicenseeDetailsSummaryRows(permission, 'GB', mockRequest)
+          await getData(sampleRequest)
 
-          expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, urlToCheck)
+          expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, urlToCheck)
         }
       )
     })
   })
 
   describe('checkNavigation', () => {
-    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', () => {
+    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
       const status = {
         [LICENCE_FULFILMENT.page]: false
       }
-      const permission = { licenceLength: '12M', isRenewal: true }
-      expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
+      const permission = { licenceLength: '12M', isRenewal: true, licensee: {} }
+      const mockRequest = generateRequestMock(permission, '', status)
+
+      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
     })
 
-    it('should throw a GetDataRedirect if licence-confirmation page is false on the status', () => {
+    it('should throw a GetDataRedirect if licence-confirmation page is false on the status', async () => {
       const status = {
         [LICENCE_CONFIRMATION_METHOD.page]: false
       }
-      const permission = { licenceLength: '12M', isRenewal: true }
-      expect(() => checkNavigation(status, permission)).toThrow(GetDataRedirect)
+      const permission = { licenceLength: '12M', isRenewal: true, licensee: {} }
+      const mockRequest = generateRequestMock(permission, '', status)
+
+      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
     })
   })
 })
