@@ -5,10 +5,12 @@ import { nextPage } from '../../../../routes/next-page.js'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
+import { checkDuplicates } from '../../../../handlers/multibuy-duplicate-handler.js'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
+jest.mock('../../../../handlers/multibuy-duplicate-handler.js')
 
 const permission = {
   licensee: {
@@ -50,6 +52,7 @@ describe('view licences > getData', () => {
     licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
     licenceTypeAndLengthDisplay.mockReturnValue('8 days')
     displayStartTime.mockReturnValue('9:32am on 23 June 2021')
+    checkDuplicates.mockReturnValue(false)
 
     data = await getData(sampleRequest)
   })
@@ -79,6 +82,10 @@ describe('view licences > getData', () => {
 
     it('index', async () => {
       expect(data.licences[0].index).toBe(0)
+    })
+
+    it('duplicate', async () => {
+      expect(data.duplicate).toBe(false)
     })
   })
 
