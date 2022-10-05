@@ -29,6 +29,7 @@ const addressAndContact = {
 const generateRequestMock = query => ({
   i18n: {
     getCatalog: () => ({
+      contact_summary_change: 'contact-summary-change',
       contact_summary_email: 'contact-summary-email',
       contact_summary_hidden_address: Symbol('contact-summary-hidden-address'),
       contact_summary_hidden_licence_fulfilment: Symbol('contact-summary-hidden-licence-fulfilment'),

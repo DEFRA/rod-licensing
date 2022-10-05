@@ -51,7 +51,7 @@ class RowGenerator {
           items: [
             {
               href: href,
-              text: 'Change',
+              text: this.labels.contact_summary_change,
               visuallyHiddenText,
               attributes: { id }
             }
