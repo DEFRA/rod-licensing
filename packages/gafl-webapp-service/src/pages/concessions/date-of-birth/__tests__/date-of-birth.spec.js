@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
-import { DATE_OF_BIRTH, DISABILITY_CONCESSION, NO_LICENCE_REQUIRED } from '../../../../uri.js'
+import { DATE_OF_BIRTH, DISABILITY_CONCESSION, LICENCE_FOR, NO_LICENCE_REQUIRED } from '../../../../uri.js'
 import {
   ADULT_TODAY,
   SENIOR_TODAY,
@@ -14,7 +14,13 @@ beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 describe('The date of birth page', () => {
+  it('redirects back to LICENCE_FOR if not been on already', async () => {
+    const response = await injectWithCookies('GET', DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(LICENCE_FOR.uri)
+  })
+
   it('return success on requesting the page', async () => {
+    await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
     const response = await injectWithCookies('GET', DATE_OF_BIRTH.uri)
     expect(response.statusCode).toBe(200)
   })
