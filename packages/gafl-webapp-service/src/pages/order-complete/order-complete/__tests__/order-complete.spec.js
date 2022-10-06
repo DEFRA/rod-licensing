@@ -23,14 +23,11 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
 }))
 
-const mockStatusCacheGet = jest.fn()
-const mockTransactionCacheGet = jest.fn()
-
-const mockRequest = {
+const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
   cache: () => ({
     helpers: {
       status: {
-        get: mockStatusCacheGet,
+        get: statusGet,
         setCurrentPermission: async () => ({
           referenceNumber: 'abc-123'
         }),
@@ -39,7 +36,7 @@ const mockRequest = {
         })
       },
       transaction: {
-        getCurrentPermission: mockTransactionCacheGet
+        getCurrentPermission: transactionGet
       }
     }
   }),
@@ -49,7 +46,7 @@ const mockRequest = {
   i18n: {
     getCatalog: () => 'messages'
   }
-}
+})
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
@@ -141,45 +138,48 @@ describe('The order completion handler', () => {
   })
 
   it('addLanguageCodeToUri is called with the expected arguments', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
+    const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
       [COMPLETION_STATUS.finalised]: true
-    }))
-    mockTransactionCacheGet.mockImplementationOnce(() => ({
+    })
+    const transaction = () => ({
       startDate: '2019-12-14T00:00:00Z',
       licensee: {
         postalFulfilment: 'test',
         preferredMethodOfConfirmation: 'test'
       }
-    }))
+    })
+
+    const request = mockRequest(status, transaction)
 
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
 
-    await getData(mockRequest)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
   })
 
   it('addLanguageCodeToUri outputs correct value', async () => {
-    mockStatusCacheGet.mockImplementationOnce(() => ({
+    const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
       [COMPLETION_STATUS.finalised]: true
-    }))
-    mockTransactionCacheGet.mockImplementationOnce(() => ({
+    })
+    const transaction = () => ({
       startDate: '2019-12-14T00:00:00Z',
       licensee: {
         postalFulfilment: 'test',
         preferredMethodOfConfirmation: 'test'
       }
-    }))
+    })
 
     const decoratedUri = Symbol('order complete uri')
     addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
 
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
+    const request = mockRequest(status, transaction)
 
-    const data = await getData(mockRequest)
+    const data = await getData(request)
     expect(data.uri.new).toEqual(decoratedUri)
   })
 })
