@@ -1,5 +1,7 @@
 {% extends "standard-form.njk" %}
 
+<meta name="robots" content="noindex">
+
 {% from "date-input/macro.njk" import govukDateInput %}
 {% set title = mssgs.dob_title_you if data.isLicenceForYou else mssgs.dob_title_other %}
 

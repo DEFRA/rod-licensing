@@ -1,4 +1,7 @@
 {% extends "standard-form.njk" %}
+
+<meta name="robots" content="noindex">
+
 {% from "radios/macro.njk" import govukRadios %}
 
 {% set title = mssgs.licence_fufilment_title_you if data.isLicenceForYou else mssgs.licence_fufilment_title_other %}

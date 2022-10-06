@@ -1,4 +1,7 @@
 {% extends "standard-form.njk" %}
+
+<meta name="robots" content="noindex">
+
 {% from "input/macro.njk" import govukInput %}
 
 {% set title = mssgs.name_title_you if data.isLicenceForYou else mssgs.name_title_other %}
