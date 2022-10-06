@@ -5,6 +5,7 @@ const createCache = (cache = {}) => ({
       set: cache.status?.set || (() => {})
     },
     transaction: {
+      getCurrentPermission: () => cache.permissions || {},
       get: () => cache.transaction || { permissions: [] }
     }
   }
