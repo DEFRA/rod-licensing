@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.4 (2022-10-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1437](https://github.com/DEFRA/rod-licensing/pull/1437) Add route to view error page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 
 ## v1.27.0-rc.1 (2022-09-27)
