@@ -4,6 +4,7 @@ import moment from 'moment-timezone'
 import { dateDisplayFormat, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { RENEWAL_ERROR_REASON } from '../../../constants.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 export const getTitleAndBodyMessage = (mssgs, reason, referenceNumber, validTo) => {
   switch (reason) {
@@ -36,12 +37,13 @@ export const getData = async request => {
   const validTo = moment(authentication.endDate, cacheDateFormat, request.locale).format(dateDisplayFormat)
   const reason = authentication.reason
   const titleAndBodyMessage = getTitleAndBodyMessage(mssgs, reason, referenceNumber, validTo)
+
   return {
     ...titleAndBodyMessage,
     reason: authentication.reason,
     reasonCodes: RENEWAL_ERROR_REASON,
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
