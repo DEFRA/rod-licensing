@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.5 (2022-10-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1393](https://github.com/DEFRA/rod-licensing/pull/1393) Persist language misc route handler ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.27.0-rc.4 (2022-10-06)
 
 #### :rocket: Enhancement
