@@ -98,6 +98,26 @@ describe('view licences > getData', () => {
       }
     }
 
+    it('returns permissions, licences and text for start after minutes text', async () => {
+      const res = await getData(sampleRequest)
+      expect(res).toEqual(
+        expect.objectContaining({
+          licences: [
+            {
+              index: 0,
+              length: '8 days',
+              licenceHolder: 'Turanga Leela',
+              price: 12,
+              start: '9:32am on 23 June 2021',
+              type: 'Trout and coarse, up to 2 rods'
+            }
+          ],
+          permission: {},
+          startAfterPaymentMinutes: 30
+        })
+      )
+    })
+
     it('licenceTypeDisplay is called with the expected arguments', async () => {
       await getData(sampleRequest)
 
