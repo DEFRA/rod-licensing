@@ -70,9 +70,9 @@ class RowGenerator {
         actions: {
           items: [
             {
-              href: href,
-              text: this.labels.contact_summary_change,
+              href,
               visuallyHiddenText,
+              text: this.labels.contact_summary_change,
               attributes: { id }
             }
           ]
