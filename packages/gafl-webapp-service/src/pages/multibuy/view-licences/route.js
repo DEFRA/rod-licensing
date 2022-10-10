@@ -4,7 +4,7 @@ import { VIEW_LICENCES } from '../../../uri.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { checkDuplicates } from '../../../handlers/multibuy-duplicate-handler.js'
+import { hasDuplicates } from '../../../handlers/multibuy-duplicate-handler.js'
 
 export const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
@@ -19,7 +19,7 @@ export const getData = async request => {
     index
   }))
 
-  const duplicate = await checkDuplicates(licences)
+  const duplicate = await hasDuplicates(licences)
 
   return { licences, duplicate }
 }

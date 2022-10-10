@@ -5,7 +5,7 @@ import { nextPage } from '../../../../routes/next-page.js'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
-import { checkDuplicates } from '../../../../handlers/multibuy-duplicate-handler.js'
+import { hasDuplicates } from '../../../../handlers/multibuy-duplicate-handler.js'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -52,7 +52,6 @@ describe('view licences > getData', () => {
     licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
     licenceTypeAndLengthDisplay.mockReturnValue('8 days')
     displayStartTime.mockReturnValue('9:32am on 23 June 2021')
-    checkDuplicates.mockReturnValue(false)
 
     data = await getData(sampleRequest)
   })
@@ -83,10 +82,6 @@ describe('view licences > getData', () => {
     it('index', async () => {
       expect(data.licences[0].index).toBe(0)
     })
-
-    it('duplicate', async () => {
-      expect(data.duplicate).toBe(false)
-    })
   })
 
   describe('getData', () => {
@@ -104,6 +99,18 @@ describe('view licences > getData', () => {
         getCatalog: () => catalog
       }
     }
+
+    it('duplicates', async () => {
+      hasDuplicates.mockReturnValueOnce(false)
+      const data = await getData(sampleRequest)
+      expect(data.duplicate).toBe(false)
+    })
+
+    it('no duplicate', async () => {
+      hasDuplicates.mockReturnValueOnce(true)
+      const data = await getData(sampleRequest)
+      expect(data.duplicate).toBe(true)
+    })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
       await getData(sampleRequest)
