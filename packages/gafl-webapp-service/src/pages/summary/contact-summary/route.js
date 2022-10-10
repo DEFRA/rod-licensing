@@ -81,7 +81,7 @@ class RowGenerator {
     }
   }
 
-  generateRow (label, text, rawHref, visuallyHiddenText, id) {
+  generateStandardRow (label, text, rawHref, visuallyHiddenText, id) {
     return this._generateRow(this.labels[label], this.labels[text], rawHref, this.labels[visuallyHiddenText], id)
   }
 
@@ -133,7 +133,7 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
-        rowGenerator.generateRow(
+        rowGenerator.generateStandardRow(
           'contact_summary_row_licence',
           'contact_summary_license_physical',
           LICENCE_FULFILMENT.uri,
@@ -182,7 +182,7 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   if (permission.isLicenceForYou) {
     const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'yes' : 'no'
     licenseeSummaryArray.push(
-      rowGenerator.generateRow(
+      rowGenerator.generateStandardRow(
         'contact_summary_row_newsletter',
         text,
         NEWSLETTER.uri,
