@@ -6,8 +6,9 @@ import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_DETAILS } from '../../../uri.j
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.get()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
@@ -28,8 +29,8 @@ const getData = async request => {
 
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
-
   const startTimeStringTitle = displayStartTime(request, permission)
+
   return {
     permission,
     startTimeStringTitle,
@@ -38,7 +39,7 @@ const getData = async request => {
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     howContacted: mappings.HOW_CONTACTED,
     uri: {
-      new: NEW_TRANSACTION.uri,
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: LICENCE_DETAILS.uri
     }

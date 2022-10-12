@@ -2,13 +2,15 @@ import { displayStartTime, displayEndTime, displayExpiryDate, advancePurchaseDat
 import moment from 'moment-timezone'
 
 jest.mock('moment-timezone', () => ({
-  tz: jest.fn(() => ({
+  tz: () => ({
     isSame: () => {},
     add: () => ({
-      format: () => ''
+      format: () => '2020-01-06T00:00:00.000',
+      locale: () => ({ format: () => ({ replace: () => {} }) })
     })
-  })),
+  }),
   format: () => {},
+  locale: jest.fn(),
   utc: jest.fn(() => ({ tz: () => {} }))
 }))
 
@@ -25,12 +27,9 @@ const getSampleRequest = () => ({
 
 describe('displayStartTime', () => {
   it('permission licence start date is passed to moment when start date is found', () => {
-    moment.utc.mockReturnValue({
-      tz: () => ({
-        format: () => ''
-      })
-    })
-    const startDate = Symbol('startDate')
+    const startDate = '2021-01-01'
+    const realMoment = jest.requireActual('moment-timezone')
+    moment.utc.mockReturnValueOnce(realMoment(startDate))
     displayStartTime(getSampleRequest(), { startDate })
     expect(moment.utc).toHaveBeenCalledWith(startDate, null, expect.any(String))
   })
@@ -46,7 +45,31 @@ describe('displayStartTime', () => {
     const realMoment = jest.requireActual('moment-timezone')
     moment.utc.mockReturnValue(realMoment(startDate))
     const startTime = displayStartTime(getSampleRequest(), { startDate })
-    return expect(startTime).toEqual(expectedResult)
+    expect(startTime).toEqual(expectedResult)
+  })
+
+  it('should return locale-specific date string', () => {
+    const expectedLocale = Symbol('expected locale')
+    const locale = jest.fn(() => ({ format: () => 'locale-aware birth date' }))
+    const startDate = '2021-01-01T00:00:00.000Z'
+    const mockRequest = {
+      i18n: {
+        getCatalog: () => ({
+          licence_start_time_am_text_0: '0.00am (first minute of the day)',
+          licence_start_time_am_text_12: '12:00pm (midday)',
+          renewal_start_date_expires_5: 'on'
+        })
+      },
+      locale: expectedLocale
+    }
+    moment.utc.mockImplementation(() => ({
+      tz: () => ({
+        locale,
+        format: () => {}
+      })
+    }))
+    displayStartTime(mockRequest, { startDate })
+    expect(locale).toHaveBeenCalledWith(expectedLocale)
   })
 })
 
@@ -89,8 +112,6 @@ describe('displayExpiryDate', () => {
 describe('advancePurchaseDateMoment', () => {
   it('returns the licence date with a start time of 0 hours', () => {
     const licenceStartDate = '2020-01-06'
-    const realMoment = jest.requireActual('moment-timezone')
-    moment.tz.mockReturnValueOnce(realMoment(licenceStartDate))
     const returnDate = advancePurchaseDateMoment(licenceStartDate)
     expect(returnDate.format('YYYY-MM-DDTHH:mm:ss.SSS')).toStrictEqual('2020-01-06T00:00:00.000')
   })
