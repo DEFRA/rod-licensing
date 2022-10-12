@@ -1,7 +1,5 @@
 {% extends "standard-form.njk" %}
 
-<meta name="robots" content="noindex">
-
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 {% set title = mssgs.disability_concession_title_you if data.isLicenceForYou else mssgs.disability_concession_title_other %}

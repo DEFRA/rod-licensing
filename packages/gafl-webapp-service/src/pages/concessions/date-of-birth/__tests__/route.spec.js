@@ -1,4 +1,4 @@
-import { getData, validator, checkBeenLicenceFor } from '../route'
+import { getData, validator } from '../route'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { LICENCE_FOR } from '../../../../uri.js'
@@ -34,14 +34,39 @@ describe('name > route', () => {
       const result = await getData(mockRequest(status, transaction))
       expect(result.isLicenceForYou).toBeTruthy()
     })
+
+    it('should return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
+      const transaction = () => ({
+        isLicenceForYou: false
+      })
+      const status = () => ({
+        [LICENCE_FOR.page]: true
+      })
+      const result = await getData(mockRequest(status, transaction))
+      expect(result.isLicenceForYou).toBeFalsy()
+    })
   })
 
-  describe('checkBeenLicenceFor', () => {
+  describe('redirectToStartOfJourney', () => {
     it('should throw a redirect if not been to LICENCE_FOR page', async () => {
+      const transaction = () => ({
+        isLicenceForYou: true
+      })
       const status = () => ({
         [LICENCE_FOR.page]: false
       })
-      expect(() => checkBeenLicenceFor(status)).toThrow(GetDataRedirect)
+      const func = async () => await getData(mockRequest(status, transaction))
+      await expect(func).rejects.toThrow(new GetDataRedirect(LICENCE_FOR.uri))
+    })
+
+    it('should not throw a redirect if not been to LICENCE_FOR page', async () => {
+      const transaction = () => ({
+        isLicenceForYou: true
+      })
+      const status = () => ({
+        [LICENCE_FOR.page]: true
+      })
+      expect(() => getData(mockRequest(status, transaction))).not.toThrow(GetDataRedirect)
     })
   })
 

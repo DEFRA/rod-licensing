@@ -15,8 +15,10 @@ export const validator = payload => {
   )
 }
 
-export const checkBeenLicenceFor = status => {
+const redirectToStartOfJourney = status => {
+  console.log(status[LICENCE_FOR.page])
   if (!status[LICENCE_FOR.page]) {
+    console.log('ghgj')
     throw new GetDataRedirect(LICENCE_FOR.uri)
   }
 }
@@ -25,7 +27,8 @@ export const getData = async request => {
   const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
   const status = await request.cache().helpers.status.getCurrentPermission()
 
-  checkBeenLicenceFor(status)
+  console.log(status)
+  redirectToStartOfJourney(status)
 
   return { isLicenceForYou }
 }
