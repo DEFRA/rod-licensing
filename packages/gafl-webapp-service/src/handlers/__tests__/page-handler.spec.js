@@ -284,6 +284,7 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/her
       },
       analytics: {
         get: () =>
+          // prettier-ignore
           includeAnalytics
             ? {
                 [ANALYTICS.selected]: 'selected',
