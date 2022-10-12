@@ -88,76 +88,48 @@ describe('licence-summary > route', () => {
       expect(name).toEqual(expectedUri)
     })
 
-    const mockStatusCacheGet = jest.fn(() => ({}))
-    const mockStatusCacheSet = jest.fn()
-    const mockTransactionCacheGet = jest.fn()
-    const mockTransactionCacheSet = jest.fn()
-
-    const mockRequest = {
-      cache: () => ({
-        helpers: {
-          status: {
-            getCurrentPermission: mockStatusCacheGet,
-            setCurrentPermission: mockStatusCacheSet
-          },
-          transaction: {
-            getCurrentPermission: mockTransactionCacheGet,
-            setCurrentPermission: mockTransactionCacheSet
-          }
-        }
-      }),
-      i18n: {
-        getCatalog: () => ({
-          licence_type_radio_salmon: 'Salmon and sea trout'
-        })
-      },
-      url: {
-        search: ''
-      },
-      path: '',
-      locale: 'en'
-    }
-
     it('should return a summary table with required data for page', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({
-        birthDateStr: '1st January 1946',
-        concessionProofs: {
-          NI: 'National Insurance Number',
-          blueBadge: 'Blue Badge',
-          none: 'No Proof'
-        },
-        cost: 6,
-        disabled: true,
-        hasExpired: false,
-        hasJunior: false,
-        isContinuing: false,
-        isRenewal: true,
-        licenceLength: '12M',
-        licenceStartDate: '2021-07-01',
-        licenceType: 'Salmon and sea trout',
-        licenceTypeStr: 'Salmon and sea trout',
-        licensee: {
-          birthDate: '1946-01-01',
-          firstName: 'Graham',
-          lastName: 'Willis'
-        },
-        numberOfRods: '3',
-        permit: {
-          cost: 6
-        },
-        startAfterPaymentMinute: 30,
-        startTimeString: '0.00am (first minute of the day) on 1 July 2021',
-        uri: {
-          clear: '/buy/new',
-          dateOfBirth: '/buy/date-of-birth',
-          disabilityConcession: '/buy/disability-concession',
-          licenceLength: '/buy/licence-length',
-          licenceStartDate: '/buy/start-kind',
-          licenceToStart: '/buy/start-kind',
-          licenceType: '/buy/licence-type',
-          name: '/buy/name'
-        }
-      }))
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => ({
+          birthDateStr: '1st January 1946',
+          concessionProofs: {
+            NI: 'National Insurance Number',
+            blueBadge: 'Blue Badge',
+            none: 'No Proof'
+          },
+          cost: 6,
+          disabled: true,
+          hasExpired: false,
+          hasJunior: false,
+          isContinuing: false,
+          isRenewal: true,
+          licenceLength: '12M',
+          licenceStartDate: '2021-07-01',
+          licenceType: 'Salmon and sea trout',
+          licenceTypeStr: 'Salmon and sea trout',
+          licensee: {
+            birthDate: '1946-01-01',
+            firstName: 'Graham',
+            lastName: 'Willis'
+          },
+          numberOfRods: '3',
+          permit: {
+            cost: 6
+          },
+          startAfterPaymentMinute: 30,
+          startTimeString: '0.00am (first minute of the day) on 1 July 2021',
+          uri: {
+            clear: '/buy/new',
+            dateOfBirth: '/buy/date-of-birth',
+            disabilityConcession: '/buy/disability-concession',
+            licenceLength: '/buy/licence-length',
+            licenceStartDate: '/buy/start-kind',
+            licenceToStart: '/buy/start-kind',
+            licenceType: '/buy/licence-type',
+            name: '/buy/name'
+          }
+        })
+      })
       const result = await getData(mockRequest)
       expect(result).toMatchSnapshot()
     })
@@ -296,20 +268,22 @@ describe('licence-summary > route', () => {
     })
 
     it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licenceStartDate: '2021-07-01',
-        numberOfRods: '3',
-        licenceType: 'Salmon and sea trout',
-        licenceLength: '12M',
-        licensee: {
-          firstName: 'Graham',
-          lastName: 'Willis',
-          birthDate: '1946-01-01'
-        },
-        permit: {
-          cost: 6
-        }
-      }))
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => ({
+          licenceStartDate: '2021-07-01',
+          numberOfRods: '3',
+          licenceType: 'Salmon and sea trout',
+          licenceLength: '12M',
+          licensee: {
+            firstName: 'Graham',
+            lastName: 'Willis',
+            birthDate: '1946-01-01'
+          },
+          permit: {
+            cost: 6
+          }
+        })
+      })
       const mockTypeDisplayValue = Symbol('type display return value')
       const mockStartTimeValue = Symbol('start time return value')
       licenceTypeDisplay.mockReturnValueOnce(mockTypeDisplayValue)
@@ -321,27 +295,27 @@ describe('licence-summary > route', () => {
 
     it('birthDateStr should return locale-specific date string', async () => {
       const expectedLocale = Symbol('expected locale')
-      mockTransactionCacheGet.mockImplementationOnce(() => ({
-        isRenewal: true,
-        permit: { cost: 1 },
-        licensee: {
-          birthDate: '1970-01-01'
-        }
-      }))
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => ({
+          isRenewal: true,
+          permit: { cost: 1 },
+          licensee: {
+            birthDate: '1970-01-01'
+          }
+        })
+      })
       const locale = jest.fn(() => ({ format: () => 'locale-aware birth date' }))
       moment.mockImplementation(() => ({
         tz: () => ({ isAfter: () => {} }),
         isAfter: jest.fn(),
         locale
       }))
-      const originalLocale = mockRequest.locale
       mockRequest.locale = expectedLocale
 
       await getData(mockRequest)
 
       expect(locale).toHaveBeenCalledWith(expectedLocale)
 
-      mockRequest.locale = originalLocale
       moment.mockReset()
     })
   })
