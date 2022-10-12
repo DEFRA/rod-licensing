@@ -1,4 +1,4 @@
-import { getFromSummary, getData, checkNavigation } from '../route'
+import { getFromSummary, getData } from '../route'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
 import {
   DATE_OF_BIRTH,
@@ -191,7 +191,7 @@ describe('licence-summary > route', () => {
       })
       getErrorPage.mockReturnValueOnce('error page')
 
-      const testFunction = async () => getData(request)
+      const testFunction = () => getData(request)
 
       await expect(testFunction).rejects.toThrow(GetDataRedirect)
     })
@@ -321,61 +321,74 @@ describe('licence-summary > route', () => {
   })
 
   describe('checkNavigation', () => {
-    it('should throw a GetDataRedirect if no licensee first name or last name is found', () => {
-      const permission = { licensee: { firstName: undefined, lastName: undefined } }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
-    })
-
-    it('should throw a GetDataRedirect if no date of birth is found', () => {
-      const permission = {
-        licensee: {
-          firstName: 'Barry',
-          lastName: 'Scott',
-          birthDate: undefined
+    function toThrowRedirectTo (error, uri) {
+      if (error instanceof GetDataRedirect) {
+        if (error.redirectUrl === uri) {
+          return {
+            message: () =>
+              `expected ${this.utils.printReceived(error)} to be a GetDataRedirect error with redirectUrl of ${this.utils.printExpected(
+                uri
+              )}`,
+            pass: true
+          }
+        }
+        return {
+          message: () =>
+            `expected ${this.utils.printReceived(error)} to to have redirectUrl of ${this.utils.printExpected(
+              uri
+            )} and in fact it has ${this.utils.printReceived(error.redirectUrl)}`,
+          pass: false
         }
       }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+      return {
+        message: () => `expected ${this.utils.printReceived(error)} to be of type GetDataRedirect`,
+        pass: false
+      }
+    }
+    expect.extend({
+      toThrowRedirectTo
     })
 
-    it('should throw a GetDataRedirect if no licence start date is found', () => {
-      const permission = {
-        licensee: {
-          firstName: 'Barry',
-          lastName: 'Scott',
-          birthDate: '1946-01-01'
-        },
-        licenceStartDate: undefined
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    it('should throw a GetDataRedirect if no licensee first name or last name is found', async () => {
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ licensee: { firstName: undefined, lastName: undefined } })
+      })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(NAME.uri)
     })
 
-    it('should throw a GetDataRedirect if no number of rods or licence type is found', () => {
-      const permission = {
-        licensee: {
-          firstName: 'Barry',
-          lastName: 'Scott',
-          birthDate: '1946-01-01'
-        },
-        licenceStartDate: '2021-07-01',
-        numberOfRods: undefined,
-        licenceType: undefined
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    it('should throw a GetDataRedirect if no date of birth is found', async () => {
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () =>
+          getSamplePermission({
+            licensee: {
+              firstName: 'Barry',
+              lastName: 'Scott',
+              birthDate: undefined
+            }
+          })
+      })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(DATE_OF_BIRTH.uri)
     })
 
-    it('should throw a GetDataRedirect if no licence length is found', () => {
-      const permission = {
-        licensee: {
-          firstName: 'Barry',
-          lastName: 'Scott',
-          birthDate: '1946-01-01'
-        },
-        licenceStartDate: '2021-07-01',
-        numberOfRods: '3',
-        licenceType: 'Salmon and sea trout',
-        licenceLength: undefined
-      }
-      expect(() => checkNavigation(permission)).toThrow(GetDataRedirect)
+    it('should throw a GetDataRedirect if no licence start date is found', async () => {
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ licenceStartDate: undefined })
+      })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_TO_START.uri)
+    })
+
+    it('should throw a GetDataRedirect if no number of rods or licence type is found', async () => {
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ numberOfRods: undefined, licenceType: undefined })
+      })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_TYPE.uri)
+    })
+
+    it('should throw a GetDataRedirect if no licence length is found', async () => {
+      const mockRequest = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ licenceLength: undefined })
+      })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_LENGTH.uri)
     })
   })
 })
