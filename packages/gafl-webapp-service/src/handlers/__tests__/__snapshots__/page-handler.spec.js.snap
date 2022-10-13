@@ -12,7 +12,6 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "analyticsSelected": "selected",
         "backRef": null,
         "displayAnalytics": false,
-        "journeyBeginning": false,
         "mssgs": undefined,
         "uri": Object {
           "analyticsFormAction": "/buy/process-analytics-preferences",
@@ -41,7 +40,6 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "analyticsSelected": "selected",
         "backRef": null,
         "displayAnalytics": true,
-        "journeyBeginning": false,
         "mssgs": undefined,
         "uri": Object {
           "analyticsFormAction": "/buy/process-analytics-preferences",

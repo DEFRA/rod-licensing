@@ -136,7 +136,6 @@ export default (path, view, completion, getData) => ({
 
     pageData.displayAnalytics = displayAnalytics(request)
 
-    pageData.journeyBeginning = false
     if (pagesJourneyBeginning.includes(request.path)) {
       pageData.journeyBeginning = true
     }

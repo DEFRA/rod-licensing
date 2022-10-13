@@ -239,7 +239,7 @@ describe('The page handler function', () => {
   })
 
   it.each([[PAYMENT_CANCELLED.uri], [PAYMENT_FAILED.uri], [AGREED.uri], [ORDER_COMPLETE.uri], [LICENCE_DETAILS.uri]])(
-    'sets journeyBeginning to false if not on licence_for or identify page',
+    'sets journeyBeginning is not set if not on licence_for or identify page',
     async pageUri => {
       const { get } = pageHandler('', 'view', '/next/page')
       const toolkit = getMockToolkit()
@@ -247,8 +247,8 @@ describe('The page handler function', () => {
       await get(mockRequest, toolkit)
       const pageData = toolkit.view.mock.calls[0][1]
       expect(pageData).toEqual(
-        expect.objectContaining({
-          journeyBeginning: false
+        expect.not.objectContaining({
+          journeyBeginning: true
         })
       )
     }
