@@ -254,19 +254,6 @@ describe('The page handler function', () => {
     }
   )
 
-  // it.only('sets journeyBeginning to true if on licence_for or identify page', async () => {
-  //   const { get } = pageHandler('', 'view', '/next/page')
-  //   const toolkit = getMockToolkit()
-  //   const mockRequest = getMockRequest(null, IDENTIFY.uri)
-  //   await get(mockRequest, toolkit)
-  //   const pageData = toolkit.view.mock.calls[0][1]
-  //   expect(pageData).toEqual(
-  //     expect.objectContaining({
-  //       journeyBeginning: true
-  //     })
-  //   )
-  // })
-
   it.each([[IDENTIFY.uri], [LICENCE_FOR.uri]])('sets journeyBeginning to true if on licence_for or identify page', async pageUri => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
