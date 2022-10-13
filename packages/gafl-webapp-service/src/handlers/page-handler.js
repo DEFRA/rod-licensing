@@ -136,10 +136,9 @@ export default (path, view, completion, getData) => ({
 
     pageData.displayAnalytics = displayAnalytics(request)
 
+    pageData.journeyBeginning = false
     if (pagesJourneyBeginning.includes(request.path)) {
-      pageData.notJourneyBeginning = false
-    } else {
-      pageData.notJourneyBeginning = true
+      pageData.journeyBeginning = true
     }
 
     return h.view(view, pageData)
