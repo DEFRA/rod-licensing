@@ -2,13 +2,19 @@ import { getData, validator } from '../route'
 import { createMockRequest } from '../../../../__mocks__/request.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
+import * as constants from '@defra-fish/business-rules-lib'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
+// const mockStartAfterValue = null
+
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  START_AFTER_PAYMENT_MINUTES: (params = {}) => { return params }
+}))
 
 const permission = {
   licensee: {
@@ -82,7 +88,7 @@ describe('view licences > getData', () => {
     })
   })
 
-  describe('getData', () => {
+  describe.only('getData', () => {
     const mockRequest = createMockRequest({
       cache: {
         transaction: {
@@ -91,20 +97,31 @@ describe('view licences > getData', () => {
       }
     })
 
-    const sampleRequest = {
+    const getSampleRequest = (startAfterPaymentMinutes = {}) => ({
       ...mockRequest,
+      START_AFTER_PAYMENT_MINUTES: startAfterPaymentMinutes,
       i18n: {
         getCatalog: () => catalog
       }
-    }
+    })
+
+    beforeEach(() => jest.clearAllMocks())
 
     it('returns permissions, licences and text for start after minutes text', async () => {
-      const res = await getData(sampleRequest)
+      const res = await getData(getSampleRequest())
       expect(res).toMatchSnapshot()
     })
 
+    it.each([[29], [31], [368]])('uses START_AFTER_PAYMENT_MINUTES environment variable for startAfterPaymentMinutes key', async startAfter => {
+      const sampleRequest = getSampleRequest({ [constants.START_AFTER_PAYMENT_MINUTES(startAfter)]: startAfter })
+      console.log('sampleRequest:', sampleRequest)
+      const { startAfterPaymentMinutes } = await getData(sampleRequest)
+      console.log('startAfterPaymentMinutes: ', startAfterPaymentMinutes)
+      expect(startAfterPaymentMinutes).toEqual(startAfter)
+    })
+
     it('licenceTypeDisplay is called with the expected arguments', async () => {
-      await getData(sampleRequest)
+      await getData(getSampleRequest())
 
       expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
     })
@@ -113,14 +130,14 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       licenceTypeDisplay.mockReturnValueOnce(returnValue)
 
-      const result = await getData(sampleRequest)
+      const result = await getData(getSampleRequest())
       const ret = result.licences[0].type
 
       expect(ret).toEqual(returnValue)
     })
 
     it('licenceTypeAndLengthDisplay is called with the expected arguments', async () => {
-      await getData(sampleRequest)
+      await getData(getSampleRequest())
       expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
     })
 
@@ -128,22 +145,22 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       licenceTypeAndLengthDisplay.mockReturnValueOnce(returnValue)
 
-      const result = await getData(sampleRequest)
+      const result = await getData(getSampleRequest())
       const ret = result.licences[0].length
 
       expect(ret).toEqual(returnValue)
     })
 
     it('displayStartTime is called with the expected arguments', async () => {
-      await getData(sampleRequest)
-      expect(displayStartTime).toHaveBeenCalledWith(sampleRequest, permission)
+      await getData(getSampleRequest())
+      expect(displayStartTime).toHaveBeenCalledWith(getSampleRequest(), permission)
     })
 
     it('return value of displayStartTime is used for start', async () => {
       const returnValue = Symbol('return value')
       displayStartTime.mockReturnValueOnce(returnValue)
 
-      const result = await getData(sampleRequest)
+      const result = await getData(getSampleRequest())
       const ret = result.licences[0].start
 
       expect(ret).toEqual(returnValue)
