@@ -147,6 +147,14 @@ describe('Error route handlers', () => {
           })
         )
       })
+
+      it('should log the server error', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+        const mockToolkit = getMockToolkit()
+        const request = getMockRequest()
+        await serverError(request, mockToolkit)
+        expect(consoleErrorSpy).toHaveBeenCalled()
+      })
     })
   })
 
