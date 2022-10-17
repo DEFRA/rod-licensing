@@ -13,6 +13,6 @@ Object {
     },
   ],
   "permission": Object {},
-  "startAfterPaymentMinutes": 30,
+  "startAfterPaymentMinutes": 4000,
 }
 `;

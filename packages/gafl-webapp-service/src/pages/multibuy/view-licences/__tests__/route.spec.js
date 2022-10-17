@@ -2,7 +2,7 @@ import { getData, validator } from '../route'
 import { createMockRequest } from '../../../../__mocks__/request.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
-import * as constants from '@defra-fish/business-rules-lib'
+import constants from '@defra-fish/business-rules-lib'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
@@ -13,7 +13,7 @@ jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
 jest.mock('@defra-fish/business-rules-lib', () => ({
-  START_AFTER_PAYMENT_MINUTES: (params = {}) => { return params }
+  START_AFTER_PAYMENT_MINUTES: 4000
 }))
 
 const permission = {
@@ -88,7 +88,7 @@ describe('view licences > getData', () => {
     })
   })
 
-  describe.only('getData', () => {
+  describe('getData', () => {
     const mockRequest = createMockRequest({
       cache: {
         transaction: {
@@ -97,9 +97,8 @@ describe('view licences > getData', () => {
       }
     })
 
-    const getSampleRequest = (startAfterPaymentMinutes = {}) => ({
+    const getSampleRequest = () => ({
       ...mockRequest,
-      START_AFTER_PAYMENT_MINUTES: startAfterPaymentMinutes,
       i18n: {
         getCatalog: () => catalog
       }
@@ -112,13 +111,15 @@ describe('view licences > getData', () => {
       expect(res).toMatchSnapshot()
     })
 
-    it.each([[29], [31], [368]])('uses START_AFTER_PAYMENT_MINUTES environment variable for startAfterPaymentMinutes key', async startAfter => {
-      const sampleRequest = getSampleRequest({ [constants.START_AFTER_PAYMENT_MINUTES(startAfter)]: startAfter })
-      console.log('sampleRequest:', sampleRequest)
-      const { startAfterPaymentMinutes } = await getData(sampleRequest)
-      console.log('startAfterPaymentMinutes: ', startAfterPaymentMinutes)
-      expect(startAfterPaymentMinutes).toEqual(startAfter)
-    })
+    it.each([[29], [31], [368]])(
+      'uses START_AFTER_PAYMENT_MINUTES environment variable for startAfterPaymentMinutes key',
+      async startAfter => {
+        constants.START_AFTER_PAYMENT_MINUTES = startAfter
+        const sampleRequest = getSampleRequest()
+        const { startAfterPaymentMinutes } = await getData(sampleRequest)
+        expect(startAfterPaymentMinutes).toEqual(startAfter)
+      }
+    )
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
       await getData(getSampleRequest())
@@ -152,8 +153,9 @@ describe('view licences > getData', () => {
     })
 
     it('displayStartTime is called with the expected arguments', async () => {
-      await getData(getSampleRequest())
-      expect(displayStartTime).toHaveBeenCalledWith(getSampleRequest(), permission)
+      const sampleRequest = getSampleRequest()
+      await getData(sampleRequest)
+      expect(displayStartTime).toHaveBeenCalledWith(sampleRequest, permission)
     })
 
     it('return value of displayStartTime is used for start', async () => {
