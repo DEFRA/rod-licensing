@@ -12,7 +12,18 @@ Object {
       "type": "Trout and coarse, up to 2 rods",
     },
   ],
-  "permission": Object {},
+  "permission": Object {
+    "licenceLength": "8D",
+    "licenceType": "trout-and-coarse",
+    "licensee": Object {
+      "firstName": "Turanga",
+      "lastName": "Leela",
+    },
+    "numberOfRods": "2",
+    "permit": Object {
+      "cost": 12,
+    },
+  },
   "startAfterPaymentMinutes": 4000,
 }
 `;

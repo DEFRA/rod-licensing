@@ -7,8 +7,6 @@ import constants from '@defra-fish/business-rules-lib'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
-// const mockStartAfterValue = null
-
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
