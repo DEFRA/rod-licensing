@@ -1,70 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`contact-summary > route getData should set the licence information based on orginal licence info if isLicenceForYou is true for both 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Address",
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristolville, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Licence details",
-    },
-    "value": Object {
-      "text": "Email to name@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
-        },
-      ],
-    },
-    "key": Object {
-      "text": "Newsletter",
-    },
-    "value": Object {
-      "text": "No",
-    },
-  },
-]
-`;
-
 exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter is set have preferred method and if isLicenceForYou is true 1`] = `
 Array [
   Object {
@@ -75,13 +10,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -95,16 +30,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "Make a note on confirmation",
+      "text": "contact-summary-license-non-physical",
     },
   },
   Object {
@@ -115,16 +50,16 @@ Array [
             "id": "change-newsletter",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
         },
       ],
     },
     "key": Object {
-      "text": "Newsletter",
+      "text": Symbol(contact-summary-row-newsletter),
     },
     "value": Object {
-      "text": "Yes",
+      "text": "aye",
     },
   },
 ]
@@ -140,13 +75,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -160,16 +95,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "Make a note on confirmation",
+      "text": "contact-summary-license-non-physical",
     },
   },
   Object {
@@ -180,16 +115,16 @@ Array [
             "id": "change-newsletter",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "newsletter",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
         },
       ],
     },
     "key": Object {
-      "text": "Newsletter",
+      "text": Symbol(contact-summary-row-newsletter),
     },
     "value": Object {
-      "text": "No",
+      "text": "negative, Ghost Rider",
     },
   },
 ]
@@ -205,13 +140,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -225,16 +160,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "Text messages to undefined",
+      "text": "contact-summary-text-plrl01234567890",
     },
   },
 ]
@@ -250,13 +185,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -270,16 +205,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "Make a note on confirmation",
+      "text": "contact-summary-license-non-physical",
     },
   },
 ]
@@ -295,13 +230,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -315,16 +250,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "Email to new3@example.com",
+      "text": "contact-summary-emailnew3@example.com",
     },
   },
 ]
@@ -340,13 +275,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -360,16 +295,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Licence details",
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "Make a note on confirmation",
+      "text": "contact-summary-license-non-physical",
     },
   },
 ]
@@ -385,13 +320,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -405,16 +340,16 @@ Array [
             "id": "change-licence-fulfilment-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence fulfilment option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
         },
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "By post",
+      "text": "contact-summary-license-physical",
     },
   },
   Object {
@@ -425,16 +360,16 @@ Array [
             "id": "change-licence-confirmation-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence confirmation option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
         },
       ],
     },
     "key": Object {
-      "text": "Licence Confirmation",
+      "text": Symbol(contact-summary-row-licence-conf),
     },
     "value": Object {
-      "text": "Email to new3@example.com",
+      "text": "contact-summary-emailnew3@example.com",
     },
   },
   Object {
@@ -445,16 +380,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "Email to new3@example.com",
+      "text": "contact-summary-emailnew3@example.com",
     },
   },
 ]
@@ -470,13 +405,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -490,16 +425,16 @@ Array [
             "id": "change-licence-fulfilment-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence fulfilment option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
         },
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "By post",
+      "text": "contact-summary-license-physical",
     },
   },
   Object {
@@ -510,16 +445,16 @@ Array [
             "id": "change-licence-confirmation-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence confirmation option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
         },
       ],
     },
     "key": Object {
-      "text": "Licence Confirmation",
+      "text": Symbol(contact-summary-row-licence-conf),
     },
     "value": Object {
-      "text": "Note of licence",
+      "text": "contact-summary-license-default",
     },
   },
   Object {
@@ -530,16 +465,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "By post",
+      "text": "contact-summary-license-physical",
     },
   },
 ]
@@ -555,13 +490,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -575,16 +510,16 @@ Array [
             "id": "change-licence-fulfilment-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence fulfilment option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
         },
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "By post",
+      "text": "contact-summary-license-physical",
     },
   },
   Object {
@@ -595,16 +530,16 @@ Array [
             "id": "change-licence-confirmation-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence confirmation option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
         },
       ],
     },
     "key": Object {
-      "text": "Licence Confirmation",
+      "text": Symbol(contact-summary-row-licence-conf),
     },
     "value": Object {
-      "text": "Note of licence",
+      "text": "contact-summary-license-default",
     },
   },
   Object {
@@ -615,16 +550,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "By post",
+      "text": "contact-summary-license-physical",
     },
   },
 ]
@@ -640,13 +575,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -660,16 +595,16 @@ Array [
             "id": "change-licence-confirmation-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence confirmation option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
         },
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "Email to new3@example.com",
+      "text": "contact-summary-emailnew3@example.com",
     },
   },
   Object {
@@ -680,16 +615,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "Email to new3@example.com",
+      "text": "contact-summary-emailnew3@example.com",
     },
   },
 ]
@@ -705,13 +640,13 @@ Array [
             "id": "change-address",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "address",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
         },
       ],
     },
     "key": Object {
-      "text": "Address",
+      "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
       "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
@@ -725,16 +660,16 @@ Array [
             "id": "change-licence-confirmation-option",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "licence confirmation option",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
         },
       ],
     },
     "key": Object {
-      "text": "Licence",
+      "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "Note of licence",
+      "text": "contact-summary-license-default",
     },
   },
   Object {
@@ -745,16 +680,16 @@ Array [
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
-          "text": "Change",
-          "visuallyHiddenText": "contact",
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
         },
       ],
     },
     "key": Object {
-      "text": "Contact",
+      "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "By post",
+      "text": "contact-summary-license-physical",
     },
   },
 ]
