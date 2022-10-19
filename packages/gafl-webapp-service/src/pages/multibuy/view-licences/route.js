@@ -4,9 +4,11 @@ import { VIEW_LICENCES } from '../../../uri.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 
 export const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const mssgs = request.i18n.getCatalog()
 
   const licences = transaction.permissions.map((permission, index) => ({
@@ -18,7 +20,11 @@ export const getData = async request => {
     index
   }))
 
-  return { licences }
+  return {
+    permission,
+    licences,
+    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
+  }
 }
 
 export const validator = Joi.object({
