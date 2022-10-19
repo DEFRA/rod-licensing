@@ -1,4 +1,3 @@
-import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import {
   ADDRESS_ENTRY,
   ADDRESS_LOOKUP,
@@ -42,21 +41,14 @@ jest.mock('../../../../processors/refdata-helper.js', () => ({
   }
 }))
 
+jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
+  isMultibuyForYou: jest.fn(() => false)
+}))
+
 const mockRoute = Symbol('mock-route')
 const { default: route } = require('../route.js')
 jest.mock('../../../../routes/page-route.js', () => jest.fn(() => mockRoute))
 const getData = pageRoute.mock.calls[1][4]
-
-const addressAndContact = {
-  firstName: 'Fester',
-  lastName: 'Tester',
-  premises: '14 Howecroft Court',
-  street: 'Eastmead Lane',
-  town: 'Bristol',
-  postcode: 'BS9 1HJ',
-  email: 'fester@tester.com',
-  mobilePhone: '01234567890'
-}
 
 const generateRequestMock = (permission = getSamplePermission(), query = '', status = {}) => ({
   cache: () => ({
@@ -386,28 +378,6 @@ describe('contact-summary > route', () => {
   })
 
   describe('getData', () => {
-    const getSamplePermission = (overrides = {}) => ({
-      isRenewal: false,
-      isLicenceForYou: true,
-      licenceStartDate: '2021-07-01',
-      numberOfRods: '3',
-      licenceType: 'Salmon and sea trout',
-      licenceLength: '12M',
-      licensee: {
-        ...addressAndContact,
-        noLicenceRequired: true,
-        postalFulfilment: true,
-        preferredMethodOfReminder: HOW_CONTACTED.email,
-        preferredMethodOfNewsletter: HOW_CONTACTED.none,
-        email: 'name@example.com',
-        text: '01234567890'
-      },
-      permit: {
-        cost: 6
-      },
-      ...overrides
-    })
-
     it('should return the licence summary page uri', async () => {
       isMultibuyForYou.mockImplementationOnce(() => true)
       const result = await getData(generateRequestMock(getSamplePermission()))
