@@ -58,7 +58,7 @@ const addressAndContact = {
   mobilePhone: '01234567890'
 }
 
-const generateRequestMock = (permission, query, status = {}) => ({
+const generateRequestMock = (permission = getSamplePermission(), query = '', status = {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -108,6 +108,27 @@ const generateRequestMock = (permission, query, status = {}) => ({
   }
 })
 
+const getSamplePermission = (licenseeOverrides = {}, overrides = {}) => ({
+  isLicenceForYou: false,
+  licenceLength: '12M',
+  licensee: {
+    firstName: 'Brenin',
+    lastName: 'Pysgotwr',
+    premises: '14 Howecroft Court',
+    street: 'Eastmead Lane',
+    town: 'Bristol',
+    postcode: 'BS9 1HJ',
+    mobilePhone: '01234567890',
+    email: 'brenin@example.com',
+    postalFulfilment: true,
+    preferredMethodOfConfirmation: 'Email',
+    preferredMethodOfReminder: 'Email',
+    preferredMethodOfNewsletter: 'Prefer not to be contacted',
+    ...licenseeOverrides
+  },
+  ...overrides
+})
+
 describe('contact-summary > route', () => {
   it('should return result of pageRoute call', () => {
     expect(route).toEqual(mockRoute)
@@ -116,18 +137,7 @@ describe('contact-summary > route', () => {
   describe('getLicenseeDetailsSummaryRows', () => {
     describe('when purchasing a 12 month (physical licence) with postal fulfilment', () => {
       it('should display the Licence as post, Licence Confirmation and Contact as the email and Newsletter as no', async () => {
-        const permission = {
-          licenceLength: '12M',
-          licensee: {
-            ...addressAndContact,
-            postalFulfilment: true,
-            preferredMethodOfConfirmation: 'Email',
-            preferredMethodOfReminder: 'Email',
-            email: 'new3@example.com',
-            preferredMethodOfNewsletter: 'Prefer not to be contacted'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+        const sampleRequest = generateRequestMock()
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -135,18 +145,14 @@ describe('contact-summary > route', () => {
       })
 
       it('should display the Licence as post, Licence Confirmation and Contact as the phone number and Newsletter as yes', async () => {
-        const permission = {
-          licenceLength: '12M',
-          licensee: {
-            ...addressAndContact,
-            postalFulfilment: true,
+        const sampleRequest = generateRequestMock(
+          getSamplePermission({
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
             preferredMethodOfNewsletter: 'Yes'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+          })
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -154,16 +160,12 @@ describe('contact-summary > route', () => {
       })
 
       it('should display the Licence as post, Licence Confirmation as note of licence and Contact as post', async () => {
-        const permission = {
-          licenceLength: '12M',
-          licensee: {
-            ...addressAndContact,
-            postalFulfilment: true,
+        const sampleRequest = generateRequestMock(
+          getSamplePermission({
             preferredMethodOfConfirmation: 'Prefer not to be contacted',
             preferredMethodOfReminder: 'Letter'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+          })
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -173,18 +175,11 @@ describe('contact-summary > route', () => {
 
     describe('when purchasing a 12 month (physical licence) without postal fulfilment', () => {
       it('should display the Licence and Contact as the email and Newsletter as no', async () => {
-        const permission = {
-          licenceLength: '12M',
-          licensee: {
-            ...addressAndContact,
-            postalFulfilment: false,
-            preferredMethodOfConfirmation: 'Email',
-            preferredMethodOfReminder: 'Email',
-            email: 'new3@example.com',
-            preferredMethodOfNewsletter: 'Prefer not to be contacted'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+        const sampleRequest = generateRequestMock(
+          getSamplePermission({
+            postalFulfilment: false
+          })
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -192,18 +187,15 @@ describe('contact-summary > route', () => {
       })
 
       it('should display the Licence and Contact as the phone number and Newsletter as yes', async () => {
-        const permission = {
-          licenceLength: '12M',
-          licensee: {
-            ...addressAndContact,
+        const sampleRequest = generateRequestMock(
+          getSamplePermission({
             postalFulfilment: false,
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text',
             mobilePhone: '07700900900',
             preferredMethodOfNewsletter: 'Text'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+          })
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -213,17 +205,14 @@ describe('contact-summary > route', () => {
 
     describe('when purchasing a 1 day (non physical licence)', () => {
       it('should display the Contact as the email and Newsletter as no', async () => {
-        const permission = {
-          licenceLength: '1D',
-          licensee: {
-            ...addressAndContact,
-            preferredMethodOfConfirmation: 'Email',
-            preferredMethodOfReminder: 'Email',
-            email: 'new3@example.com',
-            preferredMethodOfNewsletter: 'Prefer not to be contacted'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+        const sampleRequest = generateRequestMock(
+          getSamplePermission(
+            {},
+            {
+              licenceLength: '1D'
+            }
+          )
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -231,18 +220,20 @@ describe('contact-summary > route', () => {
       })
 
       it('should display the Contact as the phone number and Newsletter as yes', async () => {
-        const permission = {
-          licenceLength: '1D',
-          licensee: {
-            ...addressAndContact,
-            postalFulfilment: false,
-            preferredMethodOfConfirmation: 'Text',
-            preferredMethodOfReminder: 'Text',
-            mobilePhone: '07700900900',
-            preferredMethodOfNewsletter: 'Yes'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+        const sampleRequest = generateRequestMock(
+          getSamplePermission(
+            {
+              postalFulfilment: false,
+              preferredMethodOfConfirmation: 'Text',
+              preferredMethodOfReminder: 'Text',
+              mobilePhone: '07700900900',
+              preferredMethodOfNewsletter: 'Yes'
+            },
+            {
+              licenceLength: '1D'
+            }
+          )
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -250,17 +241,19 @@ describe('contact-summary > route', () => {
       })
 
       it('should display the Contact as Make a note on confirmation', async () => {
-        const permission = {
-          licenceLength: '1D',
-          licensee: {
-            ...addressAndContact,
-            postalFulfilment: false,
-            preferredMethodOfConfirmation: 'Prefer not to be contacted',
-            preferredMethodOfReminder: 'Prefer not to be contacted',
-            preferredMethodOfNewsletter: 'Yes'
-          }
-        }
-        const sampleRequest = generateRequestMock(permission)
+        const sampleRequest = generateRequestMock(
+          getSamplePermission(
+            {
+              licenceLength: '1D'
+            },
+            {
+              postalFulfilment: false,
+              preferredMethodOfConfirmation: 'Prefer not to be contacted',
+              preferredMethodOfReminder: 'Prefer not to be contacted',
+              preferredMethodOfNewsletter: 'Yes'
+            }
+          )
+        )
 
         const { summaryTable } = await getData(sampleRequest)
 
@@ -269,21 +262,20 @@ describe('contact-summary > route', () => {
     })
 
     it('should have the newsletter is set have preferred method and if isLicenceForYou is true', async () => {
-      const permission = {
-        licenceLength: '1D',
-        licensee: {
-          ...addressAndContact,
-          postalFulfilment: false,
-          preferredMethodOfConfirmation: 'Prefer not to be contacted',
-          preferredMethodOfReminder: 'Prefer not to be contacted',
-          preferredMethodOfNewsletter: 'Email'
-        },
-        isLicenceForYou: true
-      }
-      const query = {
-        [HOW_CONTACTED.email]: 'Email'
-      }
-      const sampleRequest = generateRequestMock(permission, query)
+      const sampleRequest = generateRequestMock(
+        getSamplePermission(
+          {
+            postalFulfilment: false,
+            preferredMethodOfConfirmation: 'Prefer not to be contacted',
+            preferredMethodOfReminder: 'Prefer not to be contacted',
+            preferredMethodOfNewsletter: 'Email'
+          },
+          { licenceLength: '1D', isLicenceForYou: true }
+        ),
+        {
+          [HOW_CONTACTED.email]: 'Email'
+        }
+      )
 
       const { summaryTable } = await getData(sampleRequest)
 
@@ -291,36 +283,27 @@ describe('contact-summary > route', () => {
     })
 
     it('should have the newsletter set to no if have preferred method and if isLicenceForYou is true', async () => {
-      const permission = {
-        licenceLength: '1D',
-        licensee: {
-          ...addressAndContact,
-          postalFulfilment: false,
-          preferredMethodOfConfirmation: 'Prefer not to be contacted',
-          preferredMethodOfReminder: 'Prefer not to be contacted',
-          preferredMethodOfNewsletter: 'Prefer not to be contacted'
-        },
-        isLicenceForYou: true
-      }
-      const query = {
-        [HOW_CONTACTED.email]: 'Prefer not to be contacted'
-      }
-      const sampleRequest = generateRequestMock(permission, query)
-
+      const sampleRequest = generateRequestMock(
+        getSamplePermission(
+          {
+            postalFulfilment: false,
+            preferredMethodOfConfirmation: 'Prefer not to be contacted',
+            preferredMethodOfReminder: 'Prefer not to be contacted',
+            preferredMethodOfNewsletter: 'Prefer not to be contacted'
+          },
+          { licenceLength: '1D', isLicenceForYou: true }
+        ),
+        {
+          [HOW_CONTACTED.email]: 'Prefer not to be contacted'
+        }
+      )
       const { summaryTable } = await getData(sampleRequest)
 
       expect(summaryTable).toMatchSnapshot()
     })
 
     it('should not have the newsletter row if isLicenceForYou is false', async () => {
-      const permission = {
-        licenceLength: '1D',
-        licensee: {
-          ...addressAndContact
-        },
-        isLicenceForYou: false
-      }
-      const sampleRequest = generateRequestMock(permission)
+      const sampleRequest = generateRequestMock(getSamplePermission({}, { licenceLength: '1D' }))
 
       const { summaryTable } = await getData(sampleRequest)
 
@@ -363,7 +346,7 @@ describe('contact-summary > route', () => {
       const permission = { licenceLength: '12M', isRenewal: true, licensee: {} }
       const mockRequest = generateRequestMock(permission, '', status)
 
-      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_FULFILMENT.uri)
     })
 
     it('should throw a GetDataRedirect if licence-confirmation page is false on the status', async () => {
@@ -375,7 +358,7 @@ describe('contact-summary > route', () => {
       const permission = { licenceLength: '12M', isRenewal: true, licensee: {} }
       const mockRequest = generateRequestMock(permission, '', status)
 
-      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_CONFIRMATION_METHOD.uri)
     })
 
     it('should throw a GetDataRedirect if address entry and address select page is false on the status', async () => {
@@ -386,7 +369,7 @@ describe('contact-summary > route', () => {
       }
       const permission = { licenceLength: '12M' }
       const mockRequest = generateRequestMock(permission, '', status)
-      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(ADDRESS_LOOKUP.uri)
     })
 
     it('should throw a GetDataRedirect if contact page is false on the status', async () => {
@@ -398,7 +381,7 @@ describe('contact-summary > route', () => {
       }
       const permission = { licenceLength: '12M' }
       const mockRequest = generateRequestMock(permission, '', status)
-      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(CONTACT.uri)
     })
   })
 

@@ -169,7 +169,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
 ]
@@ -202,6 +202,46 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
@@ -211,10 +251,10 @@ Array [
       ],
     },
     "key": Object {
-      "text": Symbol(contact-summary-row-licence-details),
+      "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-license-non-physical",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
 ]
@@ -259,7 +299,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "contact-summary-emailnew3@example.com",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
 ]
@@ -369,7 +409,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-conf),
     },
     "value": Object {
-      "text": "contact-summary-emailnew3@example.com",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
   Object {
@@ -389,7 +429,7 @@ Array [
       "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-emailnew3@example.com",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
 ]
@@ -604,7 +644,7 @@ Array [
       "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "contact-summary-emailnew3@example.com",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
   Object {
@@ -624,7 +664,7 @@ Array [
       "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-emailnew3@example.com",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
 ]
