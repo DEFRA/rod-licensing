@@ -43,9 +43,9 @@ const getBackReference = async (request, view) => {
   if (!current || !current.backLink) {
     return null
   }
-
+  console.log(current)
   if (typeof current.backLink === 'function') {
-    const backLink = current.backLink(
+    const backLink = await current.backLink(
       await request.cache().helpers.status.getCurrentPermission(),
       await request.cache().helpers.transaction.getCurrentPermission()
     )
