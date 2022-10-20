@@ -16,8 +16,10 @@
 
 {% set noOfLicencesText = mssgs.add_licence if data.numberOfLicences == 1 else mssgs.add_licences %}
 
+{% set areOrIsText = mssgs.add_licence_added_is if data.numberOfLicences == 1 else mssgs.add_licence_added %}
+
 {% set insetTextHtml %}
-  {{mssgs.add_licence_added}} <a href="/buy/view-licences">{{data.numberOfLicences}} {{noOfLicencesText}}</a>
+  {{areOrIsText}} <a href="/buy/view-licences">{{data.numberOfLicences}}{{noOfLicencesText}}</a>  {{mssgs.add_licence_basket}}
 {% endset %}
 
 {% block pageContent %}
