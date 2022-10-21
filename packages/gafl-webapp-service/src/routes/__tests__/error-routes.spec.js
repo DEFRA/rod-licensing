@@ -1,13 +1,13 @@
 import errorRoutes from '../error-routes'
-import { CLIENT_ERROR, NEW_TRANSACTION } from '../../uri.js'
+import { CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR, AGREED } from '../../uri.js'
 
 describe('Error route handlers', () => {
-  describe('CLIENT_ERROR route', () => {
-    it('has a return value with a method of GET and path of /buy/client-error', async () => {
+  describe('error route', () => {
+    it('has a return value with a method of GET and path of /buy/client-error and /buy/server-error', async () => {
       expect(errorRoutes).toMatchSnapshot()
     })
 
-    describe('handler', () => {
+    describe('CLIENT_ERROR handler', () => {
       const clientError = errorRoutes[0].handler
 
       it('handler should return correct values', async () => {
@@ -101,6 +101,61 @@ describe('Error route handlers', () => {
         })
       })
     })
+
+    describe('SERVER_ERROR handler', () => {
+      const serverError = errorRoutes[1].handler
+
+      it('handler should return correct values', async () => {
+        const mockToolkit = getMockToolkit()
+        await serverError(getMockRequest(), mockToolkit)
+        expect(mockToolkit.view).toMatchSnapshot()
+      })
+
+      it('second argument of handler return correct values', async () => {
+        const mockToolkit = getMockToolkit()
+        await serverError(getMockRequest(), mockToolkit)
+        expect(mockToolkit.view).toBeCalledWith(SERVER_ERROR.page, {
+          serverError: 'payload',
+          mssgs: [],
+          altLang: [],
+          uri: {
+            new: NEW_TRANSACTION.uri,
+            agreed: AGREED.uri
+          }
+        })
+      })
+
+      it('should pass the catalog and language to the view if it is present', async () => {
+        const mockToolkit = getMockToolkit()
+        await serverError(getMockRequest(), mockToolkit)
+        expect(mockToolkit.view).toBeCalledWith(
+          SERVER_ERROR.page,
+          expect.objectContaining({
+            mssgs: [],
+            altLang: []
+          })
+        )
+      })
+
+      it('should respond with the output of the server error to the view if it is present', async () => {
+        const mockToolkit = getMockToolkit()
+        await serverError(getMockRequest(), mockToolkit)
+        expect(mockToolkit.view).toBeCalledWith(
+          SERVER_ERROR.page,
+          expect.objectContaining({
+            serverError: 'payload'
+          })
+        )
+      })
+
+      it('should log the server error', async () => {
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
+        const mockToolkit = getMockToolkit()
+        const request = getMockRequest()
+        await serverError(request, mockToolkit)
+        expect(consoleErrorSpy).toHaveBeenCalled()
+      })
+    })
   })
 
   const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
@@ -119,7 +174,14 @@ const getMockRequest = (payment = {}) => ({
       }
     }
   }),
+  url: {},
+  path: {},
+  query: {},
+  params: {},
+  payload: 'payload',
   headers: {},
+  state: {},
+  method: {},
   i18n: {
     getCatalog: () => [],
     getLocales: () => []

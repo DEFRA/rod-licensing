@@ -1,4 +1,4 @@
-import { CLIENT_ERROR, NEW_TRANSACTION } from '../uri.js'
+import { AGREED, CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR } from '../uri.js'
 
 export default [
   {
@@ -18,6 +18,36 @@ export default [
         uri: {
           new: NEW_TRANSACTION.uri,
           ...(transaction?.payment?.href ? { payment: transaction.payment.href } : {})
+        }
+      })
+    }
+  },
+  {
+    method: ['GET'],
+    path: SERVER_ERROR.uri,
+    handler: async (request, h) => {
+      const requestDetail = {
+        url: request.url,
+        path: request.path,
+        query: request.query,
+        params: request.params,
+        payload: request.payload,
+        headers: request.headers,
+        state: request.state,
+        method: request.method
+      }
+      console.error('Error processing request. Request: %j, Exception: %o', requestDetail, request.response)
+
+      const serverError = request.response?.output.payload
+      const mssgs = request.i18n.getCatalog()
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      return h.view(SERVER_ERROR.page, {
+        serverError,
+        mssgs,
+        altLang,
+        uri: {
+          new: NEW_TRANSACTION.uri,
+          agreed: AGREED.uri
         }
       })
     }

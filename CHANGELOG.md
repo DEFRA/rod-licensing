@@ -1,4 +1,14 @@
 
+## v1.27.0-rc.7 (2022-10-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1504](https://github.com/DEFRA/rod-licensing/pull/1504) Route to view server error page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1501](https://github.com/DEFRA/rod-licensing/pull/1501) Welsh translation - error page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.27.0-rc.6 (2022-10-12)
 
 #### :rocket: Enhancement
