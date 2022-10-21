@@ -169,7 +169,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
+      "text": "contact-summary-text-plrl01234567890",
     },
   },
 ]
@@ -202,46 +202,6 @@ Array [
       "items": Array [
         Object {
           "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
             "id": "change-contact",
           },
           "href": Symbol(addLanguageCodeToUri),
@@ -251,10 +211,10 @@ Array [
       ],
     },
     "key": Object {
-      "text": Symbol(contact-summary-row-contact),
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
+      "text": "contact-summary-license-non-physical",
     },
   },
 ]
@@ -344,7 +304,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "contact-summary-license-non-physical",
+      "text": "contact-summary-text-plrl07700900900",
     },
   },
 ]
@@ -494,7 +454,7 @@ Array [
       "text": Symbol(contact-summary-row-licence-conf),
     },
     "value": Object {
-      "text": "contact-summary-license-default",
+      "text": "contact-summary-text-sngl07700900900",
     },
   },
   Object {
@@ -514,7 +474,7 @@ Array [
       "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-license-physical",
+      "text": "contact-summary-text-plrl07700900900",
     },
   },
 ]
@@ -709,7 +669,7 @@ Array [
       "text": Symbol(contact-summary-row-licence),
     },
     "value": Object {
-      "text": "contact-summary-license-default",
+      "text": "contact-summary-text-sngl07700900900",
     },
   },
   Object {
@@ -729,7 +689,7 @@ Array [
       "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-license-physical",
+      "text": "contact-summary-text-plrl07700900900",
     },
   },
 ]

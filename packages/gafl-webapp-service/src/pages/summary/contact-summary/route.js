@@ -5,7 +5,7 @@ import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
-// import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
+import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import {
@@ -115,7 +115,6 @@ export const checkNavigation = (status, permission) => {
       throw new GetDataRedirect(CONTACT.uri)
     }
   }
-
   if (isPhysical(permission)) {
     if (!status[LICENCE_FULFILMENT.page]) {
       throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
@@ -128,8 +127,8 @@ export const checkNavigation = (status, permission) => {
 
 const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const rowGenerator = new RowGenerator(request, permission)
-
   const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
+
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
@@ -199,43 +198,22 @@ const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  /*
   // All of this is untested and so would be very easy to inadvertently delete
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
   if (checkIsMultibuyForYou === true) {
     const transaction = await request.cache().helpers.transaction.get()
-
-    const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
-
-    const xferProps = [
-      'noLicenceRequired',
-      'premises',
-      'street',
-      'locality',
-      'town',
-      'postcode',
-      'countryCode',
-      'preferredMethodOfConfirmation',
-      'email',
-      'text',
-      'preferredMethodOfReminder',
-      'preferredMethodOfNewsletter'
-    ]
-    for (const prop of xferProps) {
-      permission.licensee[prop] = getLicence.licensee[prop]
-    }
+    const { licensee } = transaction.permissions.find(p => p.isLicenceForYou)
+    permission.licensee = { ...licensee }
     const pagesToSkip = [ADDRESS_ENTRY.page, ADDRESS_SELECT.page, CONTACT.page, LICENCE_CONFIRMATION_METHOD.page]
     for (const page of pagesToSkip) {
       status[page] = true
     }
 
     await request.cache().helpers.transaction.setCurrentPermission(permission)
+  } else {
+    checkNavigation(status, permission)
   }
-
-*/
-
-  checkNavigation(status, permission)
 
   status.fromSummary = CONTACT_SUMMARY_SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
