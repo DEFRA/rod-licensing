@@ -4,6 +4,7 @@ import { VIEW_LICENCES } from '../../../uri.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { hasDuplicates } from '../../../handlers/multibuy-duplicate-handler.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 
 export const getData = async request => {
@@ -20,8 +21,10 @@ export const getData = async request => {
     index
   }))
 
-  return {
+  const duplicate = await hasDuplicates(licences)
+
     permission,
+    duplicate
     licences,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
   }

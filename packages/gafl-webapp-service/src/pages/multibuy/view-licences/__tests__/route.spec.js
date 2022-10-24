@@ -6,10 +6,12 @@ import constants from '@defra-fish/business-rules-lib'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
+import { hasDuplicates } from '../../../../handlers/multibuy-duplicate-handler.js'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
+jest.mock('../../../../handlers/multibuy-duplicate-handler.js')
 jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 4000
 }))
@@ -118,6 +120,18 @@ describe('view licences > getData', () => {
         expect(startAfterPaymentMinutes).toEqual(startAfter)
       }
     )
+
+    it('duplicates', async () => {
+      hasDuplicates.mockReturnValueOnce(false)
+      const data = await getData(sampleRequest)
+      expect(data.duplicate).toBe(false)
+    })
+
+    it('no duplicate', async () => {
+      hasDuplicates.mockReturnValueOnce(true)
+      const data = await getData(sampleRequest)
+      expect(data.duplicate).toBe(true)
+    })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
       await getData(getSampleRequest())
