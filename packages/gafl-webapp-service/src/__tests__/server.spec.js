@@ -34,6 +34,16 @@ describe('The server', () => {
     await server.stop()
   })
 
+  it('decorates the toolkit with redirectWithLanguageCode', async () => {
+    createServer(catboxOptions)
+
+    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(jest.fn())
+
+    await init()
+    expect(serverDecorateSpy).toHaveBeenCalledWith('toolkit', 'redirectWithLanguageCode', expect.any(Function))
+    await server.stop()
+  })
+
   it('configures session handling in redis by default', async () => {
     process.env.REDIS_HOST = '0.0.0.0'
     process.env.REDIS_PORT = '12345'
