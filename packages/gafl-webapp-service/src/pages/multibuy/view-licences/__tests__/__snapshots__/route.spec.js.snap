@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`view licences > getData getData returns permissions, licences and text for start after minutes text 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "index": 0,
+      "length": "8 days",
+      "licenceHolder": "Turanga Leela",
+      "price": 12,
+      "start": "9:32am on 23 June 2021",
+      "type": "Trout and coarse, up to 2 rods",
+    },
+  ],
+  "permission": Object {
+    "licenceLength": "8D",
+    "licenceType": "trout-and-coarse",
+    "licensee": Object {
+      "firstName": "Turanga",
+      "lastName": "Leela",
+    },
+    "numberOfRods": "2",
+    "permit": Object {
+      "cost": 12,
+    },
+  },
+  "startAfterPaymentMinutes": 4000,
+}
+`;

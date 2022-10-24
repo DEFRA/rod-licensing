@@ -23,6 +23,29 @@ import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
+// Extracted to keep sonar happy
+export const checkNavigation = permission => {
+  if (!permission.licensee.firstName || !permission.licensee.lastName) {
+    throw new GetDataRedirect(NAME.uri)
+  }
+
+  if (!permission.licensee.birthDate) {
+    throw new GetDataRedirect(DATE_OF_BIRTH.uri)
+  }
+
+  if (!permission.licenceStartDate) {
+    throw new GetDataRedirect(LICENCE_TO_START.uri)
+  }
+
+  if (!permission.numberOfRods || !permission.licenceType) {
+    throw new GetDataRedirect(LICENCE_TYPE.uri)
+  }
+
+  if (!permission.licenceLength) {
+    throw new GetDataRedirect(LICENCE_LENGTH.uri)
+  }
+}
+
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -34,6 +57,7 @@ export const getData = async request => {
      * journey by typing into the address bar in which case they will be redirected back to the
      * appropriate point in the journey. For a renewal this is not necessary.
      */
+    checkNavigation(permission)
 
     const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
@@ -73,7 +97,7 @@ export const getData = async request => {
     concessionProofs: CONCESSION_PROOF,
     hasJunior: concessionHelper.hasJunior(permission),
     cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).format('Do MMMM YYYY'),
+    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).locale(request.locale).format('Do MMMM YYYY'),
     uri: {
       name: addLanguageCodeToUri(request, NAME.uri),
       licenceLength: addLanguageCodeToUri(request, LICENCE_LENGTH.uri),
