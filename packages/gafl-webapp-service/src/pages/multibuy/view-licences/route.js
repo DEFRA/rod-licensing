@@ -23,9 +23,8 @@ export const getData = async request => {
 
   const duplicate = await hasDuplicates(licences)
 
-  return {
     permission,
-    duplicate,
+    duplicate
     licences,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
   }

@@ -2,7 +2,6 @@
 
 exports[`view licences > getData getData returns permissions, licences and text for start after minutes text 1`] = `
 Object {
-  "duplicate": undefined,
   "licences": Array [
     Object {
       "index": 0,

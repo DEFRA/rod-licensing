@@ -46,18 +46,18 @@ describe('view licences > getData', () => {
       }
     })
 
-    const getSampleRequest = () => ({
+    const sampleRequest = {
       ...mockRequest,
       i18n: {
         getCatalog: () => catalog
       }
-    })
+    }
 
     licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
     licenceTypeAndLengthDisplay.mockReturnValue('8 days')
     displayStartTime.mockReturnValue('9:32am on 23 June 2021')
 
-    data = await getData(getSampleRequest())
+    data = await getData(sampleRequest)
   })
 
   beforeEach(() => jest.clearAllMocks())
@@ -123,13 +123,13 @@ describe('view licences > getData', () => {
 
     it('duplicates', async () => {
       hasDuplicates.mockReturnValueOnce(false)
-      const data = await getData(getSampleRequest())
+      const data = await getData(sampleRequest)
       expect(data.duplicate).toBe(false)
     })
 
     it('no duplicate', async () => {
       hasDuplicates.mockReturnValueOnce(true)
-      const data = await getData(getSampleRequest())
+      const data = await getData(sampleRequest)
       expect(data.duplicate).toBe(true)
     })
 
