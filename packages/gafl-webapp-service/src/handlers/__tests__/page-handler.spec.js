@@ -143,6 +143,21 @@ describe('The page handler function', () => {
     )
   })
 
+  it('pageData.backRef returns expected backlink', async () => {
+    const expectedBackLink = '/previous-page'
+    const backLink = async () => expectedBackLink
+    journeyDefinition.push({ current: { page: 'view' }, backLink })
+    const { get } = pageHandler(null, 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    const request = getMockRequest()
+    addLanguageCodeToUri.mockImplementationOnce((_req, link) => `${link}`)
+
+    await get(request, toolkit)
+    const pageData = toolkit.view.mock.calls[0][1]
+
+    expect(pageData.backRef).toBe(expectedBackLink)
+  })
+
   it.each([['/go/somewhere'], ['/go/somewhere/else']])(
     'GetDataRedirect being thrown will pass url to be decorated to addLanguageCodeToUri',
     async redirectUri => {
@@ -253,6 +268,7 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/her
       },
       analytics: {
         get: () =>
+          // prettier-ignore
           includeAnalytics
             ? {
                 [ANALYTICS.selected]: 'selected',

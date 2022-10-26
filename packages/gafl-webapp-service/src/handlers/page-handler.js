@@ -114,7 +114,6 @@ export default (path, view, completion, getData) => ({
         throw err
       }
     }
-
     // It is necessary then using the back buttons and other indirect navigations to clear any errors
     // from abandoned pages
     await clearErrorsFromOtherPages(request, view)
