@@ -1,4 +1,4 @@
-import { hasDuplicates } from '../multibuy-duplicate-handler.js'
+import { hasDuplicates } from '../multibuy-processor.js'
 
 describe('The multiple check for duplicates handler', () => {
   beforeEach(() => {
