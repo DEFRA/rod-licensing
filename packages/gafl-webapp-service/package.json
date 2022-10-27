@@ -75,5 +75,10 @@
     "gulp-sass": "^4.1.1",
     "gulp-sourcemaps": "^3.0.0",
     "node-sass": "^6.0.1"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./gafl-jest-matchers.js"
+    ]
   }
 }
