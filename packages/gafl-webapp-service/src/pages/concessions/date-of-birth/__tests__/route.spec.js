@@ -55,8 +55,8 @@ describe('name > route', () => {
       const status = () => ({
         [LICENCE_FOR.page]: false
       })
-      const func = async () => await getData(mockRequest(status, transaction))
-      await expect(func).rejects.toThrow(new GetDataRedirect(LICENCE_FOR.uri))
+      const func = () => getData(mockRequest(status, transaction))
+      await expect(func).rejects.toThrow(GetDataRedirect)
     })
 
     it('should not throw a redirect if not been to LICENCE_FOR page', async () => {
@@ -66,7 +66,16 @@ describe('name > route', () => {
       const status = () => ({
         [LICENCE_FOR.page]: true
       })
-      expect(() => getData(mockRequest(status, transaction))).not.toThrow(GetDataRedirect)
+
+      let error
+
+      try {
+        await getData(mockRequest(status, transaction))
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toBeUndefined()
     })
   })
 
