@@ -18,7 +18,7 @@ import moment from 'moment-timezone'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 
 jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
-  isMultibuyForYou: jest.fn()
+  isMultibuyForYou: jest.fn(async () => false)
 }))
 jest.mock('../../find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
@@ -152,7 +152,7 @@ describe('licence-summary > route', () => {
     })
 
     it('multibuy - should return the name page uri', async () => {
-      isMultibuyForYou.mockImplementationOnce(() => true)
+      isMultibuyForYou.mockResolvedValueOnce(true)
       const expectedUri = Symbol('return value')
       addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
 
@@ -161,6 +161,53 @@ describe('licence-summary > route', () => {
       } = await getData(getSampleRequest())
 
       expect(name).toEqual(expectedUri)
+    })
+
+    describe('multibuy', () => {
+      beforeAll(() => {
+        isMultibuyForYou.mockResolvedValue(true)
+      })
+
+      afterAll(() => {
+        isMultibuyForYou.mockResolvedValue(false)
+      })
+
+      it("copies licensee from existing 'for you' permission to new 'for you' permission", async () => {
+        const completedPermission = getSamplePermission()
+        const newPermission = { isLicenceForYou: true, permit: { cost: 30 } }
+        const mockRequest = getSampleRequest({
+          getCurrentTransactionPermission: () => newPermission,
+          getTransaction: () => ({ permissions: [completedPermission, newPermission] })
+        })
+        await getData(mockRequest)
+        expect(newPermission.licensee).toEqual(completedPermission.licensee)
+      })
+
+      it('copies, rather than clones, permission licensee', async () => {
+        const completedPermission = getSamplePermission()
+        const newPermission = { isLicenceForYou: true, permit: { cost: 30 } }
+        const mockRequest = getSampleRequest({
+          getCurrentTransactionPermission: () => newPermission,
+          getTransaction: () => ({ permissions: [completedPermission, newPermission] })
+        })
+        await getData(mockRequest)
+        expect(newPermission.licensee).not.toBe(completedPermission.licensee)
+      })
+
+      it('persists the new permission in the transaction cache', async () => {
+        const newPermission = { isLicenceForYou: true, permit: { cost: 30 } }
+        const setCurrentTransactionPermission = jest.fn()
+
+        await getData(
+          getSampleRequest({
+            getCurrentTransactionPermission: () => newPermission,
+            getTransaction: () => ({ permissions: [getSamplePermission(), newPermission] }),
+            setCurrentTransactionPermission
+          })
+        )
+
+        expect(setCurrentTransactionPermission).toHaveBeenCalledWith(newPermission)
+      })
     })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
@@ -189,11 +236,12 @@ describe('licence-summary > route', () => {
       const request = getSampleRequest({
         getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: false })
       })
-      getErrorPage.mockReturnValueOnce('error page')
+      const redirect = Symbol('error page')
+      getErrorPage.mockReturnValueOnce(redirect)
 
       const testFunction = () => getData(request)
 
-      await expect(testFunction).rejects.toThrow(GetDataRedirect)
+      await expect(testFunction).rejects.toThrowRedirectTo(redirect)
     })
 
     it("doesn't throw a GetDataRedirect if getErrorPage returns an empty string", async () => {
@@ -230,23 +278,6 @@ describe('licence-summary > route', () => {
       const result = await getDataResult()
 
       await expect(result instanceof GetDataRedirect).toBeFalsy()
-    })
-
-    it('passes return value of getErrorPage to thrown GetDataRedirect', async () => {
-      const expectedRedirectUrl = Symbol('error page')
-      getErrorPage.mockReturnValueOnce(expectedRedirectUrl)
-      const request = getSampleRequest({
-        getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: false })
-      })
-      const runGetData = async () => {
-        try {
-          await getData(request)
-        } catch (e) {
-          return e
-        }
-      }
-      const thrownError = await runGetData()
-      expect(thrownError.redirectUrl).toEqual(expectedRedirectUrl)
     })
 
     it('passes permission to getErrorPage', async () => {
@@ -321,34 +352,6 @@ describe('licence-summary > route', () => {
   })
 
   describe('checkNavigation', () => {
-    function toThrowRedirectTo (error, uri) {
-      if (error instanceof GetDataRedirect) {
-        if (error.redirectUrl === uri) {
-          return {
-            message: () =>
-              `expected ${this.utils.printReceived(error)} to be a GetDataRedirect error with redirectUrl of ${this.utils.printExpected(
-                uri
-              )}`,
-            pass: true
-          }
-        }
-        return {
-          message: () =>
-            `expected ${this.utils.printReceived(error)} to to have redirectUrl of ${this.utils.printExpected(
-              uri
-            )} and in fact it has ${this.utils.printReceived(error.redirectUrl)}`,
-          pass: false
-        }
-      }
-      return {
-        message: () => `expected ${this.utils.printReceived(error)} to be of type GetDataRedirect`,
-        pass: false
-      }
-    }
-    expect.extend({
-      toThrowRedirectTo
-    })
-
     it('should throw a GetDataRedirect if no licensee first name or last name is found', async () => {
       const mockRequest = getSampleRequest({
         getCurrentTransactionPermission: () => getSamplePermission({ licensee: { firstName: undefined, lastName: undefined } })

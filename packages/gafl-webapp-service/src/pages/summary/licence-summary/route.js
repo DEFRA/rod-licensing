@@ -24,7 +24,7 @@ import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 // Extracted to keep sonar happy
-export const checkNavigation = permission => {
+const checkNavigation = permission => {
   if (!permission.licensee.firstName || !permission.licensee.lastName) {
     throw new GetDataRedirect(NAME.uri)
   }
@@ -51,27 +51,22 @@ export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   if (!permission.isRenewal) {
-    /*
-     * Before we try and filter the permit it is necessary to check that the user has navigated through
-     * the journey in such a way as to have gather all the required data. They may have manipulated the
-     * journey by typing into the address bar in which case they will be redirected back to the
-     * appropriate point in the journey. For a renewal this is not necessary.
-     */
-    checkNavigation(permission)
-
     const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
     if (checkIsMultibuyForYou === true) {
       const transaction = await request.cache().helpers.transaction.get()
-
-      const getLicence = transaction.permissions.find(p => p.licensee.firstName !== undefined && p.isLicenceForYou === true)
-
-      const xferProps = ['firstName', 'lastName', 'birthDate']
-      for (const prop of xferProps) {
-        permission.licensee[prop] = getLicence.licensee[prop]
-      }
+      const { licensee } = transaction.permissions.find(p => p.isLicenceForYou)
+      permission.licensee = { ...licensee }
 
       await request.cache().helpers.transaction.setCurrentPermission(permission)
+    } else {
+      /*
+       * Before we try and filter the permit it is necessary to check that the user has navigated through
+       * the journey in such a way as to have gather all the required data. They may have manipulated the
+       * journey by typing into the address bar in which case they will be redirected back to the
+       * appropriate point in the journey. For a renewal (or second 'for you' licence) this is not necessary.
+       */
+      checkNavigation(permission)
     }
 
     const errorPage = getErrorPage(permission)
