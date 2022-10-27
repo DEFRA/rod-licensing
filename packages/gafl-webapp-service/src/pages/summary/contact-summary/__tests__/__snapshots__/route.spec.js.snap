@@ -1,180 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter is set have preferred method and if isLicenceForYou is true 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-details),
-    },
-    "value": Object {
-      "text": "contact-summary-license-non-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter set to no if have preferred method and if isLicenceForYou is true 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-details),
-    },
-    "value": Object {
-      "text": "contact-summary-license-non-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows should not have the newsletter row if isLicenceForYou is false 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-details),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-]
-`;
-
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as Make a note on confirmation 1`] = `
 Array [
   Object {
@@ -305,6 +130,181 @@ Array [
     },
     "value": Object {
       "text": "contact-summary-text-plrl07700900900",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should have the newsletter is set have preferred method and if isLicenceForYou is true 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-details),
+    },
+    "value": Object {
+      "text": "contact-summary-license-non-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should have the newsletter set to no if have preferred method and if isLicenceForYou is true 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-details),
+    },
+    "value": Object {
+      "text": "contact-summary-license-non-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should not have the newsletter row if isLicenceForYou is false 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-details),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
     },
   },
 ]

@@ -280,69 +280,63 @@ describe('contact-summary > route', () => {
 
         expect(summaryTable).toMatchSnapshot()
       })
-    })
 
-    it('should have the newsletter is set have preferred method and if isLicenceForYou is true', async () => {
-      isPhysical.mockReturnValue(false)
-      const sampleRequest = generateRequestMock({
-        permissions: [
-          getSamplePermissionForYou(
-            {
-              postalFulfilment: false,
-              preferredMethodOfConfirmation: HOW_CONTACTED.none,
-              preferredMethodOfReminder: HOW_CONTACTED.none,
-              preferredMethodOfNewsletter: HOW_CONTACTED.email
-            },
-            { licenceLength: '1D' }
-          )
-        ]
+      it('should have the newsletter is set have preferred method and if isLicenceForYou is true', async () => {
+        const sampleRequest = generateRequestMock({
+          permissions: [
+            getSamplePermissionForYou(
+              {
+                postalFulfilment: false,
+                preferredMethodOfConfirmation: HOW_CONTACTED.none,
+                preferredMethodOfReminder: HOW_CONTACTED.none,
+                preferredMethodOfNewsletter: HOW_CONTACTED.email
+              },
+              { licenceLength: '1D' }
+            )
+          ]
+        })
+
+        const { summaryTable } = await getData(sampleRequest)
+
+        expect(summaryTable).toMatchSnapshot()
       })
 
-      const { summaryTable } = await getData(sampleRequest)
+      it('should have the newsletter set to no if have preferred method and if isLicenceForYou is true', async () => {
+        const sampleRequest = generateRequestMock({
+          permissions: [
+            getSamplePermissionForYou(
+              {
+                postalFulfilment: false,
+                preferredMethodOfConfirmation: HOW_CONTACTED.none,
+                preferredMethodOfReminder: HOW_CONTACTED.none,
+                preferredMethodOfNewsletter: HOW_CONTACTED.none
+              },
+              { licenceLength: '1D' }
+            )
+          ]
+        })
+        const { summaryTable } = await getData(sampleRequest)
 
-      expect(summaryTable).toMatchSnapshot()
-      isPhysical.mockReturnValue(true)
-    })
-
-    it('should have the newsletter set to no if have preferred method and if isLicenceForYou is true', async () => {
-      isPhysical.mockReturnValue(false)
-      const sampleRequest = generateRequestMock({
-        permissions: [
-          getSamplePermissionForYou(
-            {
-              postalFulfilment: false,
-              preferredMethodOfConfirmation: HOW_CONTACTED.none,
-              preferredMethodOfReminder: HOW_CONTACTED.none,
-              preferredMethodOfNewsletter: HOW_CONTACTED.none
-            },
-            { licenceLength: '1D' }
-          )
-        ]
-      })
-      const { summaryTable } = await getData(sampleRequest)
-
-      expect(summaryTable).toMatchSnapshot()
-      isPhysical.mockReturnValue(true)
-    })
-
-    it('should not have the newsletter row if isLicenceForYou is false', async () => {
-      isPhysical.mockReturnValue(false)
-      const sampleRequest = generateRequestMock({
-        permissions: [
-          getSamplePermission(
-            {
-              preferredMethodOfConfirmation: HOW_CONTACTED.text,
-              preferredMethodOfReminder: HOW_CONTACTED.text
-            },
-            { licenceLength: '1D' }
-          )
-        ]
+        expect(summaryTable).toMatchSnapshot()
       })
 
-      const { summaryTable } = await getData(sampleRequest)
+      it('should not have the newsletter row if isLicenceForYou is false', async () => {
+        const sampleRequest = generateRequestMock({
+          permissions: [
+            getSamplePermission(
+              {
+                preferredMethodOfConfirmation: HOW_CONTACTED.text,
+                preferredMethodOfReminder: HOW_CONTACTED.text
+              },
+              { licenceLength: '1D' }
+            )
+          ]
+        })
 
-      expect(summaryTable).toMatchSnapshot()
-      isPhysical.mockReturnValue(true)
+        const { summaryTable } = await getData(sampleRequest)
+
+        expect(summaryTable).toMatchSnapshot()
+      })
     })
 
     describe('addLanguageCodeToUri', () => {
