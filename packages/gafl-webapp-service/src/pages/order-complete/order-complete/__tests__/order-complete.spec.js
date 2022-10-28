@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-
+import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
 import {
@@ -10,8 +10,43 @@ import {
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
-  REFUND_POLICY
+  REFUND_POLICY,
+  NEW_TRANSACTION
 } from '../../../../uri.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import { getData } from '../route.js'
+import { COMPLETION_STATUS } from '../../../../constants.js'
+
+beforeEach(jest.clearAllMocks)
+jest.mock('../../../../processors/date-and-time-display.js')
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
+}))
+
+const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+  cache: () => ({
+    helpers: {
+      status: {
+        get: statusGet,
+        setCurrentPermission: async () => ({
+          referenceNumber: 'abc-123'
+        }),
+        set: async () => ({
+          referenceNumber: 'abc-123'
+        })
+      },
+      transaction: {
+        getCurrentPermission: transactionGet
+      }
+    }
+  }),
+  url: {
+    search: ''
+  },
+  i18n: {
+    getCatalog: () => 'messages'
+  }
+})
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
@@ -51,6 +86,7 @@ describe('The order completion handler', () => {
   })
 
   it('responds with the order completed page if the journey has finished', async () => {
+    addLanguageCodeToUri.mockReturnValue('/buy/order-complete')
     await JUNIOR_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
@@ -99,5 +135,51 @@ describe('The order completion handler', () => {
 
     const data = await injectWithCookies('GET', uri)
     expect(data.statusCode).toBe(200)
+  })
+
+  it('addLanguageCodeToUri is called with the expected arguments', async () => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const transaction = () => ({
+      startDate: '2019-12-14T00:00:00Z',
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+
+    const request = mockRequest(status, transaction)
+
+    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
+
+    await getData(request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
+  })
+
+  it('addLanguageCodeToUri outputs correct value', async () => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const transaction = () => ({
+      startDate: '2019-12-14T00:00:00Z',
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+
+    const decoratedUri = Symbol('order complete uri')
+    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+
+    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
+    const request = mockRequest(status, transaction)
+
+    const data = await getData(request)
+    expect(data.uri.new).toEqual(decoratedUri)
   })
 })

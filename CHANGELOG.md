@@ -1,6 +1,45 @@
 
 
 
+## v1.27.0-rc.7 (2022-10-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1504](https://github.com/DEFRA/rod-licensing/pull/1504) Route to view server error page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1501](https://github.com/DEFRA/rod-licensing/pull/1501) Welsh translation - error page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.6 (2022-10-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1290](https://github.com/DEFRA/rod-licensing/pull/1290) Welsh lang  update check contact details page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.27.0-rc.5 (2022-10-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1393](https://github.com/DEFRA/rod-licensing/pull/1393) Persist language misc route handler ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.4 (2022-10-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1437](https://github.com/DEFRA/rod-licensing/pull/1437) Add route to view error page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+
 ## v1.27.0-rc.1 (2022-09-27)
 
 #### :bug: Bug Fix
