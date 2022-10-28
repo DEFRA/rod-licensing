@@ -2,7 +2,6 @@ import { getData, validator } from '../route'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { LICENCE_FOR } from '../../../../uri.js'
-import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 
 jest.mock('../../../../routes/next-page.js', () => ({
   nextPage: jest.fn()
@@ -56,7 +55,7 @@ describe('name > route', () => {
         [LICENCE_FOR.page]: false
       })
       const func = () => getData(mockRequest(status, transaction))
-      await expect(func).rejects.toThrow(GetDataRedirect)
+      await expect(func).rejects.toThrowRedirectTo(LICENCE_FOR.uri)
     })
 
     it('should not throw a redirect if not been to LICENCE_FOR page', async () => {
