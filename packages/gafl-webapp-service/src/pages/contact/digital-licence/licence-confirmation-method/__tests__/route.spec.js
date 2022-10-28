@@ -1,6 +1,5 @@
 import { CONTACT } from '../../../../../uri.js'
 import { getData } from '../route.js'
-import GetDataRedirect from '../../../../../handlers/get-data-redirect.js'
 
 describe('licence-confirmation-method > route', () => {
   describe('getData', () => {
@@ -25,9 +24,8 @@ describe('licence-confirmation-method > route', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should reject and redirect to the contact page, if licence is not physical', async () => {
-      const getDataRedirectError = new GetDataRedirect(CONTACT.uri)
       const func = async () => await getData(createRequestMock({ licenceLength: '1D' }))
-      await expect(func).rejects.toThrow(getDataRedirectError)
+      await expect(func).rejects.toThrowRedirectTo(CONTACT.uri)
     })
 
     it('returns the expected data', async () => {

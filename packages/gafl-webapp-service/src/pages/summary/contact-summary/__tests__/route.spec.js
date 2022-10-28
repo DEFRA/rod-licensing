@@ -1,4 +1,3 @@
-import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import {
   ADDRESS_ENTRY,
   ADDRESS_LOOKUP,
@@ -350,7 +349,7 @@ describe('contact-summary > route', () => {
       const permission = { licenceLength: '12M', isRenewal: true, licensee: {} }
       const mockRequest = generateRequestMock(permission, '', status)
 
-      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_FULFILMENT.uri)
     })
 
     it('should throw a GetDataRedirect if licence-confirmation page is false on the status', async () => {
@@ -360,7 +359,7 @@ describe('contact-summary > route', () => {
       const permission = { licenceLength: '12M', isRenewal: true, licensee: {} }
       const mockRequest = generateRequestMock(permission, '', status)
 
-      await expect(() => getData(mockRequest)).rejects.toThrow(GetDataRedirect)
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_CONFIRMATION_METHOD.uri)
     })
   })
 })
