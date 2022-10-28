@@ -27,7 +27,6 @@ export const getAnalyticsSessionId = async request => {
 }
 
 export default async (request, h) => {
-  console.log('analytics')
   const { payload } = request
   const analytics = await request.cache().helpers.analytics.get()
 
@@ -57,7 +56,6 @@ export default async (request, h) => {
 
   if (host === referrerHost) {
     const redirect = referer.replace(origin, '')
-
     return h.redirect(redirect)
   }
 
