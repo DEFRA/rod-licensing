@@ -21,15 +21,14 @@
           }) }}
         {% endif %}
 
+
           {% for licence in data.licences %}
 
               {% set licenceInfo = [
                 { key: { text: 'Licence holder' }, value: { text: licence.licenceHolder } }, 
                 { key: { text: 'Type' }, value: { text: licence.type } }, 
                 { key: { text: 'Length' }, value: { text: licence.length } }, 
-                { key: { text: 'Start' }, 
-                  value: { html: data.startAfterPaymentMinutes + mssgs.licence_summary_minutes_after_payment if data.permission.licenceToStart === 'after-payment' else licence.start } 
-                }, 
+                { key: { text: 'Start' }, value: { text: licence.start } }, 
                 { key: { text: 'Price' }, value: { text: '£' + licence.price } }
                 ]
               %}
