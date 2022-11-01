@@ -1,4 +1,14 @@
 
+## v1.27.0-rc.11 (2022-11-01)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1495](https://github.com/DEFRA/rod-licensing/pull/1495) Google search takes user incorrect page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1518](https://github.com/DEFRA/rod-licensing/pull/1518) Analytics error when in welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 
