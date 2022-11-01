@@ -17,6 +17,7 @@ export const advancePurchaseDateMoment = permission => {
  */
 export const displayStartTime = (request, permission) => {
   const mssgs = request.i18n.getCatalog()
+  const startAfter30Text = mssgs.licence_summary_minutes_after_payment
   const startMoment = permission.startDate
     ? moment.utc(permission.startDate, null, request.locale).tz(SERVICE_LOCAL_TIME)
     : advancePurchaseDateMoment(permission)
@@ -26,7 +27,6 @@ export const displayStartTime = (request, permission) => {
     .replace('12:00am', mssgs.licence_start_time_am_text_0)
     .replace('12:00pm', mssgs.licence_start_time_am_text_12)
 
-  const startAfter30Text = mssgs.licence_summary_minutes_after_payment
   if (permission.licenceToStart === licenceToStart.AFTER_PAYMENT) {
     return START_AFTER_PAYMENT_MINUTES + startAfter30Text
   }

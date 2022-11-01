@@ -1,5 +1,11 @@
 import { displayStartTime, displayEndTime, displayExpiryDate, advancePurchaseDateMoment } from '../date-and-time-display.js'
 import moment from 'moment-timezone'
+import constants from '@defra-fish/business-rules-lib'
+
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  START_AFTER_PAYMENT_MINUTES: 30,
+  SERVICE_LOCAL_TIME: 'Europe/London'
+}))
 
 jest.mock('moment-timezone', () => ({
   tz: () => ({
@@ -19,7 +25,8 @@ const getSampleRequest = () => ({
     getCatalog: () => ({
       licence_start_time_am_text_0: '0.00am (first minute of the day)',
       licence_start_time_am_text_12: '12:00pm (midday)',
-      renewal_start_date_expires_5: 'on'
+      renewal_start_date_expires_5: 'on',
+      licence_summary_minutes_after_payment: ' mins after le payment'
     })
   },
   locale: 'en'
@@ -32,6 +39,20 @@ describe('displayStartTime', () => {
     moment.utc.mockReturnValueOnce(realMoment(startDate))
     displayStartTime(getSampleRequest(), { startDate })
     expect(moment.utc).toHaveBeenCalledWith(startDate, null, expect.any(String))
+  })
+
+  it('expected text replaces the date string if start after payment is selected', async () => {
+    const startAfter = '2021-01-01T00:00:00.000Z'
+    const mssgs = getSampleRequest().i18n.getCatalog()
+    const expectedReturnText = constants.START_AFTER_PAYMENT_MINUTES + mssgs.licence_summary_minutes_after_payment
+    moment.utc.mockImplementation(() => ({
+      tz: () => ({
+        locale: jest.fn(() => ({ format: () => '' })),
+        format: () => {}
+      })
+    }))
+    const startAfterPaymentMinutes = displayStartTime(getSampleRequest(), { startDate: startAfter, licenceToStart: 'after-payment' })
+    expect(startAfterPaymentMinutes).toEqual(expectedReturnText)
   })
 
   it.each([

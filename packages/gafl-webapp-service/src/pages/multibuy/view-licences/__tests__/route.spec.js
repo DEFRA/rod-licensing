@@ -11,9 +11,6 @@ jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../processors/multibuy-processor.js')
-jest.mock('@defra-fish/business-rules-lib', () => ({
-  START_AFTER_PAYMENT_MINUTES: 4000
-}))
 
 const permission = {
   licensee: {
