@@ -19,16 +19,21 @@ jest.mock('moment-timezone', () => ({
   }),
   format: () => {},
   locale: jest.fn(),
-  utc: jest.fn(() => ({ tz: () => {} }))
+  utc: jest.fn(() => ({
+    tz: () => ({
+      locale: jest.fn(() => ({ format: () => '' })),
+      format: () => {}
+    })
+  }))
 }))
 
-const getSampleRequest = () => ({
+const getSampleRequest = (overrides = {}) => ({
   i18n: {
     getCatalog: () => ({
       licence_start_time_am_text_0: '0.00am (first minute of the day)',
       licence_start_time_am_text_12: '12:00pm (midday)',
       renewal_start_date_expires_5: 'on',
-      licence_summary_minutes_after_payment: ' mins after le payment'
+      ...overrides
     })
   },
   locale: 'en'
@@ -43,38 +48,25 @@ describe('displayStartTime', () => {
     expect(moment.utc).toHaveBeenCalledWith(startDate, null, expect.any(String))
   })
 
-  it.each([[50], [10000], [0]])(
-    'expected text replaces the date string if start after payment is selected using correct constant',
-    async startAfterMinutes => {
+  it.each([
+    [[50], ['2021-01-01T00:00:00.000Z'], [' minutes until fishing begins!']],
+    [[10000], ['2010-12-23T14:00:00.000Z'], [' minutes until the salmon are yours']],
+    [[0], ['2029-06-030T01:00:00.000Z'], [' minutes until cobwebs are brushed off your rod']]
+  ])(
+    'generates a string of payment delay (%s) followed by licence_summary_minutes_after_payment label when licence is to start after payment',
+    async (startAfterMinutes, date, message) => {
       constant.START_AFTER_PAYMENT_MINUTES = startAfterMinutes
-      const startDate = '2021-01-01T00:00:00.000Z'
-      const mssgs = getSampleRequest().i18n.getCatalog()
-      const expectedReturnText = constant.START_AFTER_PAYMENT_MINUTES + mssgs.licence_summary_minutes_after_payment
-      moment.utc.mockImplementation(() => ({
-        tz: () => ({
-          locale: jest.fn(() => ({ format: () => '' })),
-          format: () => {}
-        })
-      }))
-      const startAfterPaymentMinutes = displayStartTime(getSampleRequest(), { startDate, licenceToStart: 'after-payment' })
+      const mockRequest = getSampleRequest({
+        licence_summary_minutes_after_payment: message
+      })
+      const mssgs = mockRequest.i18n.getCatalog()
+      console.log(mssgs)
+      const startDate = date
+      const expectedReturnText = `${constant.START_AFTER_PAYMENT_MINUTES}${mssgs.licence_summary_minutes_after_payment}`
+      const startAfterPaymentMinutes = displayStartTime(mockRequest, { startDate, licenceToStart: 'after-payment' })
       expect(startAfterPaymentMinutes).toEqual(expectedReturnText)
     }
   )
-
-  it('date in plain english is returned if start after payment is not selected', () => {
-    const startDate = '2021-01-01T00:00:00.000Z'
-    const expectedReturnDateValue = '0.00am (first minute of the day) on 1 January 2021'
-    const realMoment = jest.requireActual('moment-timezone')
-    moment.utc.mockReturnValueOnce(realMoment(startDate))
-    moment.utc.mockImplementation(() => ({
-      tz: () => ({
-        locale: jest.fn(() => ({ format: () => '' })),
-        format: () => {}
-      })
-    }))
-    const returnDateValue = displayStartTime(getSampleRequest(), { startDate, licenceToStart: 'not-after-payment' })
-    expect(returnDateValue).toEqual(expectedReturnDateValue)
-  })
 
   it.each([
     ['2021-01-01', '0.00am (first minute of the day) on 1 January 2021'], // no time given
