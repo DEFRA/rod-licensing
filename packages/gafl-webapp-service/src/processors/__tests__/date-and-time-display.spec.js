@@ -54,15 +54,12 @@ describe('displayStartTime', () => {
     [[0], ['2029-06-030T01:00:00.000Z'], [' minutes until cobwebs are brushed off your rod']]
   ])(
     'generates a string of payment delay (%s) followed by licence_summary_minutes_after_payment label when licence is to start after payment',
-    async (startAfterMinutes, date, message) => {
+    async (startAfterMinutes, startDate, message) => {
       constant.START_AFTER_PAYMENT_MINUTES = startAfterMinutes
       const mockRequest = getSampleRequest({
         licence_summary_minutes_after_payment: message
       })
-      const mssgs = mockRequest.i18n.getCatalog()
-      console.log(mssgs)
-      const startDate = date
-      const expectedReturnText = `${constant.START_AFTER_PAYMENT_MINUTES}${mssgs.licence_summary_minutes_after_payment}`
+      const expectedReturnText = `${constant.START_AFTER_PAYMENT_MINUTES}${message}`
       const startAfterPaymentMinutes = displayStartTime(mockRequest, { startDate, licenceToStart: 'after-payment' })
       expect(startAfterPaymentMinutes).toEqual(expectedReturnText)
     }
