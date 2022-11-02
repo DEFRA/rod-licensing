@@ -27,13 +27,13 @@ jest.mock('moment-timezone', () => ({
   }))
 }))
 
-const getSampleRequest = (overrides = {}) => ({
+const getSampleRequest = (labelOverrides = {}) => ({
   i18n: {
     getCatalog: () => ({
       licence_start_time_am_text_0: '0.00am (first minute of the day)',
       licence_start_time_am_text_12: '12:00pm (midday)',
       renewal_start_date_expires_5: 'on',
-      ...overrides
+      ...labelOverrides
     })
   },
   locale: 'en'
@@ -59,7 +59,7 @@ describe('displayStartTime', () => {
       const mockRequest = getSampleRequest({
         licence_summary_minutes_after_payment: message
       })
-      const expectedReturnText = `${constant.START_AFTER_PAYMENT_MINUTES}${message}`
+      const expectedReturnText = `${startAfterMinutes}${message}`
       const startAfterPaymentMinutes = displayStartTime(mockRequest, { startDate, licenceToStart: 'after-payment' })
       expect(startAfterPaymentMinutes).toEqual(expectedReturnText)
     }
