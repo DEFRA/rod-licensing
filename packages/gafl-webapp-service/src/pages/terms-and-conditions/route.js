@@ -1,5 +1,4 @@
 import pageRoute from '../../routes/page-route.js'
-import * as mappings from '../../processors/mapping-constants.js'
 import Joi from 'joi'
 import { TERMS_AND_CONDITIONS, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
 import { nextPage } from '../../routes/next-page.js'
@@ -7,6 +6,7 @@ import { nextPage } from '../../routes/next-page.js'
 import GetDataRedirect from '../../handlers/get-data-redirect.js'
 
 export const getData = async request => {
+  const transaction = await request.cache().helpers.transaction.get()
   const status = await request.cache().helpers.status.getCurrentPermission()
 
   if (!status[LICENCE_SUMMARY.page]) {
@@ -16,12 +16,25 @@ export const getData = async request => {
   if (!status[CONTACT_SUMMARY.page]) {
     throw new GetDataRedirect(CONTACT_SUMMARY.uri)
   }
+  const licences = transaction.permissions.map(permission => ({
+    price: permission.permit.cost
+  }))
 
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   return {
-    isSalmonAndSeaTrout: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    paymentRequired: !!Number.parseInt(permission.permit.cost)
+    paymentRequired: await priceCalculation(licences)
   }
+}
+
+const priceCalculation = async licences => {
+  const price = licences.reduce((accumulator, licence) => {
+    return accumulator + licence.price
+  }, 0)
+
+  if (price > 0) {
+    return true
+  }
+
+  return false
 }
 
 export const validator = Joi.object({
