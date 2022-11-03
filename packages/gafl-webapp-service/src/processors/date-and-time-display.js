@@ -1,7 +1,6 @@
 import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { SERVICE_LOCAL_TIME, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
-import { START_AFTER_PAYMENT_MINUTES } from '../../../business-rules-lib/src/constants.js'
 export const dateDisplayFormat = 'D MMMM YYYY'
 export const cacheDateFormat = 'YYYY-MM-DD'
 

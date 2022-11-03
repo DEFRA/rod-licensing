@@ -1,8 +1,8 @@
 import { displayStartTime, displayEndTime, displayExpiryDate, advancePurchaseDateMoment } from '../date-and-time-display.js'
 import moment from 'moment-timezone'
-import constant from '../../../../business-rules-lib/src/constants.js'
+import constant from '@defra-fish/business-rules-lib'
 
-jest.mock('../../../../business-rules-lib/src/constants.js', () => ({
+jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 40,
   SERVICE_LOCAL_TIME: 'Europe/London'
 }))
