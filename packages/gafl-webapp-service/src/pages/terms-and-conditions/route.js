@@ -26,15 +26,9 @@ export const getData = async request => {
 }
 
 const priceCalculation = async licences => {
-  const price = licences.reduce((accumulator, licence) => {
-    return accumulator + licence.price
-  }, 0)
+  const price = licences.reduce((accumulator, licence) => accumulator + licence.price, 0)
 
-  if (price > 0) {
-    return true
-  }
-
-  return false
+  return price > 0
 }
 
 export const validator = Joi.object({
