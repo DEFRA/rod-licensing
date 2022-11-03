@@ -7,6 +7,7 @@
 {% from "error-summary.njk" import errorSummary %}
 {% from "back-link/macro.njk" import govukBackLink %}
 {% from "warning-text/macro.njk" import govukWarningText %}
+{% from "fieldset/macro.njk" import govukFieldset %}
 
 {% set title = mssgs.terms_conds_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -31,6 +32,13 @@
     {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
 
     <form method="post">
+        {{ govukFieldset({
+            legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                isPageHeading: true
+            }
+        }) }}
 
         {% if data.paymentRequired %}
             {{ govukWarningText({
@@ -156,7 +164,7 @@
             classes: "govuk-!-margin-top-5"
         }) }}
 
-        <div class="govuk-body-m"><a class="govuk-link" href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.terms_conds_pay_on_gov_uk }}</a>.</div>
+        <div class="govuk-body-m"><a class="govuk-link" href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.terms_conds_pay_on_gov_uk }}</a></div>
         {{ csrf() }}
     </form>
 {% endblock %}
