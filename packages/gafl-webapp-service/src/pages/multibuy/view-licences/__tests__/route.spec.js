@@ -2,7 +2,6 @@ import { getData, validator } from '../route'
 import { createMockRequest } from '../../../../__mocks__/request.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
-import constants from '@defra-fish/business-rules-lib'
 
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
@@ -12,9 +11,6 @@ jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../processors/multibuy-processor.js')
-jest.mock('@defra-fish/business-rules-lib', () => ({
-  START_AFTER_PAYMENT_MINUTES: 4000
-}))
 
 const permission = {
   licensee: {
@@ -110,16 +106,6 @@ describe('view licences > getData', () => {
       const res = await getData(getSampleRequest())
       expect(res).toMatchSnapshot()
     })
-
-    it.each([[29], [31], [368]])(
-      'uses START_AFTER_PAYMENT_MINUTES environment variable for startAfterPaymentMinutes key',
-      async startAfter => {
-        constants.START_AFTER_PAYMENT_MINUTES = startAfter
-        const sampleRequest = getSampleRequest()
-        const { startAfterPaymentMinutes } = await getData(sampleRequest)
-        expect(startAfterPaymentMinutes).toEqual(startAfter)
-      }
-    )
 
     it('duplicates', async () => {
       hasDuplicates.mockReturnValueOnce(false)
