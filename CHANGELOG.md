@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.13 (2022-11-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1503](https://github.com/DEFRA/rod-licensing/pull/1503) Welsh language - persist on error page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.27.0-rc.11 (2022-11-01)
 
