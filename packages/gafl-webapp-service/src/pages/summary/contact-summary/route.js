@@ -7,6 +7,7 @@ import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+import jd from '../../../routes/journey-definition.js'
 
 import {
   CONTACT_SUMMARY,
@@ -19,6 +20,7 @@ import {
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
+console.log('journey definition:', JSON.stringify(jd, undefined, '\t'))
 
 const CONTACT_TEXT_DEFAULT = {
   EMAIL: 'contact_summary_email',

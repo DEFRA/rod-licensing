@@ -29,5 +29,8 @@ export const nextPage = async request => {
   const result = await (resultFunctions[currentPage] || defaultResultFunction)(request)
 
   // Locate the next page
-  return addLanguageCodeToUri(request, routeNode.next[result].page.uri)
+  const next = routeNode.next[result].page.uri
+  console.log('next', next)
+  return addLanguageCodeToUri(request, next)
+  // return addLanguageCodeToUri(request, routeNode.next[result].page.uri)
 }
