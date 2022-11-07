@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.14 (2022-11-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1529](https://github.com/DEFRA/rod-licensing/pull/1529) Amend journey content for under 13 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.27.0-rc.13 (2022-11-03)
 
 #### :rocket: Enhancement
