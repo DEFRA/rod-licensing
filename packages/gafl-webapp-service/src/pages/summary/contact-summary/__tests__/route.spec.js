@@ -313,6 +313,21 @@ describe('contact-summary > route', () => {
       expect(summaryTable).toMatchSnapshot()
     })
 
+    it.each([[true], [false]])('returns value of isLicenceForYou', async licenceFor => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...addressAndContact
+        },
+        isLicenceForYou: licenceFor
+      }
+      const sampleRequest = generateRequestMock(permission)
+
+      const { isLicenceForYou } = await getData(sampleRequest)
+
+      expect(isLicenceForYou).toBe(licenceFor)
+    })
+
     describe('addLanguageCodeToUri', () => {
       beforeEach(jest.clearAllMocks)
 

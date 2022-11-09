@@ -209,7 +209,8 @@ const getData = async request => {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
-    }
+    },
+    isLicenceForYou: permission.isLicenceForYou
   }
 }
 
