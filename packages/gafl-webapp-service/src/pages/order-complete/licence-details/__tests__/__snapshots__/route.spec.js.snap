@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns expected data 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": Symbol(concession),
+      "disabled": Symbol(disabled),
+      "end": Symbol(9:32am on 23 June 2022),
+      "index": 0,
+      "length": Symbol(8 days),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": Symbol(9:32am on 23 June 2021),
+      "type": Symbol(Trout and coarse, up to 2 rods),
+    },
+  ],
+}
+`;
