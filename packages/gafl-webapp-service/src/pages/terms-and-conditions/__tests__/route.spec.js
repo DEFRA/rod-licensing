@@ -13,7 +13,7 @@ describe('terms-and-conditions > route', () => {
   })
 
   describe('getData', () => {
-    const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+    const generateMockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
       cache: () => ({
         helpers: {
           transaction: {
@@ -32,7 +32,7 @@ describe('terms-and-conditions > route', () => {
       const status = () => ({
         [LICENCE_SUMMARY.page]: false
       })
-      const func = () => getData(mockRequest(status))
+      const func = () => getData(generateMockRequest(status))
       await expect(func).rejects.toThrowRedirectTo(LICENCE_SUMMARY.uri)
     })
 
@@ -41,48 +41,16 @@ describe('terms-and-conditions > route', () => {
         [LICENCE_SUMMARY.page]: true,
         [CONTACT_SUMMARY.page]: false
       })
-      const func = () => getData(mockRequest(status))
+      const func = () => getData(generateMockRequest(status))
       await expect(func).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
     })
 
-    it('payment required returns false if price = 0', async () => {
-      const status = () => ({
-        [LICENCE_SUMMARY.page]: true,
-        [CONTACT_SUMMARY.page]: true
-      })
-      const transaction = () => ({
-        permissions: [
-          {
-            licensee: {
-              firstName: 'Turanga',
-              lastName: 'Leela'
-            },
-            licenceType: 'trout-and-coarse',
-            numberOfRods: '2',
-            licenceLength: '8D',
-            permit: { cost: 0 }
-          },
-          {
-            licensee: {
-              firstName: 'Turanga',
-              lastName: 'Leela'
-            },
-            licenceType: 'trout-and-coarse',
-            numberOfRods: '2',
-            licenceLength: '8D',
-            permit: { cost: 0 }
-          }
-        ]
-      })
-      const data = await getData(mockRequest(status, transaction))
-      expect(data.paymentRequired).toBeFalsy()
-    })
-
     it.each([
-      [0, 24],
-      [12, 0],
-      [1, 14]
-    ])('payment required returns true if price is more than 0', async (price, anotherPrice) => {
+      [0, 24, true],
+      [12, 0, true],
+      [1, 14, true],
+      [0, 0, false]
+    ])('returns whether payment is required', async (price, anotherPrice, paymentRequired) => {
       const status = () => ({
         [LICENCE_SUMMARY.page]: true,
         [CONTACT_SUMMARY.page]: true
@@ -111,8 +79,8 @@ describe('terms-and-conditions > route', () => {
           }
         ]
       })
-      const data = await getData(mockRequest(status, transaction))
-      expect(data.paymentRequired).toBeTruthy()
+      const data = await getData(generateMockRequest(status, transaction))
+      expect(data.paymentRequired).toBe(paymentRequired)
     })
   })
 })
