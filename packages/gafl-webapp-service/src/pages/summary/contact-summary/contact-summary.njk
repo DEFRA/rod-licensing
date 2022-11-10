@@ -45,15 +45,9 @@
             {{ csrf() }}
         </form>
         
-        {% if data.isLicenceForYou %}
-            <p class="govuk-body-m">
-                <a class="govuk-link" href="{{ data.uri.licenceSummary }}">{{ mssgs.change_licence_details_you }}</a>
-            </p>
-        {% else %} 
-            <p class="govuk-body-m">
-                <a class="govuk-link" href="{{ data.uri.licenceSummary }}">{{ mssgs.change_licence_details_other }}</a>
-            </p>
-        {% endif %}
+        <p class="govuk-body-m">
+            <a class="govuk-link" href="{{ data.uri.licenceSummary }}">{{ mssgs.change_licence_details_you if data.isLicenceForYou else change_licence_details_other }}</a>
+        </p>
     </div>
 </div>
 {% endblock %}
