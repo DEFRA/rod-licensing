@@ -1,4 +1,15 @@
 
+## v1.27.0-rc.15 (2022-11-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1536](https://github.com/DEFRA/rod-licensing/pull/1536) Welsh translation for Do they want to go paperless? page ([@MickStein](https://github.com/MickStein))
+  * [#1533](https://github.com/DEFRA/rod-licensing/pull/1533) Welsh - do you receive any of the following ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.27.0-rc.14 (2022-11-07)
 
 #### :rocket: Enhancement
