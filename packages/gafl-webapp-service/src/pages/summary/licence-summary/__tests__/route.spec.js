@@ -47,7 +47,7 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
   }
 }))
 
-const getMockRequest = ({ getTransactionPermission = async () => getMockPermission() } = {}) => ({
+const getMockRequest = (currentPermission = getMockPermission()) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -55,7 +55,7 @@ const getMockRequest = ({ getTransactionPermission = async () => getMockPermissi
         setCurrentPermission: () => {}
       },
       transaction: {
-        getCurrentPermission: getTransactionPermission,
+        getCurrentPermission: async () => currentPermission,
         setCurrentPermission: () => {}
       }
     }
@@ -153,14 +153,14 @@ describe('licence-summary > route', () => {
       [RENEWAL_START_DATE.uri],
       [LICENCE_TO_START.uri],
       [NEW_TRANSACTION.uri]
-    ])('addLanguageCodeToUri is called with the expected arguments', async uri => {
+    ])('addLanguageCodeToUri is called with the request and %s', async uri => {
       const mockRequest = getMockRequest()
       await getData(mockRequest)
 
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
     })
 
-    it('licenceTypeDisplay is called with the expected arguments', async () => {
+    it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
       const catalog = Symbol('mock catalog')
       const mockRequest = {
         ...getMockRequest(),
@@ -214,10 +214,8 @@ describe('licence-summary > route', () => {
       ${'licenceLength'}    | ${'LICENCE_LENGTH.uri'}   | ${{ licenceLength: undefined }}                                            | ${LICENCE_LENGTH.uri}
     `('throws a redirect error to $uriName if $notIncluded is not included in permission object', async ({ permission, uri }) => {
       const mockRequest = getMockRequest({
-        getTransactionPermission: async () => ({
-          ...getMockNonRenewalPermission(),
-          ...permission
-        })
+        ...getMockNonRenewalPermission(),
+        ...permission
       })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(uri)
     })
