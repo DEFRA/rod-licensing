@@ -5,6 +5,17 @@ import { LICENCE_SUMMARY, CONTACT_SUMMARY } from '../../../uri.js'
 
 jest.mock('../../../routes/page-route.js')
 
+const getMockPermission = price => ({
+  licensee: {
+    firstName: 'Turanga',
+    lastName: 'Leela'
+  },
+  licenceType: 'trout-and-coarse',
+  numberOfRods: '2',
+  licenceLength: '8D',
+  permit: { cost: price }
+})
+
 describe('terms-and-conditions > route', () => {
   describe('default', () => {
     it('should call the pageRoute with terms-and-conditions, /buy/conditions, validator, nextPage and getData', async () => {
@@ -13,7 +24,7 @@ describe('terms-and-conditions > route', () => {
   })
 
   describe('getData', () => {
-    const generateMockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+    const generateMockRequest = (statusGet = async () => {}, transactionGet = async () => {}) => ({
       cache: () => ({
         helpers: {
           transaction: {
@@ -55,30 +66,7 @@ describe('terms-and-conditions > route', () => {
         [LICENCE_SUMMARY.page]: true,
         [CONTACT_SUMMARY.page]: true
       })
-      const transaction = () => ({
-        permissions: [
-          {
-            licensee: {
-              firstName: 'Turanga',
-              lastName: 'Leela'
-            },
-            licenceType: 'trout-and-coarse',
-            numberOfRods: '2',
-            licenceLength: '8D',
-            permit: { cost: price }
-          },
-          {
-            licensee: {
-              firstName: 'Turanga',
-              lastName: 'Leela'
-            },
-            licenceType: 'trout-and-coarse',
-            numberOfRods: '2',
-            licenceLength: '8D',
-            permit: { cost: anotherPrice }
-          }
-        ]
-      })
+      const transaction = () => ({ permissions: [getMockPermission(price), getMockPermission(anotherPrice)] })
       const data = await getData(generateMockRequest(status, transaction))
       expect(data.paymentRequired).toBe(paymentRequired)
     })
