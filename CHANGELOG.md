@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.18 (2022-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1540](https://github.com/DEFRA/rod-licensing/pull/1540) Translation for you do not need a licence yet ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.27.0-rc.17 (2022-11-10)
 
 #### :rocket: Enhancement
