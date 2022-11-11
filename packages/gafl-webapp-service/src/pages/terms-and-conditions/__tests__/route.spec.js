@@ -24,14 +24,14 @@ describe('terms-and-conditions > route', () => {
   })
 
   describe('getData', () => {
-    const generateMockRequest = (statusGet = async () => {}, transactionGet = async () => {}) => ({
+    const generateMockRequest = (statusGet = {}, transactionGet = {}) => ({
       cache: () => ({
         helpers: {
           transaction: {
-            get: transactionGet
+            get: async () => transactionGet
           },
           status: {
-            getCurrentPermission: statusGet
+            getCurrentPermission: async () => statusGet
           }
         }
       })
@@ -40,19 +40,12 @@ describe('terms-and-conditions > route', () => {
     beforeEach(() => jest.clearAllMocks())
 
     it('LICENCE_SUMMARY redirect', async () => {
-      const status = () => ({
-        [LICENCE_SUMMARY.page]: false
-      })
-      const func = () => getData(generateMockRequest(status))
+      const func = () => getData(generateMockRequest({ [LICENCE_SUMMARY.page]: false }))
       await expect(func).rejects.toThrowRedirectTo(LICENCE_SUMMARY.uri)
     })
 
     it('CONTACT_SUMMARY redirect', async () => {
-      const status = () => ({
-        [LICENCE_SUMMARY.page]: true,
-        [CONTACT_SUMMARY.page]: false
-      })
-      const func = () => getData(generateMockRequest(status))
+      const func = () => getData(generateMockRequest({ [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: false }))
       await expect(func).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
     })
 
@@ -62,12 +55,12 @@ describe('terms-and-conditions > route', () => {
       [1, 14, true],
       [0, 0, false]
     ])('returns whether payment is required', async (price, anotherPrice, paymentRequired) => {
-      const status = () => ({
-        [LICENCE_SUMMARY.page]: true,
-        [CONTACT_SUMMARY.page]: true
-      })
-      const transaction = () => ({ permissions: [getMockPermission(price), getMockPermission(anotherPrice)] })
-      const data = await getData(generateMockRequest(status, transaction))
+      const data = await getData(
+        generateMockRequest(
+          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
+          { permissions: [getMockPermission(price), getMockPermission(anotherPrice)] }
+        )
+      )
       expect(data.paymentRequired).toBe(paymentRequired)
     })
   })
