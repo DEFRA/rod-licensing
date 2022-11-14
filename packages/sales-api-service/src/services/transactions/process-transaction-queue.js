@@ -44,6 +44,7 @@ export async function processQueue ({ id }) {
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
   const isMultiBuy = transactionRecord.permissions.length > 1
+  console.log('isMultiBuy: ', isMultiBuy)
   for (const {
     licensee,
     concessions,
@@ -71,6 +72,7 @@ export async function processQueue ({ id }) {
       isMultiBuy,
       isRenewal
     )
+    console.log('permission: ', permission)
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -133,6 +135,7 @@ const mapToPermission = async (
   permission.endDate = endDate
   permission.dataSource = dataSource
   permission.isMultiBuy = isMultiBuy
+  console.log('permission.isMultiBuy: ', permission.isMultiBuy)
   permission.isRenewal = isRenewal
   if (isLicenceForYou !== null && isLicenceForYou !== undefined) {
     permission.isLicenceForYou = await getGlobalOptionSetValue(
