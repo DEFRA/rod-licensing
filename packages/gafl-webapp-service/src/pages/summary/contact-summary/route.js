@@ -206,11 +206,7 @@ const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
-  let changeLicenceDetails = mssgs.change_licence_details_other
-
-  if (permission.isLicenceForYou) {
-    changeLicenceDetails = mssgs.change_licence_details_you
-  }
+  const changeLicenceDetails = permission.isLicenceForYou ? mssgs.change_licence_details_you : mssgs.change_licence_details_other
 
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
