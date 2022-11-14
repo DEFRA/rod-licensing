@@ -143,6 +143,7 @@ const mapToPermission = async (
       isLicenceForYou ? 'Yes' : 'No'
     )
   }
+  console.log(permission)
   return permission
 }
 
