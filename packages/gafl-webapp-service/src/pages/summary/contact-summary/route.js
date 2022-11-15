@@ -198,6 +198,7 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
   checkNavigation(status, permission)
 
@@ -205,11 +206,14 @@ const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
+  const changeLicenceDetails = permission.isLicenceForYou ? mssgs.change_licence_details_you : mssgs.change_licence_details_other
+
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
-    }
+    },
+    changeLicenceDetails
   }
 }
 
