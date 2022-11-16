@@ -113,9 +113,9 @@ class RowGenerator {
 
   generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
     const contactText =
-      label !== 'contact_summary_row_contact'
-        ? this._getPreferredMethodOfConfirmation(contactTextSpec)
-        : this._getPreferredMethodOfReminderText(contactTextSpec)
+      label === 'contact_summary_row_contact'
+        ? this._getPreferredMethodOfReminderText(contactTextSpec)
+        : this._getPreferredMethodOfConfirmation(contactTextSpec)
     return this._generateRow(this.labels[label], contactText, href, this.labels[visuallyHiddenText], id)
   }
 }
