@@ -1,26 +1,19 @@
-import { getFromSummary, getData } from '../route'
-import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
-import {
-  DATE_OF_BIRTH,
-  DISABILITY_CONCESSION,
-  LICENCE_LENGTH,
-  LICENCE_TO_START,
-  LICENCE_TYPE,
-  NAME,
-  NEW_TRANSACTION,
-  RENEWAL_START_DATE
-} from '../../../../uri.js'
-import '../../find-permit.js'
+import { getData } from '../route'
+import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
+import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION } from '../../../../uri.js'
+import findPermit from '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import moment from 'moment-timezone'
+import mappingConstants from '../../../../processors/mapping-constants.js'
 
-jest.mock('../../find-permit.js')
-jest.mock('../../../../processors/licence-type-display.js')
-jest.mock('../../../../processors/date-and-time-display.js')
-jest.mock('../../../../processors/uri-helper.js')
+jest.mock('../../../../processors/licence-type-display.js', () => ({
+  licenceTypeDisplay: jest.fn(() => 'Special Canal Licence, Shopping Trollies and Old Wellies')
+}))
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn((_request, href) => href)
+}))
 jest.mock('../../../../processors/date-and-time-display.js', () => ({
-  displayStartTime: jest.fn(),
+  displayStartTime: () => '11:45am on 21st October 1805',
   cacheDateFormat: 'YYYY-MM-DD'
 }))
 const mockMomentImpl = {
@@ -46,13 +39,14 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
     none: 'Not Proof'
   }
 }))
+jest.mock('../../find-permit.js', () => jest.fn())
 
-const getMockRequest = (currentPermission = getMockPermission()) => ({
+const getMockRequest = ({ currentPermission = getMockPermission(), statusCache = {}, statusCacheSet = () => {} } = {}) => ({
   cache: () => ({
     helpers: {
       status: {
-        getCurrentPermission: () => ({}),
-        setCurrentPermission: () => {}
+        getCurrentPermission: () => statusCache,
+        setCurrentPermission: statusCacheSet
       },
       transaction: {
         getCurrentPermission: async () => currentPermission,
@@ -62,7 +56,17 @@ const getMockRequest = (currentPermission = getMockPermission()) => ({
   }),
   i18n: {
     getCatalog: () => ({
-      licence_type_radio_salmon: 'Salmon and sea trout'
+      licence_type_radio_salmon: 'licence_type_radio_salmon',
+      contact_summary_change: 'contact_summary_change',
+      licence_summary_name: 'licence_summary_name',
+      licence_summary_dob: 'licence_summary_dob',
+      licence_summary_type: 'licence_summary_type',
+      licence_summary_length: 'licence_summary_length',
+      licence_summary_minutes_after_payment: 'licence_summary_minutes_after_payment',
+      licence_summary_immediately_after_expire: 'licence_summary_immediately_after_expire',
+      licence_summary_none: 'licence_summary_none',
+      free: 'gratis',
+      cost: 'damage'
     })
   },
   url: {
@@ -71,93 +75,151 @@ const getMockRequest = (currentPermission = getMockPermission()) => ({
   path: '',
   locale: 'en'
 })
-
 const getMockPermission = (licenseeOverrides = {}) => ({
-  birthDateStr: '1st January 1946',
-  concessionProofs: {
-    NI: 'National Insurance Number',
-    blueBadge: 'Blue Badge',
-    none: 'No Proof'
-  },
-  cost: 6,
-  disabled: true,
-  hasExpired: false,
-  hasJunior: false,
-  isContinuing: false,
-  isRenewal: true,
-  licenceLength: '12M',
-  licenceStartDate: '2021-07-01',
-  licenceType: 'Salmon and sea trout',
-  licenceTypeStr: 'Salmon and sea trout',
   licensee: {
-    birthDate: '1946-01-01',
     firstName: 'Brenin',
-    lastName: 'Pysgotwr'
+    lastName: 'Pysgotwr',
+    birthDate: '1987-10-12'
   },
+  isLicenceForYou: true,
+  isRenewal: true,
+  concessions: [
+    {
+      type: mappingConstants.CONCESSION.DISABLED,
+      proof: {
+        type: mappingConstants.CONCESSION_PROOF.NI,
+        referenceNumber: 'AB 12 34 56 A'
+      }
+    }
+  ],
+  licenceLength: '12M',
+  licenceStartTime: null,
+  licenceToStart: 'after-payment',
+  licenceStartDate: '2022-11-10',
+  licenceType: 'Trout and coarse',
   numberOfRods: '3',
-  permit: {
-    cost: 6
-  },
-  startAfterPaymentMinute: 30,
-  startTimeString: '0.00am (first minute of the day) on 1 July 2021',
-  uri: {
-    clear: '/buy/new',
-    dateOfBirth: '/buy/date-of-birth',
-    disabilityConcession: '/buy/disability-concession',
-    licenceLength: '/buy/licence-length',
-    licenceStartDate: '/buy/start-kind',
-    licenceToStart: '/buy/start-kind',
-    licenceType: '/buy/licence-type',
-    name: '/buy/name'
-  }
+  permit: { cost: 6 }
 })
 
-const getMockNonRenewalPermission = () => ({
+const getMockNewPermission = () => ({
   ...getMockPermission(),
   isRenewal: false
+})
+
+const getMockSeniorPermission = () => ({
+  ...getMockNewPermission(),
+  concessions: [
+    {
+      type: mappingConstants.SENIOR,
+      proof: {
+        type: 'Just look at him',
+        referenceNumber: 'Spot the fossil'
+      }
+    }
+  ],
+  permit: { cost: 3 }
+})
+
+const getMockJuniorPermission = () => ({
+  ...getMockNewPermission(),
+  concessions: [
+    {
+      type: mappingConstants.JUNIOR,
+      proof: {
+        type: 'Fresh faced',
+        referenceNumber: 'Beardless youth'
+      }
+    }
+  ],
+  permit: { cost: 0 }
+})
+
+const getMockBlueBadgePermission = () => ({
+  ...getMockPermission(),
+  concessions: [
+    {
+      type: mappingConstants.CONCESSION.DISABLED,
+      proof: {
+        type: mappingConstants.CONCESSION_PROOF.blueBadge,
+        referenceNumber: 'AB1 CDE 0 1234F5678'
+      }
+    }
+  ]
+})
+
+const getMockContinuingPermission = () => ({
+  ...getMockPermission(),
+  licenceToStart: 'another-date',
+  renewedEndDate: '2022-11-10'
 })
 
 describe('licence-summary > route', () => {
   beforeEach(jest.clearAllMocks)
 
-  describe('getFromSummary', () => {
-    it('should return licence-summary, if it is a renewal', async () => {
-      const result = await getFromSummary(undefined, true)
-      expect(result).toBe(LICENCE_SUMMARY_SEEN)
+  describe('sets from summary on status cache', () => {
+    it('adds LICENCE_SUMMARY_SEEN to status.fromSummary for a renewal', async () => {
+      const statusCacheSet = jest.fn()
+      const mockRequest = getMockRequest({ statusCacheSet })
+      await getData(mockRequest)
+      expect(statusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fromSummary: LICENCE_SUMMARY_SEEN
+        })
+      )
     })
 
-    it('should return licence-summary, if fromSummary has not been set and it is not a renewal', async () => {
-      const result = await getFromSummary()
-      expect(result).toBe(LICENCE_SUMMARY_SEEN)
+    it("persists existing fromSummary if permission isn't a renewal", async () => {
+      const statusCacheSet = jest.fn()
+      const statusCache = { fromSummary: Symbol('from summary') }
+      const mockRequest = getMockRequest({
+        currentPermission: getMockNewPermission(),
+        statusCache,
+        statusCacheSet
+      })
+      await getData(mockRequest)
+      expect(statusCacheSet).toHaveBeenCalledWith(expect.objectContaining(statusCache))
     })
 
-    it('should set fromSummary to contact-summary, if fromSummary is contact-summary and it is not a renewal', async () => {
-      const result = await getFromSummary(CONTACT_SUMMARY_SEEN)
-      expect(result).toBe(CONTACT_SUMMARY_SEEN, false)
+    it("sets fromSummary to LICENCE_SUMMARY_SEEN if permission isn't a renewal and no fromSummary is set", async () => {
+      const statusCacheSet = jest.fn()
+      const mockRequest = getMockRequest({
+        currentPermission: getMockNewPermission(),
+        statusCacheSet
+      })
+      await getData(mockRequest)
+      expect(statusCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fromSummary: LICENCE_SUMMARY_SEEN
+        })
+      )
+    })
+
+    it.each([
+      { statusCache: { sampleValue: 'abc-123' }, currentPermission: getMockNewPermission() },
+      { statusCache: { number: 22, otherValue: false, startDate: '15-12-2022' } },
+      { statusCache: { tag: Symbol('prince') }, currentPermission: getMockNewPermission() }
+    ])('persists existing status cache values $statusCache', async params => {
+      const statusCacheSet = jest.fn()
+      const mockRequest = getMockRequest({ ...params, statusCacheSet })
+      await getData(mockRequest)
+      expect(statusCacheSet).toHaveBeenCalledWith(expect.objectContaining(params.statusCache))
     })
   })
 
   describe('getData', () => {
-    it('should return a summary table with required data for page', async () => {
-      const result = await getData(getMockRequest())
-      expect(result).toMatchSnapshot()
-    })
-
     it.each([
-      [NAME.uri],
-      [LICENCE_LENGTH.uri],
-      [LICENCE_TYPE.uri],
-      [LICENCE_TO_START.uri],
-      [DATE_OF_BIRTH.uri],
-      [DISABILITY_CONCESSION.uri],
-      [RENEWAL_START_DATE.uri],
-      [LICENCE_TO_START.uri],
-      [NEW_TRANSACTION.uri]
-    ])('addLanguageCodeToUri is called with the request and %s', async uri => {
+      { desc: 'renewal', currentPermission: getMockPermission() },
+      { desc: 'new', currentPermission: getMockNewPermission() }
+    ])('calls findPermit with permission and request where permission is a $desc permission', async ({ currentPermission }) => {
+      const mockRequest = getMockRequest({ currentPermission })
+      await getData(mockRequest)
+      expect(findPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
+    })
+    it('addLanguageCodeToUri is called with the request and NEW_TRANSACTION.uri', async () => {
       const mockRequest = getMockRequest()
       await getData(mockRequest)
 
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
     })
 
     it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
@@ -174,32 +236,6 @@ describe('licence-summary > route', () => {
 
       expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, catalog)
     })
-
-    it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
-      const mockTypeDisplayValue = Symbol('type display return value')
-      licenceTypeDisplay.mockReturnValueOnce(mockTypeDisplayValue)
-      const { licenceTypeStr } = await getData(getMockRequest())
-      expect(licenceTypeStr).toBe(mockTypeDisplayValue)
-    })
-
-    it('birthDateStr should return locale-specific date string', async () => {
-      const expectedLocale = Symbol('expected locale')
-      const locale = jest.fn(() => ({ format: () => 'locale-aware birth date' }))
-      moment.mockImplementation(() => ({
-        ...mockMomentImpl,
-        locale
-      }))
-      const mockRequest = {
-        ...getMockRequest(),
-        locale: expectedLocale
-      }
-
-      await getData(mockRequest)
-
-      expect(locale).toHaveBeenCalledWith(expectedLocale)
-
-      moment.mockImplementation(() => mockMomentImpl)
-    })
   })
 
   describe('checkNavigation', () => {
@@ -214,10 +250,31 @@ describe('licence-summary > route', () => {
       ${'licenceLength'}    | ${'LICENCE_LENGTH.uri'}   | ${{ licenceLength: undefined }}                                            | ${LICENCE_LENGTH.uri}
     `('throws a redirect error to $uriName if $notIncluded is not included in permission object', async ({ permission, uri }) => {
       const mockRequest = getMockRequest({
-        ...getMockNonRenewalPermission(),
-        ...permission
+        currentPermission: {
+          ...getMockNewPermission(),
+          ...permission
+        }
       })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(uri)
+    })
+  })
+
+  describe('licence summary rows', () => {
+    it.each`
+      desc                         | currentPermission
+      ${'1 year renewal'}          | ${getMockPermission()}
+      ${'1 year new licence'}      | ${getMockNewPermission()}
+      ${'1 year senior renewal'}   | ${getMockSeniorPermission()}
+      ${'8 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
+      ${'1 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
+      ${'Junior licence'}          | ${getMockJuniorPermission()}
+      ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
+      ${'Continuing permission'}   | ${getMockContinuingPermission()}
+      ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
+    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
+      const mockRequest = getMockRequest({ currentPermission })
+      const data = await getData(mockRequest)
+      expect(data.licenceSummaryRows).toMatchSnapshot()
     })
   })
 })
