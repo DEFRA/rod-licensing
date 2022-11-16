@@ -18,6 +18,7 @@ import {
   COOKIES
 } from '../uri.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:session-manager')
 
@@ -90,7 +91,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
      */
     const status = await request.cache().helpers.status.get()
     if (status.agreed && !agreedHandlerProtectionExemptSet.includes(request.path)) {
-      return h.redirect(AGREED.uri).takeover()
+      return h.redirect(addLanguageCodeToUri(request, AGREED.uri)).takeover()
     }
 
     /*

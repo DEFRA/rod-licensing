@@ -1,4 +1,61 @@
 
+## v1.27.0-rc.19 (2022-11-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1534](https://github.com/DEFRA/rod-licensing/pull/1534) Welsh - contact details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.18 (2022-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1540](https://github.com/DEFRA/rod-licensing/pull/1540) Translation for you do not need a licence yet ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.27.0-rc.17 (2022-11-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1538](https://github.com/DEFRA/rod-licensing/pull/1538) Translation to how do they want their licence page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.27.0-rc.15 (2022-11-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1536](https://github.com/DEFRA/rod-licensing/pull/1536) Welsh translation for Do they want to go paperless? page ([@MickStein](https://github.com/MickStein))
+  * [#1533](https://github.com/DEFRA/rod-licensing/pull/1533) Welsh - do you receive any of the following ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.14 (2022-11-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1529](https://github.com/DEFRA/rod-licensing/pull/1529) Amend journey content for under 13 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.13 (2022-11-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1503](https://github.com/DEFRA/rod-licensing/pull/1503) Welsh language - persist on error page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.27.0-rc.11 (2022-11-01)
 

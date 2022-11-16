@@ -66,6 +66,8 @@ const generateRequestMock = (permission, query, status = {}) => ({
   }),
   i18n: {
     getCatalog: () => ({
+      change_licence_details_other: Symbol('Review or change the licence details other'),
+      change_licence_details_you: Symbol('Review or change the licence details'),
       contact_summary_change: 'contact-summary-change',
       contact_summary_email: 'contact-summary-email',
       contact_summary_hidden_address: Symbol('contact-summary-hidden-address'),
@@ -392,6 +394,21 @@ describe('contact-summary > route', () => {
       const { summaryTable } = await getData(sampleRequest)
 
       expect(summaryTable).toMatchSnapshot()
+    })
+
+    it.each([[true], [false]])('returns value of isLicenceForYou if licence is "%s"', async licenceFor => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...addressAndContact
+        },
+        isLicenceForYou: licenceFor
+      }
+      const sampleRequest = generateRequestMock(permission)
+
+      const { changeLicenceDetails } = await getData(sampleRequest)
+
+      expect(changeLicenceDetails).toMatchSnapshot()
     })
 
     describe('addLanguageCodeToUri', () => {

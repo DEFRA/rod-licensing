@@ -130,6 +130,11 @@ Array [
 ]
 `;
 
+exports[`contact-summary > route getLicenseeDetailsSummaryRows returns value of isLicenceForYou if licence is "false" 1`] = `Symbol(Review or change the licence details other)`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows returns value of isLicenceForYou if licence is "true" 1`] = `Symbol(Review or change the licence details)`;
+
+
 exports[`contact-summary > route getLicenseeDetailsSummaryRows should have the newsletter is set have preferred method and if isLicenceForYou is true 1`] = `
 Array [
   Object {

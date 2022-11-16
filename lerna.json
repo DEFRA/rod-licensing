@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "1.27.0-rc.12",
+  "version": "1.27.0-rc.19",
   "npmClient": "npm",
   "publishConfig": {
     "registry": "http://registry.npmjs.org/"
