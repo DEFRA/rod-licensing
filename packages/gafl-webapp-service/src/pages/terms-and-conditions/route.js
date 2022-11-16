@@ -22,11 +22,11 @@ export const getData = async request => {
   }))
 
   return {
-    paymentRequired: await priceCalculation(licences)
+    paymentRequired: priceCalculation(licences)
   }
 }
 
-const priceCalculation = async licences => {
+const priceCalculation = licences => {
   const price = licences.reduce((accumulator, licence) => accumulator + licence.price, 0)
 
   return price > 0
