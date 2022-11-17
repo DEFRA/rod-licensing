@@ -8,6 +8,7 @@ import {
   NEWSLETTER
 } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import { HOW_CONTACTED } from '../../../../processors/mapping-constants'
 import pageRoute from '../../../../routes/page-route.js'
 
 jest.mock('../../../../processors/uri-helper.js', () => ({
@@ -16,9 +17,9 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
 
 jest.mock('../../../../processors/mapping-constants', () => ({
   HOW_CONTACTED: {
-    email: 'Email',
-    none: 'Prefer not to be contacted',
-    text: 'Text'
+    email: 'Email Me',
+    none: 'Please not contact moi',
+    text: 'Text Me'
   }
 }))
 
@@ -104,17 +105,17 @@ describe('contact-summary > route', () => {
   describe('getLicenseeDetailsSummaryRows', () => {
     describe('when purchasing a 12 month (physical licence)', () => {
       it.each([
-        ['Email', 'Email', 'Yes'],
-        ['Email', 'Text', 'Yes'],
-        ['Email', 'Email', 'Prefer not to be contacted'],
-        ['Email', 'Text', 'Prefer not to be contacted'],
-        ['Text', 'Email', 'Yes'],
-        ['Text', 'Text', 'Yes'],
-        ['Text', 'Email', 'Prefer not to be contacted'],
-        ['Text', 'Text', 'Prefer not to be contacted'],
-        ['Prefer not to be contacted', 'Letter', 'Prefer not to be contacted'],
-        ['Prefer not to be contacted', 'Letter', 'Prefer not to be contacted'],
-        ['Prefer not to be contacted', 'Letter', 'Prefer not to be contacted']
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.none, 'Letter', 'Prefer not to be contacted'],
+        [HOW_CONTACTED.none, 'Letter', 'Prefer not to be contacted'],
+        [HOW_CONTACTED.none, 'Letter', 'Prefer not to be contacted']
       ])(
         'should display the Licence as %s, Licence Confirmation as %s and Newsletter as %s for you with postal fulfilment',
         async (preferredMethodOfConfirmation, preferredMethodOfReminder, preferredMethodOfNewsletter) => {
@@ -140,14 +141,14 @@ describe('contact-summary > route', () => {
       )
 
       it.each([
-        ['Email', 'Email', 'Yes'],
-        ['Email', 'Text', 'Yes'],
-        ['Text', 'Text', 'Yes'],
-        ['Text', 'Email', 'Yes'],
-        ['Email', 'Email', 'Prefer not to be contacted'],
-        ['Email', 'Text', 'Prefer not to be contacted'],
-        ['Text', 'Text', 'Prefer not to be contacted'],
-        ['Text', 'Email', 'Prefer not to be contacted']
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, 'Prefer not to be contacted']
       ])(
         'should display the Licence as %s, Licence Confirmation as %s and Newsletter as %s',
         async (preferredMethodOfConfirmation, preferredMethodOfReminder, preferredMethodOfNewsletter) => {
@@ -178,8 +179,8 @@ describe('contact-summary > route', () => {
           licensee: {
             ...addressAndContact,
             postalFulfilment: true,
-            preferredMethodOfConfirmation: 'email',
-            preferredMethodOfReminder: 'email',
+            preferredMethodOfConfirmation: HOW_CONTACTED.email,
+            preferredMethodOfReminder: HOW_CONTACTED.email,
             email: 'new3@example.com'
           }
         }
@@ -194,35 +195,32 @@ describe('contact-summary > route', () => {
 
     describe('when purchasing a 1 or 8 day', () => {
       it.each([
-        ['Email', 'Yes'],
-        ['Email', 'Yes'],
-        ['Text', 'Yes'],
-        ['Text', 'Yes'],
-        ['Email', 'Prefer not to be contacted'],
-        ['Email', 'Prefer not to be contacted'],
-        ['Text', 'Prefer not to be contacted'],
-        ['Text', 'Prefer not to be contacted'],
-        ['Prefer not to be contacted', 'Yes'],
-        ['Prefer not to be contacted', 'Prefer not to be contacted']
-      ])(
-        'should display the Licence as %s, Licence Confirmation as %s and Newsletter as %s',
-        async (preferredMethodOfConfirmation, preferredMethodOfNewsletter) => {
-          const permission = {
-            licenceLength: '1D',
-            isLicenceForYou: true,
-            licensee: {
-              ...addressAndContact,
-              preferredMethodOfConfirmation,
-              preferredMethodOfNewsletter
-            }
+        [HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.email, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.email, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.text, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.text, 'Prefer not to be contacted'],
+        [HOW_CONTACTED.none, 'Yes'],
+        [HOW_CONTACTED.none, 'Prefer not to be contacted']
+      ])('should display the Licence as %s and Newsletter as %s', async (preferredMethodOfReminder, preferredMethodOfNewsletter) => {
+        const permission = {
+          licenceLength: '1D',
+          isLicenceForYou: true,
+          licensee: {
+            ...addressAndContact,
+            preferredMethodOfReminder,
+            preferredMethodOfNewsletter
           }
-          const sampleRequest = generateRequestMock(permission)
-
-          const { summaryTable } = await getData(sampleRequest)
-
-          expect(summaryTable).toMatchSnapshot()
         }
-      )
+        const sampleRequest = generateRequestMock(permission)
+
+        const { summaryTable } = await getData(sampleRequest)
+
+        expect(summaryTable).toMatchSnapshot()
+      })
     })
   })
 
@@ -240,6 +238,25 @@ describe('contact-summary > route', () => {
 
     expect(changeLicenceDetails).toMatchSnapshot()
   })
+
+  it.each([[HOW_CONTACTED.none], [null]])(
+    'returns yes or no to newsletter depending on user preference',
+    async preferredMethodOfNewsletter => {
+      const permission = {
+        licenceLength: '1D',
+        licensee: {
+          ...addressAndContact,
+          preferredMethodOfNewsletter
+        },
+        isLicenceForYou: true
+      }
+      const sampleRequest = generateRequestMock(permission)
+
+      const { summaryTable } = await getData(sampleRequest)
+
+      expect(summaryTable[2].value.text).toMatchSnapshot()
+    }
+  )
 
   describe('addLanguageCodeToUri', () => {
     beforeEach(jest.clearAllMocks)
