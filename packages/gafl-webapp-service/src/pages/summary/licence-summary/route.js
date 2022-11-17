@@ -53,14 +53,6 @@ class RowGenerator {
     }
   }
 
-  generateStandardRow (label, text, rawHref, visuallyHiddenText, id) {
-    return this._generateRow(this.labels[label], text, rawHref, this.labels[visuallyHiddenText], id)
-  }
-
-  generateBasicRow (label, text) {
-    return this._generateRow(this.labels[label], text)
-  }
-
   _getStartDateText () {
     const isContinuing = !!this.permission.renewedEndDate && this.permission.renewedEndDate === this.permission.licenceStartDate
     if (this.permission.licenceToStart === 'after-payment') {
@@ -70,22 +62,26 @@ class RowGenerator {
         this.labels.licence_summary_immediately_after_expire
       }</span>`
     }
-    return ''
+    return displayStartTime(this.request, this.permission)
   }
 
   _getConcessionText () {
     if (this.disabled?.proof?.type === CONCESSION_PROOF.blueBadge) {
-      return 'licence_summary_blue_badge_num'
+      return this.labels.licence_summary_blue_badge_num
     } else if (this.disabled?.proof?.type === CONCESSION_PROOF.NI) {
-      return 'licence_summary_ni_num'
+      return this.labels.licence_summary_ni_num
     }
-    return 'licence_summary_disability_concession'
+    return this.labels.licence_summary_disability_concession
+  }
+
+  generateStandardRow (label, text, rawHref, id) {
+    return this._generateRow(this.labels[label], text, rawHref, this.labels[label], id)
   }
 
   generateStartDateRow () {
     const href = this.permission.isRenewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri
     return this._generateRow(
-      'licence_summary_start_date',
+      this.labels.licence_summary_start_date,
       this._getStartDateText(),
       href,
       this.labels.licence_summary_start_date,
@@ -97,6 +93,21 @@ class RowGenerator {
     const label = this.disabled ? this.disabled.proof.referenceNumber : `<span>${this.labels.licence_summary_none}</span>`
     const concessionText = this._getConcessionText()
     return this._generateRow(concessionText, label, DISABILITY_CONCESSION.uri, concessionText, 'change-benefit-check')
+  }
+
+  generateCostRow () {
+    const permitCost = this.permission.permit.cost
+    const costText = permitCost === 0 ? this.labels.free : `${this.labels.pound}${permitCost}`
+    return this._generateRow(this.labels.cost, costText)
+  }
+
+  generateLicenceLengthRow () {
+    return this.generateStandardRow(
+      'licence_summary_length',
+      this.labels[`licence_type_${this.permission.licenceLength.toLowerCase()}`],
+      LICENCE_LENGTH.uri,
+      'change-licence-length'
+    )
   }
 }
 
@@ -128,42 +139,25 @@ const getLicenceSummaryRows = (request, permission) => {
   const { licensee } = permission
 
   const rg = new RowGenerator(request, permission)
-  rows.push(
-    rg.generateStandardRow(
-      'licence_summary_name',
-      `${licensee.firstName} ${licensee.lastName}`,
-      NAME.uri,
-      'licence_summary_name',
-      'change-name'
-    )
-  )
+  rows.push(rg.generateStandardRow('licence_summary_name', `${licensee.firstName} ${licensee.lastName}`, NAME.uri, 'change-name'))
   if (!permission.isRenewal) {
     const birthDateStr = moment(permission.licensee.birthDate).locale(request.locale).format('Do MMMM YYYY')
-    rows.push(rg.generateStandardRow('licence_summary_dob', birthDateStr, DATE_OF_BIRTH.uri, 'licence_summary_dob', 'change-birth-date'))
+    rows.push(rg.generateStandardRow('licence_summary_dob', birthDateStr, DATE_OF_BIRTH.uri, 'change-birth-date'))
   }
   rows.push(
     rg.generateStandardRow(
       'licence_summary_type',
       licenceTypeDisplay(permission, request.i18n.getCatalog()),
       LICENCE_TYPE.uri,
-      'licence_summary_type',
       'change-licence-type'
     )
   )
-  rows.push(
-    rg.generateStandardRow(
-      'licence_summary_length',
-      `licence_type_${permission.licenceLength.toLowerCase()}`,
-      LICENCE_LENGTH.uri,
-      'licence_summary_length',
-      'change-licence-length'
-    )
-  )
+  rows.push(rg.generateLicenceLengthRow())
   rows.push(rg.generateStartDateRow())
   if (permission.licenceLength === '12M') {
     rows.push(rg.generateConcessionRow())
   }
-  rows.push(rg.generateBasicRow('cost', permission.permit.cost || request.i18n.getCatalog().free))
+  rows.push(rg.generateCostRow())
   return rows
 }
 

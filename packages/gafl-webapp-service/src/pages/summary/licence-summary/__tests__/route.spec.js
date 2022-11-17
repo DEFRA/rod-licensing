@@ -65,8 +65,16 @@ const getMockRequest = ({ currentPermission = getMockPermission(), statusCache =
       licence_summary_minutes_after_payment: 'licence_summary_minutes_after_payment',
       licence_summary_immediately_after_expire: 'licence_summary_immediately_after_expire',
       licence_summary_none: 'licence_summary_none',
+      licence_summary_start_date: 'licence_summary_start_date',
+      licence_type_12m: 'licence_type_12m',
+      licence_type_8d: 'licence_type_8d',
+      licence_type_1d: 'licence_type_1d',
+      licence_summary_blue_badge_num: 'licence_summary_blue_badge_num',
+      licence_summary_ni_num: 'licence_summary_ni_num',
+      licence_summary_disability_concession: 'licence_summary_disability_concession',
       free: 'gratis',
-      cost: 'damage'
+      cost: 'damage',
+      pound: '#'
     })
   },
   url: {
@@ -271,7 +279,7 @@ describe('licence-summary > route', () => {
       ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
       ${'Continuing permission'}   | ${getMockContinuingPermission()}
       ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
-    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
+      `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
       const data = await getData(mockRequest)
       expect(data.licenceSummaryRows).toMatchSnapshot()
