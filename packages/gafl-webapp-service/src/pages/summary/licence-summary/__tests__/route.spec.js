@@ -279,7 +279,7 @@ describe('licence-summary > route', () => {
       ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
       ${'Continuing permission'}   | ${getMockContinuingPermission()}
       ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
-      `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
+    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
       const data = await getData(mockRequest)
       expect(data.licenceSummaryRows).toMatchSnapshot()
