@@ -21,6 +21,8 @@ const getMockPermission = (price, type) => ({
   permit: { cost: price }
 })
 
+const catalog = Symbol('mock catalog')
+
 describe('terms-and-conditions > route', () => {
   describe('default', () => {
     it('should call the pageRoute with terms-and-conditions, /buy/conditions, validator, nextPage and getData', async () => {
@@ -41,7 +43,7 @@ describe('terms-and-conditions > route', () => {
         }
       }),
       i18n: {
-        getCatalog: () => ({})
+        getCatalog: () => catalog
       }
     })
 
@@ -72,15 +74,37 @@ describe('terms-and-conditions > route', () => {
       expect(data.paymentRequired).toBe(paymentRequired)
     })
 
+    it('test licenceTypeDisplay is called with permission and mssgs', async () => {
+      const func = () => getData(generateMockRequest({ [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: false }))
+      await expect(func).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
+    })
+
     const troutAndCoarse2Rods = 'Trout and coarse, up to 2 rods'
     const troutAndCoarse3Rods = 'Trout and coarse, up to 3 rods'
     const salmonAndSeaTrout = 'Salmon and sea trout'
+
+    it.each([[troutAndCoarse2Rods], [troutAndCoarse3Rods], [salmonAndSeaTrout]])(
+      'licenceTypeDisplay is called with permission and catalog',
+      async type => {
+        const permission = getMockPermission(10, type)
+        await getData(
+          generateMockRequest(
+            { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
+            {
+              permissions: [permission]
+            }
+          )
+        )
+
+        expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
+      }
+    )
 
     it.each([
       [troutAndCoarse2Rods, true],
       [troutAndCoarse3Rods, false],
       [salmonAndSeaTrout, false]
-    ])('returns whether should display Trout and coarse, up to 2 rods conditions', async (type, displayType) => {
+    ])('returns whether to display Trout and coarse, up to 2 rods conditions', async (type, displayType) => {
       const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
       const mockLicenceTypeReturn3Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse3Rods)
       const data = await getData(
@@ -102,7 +126,7 @@ describe('terms-and-conditions > route', () => {
       [troutAndCoarse2Rods, false],
       [troutAndCoarse3Rods, true],
       [salmonAndSeaTrout, false]
-    ])('returns whether should display Trout and coarse, up to 3 rods conditions', async (type, displayType) => {
+    ])('returns whether to display Trout and coarse, up to 3 rods conditions', async (type, displayType) => {
       const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
       const mockLicenceTypeReturn2Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
       const data = await getData(
@@ -124,7 +148,7 @@ describe('terms-and-conditions > route', () => {
       [troutAndCoarse2Rods, false],
       [troutAndCoarse3Rods, false],
       [salmonAndSeaTrout, true]
-    ])('returns whether should display Salmon and sea trout conditions', async (type, displayType) => {
+    ])('returns whether to display Salmon and sea trout conditions', async (type, displayType) => {
       const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
       const mockLicenceTypeReturn2Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
       const data = await getData(
