@@ -2,8 +2,7 @@ import moment from 'moment-timezone'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import findPermit from '../find-permit.js'
-import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
   NAME,
@@ -16,11 +15,101 @@ import {
   RENEWAL_START_DATE,
   NEW_TRANSACTION
 } from '../../../uri.js'
-import { START_AFTER_PAYMENT_MINUTES, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+
+class RowGenerator {
+  constructor (request, permission) {
+    this.request = request
+    this.permission = permission
+    this.labels = request.i18n.getCatalog()
+    this.disabled = this.permission.concessions && this.permission.concessions.find(c => c.type === CONCESSION.DISABLED)
+  }
+
+  _generateRow (label, text, rawHref, visuallyHiddenText, id) {
+    const href = rawHref && addLanguageCodeToUri(this.request, rawHref)
+    return {
+      key: {
+        text: label
+      },
+      value: {
+        html: text
+      },
+      ...(href && {
+        actions: {
+          items: [
+            {
+              href,
+              visuallyHiddenText,
+              text: this.labels.contact_summary_change,
+              attributes: { id }
+            }
+          ]
+        }
+      })
+    }
+  }
+
+  _getStartDateText () {
+    const isContinuing = !!this.permission.renewedEndDate && this.permission.renewedEndDate === this.permission.licenceStartDate
+    if (this.permission.licenceToStart === 'after-payment') {
+      return `${START_AFTER_PAYMENT_MINUTES}${this.labels.licence_summary_minutes_after_payment}`
+    } else if (isContinuing && this.permission.isRenewal) {
+      return `${displayStartTime(this.request, this.permission)}</br><span class="govuk-caption-m">${
+        this.labels.licence_summary_immediately_after_expire
+      }</span>`
+    }
+    return displayStartTime(this.request, this.permission)
+  }
+
+  _getConcessionText () {
+    if (this.disabled?.proof?.type === CONCESSION_PROOF.blueBadge) {
+      return this.labels.licence_summary_blue_badge_num
+    } else if (this.disabled?.proof?.type === CONCESSION_PROOF.NI) {
+      return this.labels.licence_summary_ni_num
+    }
+    return this.labels.licence_summary_disability_concession
+  }
+
+  generateStandardRow (label, text, rawHref, id) {
+    return this._generateRow(this.labels[label], text, rawHref, this.labels[label], id)
+  }
+
+  generateStartDateRow () {
+    const href = this.permission.isRenewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri
+    return this._generateRow(
+      this.labels.licence_summary_start_date,
+      this._getStartDateText(),
+      href,
+      this.labels.licence_summary_start_date,
+      'change-licence-to-start'
+    )
+  }
+
+  generateConcessionRow () {
+    const label = this.disabled ? this.disabled.proof.referenceNumber : `<span>${this.labels.licence_summary_none}</span>`
+    const concessionText = this._getConcessionText()
+    return this._generateRow(concessionText, label, DISABILITY_CONCESSION.uri, concessionText, 'change-benefit-check')
+  }
+
+  generateCostRow () {
+    const permitCost = this.permission.permit.cost
+    const costText = permitCost === 0 ? this.labels.free : `${this.labels.pound}${permitCost}`
+    return this._generateRow(this.labels.cost, costText)
+  }
+
+  generateLicenceLengthRow () {
+    return this.generateStandardRow(
+      'licence_summary_length',
+      this.labels[`licence_type_${this.permission.licenceLength.toLowerCase()}`],
+      LICENCE_LENGTH.uri,
+      'change-licence-length'
+    )
+  }
+}
 
 // Extracted to keep sonar happy
 export const checkNavigation = permission => {
@@ -45,6 +134,33 @@ export const checkNavigation = permission => {
   }
 }
 
+const getLicenceSummaryRows = (request, permission) => {
+  const rows = []
+  const { licensee } = permission
+
+  const rg = new RowGenerator(request, permission)
+  rows.push(rg.generateStandardRow('licence_summary_name', `${licensee.firstName} ${licensee.lastName}`, NAME.uri, 'change-name'))
+  if (!permission.isRenewal) {
+    const birthDateStr = moment(permission.licensee.birthDate).locale(request.locale).format('Do MMMM YYYY')
+    rows.push(rg.generateStandardRow('licence_summary_dob', birthDateStr, DATE_OF_BIRTH.uri, 'change-birth-date'))
+  }
+  rows.push(
+    rg.generateStandardRow(
+      'licence_summary_type',
+      licenceTypeDisplay(permission, request.i18n.getCatalog()),
+      LICENCE_TYPE.uri,
+      'change-licence-type'
+    )
+  )
+  rows.push(rg.generateLicenceLengthRow())
+  rows.push(rg.generateStartDateRow())
+  if (permission.licenceLength === '12M') {
+    rows.push(rg.generateConcessionRow())
+  }
+  rows.push(rg.generateCostRow())
+  return rows
+}
+
 export const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -62,37 +178,17 @@ export const getData = async request => {
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   await findPermit(permission, request)
-  const startTimeString = displayStartTime(request, permission)
 
   return {
-    permission,
-    startTimeString,
-    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
+    licenceSummaryRows: getLicenceSummaryRows(request, permission),
     isRenewal: permission.isRenewal,
-    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog()),
-    isContinuing: !!(permission.renewedEndDate && permission.renewedEndDate === permission.licenceStartDate),
-    hasExpired: moment(moment().tz(SERVICE_LOCAL_TIME)).isAfter(moment(permission.renewedEndDate, cacheDateFormat)),
-    disabled: permission.concessions && permission.concessions.find(c => c.type === CONCESSION.DISABLED),
-    concessionProofs: CONCESSION_PROOF,
-    hasJunior: concessionHelper.hasJunior(permission),
-    cost: permission.permit.cost,
-    birthDateStr: moment(permission.licensee.birthDate, cacheDateFormat).locale(request.locale).format('Do MMMM YYYY'),
     uri: {
-      name: addLanguageCodeToUri(request, NAME.uri),
-      licenceLength: addLanguageCodeToUri(request, LICENCE_LENGTH.uri),
-      licenceType: addLanguageCodeToUri(request, LICENCE_TYPE.uri),
-      licenceToStart: addLanguageCodeToUri(request, LICENCE_TO_START.uri),
-      dateOfBirth: addLanguageCodeToUri(request, DATE_OF_BIRTH.uri),
-      disabilityConcession: addLanguageCodeToUri(request, DISABILITY_CONCESSION.uri),
-      licenceStartDate: permission.isRenewal
-        ? addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
-        : addLanguageCodeToUri(request, LICENCE_TO_START.uri),
       clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
 
-export const getFromSummary = (fromSummary, isRenewal) => {
+const getFromSummary = (fromSummary, isRenewal) => {
   if (isRenewal) {
     return LICENCE_SUMMARY_SEEN
   }
