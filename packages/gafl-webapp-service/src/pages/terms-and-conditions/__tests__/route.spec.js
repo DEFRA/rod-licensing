@@ -2,8 +2,13 @@ import { getData, validator } from '../route'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { LICENCE_SUMMARY, CONTACT_SUMMARY } from '../../../uri.js'
+import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 
 jest.mock('../../../routes/page-route.js')
+
+jest.mock('../../../processors/licence-type-display.js', () => ({
+  licenceTypeDisplay: jest.fn()
+}))
 
 const getMockPermission = (price, type) => ({
   licensee: {
@@ -67,48 +72,74 @@ describe('terms-and-conditions > route', () => {
       expect(data.paymentRequired).toBe(paymentRequired)
     })
 
+    const troutAndCoarse2Rods = 'Trout and coarse, up to 2 rods'
+    const troutAndCoarse3Rods = 'Trout and coarse, up to 3 rods'
+    const salmonAndSeaTrout = 'Salmon and sea trout'
+
     it.each([
-      ['Trout and coarse, up to 2 rods', 'Trout and coarse, up to 2 rods', true],
-      ['Trout and coarse, up to 2 rods', 'Trout and coarse, up to 3 rods', true],
-      ['Trout and coarse, up to 3 rods', 'Salmon and sea trout', false],
-      ['Salmon and sea trout', 'Trout and coarse, up to 2 rods', true]
-    ])('returns whether should display Trout and coarse, up to 2 rods conditions', async (type, anotherType, displayType) => {
+      [troutAndCoarse2Rods, true],
+      [troutAndCoarse3Rods, false],
+      [salmonAndSeaTrout, false]
+    ])('returns whether should display Trout and coarse, up to 2 rods conditions', async (type, displayType) => {
+      const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
+      const mockLicenceTypeReturn3Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse3Rods)
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-          { permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, anotherType)] }
+          {
+            permissions: [
+              getMockPermission(1, mockLicenceTypeReturn),
+              getMockPermission(1, mockLicenceTypeReturn),
+              getMockPermission(0, mockLicenceTypeReturn3Rods)
+            ]
+          }
         )
       )
       expect(data.troutAndCoarse2Rods).toBe(displayType)
     })
 
     it.each([
-      ['Trout and coarse, up to 3 rods', 'Trout and coarse, up to 3 rods', true],
-      ['Trout and coarse, up to 3 rods', 'Trout and coarse, up to 2 rods', true],
-      ['Trout and coarse, up to 2 rods', 'Salmon and sea trout', false],
-      ['Salmon and sea trout', 'Trout and coarse, up to 3 rods', true]
-    ])('returns whether should display Trout and coarse, up to 3 rods conditions', async (type, anotherType, displayType) => {
+      [troutAndCoarse2Rods, false],
+      [troutAndCoarse3Rods, true],
+      [salmonAndSeaTrout, false]
+    ])('returns whether should display Trout and coarse, up to 3 rods conditions', async (type, displayType) => {
+      const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
+      const mockLicenceTypeReturn2Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-          { permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, anotherType)] }
+          {
+            permissions: [
+              getMockPermission(1, mockLicenceTypeReturn),
+              getMockPermission(1, mockLicenceTypeReturn),
+              getMockPermission(0, mockLicenceTypeReturn2Rods)
+            ]
+          }
         )
       )
       expect(data.troutAndCoarse3Rods).toBe(displayType)
     })
 
     it.each([
-      ['Salmon and sea trout', 'Salmon and sea trout', true],
-      ['Salmon and sea trout', 'Trout and coarse, up to 2 rods', true],
-      ['Trout and coarse, up to 2 rods', 'Trout and coarse, up to 3 rods', false],
-      ['Trout and coarse, up to 2 rods', 'Salmon and sea trout', true]
-    ])('returns whether should display Trout and coarse, up to 3 rods conditions', async (type, anotherType, displayType) => {
+      [troutAndCoarse2Rods, false],
+      [troutAndCoarse3Rods, false],
+      [salmonAndSeaTrout, true]
+    ])('returns whether should display Salmon and sea trout conditions', async (type, displayType) => {
+      const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
+      const mockLicenceTypeReturn2Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-          { permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, anotherType)] }
+          {
+            permissions: [
+              getMockPermission(1, mockLicenceTypeReturn),
+              getMockPermission(1, mockLicenceTypeReturn),
+              getMockPermission(0, mockLicenceTypeReturn2Rods)
+            ]
+          }
         )
       )
+
       expect(data.salmonAndSeaTrout).toBe(displayType)
     })
   })

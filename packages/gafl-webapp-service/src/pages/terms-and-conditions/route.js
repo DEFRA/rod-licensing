@@ -33,13 +33,14 @@ export const getData = async request => {
 }
 
 const checkLicenceType = (licences, type) => {
+  let licenceSelected = false
   licences.forEach(licence => {
     if (licence.type === type) {
-      return true
+      licenceSelected = true
     }
   })
 
-  return false
+  return licenceSelected
 }
 
 const priceCalculation = licences => {
