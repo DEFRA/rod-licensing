@@ -5,12 +5,12 @@ import { LICENCE_SUMMARY, CONTACT_SUMMARY } from '../../../uri.js'
 
 jest.mock('../../../routes/page-route.js')
 
-const getMockPermission = price => ({
+const getMockPermission = (price, type) => ({
   licensee: {
     firstName: 'Turanga',
     lastName: 'Leela'
   },
-  licenceType: 'trout-and-coarse',
+  licenceType: type,
   numberOfRods: '2',
   licenceLength: '8D',
   permit: { cost: price }
@@ -34,7 +34,10 @@ describe('terms-and-conditions > route', () => {
             getCurrentPermission: async () => statusGet
           }
         }
-      })
+      }),
+      i18n: {
+        getCatalog: () => ({})
+      }
     })
 
     beforeEach(() => jest.clearAllMocks())
@@ -62,6 +65,51 @@ describe('terms-and-conditions > route', () => {
         )
       )
       expect(data.paymentRequired).toBe(paymentRequired)
+    })
+
+    it.each([
+      ['Trout and coarse, up to 2 rods', 'Trout and coarse, up to 2 rods', true],
+      ['Trout and coarse, up to 2 rods', 'Trout and coarse, up to 3 rods', true],
+      ['Trout and coarse, up to 3 rods', 'Salmon and sea trout', false],
+      ['Salmon and sea trout', 'Trout and coarse, up to 2 rods', true]
+    ])('returns whether should display Trout and coarse, up to 2 rods conditions', async (type, anotherType, displayType) => {
+      const data = await getData(
+        generateMockRequest(
+          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
+          { permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, anotherType)] }
+        )
+      )
+      expect(data.troutAndCoarse2Rods).toBe(displayType)
+    })
+
+    it.each([
+      ['Trout and coarse, up to 3 rods', 'Trout and coarse, up to 3 rods', true],
+      ['Trout and coarse, up to 3 rods', 'Trout and coarse, up to 2 rods', true],
+      ['Trout and coarse, up to 2 rods', 'Salmon and sea trout', false],
+      ['Salmon and sea trout', 'Trout and coarse, up to 3 rods', true]
+    ])('returns whether should display Trout and coarse, up to 3 rods conditions', async (type, anotherType, displayType) => {
+      const data = await getData(
+        generateMockRequest(
+          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
+          { permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, anotherType)] }
+        )
+      )
+      expect(data.troutAndCoarse3Rods).toBe(displayType)
+    })
+
+    it.each([
+      ['Salmon and sea trout', 'Salmon and sea trout', true],
+      ['Salmon and sea trout', 'Trout and coarse, up to 2 rods', true],
+      ['Trout and coarse, up to 2 rods', 'Trout and coarse, up to 3 rods', false],
+      ['Trout and coarse, up to 2 rods', 'Salmon and sea trout', true]
+    ])('returns whether should display Trout and coarse, up to 3 rods conditions', async (type, anotherType, displayType) => {
+      const data = await getData(
+        generateMockRequest(
+          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
+          { permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, anotherType)] }
+        )
+      )
+      expect(data.salmonAndSeaTrout).toBe(displayType)
     })
   })
 })
