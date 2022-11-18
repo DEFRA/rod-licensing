@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.20 (2022-11-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1535](https://github.com/DEFRA/rod-licensing/pull/1535) Refactor licence summary page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.27.0-rc.19 (2022-11-15)
 
 #### :rocket: Enhancement
