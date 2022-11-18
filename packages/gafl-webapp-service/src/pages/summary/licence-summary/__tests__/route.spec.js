@@ -45,7 +45,7 @@ const getMockRequest = ({ currentPermission = getMockPermission(), statusCache =
   cache: () => ({
     helpers: {
       status: {
-        getCurrentPermission: () => statusCache,
+        getCurrentPermission: async () => statusCache,
         setCurrentPermission: statusCacheSet
       },
       transaction: {
