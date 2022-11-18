@@ -62,7 +62,7 @@ describe('The disability-concession page', () => {
 describe('The licence-type page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_TYPE.page)
   it('has a back-link to the disability-concession page on initial viewing', () => {
-    expect(n.backLink({})).toBe(DISABILITY_CONCESSION.uri)
+    expect(n.backLink({})).toBe(LICENCE_TO_START.uri)
   })
   it('has a back-link to the license summary if the summary is seen', () => {
     expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
