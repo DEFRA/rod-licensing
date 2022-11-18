@@ -1,4 +1,13 @@
 
+## v1.27.0-rc.21 (2022-11-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1546](https://github.com/DEFRA/rod-licensing/pull/1546) Back button - licence type ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.27.0-rc.20 (2022-11-18)
 
 #### :rocket: Enhancement
