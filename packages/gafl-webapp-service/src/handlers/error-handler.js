@@ -1,4 +1,5 @@
 import { AGREED, CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR } from '../uri.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 /**
  * Pre-response error handler server extension.
@@ -11,6 +12,7 @@ export const errorHandler = async (request, h) => {
   if (!request.response.isBoom) {
     return h.continue
   }
+
   const transaction = await request.cache().helpers.transaction.get()
   const paymentInProgress = transaction?.payment?.payment_id !== undefined
   const mssgs = request.i18n.getCatalog()
@@ -28,9 +30,9 @@ export const errorHandler = async (request, h) => {
         clientError: request.response.output.payload,
         path: request.path,
         uri: {
-          new: NEW_TRANSACTION.uri,
-          controller: CONTROLLER.uri,
-          agreed: AGREED.uri,
+          new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+          controller: addLanguageCodeToUri(request, CONTROLLER.uri),
+          agreed: addLanguageCodeToUri(request, AGREED.uri),
           ...(transaction?.payment?.href ? { payment: transaction.payment.href } : {})
         }
       })

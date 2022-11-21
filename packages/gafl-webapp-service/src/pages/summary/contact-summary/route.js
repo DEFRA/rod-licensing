@@ -19,7 +19,93 @@ import {
   LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
-export const checkNavigation = (status, permission) => {
+const CONTACT_TEXT_DEFAULT = {
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_sngl',
+  DEFAULT: 'contact_summary_license_default'
+}
+
+const CONTACT_TEXT_NON_PHYSICAL = {
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_plrl',
+  DEFAULT: 'contact_summary_license_non_physical'
+}
+
+const CONTACT_TEXT_PHYSICAL = {
+  EMAIL: 'contact_summary_email',
+  TEXT: 'contact_summary_text_plrl',
+  DEFAULT: 'contact_summary_license_physical'
+}
+
+const CHANGE_CONTACT = 'change-contact'
+
+class RowGenerator {
+  constructor (request, permission) {
+    this.request = request
+    this.permission = permission
+    this.labels = request.i18n.getCatalog()
+  }
+
+  _getContactText (contactTextSpec) {
+    switch (this.permission.licensee.preferredMethodOfReminder) {
+      case HOW_CONTACTED.email:
+        return `${this.labels[contactTextSpec.EMAIL]}${this.permission.licensee.email}`
+      case HOW_CONTACTED.text:
+        return `${this.labels[contactTextSpec.TEXT]}${this.permission.licensee.mobilePhone}`
+      default:
+        return this.labels[contactTextSpec.DEFAULT]
+    }
+  }
+
+  _generateRow (label, text, rawHref, visuallyHiddenText, id) {
+    const href = addLanguageCodeToUri(this.request, rawHref)
+    return {
+      key: {
+        text: label
+      },
+      value: {
+        text
+      },
+      ...(href && {
+        actions: {
+          items: [
+            {
+              href,
+              visuallyHiddenText,
+              text: this.labels.contact_summary_change,
+              attributes: { id }
+            }
+          ]
+        }
+      })
+    }
+  }
+
+  generateStandardRow (label, text, rawHref, visuallyHiddenText, id) {
+    return this._generateRow(this.labels[label], this.labels[text], rawHref, this.labels[visuallyHiddenText], id)
+  }
+
+  generateAddressRow (countryName) {
+    const { licensee } = this.permission
+    const text = [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
+      .filter(Boolean)
+      .join(', ')
+
+    return this._generateRow(
+      this.labels.contact_summary_row_address,
+      text,
+      ADDRESS_LOOKUP.uri,
+      this.labels.contact_summary_hidden_address,
+      'change-address'
+    )
+  }
+
+  generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
+    return this._generateRow(this.labels[label], this._getContactText(contactTextSpec), href, this.labels[visuallyHiddenText], id)
+  }
+}
+
+const checkNavigation = (status, permission) => {
   if (!permission.isRenewal) {
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
@@ -40,45 +126,67 @@ export const checkNavigation = (status, permission) => {
   }
 }
 
-const getData = async request => {
-  const status = await request.cache().helpers.status.getCurrentPermission()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
+  const rowGenerator = new RowGenerator(request, permission)
 
-  checkNavigation(status, permission)
-
-  status.fromSummary = CONTACT_SUMMARY_SEEN
-  await request.cache().helpers.status.setCurrentPermission(status)
-  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
-
-  return {
-    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
-    uri: {
-      licenceSummary: LICENCE_SUMMARY.uri
+  const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
+  if (isPhysical(permission)) {
+    if (permission.licensee.postalFulfilment) {
+      licenseeSummaryArray.push(
+        rowGenerator.generateStandardRow(
+          'contact_summary_row_licence',
+          'contact_summary_license_physical',
+          LICENCE_FULFILMENT.uri,
+          'contact_summary_hidden_licence_fulfilment',
+          'change-licence-fulfilment-option'
+        ),
+        rowGenerator.generateContactRow(
+          'contact_summary_row_licence_conf',
+          LICENCE_CONFIRMATION_METHOD.uri,
+          'contact_summary_hidden_licence_confirmation',
+          'change-licence-confirmation-option'
+        )
+      )
+    } else {
+      licenseeSummaryArray.push(
+        rowGenerator.generateContactRow(
+          'contact_summary_row_licence',
+          LICENCE_FULFILMENT.uri,
+          'contact_summary_hidden_licence_confirmation',
+          'change-licence-confirmation-option'
+        )
+      )
     }
+
+    licenseeSummaryArray.push(
+      rowGenerator.generateContactRow(
+        'contact_summary_row_contact',
+        CONTACT.uri,
+        'contact_summary_hidden_contact',
+        CHANGE_CONTACT,
+        CONTACT_TEXT_PHYSICAL
+      )
+    )
+  } else {
+    licenseeSummaryArray.push(
+      rowGenerator.generateContactRow(
+        'contact_summary_row_licence_details',
+        CONTACT.uri,
+        'contact_summary_hidden_contact',
+        CHANGE_CONTACT,
+        CONTACT_TEXT_NON_PHYSICAL
+      )
+    )
   }
-}
-
-export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)
-
-export const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
-  const licenseeSummaryArray = [
-    getRow(
-      'Address',
-      getAddressText(permission.licensee, countryName),
-      addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
-      'address',
-      'change-address'
-    ),
-    ...getContactDetails(permission, request)
-  ]
 
   if (permission.isLicenceForYou) {
+    const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'yes' : 'no'
     licenseeSummaryArray.push(
-      getRow(
-        'Newsletter',
-        permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'Yes' : 'No',
-        addLanguageCodeToUri(request, NEWSLETTER.uri),
-        'newsletter',
+      rowGenerator.generateStandardRow(
+        'contact_summary_row_newsletter',
+        text,
+        NEWSLETTER.uri,
+        'contact_summary_hidden_newsletter',
         'change-newsletter'
       )
     )
@@ -87,118 +195,26 @@ export const getLicenseeDetailsSummaryRows = (permission, countryName, request) 
   return licenseeSummaryArray
 }
 
-const CONTACT_TEXT_DEFAULT = {
-  EMAIL: 'Email to ',
-  TEXT: 'Text message to ',
-  DEFAULT: 'Note of licence'
-}
+const getData = async request => {
+  const status = await request.cache().helpers.status.getCurrentPermission()
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
-const CONTACT_TEXT_NON_PHYSICAL = {
-  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
-  TEXT: 'Text messages to ',
-  DEFAULT: 'Make a note on confirmation'
-}
+  checkNavigation(status, permission)
 
-const CONTACT_TEXT_PHYSICAL = {
-  EMAIL: CONTACT_TEXT_DEFAULT.EMAIL,
-  TEXT: 'Text messages to ',
-  DEFAULT: 'By post'
-}
+  status.fromSummary = CONTACT_SUMMARY_SEEN
+  await request.cache().helpers.status.setCurrentPermission(status)
+  const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
-const CHANGE_CONTACT = 'change-contact'
+  const changeLicenceDetails = permission.isLicenceForYou ? mssgs.change_licence_details_you : mssgs.change_licence_details_other
 
-const getContactDetails = (permission, request) => {
-  if (isPhysical(permission)) {
-    if (permission.licensee.postalFulfilment) {
-      return [
-        getRow(
-          'Licence',
-          'By post',
-          addLanguageCodeToUri(request, LICENCE_FULFILMENT.uri),
-          'licence fulfilment option',
-          'change-licence-fulfilment-option'
-        ),
-        getRow(
-          'Licence Confirmation',
-          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          addLanguageCodeToUri(request, LICENCE_CONFIRMATION_METHOD.uri),
-          'licence confirmation option',
-          'change-licence-confirmation-option'
-        ),
-        getRow(
-          'Contact',
-          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-          addLanguageCodeToUri(request, CONTACT.uri),
-          'contact',
-          CHANGE_CONTACT
-        )
-      ]
-    } else {
-      return [
-        getRow(
-          'Licence',
-          getContactText(permission.licensee.preferredMethodOfConfirmation, permission.licensee),
-          addLanguageCodeToUri(request, LICENCE_FULFILMENT.uri),
-          'licence confirmation option',
-          'change-licence-confirmation-option'
-        ),
-        getRow(
-          'Contact',
-          getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_PHYSICAL),
-          addLanguageCodeToUri(request, CONTACT.uri),
-          'contact',
-          CHANGE_CONTACT
-        )
-      ]
-    }
-  } else {
-    return [
-      getRow(
-        'Licence details',
-        getContactText(permission.licensee.preferredMethodOfReminder, permission.licensee, CONTACT_TEXT_NON_PHYSICAL),
-        addLanguageCodeToUri(request, CONTACT.uri),
-        'contact',
-        CHANGE_CONTACT
-      )
-    ]
-  }
-}
-
-const getAddressText = (licensee, countryName) =>
-  [licensee.premises, licensee.street, licensee.locality, licensee.town, licensee.postcode, countryName?.toUpperCase()]
-    .filter(Boolean)
-    .join(', ')
-
-const getContactText = (contactMethod, licensee, contactText = CONTACT_TEXT_DEFAULT) => {
-  switch (contactMethod) {
-    case HOW_CONTACTED.email:
-      return contactText.EMAIL + licensee.email
-    case HOW_CONTACTED.text:
-      return contactText.TEXT + licensee.mobilePhone
-    default:
-      return contactText.DEFAULT
-  }
-}
-
-const getRow = (label, text, href, visuallyHiddenText, id) => {
   return {
-    key: {
-      text: label
+    summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
+    uri: {
+      licenceSummary: LICENCE_SUMMARY.uri
     },
-    value: {
-      text
-    },
-    ...(href && {
-      actions: {
-        items: [
-          {
-            href,
-            text: 'Change',
-            visuallyHiddenText: visuallyHiddenText,
-            attributes: { id }
-          }
-        ]
-      }
-    })
+    changeLicenceDetails
   }
 }
+
+export default pageRoute(CONTACT_SUMMARY.page, CONTACT_SUMMARY.uri, null, nextPage, getData)

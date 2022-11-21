@@ -2,10 +2,11 @@ import Boom from '@hapi/boom'
 import pageRoute from '../../../routes/page-route.js'
 import { PAYMENT_CANCELLED, NEW_TRANSACTION } from '../../../uri.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import { COMPLETION_STATUS } from '../../../constants.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.get()
 
   // If the payment created flag is not set to true then throw an exception
@@ -15,7 +16,7 @@ const getData = async request => {
 
   return {
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

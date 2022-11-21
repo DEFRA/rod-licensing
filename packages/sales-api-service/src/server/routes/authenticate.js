@@ -4,7 +4,18 @@ import {
   authenticateRenewalRequestQuerySchema,
   authenticateRenewalResponseSchema
 } from '../../schema/authenticate.schema.js'
+import db from 'debug'
 import { permissionForLicensee, concessionsByIds, executeQuery } from '@defra-fish/dynamics-lib'
+const debug = db('sales:renewal-authentication')
+
+const executeWithErrorLog = async query => {
+  try {
+    return await executeQuery(query)
+  } catch (e) {
+    debug(`Error executing query with filter ${query.filter}`)
+    throw e
+  }
+}
 
 export default [
   {
@@ -13,13 +24,15 @@ export default [
     options: {
       handler: async (request, h) => {
         const { licenseeBirthDate, licenseePostcode } = request.query
-        const results = await executeQuery(permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode))
+        const results = await executeWithErrorLog(
+          permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode)
+        )
 
         if (results.length === 1) {
           let concessionProofs = []
           if (results[0].expanded.concessionProofs.length > 0) {
             const ids = results[0].expanded.concessionProofs.map(f => f.entity.id)
-            concessionProofs = await executeQuery(concessionsByIds(ids))
+            concessionProofs = await executeWithErrorLog(concessionsByIds(ids))
           }
           return h
             .response({

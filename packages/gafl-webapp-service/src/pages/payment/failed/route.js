@@ -4,8 +4,9 @@ import { GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import { COMPLETION_STATUS } from '../../../constants.js'
 import { PAYMENT_FAILED, NEW_TRANSACTION } from '../../../uri.js'
 import { nextPage } from '../../../routes/next-page.js'
+import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
-const getData = async request => {
+export const getData = async request => {
   const status = await request.cache().helpers.status.get()
 
   // If the cancelled flag is not set to true then throw an exception
@@ -17,7 +18,7 @@ const getData = async request => {
     codes: GOVUK_PAY_ERROR_STATUS_CODES,
     'failure-code': status.payment.code,
     uri: {
-      new: NEW_TRANSACTION.uri
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

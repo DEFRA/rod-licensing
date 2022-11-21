@@ -34,6 +34,7 @@ import renewalStartDate from '../pages/renewals/renewal-start-date/route.js'
 import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
 import telesalesRoutes from './telesales-routes.js'
+import errorRoutes from './error-routes.js'
 
 const routes = [
   ...staticAssets,
@@ -69,6 +70,10 @@ const routes = [
 
 if (process.env.CHANNEL === 'telesales') {
   routes.push(...telesalesRoutes)
+}
+
+if (process.env.ERROR_PAGE_ROUTE === 'true') {
+  routes.push(...errorRoutes)
 }
 
 export default routes

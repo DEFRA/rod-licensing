@@ -145,7 +145,7 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : DISABILITY_CONCESSION.uri)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri)
   },
 
   {

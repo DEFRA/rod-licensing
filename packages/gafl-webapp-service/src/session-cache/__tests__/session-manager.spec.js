@@ -1,5 +1,5 @@
 import { start, stop, initialize, injectWithCookies, injectWithoutSessionCookie, mockSalesApi } from '../../__mocks__/test-utils-system.js'
-import { isStaticResource, useSessionCookie, includesRegex } from '../session-manager.js'
+import sessionManager, { isStaticResource, useSessionCookie, includesRegex } from '../session-manager.js'
 import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
 import {
   CONTROLLER,
@@ -9,8 +9,14 @@ import {
   LICENCE_DETAILS,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
-  IDENTIFY
+  IDENTIFY,
+  AGREED
 } from '../../uri.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn((request, uri) => uri)
+}))
 
 mockSalesApi()
 
@@ -114,5 +120,69 @@ describe('The user', () => {
     const response = await injectWithoutSessionCookie('GET', '/renew/ABC123')
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(IDENTIFY.uri)
+  })
+})
+
+describe('takeover by agreed handler once agreed flag is set', () => {
+  const sessionCookieName = 'garibaldi'
+  const getMockRequest = () => ({
+    path: 'crazy-paving',
+    state: {
+      [sessionCookieName]: {
+        id: 'a disappointing currant embedded biscuit'
+      }
+    },
+    cache: () => ({
+      helpers: {
+        status: {
+          get: async () => ({
+            agreed: true
+          })
+        }
+      }
+    })
+  })
+  const getMockToolkit = (takeover = () => {}) => ({
+    state: () => {},
+    redirect: jest.fn(() => ({
+      takeover
+    }))
+  })
+  const initialisedSessionManager = sessionManager(sessionCookieName)
+
+  beforeEach(jest.clearAllMocks)
+
+  it("redirects to agreed handler when status is already agreed and request path isn't in exempt set", async () => {
+    const toolkit = getMockToolkit()
+    await initialisedSessionManager(getMockRequest(), toolkit)
+    expect(toolkit.redirect).toHaveBeenCalledWith(AGREED.uri)
+  })
+
+  it('returns a takeover response after redirect', async () => {
+    const takeoverResponse = Symbol('takeover')
+    const response = await initialisedSessionManager(
+      getMockRequest(),
+      getMockToolkit(() => takeoverResponse)
+    )
+    expect(response).toBe(takeoverResponse)
+  })
+
+  it('passes request to addLanguageCodeToUri before redirecting', async () => {
+    const request = getMockRequest()
+    await initialisedSessionManager(request, getMockToolkit())
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.any(String))
+  })
+
+  it('passes AGREED.uri to addLanguageCodeToUri before redirecting', async () => {
+    await initialisedSessionManager(getMockRequest(), getMockToolkit())
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), AGREED.uri)
+  })
+
+  it('passes result of addLanguageCodeToUri to redirect', async () => {
+    const decoratedUri = Symbol('redirect uri')
+    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
+    const toolkit = getMockToolkit()
+    await initialisedSessionManager(getMockRequest(), toolkit)
+    expect(toolkit.redirect).toHaveBeenCalledWith(decoratedUri)
   })
 })

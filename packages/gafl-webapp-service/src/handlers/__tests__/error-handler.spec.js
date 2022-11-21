@@ -1,5 +1,8 @@
 import { errorHandler } from '../error-handler.js'
-import { CLIENT_ERROR } from '../../uri.js'
+import { CLIENT_ERROR, NEW_TRANSACTION, CONTROLLER, AGREED } from '../../uri.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js')
 
 describe('error-handler', () => {
   describe('errorHandler', () => {
@@ -88,6 +91,31 @@ describe('error-handler', () => {
         }
       })
     })
+
+    it.each([[NEW_TRANSACTION.uri], [CONTROLLER.uri], [AGREED.uri]])('called with expected arguments', async urlToCheck => {
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      await errorHandler(request, mockToolkit)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
+    })
+
+    it('uri object returns correct', async () => {
+      const decoratedUri = Symbol('uri')
+      addLanguageCodeToUri.mockReturnValue(decoratedUri)
+      const request = getMockRequest()
+      const mockToolkit = getMockToolkit()
+      await errorHandler(request, mockToolkit)
+      expect(mockToolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          uri: expect.objectContaining({
+            new: decoratedUri,
+            controller: decoratedUri,
+            agreed: decoratedUri
+          })
+        })
+      )
+    })
   })
 
   const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
@@ -115,6 +143,9 @@ describe('error-handler', () => {
       output: {
         statusCode: 400
       }
+    },
+    url: {
+      search: ''
     }
   })
 })
