@@ -1,6 +1,6 @@
 {% macro accordion(mssgs, troutAndCoarse2Rods, troutAndCoarse3Rods, salmonAndSeaTrout) %}
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
-        {% if data.troutAndCoarse2Rods %}
+        {% if troutAndCoarse2Rods %}
             <div class="govuk-accordion__section ">
                 <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
@@ -33,7 +33,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if data.troutAndCoarse3Rods %}
+        {% if troutAndCoarse3Rods %}
             <div class="govuk-accordion__section ">
                 <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
@@ -65,7 +65,7 @@
                 </div>
             </div>
         {% endif %}
-        {% if data.salmonAndSeaTrout %}
+        {% if salmonAndSeaTrout %}
             <div class="govuk-accordion__section ">
                 <div class="govuk-accordion__section-header">
                 <h2 class="govuk-accordion__section-heading">
