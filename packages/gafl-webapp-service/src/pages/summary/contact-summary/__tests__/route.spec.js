@@ -81,13 +81,7 @@ const generatePermissionMock = (licenseePermissions, permissions = {}) => ({
   }
 })
 
-const getRequestMock = ({
-  permission = generatePermissionMock(),
-  query,
-  status,
-  catalog = getMockCatalog()
-} = {}
-) => ({
+const getRequestMock = ({ permission = generatePermissionMock(), query, status, catalog = getMockCatalog() } = {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -147,9 +141,11 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder,
             preferredMethodOfNewsletter
           })
-          const { summaryTable } = await getData(getRequestMock({
-            permission: samplePermission
-          }))
+          const { summaryTable } = await getData(
+            getRequestMock({
+              permission: samplePermission
+            })
+          )
           expect(summaryTable).toMatchSnapshot()
         }
       )
@@ -172,9 +168,11 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter,
             postalFulfilment: false
           })
-          const { summaryTable } = await getData(getRequestMock({
-            permission: samplePermission
-          }))
+          const { summaryTable } = await getData(
+            getRequestMock({
+              permission: samplePermission
+            })
+          )
           expect(summaryTable).toMatchSnapshot()
         }
       )
@@ -186,9 +184,11 @@ describe('contact-summary > route', () => {
             isLicenceForYou: false
           }
         )
-        const { summaryTable } = await getData(getRequestMock({
-          permission: samplePermission
-        }))
+        const { summaryTable } = await getData(
+          getRequestMock({
+            permission: samplePermission
+          })
+        )
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -211,9 +211,11 @@ describe('contact-summary > route', () => {
             licenceLength: '1D'
           }
         )
-        const { summaryTable } = await getData(getRequestMock({
-          permission: samplePermission
-        }))
+        const { summaryTable } = await getData(
+          getRequestMock({
+            permission: samplePermission
+          })
+        )
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -241,23 +243,20 @@ describe('contact-summary > route', () => {
     expect(changeLicenceDetails).toBe(mssg)
   })
 
-  it.each([[HOW_CONTACTED.none, mssgs.no], [null, mssgs.yes]])(
-    'returns yes or no to newsletter depending on user preference',
-    async (preferredMethodOfNewsletter, expectedReturn) => {
-      const samplePermission = generatePermissionMock(
-        {
-          preferredMethodOfNewsletter
-        },
-        {
-          licenceLength: '1D'
-        }
-      )
-      const sampleRequest = getRequestMock(samplePermission)
-      const { summaryTable } = await getData(sampleRequest)
-      console.log(summaryTable)
-      expect(summaryTable[3].value.text).toBe(expectedReturn)
-    }
-  )
+  it.each([
+    [HOW_CONTACTED.none, mssgs.no],
+    [null, mssgs.yes]
+  ])('returns yes or no to newsletter depending on user preference', async (preferredMethodOfNewsletter, expectedReturn) => {
+    const samplePermission = generatePermissionMock({
+      preferredMethodOfNewsletter
+    })
+    const { summaryTable } = await getData(
+      getRequestMock({
+        permission: samplePermission
+      })
+    )
+    expect(summaryTable[4].value.text).toBe(expectedReturn)
+  })
 
   describe('addLanguageCodeToUri', () => {
     beforeEach(jest.clearAllMocks)
