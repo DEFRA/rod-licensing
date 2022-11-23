@@ -34,31 +34,16 @@
             <img src="/public/images/EA-logo-black.png" class="print-area ea-logo">
 
             {% for licence in data.licences %}
-                {% if licence.length === '1D' %}
-                    {% set lengthText = mssgs.licence_type_1d %}
-                {% elseif licence.length === '8D' %}
-                    {% set lengthText = mssgs.licence_type_8d %}
-                {% else %}
-                    {% set lengthText = mssgs.licence_type_12m %}
-                {% endif %}
-
-                {% if licence.ageConcession %}
-                    {% if licence.ageConcession.type == mssgs.senior %}
-                        {% set ageConcessionText = mssgs.age_senior_concession %}
-                    {% elseif licence.ageConcession.type == mssgs.age_junior %}
-                        {% set ageConcessionText = mssgs.age_junior_concession %}
-                    {% endif%}
-                {% endif%}
 
                 {% set licenseDetailsSummaryRows = [] %}
                     {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_name }, value: { text: licence.licenceHolder } }) }}
                     {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.identification }, value: { text: licence.obfuscatedDob } }) }}
                     {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_type }, value: { text: licence.type } }) }}
-                    {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_length }, value: { text: lengthText } }) }}
+                    {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_length }, value: { text: licence.length } }) }}
                     {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.starts }, value: { text: licence.start } }) }}
                     {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.ends }, value: { text: licence.end } }) }}
                     {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }) if licence.disabled }}
-                    {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: ageConcessionText } }) if licence.ageConcession }}
+                    {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: licence.ageConcession } }) if licence.ageConcession }}
                 
                 <h2 class="govuk-heading-l">{{ licence.referenceNumber }}</h2>
 

@@ -30,18 +30,44 @@ export const getData = async request => {
     licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
     obfuscatedDob: permission.licensee.obfuscatedDob,
     type: licenceTypeDisplay(permission, mssgs),
-    length: licenceTypeAndLengthDisplay(permission, mssgs),
+    length: licenceLengthText(permission, mssgs),
     start: displayStartTime(request, permission),
     end: displayEndTime(request, permission),
     price: permission.permit.cost,
     disabled: concessionHelper.hasDisabled(permission),
-    ageConcession: concessionHelper.getAgeConcession(permission),
+    ageConcession: ageConcessionText(permission, mssgs),
     index
   }))
 
   return {
     licences
   }
+}
+
+const ageConcessionText = (permission, mssgs) => {
+  const concession = concessionHelper.getAgeConcession(permission)
+
+  if (concession) {
+    if (concession.type === 'Senior') {
+      return mssgs.age_senior_concession
+    } else if (concession.type === 'Junior') {
+      return mssgs.age_junior_concession
+    }
+  }
+
+  return false
+}
+
+const licenceLengthText = (permission, mssgs) => {
+  const length = licenceTypeAndLengthDisplay(permission, mssgs)
+
+  if (length === '1D') {
+    return mssgs.licence_type_1d
+  } else if (length === '8D') {
+    return mssgs.licence_type_8d
+  }
+
+  return mssgs.licence_type_12m
 }
 
 export default pageRoute(LICENCE_DETAILS.page, LICENCE_DETAILS.uri, null, nextPage, getData)

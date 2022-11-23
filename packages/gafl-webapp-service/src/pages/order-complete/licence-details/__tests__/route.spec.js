@@ -26,7 +26,7 @@ jest.mock('../../../../constants', () => ({
   }
 }))
 
-const status = () => ({
+const getMockStatus = () => ({
   [COMPLETION_STATUS.agreed]: 'agreed',
   [COMPLETION_STATUS.posted]: 'posted',
   [COMPLETION_STATUS.finalised]: 'finalised',
@@ -34,11 +34,11 @@ const status = () => ({
   [ShowDigitalLicencePages.YES]: 'yes'
 })
 
-const transaction = () => ({
-  permissions: [permission]
+const getMockTransaction = () => ({
+  permissions: [getMockPermission()]
 })
 
-const permission = {
+const getMockPermission = () => ({
   licensee: {
     firstName: 'Turanga',
     lastName: 'Leela',
@@ -49,22 +49,30 @@ const permission = {
   numberOfRods: '2',
   licenceLength: '8D',
   permit: { cost: 12 }
-}
+})
 
-const catalog = Symbol('mock catalog')
+const getMockCatalog = overrides => ({
+  age_senior_concession: Symbol('Over 65'),
+  age_junior_concession: Symbol('Junior (13 to 16)'),
+
+  licence_type_1d: Symbol('1 day'),
+  licence_type_8d: Symbol('8 days'),
+  licence_type_12m: Symbol('12 months'),
+  ...overrides
+})
 
 describe('licence-length > route', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  describe('getData', () => {
-    const getMockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+  describe.only('getData', () => {
+    const getMockRequest = (statusGet = () => {}, transactionGet = () => {}, catalog = getMockCatalog()) => ({
       cache: () => ({
         helpers: {
           transaction: {
-            get: transactionGet
+            get: async () => transactionGet
           },
           status: {
-            get: statusGet
+            get: async () => statusGet
           }
         }
       }),
@@ -73,44 +81,44 @@ describe('licence-length > route', () => {
       }
     })
 
-    it('licenceTypeDisplay is called with the expected arguments', async () => {
-      await getData(getMockRequest(status, transaction))
-      expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
-    })
+    const mockRequest = getMockRequest(getMockStatus(), getMockTransaction())
+    const mssgs = mockRequest.i18n.getCatalog()
 
-    it('licenceTypeAndLengthDisplay is called with the expected arguments', async () => {
-      await getData(getMockRequest(status, transaction))
-      expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
-    })
+    beforeEach(() => jest.clearAllMocks())
 
-    it('displayStartTime is called with the expected arguments', async () => {
-      const mockRequest = getMockRequest(status, transaction)
+    it('licenceTypeDisplay is called with permissions and mssgs', async () => {
       await getData(mockRequest)
-      expect(displayStartTime).toHaveBeenCalledWith(mockRequest, permission)
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(getMockPermission(), mssgs)
     })
 
-    it('displayEndTime is called with the expected arguments', async () => {
-      const mockRequest = getMockRequest(status, transaction)
+    it('licenceTypeAndLengthDisplay is called with permission and mssgs', async () => {
       await getData(mockRequest)
-      expect(displayEndTime).toHaveBeenCalledWith(mockRequest, permission)
+      expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(getMockPermission(), mssgs)
     })
 
-    it('hasDisabled is called with the expected arguments', async () => {
-      await getData(getMockRequest(status, transaction))
-      expect(concessionHelper.hasDisabled).toHaveBeenCalledWith(permission)
+    it('displayStartTime is called request and permission', async () => {
+      await getData(mockRequest)
+      expect(displayStartTime).toHaveBeenCalledWith(mockRequest, getMockPermission())
     })
 
-    it('getAgeConcession is called with the expected arguments', async () => {
-      await getData(getMockRequest(status, transaction))
-      expect(concessionHelper.getAgeConcession).toHaveBeenCalledWith(permission)
+    it('displayEndTime is called with request and permission', async () => {
+      await getData(mockRequest)
+      expect(displayEndTime).toHaveBeenCalledWith(mockRequest, getMockPermission())
+    })
+
+    it('hasDisabled is called with permission', async () => {
+      await getData(mockRequest)
+      expect(concessionHelper.hasDisabled).toHaveBeenCalledWith(getMockPermission())
+    })
+
+    it('getAgeConcession is called with permission', async () => {
+      await getData(mockRequest)
+      expect(concessionHelper.getAgeConcession).toHaveBeenCalledWith(getMockPermission())
     })
 
     describe('returns expected licence data for the given permission:', () => {
       const licenceType = Symbol('Trout and coarse, up to 2 rods')
       licenceTypeDisplay.mockReturnValue(licenceType)
-
-      const licenceLength = Symbol('8 days')
-      licenceTypeAndLengthDisplay.mockReturnValue(licenceLength)
 
       const startTime = Symbol('9:32am on 23 June 2021')
       displayStartTime.mockReturnValue(startTime)
@@ -121,66 +129,23 @@ describe('licence-length > route', () => {
       const disabled = Symbol('disabled')
       concessionHelper.hasDisabled.mockReturnValue(disabled)
 
-      const concession = Symbol('concession')
-      concessionHelper.getAgeConcession.mockReturnValue(concession)
-
-      it('referenceNumber', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].referenceNumber).toBe('123456789')
-      })
-
-      it('licenceHolder', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].licenceHolder).toBe('Turanga Leela')
-      })
-
-      it('obfuscatedDob', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].obfuscatedDob).toBe('obfuscatedDob')
-      })
-
-      it('type', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].type).toBe(licenceType)
-      })
-
-      it('length', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].length).toBe(licenceLength)
-      })
-
-      it('start', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].start).toBe(startTime)
-      })
-
-      it('end', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].end).toBe(endTime)
-      })
-
-      it('price', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].price).toBe(permission.permit.cost)
-      })
-
-      it('disabled', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].disabled).toBe(disabled)
-      })
-
-      it('ageConcession', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].ageConcession).toBe(concession)
-      })
-
-      it('index', async () => {
-        const data = await getData(getMockRequest(status, transaction))
-        expect(data.licences[0].index).toBe(0)
-      })
-
       it('returns expected data', async () => {
-        const data = await getData(getMockRequest(status, transaction))
+        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
+        expect(data).toMatchSnapshot()
+      })
+
+      it.each([['1D'], ['8D'], ['12M']])('returns licence length as %s', async licenceLength => {
+        licenceTypeAndLengthDisplay.mockReturnValue(licenceLength)
+        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
+        expect(data).toMatchSnapshot()
+      })
+
+      it.each([['Senior'], ['Junior'], ['Neither']])('returns age concession as %s', async type => {
+        const concession = {
+          type: type
+        }
+        concessionHelper.getAgeConcession.mockReturnValue(concession)
+        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
         expect(data).toMatchSnapshot()
       })
     })
@@ -189,7 +154,7 @@ describe('licence-length > route', () => {
       it('if status agreed flag is not set', async () => {
         const status = () => ({})
         const boomError = Boom.forbidden('Attempt to access the licence information handler with no agreed flag set')
-        await expect(getData(getMockRequest(status, transaction))).rejects.toThrow(boomError)
+        await expect(getData(getMockRequest(status, getMockTransaction()))).rejects.toThrow(boomError)
       })
 
       it('if status posted flag is not set', async () => {
@@ -197,7 +162,7 @@ describe('licence-length > route', () => {
           [COMPLETION_STATUS.agreed]: 'agreed'
         })
         const boomError = Boom.forbidden('Attempt to access the licence information handler with no posted flag set')
-        await expect(getData(getMockRequest(status, transaction))).rejects.toThrow(boomError)
+        await expect(getData(getMockRequest(status(), getMockTransaction()))).rejects.toThrow(boomError)
       })
 
       it('if status finalised flag is not set', async () => {
@@ -206,7 +171,7 @@ describe('licence-length > route', () => {
           [COMPLETION_STATUS.posted]: 'posted'
         })
         const boomError = Boom.forbidden('Attempt to access the licence information handler with no finalised flag set')
-        await expect(getData(getMockRequest(status, transaction))).rejects.toThrow(boomError)
+        await expect(getData(getMockRequest(status(), getMockTransaction()))).rejects.toThrow(boomError)
       })
     })
   })
