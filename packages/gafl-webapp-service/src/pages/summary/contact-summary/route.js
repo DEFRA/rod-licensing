@@ -198,7 +198,6 @@ const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  // All of this is untested and so would be very easy to inadvertently delete
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
 
   if (checkIsMultibuyForYou === true) {
