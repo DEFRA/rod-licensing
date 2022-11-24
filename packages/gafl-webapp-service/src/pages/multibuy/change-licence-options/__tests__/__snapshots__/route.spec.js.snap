@@ -30,6 +30,7 @@ Object {
   "startAfterPaymentMinutes": 30,
   "startTimeString": "Test on 1 July 2021",
   "uri": Object {
+    "changeContactDetails": "/buy/change-contact-details",
     "clear": "/buy/new",
     "dateOfBirth": "/buy/date-of-birth",
     "disabilityConcession": "/buy/disability-concession",
@@ -79,6 +80,7 @@ Object {
   "startAfterPaymentMinutes": 30,
   "startTimeString": "Test on 1 July 2021",
   "uri": Object {
+    "changeContactDetails": "/buy/change-contact-details",
     "clear": "/buy/new",
     "dateOfBirth": "/buy/date-of-birth",
     "disabilityConcession": "/buy/disability-concession",
@@ -121,6 +123,7 @@ Object {
   "startAfterPaymentMinutes": 30,
   "startTimeString": "Test on 1 July 2021",
   "uri": Object {
+    "changeContactDetails": "/buy/change-contact-details",
     "clear": "/buy/new",
     "dateOfBirth": "/buy/date-of-birth",
     "disabilityConcession": "/buy/disability-concession",

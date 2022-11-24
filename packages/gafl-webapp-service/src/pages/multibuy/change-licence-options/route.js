@@ -8,6 +8,7 @@ import moment from 'moment-timezone'
 import {
   NAME,
   CHANGE_LICENCE_OPTIONS,
+  CHANGE_CONTACT_DETAILS,
   LICENCE_LENGTH,
   LICENCE_TYPE,
   LICENCE_TO_START,
@@ -64,7 +65,8 @@ export const getData = async request => {
       dateOfBirth: DATE_OF_BIRTH.uri,
       disabilityConcession: DISABILITY_CONCESSION.uri,
       licenceStartDate: status.renewal ? RENEWAL_START_DATE.uri : LICENCE_TO_START.uri,
-      clear: NEW_TRANSACTION.uri
+      clear: NEW_TRANSACTION.uri,
+      changeContactDetails: CHANGE_CONTACT_DETAILS.uri
     }
   }
 }

@@ -170,6 +170,10 @@
             {{ csrf() }}
         </form>
         {% if data.isRenewal %}<a class="govuk-link" class="govuk-link" href="{{ data.uri.clear }}">{{ mssgs.buy_different_licence }}</a>{% endif %}
+
+        <p class="govuk-body-m">
+            <a class="govuk-link" href="{{ data.uri.changeContactDetails }}">{{ 'Change contact details' }}</a>
+        </p>
     </div>
 </div>
 {% endblock %}
