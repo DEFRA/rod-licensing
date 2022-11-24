@@ -137,7 +137,7 @@ describe('The order completion handler', () => {
     expect(data.statusCode).toBe(200)
   })
 
-  it('addLanguageCodeToUri is called with the expected arguments', async () => {
+  it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with the expected arguments', async uri => {
     const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
@@ -156,10 +156,10 @@ describe('The order completion handler', () => {
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
 
     await getData(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   })
 
-  it('addLanguageCodeToUri outputs correct value', async () => {
+  it('addLanguageCodeToUri outputs correct value for new', async () => {
     const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
@@ -181,5 +181,29 @@ describe('The order completion handler', () => {
 
     const data = await getData(request)
     expect(data.uri.new).toEqual(decoratedUri)
+  })
+
+  it('addLanguageCodeToUri outputs correct value for licence details', async () => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const transaction = () => ({
+      startDate: '2019-12-14T00:00:00Z',
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+
+    const decoratedUri = Symbol('licence details uri')
+    addLanguageCodeToUri.mockReturnValue(decoratedUri)
+
+    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
+    const request = mockRequest(status, transaction)
+
+    const data = await getData(request)
+    expect(data.uri.licenceDetails).toEqual(decoratedUri)
   })
 })
