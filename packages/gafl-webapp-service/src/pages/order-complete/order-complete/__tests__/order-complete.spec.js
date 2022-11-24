@@ -137,7 +137,7 @@ describe('The order completion handler', () => {
     expect(data.statusCode).toBe(200)
   })
 
-  it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with the expected arguments', async uri => {
+  it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
     const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
