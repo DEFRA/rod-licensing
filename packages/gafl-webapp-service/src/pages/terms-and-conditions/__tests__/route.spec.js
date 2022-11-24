@@ -23,6 +23,22 @@ const getMockPermission = (price, type) => ({
 
 const catalog = Symbol('mock catalog')
 
+const generateMockRequest = (statusGet = {}, transactionGet = {}) => ({
+  cache: () => ({
+    helpers: {
+      transaction: {
+        get: async () => transactionGet
+      },
+      status: {
+        getCurrentPermission: async () => statusGet
+      }
+    }
+  }),
+  i18n: {
+    getCatalog: () => catalog
+  }
+})
+
 describe('terms-and-conditions > route', () => {
   describe('default', () => {
     it('should call the pageRoute with terms-and-conditions, /buy/conditions, validator, nextPage and getData', async () => {
@@ -31,22 +47,6 @@ describe('terms-and-conditions > route', () => {
   })
 
   describe('getData', () => {
-    const generateMockRequest = (statusGet = {}, transactionGet = {}) => ({
-      cache: () => ({
-        helpers: {
-          transaction: {
-            get: async () => transactionGet
-          },
-          status: {
-            getCurrentPermission: async () => statusGet
-          }
-        }
-      }),
-      i18n: {
-        getCatalog: () => catalog
-      }
-    })
-
     beforeEach(() => jest.clearAllMocks())
 
     it('LICENCE_SUMMARY redirect', async () => {
