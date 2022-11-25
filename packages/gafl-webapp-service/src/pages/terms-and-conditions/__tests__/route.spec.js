@@ -105,17 +105,13 @@ describe('terms-and-conditions > route', () => {
       [troutAndCoarse3Rods, false],
       [salmonAndSeaTrout, false]
     ])('returns whether to display Trout and coarse, up to 2 rods conditions', async (type, displayType) => {
-      const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
-      const mockLicenceTypeReturn3Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse3Rods)
+      licenceTypeDisplay.mockReturnValue(type)
+      licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse3Rods)
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
           {
-            permissions: [
-              getMockPermission(1, mockLicenceTypeReturn),
-              getMockPermission(1, mockLicenceTypeReturn),
-              getMockPermission(0, mockLicenceTypeReturn3Rods)
-            ]
+            permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, troutAndCoarse3Rods)]
           }
         )
       )
@@ -127,17 +123,13 @@ describe('terms-and-conditions > route', () => {
       [troutAndCoarse3Rods, true],
       [salmonAndSeaTrout, false]
     ])('returns whether to display Trout and coarse, up to 3 rods conditions', async (type, displayType) => {
-      const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
-      const mockLicenceTypeReturn2Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
+      licenceTypeDisplay.mockReturnValue(type)
+      licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
           {
-            permissions: [
-              getMockPermission(1, mockLicenceTypeReturn),
-              getMockPermission(1, mockLicenceTypeReturn),
-              getMockPermission(0, mockLicenceTypeReturn2Rods)
-            ]
+            permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, troutAndCoarse2Rods)]
           }
         )
       )
@@ -149,17 +141,13 @@ describe('terms-and-conditions > route', () => {
       [troutAndCoarse3Rods, false],
       [salmonAndSeaTrout, true]
     ])('returns whether to display Salmon and sea trout conditions', async (type, displayType) => {
-      const mockLicenceTypeReturn = licenceTypeDisplay.mockReturnValue(type)
-      const mockLicenceTypeReturn2Rods = licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
+      licenceTypeDisplay.mockReturnValue(type)
+      licenceTypeDisplay.mockReturnValueOnce(troutAndCoarse2Rods)
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
           {
-            permissions: [
-              getMockPermission(1, mockLicenceTypeReturn),
-              getMockPermission(1, mockLicenceTypeReturn),
-              getMockPermission(0, mockLicenceTypeReturn2Rods)
-            ]
+            permissions: [getMockPermission(1, type), getMockPermission(1, type), getMockPermission(0, troutAndCoarse2Rods)]
           }
         )
       )
