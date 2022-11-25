@@ -18,9 +18,9 @@
 {% endif %}
 
 {% if data.ageConcession %}
-    {% if data.ageConcession.type == mssgs.senior %}
+    {% if data.ageConcession.type == 'Senior' %}
         {% set ageConcessionText = mssgs.age_senior_concession %}
-    {% elseif data.ageConcession.type == mssgs.age_junior %}
+    {% elseif data.ageConcession.type == 'Junior' %}
         {% set ageConcessionText = mssgs.age_junior_concession %}
     {% endif%}
 {% endif%}
