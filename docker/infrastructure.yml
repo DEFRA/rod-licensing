@@ -77,14 +77,14 @@ services:
   # Elasticmq (SQS provider)
   #######################################################
   elasticmq:
-    image: s12v/elasticmq
+    image: softwaremill/elasticmq-native
     ports:
       - '9324:9324'
     volumes:
       - type: bind
         read_only: true
         source: resources/infrastructure/elasticmq/elasticmq.conf
-        target: /etc/elasticmq/elasticmq.conf
+        target: /opt/elasticmq.conf
     deploy:
       restart_policy:
         condition: on-failure
