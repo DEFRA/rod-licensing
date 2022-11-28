@@ -30,7 +30,8 @@ import {
   RENEWAL_START_DATE,
   ADD_PERMISSION,
   VIEW_LICENCES,
-  CHANGE_LICENCE_OPTIONS
+  CHANGE_LICENCE_OPTIONS,
+  CHANGE_CONTACT_DETAILS
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
@@ -386,6 +387,15 @@ export default [
 
   {
     current: CHANGE_LICENCE_OPTIONS,
+    next: {
+      [CommonResults.OK]: {
+        page: VIEW_LICENCES
+      }
+    }
+  },
+
+  {
+    current: CHANGE_CONTACT_DETAILS,
     next: {
       [CommonResults.OK]: {
         page: VIEW_LICENCES
