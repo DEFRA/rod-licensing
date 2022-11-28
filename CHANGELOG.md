@@ -1,4 +1,12 @@
 
+## v1.28.0-rc.3 (2022-11-28)
+
+#### :rocket: Enhancement
+* [#1557](https://github.com/DEFRA/rod-licensing/pull/1557) Update dev env docker config ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.28.0-rc.2 (2022-11-25)
 
 #### :rocket: Enhancement
