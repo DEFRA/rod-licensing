@@ -82,7 +82,13 @@ const getMockPermission = (licenseePermissions, permissions = {}) => ({
   }
 })
 
-const getRequestMock = ({ permission = getMockPermission(), query, status, setCurrentPermission, catalog = getMockCatalog() } = {}) => ({
+const getRequestMock = ({
+  permission = getMockPermission(),
+  query,
+  status,
+  setStatusPermission = () => {},
+  catalog = getMockCatalog()
+} = {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -95,7 +101,7 @@ const getRequestMock = ({ permission = getMockPermission(), query, status, setCu
           [LICENCE_CONFIRMATION_METHOD.page]: true,
           ...status
         }),
-        setCurrentPermission
+        setCurrentPermission: setStatusPermission
       },
       transaction: {
         getCurrentPermission: async () => permission
@@ -119,10 +125,10 @@ describe('contact-summary > route', () => {
   })
 
   it('should set status.fromSummary to seen', async () => {
-    const setCurrentPermission = jest.fn()
-    const mockRequest = getRequestMock({ setCurrentPermission: setCurrentPermission })
+    const mockPermission = jest.fn()
+    const mockRequest = getRequestMock({ setStatusPermission: mockPermission })
     await getData(mockRequest)
-    expect(setCurrentPermission).toHaveBeenCalledWith(
+    expect(mockPermission).toHaveBeenCalledWith(
       expect.objectContaining({
         fromSummary: CONTACT_SUMMARY_SEEN
       })
@@ -145,16 +151,16 @@ describe('contact-summary > route', () => {
     })
     const sampleRequest = getRequestMock({
       permission,
-      catalog: mssgCatalog,
-      setCurrentPermission: () => {}
+      catalog: mssgCatalog
     })
     const { changeLicenceDetails } = await getData(sampleRequest)
     expect(changeLicenceDetails).toBe(mssg)
   })
 
   it.each([
-    { preferredMethodOfNewsletter: HOW_CONTACTED.none, expectedReturn: mssgs.no, action: 'not sent' },
-    { preferredMethodOfNewsletter: null, expectedReturn: mssgs.yes, action: 'sent' }
+    { preferredMethodOfNewsletter: HOW_CONTACTED.email, expectedReturn: mssgs.yes, action: 'sent' },
+    { preferredMethodOfNewsletter: HOW_CONTACTED.text, expectedReturn: mssgs.yes, action: 'sent' },
+    { preferredMethodOfNewsletter: HOW_CONTACTED.post, expectedReturn: mssgs.yes, action: 'sent' }
   ])(
     'newsletter is $action when preferredMethodOfNewletter is $preferredMethodOfNewsletter',
     async ({ preferredMethodOfNewsletter, expectedReturn }) => {
@@ -163,8 +169,7 @@ describe('contact-summary > route', () => {
       })
       const { summaryTable } = await getData(
         getRequestMock({
-          permission: samplePermission,
-          setCurrentPermission: () => {}
+          permission: samplePermission
         })
       )
       expect(summaryTable[4].value.text).toBe(expectedReturn)
@@ -196,7 +201,7 @@ describe('contact-summary > route', () => {
             preferredMethodOfReminder,
             preferredMethodOfNewsletter
           })
-          const { summaryTable } = await getData(getRequestMock({ permission: samplePermission, setCurrentPermission: () => {} }))
+          const { summaryTable } = await getData(getRequestMock({ permission: samplePermission }))
           expect(summaryTable).toMatchSnapshot()
         }
       )
@@ -219,14 +224,14 @@ describe('contact-summary > route', () => {
             preferredMethodOfNewsletter,
             postalFulfilment: false
           })
-          const { summaryTable } = await getData(getRequestMock({ permission: samplePermission, setCurrentPermission: () => {} }))
+          const { summaryTable } = await getData(getRequestMock({ permission: samplePermission }))
           expect(summaryTable).toMatchSnapshot()
         }
       )
 
       it('should not include newsletter row in the summary table if licence is not for you', async () => {
         const samplePermission = getMockPermission({}, { isLicenceForYou: false })
-        const { summaryTable } = await getData(getRequestMock({ permission: samplePermission, setCurrentPermission: () => {} }))
+        const { summaryTable } = await getData(getRequestMock({ permission: samplePermission }))
         expect(summaryTable).toMatchSnapshot()
       })
     })
@@ -251,8 +256,7 @@ describe('contact-summary > route', () => {
         )
         const { summaryTable } = await getData(
           getRequestMock({
-            permission: samplePermission,
-            setCurrentPermission: () => {}
+            permission: samplePermission
           })
         )
         expect(summaryTable).toMatchSnapshot()
@@ -266,7 +270,7 @@ describe('contact-summary > route', () => {
     it.each([[ADDRESS_LOOKUP.uri], [LICENCE_FULFILMENT.uri], [LICENCE_CONFIRMATION_METHOD.uri], [CONTACT.uri], [NEWSLETTER.uri]])(
       'test addLanguageCodeToUri is called correctly',
       async urlToCheck => {
-        const sampleRequest = getRequestMock({ setCurrentPermission: () => {} }, getMockPermission({}))
+        const sampleRequest = getRequestMock(getMockPermission({}))
         await getData(sampleRequest)
         expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, urlToCheck)
       }
@@ -279,7 +283,7 @@ describe('contact-summary > route', () => {
         [ADDRESS_ENTRY.page]: false,
         [ADDRESS_SELECT.page]: false
       }
-      const mockRequest = getRequestMock({ permission: {}, status, setCurrentPermission: () => {} })
+      const mockRequest = getRequestMock({ permission: {}, status })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(ADDRESS_LOOKUP.uri)
     })
 
@@ -287,7 +291,7 @@ describe('contact-summary > route', () => {
       const status = {
         [CONTACT.page]: false
       }
-      const mockRequest = getRequestMock({ permission: {}, status, setCurrentPermission: () => {} })
+      const mockRequest = getRequestMock({ permission: {}, status })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(CONTACT.uri)
     })
 
@@ -295,7 +299,7 @@ describe('contact-summary > route', () => {
       const status = {
         [LICENCE_FULFILMENT.page]: false
       }
-      const mockRequest = getRequestMock({ status, setCurrentPermission: () => {} })
+      const mockRequest = getRequestMock({ status })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_FULFILMENT.uri)
     })
 
@@ -303,7 +307,7 @@ describe('contact-summary > route', () => {
       const status = {
         [LICENCE_CONFIRMATION_METHOD.page]: false
       }
-      const mockRequest = getRequestMock({ status, setCurrentPermission: () => {} })
+      const mockRequest = getRequestMock({ status })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_CONFIRMATION_METHOD.uri)
     })
   })
