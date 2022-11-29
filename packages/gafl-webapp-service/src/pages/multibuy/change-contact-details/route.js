@@ -9,7 +9,6 @@ import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import {
-  CONTACT_SUMMARY,
   LICENCE_SUMMARY,
   ADDRESS_ENTRY,
   ADDRESS_SELECT,
@@ -18,7 +17,8 @@ import {
   NEWSLETTER,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
-  CHANGE_CONTACT_DETAILS
+  CHANGE_CONTACT_DETAILS,
+  CHANGE_LICENCE_OPTIONS
 } from '../../../uri.js'
 
 const CONTACT_TEXT_DEFAULT = {
@@ -223,7 +223,8 @@ const getData = async request => {
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
-      licenceSummary: LICENCE_SUMMARY.uri
+      licenceSummary: LICENCE_SUMMARY.uri,
+      changeLicenceOptions: CHANGE_LICENCE_OPTIONS.uri
     }
   }
 }
