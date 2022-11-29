@@ -117,8 +117,6 @@ const getRequestMock = ({
   }
 })
 
-const mssgs = getRequestMock().i18n.getCatalog()
-
 describe('contact-summary > route', () => {
   it('should return result of pageRoute call', () => {
     expect(route).toEqual(mockRoute)
@@ -158,23 +156,23 @@ describe('contact-summary > route', () => {
   })
 
   it.each([
-    { preferredMethodOfNewsletter: HOW_CONTACTED.email, expectedReturn: mssgs.yes, action: 'sent' },
-    { preferredMethodOfNewsletter: HOW_CONTACTED.text, expectedReturn: mssgs.yes, action: 'sent' },
-    { preferredMethodOfNewsletter: HOW_CONTACTED.post, expectedReturn: mssgs.yes, action: 'sent' }
-  ])(
-    'newsletter is $action when preferredMethodOfNewletter is $preferredMethodOfNewsletter',
-    async ({ preferredMethodOfNewsletter, expectedReturn }) => {
-      const samplePermission = getMockPermission({
-        preferredMethodOfNewsletter
+    ['aye', HOW_CONTACTED.email, 'yes'],
+    ['negative, Ghost Rider', HOW_CONTACTED.none, 'no']
+  ])('newsletter text should show as %s if how contacted is %s', async (mssg, preferredMethodOfNewsletter, mssgKey) => {
+    const mssgCatalog = getMockCatalog({
+      [mssgKey]: mssg
+    })
+    const samplePermission = getMockPermission({
+      preferredMethodOfNewsletter
+    })
+    const { summaryTable } = await getData(
+      getRequestMock({
+        permission: samplePermission,
+        mssgCatalog
       })
-      const { summaryTable } = await getData(
-        getRequestMock({
-          permission: samplePermission
-        })
-      )
-      expect(summaryTable[4].value.text).toBe(expectedReturn)
-    }
-  )
+    )
+    expect(summaryTable[4].value.text).toBe(mssg)
+  })
 
   describe('getLicenseeDetailsSummaryRows', () => {
     describe('when purchasing a 12 month (physical licence)', () => {
