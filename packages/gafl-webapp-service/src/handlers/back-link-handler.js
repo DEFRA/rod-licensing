@@ -3,6 +3,7 @@ import { LICENCE_SUMMARY_SEEN, CHANGE_LICENCE_OPTIONS_SEEN } from '../constants.
 
 export default async (status, defaultUri) => {
   const summarySeen = status.fromSummary
+  const isRenewal = status.isRenewal
   const changeLicenceOptionsSeen = status.fromLicenceOptions
   const fromContactDetailsSeen = status.fromContactDetails
   if (changeLicenceOptionsSeen === CHANGE_LICENCE_OPTIONS_SEEN.SEEN) {
@@ -11,7 +12,7 @@ export default async (status, defaultUri) => {
   if (fromContactDetailsSeen) {
     return CHANGE_CONTACT_DETAILS.uri
   }
-  if (summarySeen === LICENCE_SUMMARY_SEEN) {
+  if (summarySeen === LICENCE_SUMMARY_SEEN || isRenewal) {
     return LICENCE_SUMMARY.uri
   }
   if (summarySeen) {

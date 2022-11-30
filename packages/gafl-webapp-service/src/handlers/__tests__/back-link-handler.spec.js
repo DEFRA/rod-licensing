@@ -25,14 +25,6 @@ describe('back-link-handler', () => {
       expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
     })
 
-    it('should return CHANGE_LICENCE_OPTIONS uri if changeLicenceOptionsSeen is true', async () => {
-      const status = {
-        fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-      }
-      const result = await backLinkHandler(status, 'aPage')
-      expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
-    })
-
     it('should return LICENCE_SUMMARY uri if licence Summary is seen', async () => {
       const status = {
         fromSummary: LICENCE_SUMMARY_SEEN
@@ -40,6 +32,15 @@ describe('back-link-handler', () => {
       const result = await backLinkHandler(status, 'aPage')
       expect(result).toBe(LICENCE_SUMMARY.uri)
     })
+
+    it('should return LICENCE_SUMMARY uri if going through a renewal', async () => {
+      const status = {
+        isRenewal: true
+      }
+      const result = await backLinkHandler(status, 'aPage')
+      expect(result).toBe(LICENCE_SUMMARY.uri)
+    })
+
     it('should return CONTACT_SUMMARY uri if contact summary is seen', async () => {
       const status = {
         fromSummary: CONTACT_SUMMARY_SEEN
