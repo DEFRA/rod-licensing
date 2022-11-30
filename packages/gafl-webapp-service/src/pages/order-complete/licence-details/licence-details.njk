@@ -17,14 +17,6 @@
     {% set lengthText = mssgs.licence_type_12m %}
 {% endif %}
 
-{% if data.ageConcession %}
-    {% if data.ageConcession.type == 'Senior' %}
-        {% set ageConcessionText = mssgs.age_senior_concession %}
-    {% elseif data.ageConcession.type == 'Junior' %}
-        {% set ageConcessionText = mssgs.age_junior_concession %}
-    {% endif%}
-{% endif%}
-
 {% set licenseDetailsSummaryRows = [] %}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_name }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.identification }, value: { text: data.permission.licensee.obfuscatedDob } }) }}
@@ -33,7 +25,7 @@
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.starts }, value: { text: data.startTimeString } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.ends }, value: { text: data.endTimeString } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }) if data.disabled }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: ageConcessionText } }) if data.ageConcession }}
+{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: data.ageConcessionText } }) if data.ageConcession }}
 
 {% block content %}
 <div class="govuk-grid-row">
