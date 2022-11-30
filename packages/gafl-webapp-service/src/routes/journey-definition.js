@@ -235,7 +235,7 @@ export default [
         page: ADDRESS_ENTRY
       }
     },
-    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : LICENCE_SUMMARY.uri)
+    backLink: status => backLinkHandler(status, LICENCE_SUMMARY.uri)
   },
 
   {

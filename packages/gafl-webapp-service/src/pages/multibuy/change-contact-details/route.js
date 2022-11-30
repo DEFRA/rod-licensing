@@ -2,7 +2,7 @@ import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { countries } from '../../../processors/refdata-helper.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
+import { CHANGE_CONTACT_DETAILS_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
@@ -216,8 +216,10 @@ const getData = async request => {
     checkNavigation(status, permission)
   }
 
-  status.fromSummary = CONTACT_SUMMARY_SEEN
+  status.fromLicenceOptions = CHANGE_CONTACT_DETAILS_SEEN.NOT_SEEN
+  status.fromContactDetails = CHANGE_CONTACT_DETAILS_SEEN.SEEN
   await request.cache().helpers.status.setCurrentPermission(status)
+
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
   return {
