@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The licence details page .getData returns the expected data 1`] = `
+Object {
+  "ageConcession": Object {
+    "proof": Object {
+      "type": "No Proof",
+    },
+    "type": "Senior",
+  },
+  "ageConcessionText": "age_senior_concession",
+  "disabled": true,
+  "endTimeString": "1:00am on 5 June 2021",
+  "licenceTypeStr": "Shopping trollies and old wellies",
+  "permission": Object {
+    "concessions": Array [
+      Object {
+        "proof": Object {
+          "referenceNumber": "123456324",
+          "type": "Blue Badge",
+        },
+        "type": "Disabled",
+      },
+      Object {
+        "proof": Object {
+          "type": "No Proof",
+        },
+        "type": "Senior",
+      },
+    ],
+    "endDate": "2021-06-05",
+    "licenceType": "Trout and coarse",
+    "numberOfRods": "3",
+    "startDate": "2020-06-06",
+  },
+  "startTimeString": "1:00am on 6 June 2020",
+}
+`;
