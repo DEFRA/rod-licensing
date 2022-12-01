@@ -15,6 +15,7 @@ const getAgeConcessionText = (permission, catalog) => {
   if (concessionHelper.hasJunior(permission)) {
     return catalog.age_junior_concession
   }
+  return
 }
 
 export const getData = async request => {
