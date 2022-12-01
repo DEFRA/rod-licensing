@@ -1,4 +1,13 @@
 
+## v1.28.0-rc.5 (2022-12-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1556](https://github.com/DEFRA/rod-licensing/pull/1556) Welsh - translations licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.28.0-rc.4 (2022-11-28)
 
 #### :rocket: Enhancement
