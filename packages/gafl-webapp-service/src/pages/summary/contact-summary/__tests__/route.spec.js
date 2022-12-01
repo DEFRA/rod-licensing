@@ -156,19 +156,20 @@ describe('contact-summary > route', () => {
   })
 
   it.each([
-    ['aye', HOW_CONTACTED.email, 'yes'],
-    ['negative, Ghost Rider', HOW_CONTACTED.none, 'no']
+    ['Yaas', HOW_CONTACTED.email, 'yes'],
+    ['Nnnoo, noo, noo', HOW_CONTACTED.none, 'no']
   ])('newsletter text should show as %s if how contacted is %s', async (mssg, preferredMethodOfNewsletter, mssgKey) => {
     const mssgCatalog = getMockCatalog({
       [mssgKey]: mssg
     })
+    console.log('mssgcat: ', mssgCatalog.yes)
     const samplePermission = getMockPermission({
       preferredMethodOfNewsletter
     })
     const { summaryTable } = await getData(
       getRequestMock({
         permission: samplePermission,
-        mssgCatalog
+        catalog: mssgCatalog
       })
     )
     expect(summaryTable[4].value.text).toBe(mssg)
