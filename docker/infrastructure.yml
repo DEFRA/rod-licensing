@@ -9,7 +9,7 @@ services:
   # - CloudFormation (http port 4581)
   #######################################################
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack:1.2.0
     ports:
       - '4563-4599:4563-4599'
       - '${PORT_WEB_UI-4080}:${PORT_WEB_UI-8080}'
