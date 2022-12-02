@@ -4,7 +4,7 @@ import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NE
 import findPermit from '../../find-permit.js'
 import { licenceTypeDisplay, getErrorPage } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-// import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
+import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
 import moment from 'moment-timezone'
 import mappingConstants from '../../../../processors/mapping-constants.js'
 
@@ -43,8 +43,15 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
   }
 }))
 jest.mock('../../find-permit.js', () => jest.fn())
+jest.mock('../../../../handlers/multibuy-for-you-handler.js')
 
-const getMockRequest = ({ currentPermission = getMockPermission(), statusCache = {}, statusCacheSet = () => {} } = {}) => ({
+const getMockRequest = ({
+  currentPermission = getMockPermission(),
+  getTransaction = async () => ({ permissions: [currentPermission] }),
+  setCurrentTransactionPermission = () => {},
+  statusCache = {},
+  statusCacheSet = () => {}
+} = {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -52,9 +59,9 @@ const getMockRequest = ({ currentPermission = getMockPermission(), statusCache =
         setCurrentPermission: statusCacheSet
       },
       transaction: {
-        get: async () => ({ permissions: [currentPermission] }),
+        get: getTransaction,
         getCurrentPermission: async () => currentPermission,
-        setCurrentPermission: () => {}
+        setCurrentPermission: setCurrentTransactionPermission
       }
     }
   }),
@@ -352,6 +359,54 @@ describe('licence-summary > route', () => {
         }
       })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(uri)
+    })
+  })
+
+  describe('shortened multibuy journey', () => {
+    beforeAll(() => {
+      isMultibuyForYou.mockResolvedValue(true)
+    })
+
+    afterAll(() => {
+      isMultibuyForYou.mockResolvedValue(false)
+    })
+
+    it("copies licensee from existing 'for you' permission to new 'for you' permission", async () => {
+      const completedPermission = getMockNewPermission()
+      const newPermission = { isLicenceForYou: true, permit: { cost: 30 }, licenceLength: '12M' }
+      const mockRequest = getMockRequest({
+        currentPermission: newPermission,
+        getTransaction: () => ({ permissions: [completedPermission, newPermission] })
+      })
+
+      await getData(mockRequest)
+      expect(newPermission.licensee).toEqual(completedPermission.licensee)
+    })
+
+    it('copies, rather than clones, permission licensee', async () => {
+      const completedPermission = getMockNewPermission()
+      const newPermission = { isLicenceForYou: true, permit: { cost: 30 }, licenceLength: '12M' }
+      const mockRequest = getMockRequest({
+        currentPermission: newPermission,
+        getTransaction: () => ({ permissions: [completedPermission, newPermission] })
+      })
+      await getData(mockRequest)
+      expect(newPermission.licensee).not.toBe(completedPermission.licensee)
+    })
+
+    it('persists the new permission in the transaction cache', async () => {
+      const newPermission = { isLicenceForYou: true, permit: { cost: 30 }, licenceLength: '12M' }
+      const setCurrentTransactionPermission = jest.fn()
+
+      await getData(
+        getMockRequest({
+          currentPermission: newPermission,
+          getTransaction: () => ({ permissions: [getMockNewPermission(), newPermission] }),
+          setCurrentTransactionPermission
+        })
+      )
+
+      expect(setCurrentTransactionPermission).toHaveBeenCalledWith(newPermission)
     })
   })
 
