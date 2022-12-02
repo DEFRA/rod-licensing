@@ -147,25 +147,12 @@ describe('The licence-to-start page', () => {
 })
 
 describe('The licence-type page', () => {
-  const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_TYPE.page)
-  it('has a back-link to the disability-concession page on initial viewing', async () => {
-    const status = {}
-    const result = await currentPage.backLink(status, DISABILITY_CONCESSION.uri)
-    expect(result).toBe(DISABILITY_CONCESSION.uri)
+  const n = journeyDefinition.find(n => n.current.page === LICENCE_TYPE.page)
+  it('has a back-link to the disability-concession page on initial viewing', () => {
+    expect(n.backLink({})).toBe(LICENCE_TO_START.uri)
   })
-  it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
-    const result = await currentPage.backLink(status)
-    expect(result).toBe(LICENCE_SUMMARY.uri)
-  })
-  it('has a back-link to licence options if the licence-options page is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
-    const result = await currentPage.backLink(status)
-    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
+  it('has a back-link to the license summary if the summary is seen', () => {
+    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
   })
 })
 

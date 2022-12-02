@@ -1,6 +1,10 @@
 {% extends "template.njk" %}
 {% set assetPath = "/public" %}
 
+{% if not journeyBeginning %}
+    <meta name="robots" content="noindex">
+{% endif %}
+
 {% from "header/macro.njk" import govukHeader %}
 {% from "button/macro.njk" import govukButton %}
 {% from "footer/macro.njk" import govukFooter %}

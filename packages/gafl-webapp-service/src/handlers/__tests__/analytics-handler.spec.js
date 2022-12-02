@@ -60,15 +60,26 @@ describe('The analytics handler', () => {
   })
 
   it('calls addLanguageCodeToUri with request and /buy', async () => {
-    const headers = { origin: 'https://localhost:3000', referer: 'https://localhost:3000/buy' }
+    const headers = { origin: 'https://localhost:1234', referer: 'https://localhost:3000/buy' }
     const redirect = '/buy'
     const payload = { analyticsResponse: 'accept' }
     const responseToolkit = generateResponseToolkitMock()
-    const request = generateRequestMock(payload, 'analytics', headers)
+    const request = generateRequestMock(payload, 'analytics', headers, 'localhost:1234')
 
     await analyticsHandler(request, responseToolkit)
 
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, redirect)
+  })
+
+  it('addLanguageCodeToUri is not called when HTTP_REFERER host matches the host of the current page', async () => {
+    const headers = { origin: 'https://localhost:3000', referer: 'https://localhost:3000/example/test' }
+    const payload = { analyticsResponse: 'accept' }
+    const responseToolkit = generateResponseToolkitMock()
+    const request = generateRequestMock(payload, 'analytics', headers, 'localhost:3000')
+
+    await analyticsHandler(request, responseToolkit)
+
+    expect(addLanguageCodeToUri).not.toBeCalled()
   })
 
   it('selected not true and response is accept sets selected to true and acceptTracking to true', async () => {

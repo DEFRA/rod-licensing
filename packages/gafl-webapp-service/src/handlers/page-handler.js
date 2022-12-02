@@ -5,10 +5,12 @@ import {
   AGREED,
   CONTROLLER,
   LICENCE_DETAILS,
+  LICENCE_FOR,
   ORDER_COMPLETE,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
-  PROCESS_ANALYTICS_PREFERENCES
+  PROCESS_ANALYTICS_PREFERENCES,
+  IDENTIFY
 } from '../uri.js'
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
@@ -16,6 +18,7 @@ import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:page-handler')
 const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
+const pagesJourneyBeginning = [LICENCE_FOR.uri, IDENTIFY.uri]
 
 const displayAnalytics = request => {
   if (pagesToOmitAnalyticsBanner.includes(request.path)) {
@@ -130,6 +133,10 @@ export default (path, view, completion, getData) => ({
     pageData.acceptedTracking = analytics ? analytics[ANALYTICS.acceptTracking] : false
 
     pageData.displayAnalytics = displayAnalytics(request)
+
+    if (pagesJourneyBeginning.includes(request.path)) {
+      pageData.journeyBeginning = true
+    }
 
     return h.view(view, pageData)
   },

@@ -8,9 +8,10 @@ Object {
     },
     "type": "Senior",
   },
+  "ageConcessionText": "age_senior_concession",
   "disabled": true,
   "endTimeString": "1:00am on 5 June 2021",
-  "licenceTypeStr": "Over 65, Trout and coarse, up to 3 rods",
+  "licenceTypeStr": "Shopping trollies and old wellies",
   "permission": Object {
     "concessions": Array [
       Object {
