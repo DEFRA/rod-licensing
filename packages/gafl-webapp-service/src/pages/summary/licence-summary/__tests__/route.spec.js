@@ -51,8 +51,7 @@ const getMockRequest = ({
   setCurrentTransactionPermission = () => {},
   statusCache = {},
   statusCacheSet = () => {}
-} = {}
-) => ({
+} = {}) => ({
   cache: () => ({
     helpers: {
       status: {
