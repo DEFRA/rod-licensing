@@ -46,8 +46,19 @@ class RowGenerator {
     this.labels = request.i18n.getCatalog()
   }
 
-  _getContactText (contactTextSpec) {
+  _getPreferredMethodOfReminderText (contactTextSpec) {
     switch (this.permission.licensee.preferredMethodOfReminder) {
+      case HOW_CONTACTED.email:
+        return `${this.labels[contactTextSpec.EMAIL]}${this.permission.licensee.email}`
+      case HOW_CONTACTED.text:
+        return `${this.labels[contactTextSpec.TEXT]}${this.permission.licensee.mobilePhone}`
+      default:
+        return this.labels[contactTextSpec.DEFAULT]
+    }
+  }
+
+  _getPreferredMethodOfConfirmation (contactTextSpec) {
+    switch (this.permission.licensee.preferredMethodOfConfirmation) {
       case HOW_CONTACTED.email:
         return `${this.labels[contactTextSpec.EMAIL]}${this.permission.licensee.email}`
       case HOW_CONTACTED.text:
@@ -101,7 +112,11 @@ class RowGenerator {
   }
 
   generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
-    return this._generateRow(this.labels[label], this._getContactText(contactTextSpec), href, this.labels[visuallyHiddenText], id)
+    const contactText =
+      label === 'contact_summary_row_contact'
+        ? this._getPreferredMethodOfReminderText(contactTextSpec)
+        : this._getPreferredMethodOfConfirmation(contactTextSpec)
+    return this._generateRow(this.labels[label], contactText, href, this.labels[visuallyHiddenText], id)
   }
 }
 
@@ -180,7 +195,7 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   }
 
   if (permission.isLicenceForYou) {
-    const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'yes' : 'no'
+    const text = permission.licensee.preferredMethodOfNewsletter === HOW_CONTACTED.none ? 'no' : 'yes'
     licenseeSummaryArray.push(
       rowGenerator.generateStandardRow(
         'contact_summary_row_newsletter',
