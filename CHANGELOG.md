@@ -1,4 +1,13 @@
 
+## v1.28.0-rc.7 (2022-12-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1526](https://github.com/DEFRA/rod-licensing/pull/1526) Contact Page shows incorrect information for license confirmation page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.28.0-rc.6 (2022-12-05)
 
 #### :bug: Bug Fix
