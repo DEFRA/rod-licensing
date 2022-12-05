@@ -3,7 +3,7 @@ import Joi from 'joi'
 import { TERMS_AND_CONDITIONS, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
 import { nextPage } from '../../routes/next-page.js'
 import { licenceTypeDisplay } from '../../processors/licence-type-display.js'
-
+import { LICENCE_TYPE } from '../../processors/mapping-constants.js'
 import GetDataRedirect from '../../handlers/get-data-redirect.js'
 
 export const getData = async request => {
@@ -26,21 +26,14 @@ export const getData = async request => {
 
   return {
     paymentRequired: priceCalculation(licences),
-    troutAndCoarse2Rods: checkLicenceType(licences, 'Trout and coarse, up to 2 rods'),
-    troutAndCoarse3Rods: checkLicenceType(licences, 'Trout and coarse, up to 3 rods'),
-    salmonAndSeaTrout: checkLicenceType(licences, 'Salmon and sea trout')
+    troutAndCoarse2Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], 2),
+    troutAndCoarse3Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], 3),
+    salmonAndSeaTrout: checkLicenceType(transaction, LICENCE_TYPE['salmon-and-sea-trout'], 1)
   }
 }
 
-const checkLicenceType = (licences, type) => {
-  let licenceSelected = false
-  licences.forEach(licence => {
-    if (licence.type === type) {
-      licenceSelected = true
-    }
-  })
-
-  return licenceSelected
+const checkLicenceType = (transaction, type, rods) => {
+  return transaction.permissions.some(p => p.licenceType === type && p.numberOfRods === rods)
 }
 
 const priceCalculation = licences => {
