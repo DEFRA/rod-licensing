@@ -1,4 +1,12 @@
 
+## v1.28.0-rc.6 (2022-12-05)
+
+#### :bug: Bug Fix
+* [#1563](https://github.com/DEFRA/rod-licensing/pull/1563) Pin Docker to localstack v1.2.0 ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.28.0-rc.5 (2022-12-01)
 
 #### :rocket: Enhancement
