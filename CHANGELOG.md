@@ -1,4 +1,13 @@
 
+## v1.28.0-rc.8 (2022-12-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1562](https://github.com/DEFRA/rod-licensing/pull/1562) Phone number splitting over two lines ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.28.0-rc.7 (2022-12-05)
 
 #### :bug: Bug Fix
