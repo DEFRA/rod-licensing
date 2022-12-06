@@ -37,7 +37,7 @@
   "dependencies": {
     "@defra-fish/business-rules-lib": "1.28.0-rc.5",
     "@defra-fish/connectors-lib": "1.28.0-rc.5",
-    "@defra-fish/dynamics-lib": "1.28.0-rc.5",
+    "@defra-fish/dynamics-lib": "https://github.com/DEFRA/rod-licensing/tree/feature/multibuy-enhancement/packages/dynamics-lib",
     "@hapi/boom": "^9.1.2",
     "@hapi/hapi": "^20.1.3",
     "@hapi/inert": "^6.0.3",
