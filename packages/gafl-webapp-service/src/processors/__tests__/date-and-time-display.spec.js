@@ -1,5 +1,11 @@
 import { displayStartTime, displayEndTime, displayExpiryDate, advancePurchaseDateMoment } from '../date-and-time-display.js'
 import moment from 'moment-timezone'
+import constant from '@defra-fish/business-rules-lib'
+
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  START_AFTER_PAYMENT_MINUTES: 40,
+  SERVICE_LOCAL_TIME: 'Europe/London'
+}))
 
 jest.mock('moment-timezone', () => ({
   tz: () => ({
@@ -7,19 +13,27 @@ jest.mock('moment-timezone', () => ({
     add: () => ({
       format: () => '2020-01-06T00:00:00.000',
       locale: () => ({ format: () => ({ replace: () => {} }) })
-    })
+    }),
+    locale: jest.fn(() => ({ format: () => '' })),
+    format: () => {}
   }),
   format: () => {},
   locale: jest.fn(),
-  utc: jest.fn(() => ({ tz: () => {} }))
+  utc: jest.fn(() => ({
+    tz: () => ({
+      locale: jest.fn(() => ({ format: () => '' })),
+      format: () => {}
+    })
+  }))
 }))
 
-const getSampleRequest = () => ({
+const getSampleRequest = (labelOverrides = {}) => ({
   i18n: {
     getCatalog: () => ({
       licence_start_time_am_text_0: '0.00am (first minute of the day)',
       licence_start_time_am_text_12: '12:00pm (midday)',
-      renewal_start_date_expires_5: 'on'
+      renewal_start_date_expires_5: 'on',
+      ...labelOverrides
     })
   },
   locale: 'en'
@@ -33,6 +47,23 @@ describe('displayStartTime', () => {
     displayStartTime(getSampleRequest(), { startDate })
     expect(moment.utc).toHaveBeenCalledWith(startDate, null, expect.any(String))
   })
+
+  it.each([
+    [[50], ['2021-01-01T00:00:00.000Z'], [' minutes until fishing begins!']],
+    [[10000], ['2010-12-23T14:00:00.000Z'], [' minutes until the salmon are yours']],
+    [[0], ['2029-06-030T01:00:00.000Z'], [' minutes until cobwebs are brushed off your rod']]
+  ])(
+    'generates a string of payment delay (%s) followed by licence_summary_minutes_after_payment label when licence is to start after payment',
+    async (startAfterMinutes, startDate, message) => {
+      constant.START_AFTER_PAYMENT_MINUTES = startAfterMinutes
+      const mockRequest = getSampleRequest({
+        licence_summary_minutes_after_payment: message
+      })
+      const expectedReturnText = `${startAfterMinutes}${message}`
+      const startAfterPaymentMinutes = displayStartTime(mockRequest, { startDate, licenceToStart: 'after-payment' })
+      expect(startAfterPaymentMinutes).toEqual(expectedReturnText)
+    }
+  )
 
   it.each([
     ['2021-01-01', '0.00am (first minute of the day) on 1 January 2021'], // no time given

@@ -168,7 +168,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: status => backLinkHandler(status, DISABILITY_CONCESSION.uri)
+    backLink: s => (s.fromSummary ? LICENCE_SUMMARY.uri : LICENCE_TO_START.uri)
   },
 
   {

@@ -1,5 +1,6 @@
 import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { SERVICE_LOCAL_TIME, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
+import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 export const dateDisplayFormat = 'D MMMM YYYY'
 export const cacheDateFormat = 'YYYY-MM-DD'
 
@@ -23,6 +24,11 @@ export const displayStartTime = (request, permission) => {
     .format('h:mma')
     .replace('12:00am', mssgs.licence_start_time_am_text_0)
     .replace('12:00pm', mssgs.licence_start_time_am_text_12)
+
+  if (permission.licenceToStart === licenceToStart.AFTER_PAYMENT) {
+    return `${START_AFTER_PAYMENT_MINUTES}${mssgs.licence_summary_minutes_after_payment}`
+  }
+
   return `${timeComponent} ${mssgs.renewal_start_date_expires_5} ${startMoment.format(dateDisplayFormat)}`
 }
 

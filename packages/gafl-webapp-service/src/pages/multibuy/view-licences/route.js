@@ -5,11 +5,9 @@ import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../proces
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { hasDuplicates } from '../../../processors/multibuy-processor.js'
-import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 
 export const getData = async request => {
   const transaction = await request.cache().helpers.transaction.get()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const mssgs = request.i18n.getCatalog()
 
   const licences = transaction.permissions.map((permission, index) => ({
@@ -24,10 +22,8 @@ export const getData = async request => {
   const duplicate = await hasDuplicates(licences)
 
   return {
-    permission,
     duplicate,
-    licences,
-    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
+    licences
   }
 }
 

@@ -1,5 +1,8 @@
 {% extends "layout.njk" %}
 
+
+{% from "accordion.njk" import accordion %}
+{% from "back-link/macro.njk" import govukBackLink %}
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
@@ -19,75 +22,66 @@
 %}
 
 {% block content %}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {% if backRef %}
-            {{ govukBackLink({
-              text: mssgs.back,
-              href: backRef,
-              classes: "govuk-!-margin-bottom-7"
-            }) }}
-        {% endif %}
+    {% if backRef %}
+        {{ govukBackLink({
+            text: mssgs.back,
+            href: backRef,
+            classes: "govuk-!-margin-bottom-7"
+        }) }}
+    {% endif %}
 
-        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+    {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
 
-        <form method="post">
+    <form method="post">
 
-            {% call govukFieldset({
-              legend: {
+        {{ govukFieldset({
+            legend: {
                 text: title,
                 classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
                 isPageHeading: true
-              }
-            }) %}
+            }
+        }) }}
 
-            {% if data.paymentRequired %}
-                {{ govukWarningText({
-                    text: mssgs.terms_conds_warning,
-                    iconFallbackText: "Warning"
-                }) }}
-            {% endif %}
+        {% if data.paymentRequired %}
+            {{ govukWarningText({
+                text: mssgs.terms_conds_warning,
+                iconFallbackText: "Warning"
+            }) }}
+        {% endif %}
+        
+        {{ accordion(mssgs)}}
 
-            <div class="govuk-!-margin-bottom-9">
-                <p class="govuk-body">{{ mssgs.terms_conds_body }}</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.terms_conds_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_4_1 }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_4_link }}</a>{{ mssgs.terms_conds_bulletpoint_4_2 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_5 }}</li>
-                    {% if data.isSalmonAndSeaTrout %}
-                        <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
-                    {% endif %}
-                </ul>
-            </div>
+        <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_byelaws_title }}</h2>
+        <p class="govuk-body">{{ mssgs.licence_conditions_byelaws }}</p>
 
-                {{ govukCheckboxes({
-                  idPrefix: "agree",
-                  name: "agree",
-                  errorMessage: { text: mssgs.terms_conds_error_must_agree } if error,
-                  items: [
-                    {
-                      value: "yes",
-                      text: mssgs.terms_conds_item_agree
-                    }
-                  ]
-                }) }}
+        <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_privacy_policy_title }}</h2>
+        <p class="govuk-body">{{ mssgs.licence_conditions_privacy_policy }}</p>
 
-                {{ govukButton({
-                    attributes: { id: 'continue' },
-                    preventDoubleClick: true,
-                    name: "continue",
-                    text: mssgs.terms_conds_pay_button_1 if data.paymentRequired else mssgs.terms_conds_pay_button_2,
-                    classes: "govuk-!-margin-top-5"
-                }) }}
+        <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_incident_title }}</h2>
+        <p class="govuk-body">{{ mssgs.licence_conditions_incident }}</p>
 
-                {% if data.paymentRequired %}
-                    <span class="govuk-caption-m">{{ mssgs.terms_conds_pay_on_gov_uk }}</span>
-                {% endif %}
-            {% endcall %}
-            {{ csrf() }}
-        </form>
-    </div>
-</div>
+        {{ govukCheckboxes({
+            idPrefix: "agree",
+            name: "agree",
+            errorMessage: { text: mssgs.terms_conds_error_must_agree } if error,
+            items: [
+            {
+                value: "yes",
+                text: mssgs.terms_conds_item_agree
+            }
+            ]
+        }) }}
+
+        {{ govukButton({
+            attributes: { id: 'continue' },
+            preventDoubleClick: true,
+            name: "continue",
+            text: mssgs.terms_conds_pay_button_1 if data.paymentRequired else mssgs.terms_conds_pay_button_2,
+            classes: "govuk-!-margin-top-5"
+        }) }}
+
+        <div class="govuk-body-m"><a class="govuk-link" href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.terms_conds_pay_on_gov_uk }}</a></div>
+
+        {{ csrf() }}
+    </form> 
 {% endblock %}

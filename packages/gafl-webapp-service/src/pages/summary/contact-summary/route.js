@@ -105,7 +105,7 @@ class RowGenerator {
   }
 }
 
-export const checkNavigation = (status, permission) => {
+const checkNavigation = (status, permission) => {
   if (!permission.isRenewal) {
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
@@ -115,6 +115,7 @@ export const checkNavigation = (status, permission) => {
       throw new GetDataRedirect(CONTACT.uri)
     }
   }
+
   if (isPhysical(permission)) {
     if (!status[LICENCE_FULFILMENT.page]) {
       throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
@@ -197,10 +198,9 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
-  // All of this is untested and so would be very easy to inadvertently delete
   const checkIsMultibuyForYou = await isMultibuyForYou(request)
-
   if (checkIsMultibuyForYou === true) {
     const transaction = await request.cache().helpers.transaction.get()
     const { licensee } = transaction.permissions.find(p => p.isLicenceForYou)
@@ -219,11 +219,14 @@ const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
+  const changeLicenceDetails = permission.isLicenceForYou ? mssgs.change_licence_details_you : mssgs.change_licence_details_other
+
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
       licenceSummary: LICENCE_SUMMARY.uri
-    }
+    },
+    changeLicenceDetails
   }
 }
 
