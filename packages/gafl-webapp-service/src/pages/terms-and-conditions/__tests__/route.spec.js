@@ -108,9 +108,9 @@ describe('terms-and-conditions > route', () => {
     )
 
     it.each([
-      ['Trout and coarse', true, 2],
-      ['Trout and coarse', false, 3],
-      ['Salmon and sea trout', false, 1]
+      ['Trout and coarse', true, '2'],
+      ['Trout and coarse', false, '3'],
+      ['Salmon and sea trout', false, '1']
     ])('returns whether to display Trout and coarse, up to 2 rods conditions', async (type, displayType, rods) => {
       const data = await getData(
         generateMockRequest(
@@ -124,15 +124,15 @@ describe('terms-and-conditions > route', () => {
     })
 
     it.each([
-      ['Trout and coarse', false, 2],
-      ['Trout and coarse', true, 3],
-      ['Salmon and sea trout', false, 1]
+      ['Trout and coarse', false, '2'],
+      ['Trout and coarse', true, '3'],
+      ['Salmon and sea trout', false, '1']
     ])('returns whether to display Trout and coarse, up to 3 rods conditions', async (type, displayType, rods) => {
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
           {
-            permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, type, 2)]
+            permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, type, '2')]
           }
         )
       )
@@ -140,15 +140,15 @@ describe('terms-and-conditions > route', () => {
     })
 
     it.each([
-      ['Trout and coarse', false, 2],
-      ['Trout and coarse', false, 3],
-      ['Salmon and sea trout', true, 1]
+      ['Trout and coarse', false, '2'],
+      ['Trout and coarse', false, '3'],
+      ['Salmon and sea trout', true, '1']
     ])('returns whether to display Salmon and sea trout conditions', async (type, displayType, rods) => {
       const data = await getData(
         generateMockRequest(
           { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
           {
-            permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, type, 2)]
+            permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, type, '2')]
           }
         )
       )

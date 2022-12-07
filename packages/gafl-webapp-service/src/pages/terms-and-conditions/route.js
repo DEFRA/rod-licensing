@@ -26,13 +26,17 @@ export const getData = async request => {
 
   return {
     paymentRequired: priceCalculation(licences),
-    troutAndCoarse2Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], 2),
-    troutAndCoarse3Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], 3),
-    salmonAndSeaTrout: checkLicenceType(transaction, LICENCE_TYPE['salmon-and-sea-trout'], 1)
+    troutAndCoarse2Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], '2'),
+    troutAndCoarse3Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], '3'),
+    salmonAndSeaTrout: checkLicenceType(transaction, LICENCE_TYPE['salmon-and-sea-trout'], '1')
   }
 }
 
 const checkLicenceType = (transaction, type, rods) => {
+  const example = transaction.permissions[0]
+  const testRods = example.numberOfRods === rods
+  console.log('rods: ', rods)
+  console.log(testRods)
   return transaction.permissions.some(p => p.licenceType === type && p.numberOfRods === rods)
 }
 
