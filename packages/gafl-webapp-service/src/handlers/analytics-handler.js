@@ -56,8 +56,7 @@ export default async (request, h) => {
 
   if (host === referrerHost) {
     const redirect = referer.replace(origin, '')
-
-    return h.redirect(addLanguageCodeToUri(request, redirect))
+    return h.redirect(redirect)
   }
 
   return h.redirect(addLanguageCodeToUri(request, '/buy'))

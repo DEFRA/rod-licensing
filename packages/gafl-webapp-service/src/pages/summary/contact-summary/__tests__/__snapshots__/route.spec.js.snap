@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`contact-summary > route getLicenseeDetailsSummaryRows returns value of isLicenceForYou if licence is "false" 1`] = `Symbol(Review or change the licence details other)`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows returns value of isLicenceForYou if licence is "true" 1`] = `Symbol(Review or change the licence details)`;
+
 exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 day (non physical licence) should display the Contact as Make a note on confirmation 1`] = `
 Array [
   Object {

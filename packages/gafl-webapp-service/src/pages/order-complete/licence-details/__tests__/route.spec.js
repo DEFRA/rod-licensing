@@ -8,7 +8,8 @@ import * as concessionHelper from '../../../../processors/concession-helper.js'
 jest.mock('../../../../processors/concession-helper.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
-jest.mock('../../../../constants', () => ({
+jest.mock('../../../../processors/licence-type-display.js')
+jest.mock('../../../../constants.js', () => ({
   COMPLETION_STATUS: {
     agreed: 'agreed',
     posted: 'posted',
@@ -64,7 +65,7 @@ const getMockCatalog = overrides => ({
 describe('licence-length > route', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  describe.only('getData', () => {
+  describe('getData', () => {
     const getMockRequest = (statusGet = () => {}, transactionGet = () => {}, catalog = getMockCatalog()) => ({
       cache: () => ({
         helpers: {
@@ -153,7 +154,9 @@ describe('licence-length > route', () => {
     describe('throws a Boom forbidden error', () => {
       it('if status agreed flag is not set', async () => {
         const status = () => ({})
+
         const boomError = Boom.forbidden('Attempt to access the licence information handler with no agreed flag set')
+
         await expect(getData(getMockRequest(status, getMockTransaction()))).rejects.toThrow(boomError)
       })
 

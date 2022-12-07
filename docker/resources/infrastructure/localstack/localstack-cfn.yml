@@ -179,10 +179,11 @@ Resources:
 
 # At the time of writing (Mar 2020) there are problems using cloudformation templates to initialise SQS queues (FIFO support)
 # update jul 2020 - still a problem with redrive policies and referencing the DLQ via its ARN
+# update nov 2022 - still hosed :/
 # SalesQueue:
 #    Type: AWS::SQS::Queue
 #    Properties:
-#      QueueName: SalesQueue.fifo
+#      QueueName: TransactionsQueue.fifo
 #      FifoQueue: True
 #      ContentBasedDeduplication: True
 #      DelaySeconds: 10
@@ -194,10 +195,10 @@ Resources:
 #            - SalesDeadLetterQueue
 #            - Arn
 #        maxReceiveCount: 5
-#  SalesDeadLetterQueue:
+# SalesDeadLetterQueue:
 #    Type: AWS::SQS::Queue
 #    Properties:
-#      QueueName: SalesDeadLetterQueue.fifo
+#      QueueName: TransactionsDlq.fifo
 #      FifoQueue: True
 #      DelaySeconds: 30
 #      VisibilityTimeout: 30

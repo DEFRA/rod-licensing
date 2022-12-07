@@ -41,7 +41,7 @@ export const getData = async request => {
     uri: {
       new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-      licenceDetails: LICENCE_DETAILS.uri
+      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri)
     }
   }
 }
