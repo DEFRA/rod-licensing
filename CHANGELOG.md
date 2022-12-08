@@ -1,4 +1,76 @@
 
+## v1.28.0-rc.8 (2022-12-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1562](https://github.com/DEFRA/rod-licensing/pull/1562) Phone number splitting over two lines ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.28.0-rc.7 (2022-12-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1526](https://github.com/DEFRA/rod-licensing/pull/1526) Contact Page shows incorrect information for license confirmation page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.28.0-rc.6 (2022-12-05)
+
+#### :bug: Bug Fix
+* [#1563](https://github.com/DEFRA/rod-licensing/pull/1563) Pin Docker to localstack v1.2.0 ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.28.0-rc.5 (2022-12-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1556](https://github.com/DEFRA/rod-licensing/pull/1556) Welsh - translations licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.28.0-rc.4 (2022-11-28)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1555](https://github.com/DEFRA/rod-licensing/pull/1555) Welsh Translations - order complete licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.28.0-rc.3 (2022-11-28)
+
+#### :rocket: Enhancement
+* [#1557](https://github.com/DEFRA/rod-licensing/pull/1557) Update dev env docker config ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.28.0-rc.2 (2022-11-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1554](https://github.com/DEFRA/rod-licensing/pull/1554) Persist language - order complete and licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.28.0-rc.0 (2022-11-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1552](https://github.com/DEFRA/rod-licensing/pull/1552) Welsh translation - order complete page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1553](https://github.com/DEFRA/rod-licensing/pull/1553) Welsh translation - licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.27.0-rc.21 (2022-11-18)
 
