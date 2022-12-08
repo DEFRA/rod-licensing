@@ -34,14 +34,15 @@ import {
   CHANGE_CONTACT_DETAILS
 } from '../uri.js'
 
-import { CommonResults, CONTACT_SUMMARY_SEEN, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
+import { CommonResults, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
 import { ageConcessionResults } from '../pages/concessions/date-of-birth/result-function.js'
 import { licenceLengthResults } from '../pages/licence-details/licence-length/result-function.js'
 import { isPhysical } from '../processors/licence-type-display.js'
-import backLinkHandler from '../handlers/back-link-handler.js'
+import backLinkHandlerLicence from '../handlers/back-link-handler-licence.js'
+import backLinkHandlerContact from '../handlers/back-link-handler-contact.js'
 
 /**
  * The structure of each atom is as follows
@@ -72,7 +73,7 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: status => backLinkHandler(status)
+    backLink: status => backLinkHandlerLicence(status)
   },
 
   {
@@ -88,7 +89,7 @@ export default [
         page: LICENCE_SUMMARY
       }
     },
-    backLink: status => backLinkHandler(status, LICENCE_FOR.uri)
+    backLink: status => backLinkHandlerLicence(status, LICENCE_FOR.uri)
   },
 
   {
@@ -107,7 +108,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: status => backLinkHandler(status, NAME.uri)
+    backLink: status => backLinkHandlerLicence(status, NAME.uri)
   },
 
   {
@@ -123,7 +124,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: status => backLinkHandler(status, DATE_OF_BIRTH.uri)
+    backLink: status => backLinkHandlerLicence(status, DATE_OF_BIRTH.uri)
   },
 
   {
@@ -145,7 +146,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: status => backLinkHandler(status, DISABILITY_CONCESSION.uri)
+    backLink: status => backLinkHandlerLicence(status, DISABILITY_CONCESSION.uri)
   },
 
   {
@@ -169,7 +170,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: status => backLinkHandler(status, DISABILITY_CONCESSION.uri)
+    backLink: status => backLinkHandlerLicence(status, DISABILITY_CONCESSION.uri)
   },
 
   {
@@ -188,7 +189,7 @@ export default [
         page: CHANGE_LICENCE_OPTIONS
       }
     },
-    backLink: status => backLinkHandler(status, LICENCE_TYPE.uri)
+    backLink: status => backLinkHandlerLicence(status, LICENCE_TYPE.uri)
   },
 
   {
@@ -235,7 +236,7 @@ export default [
         page: ADDRESS_ENTRY
       }
     },
-    backLink: status => backLinkHandler(status, LICENCE_SUMMARY.uri)
+    backLink: status => backLinkHandlerContact(status, LICENCE_SUMMARY.uri)
   },
 
   {
@@ -282,7 +283,7 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: status => backLinkHandler(status, ADDRESS_LOOKUP.uri)
+    backLink: status => backLinkHandlerContact(status, ADDRESS_LOOKUP.uri)
   },
   {
     current: LICENCE_CONFIRMATION_METHOD,
@@ -294,16 +295,7 @@ export default [
         page: CONTACT
       }
     },
-    backLink: status => {
-      const seenContactSummary = status.fromSummary === CONTACT_SUMMARY_SEEN
-      if (
-        ([LICENCE_FULFILMENT.page, LICENCE_CONFIRMATION_METHOD.page].includes(status.currentPage) && seenContactSummary) ||
-        !seenContactSummary
-      ) {
-        return LICENCE_FULFILMENT.uri
-      }
-      return CONTACT_SUMMARY.uri
-    }
+    backLink: status => backLinkHandlerContact(status, LICENCE_FULFILMENT.uri)
   },
   {
     current: CHECK_CONFIRMATION_CONTACT,
@@ -325,15 +317,10 @@ export default [
       }
     },
     backLink: (status, transaction) => {
-      const contactSummarySeen = status.fromSummary === CONTACT_SUMMARY_SEEN
-      if (status.currentPage === LICENCE_CONFIRMATION_METHOD.page && contactSummarySeen) {
-        return LICENCE_CONFIRMATION_METHOD.uri
-      } else if (contactSummarySeen) {
-        return CONTACT_SUMMARY.uri
-      } else if (isPhysical(transaction)) {
-        return LICENCE_CONFIRMATION_METHOD.uri
+      if (isPhysical(transaction)) {
+        return backLinkHandlerContact(status, LICENCE_CONFIRMATION_METHOD.uri)
       }
-      return ADDRESS_LOOKUP.uri
+      return backLinkHandlerContact(status, ADDRESS_LOOKUP.uri)
     }
   },
 
@@ -344,7 +331,7 @@ export default [
         page: CONTACT_SUMMARY
       }
     },
-    backLink: status => (status.fromSummary === CONTACT_SUMMARY_SEEN ? CONTACT_SUMMARY.uri : CONTACT.uri)
+    backLink: status => backLinkHandlerContact(status, CONTACT.uri)
   },
 
   {

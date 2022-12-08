@@ -1,4 +1,4 @@
-import backLinkHandler from '../back-link-handler'
+import backLinkHandler from '../back-link-handler-licence'
 import { CHANGE_LICENCE_OPTIONS, LICENCE_SUMMARY, CONTACT_SUMMARY, CHANGE_CONTACT_DETAILS } from '../../uri.js'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN, CHANGE_LICENCE_OPTIONS_SEEN, CHANGE_CONTACT_DETAILS_SEEN } from '../../constants.js'
 
