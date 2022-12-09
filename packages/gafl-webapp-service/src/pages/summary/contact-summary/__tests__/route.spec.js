@@ -5,15 +5,17 @@ import {
   CONTACT,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
-  NEWSLETTER
+  NEWSLETTER,
+  LICENCE_SUMMARY
 } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants'
 import pageRoute from '../../../../routes/page-route.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
 
+const mockDecoratedUri = Symbol('addLanguageCodeToUri')
 jest.mock('../../../../processors/uri-helper.js', () => ({
-  addLanguageCodeToUri: jest.fn(() => Symbol('addLanguageCodeToUri'))
+  addLanguageCodeToUri: jest.fn(() => mockDecoratedUri)
 }))
 
 jest.mock('../../../../processors/mapping-constants', () => ({
@@ -266,14 +268,31 @@ describe('contact-summary > route', () => {
   describe('addLanguageCodeToUri', () => {
     beforeEach(jest.clearAllMocks)
 
-    it.each([[ADDRESS_LOOKUP.uri], [LICENCE_FULFILMENT.uri], [LICENCE_CONFIRMATION_METHOD.uri], [CONTACT.uri], [NEWSLETTER.uri]])(
-      'test addLanguageCodeToUri is called correctly',
-      async urlToCheck => {
-        const sampleRequest = getRequestMock(getMockPermission({}))
-        await getData(sampleRequest)
-        expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, urlToCheck)
-      }
-    )
+    it.each([
+      [ADDRESS_LOOKUP.uri],
+      [LICENCE_FULFILMENT.uri],
+      [LICENCE_CONFIRMATION_METHOD.uri],
+      [CONTACT.uri],
+      [NEWSLETTER.uri],
+      [LICENCE_SUMMARY.uri]
+    ])('test addLanguageCodeToUri is called correctly', async urlToCheck => {
+      const sampleRequest = getRequestMock(getMockPermission({}))
+      await getData(sampleRequest)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, urlToCheck)
+    })
+
+    it('uses url modified by addLanguageCode for licenceSummary', async () => {
+      const decoratedUri = Symbol('decoratedUri')
+      addLanguageCodeToUri.mockReturnValue(decoratedUri)
+
+      const {
+        uri: { licenceSummary }
+      } = await getData(getRequestMock())
+
+      expect(licenceSummary).toBe(decoratedUri)
+
+      addLanguageCodeToUri.mockReturnValue(mockDecoratedUri)
+    })
   })
 
   describe('checkNavigation', () => {
