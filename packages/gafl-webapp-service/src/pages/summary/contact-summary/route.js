@@ -226,7 +226,7 @@ const getData = async request => {
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
-      licenceSummary: LICENCE_SUMMARY.uri
+      licenceSummary: addLanguageCodeToUri(request, LICENCE_SUMMARY.uri)
     },
     changeLicenceDetails
   }
