@@ -33,10 +33,6 @@ export const getData = async request => {
 }
 
 const checkLicenceType = (transaction, type, rods) => {
-  const example = transaction.permissions[0]
-  const testRods = example.numberOfRods === rods
-  console.log('rods: ', rods)
-  console.log(testRods)
   return transaction.permissions.some(p => p.licenceType === type && p.numberOfRods === rods)
 }
 
