@@ -250,6 +250,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: ADDRESS_LOOKUP.uri
@@ -266,6 +269,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: ADDRESS_LOOKUP.uri
@@ -281,6 +287,9 @@ export default [
       },
       [MultibuyForYou.YES]: {
         page: CONTACT_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: status => backLinkHandlerContact(status, ADDRESS_LOOKUP.uri)
@@ -293,6 +302,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: status => backLinkHandlerContact(status, LICENCE_FULFILMENT.uri)
@@ -302,6 +314,9 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: CONTACT
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: LICENCE_CONFIRMATION_METHOD.uri
@@ -314,6 +329,9 @@ export default [
       },
       [CommonResults.SUMMARY]: {
         page: CONTACT_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: (status, transaction) => {
@@ -329,6 +347,9 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: CONTACT_SUMMARY
+      },
+      [CommonResults.AMEND]: {
+        page: CHANGE_CONTACT_DETAILS
       }
     },
     backLink: status => backLinkHandlerContact(status, CONTACT.uri)

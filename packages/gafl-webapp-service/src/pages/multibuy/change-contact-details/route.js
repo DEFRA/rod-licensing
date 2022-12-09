@@ -5,10 +5,10 @@ import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CHANGE_CONTACT_DETAILS_SEEN } from '../../../constants.js'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import {
+  CHANGE_CONTACT_DETAILS,
   LICENCE_SUMMARY,
   ADDRESS_ENTRY,
   ADDRESS_SELECT,
@@ -16,9 +16,7 @@ import {
   CONTACT,
   NEWSLETTER,
   LICENCE_FULFILMENT,
-  LICENCE_CONFIRMATION_METHOD,
-  CHANGE_CONTACT_DETAILS,
-  CHANGE_LICENCE_OPTIONS
+  LICENCE_CONFIRMATION_METHOD
 } from '../../../uri.js'
 
 const CONTACT_TEXT_DEFAULT = {
@@ -40,6 +38,7 @@ const CONTACT_TEXT_PHYSICAL = {
 }
 
 const CHANGE_CONTACT = 'change-contact'
+
 class RowGenerator {
   constructor (request, permission) {
     this.request = request
@@ -47,8 +46,19 @@ class RowGenerator {
     this.labels = request.i18n.getCatalog()
   }
 
-  _getContactText (contactTextSpec) {
+  _getPreferredMethodOfReminderText (contactTextSpec) {
     switch (this.permission.licensee.preferredMethodOfReminder) {
+      case HOW_CONTACTED.email:
+        return `${this.labels[contactTextSpec.EMAIL]}${this.permission.licensee.email}`
+      case HOW_CONTACTED.text:
+        return `${this.labels[contactTextSpec.TEXT]}${this.permission.licensee.mobilePhone}`
+      default:
+        return this.labels[contactTextSpec.DEFAULT]
+    }
+  }
+
+  _getPreferredMethodOfConfirmation (contactTextSpec) {
+    switch (this.permission.licensee.preferredMethodOfConfirmation) {
       case HOW_CONTACTED.email:
         return `${this.labels[contactTextSpec.EMAIL]}${this.permission.licensee.email}`
       case HOW_CONTACTED.text:
@@ -102,11 +112,15 @@ class RowGenerator {
   }
 
   generateContactRow (label, href, visuallyHiddenText, id, contactTextSpec = CONTACT_TEXT_DEFAULT) {
-    return this._generateRow(this.labels[label], this._getContactText(contactTextSpec), href, this.labels[visuallyHiddenText], id)
+    const contactText =
+      label === 'contact_summary_row_contact'
+        ? this._getPreferredMethodOfReminderText(contactTextSpec)
+        : this._getPreferredMethodOfConfirmation(contactTextSpec)
+    return this._generateRow(this.labels[label], contactText, href, this.labels[visuallyHiddenText], id)
   }
 }
 
-export const checkNavigation = (status, permission) => {
+const checkNavigation = (status, permission) => {
   if (!permission.isRenewal) {
     if (!status[ADDRESS_ENTRY.page] && !status[ADDRESS_SELECT.page]) {
       throw new GetDataRedirect(ADDRESS_LOOKUP.uri)
@@ -116,6 +130,7 @@ export const checkNavigation = (status, permission) => {
       throw new GetDataRedirect(CONTACT.uri)
     }
   }
+
   if (isPhysical(permission)) {
     if (!status[LICENCE_FULFILMENT.page]) {
       throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
@@ -128,8 +143,8 @@ export const checkNavigation = (status, permission) => {
 
 const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const rowGenerator = new RowGenerator(request, permission)
-  const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
 
+  const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
   if (isPhysical(permission)) {
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
@@ -180,7 +195,7 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   }
 
   if (permission.isLicenceForYou) {
-    const text = permission.licensee.preferredMethodOfNewsletter !== HOW_CONTACTED.none ? 'yes' : 'no'
+    const text = permission.licensee.preferredMethodOfNewsletter === HOW_CONTACTED.none ? 'no' : 'yes'
     licenseeSummaryArray.push(
       rowGenerator.generateStandardRow(
         'contact_summary_row_newsletter',
@@ -198,36 +213,23 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
 const getData = async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
-  // All of this is untested and so would be very easy to inadvertently delete
-  const checkIsMultibuyForYou = await isMultibuyForYou(request)
+  checkNavigation(status, permission)
 
-  if (checkIsMultibuyForYou === true) {
-    const transaction = await request.cache().helpers.transaction.get()
-    const { licensee } = transaction.permissions.find(p => p.isLicenceForYou)
-    permission.licensee = { ...licensee }
-    const pagesToSkip = [ADDRESS_ENTRY.page, ADDRESS_SELECT.page, CONTACT.page, LICENCE_CONFIRMATION_METHOD.page]
-    for (const page of pagesToSkip) {
-      status[page] = true
-    }
-
-    await request.cache().helpers.transaction.setCurrentPermission(permission)
-  } else {
-    checkNavigation(status, permission)
-  }
-
-  status.fromLicenceOptions = CHANGE_CONTACT_DETAILS_SEEN.NOT_SEEN
-  status.fromContactDetails = CHANGE_CONTACT_DETAILS_SEEN.SEEN
+  status.changeContactDetails = CHANGE_CONTACT_DETAILS_SEEN.SEEN
+  status.fromSummary = undefined
   await request.cache().helpers.status.setCurrentPermission(status)
-
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
+
+  const changeLicenceDetails = permission.isLicenceForYou ? mssgs.change_licence_details_you : mssgs.change_licence_details_other
 
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
-      licenceSummary: LICENCE_SUMMARY.uri,
-      changeLicenceOptions: CHANGE_LICENCE_OPTIONS.uri
-    }
+      licenceSummary: LICENCE_SUMMARY.uri
+    },
+    changeLicenceDetails
   }
 }
 

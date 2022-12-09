@@ -1,202 +1,313 @@
-// import { getData } from '../route'
-// import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
-// import { CONCESSION } from '../../../../processors/mapping-constants.js'
-// import { licenceTypeDisplay, getErrorPage } from '../../../../processors/licence-type-display.js'
-// import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../../../constants.js'
-// import findPermit from '../../../summary/find-permit'
+import {
+  ADDRESS_ENTRY,
+  ADDRESS_LOOKUP,
+  ADDRESS_SELECT,
+  CONTACT,
+  LICENCE_FULFILMENT,
+  LICENCE_CONFIRMATION_METHOD,
+  NEWSLETTER
+} from '../../../../uri.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import { HOW_CONTACTED } from '../../../../processors/mapping-constants'
+import pageRoute from '../../../../routes/page-route.js'
+import { CHANGE_CONTACT_DETAILS_SEEN } from '../../../../constants.js'
 
-// jest.mock('../../../summary/find-permit.js')
-// jest.mock('../../../../processors/mapping-constants.js', () => ({
-//   CONCESSION: {
-//     SENIOR: 'Senior person',
-//     JUNIOR: 'Junior person',
-//     DISABLED: 'Disabled person'
-//   },
-//   LICENCE_TYPE: {
-//     'trout-and-coarse': 'Trout and coarse',
-//     'salmon-and-sea-trout': 'Salmon and sea trout'
-//   },
-//   CONCESSION_PROOF: {
-//     NI: 'NIN',
-//     blueBadge: 'BB',
-//     none: 'Not Proof'
-//   }
-// }))
-// jest.mock('../../../../processors/date-and-time-display.js', () => ({
-//   ...jest.requireActual('../../../../processors/date-and-time-display.js'),
-//   displayStartTime: () => 'Test on 1 July 2021'
-// }))
-// jest.mock('../../../../processors/licence-type-display.js', () => ({
-//   licenceTypeDisplay: jest.fn(),
-//   getErrorPage: jest.fn(() => '')
-// }))
-// jest.mock('../../../summary/find-permit')
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn(() => Symbol('addLanguageCodeToUri'))
+}))
 
-// const getSamplePermission = overrides => ({
-//   licenceStartDate: '2021-07-01',
-//   renewedEndDate: '2021-07-02',
-//   permit: {
-//     cost: 6
-//   },
-//   licensee: {
-//     birthDate: '1946-01-01'
-//   },
-//   licenceType: 'Salmon and sea trout',
-//   numberOfRods: '3',
-//   ...overrides
-// })
+jest.mock('../../../../processors/mapping-constants', () => ({
+  HOW_CONTACTED: {
+    email: 'Email Me',
+    none: 'Please not contact moi',
+    text: 'Text Me',
+    post: 'By pigeon'
+  }
+}))
 
-// describe('change-licence-options > route', () => {
-//   describe('getData', () => {
-//     beforeEach(jest.clearAllMocks)
+jest.mock('../../../../processors/refdata-helper.js', () => ({
+  countries: {
+    nameFromCode: async () => 'GB'
+  }
+}))
 
-//     it.each([
-//       ['standard permission', getSamplePermission()],
-//       ['continuing, expired permission', getSamplePermission({ renewedEndDate: '2021-07-01' })],
-//       ['disabled permission', getSamplePermission({ concessions: [{ type: CONCESSION.DISABLED }] })]
-//     ])('test output of getData for a %s', async (_description, permission) => {
-//       const request = getSampleRequest({
-//         getCurrentTransactionPermission: () => permission
-//       })
-//       licenceTypeDisplay.mockReturnValueOnce(Symbol('Salmon and sea trout'))
-//       const result = await getData(request)
-//       expect(result).toMatchSnapshot()
-//     })
+const mockRoute = Symbol('mock-route')
+const route = require('../route.js').default
+jest.mock('../../../../routes/page-route.js', () => jest.fn(() => mockRoute))
+const getData = pageRoute.mock.calls[1][4]
 
-//     it("throws a GetDataRedirect if getErrorPage returns a value and it isn't a renewal", async () => {
-//       const request = getSampleRequest({
-//         getCurrentStatusPermission: () => ({ renewal: false })
-//       })
-//       getErrorPage.mockReturnValueOnce('error page')
+const getMockCatalog = overrides => ({
+  change_licence_details_other: Symbol('Review or change the licence details other'),
+  change_licence_details_you: Symbol('Review or change the licence details'),
+  contact_summary_change: 'contact-summary-change',
+  contact_summary_email: 'contact-summary-email',
+  contact_summary_hidden_address: Symbol('contact-summary-hidden-address'),
+  contact_summary_hidden_licence_fulfilment: Symbol('contact-summary-hidden-licence-fulfilment'),
+  contact_summary_hidden_licence_confirmation: Symbol('contact-summary-hidden-licence-confirmation'),
+  contact_summary_hidden_contact: Symbol('contact-summary-hidden-contact'),
+  contact_summary_hidden_newsletter: Symbol('contact-summary-hidden-newsletter'),
+  contact_summary_license_default: 'contact-summary-license-default',
+  contact_summary_license_non_physical: 'contact-summary-license-non-physical',
+  contact_summary_license_physical: 'contact-summary-license-physical',
+  contact_summary_row_address: Symbol('contact-summary-row-address'),
+  contact_summary_row_licence: Symbol('contact-summary-row-licence'),
+  contact_summary_row_licence_conf: Symbol('contact-summary-row-licence-conf'),
+  contact_summary_row_contact: Symbol('contact-summary-row-contact'),
+  contact_summary_row_licence_details: Symbol('contact-summary-row-licence-details'),
+  contact_summary_row_newsletter: Symbol('contact-summary-row-newsletter'),
+  contact_summary_text_sngl: 'contact-summary-text-sngl',
+  contact_summary_text_plrl: 'contact-summary-text-plrl',
+  contact_summary_title: Symbol('contact-summary-title'),
+  no: 'negative, Ghost Rider',
+  yes: 'aye',
+  ...overrides
+})
 
-//       const testFunction = async () => getData(request)
+const getMockPermission = (licenseePermissions, permissions = {}) => ({
+  licenceLength: '12M',
+  isLicenceForYou: true,
+  ...permissions,
+  licensee: {
+    firstName: 'Fester',
+    lastName: 'Tester',
+    premises: '14 Howecroft Court',
+    street: 'Eastmead Lane',
+    town: 'Bristol',
+    postcode: 'BS9 1HJ',
+    email: 'fester@tester.com',
+    mobilePhone: '01234567890',
+    birthDate: '1996-01-01',
+    postalFulfilment: true,
+    ...licenseePermissions
+  }
+})
 
-//       await expect(testFunction).rejects.toThrow(GetDataRedirect)
-//     })
+const getRequestMock = ({
+  permission = getMockPermission(),
+  query,
+  status,
+  setStatusPermission = () => {},
+  catalog = getMockCatalog()
+} = {}) => ({
+  cache: () => ({
+    helpers: {
+      status: {
+        getCurrentPermission: async () => ({
+          fromSummary: false,
+          [ADDRESS_ENTRY.page]: true,
+          [ADDRESS_SELECT.page]: true,
+          [CONTACT.page]: true,
+          [LICENCE_FULFILMENT.page]: true,
+          [LICENCE_CONFIRMATION_METHOD.page]: true,
+          ...status
+        }),
+        setCurrentPermission: setStatusPermission
+      },
+      transaction: {
+        getCurrentPermission: async () => permission
+      }
+    }
+  }),
+  i18n: {
+    getCatalog: () => catalog
+  },
+  query,
+  url: {
+    search: ''
+  }
+})
 
-//     it("doesn't throw a GetDataRedirect if getErrorPage returns an empty string", async () => {
-//       const request = getSampleRequest({
-//         getCurrentStatusPermission: () => ({ renewal: false })
-//       })
-//       const getDataResult = async () => {
-//         try {
-//           await getData(request)
-//         } catch (e) {
-//           return e
-//         }
-//       }
+describe('change-contact-details > route', () => {
+  it('should return result of pageRoute call', () => {
+    expect(route).toEqual(mockRoute)
+  })
 
-//       const result = await getDataResult()
+  it('should set status.fromSummary to seen', async () => {
+    const mockPermission = jest.fn()
+    const mockRequest = getRequestMock({ setStatusPermission: mockPermission })
+    await getData(mockRequest)
+    expect(mockPermission).toHaveBeenCalledWith(
+      expect.objectContaining({
+        changeContactDetails: CHANGE_CONTACT_DETAILS_SEEN.SEEN
+      })
+    )
+  })
 
-//       await expect(result).toBeUndefined()
-//     })
+  it.each([
+    ['Review or change the licence details', true, 'change_licence_details_you'],
+    ['Review or change the licence details other', false, 'change_licence_details_other']
+  ])('changeLicenceDetails should be %s when isLicenceForYou is %s', async (mssg, isLicenceForYou, mssgKey) => {
+    const permission = getMockPermission(
+      {},
+      {
+        licenceLength: '1D',
+        isLicenceForYou
+      }
+    )
+    const mssgCatalog = getMockCatalog({
+      [mssgKey]: mssg
+    })
+    const sampleRequest = getRequestMock({
+      permission,
+      catalog: mssgCatalog
+    })
+    const { changeLicenceDetails } = await getData(sampleRequest)
+    expect(changeLicenceDetails).toBe(mssg)
+  })
 
-//     it("doesn't throw a GetDataRedirect if getErrorPage returns a value but it's a renewal", async () => {
-//       const request = getSampleRequest({
-//         getCurrentStatusPermission: () => ({ renewal: true })
-//       })
-//       const getDataResult = async () => {
-//         try {
-//           await getData(request)
-//         } catch (e) {
-//           return e
-//         }
-//       }
+  it.each([
+    ['Yaas', HOW_CONTACTED.email, 'yes'],
+    ['Nnnoo, noo, noo', HOW_CONTACTED.none, 'no']
+  ])('newsletter text should show as %s if how contacted is %s', async (mssg, preferredMethodOfNewsletter, mssgKey) => {
+    const mssgCatalog = getMockCatalog({
+      [mssgKey]: mssg
+    })
+    console.log('mssgcat: ', mssgCatalog.yes)
+    const samplePermission = getMockPermission({
+      preferredMethodOfNewsletter
+    })
+    const { summaryTable } = await getData(
+      getRequestMock({
+        permission: samplePermission,
+        catalog: mssgCatalog
+      })
+    )
+    expect(summaryTable[4].value.text).toBe(mssg)
+  })
 
-//       const result = await getDataResult()
+  describe('getLicenseeDetailsSummaryRows', () => {
+    describe('when purchasing a 12 month (physical licence)', () => {
+      it.each([
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, HOW_CONTACTED.none],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, HOW_CONTACTED.none],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, HOW_CONTACTED.none],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, HOW_CONTACTED.none],
+        [HOW_CONTACTED.none, HOW_CONTACTED.post, 'Yes'],
+        [HOW_CONTACTED.none, HOW_CONTACTED.post, HOW_CONTACTED.none],
+        [HOW_CONTACTED.none, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.none, HOW_CONTACTED.email, HOW_CONTACTED.none],
+        [HOW_CONTACTED.none, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.none, HOW_CONTACTED.text, HOW_CONTACTED.none]
+      ])(
+        'should display the Licence as %s, Licence Confirmation as %s and Newsletter as %s for you with postal fulfilment',
+        async (preferredMethodOfConfirmation, preferredMethodOfReminder, preferredMethodOfNewsletter) => {
+          const samplePermission = getMockPermission({
+            preferredMethodOfConfirmation,
+            preferredMethodOfReminder,
+            preferredMethodOfNewsletter
+          })
+          const { summaryTable } = await getData(getRequestMock({ permission: samplePermission }))
+          expect(summaryTable).toMatchSnapshot()
+        }
+      )
 
-//       await expect(result instanceof GetDataRedirect).toBeFalsy()
-//     })
+      it.each([
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.email, HOW_CONTACTED.none],
+        [HOW_CONTACTED.email, HOW_CONTACTED.text, HOW_CONTACTED.none],
+        [HOW_CONTACTED.text, HOW_CONTACTED.text, HOW_CONTACTED.none],
+        [HOW_CONTACTED.text, HOW_CONTACTED.email, HOW_CONTACTED.none]
+      ])(
+        'should display the Licence as %s, Licence Confirmation as %s and Newsletter as %s without postal fulfilment',
+        async (preferredMethodOfConfirmation, preferredMethodOfReminder, preferredMethodOfNewsletter) => {
+          const samplePermission = getMockPermission({
+            preferredMethodOfConfirmation,
+            preferredMethodOfReminder,
+            preferredMethodOfNewsletter,
+            postalFulfilment: false
+          })
+          const { summaryTable } = await getData(getRequestMock({ permission: samplePermission }))
+          expect(summaryTable).toMatchSnapshot()
+        }
+      )
 
-//     it('passes return value of getErrorPage to thrown GetDataRedirect', async () => {
-//       const expectedRedirectUrl = Symbol('error page')
-//       getErrorPage.mockReturnValueOnce(expectedRedirectUrl)
-//       const request = getSampleRequest({
-//         getCurrentStatusPermission: () => ({ renewal: false })
-//       })
-//       const runGetData = async () => {
-//         try {
-//           await getData(request)
-//         } catch (e) {
-//           return e
-//         }
-//       }
-//       const thrownError = await runGetData()
-//       expect(thrownError.redirectUrl).toEqual(expectedRedirectUrl)
-//     })
+      it('should not include newsletter row in the summary table if licence is not for you', async () => {
+        const samplePermission = getMockPermission({}, { isLicenceForYou: false })
+        const { summaryTable } = await getData(getRequestMock({ permission: samplePermission }))
+        expect(summaryTable).toMatchSnapshot()
+      })
+    })
 
-//     it('passes permission to getErrorPage', async () => {
-//       const permission = Symbol('permission')
-//       const request = getSampleRequest({
-//         getCurrentStatusPermission: () => ({ renewal: false }),
-//         getCurrentTransactionPermission: () => permission
-//       })
-//       const runGetData = async () => {
-//         try {
-//           await getData(request)
-//         } catch (e) {
-//           return e
-//         }
-//       }
+    describe('when purchasing a 1 or 8 day', () => {
+      it.each([
+        [HOW_CONTACTED.email, 'Yes'],
+        [HOW_CONTACTED.text, 'Yes'],
+        [HOW_CONTACTED.none, 'Yes'],
+        [HOW_CONTACTED.email, HOW_CONTACTED.none],
+        [HOW_CONTACTED.text, HOW_CONTACTED.none],
+        [HOW_CONTACTED.none, HOW_CONTACTED.none]
+      ])('should display the Licence as %s and Newsletter as %s', async (preferredMethodOfReminder, preferredMethodOfNewsletter) => {
+        const samplePermission = getMockPermission(
+          {
+            preferredMethodOfReminder,
+            preferredMethodOfNewsletter
+          },
+          {
+            licenceLength: '1D'
+          }
+        )
+        const { summaryTable } = await getData(
+          getRequestMock({
+            permission: samplePermission
+          })
+        )
+        expect(summaryTable).toMatchSnapshot()
+      })
+    })
+  })
 
-//       await runGetData()
+  describe('addLanguageCodeToUri', () => {
+    beforeEach(jest.clearAllMocks)
 
-//       expect(getErrorPage).toHaveBeenCalledWith(permission)
-//     })
+    it.each([[ADDRESS_LOOKUP.uri], [LICENCE_FULFILMENT.uri], [LICENCE_CONFIRMATION_METHOD.uri], [CONTACT.uri], [NEWSLETTER.uri]])(
+      'test addLanguageCodeToUri is called correctly',
+      async urlToCheck => {
+        const sampleRequest = getRequestMock(getMockPermission({}))
+        await getData(sampleRequest)
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, urlToCheck)
+      }
+    )
+  })
 
-//     it('updates current status permission', async () => {
-//       const permission = getSamplePermission()
-//       const getCurrentStatusPermission = () => permission
-//       const setCurrentStatusPermission = jest.fn()
-//       await getData(getSampleRequest({ getCurrentStatusPermission, setCurrentStatusPermission }))
-//       expect(setCurrentStatusPermission).toHaveBeenCalledWith(expect.objectContaining(permission))
-//     })
+  describe('checkNavigation', () => {
+    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+      const status = {
+        [ADDRESS_ENTRY.page]: false,
+        [ADDRESS_SELECT.page]: false
+      }
+      const mockRequest = getRequestMock({ permission: {}, status })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(ADDRESS_LOOKUP.uri)
+    })
 
-//     it('sets fromLicenceOptions before updating current status permission', async () => {
-//       const setCurrentStatusPermission = jest.fn()
-//       await getData(getSampleRequest({ setCurrentStatusPermission }))
-//       expect(setCurrentStatusPermission).toHaveBeenCalledWith(
-//         expect.objectContaining({
-//           fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-//         })
-//       )
-//     })
+    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+      const status = {
+        [CONTACT.page]: false
+      }
+      const mockRequest = getRequestMock({ permission: {}, status })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(CONTACT.uri)
+    })
 
-//     it('calls findPermit with permission and request', async () => {
-//       const permission = getSamplePermission()
-//       const request = getSampleRequest({ getCurrentTransactionPermission: () => permission })
-//       await getData(request)
-//       expect(findPermit).toHaveBeenCalledWith(permission, request)
-//     })
+    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+      const status = {
+        [LICENCE_FULFILMENT.page]: false
+      }
+      const mockRequest = getRequestMock({ status })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_FULFILMENT.uri)
+    })
 
-//     const getSampleRequest = ({
-//       getCurrentStatusPermission = () => ({}),
-//       setCurrentStatusPermission = () => {},
-//       getCurrentTransactionPermission = () => getSamplePermission(),
-//       setCurrentTransactionPermission = () => {}
-//     }) => ({
-//       cache: () => ({
-//         helpers: {
-//           status: {
-//             getCurrentPermission: getCurrentStatusPermission,
-//             setCurrentPermission: setCurrentStatusPermission
-//           },
-//           transaction: {
-//             get: () => {},
-//             set: () => {},
-//             getCurrentPermission: getCurrentTransactionPermission,
-//             setCurrentPermission: setCurrentTransactionPermission
-//           }
-//         }
-//       }),
-//       i18n: {
-//         getCatalog: () => ({
-//           licence_start_time_am_text_0: 'Test',
-//           licence_type_radio_salmon: 'Salmon and sea trout',
-//           licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
-//           licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
-//         })
-//       }
-//     })
-//   })
-// })
+    it('should throw a GetDataRedirect if licence-confirmation page is false on the status', async () => {
+      const status = {
+        [LICENCE_CONFIRMATION_METHOD.page]: false
+      }
+      const mockRequest = getRequestMock({ status })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_CONFIRMATION_METHOD.uri)
+    })
+  })
+})
