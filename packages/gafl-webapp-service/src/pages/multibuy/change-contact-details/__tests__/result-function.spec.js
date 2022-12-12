@@ -63,7 +63,7 @@ describe('change-licence-options > result-function', () => {
       expect(result).toBe(CommonResults.OK)
     })
 
-    it('should return amend if fromChangeOptions is seen', async () => {
+    it('should return amend if fromContactDetails is seen', async () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetails: 'seen' }))
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.AMEND)

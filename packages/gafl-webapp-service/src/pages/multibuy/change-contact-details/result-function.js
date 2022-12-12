@@ -19,5 +19,5 @@ export default async request => {
     return MultibuyForYou.YES
   }
 
-  return status.changeContactDetailsSeen === CHANGE_CONTACT_DETAILS_SEEN.SEEN ? CommonResults.AMEND : CommonResults.OK
+  return status.fromContactDetails === CHANGE_CONTACT_DETAILS_SEEN.SEEN ? CommonResults.AMEND : CommonResults.OK
 }

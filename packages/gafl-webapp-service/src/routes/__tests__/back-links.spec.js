@@ -213,7 +213,7 @@ describe('The address-lookup page', () => {
   })
   it('has a back-link to contact details if the contact-details page is seen', async () => {
     const status = {
-      fromContactDetails: CHANGE_CONTACT_DETAILS_SEEN.SEEN
+      fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN
     }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
@@ -257,7 +257,7 @@ describe('The licence-fulfilment page', () => {
   })
   it('has a back-link to contact details if the contact-details page is seen', async () => {
     const status = {
-      fromContactDetails: CHANGE_CONTACT_DETAILS_SEEN.SEEN
+      fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN
     }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
@@ -280,7 +280,7 @@ describe('The licence-confirmation page', () => {
   })
   it('has a back-link to contact details if the contact-details page is seen', async () => {
     const status = {
-      fromContactDetails: CHANGE_CONTACT_DETAILS_SEEN.SEEN
+      fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN
     }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
@@ -315,7 +315,7 @@ describe('The contact page', () => {
   })
   it('has a back-link to contact details if the contact-details page is seen', async () => {
     const status = {
-      fromContactDetails: CHANGE_CONTACT_DETAILS_SEEN.SEEN
+      fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN
     }
     const transaction = {}
     const result = await currentPage.backLink(status, transaction)

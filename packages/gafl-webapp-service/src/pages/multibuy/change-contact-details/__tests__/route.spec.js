@@ -128,7 +128,7 @@ describe('change-contact-details > route', () => {
     await getData(mockRequest)
     expect(mockPermission).toHaveBeenCalledWith(
       expect.objectContaining({
-        changeContactDetails: CHANGE_CONTACT_DETAILS_SEEN.SEEN
+        fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN
       })
     )
   })

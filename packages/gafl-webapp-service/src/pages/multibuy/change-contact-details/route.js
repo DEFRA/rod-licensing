@@ -217,9 +217,7 @@ const getData = async request => {
 
   checkNavigation(status, permission)
 
-  status.changeContactDetails = CHANGE_CONTACT_DETAILS_SEEN.SEEN
-
-  console.log(status.changeContactDetails)
+  status.fromContactDetailsSeen = CHANGE_CONTACT_DETAILS_SEEN.SEEN
 
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
