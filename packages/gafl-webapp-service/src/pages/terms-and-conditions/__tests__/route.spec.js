@@ -107,33 +107,35 @@ describe('terms-and-conditions > route', () => {
       }
     )
 
+    const mockGetData = async (type, rods) => {
+      return await getData(
+        generateMockRequest(
+          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
+          {
+            permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, 'type', '4')]
+          }
+        )
+      )
+    }
+
     describe.each([
       ['Trout and coarse', '2', true, false, false],
       ['Trout and coarse', '3', false, true, false],
       ['Salmon and sea trout', '1', false, false, true]
     ])('testing whether correct type is set to display', (type, rods, troutTwoFlag, troutThreeFlag, salmonFlag) => {
-      let data
-      beforeEach(async () => {
-        data = await getData(
-          generateMockRequest(
-            { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-            {
-              permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, 'type', '4')]
-            }
-          )
-        )
-      })
-
       it('returns whether to display Trout and coarse, up to 2 rods conditions', async () => {
-        expect(data.troutAndCoarse2Rods).toBe(troutTwoFlag)
+        const result = await mockGetData(type, rods)
+        expect(result.troutAndCoarse2Rods).toBe(troutTwoFlag)
       })
 
       it('returns whether to display Trout and coarse, up to 3 rods conditions', async () => {
-        expect(data.troutAndCoarse3Rods).toBe(troutThreeFlag)
+        const result = await mockGetData(type, rods)
+        expect(result.troutAndCoarse3Rods).toBe(troutThreeFlag)
       })
 
       it('returns whether to display Salmon and sea trout conditions', async () => {
-        expect(data.salmonAndSeaTrout).toBe(salmonFlag)
+        const result = await mockGetData(type, rods)
+        expect(result.salmonAndSeaTrout).toBe(salmonFlag)
       })
     })
   })
