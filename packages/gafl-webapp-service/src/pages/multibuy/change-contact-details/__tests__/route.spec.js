@@ -37,8 +37,6 @@ jest.mock('../../../../routes/page-route.js', () => jest.fn(() => mockRoute))
 const getData = pageRoute.mock.calls[1][4]
 
 const getMockCatalog = overrides => ({
-  change_licence_details_other: Symbol('Review or change the licence details other'),
-  change_licence_details_you: Symbol('Review or change the licence details'),
   contact_summary_change: 'contact-summary-change',
   contact_summary_email: 'contact-summary-email',
   contact_summary_hidden_address: Symbol('contact-summary-hidden-address'),
@@ -122,7 +120,7 @@ describe('change-contact-details > route', () => {
     expect(route).toEqual(mockRoute)
   })
 
-  it('should set status.fromSummary to seen', async () => {
+  it('should set status.fromContactDetailsSeen to seen', async () => {
     const mockPermission = jest.fn()
     const mockRequest = getRequestMock({ setStatusPermission: mockPermission })
     await getData(mockRequest)
@@ -131,28 +129,6 @@ describe('change-contact-details > route', () => {
         fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN
       })
     )
-  })
-
-  it.each([
-    ['Review or change the licence details', true, 'change_licence_details_you'],
-    ['Review or change the licence details other', false, 'change_licence_details_other']
-  ])('changeLicenceDetails should be %s when isLicenceForYou is %s', async (mssg, isLicenceForYou, mssgKey) => {
-    const permission = getMockPermission(
-      {},
-      {
-        licenceLength: '1D',
-        isLicenceForYou
-      }
-    )
-    const mssgCatalog = getMockCatalog({
-      [mssgKey]: mssg
-    })
-    const sampleRequest = getRequestMock({
-      permission,
-      catalog: mssgCatalog
-    })
-    const { changeLicenceDetails } = await getData(sampleRequest)
-    expect(changeLicenceDetails).toBe(mssg)
   })
 
   it.each([
