@@ -82,39 +82,50 @@ describe('licence-length > route', () => {
       }
     })
 
-    const mockRequest = getMockRequest(getMockStatus(), getMockTransaction())
-    const mssgs = mockRequest.i18n.getCatalog()
-
     beforeEach(() => jest.clearAllMocks())
 
     it('licenceTypeDisplay is called with permissions and mssgs', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      const mssgs = mockRequest.i18n.getCatalog()
       await getData(mockRequest)
-      expect(licenceTypeDisplay).toHaveBeenCalledWith(getMockPermission(), mssgs)
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, mssgs)
     })
 
     it('licenceTypeAndLengthDisplay is called with permission and mssgs', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      const mssgs = mockRequest.i18n.getCatalog()
       await getData(mockRequest)
-      expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(getMockPermission(), mssgs)
+      expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(mockPermission, mssgs)
     })
 
     it('displayStartTime is called request and permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
-      expect(displayStartTime).toHaveBeenCalledWith(mockRequest, getMockPermission())
+      expect(displayStartTime).toHaveBeenCalledWith(mockRequest, mockPermission)
     })
 
     it('displayEndTime is called with request and permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
-      expect(displayEndTime).toHaveBeenCalledWith(mockRequest, getMockPermission())
+      expect(displayEndTime).toHaveBeenCalledWith(mockRequest, mockPermission)
     })
 
     it('hasDisabled is called with permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
-      expect(concessionHelper.hasDisabled).toHaveBeenCalledWith(getMockPermission())
+      expect(concessionHelper.hasDisabled).toHaveBeenCalledWith(mockPermission)
     })
 
     it('getAgeConcession is called with permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
-      expect(concessionHelper.getAgeConcession).toHaveBeenCalledWith(getMockPermission())
+      expect(concessionHelper.getAgeConcession).toHaveBeenCalledWith(mockPermission)
     })
 
     describe('returns expected licence data for the given permission:', () => {
