@@ -138,7 +138,6 @@ describe('change-contact-details > route', () => {
     const mssgCatalog = getMockCatalog({
       [mssgKey]: mssg
     })
-    console.log('mssgcat: ', mssgCatalog.yes)
     const samplePermission = getMockPermission({
       preferredMethodOfNewsletter
     })

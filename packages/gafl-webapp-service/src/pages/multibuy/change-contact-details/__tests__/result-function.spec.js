@@ -6,7 +6,7 @@ jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
 }))
 
-describe('change-licence-options > result-function', () => {
+describe('change-contact-details > result-function', () => {
   const mockStatusCacheGet = jest.fn()
   const mockTransactionPageGet = jest.fn()
 
@@ -64,13 +64,13 @@ describe('change-licence-options > result-function', () => {
     })
 
     it('should return amend if fromContactDetails is seen', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetails: 'seen' }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetailsSeen: 'seen' }))
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.AMEND)
     })
 
     it('should return ok if fromChangeLicenceOptions is not seen', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetails: 'details' }))
+      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetailsSeen: 'details' }))
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.OK)
     })
