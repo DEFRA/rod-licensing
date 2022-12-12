@@ -3,7 +3,7 @@ import { CONTACT_SUMMARY_SEEN } from '../constants.js'
 
 export default async (status, defaultUri) => {
   const summarySeen = status.fromSummary
-  const fromContactDetailsSeen = status.fromContactDetails
+  const fromContactDetailsSeen = status.changeContactDetails
   const isRenewal = status.isRenewal
   if (fromContactDetailsSeen) {
     return CHANGE_CONTACT_DETAILS.uri

@@ -9,14 +9,14 @@ import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 import {
   CHANGE_CONTACT_DETAILS,
-  LICENCE_SUMMARY,
   ADDRESS_ENTRY,
   ADDRESS_SELECT,
   ADDRESS_LOOKUP,
   CONTACT,
   NEWSLETTER,
   LICENCE_FULFILMENT,
-  LICENCE_CONFIRMATION_METHOD
+  LICENCE_CONFIRMATION_METHOD,
+  CHANGE_LICENCE_OPTIONS
 } from '../../../uri.js'
 
 const CONTACT_TEXT_DEFAULT = {
@@ -218,7 +218,9 @@ const getData = async request => {
   checkNavigation(status, permission)
 
   status.changeContactDetails = CHANGE_CONTACT_DETAILS_SEEN.SEEN
-  status.fromSummary = undefined
+
+  console.log(status.changeContactDetails)
+
   await request.cache().helpers.status.setCurrentPermission(status)
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
 
@@ -227,7 +229,7 @@ const getData = async request => {
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {
-      licenceSummary: LICENCE_SUMMARY.uri
+      changeLicenceOptions: CHANGE_LICENCE_OPTIONS.uri
     },
     changeLicenceDetails
   }

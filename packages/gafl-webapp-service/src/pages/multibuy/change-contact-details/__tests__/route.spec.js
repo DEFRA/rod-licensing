@@ -93,7 +93,7 @@ const getRequestMock = ({
     helpers: {
       status: {
         getCurrentPermission: async () => ({
-          fromSummary: false,
+          changeContactDetails: false,
           [ADDRESS_ENTRY.page]: true,
           [ADDRESS_SELECT.page]: true,
           [CONTACT.page]: true,
