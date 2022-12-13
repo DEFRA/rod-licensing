@@ -41,13 +41,6 @@
               }
             }) %}
 
-            {% if data.paymentRequired %}
-                {{ govukWarningText({
-                    text: mssgs.terms_conds_warning,
-                    iconFallbackText: "Warning"
-                }) }}
-            {% endif %}
-
             <div class="govuk-!-margin-bottom-9">
                 <p class="govuk-body">{{ mssgs.terms_conds_body }}</p>
                 <ul class="govuk-list govuk-list--bullet">
@@ -73,6 +66,13 @@
                     }
                   ]
                 }) }}
+
+                {% if data.paymentRequired %}
+                    {{ govukWarningText({
+                        text: mssgs.terms_conds_warning,
+                        iconFallbackText: "Warning"
+                    }) }}
+                {% endif %}
 
                 {{ govukButton({
                     attributes: { id: 'continue' },
