@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.1 (2022-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1573](https://github.com/DEFRA/rod-licensing/pull/1573) Fix cache error ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.30.0-rc.0 (2022-12-13)
 
 #### :rocket: Enhancement
