@@ -6,7 +6,6 @@ import { COMPLETION_STATUS, CommonResults, ShowDigitalLicencePages } from '../..
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 
 jest.mock('../../../../processors/concession-helper.js')
-jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../constants.js', () => ({
@@ -24,6 +23,13 @@ jest.mock('../../../../constants.js', () => ({
   MultibuyForYou: {
     YES: 'yes',
     NO: 'no'
+  }
+}))
+
+jest.mock('@hapi/boom', () => ({
+  // forbidden: Symbol('403 Forbidden error')
+  forbidden: () => {
+    Symbol('403 Forbidden error')
   }
 }))
 
@@ -129,17 +135,10 @@ describe('licence-length > route', () => {
     })
 
     describe('returns expected licence data for the given permission:', () => {
-      const licenceType = Symbol('Trout and coarse, up to 2 rods')
-      licenceTypeDisplay.mockReturnValue(licenceType)
-
-      const startTime = Symbol('9:32am on 23 June 2021')
-      displayStartTime.mockReturnValue(startTime)
-
-      const endTime = Symbol('9:32am on 23 June 2022')
-      displayEndTime.mockReturnValue(endTime)
-
-      const disabled = Symbol('disabled')
-      concessionHelper.hasDisabled.mockReturnValue(disabled)
+      licenceTypeDisplay.mockReturnValue('Licence Type')
+      displayStartTime.mockReturnValue('Start Time')
+      displayEndTime.mockReturnValue('End Time')
+      concessionHelper.hasDisabled.mockReturnValue('Disability')
 
       it('returns expected data', async () => {
         const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
@@ -163,29 +162,28 @@ describe('licence-length > route', () => {
     })
 
     describe('throws a Boom forbidden error', () => {
-      it('if status agreed flag is not set', async () => {
-        const status = () => ({})
-
-        const boomError = Boom.forbidden('Attempt to access the licence information handler with no agreed flag set')
-
-        await expect(getData(getMockRequest(status, getMockTransaction()))).rejects.toThrow(boomError)
+      it('boom is called', async () => {
+        expect(async () => await getData(getMockRequest({}, {}))).rejects.toThrow(Boom)
       })
 
-      it('if status posted flag is not set', async () => {
-        const status = () => ({
-          [COMPLETION_STATUS.agreed]: 'agreed'
-        })
-        const boomError = Boom.forbidden('Attempt to access the licence information handler with no posted flag set')
-        await expect(getData(getMockRequest(status(), getMockTransaction()))).rejects.toThrow(boomError)
-      })
-
-      it('if status finalised flag is not set', async () => {
-        const status = () => ({
-          [COMPLETION_STATUS.agreed]: 'agreed',
-          [COMPLETION_STATUS.posted]: 'posted'
-        })
-        const boomError = Boom.forbidden('Attempt to access the licence information handler with no finalised flag set')
-        await expect(getData(getMockRequest(status(), getMockTransaction()))).rejects.toThrow(boomError)
+      it.each([
+        {
+          status: {},
+          boomError: 'Attempt to access the licence information handler with no agreed flag set',
+          description: 'status agreed flag is not set'
+        },
+        {
+          status: { [COMPLETION_STATUS.agreed]: 'agreed' },
+          boomError: 'Attempt to access the licence information handler with no posted flag set',
+          description: 'status posted flag is not set'
+        },
+        {
+          status: { [COMPLETION_STATUS.agreed]: 'agreed', [COMPLETION_STATUS.posted]: 'posted' },
+          boomError: 'Attempt to access the licence information handler with no finalised flag set',
+          description: 'status finalised flag is not set'
+        }
+      ])('boom error thrown if $description', async ({ status, boomError }) => {
+        expect(async () => await getData(getMockRequest(status, {}))).rejects.toThrow(boomError)
       })
     })
   })
