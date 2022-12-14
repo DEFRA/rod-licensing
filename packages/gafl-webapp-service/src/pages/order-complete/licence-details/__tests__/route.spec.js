@@ -162,7 +162,7 @@ describe('licence-length > route', () => {
     })
 
     describe('throws a Boom forbidden error', () => {
-      it('boom is called', async () => {
+      it('test that boom is called when no status flag is set', async () => {
         expect(async () => await getData(getMockRequest({}, {}))).rejects.toThrow(Boom)
       })
 
