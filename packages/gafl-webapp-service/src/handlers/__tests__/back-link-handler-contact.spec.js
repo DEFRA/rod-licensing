@@ -1,5 +1,5 @@
 import backLinkHandlerContact from '../back-link-handler-contact.js'
-import { CONTACT_SUMMARY, CHANGE_CONTACT_DETAILS } from '../../uri.js'
+import { CONTACT_SUMMARY, CHANGE_CONTACT_DETAILS, LICENCE_SUMMARY } from '../../uri.js'
 import { CONTACT_SUMMARY_SEEN, CHANGE_CONTACT_DETAILS_SEEN } from '../../constants.js'
 
 describe('back-link-handler', () => {
@@ -23,6 +23,14 @@ describe('back-link-handler', () => {
       }
       const result = await backLinkHandlerContact(status, 'aPage')
       expect(result).toBe(CONTACT_SUMMARY.uri)
+    })
+
+    it('should return LICENCE_SUMMARY uri if going through a renewal', async () => {
+      const status = {
+        isRenewal: true
+      }
+      const result = await backLinkHandlerContact(status, 'aPage')
+      expect(result).toBe(LICENCE_SUMMARY.uri)
     })
   })
 })

@@ -252,7 +252,19 @@ describe('change-contact-details > route', () => {
   })
 
   describe('checkNavigation', () => {
-    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+    it('should throw a GetDataRedirect to licence-fulfilment page if it is a renewal', async () => {
+      const status = {
+        [LICENCE_FULFILMENT.page]: false
+      }
+      const permissions = {
+        isRenewal: true
+      }
+      const mockPermission = getMockPermission({}, permissions)
+      const mockRequest = getRequestMock({ status, permission: mockPermission })
+      await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(LICENCE_FULFILMENT.uri)
+    })
+
+    it('should throw a GetDataRedirect if address-lookup page is false on the status', async () => {
       const status = {
         [ADDRESS_ENTRY.page]: false,
         [ADDRESS_SELECT.page]: false
@@ -261,7 +273,7 @@ describe('change-contact-details > route', () => {
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(ADDRESS_LOOKUP.uri)
     })
 
-    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+    it('should throw a GetDataRedirect if contact page is false on the status', async () => {
       const status = {
         [CONTACT.page]: false
       }
