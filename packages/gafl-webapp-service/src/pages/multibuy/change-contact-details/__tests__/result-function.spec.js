@@ -6,85 +6,93 @@ jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
 }))
 
-describe('change-contact-details > result-function', () => {
-  const mockStatusCacheGet = jest.fn()
-  const mockTransactionPageGet = jest.fn()
-
-  const mockRequest = {
-    cache: () => ({
-      helpers: {
-        status: {
-          getCurrentPermission: mockStatusCacheGet
-        },
-        transaction: {
-          getCurrentPermission: mockTransactionPageGet
-        }
+const getMockRequest = (mockStatus, mockPermissions) => ({
+  cache: () => ({
+    helpers: {
+      status: {
+        getCurrentPermission: jest.fn(() => ({
+          ...mockStatus
+        }))
+      },
+      transaction: {
+        getCurrentPermission: jest.fn(() => ({
+          ...mockPermissions
+        }))
       }
-    })
-  }
+    }
+  })
+})
 
+describe('change-contact-details > result-function', () => {
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: true }))
-      mockTransactionPageGet.mockImplementationOnce(() => ({
+      const mockStatus = { renewal: true, showDigitalLicencePages: true }
+      const mockTransaction = {
         licenceLength: '12M',
         licensee: {
           postalFulfilment: true
         }
-      }))
+      }
+      const mockRequest = getMockRequest(mockStatus, mockTransaction)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(ShowDigitalLicencePages.YES)
     })
 
     it('should return the summary screen, if licence is in renewal, is 12 months and showDigitalLicencePages is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: true, showDigitalLicencePages: false }))
-      mockTransactionPageGet.mockImplementationOnce(() => ({
+      const mockStatus = { renewal: true, showDigitalLicencePages: false }
+      const mockTransaction = {
         licenceLength: '12M',
         licensee: {
           postalFulfilment: false
         }
-      }))
+      }
+      const mockRequest = getMockRequest(mockStatus, mockTransaction)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
     it('should return ok, if licence is 12 months and showDigitalLicencePages is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ showDigitalLicencePages: true }))
-      mockTransactionPageGet.mockImplementationOnce(() => ({
+      const mockStatus = { showDigitalLicencePages: true }
+      const mockTransaction = {
         licenceLength: '12M',
         licensee: {
           postalFulfilment: true
         }
-      }))
+      }
       isMultibuyForYou.mockImplementationOnce(() => false)
+      const mockRequest = getMockRequest(mockStatus, mockTransaction)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return amend if fromContactDetails is seen', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetailsSeen: 'seen' }))
+      const mockStatus = { fromContactDetailsSeen: 'seen' }
+      const mockRequest = getMockRequest(mockStatus)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.AMEND)
     })
 
     it('should return ok if fromChangeLicenceOptions is not seen', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetailsSeen: 'details' }))
+      const mockStatus = { fromContactDetailsSeen: 'details' }
+      const mockRequest = getMockRequest(mockStatus)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return isMultibuyForYou when is true', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
+      const mockStatus = { renewal: false }
       isMultibuyForYou.mockImplementationOnce(() => true)
+      const mockRequest = getMockRequest(mockStatus)
       const result = await resultFunction(mockRequest)
       expect(result).toBe(MultibuyForYou.YES)
     })
 
     it('should not return isMultibuyForYou when is false', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ renewal: false }))
+      const mockStatus = { renewal: false }
       isMultibuyForYou.mockImplementationOnce(() => false)
+      const mockRequest = getMockRequest(mockStatus)
       const result = await resultFunction(mockRequest)
       expect(result).not.toBe(MultibuyForYou.YES)
     })
