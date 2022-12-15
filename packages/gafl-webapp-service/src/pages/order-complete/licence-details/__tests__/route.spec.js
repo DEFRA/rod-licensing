@@ -1,12 +1,11 @@
-import { getData } from '../route.js'
+import { getData } from '../route'
 import Boom from '@hapi/boom'
-import { COMPLETION_STATUS } from '../../../../constants.js'
-import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
-import * as dtDisplay from '../../../../processors/date-and-time-display.js'
-import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
+import { displayStartTime, displayEndTime } from '../../../../processors/date-and-time-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
+import { COMPLETION_STATUS, CommonResults, ShowDigitalLicencePages } from '../../../../constants.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 
-beforeEach(jest.clearAllMocks)
+jest.mock('../../../../processors/concession-helper.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../constants.js', () => ({
@@ -26,149 +25,166 @@ jest.mock('../../../../constants.js', () => ({
     NO: 'no'
   }
 }))
-jest.mock('../../../../processors/concession-helper.js')
 
-describe('The licence details page', () => {
-  describe('.getData', () => {
+jest.mock('@hapi/boom', () => ({
+  // forbidden: Symbol('403 Forbidden error')
+  forbidden: () => {
+    Symbol('403 Forbidden error')
+  }
+}))
+
+const getMockStatus = () => ({
+  [COMPLETION_STATUS.agreed]: 'agreed',
+  [COMPLETION_STATUS.posted]: 'posted',
+  [COMPLETION_STATUS.finalised]: 'finalised',
+  [CommonResults.OK]: 'ok',
+  [ShowDigitalLicencePages.YES]: 'yes'
+})
+
+const getMockTransaction = () => ({
+  permissions: [getMockPermission()]
+})
+
+const getMockPermission = () => ({
+  licensee: {
+    firstName: 'Turanga',
+    lastName: 'Leela',
+    obfuscatedDob: 'obfuscatedDob'
+  },
+  referenceNumber: '123456789',
+  licenceType: 'trout-and-coarse',
+  numberOfRods: '2',
+  licenceLength: '8D',
+  permit: { cost: 12 }
+})
+
+const getMockCatalog = overrides => ({
+  age_senior_concession: Symbol('Over 65'),
+  age_junior_concession: Symbol('Junior (13 to 16)'),
+
+  licence_type_1d: Symbol('1 day'),
+  licence_type_8d: Symbol('8 days'),
+  licence_type_12m: Symbol('12 months'),
+  ...overrides
+})
+
+describe('licence-length > route', () => {
+  beforeEach(() => jest.clearAllMocks())
+
+  describe('getData', () => {
+    const getMockRequest = (statusGet = () => {}, transactionGet = () => {}, catalog = getMockCatalog()) => ({
+      cache: () => ({
+        helpers: {
+          transaction: {
+            get: async () => transactionGet
+          },
+          status: {
+            get: async () => statusGet
+          }
+        }
+      }),
+      i18n: {
+        getCatalog: () => catalog
+      }
+    })
+
+    beforeEach(() => jest.clearAllMocks())
+
+    it('licenceTypeDisplay is called with permissions and mssgs', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      const mssgs = mockRequest.i18n.getCatalog()
+      await getData(mockRequest)
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, mssgs)
+    })
+
+    it('licenceTypeAndLengthDisplay is called with permission and mssgs', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      const mssgs = mockRequest.i18n.getCatalog()
+      await getData(mockRequest)
+      expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(mockPermission, mssgs)
+    })
+
+    it('displayStartTime is called request and permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      await getData(mockRequest)
+      expect(displayStartTime).toHaveBeenCalledWith(mockRequest, mockPermission)
+    })
+
+    it('displayEndTime is called with request and permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      await getData(mockRequest)
+      expect(displayEndTime).toHaveBeenCalledWith(mockRequest, mockPermission)
+    })
+
+    it('hasDisabled is called with permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      await getData(mockRequest)
+      expect(concessionHelper.hasDisabled).toHaveBeenCalledWith(mockPermission)
+    })
+
+    it('getAgeConcession is called with permission', async () => {
+      const mockPermission = getMockPermission()
+      const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
+      await getData(mockRequest)
+      expect(concessionHelper.getAgeConcession).toHaveBeenCalledWith(mockPermission)
+    })
+
+    describe('returns expected licence data for the given permission:', () => {
+      licenceTypeDisplay.mockReturnValue('Licence Type')
+      displayStartTime.mockReturnValue('Start Time')
+      displayEndTime.mockReturnValue('End Time')
+      concessionHelper.hasDisabled.mockReturnValue('Disability')
+
+      it('returns expected data', async () => {
+        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
+        expect(data).toMatchSnapshot()
+      })
+
+      it.each([['1D'], ['8D'], ['12M']])('returns licence length as %s', async licenceLength => {
+        licenceTypeAndLengthDisplay.mockReturnValue(licenceLength)
+        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
+        expect(data).toMatchSnapshot()
+      })
+
+      it.each([['Senior'], ['Junior'], ['Neither']])('returns age concession as %s', async type => {
+        const concession = {
+          type: type
+        }
+        concessionHelper.getAgeConcession.mockReturnValue(concession)
+        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
+        expect(data).toMatchSnapshot()
+      })
+    })
+
     describe('throws a Boom forbidden error', () => {
-      it('if status agreed flag is not set', async () => {
-        const mockRequest = createMockRequest({ status: {} })
-        const boomError = Boom.forbidden('Attempt to access the licence information handler with no agreed flag set')
-        await expect(getData(mockRequest)).rejects.toThrow(boomError)
+      it('test that boom is called when no status flag is set', async () => {
+        expect(async () => await getData(getMockRequest({}, {}))).rejects.toThrow(Boom)
       })
 
-      it('if status posted flag is not set', async () => {
-        const mockRequest = createMockRequest({ status: { [COMPLETION_STATUS.agreed]: true } })
-        const boomError = Boom.forbidden('Attempt to access the licence information handler with no posted flag set')
-        await expect(getData(mockRequest)).rejects.toThrow(boomError)
+      it.each([
+        {
+          status: {},
+          boomError: 'Attempt to access the licence information handler with no agreed flag set',
+          description: 'status agreed flag is not set'
+        },
+        {
+          status: { [COMPLETION_STATUS.agreed]: 'agreed' },
+          boomError: 'Attempt to access the licence information handler with no posted flag set',
+          description: 'status posted flag is not set'
+        },
+        {
+          status: { [COMPLETION_STATUS.agreed]: 'agreed', [COMPLETION_STATUS.posted]: 'posted' },
+          boomError: 'Attempt to access the licence information handler with no finalised flag set',
+          description: 'status finalised flag is not set'
+        }
+      ])('boom error thrown if $description', async ({ status, boomError }) => {
+        expect(async () => await getData(getMockRequest(status, {}))).rejects.toThrow(boomError)
       })
-
-      it('if status finalised flag is not set', async () => {
-        const mockRequest = createMockRequest({ status: { [COMPLETION_STATUS.agreed]: true, [COMPLETION_STATUS.posted]: true } })
-        const boomError = Boom.forbidden('Attempt to access the licence information handler with no finalised flag set')
-        await expect(getData(mockRequest)).rejects.toThrow(boomError)
-      })
-    })
-
-    it('calls licenceTypeDisplay with permission and i18n catalog', async () => {
-      const i18nCatalog = Symbol('mock catalog')
-      const permission = Symbol('mock permission')
-
-      const sampleRequest = createMockRequest({ permission, i18nCatalog })
-
-      await getData(sampleRequest)
-
-      expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, i18nCatalog)
-    })
-
-    it('return value of licenceTypeDisplay is used for licenceTypeStr', async () => {
-      const licenceDisplay = Symbol('licence display')
-      licenceTypeDisplay.mockReturnValueOnce(licenceDisplay)
-
-      const { licenceTypeStr } = await getData(createMockRequest())
-
-      expect(licenceTypeStr).toBe(licenceDisplay)
-    })
-
-    it.each(['hasDisabled', 'getAgeConcession'])('calls concessionHelper.%s with current permission', async method => {
-      const permission = Symbol('mock permission')
-      await getData(createMockRequest({ permission }))
-
-      expect(concessionHelper[method]).toHaveBeenCalledWith(permission)
-    })
-
-    it.each([
-      ['hasDisabled', 'disabled'],
-      ['getAgeConcession', 'ageConcession']
-    ])('returns value of concessionHelper.%s for %s', async (method, key) => {
-      const returnValue = Symbol('return value')
-      concessionHelper[method].mockReturnValueOnce(returnValue)
-
-      const data = await getData(createMockRequest())
-
-      expect(data[key]).toBe(returnValue)
-    })
-
-    it.each(['displayStartTime', 'displayEndTime'])('calls %s with request and permission', async method => {
-      const permission = Symbol('mock permission')
-      const request = createMockRequest({ permission })
-      await getData(request)
-      expect(dtDisplay[method]).toHaveBeenCalledWith(request, permission)
-    })
-
-    it.each([
-      ['displayStartTime', 'startTimeString'],
-      ['displayEndTime', 'endTimeString']
-    ])('calls %s with request and permission', async (method, key) => {
-      const returnValue = Symbol('return value')
-      dtDisplay[method].mockReturnValueOnce(returnValue)
-      const data = await getData(createMockRequest())
-      expect(data[key]).toBe(returnValue)
-    })
-
-    it.each([
-      { desc: 'senior', method: 'hasSenior', catKey: 'age_senior_concession' },
-      { desc: 'junior', method: 'hasJunior', catKey: 'age_junior_concession' }
-    ])('returns $desc concession text when age concession is $desc', async ({ method, catKey }) => {
-      concessionHelper[method].mockReturnValueOnce(true)
-      const ageConcession = Symbol('age concession')
-      const mockRequest = createMockRequest({ i18nCatalog: { [catKey]: ageConcession } })
-      const { ageConcessionText } = await getData(mockRequest)
-      expect(ageConcessionText).toBe(ageConcession)
-    })
-
-    it('returns the expected data', async () => {
-      const mockRequest = createMockRequest()
-      dtDisplay.displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-      dtDisplay.displayEndTime.mockReturnValueOnce('1:00am on 5 June 2021')
-      licenceTypeDisplay.mockReturnValueOnce('Shopping trollies and old wellies')
-      concessionHelper.hasDisabled.mockReturnValueOnce(true)
-      concessionHelper.hasSenior.mockReturnValueOnce(true)
-      concessionHelper.getAgeConcession.mockReturnValueOnce({ proof: { type: 'No Proof' }, type: 'Senior' })
-      const result = await getData(mockRequest)
-      expect(result).toMatchSnapshot()
     })
   })
-})
-
-const getSamplePermission = () => ({
-  startDate: '2020-06-06',
-  endDate: '2021-06-05',
-  licenceType: LICENCE_TYPE['trout-and-coarse'],
-  numberOfRods: '3',
-  concessions: [
-    {
-      type: CONCESSION.DISABLED,
-      proof: {
-        type: CONCESSION_PROOF.blueBadge,
-        referenceNumber: '123456324'
-      }
-    },
-    {
-      type: CONCESSION.SENIOR,
-      proof: {
-        type: CONCESSION_PROOF.none
-      }
-    }
-  ]
-})
-
-const createMockRequest = ({
-  status = { [COMPLETION_STATUS.agreed]: true, [COMPLETION_STATUS.posted]: true, [COMPLETION_STATUS.finalised]: true },
-  permission = getSamplePermission(),
-  i18nCatalog = { age_senior_concession: 'age_senior_concession', age_junior_concession: 'age_junior_concession' }
-} = {}) => ({
-  cache: () => ({
-    helpers: {
-      status: {
-        get: () => status
-      },
-      transaction: {
-        getCurrentPermission: () => permission
-      }
-    }
-  }),
-  i18n: {
-    getCatalog: () => i18nCatalog
-  }
 })
