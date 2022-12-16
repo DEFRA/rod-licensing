@@ -5,7 +5,6 @@ import { validation, RENEW_BEFORE_DAYS, RENEW_AFTER_DAYS, SERVICE_LOCAL_TIME } f
 import Joi from 'joi'
 import { salesApi } from '@defra-fish/connectors-lib'
 import moment from 'moment-timezone'
-import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 /**
  * Handler to authenticate the user on the easy renewals journey. It will
@@ -39,14 +38,14 @@ export default async (request, h) => {
         endDate: authenticationResult.permission.endDate
       }
     })
-    return h.redirect(addLanguageCodeToUri(request, RENEWAL_INACTIVE.uri))
+    return h.redirectWithLanguageCode(request, RENEWAL_INACTIVE.uri)
   }
 
   if (!authenticationResult) {
     payload.referenceNumber = referenceNumber
     await request.cache().helpers.page.setCurrentPermission(IDENTIFY.page, { payload, error: { referenceNumber: 'string.invalid' } })
     await request.cache().helpers.status.setCurrentPermission({ referenceNumber, authentication: { authorized: false } })
-    return h.redirect(addLanguageCodeToUri(request, IDENTIFY.uri))
+    return h.redirectWithLanguageCode(request, IDENTIFY.uri)
   } else {
     // Test for 12 month licence
     const daysDiff = moment(authenticationResult.permission.endDate).diff(moment().tz(SERVICE_LOCAL_TIME).startOf('day'), 'days')
@@ -63,7 +62,7 @@ export default async (request, h) => {
         await setUpCacheFromAuthenticationResult(request, authenticationResult)
         await setUpPayloads(request)
         await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: true } })
-        return h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
+        return h.redirectWithLanguageCode(request, CONTROLLER.uri)
       }
     } else {
       return linkInactive(RENEWAL_ERROR_REASON.NOT_ANNUAL)

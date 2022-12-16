@@ -1,5 +1,4 @@
 import handler from '../authentication-handler.js'
-import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../../uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
@@ -54,22 +53,10 @@ describe.each([
   })
 
   it(`redirects to decorated uri if auth ${authResult ? 'passes' : 'fails'}`, async () => {
-    const expectedUri = Symbol('decorated uri')
-    addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
+    const mockRequest = getSampleRequest()
     const responseToolkit = getSampleResponseToolkit()
-    await handler(getSampleRequest(), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(expectedUri)
-  })
-
-  it(`passes request to addLanguageCodeToUri if auth ${authResult ? 'passes' : 'fails'}`, async () => {
-    const request = getSampleRequest()
-    await handler(request, getSampleResponseToolkit())
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
-  })
-
-  it(`passes ${uriDescription} uri to addLangaugeCodeToUri if result error ${authResult ? 'passes' : 'fails'}`, async () => {
-    await handler(getSampleRequest(), getSampleResponseToolkit())
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), redirectUri)
+    await handler(mockRequest, responseToolkit)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, redirectUri)
   })
 
   const getSampleRequest = () => ({
@@ -101,6 +88,6 @@ describe.each([
     })
   })
   const getSampleResponseToolkit = () => ({
-    redirect: jest.fn()
+    redirectWithLanguageCode: jest.fn()
   })
 })
