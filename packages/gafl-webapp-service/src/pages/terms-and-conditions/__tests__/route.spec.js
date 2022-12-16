@@ -3,11 +3,12 @@ import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { LICENCE_SUMMARY, CONTACT_SUMMARY } from '../../../uri.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { LICENCE_TYPE } from '../../../processors/mapping-constants.js'
 
 jest.mock('../../../processors/mapping-constants.js', () => ({
   LICENCE_TYPE: {
-    'trout-and-coarse': 'Trout and coarse',
-    'salmon-and-sea-trout': 'Salmon and sea trout'
+    'trout-and-coarse': 'Test trout and coarse',
+    'salmon-and-sea-trout': 'Test Salmon'
   }
 }))
 
@@ -30,7 +31,7 @@ const getMockPermission = (price, type, rods) => ({
 
 const catalog = Symbol('mock catalog')
 
-const generateMockRequest = (statusGet = {}, transactionGet = {}) => ({
+const generateMockRequest = (transactionGet = {}, statusGet = { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true }) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -57,12 +58,12 @@ describe('terms-and-conditions > route', () => {
     beforeEach(() => jest.clearAllMocks())
 
     it('LICENCE_SUMMARY redirect', async () => {
-      const func = () => getData(generateMockRequest({ [LICENCE_SUMMARY.page]: false }))
+      const func = () => getData(generateMockRequest({}, { [LICENCE_SUMMARY.page]: false }))
       await expect(func).rejects.toThrowRedirectTo(LICENCE_SUMMARY.uri)
     })
 
     it('CONTACT_SUMMARY redirect', async () => {
-      const func = () => getData(generateMockRequest({ [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: false }))
+      const func = () => getData(generateMockRequest({}, { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: false }))
       await expect(func).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
     })
 
@@ -74,54 +75,47 @@ describe('terms-and-conditions > route', () => {
     ])('returns whether payment is required', async (price, anotherPrice, paymentRequired) => {
       const data = await getData(
         generateMockRequest(
-          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-          { permissions: [getMockPermission(price), getMockPermission(anotherPrice)] }
+          { permissions: [getMockPermission(price), getMockPermission(anotherPrice)] },
+          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true }
         )
       )
       expect(data.paymentRequired).toBe(paymentRequired)
     })
 
-    it('test licenceTypeDisplay is called with permission and mssgs', async () => {
-      const func = () => getData(generateMockRequest({ [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: false }))
-      await expect(func).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
-    })
-
-    const troutAndCoarse2Rods = 'Trout and coarse, up to 2 rods'
-    const troutAndCoarse3Rods = 'Trout and coarse, up to 3 rods'
-    const salmonAndSeaTrout = 'Salmon and sea trout'
+    const troutAndCoarse2Rods = '2 rods, Trout and coarse'
+    const troutAndCoarse3Rods = '3 rods, Trout and coarse'
+    const salmonAndSeaTrout = 'Salmon'
 
     it.each([[troutAndCoarse2Rods], [troutAndCoarse3Rods], [salmonAndSeaTrout]])(
       'licenceTypeDisplay is called with permission and catalog',
       async type => {
         const permission = getMockPermission(10, type)
         await getData(
-          generateMockRequest(
-            { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-            {
-              permissions: [permission]
-            }
-          )
+          generateMockRequest({
+            permissions: [permission]
+          })
         )
 
         expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
       }
     )
 
+    const getSamplePermissions = (type, rods) => {
+      return [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, 'type', '4')]
+    }
+
     const mockGetData = async (type, rods) => {
       return await getData(
-        generateMockRequest(
-          { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
-          {
-            permissions: [getMockPermission(1, type, rods), getMockPermission(1, type, rods), getMockPermission(0, 'type', '4')]
-          }
-        )
+        generateMockRequest({
+          permissions: getSamplePermissions(type, rods)
+        })
       )
     }
 
     describe.each([
-      ['Trout and coarse', '2', true, false, false],
-      ['Trout and coarse', '3', false, true, false],
-      ['Salmon and sea trout', '1', false, false, true]
+      [LICENCE_TYPE['trout-and-coarse'], '2', true, false, false],
+      [LICENCE_TYPE['trout-and-coarse'], '3', false, true, false],
+      [LICENCE_TYPE['salmon-and-sea-trout'], '1', false, false, true]
     ])('testing whether correct type is set to display', (type, rods, troutTwoFlag, troutThreeFlag, salmonFlag) => {
       it('returns whether to display Trout and coarse, up to 2 rods conditions', async () => {
         const result = await mockGetData(type, rods)
