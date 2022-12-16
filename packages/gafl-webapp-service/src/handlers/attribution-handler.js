@@ -13,10 +13,10 @@ export default async (request, h) => {
 
   if (request.query[UTM.CAMPAIGN] === RENEWALS_CAMPAIGN_ID) {
     if (request.query[QUERYSTRING_LICENCE_KEY]) {
-      return h.redirect(`${RENEWAL_BASE.uri}/${request.query[QUERYSTRING_LICENCE_KEY]}`)
+      return h.redirectWithLanguageCode(`${RENEWAL_BASE.uri}/${request.query[QUERYSTRING_LICENCE_KEY]}`)
     }
-    return h.redirect(IDENTIFY.uri)
+    return h.redirectWithLanguageCode(IDENTIFY.uri)
   }
 
-  return h.redirect(process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT)
+  return h.redirectWithLanguageCode(process.env.ATTRIBUTION_REDIRECT || ATTRIBUTION_REDIRECT_DEFAULT)
 }
