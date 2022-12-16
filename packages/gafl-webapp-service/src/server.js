@@ -25,6 +25,7 @@ import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
+import { addLanguageCodeToUri } from './processors/uri-helper.js'
 airbrake.initialise()
 let server
 
@@ -178,6 +179,12 @@ const init = async () => {
    * simple setters and getters hiding the session key.
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
+
+  server.decorate('toolkit', 'redirectWithLanguageCode', function (request, redirect) {
+    const uriWithLanguage = addLanguageCodeToUri(request, redirect)
+
+    return this.redirect(uriWithLanguage)
+  })
 
   if (process.env.CHANNEL === 'telesales') {
     await initialiseOIDC(server)
