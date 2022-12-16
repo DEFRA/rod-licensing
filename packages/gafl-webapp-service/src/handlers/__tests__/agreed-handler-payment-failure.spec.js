@@ -7,11 +7,9 @@ import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, PAYMENT_FAILED, PAYMENT_CANCELLED } from '../../uri.js'
 
 import agreedHandler from '../agreed-handler.js'
-import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { getPaymentStatus, sendPayment } from '../../services/payment/govuk-pay-service.js'
 import { preparePayment } from '../../processors/payment.js'
 jest.mock('../../services/payment/govuk-pay-service.js')
-jest.mock('../../processors/uri-helper.js')
 jest.mock('../../processors/payment.js')
 
 beforeAll(() => {
@@ -123,7 +121,7 @@ const getMockRequest = () => ({
 })
 
 const getRequestToolkit = () => ({
-  redirect: jest.fn()
+  redirectWithLanguageCode: jest.fn()
 })
 
 const getSendPaymentMockImplementation = () => ({
@@ -158,7 +156,6 @@ describe('The agreed handler', () => {
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
   ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
-    addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
@@ -198,7 +195,6 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.paymentCompleted]).not.toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
-    addLanguageCodeToUri.mockReturnValue('/buy/agreed')
     await injectWithCookies('GET', PAYMENT_FAILED.uri)
     const data4 = await injectWithCookies('POST', PAYMENT_FAILED.uri, {})
     expect(data4.statusCode).toBe(302)
@@ -225,26 +221,15 @@ describe('The agreed handler', () => {
       })
     })
 
-    it('calls addLanguageCodeToUri', async () => {
-      const mockRequest = getMockRequest()
-
-      addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
-
-      await agreedHandler(mockRequest, getRequestToolkit())
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
-    })
-
     it('calls redirect correctly', async () => {
       preparePayment.mockImplementation(() => {})
       sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
       const requestToolkit = getRequestToolkit()
-      const expectedPath = Symbol('expected path')
-      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+      const mockRequest = getMockRequest()
 
-      await agreedHandler(getMockRequest(), requestToolkit)
+      await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
     })
   })
 
@@ -259,32 +244,19 @@ describe('The agreed handler', () => {
       })
     })
 
-    it('calls addLanguageCodeToUri', async () => {
-      const mockRequest = getMockRequest()
-
-      addLanguageCodeToUri.mockReturnValue('/buy/payment-failed')
-
-      await agreedHandler(mockRequest, getRequestToolkit())
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
-    })
-
     it('calls redirect correctly', async () => {
       preparePayment.mockImplementation(() => {})
       sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
       const requestToolkit = getRequestToolkit()
-      const expectedPath = Symbol('expected path')
-      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+      const mockRequest = getMockRequest()
 
-      await agreedHandler(getMockRequest(), requestToolkit)
+      await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
     })
   })
 
   it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
-    addLanguageCodeToUri.mockReturnValue('/buy/payment-cancelled')
-
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -326,7 +298,6 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
 
     // Perform the redirect to the payment failed screen and attempt payment again
-    addLanguageCodeToUri.mockReturnValue('/buy/agreed')
     await injectWithCookies('GET', PAYMENT_CANCELLED.uri)
     const data3 = await injectWithCookies('POST', PAYMENT_CANCELLED.uri, {})
     expect(data3.statusCode).toBe(302)
@@ -363,26 +334,15 @@ describe('The agreed handler', () => {
       })
     })
 
-    it('calls addLanguageCodeToUri', async () => {
-      const mockRequest = getMockRequest()
-
-      addLanguageCodeToUri.mockReturnValue('/buy/payment-cancelled')
-
-      await agreedHandler(mockRequest, getRequestToolkit())
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, PAYMENT_CANCELLED.uri)
-    })
-
     it('calls redirect correctly', async () => {
       preparePayment.mockImplementation(() => {})
       sendPayment.mockImplementation(() => getSendPaymentMockImplementation())
       const requestToolkit = getRequestToolkit()
-      const expectedPath = Symbol('expected path')
-      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+      const mockRequest = getMockRequest()
 
-      await agreedHandler(getMockRequest(), requestToolkit)
+      await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, PAYMENT_CANCELLED.uri)
     })
   })
 
