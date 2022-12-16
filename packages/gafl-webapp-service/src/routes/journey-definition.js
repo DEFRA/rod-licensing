@@ -398,7 +398,7 @@ export default [
     current: CHANGE_CONTACT_DETAILS,
     next: {
       [CommonResults.OK]: {
-        page: VIEW_LICENCES
+        page: CHANGE_LICENCE_OPTIONS
       }
     }
   },

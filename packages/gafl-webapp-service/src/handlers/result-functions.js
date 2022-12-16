@@ -17,8 +17,7 @@ import {
   CONTACT,
   LICENCE_SUMMARY,
   NAME,
-  ADD_LICENCE,
-  CHANGE_CONTACT_DETAILS
+  ADD_LICENCE
 } from '../uri.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
@@ -35,7 +34,6 @@ import addressEntry from '../pages/contact/address/entry/result-function.js'
 import licenceSummary from '../pages/summary/licence-summary/result-function.js'
 import addLicence from '../pages/multibuy/add-licence/result-function.js'
 import multibuyAmendHandler from '../handlers/multibuy-amend-handler.js'
-import changeContactDetails from '../pages/multibuy/change-contact-details/result-function.js'
 
 /**
  * The result function determines the navigation in the route definition
@@ -56,6 +54,5 @@ export default {
   [LICENCE_CONFIRMATION_METHOD.page]: licenceConfirmationMethod,
   [NAME.page]: multibuyAmendHandler,
   [LICENCE_SUMMARY.page]: licenceSummary,
-  [ADD_LICENCE.page]: addLicence,
-  [CHANGE_CONTACT_DETAILS.page]: changeContactDetails
+  [ADD_LICENCE.page]: addLicence
 }
