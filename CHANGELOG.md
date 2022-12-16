@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.2 (2022-12-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1579](https://github.com/DEFRA/rod-licensing/pull/1579) Trigger specific error response codes from route ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.30.0-rc.1 (2022-12-13)
 
 #### :bug: Bug Fix
