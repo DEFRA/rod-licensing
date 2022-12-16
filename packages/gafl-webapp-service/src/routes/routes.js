@@ -35,6 +35,7 @@ import staticAssets from './static-routes.js'
 import miscRoutes from './misc-routes.js'
 import telesalesRoutes from './telesales-routes.js'
 import errorRoutes from './error-routes.js'
+import errorTestRoutes from './error-test-routes.js'
 
 const routes = [
   ...staticAssets,
@@ -74,6 +75,10 @@ if (process.env.CHANNEL === 'telesales') {
 
 if (process.env.ERROR_PAGE_ROUTE === 'true') {
   routes.push(...errorRoutes)
+}
+
+if (process.env.ERROR_PAGE_ROUTE === 'true') {
+  routes.push(...errorTestRoutes)
 }
 
 export default routes
