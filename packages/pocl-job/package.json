@@ -39,7 +39,7 @@
     "@defra-fish/connectors-lib": "1.23.0-rc.62",
     "commander": "^7.2.0",
     "debug": "^4.3.3",
-    "filesize": "^6.4.0",
+    "filesize": "^10.0.6",
     "md5-file": "^5.0.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
