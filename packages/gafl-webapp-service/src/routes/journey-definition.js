@@ -370,7 +370,7 @@ export default [
         page: ADD_PERMISSION
       },
       [CommonResults.NO]: {
-        page: VIEW_LICENCES
+        page: TERMS_AND_CONDITIONS
       }
     }
   },
@@ -379,7 +379,7 @@ export default [
     current: VIEW_LICENCES,
     next: {
       [CommonResults.OK]: {
-        page: TERMS_AND_CONDITIONS
+        page: ADD_LICENCE
       }
     }
   },
