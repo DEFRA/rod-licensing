@@ -30,6 +30,7 @@ export const LICENCE_SUMMARY = { uri: '/buy/licence-summary', page: 'licence-sum
 export const ADD_LICENCE = { uri: '/buy/add-licence', page: 'add-licence' }
 export const VIEW_LICENCES = { uri: '/buy/view-licences', page: 'view-licences' }
 export const CHANGE_LICENCE_OPTIONS = { uri: '/buy/change-licence-options', page: 'change-licence-options' }
+export const CHANGE_CONTACT_DETAILS = { uri: '/buy/change-contact-details', page: 'change-contact-details' }
 
 export const PAYMENT_CANCELLED = { uri: '/buy/payment-cancelled', page: 'payment-cancelled' }
 export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-failed' }

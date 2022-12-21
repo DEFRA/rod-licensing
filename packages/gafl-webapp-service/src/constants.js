@@ -73,6 +73,11 @@ export const CHANGE_LICENCE_OPTIONS_SEEN = {
   NOT_SEEN: 'not-seen'
 }
 
+export const CHANGE_CONTACT_DETAILS_SEEN = {
+  SEEN: 'seen',
+  NOT_SEEN: 'not-seen'
+}
+
 export const RENEWAL_ERROR_REASON = {
   NOT_DUE: 'not-due',
   EXPIRED: 'expired',

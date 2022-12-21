@@ -12,13 +12,15 @@ import {
   CONTACT_SUMMARY,
   ADDRESS_LOOKUP,
   ADDRESS_ENTRY,
+  ADDRESS_SELECT,
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   CONTACT,
   NEWSLETTER,
-  CHANGE_LICENCE_OPTIONS
+  CHANGE_LICENCE_OPTIONS,
+  CHANGE_CONTACT_DETAILS
 } from '../../uri.js'
-import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN, CHANGE_LICENCE_OPTIONS_SEEN } from '../../constants.js'
+import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN, CHANGE_LICENCE_OPTIONS_SEEN, CHANGE_CONTACT_DETAILS_SEEN } from '../../constants.js'
 
 describe('The licence-for page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FOR.page)
@@ -28,23 +30,12 @@ describe('The licence-for page', () => {
     expect(result).not.toBeTruthy()
   })
   it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(LICENCE_SUMMARY.uri)
   })
-  it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: CONTACT_SUMMARY_SEEN
-    }
-    const result = await currentPage.backLink(status)
-    expect(result).toBe(CONTACT_SUMMARY.uri)
-  })
   it('has a back-link to the licence options if the licence options page is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
@@ -53,16 +44,12 @@ describe('The licence-for page', () => {
 describe('The name page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === NAME.page)
   it('has a back-link to the licence-summary page if the licence-summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to the change-options page if the change-options is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
@@ -85,16 +72,12 @@ describe('The date-of-birth page', () => {
     expect(result).toBe(NAME.uri)
   })
   it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to licence options if the licence-options page is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
@@ -108,16 +91,12 @@ describe('The disability-concession page', () => {
     expect(result).toBe(DATE_OF_BIRTH.uri)
   })
   it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to licence options if the licence-options page is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
@@ -131,29 +110,33 @@ describe('The licence-to-start page', () => {
     expect(result).toBe(DISABILITY_CONCESSION.uri)
   })
   it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to licence options if the licence-options page is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
 })
 
 describe('The licence-type page', () => {
-  const n = journeyDefinition.find(n => n.current.page === LICENCE_TYPE.page)
-  it('has a back-link to the disability-concession page on initial viewing', () => {
-    expect(n.backLink({})).toBe(LICENCE_TO_START.uri)
+  const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_TYPE.page)
+  it('has a back-link to the disability-concession page on initial viewing', async () => {
+    const status = {}
+    const result = await currentPage.backLink(status, DISABILITY_CONCESSION.uri)
+    expect(result).toBe(DISABILITY_CONCESSION.uri)
   })
-  it('has a back-link to the license summary if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence summary if the summary is seen', async () => {
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
   })
+  it('has a back-link to licence options if the licence-options page is seen', async () => {
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
 })
 
 describe('The licence-length page', () => {
@@ -164,16 +147,12 @@ describe('The licence-length page', () => {
     expect(result).toBe(LICENCE_TYPE.uri)
   })
   it('has a back-link to the licence summary if the summary is seen', async () => {
-    const status = {
-      fromSummary: LICENCE_SUMMARY_SEEN
-    }
+    const status = { fromSummary: LICENCE_SUMMARY_SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(LICENCE_SUMMARY.uri)
   })
   it('has a back-link to licence options if the licence-options page is seen', async () => {
-    const status = {
-      fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN
-    }
+    const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
   })
@@ -191,84 +170,118 @@ describe('The licence-start-time page', () => {
 
 describe('The address-lookup page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === ADDRESS_LOOKUP.page)
-  it('has a back-link to the licence-summary page if the contact summary has not been seen', () => {
-    expect(currentPage.backLink({})).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence-summary page if the contact summary has not been seen', async () => {
+    const status = {}
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
   })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  it('has a back-link to the contact-summary page if the contact-summary is seen', async () => {
+    const status = { fromSummary: CONTACT_SUMMARY_SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CONTACT_SUMMARY.uri)
+  })
+  it('has a back-link to contact details if the contact-details page is seen', async () => {
+    const status = { fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
   })
 })
 
 describe('The address-entry page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === ADDRESS_ENTRY.page)
-  it('has a back-link to the address-lookup page if the contact summary has not been seen', () => {
-    expect(currentPage.backLink({})).toBe(ADDRESS_LOOKUP.uri)
+  it('has a back-link to the address-lookup page', () => {
+    expect(currentPage.backLink).toBe(ADDRESS_LOOKUP.uri)
   })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+})
+
+describe('The address-select page', () => {
+  const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === ADDRESS_SELECT.page)
+  it('has a back-link to the address-lookup page', () => {
+    expect(currentPage.backLink).toBe(ADDRESS_LOOKUP.uri)
   })
 })
 
 describe('The licence-fulfilment page', () => {
-  it('has a back-link to the address-lookup page if the contact summary has not been seen', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FULFILMENT.page)
-    expect(currentPage.backLink({})).toBe(ADDRESS_LOOKUP.uri)
+  const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FULFILMENT.page)
+  it('has a back-link to the address-lookup page if the contact summary has not been seen', async () => {
+    const status = {}
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(ADDRESS_LOOKUP.uri)
   })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FULFILMENT.page)
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  it('has a back-link to the contact-summary page if the contact-summary is seen', async () => {
+    const status = { fromSummary: CONTACT_SUMMARY_SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CONTACT_SUMMARY.uri)
   })
-  it('has a back-link to the licence-summary page if in renewal', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FULFILMENT.page)
-    expect(currentPage.backLink({}, { isRenewal: true })).toBe(LICENCE_SUMMARY.uri)
+  it('has a back-link to the licence-summary page if in renewal', async () => {
+    const status = { isRenewal: true }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(LICENCE_SUMMARY.uri)
+  })
+  it('has a back-link to contact details if the contact-details page is seen', async () => {
+    const status = { fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
   })
 })
 
 describe('The licence-confirmation page', () => {
-  it('has a back-link to the licence-fulfilment page if the contact-summary has not been seen', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_CONFIRMATION_METHOD.page)
-    expect(currentPage.backLink({})).toBe(LICENCE_FULFILMENT.uri)
+  const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_CONFIRMATION_METHOD.page)
+  it('has a back-link to the licence-fulfilment page if the contact-summary has not been seen', async () => {
+    const status = {}
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(LICENCE_FULFILMENT.uri)
   })
-  it('has a back-link to the licence-fulfilment page if the contact-summary has been seen and the last sumbitted page is licence-fulfilment', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_CONFIRMATION_METHOD.page)
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN, currentPage: LICENCE_FULFILMENT.page })).toBe(LICENCE_FULFILMENT.uri)
+  it('has a back-link to the contact summary page if the contact-summary has been seen', async () => {
+    const status = { fromSummary: CONTACT_SUMMARY_SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CONTACT_SUMMARY.uri)
   })
-  it('has a back-link to the licence-fulfilment page if the contact-summary has been seen and the last sumbitted page is licence-confirmation-method', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_CONFIRMATION_METHOD.page)
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN, currentPage: LICENCE_CONFIRMATION_METHOD.page })).toBe(
-      LICENCE_FULFILMENT.uri
-    )
-  })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_CONFIRMATION_METHOD.page)
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  it('has a back-link to contact details if the contact-details page is seen', async () => {
+    const status = { fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
   })
 })
 
 describe('The contact page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === CONTACT.page)
-  it('has a back-link to the address-lookup page if the contact summary has not been seen and is not a physical licence', () => {
-    expect(currentPage.backLink({}, {})).toBe(ADDRESS_LOOKUP.uri)
+  it('has a back-link to the address-lookup page if the contact summary has not been seen and is not a physical licence', async () => {
+    const status = {}
+    const transaction = { licenceLength: '1D' }
+    const result = await currentPage.backLink(status, transaction)
+    expect(result).toBe(ADDRESS_LOOKUP.uri)
   })
-  it('has a back-link to the licence confirmation method page if the contact summary has not been seen and is a physical licence', () => {
-    expect(currentPage.backLink({}, { licenceLength: '12M' })).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+  it('has a back-link to the licence confirmation method page if the contact summary has not been seen and is a physical licence', async () => {
+    const status = {}
+    const transaction = { licenceLength: '12M' }
+    const result = await currentPage.backLink(status, transaction)
+    expect(result).toBe(LICENCE_CONFIRMATION_METHOD.uri)
   })
-  it('has a back-link to the licence confirmation method page if the contact summary has been seen and the last submitted page is licence confirmation method', () => {
-    expect(currentPage.backLink({ currentPage: LICENCE_CONFIRMATION_METHOD.page, fromSummary: CONTACT_SUMMARY_SEEN })).toBe(
-      LICENCE_CONFIRMATION_METHOD.uri
-    )
+  it('has a back-link to the contact-summary page if the contact-summary is seen', async () => {
+    const status = { fromSummary: CONTACT_SUMMARY_SEEN }
+    const transaction = {}
+    const result = await currentPage.backLink(status, transaction)
+    expect(result).toBe(CONTACT_SUMMARY.uri)
   })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  it('has a back-link to contact details if the contact-details page is seen', async () => {
+    const status = { fromContactDetailsSeen: CHANGE_CONTACT_DETAILS_SEEN.SEEN }
+    const transaction = {}
+    const result = await currentPage.backLink(status, transaction)
+    expect(result).toBe(CHANGE_CONTACT_DETAILS.uri)
   })
 })
 
 describe('The newsletter page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === NEWSLETTER.page)
-  it('has a back-link to the contact page if the contact summary has not been seen', () => {
-    expect(currentPage.backLink({})).toBe(CONTACT.uri)
+  it('has a back-link to the contact page if the contact summary has not been seen', async () => {
+    const status = {}
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CONTACT.uri)
   })
-  it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
-    expect(currentPage.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  it('has a back-link to the contact-summary page if the contact-summary is seen', async () => {
+    const status = { fromSummary: CONTACT_SUMMARY_SEEN }
+    const result = await currentPage.backLink(status)
+    expect(result).toBe(CONTACT_SUMMARY.uri)
   })
 })
