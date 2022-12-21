@@ -4,11 +4,13 @@ import pageRoute from '../../../routes/page-route.js'
 import { LICENCE_DETAILS } from '../../../uri.js'
 import { COMPLETION_STATUS } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
 
 export const getData = async request => {
+  const mssgs = request.i18n.getCatalog()
+  const transaction = await request.cache().helpers.transaction.get()
   const status = await request.cache().helpers.status.get()
 
   if (!status[COMPLETION_STATUS.agreed]) {
@@ -23,19 +25,49 @@ export const getData = async request => {
     throw Boom.forbidden('Attempt to access the licence information handler with no finalised flag set')
   }
 
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
-  const startTimeString = displayStartTime(request, permission)
-  const endTimeString = displayEndTime(request, permission)
+  const licences = transaction.permissions.map((permission, index) => ({
+    referenceNumber: permission.referenceNumber,
+    licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
+    obfuscatedDob: permission.licensee.obfuscatedDob,
+    type: licenceTypeDisplay(permission, mssgs),
+    length: licenceLengthText(permission, mssgs),
+    start: displayStartTime(request, permission),
+    end: displayEndTime(request, permission),
+    price: permission.permit.cost,
+    disabled: concessionHelper.hasDisabled(permission),
+    ageConcession: ageConcessionText(permission, mssgs),
+    index
+  }))
 
   return {
-    permission,
-    startTimeString,
-    endTimeString,
-    disabled: concessionHelper.hasDisabled(permission),
-    ageConcession: concessionHelper.getAgeConcession(permission),
-    licenceTypeStr: licenceTypeDisplay(permission, request.i18n.getCatalog())
+    licences
   }
+}
+
+const ageConcessionText = (permission, mssgs) => {
+  const concession = concessionHelper.getAgeConcession(permission)
+
+  if (concession) {
+    if (concession.type === 'Senior') {
+      return mssgs.age_senior_concession
+    } else if (concession.type === 'Junior') {
+      return mssgs.age_junior_concession
+    }
+  }
+
+  return false
+}
+
+const licenceLengthText = (permission, mssgs) => {
+  const length = licenceTypeAndLengthDisplay(permission, mssgs)
+
+  if (length === '1D') {
+    return mssgs.licence_type_1d
+  } else if (length === '8D') {
+    return mssgs.licence_type_8d
+  }
+
+  return mssgs.licence_type_12m
 }
 
 export default pageRoute(LICENCE_DETAILS.page, LICENCE_DETAILS.uri, null, nextPage, getData)

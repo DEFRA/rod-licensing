@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns age concession as Junior 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": Symbol(Junior (13 to 16)),
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(12 months),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns age concession as Neither 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": false,
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(12 months),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns age concession as Senior 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": Symbol(Over 65),
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(12 months),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns expected data 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": false,
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(12 months),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as 1D 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": false,
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(1 day),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as 8D 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": false,
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(8 days),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;
+
+exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as 12M 1`] = `
+Object {
+  "licences": Array [
+    Object {
+      "ageConcession": false,
+      "disabled": "Disability",
+      "end": "End Time",
+      "index": 0,
+      "length": Symbol(12 months),
+      "licenceHolder": "Turanga Leela",
+      "obfuscatedDob": "obfuscatedDob",
+      "price": 12,
+      "referenceNumber": "123456789",
+      "start": "Start Time",
+      "type": "Licence Type",
+    },
+  ],
+}
+`;

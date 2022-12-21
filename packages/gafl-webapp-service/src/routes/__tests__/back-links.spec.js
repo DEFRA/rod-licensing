@@ -137,7 +137,6 @@ describe('The licence-type page', () => {
     const status = { fromLicenceOptions: CHANGE_LICENCE_OPTIONS_SEEN.SEEN }
     const result = await currentPage.backLink(status)
     expect(result).toBe(CHANGE_LICENCE_OPTIONS.uri)
-  })
 })
 
 describe('The licence-length page', () => {

@@ -4,7 +4,7 @@ import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
-import { AGREED, LICENCE_DETAILS, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
+import { AGREED, IDENTIFY, LICENCE_DETAILS, LICENCE_FOR, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
@@ -25,7 +25,9 @@ jest.mock('../../uri.js', () => ({
   ORDER_COMPLETE: { uri: '/buy/order/complete/page' },
   PAYMENT_CANCELLED: { uri: '/buy/payment/cancelled/page' },
   PAYMENT_FAILED: { uri: '/buy/payment/failed/page' },
-  PROCESS_ANALYTICS_PREFERENCES: { uri: '/buy/process/analytics/preferences/page' }
+  PROCESS_ANALYTICS_PREFERENCES: { uri: '/buy/process/analytics/preferences/page' },
+  LICENCE_FOR: { uri: '/buy/licence-for' },
+  IDENTIFY: { uri: '/buy/renew/identify' }
 }))
 
 describe('The page handler function', () => {
@@ -247,6 +249,35 @@ describe('The page handler function', () => {
         analyticsMessageDisplayed: false,
         analyticsSelected: false,
         acceptedTracking: false
+      })
+    )
+  })
+
+  it.each([[PAYMENT_CANCELLED.uri], [PAYMENT_FAILED.uri], [AGREED.uri], [ORDER_COMPLETE.uri], [LICENCE_DETAILS.uri]])(
+    'sets journeyBeginning is not set if not on licence_for or identify page',
+    async pageUri => {
+      const { get } = pageHandler('', 'view', '/next/page')
+      const toolkit = getMockToolkit()
+      const mockRequest = getMockRequest(null, pageUri)
+      await get(mockRequest, toolkit)
+      const pageData = toolkit.view.mock.calls[0][1]
+      expect(pageData).toEqual(
+        expect.not.objectContaining({
+          journeyBeginning: true
+        })
+      )
+    }
+  )
+
+  it.each([[IDENTIFY.uri], [LICENCE_FOR.uri]])('sets journeyBeginning to true if on licence_for or identify page', async pageUri => {
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    const mockRequest = getMockRequest(null, pageUri)
+    await get(mockRequest, toolkit)
+    const pageData = toolkit.view.mock.calls[0][1]
+    expect(pageData).toEqual(
+      expect.objectContaining({
+        journeyBeginning: true
       })
     )
   })

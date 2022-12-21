@@ -1,4 +1,150 @@
 
+## v1.28.0-rc.5 (2022-12-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1556](https://github.com/DEFRA/rod-licensing/pull/1556) Welsh - translations licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.28.0-rc.4 (2022-11-28)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1555](https://github.com/DEFRA/rod-licensing/pull/1555) Welsh Translations - order complete licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.28.0-rc.3 (2022-11-28)
+
+#### :rocket: Enhancement
+* [#1557](https://github.com/DEFRA/rod-licensing/pull/1557) Update dev env docker config ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.28.0-rc.2 (2022-11-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1554](https://github.com/DEFRA/rod-licensing/pull/1554) Persist language - order complete and licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.28.0-rc.0 (2022-11-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1552](https://github.com/DEFRA/rod-licensing/pull/1552) Welsh translation - order complete page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1553](https://github.com/DEFRA/rod-licensing/pull/1553) Welsh translation - licence details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.27.0-rc.21 (2022-11-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1546](https://github.com/DEFRA/rod-licensing/pull/1546) Back button - licence type ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.20 (2022-11-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1535](https://github.com/DEFRA/rod-licensing/pull/1535) Refactor licence summary page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.27.0-rc.19 (2022-11-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1534](https://github.com/DEFRA/rod-licensing/pull/1534) Welsh - contact details ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.18 (2022-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1540](https://github.com/DEFRA/rod-licensing/pull/1540) Translation for you do not need a licence yet ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.27.0-rc.17 (2022-11-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1538](https://github.com/DEFRA/rod-licensing/pull/1538) Translation to how do they want their licence page ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.27.0-rc.15 (2022-11-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1536](https://github.com/DEFRA/rod-licensing/pull/1536) Welsh translation for Do they want to go paperless? page ([@MickStein](https://github.com/MickStein))
+  * [#1533](https://github.com/DEFRA/rod-licensing/pull/1533) Welsh - do you receive any of the following ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.14 (2022-11-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1529](https://github.com/DEFRA/rod-licensing/pull/1529) Amend journey content for under 13 ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.27.0-rc.13 (2022-11-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1503](https://github.com/DEFRA/rod-licensing/pull/1503) Welsh language - persist on error page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.27.0-rc.11 (2022-11-01)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1495](https://github.com/DEFRA/rod-licensing/pull/1495) Google search takes user incorrect page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1518](https://github.com/DEFRA/rod-licensing/pull/1518) Analytics error when in welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+
+## v1.27.0-rc.7 (2022-10-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1504](https://github.com/DEFRA/rod-licensing/pull/1504) Route to view server error page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1501](https://github.com/DEFRA/rod-licensing/pull/1501) Welsh translation - error page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.27.0-rc.6 (2022-10-12)
 
 #### :rocket: Enhancement

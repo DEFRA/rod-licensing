@@ -1,100 +1,104 @@
-{% macro accordion(mssgs) %}
+{% macro accordion(mssgs, troutAndCoarse2Rods, troutAndCoarse3Rods, salmonAndSeaTrout) %}
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
-        <div class="govuk-accordion__section ">
-            <div class="govuk-accordion__section-header">
-            <h2 class="govuk-accordion__section-heading">
-                <span class="govuk-accordion__section-button" id="accordion-default-heading-1">
-                    {{ mssgs.licence_type_radio_trout_two_rod }}
-                </span>
-            </h2>
+        {% if troutAndCoarse2Rods %}
+            <div class="govuk-accordion__section ">
+                <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button" id="accordion-default-heading-1">
+                        {{ mssgs.licence_type_radio_trout_two_rod }}
+                    </span>
+                </h2>
+                </div>
+                <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
+                    <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_heading }}</h2>
+                    <p class="govuk-body">{{ mssgs.licence_conditions_paragraph }}</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.licence_conditions_bulletpoint_1 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_2 }}</li>
+                        <li>{{ mssgs.licence_conditions_trout_two_rod_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_4 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_6 }}</li>
+                    </ul>
+                    <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_important_info }}</h2>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_1 }}</li>
+                        <li>{{ mssgs.licence_conditions_trout_info_bulletpoint_2 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_4 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_trout_two_rod_info_bulletpoint_6 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_6 }}</li>
+                    </ul>
+                </div>
             </div>
-            <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
-                <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_heading }}</h2>
-                <p class="govuk-body">{{ mssgs.licence_conditions_paragraph }}</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.licence_conditions_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.licence_conditions_trout_two_rod_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_4 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_6 }}</li>
-                </ul>
-                <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_important_info }}</h2>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.licence_conditions_trout_info_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_4 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_trout_two_rod_info_bulletpoint_6 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_6 }}</li>
-                </ul>
+        {% endif %}
+        {% if troutAndCoarse3Rods %}
+            <div class="govuk-accordion__section ">
+                <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button" id="accordion-default-heading-2">
+                        {{ mssgs.licence_type_radio_trout_three_rod }}
+                    </span>
+                </h2>
+                </div>
+                <div id="accordion-default-content-2" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-2">
+                    <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_heading }}</h2>
+                    <p class="govuk-body">{{ mssgs.licence_conditions_paragraph }}</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.licence_conditions_bulletpoint_1 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_2 }}</li>
+                        <li>{{ mssgs.licence_conditions_trout_three_rod_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_4 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_6 }}</li>
+                    </ul>
+                    <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_important_info }}</h2>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_1 }}</li>
+                        <li>{{ mssgs.licence_conditions_trout_info_bulletpoint_2 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_4 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_6 }}</li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        <div class="govuk-accordion__section ">
-            <div class="govuk-accordion__section-header">
-            <h2 class="govuk-accordion__section-heading">
-                <span class="govuk-accordion__section-button" id="accordion-default-heading-2">
-                    {{ mssgs.licence_type_radio_trout_three_rod }}
-                </span>
-            </h2>
+        {% endif %}
+        {% if salmonAndSeaTrout %}
+            <div class="govuk-accordion__section ">
+                <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+                    {{ mssgs.licence_type_radio_salmon }}
+                    </span>
+                </h2>
+                </div>
+                <div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+                    <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_heading }}</h2>
+                    <p class="govuk-body">{{ mssgs.licence_conditions_paragraph }}</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.licence_conditions_bulletpoint_1 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_2 }}</li>
+                        <li>{{ mssgs.licence_conditions_salmon_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_4 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_bulletpoint_6 }}</li>
+                        <li>{{ mssgs.licence_conditions_salmon_bulletpoint_7 }}</li>
+                    </ul>
+                    <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_important_info }}</h2>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_1 }}</li>
+                        <li>{{ mssgs.licence_conditions_salmon_info_bulletpoint_2 }}</li>
+                        <li>{{ mssgs.licence_conditions_salmon_info_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_3 }}</li>
+                        <li>{{ mssgs.licence_conditions_salmon_info_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_4 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_5 }}</li>
+                        <li>{{ mssgs.licence_conditions_info_bulletpoint_6 }}</li>
+                    </ul>
+                </div>
             </div>
-            <div id="accordion-default-content-2" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-2">
-                <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_heading }}</h2>
-                <p class="govuk-body">{{ mssgs.licence_conditions_paragraph }}</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.licence_conditions_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.licence_conditions_trout_three_rod_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_4 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_6 }}</li>
-                </ul>
-                <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_important_info }}</h2>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.licence_conditions_trout_info_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_4 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_6 }}</li>
-                </ul>
-            </div>
-        </div>
-        <div class="govuk-accordion__section ">
-            <div class="govuk-accordion__section-header">
-            <h2 class="govuk-accordion__section-heading">
-                <span class="govuk-accordion__section-button" id="accordion-default-heading-3">
-                {{ mssgs.licence_type_radio_salmon }}
-                </span>
-            </h2>
-            </div>
-            <div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
-                <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_heading }}</h2>
-                <p class="govuk-body">{{ mssgs.licence_conditions_paragraph }}</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.licence_conditions_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.licence_conditions_salmon_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_4 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_bulletpoint_6 }}</li>
-                    <li>{{ mssgs.licence_conditions_salmon_bulletpoint_7 }}</li>
-                </ul>
-                <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_important_info }}</h2>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.licence_conditions_salmon_info_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.licence_conditions_salmon_info_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.licence_conditions_salmon_info_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_4 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_5 }}</li>
-                    <li>{{ mssgs.licence_conditions_info_bulletpoint_6 }}</li>
-                </ul>
-            </div>
-        </div>
+        {% endif %}
     </div>
 {% endmacro %}
-
-

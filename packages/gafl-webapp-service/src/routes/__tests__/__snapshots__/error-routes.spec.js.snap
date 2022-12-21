@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Error route handlers CLIENT_ERROR route handler handler should return correct values 1`] = `
+exports[`Error route handlers error route CLIENT_ERROR handler handler should return correct values 1`] = `
 [MockFunction] {
   "calls": Array [
     Array [
@@ -27,7 +27,34 @@ exports[`Error route handlers CLIENT_ERROR route handler handler should return c
 }
 `;
 
-exports[`Error route handlers CLIENT_ERROR route has a return value with a method of GET and path of /buy/client-error 1`] = `
+exports[`Error route handlers error route SERVER_ERROR handler handler should return correct values 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "server-error",
+      Object {
+        "altLang": Array [],
+        "mssgs": Array [],
+        "serverError": "payload",
+        "uri": Object {
+          "agreed": "/buy/agreed",
+          "new": "/buy/new",
+        },
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "code": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Error route handlers error route has a return value with a method of GET and path of /buy/client-error and /buy/server-error 1`] = `
 Array [
   Object {
     "handler": [Function],
@@ -35,6 +62,13 @@ Array [
       "GET",
     ],
     "path": "/buy/client-error",
+  },
+  Object {
+    "handler": [Function],
+    "method": Array [
+      "GET",
+    ],
+    "path": "/buy/server-error",
   },
 ]
 `;

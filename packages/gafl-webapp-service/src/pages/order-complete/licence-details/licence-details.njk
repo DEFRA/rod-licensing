@@ -9,32 +9,6 @@
 {% set title = mssgs.licence_details_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
-{% if data.permission.licenceLength === '1D' %}
-    {% set lengthText = mssgs.licence_type_1d %}
-{% elseif data.permission.licenceLength === '8D' %}
-    {% set lengthText = mssgs.licence_type_8d %}
-{% else %}
-    {% set lengthText = mssgs.licence_type_12m %}
-{% endif %}
-
-{% if data.ageConcession %}
-    {% if data.ageConcession.type == mssgs.senior %}
-        {% set ageConcessionText = mssgs.age_senior_concession %}
-    {% elseif data.ageConcession.type == mssgs.age_junior %}
-        {% set ageConcessionText = mssgs.age_junior_concession %}
-    {% endif%}
-{% endif%}
-
-{% set licenseDetailsSummaryRows = [] %}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_name }, value: { text: data.permission.licensee.firstName + ' ' + data.permission.licensee.lastName } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.identification }, value: { text: data.permission.licensee.obfuscatedDob } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_type }, value: { text: data.licenceTypeStr } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_length }, value: { text: lengthText } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.starts }, value: { text: data.startTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.ends }, value: { text: data.endTimeString } }) }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }) if data.disabled }}
-{{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: ageConcessionText } }) if data.ageConcession }}
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -47,7 +21,11 @@
             <h1 class="govuk-heading-xl">{{ title }}</h1>
 
             <p class="govuk-body-l">
-                {{ mssgs.licence_details_body }}
+                {{ mssgs.licence_details_body_1 }}
+            </p>
+
+            <p class="govuk-body-l">
+                {{ mssgs.licence_details_body_2 }}
             </p>
         </section>
 
@@ -55,13 +33,32 @@
 
             <img src="/public/images/EA-logo-black.png" class="print-area ea-logo">
 
-            <span class="govuk-caption-xl"><span class="print-area">{{ mssgs.licence_num }}</span></span>
+            {% for licence in data.licences %}
 
-            <h2 class="govuk-heading-l">{{ data.permission.referenceNumber }}</h2>
+                {% set licenseDetailsSummaryRows = [
+                    { key: { text: mssgs.licence_summary_name }, value: { text: licence.licenceHolder } },
+                    { key: { text: mssgs.identification }, value: { text: licence.obfuscatedDob } },
+                    { key: { text: mssgs.licence_summary_type }, value: { text: licence.type } },
+                    { key: { text: mssgs.licence_summary_length }, value: { text: licence.length } },
+                    { key: { text: mssgs.starts }, value: { text: licence.start } },
+                    { key: { text: mssgs.ends }, value: { text: licence.end } }
+                ]
+                %}
 
-            {{ govukSummaryList({
-                rows: licenseDetailsSummaryRows
-            }) }}
+                {% if licence.disabled %}
+                    {% set licenseDetailsSummaryRows = (licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }), licenseDetailsSummaryRows) %}
+                {% endif %}
+                {% if licence.ageConcession %}
+                    {% set licenseDetailsSummaryRows = (licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: licence.ageConcession } }), licenseDetailsSummaryRows) %}
+                {% endif %}
+
+                <h2 class="govuk-heading-l">{{ licence.referenceNumber }}</h2>
+
+                {{ govukSummaryList({
+                    rows: licenseDetailsSummaryRows
+                }) }}
+
+            {% endfor %}
 
             {{ govukInsetText({
                 html: mssgs.licence_details_no_print_1 + '<br/>' + mssgs.licence_details_no_print_2 + '<a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link">' + mssgs.licence_details_no_print_link + '</a>' + mssgs.licence_details_no_print_3,
