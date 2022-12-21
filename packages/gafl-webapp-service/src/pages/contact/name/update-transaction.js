@@ -7,8 +7,6 @@ import { NAME } from '../../../uri.js'
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(NAME.page)
   const { licensee } = await request.cache().helpers.transaction.getCurrentPermission()
-  const { firstName } = payload['first-name']
-  const { lastName } = payload['last-name']
-  Object.assign(licensee, { firstName, lastName })
+  Object.assign(licensee, { firstName: payload['first-name'], lastName: payload['last-name'] })
   await request.cache().helpers.transaction.setCurrentPermission({ licensee })
 }
