@@ -41,13 +41,6 @@
                 isPageHeading: true
             }
         }) }}
-
-        {% if data.paymentRequired %}
-            {{ govukWarningText({
-                text: mssgs.terms_conds_warning,
-                iconFallbackText: "Warning"
-            }) }}
-        {% endif %}
         
         {{ accordion(mssgs, data.troutAndCoarse2Rods, data.troutAndCoarse3Rods, data.salmonAndSeaTrout)}}
 
@@ -71,6 +64,13 @@
             }
             ]
         }) }}
+
+        {% if data.paymentRequired %}
+            {{ govukWarningText({
+                text: mssgs.terms_conds_warning,
+                iconFallbackText: "Warning"
+            }) }}
+        {% endif %}
 
         {{ govukButton({
             attributes: { id: 'continue' },
