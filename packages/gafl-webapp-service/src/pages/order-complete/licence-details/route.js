@@ -47,8 +47,6 @@ export const getData = async request => {
 const ageConcessionText = (permission, mssgs) => {
   const concession = concessionHelper.getAgeConcession(permission)
 
-  console.log('concession:', concession)
-
   if (concession) {
     if (concession.type === 'Senior') {
       return mssgs.age_senior_concession
