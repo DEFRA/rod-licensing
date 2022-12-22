@@ -47,6 +47,8 @@ export const getData = async request => {
 const ageConcessionText = (permission, mssgs) => {
   const concession = concessionHelper.getAgeConcession(permission)
 
+  console.log('concession:', concession)
+
   if (concession) {
     if (concession.type === 'Senior') {
       return mssgs.age_senior_concession
@@ -61,9 +63,9 @@ const ageConcessionText = (permission, mssgs) => {
 const licenceLengthText = (permission, mssgs) => {
   const length = licenceTypeAndLengthDisplay(permission, mssgs)
 
-  if (length === '1D') {
+  if (length.includes('1 day')) {
     return mssgs.licence_type_1d
-  } else if (length === '8D') {
+  } else if (length.includes('8 days')) {
     return mssgs.licence_type_8d
   }
 
