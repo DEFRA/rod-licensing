@@ -1,4 +1,3 @@
-import db from 'debug'
 import pageHandler from '../page-handler.js'
 import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
@@ -6,7 +5,6 @@ import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
 import { AGREED, IDENTIFY, LICENCE_DETAILS, LICENCE_FOR, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
 
-jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
 
@@ -31,11 +29,6 @@ jest.mock('../../uri.js', () => ({
 }))
 
 describe('The page handler function', () => {
-  let fakeDebug
-
-  beforeAll(() => {
-    fakeDebug = db.mock.results[0].value
-  })
   beforeEach(() => {
     jest.resetAllMocks()
     journeyDefinition.length = 0
@@ -64,35 +57,6 @@ describe('The page handler function', () => {
     } catch (err) {
       expect(err.message).toBe('Random exception')
     }
-  })
-
-  it('logs the cache if getCurrentPermission throws an error', async () => {
-    const request = {
-      cache: () => ({
-        helpers: {
-          page: {
-            getCurrentPermission: () => {
-              throw new Error('Random exception')
-            },
-            get: () => ({})
-          },
-          status: {
-            get: () => ({})
-          },
-          transaction: {
-            get: () => ({})
-          },
-          analytics: {
-            get: () => ({})
-          }
-        }
-      })
-    }
-    await expect(pageHandler().get(request)).rejects.toThrow('Random exception')
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Page cache'))
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Status cache'))
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Transaction cache'))
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Analytics cache'))
   })
 
   it.each([['/previous/page'], ['/last/page']])('get calls addLanguageCodeToUri with request and backLink', async previousPage => {
