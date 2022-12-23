@@ -27,7 +27,6 @@ jest.mock('../../../../constants.js', () => ({
 }))
 
 jest.mock('@hapi/boom', () => ({
-  // forbidden: Symbol('403 Forbidden error')
   forbidden: () => {
     Symbol('403 Forbidden error')
   }
@@ -91,6 +90,7 @@ describe('licence-length > route', () => {
     beforeEach(() => jest.clearAllMocks())
 
     it('licenceTypeDisplay is called with permissions and mssgs', async () => {
+      licenceTypeAndLengthDisplay.mockReturnValue('length')
       const mockPermission = getMockPermission()
       const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       const mssgs = mockRequest.i18n.getCatalog()
@@ -107,6 +107,7 @@ describe('licence-length > route', () => {
     })
 
     it('displayStartTime is called request and permission', async () => {
+      licenceTypeAndLengthDisplay.mockReturnValue('length')
       const mockPermission = getMockPermission()
       const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
@@ -114,6 +115,7 @@ describe('licence-length > route', () => {
     })
 
     it('displayEndTime is called with request and permission', async () => {
+      licenceTypeAndLengthDisplay.mockReturnValue('length')
       const mockPermission = getMockPermission()
       const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
@@ -121,6 +123,7 @@ describe('licence-length > route', () => {
     })
 
     it('hasDisabled is called with permission', async () => {
+      licenceTypeAndLengthDisplay.mockReturnValue('length')
       const mockPermission = getMockPermission()
       const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
@@ -128,6 +131,7 @@ describe('licence-length > route', () => {
     })
 
     it('getAgeConcession is called with permission', async () => {
+      licenceTypeAndLengthDisplay.mockReturnValue('length')
       const mockPermission = getMockPermission()
       const mockRequest = getMockRequest(getMockStatus(), getMockTransaction(mockPermission))
       await getData(mockRequest)
@@ -141,15 +145,19 @@ describe('licence-length > route', () => {
       concessionHelper.hasDisabled.mockReturnValue('Disability')
 
       it('returns expected data', async () => {
+        licenceTypeAndLengthDisplay.mockReturnValue('length')
         const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
         expect(data).toMatchSnapshot()
       })
 
-      it.each([['1D'], ['8D'], ['12M']])('returns licence length as %s', async licenceLength => {
-        licenceTypeAndLengthDisplay.mockReturnValue(licenceLength)
-        const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
-        expect(data).toMatchSnapshot()
-      })
+      it.each([['Salmon and sea trout, 1 day'], ['Salmon and sea trout, 8 days'], ['Salmon and sea trout, 12 months']])(
+        'returns licence length as %s',
+        async licenceLength => {
+          licenceTypeAndLengthDisplay.mockReturnValue(licenceLength)
+          const data = await getData(getMockRequest(getMockStatus(), getMockTransaction()))
+          expect(data).toMatchSnapshot()
+        }
+      )
 
       it.each([['Senior'], ['Junior'], ['Neither']])('returns age concession as %s', async type => {
         const concession = {

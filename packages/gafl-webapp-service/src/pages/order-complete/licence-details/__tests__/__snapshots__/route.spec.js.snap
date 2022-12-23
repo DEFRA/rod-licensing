@@ -80,7 +80,7 @@ Object {
 }
 `;
 
-exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as 1D 1`] = `
+exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as Salmon and sea trout, 1 day 1`] = `
 Object {
   "licences": Array [
     Object {
@@ -100,7 +100,7 @@ Object {
 }
 `;
 
-exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as 8D 1`] = `
+exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as Salmon and sea trout, 8 days 1`] = `
 Object {
   "licences": Array [
     Object {
@@ -120,7 +120,7 @@ Object {
 }
 `;
 
-exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as 12M 1`] = `
+exports[`licence-length > route getData returns expected licence data for the given permission: returns licence length as Salmon and sea trout, 12 months 1`] = `
 Object {
   "licences": Array [
     Object {
