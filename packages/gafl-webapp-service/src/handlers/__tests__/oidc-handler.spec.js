@@ -76,7 +76,7 @@ describe('oidc handler', () => {
           ttl: jest.fn()
         }
       }
-      const fakeHandler = { redirect: jest.fn() }
+      const fakeHandler = { redirectWithLanguageCode: jest.fn() }
 
       salesApi.getSystemUser.mockResolvedValue({
         id: '26449770-5e67-e911-a988-000d3ab9df39',
@@ -99,7 +99,7 @@ describe('oidc handler', () => {
         email: mockSettings.TEST_EMAIL
       })
       expect(fakeRequest.cookieAuth.ttl).toHaveBeenCalledWith(expect.any(Number))
-      expect(fakeHandler.redirect).toHaveBeenCalledWith(mockSettings.TEST_POST_AUTH_REDIRECT)
+      expect(fakeHandler.redirectWithLanguageCode).toHaveBeenCalledWith(mockSettings.TEST_POST_AUTH_REDIRECT)
     })
 
     it('redirects to /oidc/role-required if the user does not have the required role set in Dynamics', async () => {
@@ -107,7 +107,7 @@ describe('oidc handler', () => {
         payload: { id_token: 'sample_token', state: mockSettings.TEST_STATE },
         cookieAuth: { set: jest.fn(), ttl: jest.fn() }
       }
-      const fakeHandler = { redirect: jest.fn() }
+      const fakeHandler = { redirectWithLanguageCode: jest.fn() }
 
       salesApi.getSystemUser.mockResolvedValue({
         id: '26449770-5e67-e911-a988-000d3ab9df39',
@@ -126,7 +126,7 @@ describe('oidc handler', () => {
       await expect(signIn(fakeRequest, fakeHandler)).resolves.toBeUndefined()
       expect(fakeRequest.cookieAuth.set).not.toHaveBeenCalled()
       expect(fakeRequest.cookieAuth.ttl).not.toHaveBeenCalled()
-      expect(fakeHandler.redirect).toHaveBeenCalledWith('/oidc/role-required')
+      expect(fakeHandler.redirectWithLanguageCode).toHaveBeenCalledWith('/oidc/role-required')
     })
 
     it('redirects to /oidc/account-disabled if the user account is not recognised in Dynamics', async () => {
@@ -134,12 +134,12 @@ describe('oidc handler', () => {
         payload: { id_token: 'sample_token', state: 'test_stored_state' },
         cookieAuth: { set: jest.fn(), ttl: jest.fn() }
       }
-      const fakeHandler = { redirect: jest.fn() }
+      const fakeHandler = { redirectWithLanguageCode: jest.fn() }
       salesApi.getSystemUser.mockResolvedValue(null)
       await expect(signIn(fakeRequest, fakeHandler)).resolves.toBeUndefined()
       expect(fakeRequest.cookieAuth.set).not.toHaveBeenCalled()
       expect(fakeRequest.cookieAuth.ttl).not.toHaveBeenCalled()
-      expect(fakeHandler.redirect).toHaveBeenCalledWith('/oidc/account-disabled')
+      expect(fakeHandler.redirectWithLanguageCode).toHaveBeenCalledWith('/oidc/account-disabled')
     })
 
     it('redirects to /oidc/account-disabled if the user account has been set to disabled in Dynamics', async () => {
@@ -147,7 +147,7 @@ describe('oidc handler', () => {
         payload: { id_token: 'sample_token', state: 'test_stored_state' },
         cookieAuth: { set: jest.fn(), ttl: jest.fn() }
       }
-      const fakeHandler = { redirect: jest.fn() }
+      const fakeHandler = { redirectWithLanguageCode: jest.fn() }
 
       salesApi.getSystemUser.mockResolvedValue({
         id: '26449770-5e67-e911-a988-000d3ab9df39',
@@ -166,20 +166,20 @@ describe('oidc handler', () => {
       await expect(signIn(fakeRequest, fakeHandler)).resolves.toBeUndefined()
       expect(fakeRequest.cookieAuth.set).not.toHaveBeenCalled()
       expect(fakeRequest.cookieAuth.ttl).not.toHaveBeenCalled()
-      expect(fakeHandler.redirect).toHaveBeenCalledWith('/oidc/account-disabled')
+      expect(fakeHandler.redirectWithLanguageCode).toHaveBeenCalledWith('/oidc/account-disabled')
     })
 
     it('throws errors authenticating the token back up the stack', async () => {
       mockOidcClient.callback.mockRejectedValue(new Error('error validating jwt token'))
       mockCache.get.mockResolvedValue(null)
       const fakeRequest = { payload: { id_token: 'sample_token', state: mockSettings.TEST_STATE } }
-      const fakeHandler = { redirect: jest.fn() }
+      const fakeHandler = { redirectWithLanguageCode: jest.fn() }
       await expect(signIn(fakeRequest, fakeHandler)).rejects.toThrow('error validating jwt token')
     })
 
     it('throws a 500 error if the payload does not contain an id_token', async () => {
       const fakeRequest = { payload: { error: 'ERROR_CODE', error_description: 'Something went wrong' } }
-      const fakeHandler = { redirect: jest.fn() }
+      const fakeHandler = { redirectWithLanguageCode: jest.fn() }
       await expect(signIn(fakeRequest, fakeHandler)).rejects.toThrow('Authentication error: ERROR_CODE: Something went wrong')
     })
   })
