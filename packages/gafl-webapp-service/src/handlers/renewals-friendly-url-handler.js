@@ -14,10 +14,11 @@ export default async (request, h) => {
     const refNumber = request.params[QUERYSTRING_LICENCE_KEY]
     const sixDigit = /^[A-Za-z0-9]{6}$/.test(refNumber)
     if (sixDigit) {
-      return h.redirect(
+      return h.redirectWithLanguageCode(
+        request,
         `${ATTRIBUTION.uri}?${UTM.CAMPAIGN}=${RENEWALS_CAMPAIGN_ID}&${UTM.SOURCE}=${AEN_INVITATION_ID}&${QUERYSTRING_LICENCE_KEY}=${refNumber}`
       )
     }
   }
-  return h.redirect(IDENTIFY.uri)
+  return h.redirectWithLanguageCode(request, IDENTIFY.uri)
 }

@@ -30,19 +30,21 @@ describe('The url handler', () => {
       [UTM.CAMPAIGN]: 'renewals',
       [QUERYSTRING_LICENCE_KEY]: null
     }
+    const request = generateRequestMock(params)
     const responseToolkit = generateResponseToolkitMock()
-    await urlHandler(generateRequestMock(params), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY.uri)
+    await urlHandler(request, responseToolkit)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, IDENTIFY.uri)
   })
 
   it.each([['B2F11U'], ['AH56F6'], ['GH330P']])('6 digit reference number exists and returns ATTRIBUTION', async licenceKey => {
     const params = {
       [QUERYSTRING_LICENCE_KEY]: licenceKey
     }
+    const request = generateRequestMock(params)
     const responseToolkit = generateResponseToolkitMock()
-    await urlHandler(generateRequestMock(params), responseToolkit)
+    await urlHandler(request, responseToolkit)
     const regExMatch = new RegExp(`^/attribution-url\\?utmcampaign\\=renewals&utmsource\\=aen_invitation&reference\\=${licenceKey}$`)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, expect.stringMatching(regExMatch))
   })
 
   it.each([['B2F11UH5D'], ['AH56'], ['GH330PPTD']])('reference number is not 6 digits and returns back to IDENTIFY', async licenceKey => {
@@ -51,9 +53,10 @@ describe('The url handler', () => {
       [UTM.SOURCE]: 'aen_invitation',
       [QUERYSTRING_LICENCE_KEY]: licenceKey
     }
+    const request = generateRequestMock(params)
     const responseToolkit = generateResponseToolkitMock()
-    await urlHandler(generateRequestMock(params), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY.uri)
+    await urlHandler(request, responseToolkit)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, IDENTIFY.uri)
   })
 
   const generateRequestMock = (params, query, status = {}) => ({
@@ -70,6 +73,6 @@ describe('The url handler', () => {
   })
 
   const generateResponseToolkitMock = () => ({
-    redirect: jest.fn()
+    redirectWithLanguageCode: jest.fn()
   })
 })
