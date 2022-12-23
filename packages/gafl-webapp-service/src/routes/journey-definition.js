@@ -410,7 +410,7 @@ export default [
         page: AGREED
       }
     },
-    backLink: VIEW_LICENCES.uri
+    backLink: ADD_LICENCE.uri
   },
 
   {
