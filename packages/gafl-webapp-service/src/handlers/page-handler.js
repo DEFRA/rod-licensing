@@ -112,7 +112,7 @@ export default (path, view, completion, getData) => ({
       } catch (err) {
         // If GetDataRedirect is thrown the getData function is requesting a redirect
         if (err instanceof GetDataRedirect) {
-          return h.redirect(addLanguageCodeToUri(request, err.redirectUrl))
+          return h.redirectWithLanguageCode(request, err.redirectUrl)
         }
 
         throw err
@@ -156,9 +156,9 @@ export default (path, view, completion, getData) => ({
     await request.cache().helpers.status.setCurrentPermission(status)
 
     if (typeof completion === 'function') {
-      return h.redirect(await completion(request))
+      return h.redirectWithLanguageCode(request, await completion(request))
     } else {
-      return h.redirect(completion)
+      return h.redirectWithLanguageCode(request, completion)
     }
   },
   /**
@@ -173,11 +173,11 @@ export default (path, view, completion, getData) => ({
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
 
-      return h.redirect(addLanguageCodeToUri(request)).takeover()
+      return h.redirectWithLanguageCode(request).takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {
-        return h.redirect(CONTROLLER.uri).takeover()
+        return h.redirectWithLanguageCode(request, CONTROLLER.uri).takeover()
       }
 
       throw err2
