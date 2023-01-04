@@ -19,6 +19,18 @@ const getMockRequest = (permission = getMockPermission()) => ({
 })
 
 describe('route > getData', () => {
+  it('should return the correct data for isLicenceForYou, firstName and lastName', async () => {
+    const samplePermission = getMockPermission({ isLicenceForYou: true })
+    const result = await getData(getMockRequest(samplePermission))
+    expect(result).toEqual(
+      expect.objectContaining({
+        isLicenceForYou: true,
+        firstName: 'Mynames',
+        lastName: 'Jeff'
+      })
+    )
+  })
+
   it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
     const samplePermission = getMockPermission({ isLicenceForYou: true })
     const result = await getData(getMockRequest(samplePermission))
