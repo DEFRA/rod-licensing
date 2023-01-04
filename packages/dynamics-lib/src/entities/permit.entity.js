@@ -24,6 +24,8 @@ export class Permit extends BaseEntity {
       isCounterSales: { field: 'defra_iscountersales', type: 'boolean' },
       isRecurringPaymentSupported: { field: 'defra_recurringsupported', type: 'boolean' },
       cost: { field: 'defra_advertisedprice', type: 'decimal' },
+      newCost: { field: 'defra_newadvertisedprice', type: 'decimal' },
+      newCostStartDate: { field: 'defra_dateofpricechange', type: 'datetime' },
       itemId: { field: 'defra_itemid', type: 'string' }
     }
   }))
@@ -142,6 +144,24 @@ export class Permit extends BaseEntity {
    */
   get cost () {
     return super._getState('cost')
+  }
+
+  /**
+   * The new cost of permissions associated with this permit
+   * @type {number}
+   * @readonly
+   */
+  get newCost () {
+    return super._getState('newCost')
+  }
+
+  /**
+   * The date when the cost of permissions changes from cost to newCost
+   * @type {date}
+   * @readonly
+   */
+  get newCostStartDate () {
+    return super._getState('newCostStartDate')
   }
 
   /**
