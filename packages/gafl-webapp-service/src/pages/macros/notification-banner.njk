@@ -1,0 +1,20 @@
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% macro notificationBanner() %}
+    {% set html %}
+    <h3 class="govuk-notification-banner__heading">
+        Title
+    </h3>
+    <p class="govuk-body">
+        Content
+        <a class="govuk-notification-banner__link" href="#">
+            Link
+        </a>
+    </p>
+
+    {% endset %}
+
+    {{ govukNotificationBanner({
+    html: html
+    }) }}
+{% endmacro %}
