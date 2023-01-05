@@ -1,6 +1,6 @@
 import { getData } from '../route'
 
-const getMockPermission = ({ isLicenceForYou }) => ({
+const getMockPermission = ({ isLicenceForYou } = { isLicenceForYou: true }) => ({
   isLicenceForYou,
   licensee: {
     firstName: 'Mynames',
@@ -20,8 +20,7 @@ const getMockRequest = (permission = getMockPermission()) => ({
 
 describe('route > getData', () => {
   it('should return the correct data for isLicenceForYou, firstName and lastName', async () => {
-    const samplePermission = getMockPermission({ isLicenceForYou: true })
-    const result = await getData(getMockRequest(samplePermission))
+    const result = await getData(getMockRequest())
     expect(result).toEqual(
       expect.objectContaining({
         isLicenceForYou: true,
@@ -32,8 +31,7 @@ describe('route > getData', () => {
   })
 
   it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-    const samplePermission = getMockPermission({ isLicenceForYou: true })
-    const result = await getData(getMockRequest(samplePermission))
+    const result = await getData(getMockRequest())
     expect(result.isLicenceForYou).toBeTruthy()
   })
 
