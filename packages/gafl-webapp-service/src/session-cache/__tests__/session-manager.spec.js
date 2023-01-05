@@ -151,7 +151,7 @@ describe('takeover by agreed handler once agreed flag is set', () => {
     const request = getMockRequest()
     const toolkit = getMockToolkit()
     await initialisedSessionManager(request, toolkit)
-    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, AGREED.uri)
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(AGREED.uri)
   })
 
   it('returns a takeover response after redirect', async () => {

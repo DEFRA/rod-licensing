@@ -180,8 +180,8 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
-  server.decorate('toolkit', 'redirectWithLanguageCode', function (request, redirect) {
-    const uriWithLanguage = addLanguageCodeToUri(request, redirect)
+  server.decorate('toolkit', 'redirectWithLanguageCode', function (redirect) {
+    const uriWithLanguage = addLanguageCodeToUri(this.request, redirect)
 
     return this.redirect(uriWithLanguage)
   })

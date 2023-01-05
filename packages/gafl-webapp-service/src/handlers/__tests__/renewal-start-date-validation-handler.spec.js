@@ -43,7 +43,7 @@ describe('Renewal start date validation handler', () => {
 
     await renewalStartDateValidationHandler(request, toolkit)
 
-    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, LICENCE_SUMMARY.uri)
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(LICENCE_SUMMARY.uri)
   })
 
   it('redirects to the start page when validation fails', async () => {
@@ -52,6 +52,6 @@ describe('Renewal start date validation handler', () => {
 
     await renewalStartDateValidationHandler(request, toolkit)
 
-    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, RENEWAL_START_DATE.uri)
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(RENEWAL_START_DATE.uri)
   })
 })

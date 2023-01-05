@@ -157,7 +157,7 @@ describe('The page handler function', () => {
 
     await get(request, toolkit)
 
-    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, url)
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(url)
   })
 
   it.each([['/route/one'], ['/route/sixty-six']])('error redirects to request uri', async url => {
@@ -165,7 +165,7 @@ describe('The page handler function', () => {
     const request = getMockRequest(undefined, url)
     const toolkit = getMockToolkit()
     await error(request, toolkit, { details: [] })
-    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request)
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalled()
   })
 
   it('sets the value of pageData with displayAnalytics true', async () => {

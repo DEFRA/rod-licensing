@@ -34,6 +34,6 @@ describe('New session handler', () => {
     const mockRequestToolkit = getRequestToolkit()
 
     await newSessionHandler(mockRequest, mockRequestToolkit)
-    expect(mockRequestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, CONTROLLER.uri)
+    expect(mockRequestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(CONTROLLER.uri)
   })
 })

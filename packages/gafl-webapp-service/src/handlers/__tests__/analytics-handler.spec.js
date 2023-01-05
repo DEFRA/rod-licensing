@@ -31,7 +31,7 @@ describe('The analytics handler', () => {
 
     await analyticsHandler(request, responseToolkit)
 
-    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, redirect)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(redirect)
   })
 
   it.each([
@@ -51,7 +51,7 @@ describe('The analytics handler', () => {
 
     await analyticsHandler(request, responseToolkit)
 
-    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(request, '/buy')
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith('/buy')
   })
 
   it('selected not true and response is accept sets selected to true and acceptTracking to true', async () => {

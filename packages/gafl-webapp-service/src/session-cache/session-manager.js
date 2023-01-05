@@ -90,7 +90,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
      */
     const status = await request.cache().helpers.status.get()
     if (status.agreed && !agreedHandlerProtectionExemptSet.includes(request.path)) {
-      return h.redirectWithLanguageCode(request, AGREED.uri).takeover()
+      return h.redirectWithLanguageCode(AGREED.uri).takeover()
     }
 
     /*
@@ -109,7 +109,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
     if (initialized) {
       await initialiseAnalyticsSessionData(request)
       if (!includesRegex(request.path, startProtectionExemptSet)) {
-        return h.redirectWithLanguageCode(request, CONTROLLER.uri).takeover()
+        return h.redirectWithLanguageCode(CONTROLLER.uri).takeover()
       }
     }
   }

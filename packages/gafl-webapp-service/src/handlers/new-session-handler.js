@@ -6,5 +6,5 @@ export default async (request, h) => {
   const existingCacheStatus = await request.cache().helpers.status.get()
   await request.cache().initialize()
   await initialiseAnalyticsSessionData(request, existingCacheStatus)
-  return h.redirectWithLanguageCode(request, CONTROLLER.uri)
+  return h.redirectWithLanguageCode(CONTROLLER.uri)
 }

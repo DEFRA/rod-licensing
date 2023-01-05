@@ -229,7 +229,7 @@ describe('The agreed handler', () => {
 
       await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_FAILED.uri)
     })
   })
 
@@ -252,7 +252,7 @@ describe('The agreed handler', () => {
 
       await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, PAYMENT_FAILED.uri)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_FAILED.uri)
     })
   })
 
@@ -342,7 +342,7 @@ describe('The agreed handler', () => {
 
       await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, PAYMENT_CANCELLED.uri)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(PAYMENT_CANCELLED.uri)
     })
   })
 

@@ -56,7 +56,7 @@ describe.each([
     const mockRequest = getSampleRequest()
     const responseToolkit = getSampleResponseToolkit()
     await handler(mockRequest, responseToolkit)
-    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, redirectUri)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(redirectUri)
   })
 
   const getSampleRequest = () => ({

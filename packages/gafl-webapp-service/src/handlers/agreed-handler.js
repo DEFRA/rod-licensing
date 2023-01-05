@@ -240,7 +240,7 @@ export default async (request, h) => {
     // Note: At this point payment completed status is never set
     const next = await processPayment(request, transaction, status)
     if (next) {
-      return h.redirectWithLanguageCode(request, next)
+      return h.redirectWithLanguageCode(next)
     }
   }
 
@@ -252,5 +252,5 @@ export default async (request, h) => {
   }
 
   // If we are here we have completed
-  return h.redirectWithLanguageCode(request, ORDER_COMPLETE.uri)
+  return h.redirectWithLanguageCode(ORDER_COMPLETE.uri)
 }

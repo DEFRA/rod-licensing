@@ -55,8 +55,8 @@ export default async (request, h) => {
 
   if (host === referrerHost) {
     const redirect = referer.replace(origin, '')
-    return h.redirectWithLanguageCode(request, redirect)
+    return h.redirectWithLanguageCode(redirect)
   }
 
-  return h.redirectWithLanguageCode(request, '/buy')
+  return h.redirectWithLanguageCode('/buy')
 }

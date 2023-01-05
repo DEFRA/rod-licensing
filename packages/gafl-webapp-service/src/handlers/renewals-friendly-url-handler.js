@@ -15,10 +15,9 @@ export default async (request, h) => {
     const sixDigit = /^[A-Za-z0-9]{6}$/.test(refNumber)
     if (sixDigit) {
       return h.redirectWithLanguageCode(
-        request,
         `${ATTRIBUTION.uri}?${UTM.CAMPAIGN}=${RENEWALS_CAMPAIGN_ID}&${UTM.SOURCE}=${AEN_INVITATION_ID}&${QUERYSTRING_LICENCE_KEY}=${refNumber}`
       )
     }
   }
-  return h.redirectWithLanguageCode(request, IDENTIFY.uri)
+  return h.redirectWithLanguageCode(IDENTIFY.uri)
 }

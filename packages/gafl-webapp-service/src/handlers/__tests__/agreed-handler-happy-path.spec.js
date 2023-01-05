@@ -294,7 +294,7 @@ describe('The agreed handler', () => {
 
       await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(mockRequest, ORDER_COMPLETE.uri)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
     })
   })
 })
