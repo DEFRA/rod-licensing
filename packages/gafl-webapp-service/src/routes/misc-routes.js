@@ -50,7 +50,7 @@ export default [
   {
     method: 'GET',
     path: '/',
-    handler: async (request, h) => h.redirectWithLanguageCode(CONTROLLER.uri)
+    handler: async (_request, h) => h.redirectWithLanguageCode(CONTROLLER.uri)
   },
   {
     method: 'GET',
