@@ -160,12 +160,12 @@ describe('The page handler function', () => {
     expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(url)
   })
 
-  it.each([['/route/one'], ['/route/sixty-six']])('error redirects to request uri', async url => {
+  it.each([['/route/one'], ['/route/sixty-six']])('error redirects with language code', async url => {
     const { error } = pageHandler('', 'view')
     const request = getMockRequest(undefined, url)
     const toolkit = getMockToolkit()
     await error(request, toolkit, { details: [] })
-    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalled()
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith()
   })
 
   it('sets the value of pageData with displayAnalytics true', async () => {
