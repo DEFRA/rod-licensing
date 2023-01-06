@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.5 (2023-01-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1580](https://github.com/DEFRA/rod-licensing/pull/1580) Refactor redirects to automatically use correct language ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.30.0-rc.4 (2023-01-05)
 
 #### :rocket: Enhancement
