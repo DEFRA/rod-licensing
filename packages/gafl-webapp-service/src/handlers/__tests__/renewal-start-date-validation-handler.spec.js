@@ -2,16 +2,16 @@ import renewalStartDateValidationHandler from '../renewal-start-date-validation-
 import { LICENCE_SUMMARY, RENEWAL_START_DATE } from '../../uri.js'
 
 describe('Renewal start date validation handler', () => {
-  const getMockRequest = (startYear, startMonth, startDay, renewedEndDate) => ({
+  const getMockRequest = (startYear = 1970, startMonth = 1, startDay = 1, renewedEndDate = '2023-01-01T00:00:00.000Z') => ({
     cache: () => ({
       initialize: () => ({}),
       helpers: {
         page: {
           getCurrentPermission: async () => ({
             payload: {
-              'licence-start-date-year': startYear || 1970,
-              'licence-start-date-month': startMonth || 1,
-              'licence-start-date-day': startDay || 1
+              'licence-start-date-year': startYear,
+              'licence-start-date-month': startMonth,
+              'licence-start-date-day': startDay
             }
           }),
           setCurrentPermission: async () => {}
@@ -21,7 +21,7 @@ describe('Renewal start date validation handler', () => {
             licensee: {
               noLicenceRequired: {}
             },
-            renewedEndDate: renewedEndDate || '2023-01-01T00:00:00.000Z'
+            renewedEndDate: renewedEndDate
           }),
           setCurrentPermission: async () => {}
         },
