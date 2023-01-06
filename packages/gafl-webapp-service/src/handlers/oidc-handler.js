@@ -90,15 +90,15 @@ export const signIn = async (request, h) => {
     const hasTelesalesRole = !!userDetails?.roles.find(role => role.name === process.env.OIDC_REQUIRE_DYNAMICS_ROLE)
 
     if (!userDetails || userDetails.isDisabled) {
-      return h.redirect('/oidc/account-disabled')
+      return h.redirectWithLanguageCode('/oidc/account-disabled')
     } else if (!hasTelesalesRole) {
-      return h.redirect('/oidc/role-required')
+      return h.redirectWithLanguageCode('/oidc/role-required')
     } else {
       request.cookieAuth.set({ oid, name, email })
 
       db('Token expires at: %s', moment.unix(exp).format())
       request.cookieAuth.ttl((exp - moment().unix()) * 1000)
-      return h.redirect(postAuthRedirect)
+      return h.redirectWithLanguageCode(postAuthRedirect)
     }
   } else {
     const { error, error_description: errorDescription } = request.payload

@@ -13,12 +13,7 @@ import {
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import agreedHandler from '../agreed-handler.js'
-
-jest.mock('../../processors/uri-helper.js', () => ({
-  addLanguageCodeToUri: jest.fn(() => '/buy/order-complete')
-}))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
@@ -290,25 +285,16 @@ describe('The agreed handler', () => {
     })
 
     const getRequestToolkit = () => ({
-      redirect: jest.fn()
-    })
-
-    it('calls addLanguageCodeToUri', async () => {
-      const mockRequest = getMockRequest()
-
-      await agreedHandler(mockRequest, getRequestToolkit())
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, ORDER_COMPLETE.uri)
+      redirectWithLanguageCode: jest.fn()
     })
 
     it('calls redirect correctly', async () => {
       const requestToolkit = getRequestToolkit()
-      const expectedPath = Symbol('expected path')
-      addLanguageCodeToUri.mockReturnValueOnce(expectedPath)
+      const mockRequest = getMockRequest()
 
-      await agreedHandler(getMockRequest(), requestToolkit)
+      await agreedHandler(mockRequest, requestToolkit)
 
-      expect(requestToolkit.redirect).toHaveBeenCalledWith(expectedPath)
+      expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
     })
   })
 })

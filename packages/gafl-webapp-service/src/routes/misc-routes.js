@@ -50,7 +50,7 @@ export default [
   {
     method: 'GET',
     path: '/',
-    handler: async (request, h) => h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
+    handler: async (_request, h) => h.redirectWithLanguageCode(CONTROLLER.uri)
   },
   {
     method: 'GET',
@@ -71,7 +71,7 @@ export default [
       if (request.params.referenceNumber) {
         await request.cache().helpers.status.setCurrentPermission({ referenceNumber: request.params.referenceNumber })
       }
-      return h.redirect(IDENTIFY.uri)
+      return h.redirectWithLanguageCode(IDENTIFY.uri)
     }
   },
   {
@@ -94,7 +94,7 @@ export default [
     path: ADD_PERMISSION.uri,
     handler: async (request, h) => {
       await addPermission(request)
-      return h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
+      return h.redirectWithLanguageCode(CONTROLLER.uri)
     }
   },
   {

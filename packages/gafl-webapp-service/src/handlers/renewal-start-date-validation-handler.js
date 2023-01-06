@@ -8,7 +8,6 @@ import JoiDate from '@hapi/joi-date'
 import { ageConcessionHelper } from '../processors/concession-helper.js'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 import { cacheDateFormat } from '../processors/date-and-time-display.js'
-import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const JoiX = Joi.extend(JoiDate)
 /**
@@ -43,7 +42,7 @@ export default async (request, h) => {
     await request
       .cache()
       .helpers.status.setCurrentPermission({ [RENEWAL_START_DATE.page]: PAGE_STATE.error, currentPage: RENEWAL_START_DATE.page })
-    return h.redirect(addLanguageCodeToUri(request, RENEWAL_START_DATE.uri))
+    return h.redirectWithLanguageCode(RENEWAL_START_DATE.uri)
   } else {
     permission.licenceStartDate = moment({
       year: payload['licence-start-date-year'],
@@ -70,6 +69,6 @@ export default async (request, h) => {
 
     ageConcessionHelper(permission)
     await request.cache().helpers.transaction.setCurrentPermission(permission)
-    return h.redirect(addLanguageCodeToUri(request, LICENCE_SUMMARY.uri))
+    return h.redirectWithLanguageCode(LICENCE_SUMMARY.uri)
   }
 }
