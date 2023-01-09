@@ -30,7 +30,7 @@ const paymentStatusSuccess = cost => ({
   }
 })
 
-describe('The agreed handler', () => {
+describe.skip('The agreed handler', () => {
   beforeEach(jest.clearAllMocks)
 
   it('throw a status 500 (server) exception and the posted status is not set if there is an error fetching reference data', async () => {

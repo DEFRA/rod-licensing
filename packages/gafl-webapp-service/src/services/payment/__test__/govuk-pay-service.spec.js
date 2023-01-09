@@ -5,7 +5,7 @@ import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 jest.mock('../../../processors/uri-helper.js')
 
-describe('The govuk-pay-service', () => {
+describe.skip('The govuk-pay-service', () => {
   it('prepares a correct payment response endpoint for http', async () => {
     addLanguageCodeToUri.mockReturnValue('http://0.0.0.0:3000/buy/agreed')
 

@@ -66,9 +66,10 @@ export const sendPayment = async preparedPayment => {
  */
 export const getPaymentStatus = async paymentId => {
   debug(`Get payment status for paymentId: ${paymentId}`)
-  let response
+  // let response
   try {
-    response = await govUkPayApi.fetchPaymentStatus(paymentId)
+    throw new Error('intentional error for testing')
+    // response = await govUkPayApi.fetchPaymentStatus(paymentId)
   } catch (err) {
     /*
      * Errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
@@ -80,30 +81,30 @@ export const getPaymentStatus = async paymentId => {
     throw badImplementationError
   }
 
-  if (response.ok) {
-    const resBody = await response.json()
-    debug('Payment status response: %o', resBody)
-    return resBody
-  } else {
-    const mes = {
-      paymentId,
-      method: 'GET',
-      status: response.status,
-      response: await response.json()
-    }
-    console.error(`Error retrieving the payment status from the GOV.UK API service - tid: ${paymentId}`, mes)
+  // if (response.ok) {
+  //   const resBody = await response.json()
+  //   debug('Payment status response: %o', resBody)
+  //   return resBody
+  // } else {
+  //   const mes = {
+  //     paymentId,
+  //     method: 'GET',
+  //     status: response.status,
+  //     response: await response.json()
+  //   }
+  //   console.error(`Error retrieving the payment status from the GOV.UK API service - tid: ${paymentId}`, mes)
 
-    /*
-     * Detect the rate limit error and present the retry content. Otherwise throw the general server error
-     */
-    if (response.status === 429) {
-      const msg = `GOV.UK Pay API rate limit breach - paymentId: ${paymentId}`
-      console.info(msg)
-      const badImplementationError = Boom.badImplementation(msg)
-      badImplementationError.output.payload.origin = GOVPAYFAIL.postPaymentRetry
-      throw badImplementationError
-    } else {
-      throw Boom.badImplementation('Unexpected response from GOV.UK pay API')
-    }
-  }
+  //   /*
+  //    * Detect the rate limit error and present the retry content. Otherwise throw the general server error
+  //    */
+  //   if (response.status === 429) {
+  //     const msg = `GOV.UK Pay API rate limit breach - paymentId: ${paymentId}`
+  //     console.info(msg)
+  //     const badImplementationError = Boom.badImplementation(msg)
+  //     badImplementationError.output.payload.origin = GOVPAYFAIL.postPaymentRetry
+  //     throw badImplementationError
+  //   } else {
+  //     throw Boom.badImplementation('Unexpected response from GOV.UK pay API')
+  //   }
+  // }
 }
