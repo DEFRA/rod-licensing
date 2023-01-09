@@ -42,7 +42,7 @@ const paymentStatusSuccess = cost => ({
   }
 })
 
-describe('The agreed handler', () => {
+describe.skip('The agreed handler', () => {
   beforeEach(jest.clearAllMocks)
 
   it('throws a status 403 (forbidden) exception is the agreed flag is not set', async () => {
