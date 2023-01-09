@@ -1,347 +1,651 @@
-import { dobHelper, JUNIOR_TODAY, ADULT_TODAY, SENIOR_TODAY } from '../../__mocks__/test-utils-business-rules.js'
-import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../__mocks__/test-utils-system.js'
-import { licenseTypes } from '../../pages/licence-details/licence-type/route.js'
-
-import {
-  LICENCE_TO_START,
-  DATE_OF_BIRTH,
-  LICENCE_TYPE,
-  CONTROLLER,
-  DISABILITY_CONCESSION,
-  GET_PRICING_TYPES,
-  GET_PRICING_LENGTHS
-} from '../../uri.js'
-
-import { licenceToStart } from '../../pages/licence-details/licence-to-start/update-transaction.js'
-import { disabilityConcessionTypes } from '../../pages/concessions/disability/update-transaction.js'
-
-mockSalesApi()
-
-beforeAll(() => new Promise(resolve => start(resolve)))
-beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll(d => stop(d))
-
-const juniorPricingByType = {
-  [licenseTypes.troutAndCoarse2Rod]: {
-    '12M': {
-      cost: 0,
-      concessions: true
-    },
-    msg: 'no-short'
-  },
-  [licenseTypes.troutAndCoarse3Rod]: {
-    '12M': {
-      cost: 0,
-      concessions: true
-    },
-    msg: 'no-short'
-  },
-  [licenseTypes.salmonAndSeaTrout]: {
-    '12M': {
-      cost: 0,
-      concessions: true
-    },
-    msg: 'no-short'
-  }
-}
-
-const adultPricingByType = {
-  [licenseTypes.salmonAndSeaTrout]: {
-    '12M': {
-      cost: 82,
-      concessions: false
-    },
-    '8D': {
-      cost: 27,
-      concessions: false
-    },
-    '1D': {
-      cost: 12,
-      concessions: false
-    }
-  },
-  [licenseTypes.troutAndCoarse3Rod]: {
-    '12M': {
-      cost: 45,
-      concessions: false
-    },
-    msg: 'no-short'
-  },
-  [licenseTypes.troutAndCoarse2Rod]: {
-    '12M': {
-      cost: 30,
-      concessions: false
-    },
-    '8D': {
-      cost: 12,
-      concessions: false
-    },
-    '1D': {
-      cost: 6,
-      concessions: false
-    }
-  }
-}
-
-const adultDisabledPricingByType = {
-  [licenseTypes.salmonAndSeaTrout]: {
-    '12M': {
-      cost: 54,
-      concessions: true
-    },
-    '8D': {
-      cost: 27,
-      concessions: false
-    },
-    '1D': {
-      cost: 12,
-      concessions: false
-    }
-  },
-  [licenseTypes.troutAndCoarse3Rod]: {
-    '12M': {
-      cost: 30,
-      concessions: true
-    },
-    msg: 'no-short'
-  },
-  [licenseTypes.troutAndCoarse2Rod]: {
-    '12M': {
-      cost: 20,
-      concessions: true
-    },
-    '8D': {
-      cost: 12,
-      concessions: false
-    },
-    '1D': {
-      cost: 6,
-      concessions: false
-    }
-  }
-}
-
-const seniorPricingByType = {
-  [licenseTypes.salmonAndSeaTrout]: {
-    '12M': {
-      cost: 54,
-      concessions: true
-    },
-    '8D': {
-      cost: 27,
-      concessions: false
-    },
-    '1D': {
-      cost: 12,
-      concessions: false
-    }
-  },
-  [licenseTypes.troutAndCoarse3Rod]: {
-    '12M': {
-      cost: 30,
-      concessions: true
-    },
-    msg: 'no-short'
-  },
-  [licenseTypes.troutAndCoarse2Rod]: {
-    '12M': {
-      cost: 20,
-      concessions: true
-    },
-    '8D': {
-      cost: 12,
-      concessions: false
-    },
-    '1D': {
-      cost: 6,
-      concessions: false
-    }
-  }
-}
-
-const juniorPricingByLength = {
-  '12M': {
-    total: {
-      cost: 0,
-      concessions: true
-    }
-  }
-}
-
-const adultPricingByLength = {
-  '12M': {
-    total: {
-      cost: 30,
-      concessions: false
-    }
-  },
-  '8D': {
-    total: {
-      cost: 12,
-      concessions: false
-    }
-  },
-  '1D': {
-    total: {
-      cost: 6,
-      concessions: false
-    }
-  }
-}
-const adultDisabledPricingByLength = {
-  '12M': {
-    total: {
-      cost: 20,
-      concessions: true
-    }
-  },
-  '8D': {
-    total: {
-      cost: 12,
-      concessions: false
-    }
-  },
-  '1D': {
-    total: {
-      cost: 6,
-      concessions: false
-    }
-  }
-}
-
-const seniorPricingByLength = {
-  '12M': {
-    total: {
-      cost: 20,
-      concessions: true
-    }
-  },
-  '8D': {
-    total: {
-      cost: 12,
-      concessions: false
-    }
-  },
-  '1D': {
-    total: {
-      cost: 6,
-      concessions: false
-    }
-  }
-}
+import { pricingDetail } from '../pricing-summary.js'
 
 describe('The pricing summary calculator', () => {
-  describe('for a junior licence', () => {
-    beforeEach(async () => {
-      await injectWithCookies('GET', CONTROLLER.uri)
-      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
-      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.no
-      })
-    })
+  beforeAll(() => {
+    const mockPermits = getSamplePermits()
+    jest.mock('../filter-permits.js', () => ({
+      getPermitsJoinPermitConcessions: () => mockPermits
+    }))
+  })
 
+  describe('for a junior licence', () => {
     it('returns the correct type pricing data', async () => {
-      const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
-      expect(result.byType).toEqual(expect.objectContaining(juniorPricingByType))
+      const samplePermission = {
+        licensee: {
+          birthDate: '2010-01-09'
+        },
+        licenceLength: '12M',
+        licenceStartTime: null,
+        concessions: [
+          {
+            type: 'Junior',
+            proof: {
+              type: 'No Proof'
+            }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09'
+      }
+      const { byType } = await pricingDetail('licence-type', samplePermission)
+      expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.pipDla,
-        'ni-number': 'NH 34 67 44 A'
-      })
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
-      expect(result.byType).toEqual(expect.objectContaining(juniorPricingByType))
+      const mockPermits = getSamplePermits()
+      jest.mock('../filter-permits.js', () => ({
+        getPermitsJoinPermitConcessions: () => mockPermits
+      }))
+      const samplePermission = {
+        licensee: {
+          birthDate: '2010-01-09'
+        },
+        licenceLength: '12M',
+        licenceStartTime: '0',
+        concessions: [
+          {
+            type: 'Junior',
+            proof: {
+              type: 'No Proof'
+            }
+          },
+          {
+            type: 'Disabled',
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: 'NH 34 67 44 A'
+            }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byType } = await pricingDetail('licence-type', samplePermission)
+      expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data for a 12 month', async () => {
-      const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
-      expect(result.byLength).toEqual(expect.objectContaining(juniorPricingByLength))
+      const samplePermission = {
+        licensee: {
+          birthDate: '2010-01-09'
+        },
+        licenceLength: '12M',
+        licenceStartTime: null,
+        concessions: [
+          {
+            type: 'Junior',
+            proof: {
+              type: 'No Proof'
+            }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byLength } = await pricingDetail('licence-length', samplePermission)
+      expect(byLength).toMatchSnapshot()
     })
   })
 
   describe('for an adult licence', () => {
-    beforeEach(async () => {
-      await injectWithCookies('GET', CONTROLLER.uri)
-      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
-      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.no
-      })
+    it('returns the correct type pricing data with a disabled concession', async () => {
+      const samplePermission = {
+        licensee: {
+          birthDate: '2006-01-09'
+        },
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        concessions: [
+          {
+            type: 'Disabled',
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: 'NH 34 67 44 A'
+            }
+          }
+        ],
+        licenceLength: '12M',
+        licenceStartTime: '0',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byType } = await pricingDetail('licence-type', samplePermission)
+      expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct type pricing data', async () => {
-      const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
-      expect(result.byType).toEqual(expect.objectContaining(adultPricingByType))
-    })
-
-    it('returns the correct type pricing data with a disabled concession', async () => {
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.pipDla,
-        'ni-number': 'NH 34 67 44 A'
-      })
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
-      expect(result.byType).toEqual(expect.objectContaining(adultDisabledPricingByType))
+      const samplePermission = {
+        licensee: {
+          birthDate: '2006-01-09'
+        },
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        concessions: [],
+        licenceLength: '12M',
+        licenceStartTime: '0',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byType } = await pricingDetail('licence-type', samplePermission)
+      expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data', async () => {
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
-      expect(result.byLength).toEqual(expect.objectContaining(adultPricingByLength))
+      const samplePermission = {
+        licensee: {
+          birthDate: '2006-01-09'
+        },
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        concessions: [],
+        licenceLength: '12M',
+        licenceStartTime: '0',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byLength } = await pricingDetail('licence-length', samplePermission)
+      expect(byLength).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data for a disabled concession', async () => {
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.pipDla,
-        'ni-number': 'NH 34 67 44 A'
-      })
-      const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
-      expect(result.byLength).toEqual(expect.objectContaining(adultDisabledPricingByLength))
+      const samplePermission = {
+        licensee: {
+          birthDate: '2006-01-09'
+        },
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        concessions: [
+          {
+            type: 'Disabled',
+            proof: {
+              type: 'National Insurance Number',
+              referenceNumber: 'NH 34 67 44 A'
+            }
+          }
+        ],
+        licenceLength: '12M',
+        licenceStartTime: '0',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byLength } = await pricingDetail('licence-length', samplePermission)
+      expect(byLength).toMatchSnapshot()
     })
   })
 
   describe('for an senior licence', () => {
-    beforeEach(async () => {
-      await injectWithCookies('GET', CONTROLLER.uri)
-      await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
-      await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.no
-      })
-    })
-
     it('returns the correct type pricing data', async () => {
-      const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
-      expect(result.byType).toEqual(expect.objectContaining(seniorPricingByType))
+      const samplePermission = {
+        licensee: {
+          birthDate: '1958-01-09'
+        },
+        concessions: [
+          {
+            type: 'Senior',
+            proof: { type: 'No Proof' }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09'
+      }
+      const { byType } = await pricingDetail('licence-type', samplePermission)
+      expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.pipDla,
-        'ni-number': 'NH 34 67 44 A'
-      })
-      const { result } = await injectWithCookies('GET', GET_PRICING_TYPES.uri)
-      expect(result.byType).toEqual(expect.objectContaining(seniorPricingByType))
+      const samplePermission = {
+        licensee: {
+          birthDate: '1958-01-09'
+        },
+        concessions: [
+          {
+            type: 'Senior',
+            proof: { type: 'No Proof' }
+          },
+          {
+            type: 'Disabled',
+            proof: { type: 'National Insurance Number', referenceNumber: 'NH 34 67 44 A' }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        licenceLength: '12M',
+        licenceStartTime: '0'
+      }
+      const { byType } = await pricingDetail('licence-type', samplePermission)
+      expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data', async () => {
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
-      expect(result.byLength).toEqual(expect.objectContaining(seniorPricingByLength))
+      const samplePermission = {
+        licensee: {
+          birthDate: '1958-01-09'
+        },
+        concessions: [
+          {
+            type: 'Senior',
+            proof: { type: 'No Proof' }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byLength } = await pricingDetail('licence-length', samplePermission)
+      expect(byLength).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data for a disabled concession', async () => {
-      await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
-        'disability-concession': disabilityConcessionTypes.pipDla,
-        'ni-number': 'NH 34 67 44 A'
-      })
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
-      const { result } = await injectWithCookies('GET', GET_PRICING_LENGTHS.uri)
-      expect(result.byLength).toEqual(expect.objectContaining(seniorPricingByLength))
+      const samplePermission = {
+        licensee: {
+          birthDate: '1958-01-09'
+        },
+        concessions: [
+          {
+            type: 'Senior',
+            proof: { type: 'No Proof' }
+          },
+          {
+            type: 'Disabled',
+            proof: { type: 'National Insurance Number', referenceNumber: 'NH 34 67 44 A' }
+          }
+        ],
+        licenceToStart: 'after-payment',
+        licenceStartDate: '2023-01-09',
+        licenceLength: '12M',
+        licenceStartTime: '0',
+        licenceType: 'Trout and coarse',
+        numberOfRods: '2'
+      }
+      const { byLength } = await pricingDetail('licence-length', samplePermission)
+      expect(byLength).toMatchSnapshot()
     })
   })
 })
+
+const getSamplePermits = () => [
+  {
+    id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 1 day 2 Rod Licence (Full)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 1,
+    concessions: [],
+    cost: 6
+  },
+  {
+    id: '9f1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 1 day 2 Rod Licence (Senior)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 1,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 6
+  },
+  {
+    id: 'a51b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 1 day 1 Rod Licence (Full)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 1,
+    concessions: [],
+    cost: 12
+  },
+  {
+    id: 'a71b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 1 day 1 Rod Licence (Senior)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 1,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 12
+  },
+  {
+    id: 'a91b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 8 day 2 Rod Licence (Full)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 8,
+    concessions: [],
+    cost: 12
+  },
+  {
+    id: 'ab1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 8 day 2 Rod Licence (Senior)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 8,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 12
+  },
+  {
+    id: 'b11b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 8 day 1 Rod Licence (Full) ',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 8,
+    concessions: [],
+    cost: 27
+  },
+  {
+    id: 'b31b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 8 day 1 Rod Licence (Senior) ',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400000, label: 'Day(s)', description: 'D' },
+    durationMagnitude: 8,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 27
+  },
+  {
+    id: 'b51b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 2 Rod Licence (Junior)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+        name: 'Junior'
+      }
+    ],
+    cost: 0
+  },
+  {
+    id: 'b71b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 2 Rod Licence (Full)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [],
+    cost: 30
+  },
+  {
+    id: 'b91b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 2 Rod Licence (Senior)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 20
+  },
+  {
+    id: 'bb1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 2 Rod Licence (Junior, Disabled)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+        name: 'Junior'
+      },
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 0
+  },
+  {
+    id: 'bd1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 2 Rod Licence (Full, Disabled)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 20
+  },
+  {
+    id: 'bf1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 2 Rod Licence (Senior, Disabled)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 2,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      },
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 20
+  },
+  {
+    id: 'c11b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 3 Rod Licence (Junior)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 3,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+        name: 'Junior'
+      }
+    ],
+    cost: 0
+  },
+  {
+    id: 'c31b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 3 Rod Licence (Full)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 3,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [],
+    cost: 45
+  },
+  {
+    id: 'c51b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 3 Rod Licence (Senior)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 3,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 30
+  },
+  {
+    id: 'c71b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 3 Rod Licence (Junior, Disabled)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 3,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+        name: 'Junior'
+      },
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 0
+  },
+  {
+    id: 'c91b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 3 Rod Licence (Full, Disabled)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 3,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 30
+  },
+  {
+    id: 'cb1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Coarse 12 month 3 Rod Licence (Senior, Disabled)',
+    permitSubtype: { id: 910400001, label: 'Trout and coarse', description: 'C' },
+    numberOfRods: 3,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      },
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 30
+  },
+  {
+    id: 'd91b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 12 month 1 Rod Licence (Junior)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+        name: 'Junior'
+      }
+    ],
+    cost: 0
+  },
+  {
+    id: 'db1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 12 month 1 Rod Licence (Full)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [],
+    cost: 82
+  },
+  {
+    id: 'dd1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 12 month 1 Rod Licence (Senior)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      }
+    ],
+    cost: 54
+  },
+  {
+    id: 'df1b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 12 month 1 Rod Licence (Junior, Disabled)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: '3230c68f-ef65-e611-80dc-c4346bad4004',
+        name: 'Junior'
+      },
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 0
+  },
+  {
+    id: 'e11b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 12 month 1 Rod Licence (Full, Disabled)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 54
+  },
+  {
+    id: 'e31b34a0-0c66-e611-80dc-c4346bad0190',
+    description: 'Salmon 12 month 1 Rod Licence (Senior, Disabled)',
+    permitSubtype: { id: 910400000, label: 'Salmon and sea trout', description: 'S' },
+    numberOfRods: 1,
+    durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' },
+    durationMagnitude: 12,
+    concessions: [
+      {
+        id: 'd0ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Senior'
+      },
+      {
+        id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+        name: 'Disabled'
+      }
+    ],
+    cost: 54
+  }
+]
