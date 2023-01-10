@@ -1,0 +1,46 @@
+{% extends "layout.njk" %}
+
+{% from "button/macro.njk" import govukButton %}
+{% from "summary-list/macro.njk" import govukSummaryList %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% set title = mssgs.multibuy_remove_licences_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form method="post" novalidate>
+        {{ govukBackLink({
+          text: mssgs.back,
+          href: data.uri.view_licences,
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
+
+        <h1 class="govuk-heading-l"> {{ mssgs.multibuy_remove_licences_heading }} </h1>
+
+        {{ govukSummaryList({
+          rows: [
+            { key: { text: mssgs.licence_summary_licence_holder }, value: { text: data.licenceHolder } }, 
+            { key: { text: mssgs.licence_summary_type }, value: { text: data.type} }, 
+            { key: { text: mssgs.licence_summary_length }, value: { text: data.length } }, 
+            { key: { text: mssgs.licence_summary_start }, value: { text: data.start } }, 
+            { key: { text: mssgs.licence_summary_price }, value: { text: '£' + data.price } }
+          ]
+        }) }}
+
+        <div class="govuk-button-group">
+          {{ govukButton({
+            preventDoubleClick: true,
+            text: mssgs.remove
+          }) }}
+          <a class="govuk-link" href="{{ data.uri.view_licences }}">Cancel</a>
+        </div>
+        {{ csrf() }}
+      </form>
+    </div>
+</div>
+
+{% endblock %}
+

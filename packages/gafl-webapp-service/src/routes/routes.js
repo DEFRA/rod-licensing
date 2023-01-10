@@ -22,6 +22,7 @@ import contact from '../pages/contact/contact/route.js'
 import newsletter from '../pages/contact/newsletter/route.js'
 
 import addLicence from '../pages/multibuy/add-licence/route.js'
+import removeLicence from '../pages/multibuy/remove-licence/route.js'
 import viewLicences from '../pages/multibuy/view-licences/route.js'
 import changeLicenceOptions from '../pages/multibuy/change-licence-options/route.js'
 import changeContactDetails from '../pages/multibuy/change-contact-details/route.js'
@@ -64,6 +65,7 @@ const routes = [
   ...contactSummary,
   ...licenceSummary,
   ...addLicence,
+  ...removeLicence,
   ...viewLicences,
   ...changeLicenceOptions,
   ...changeContactDetails,

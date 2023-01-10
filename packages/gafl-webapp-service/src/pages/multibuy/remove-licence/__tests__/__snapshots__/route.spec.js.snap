@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`remove-licence > getData expected data from getData 1`] = `
+Object {
+  "length": "8 days",
+  "licenceHolder": "Turanga Leela",
+  "price": 12,
+  "start": "9:32am on 23 June 2021",
+  "type": "Trout and coarse, up to 2 rods",
+  "uri": Object {
+    "view_licences": "/buy/remove-licence",
+  },
+}
+`;

@@ -20,6 +20,8 @@ import licenceFulfilment from '../pages/contact/digital-licence/licence-fulfilme
 import licenceConfirmationMethod from '../pages/contact/digital-licence/licence-confirmation-method/update-transaction.js'
 import newsletter from '../pages/contact/newsletter/update-transaction.js'
 
+import removeLicence from '../pages/multibuy/remove-licence/update-transaction.js'
+
 import paymentCancelled from '../pages/payment/cancelled/update-transaction.js'
 import paymentFailed from '../pages/payment/failed/update-transaction.js'
 
@@ -42,6 +44,7 @@ import {
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   NEWSLETTER,
+  REMOVE_LICENCE,
   TERMS_AND_CONDITIONS,
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
@@ -64,6 +67,7 @@ export default {
   [LICENCE_FULFILMENT.page]: licenceFulfilment,
   [LICENCE_CONFIRMATION_METHOD.page]: licenceConfirmationMethod,
   [NEWSLETTER.page]: newsletter,
+  [REMOVE_LICENCE.page]: removeLicence,
   [TERMS_AND_CONDITIONS.page]: termsAndConditions,
   [PAYMENT_FAILED.page]: paymentFailed,
   [PAYMENT_CANCELLED.page]: paymentCancelled,
