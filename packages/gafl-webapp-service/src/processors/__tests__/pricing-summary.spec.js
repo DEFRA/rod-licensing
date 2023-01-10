@@ -1,5 +1,85 @@
 import { pricingDetail } from '../pricing-summary.js'
 
+const getSamplePermission = ({
+  birthDate,
+  juniorConcession = false,
+  seniorConcession = false,
+  disabledConcession = false,
+  licenceLength = '12M'
+} = {}) => {
+  const concessions = []
+  if (juniorConcession) {
+    concessions.push({
+      type: 'Junior',
+      proof: {
+        type: 'No Proof'
+      }
+    })
+  } else if (seniorConcession) {
+    concessions.push({
+      type: 'Senior',
+      proof: {
+        type: 'No Proof'
+      }
+    })
+  }
+  if (disabledConcession) {
+    concessions.push({
+      type: 'Disabled',
+      proof: {
+        type: 'National Insurance Number',
+        referenceNumber: 'NH 34 67 44 A'
+      }
+    })
+  }
+
+  return {
+    licensee: {
+      birthDate
+    },
+    licenceLength,
+    ...(licenceLength !== '12M' ? { licenceStartTime: '0' } : {}),
+    concessions,
+    licenceToStart: 'after-payment',
+    licenceStartDate: '2023-01-09',
+    licenceType: 'Trout and coarse',
+    numberOfRods: '2'
+  }
+}
+
+const getJuniorPermission = ({
+  disabledConcession = false
+} = {}) => {
+  return getSamplePermission({
+    birthDate: '2010-01-09',
+    juniorConcession: true,
+    disabledConcession
+  })
+}
+
+const getAdultPermission = ({
+  disabledConcession = false,
+  licenceLength
+} = {}) => {
+  return getSamplePermission({
+    birthDate: '2006-01-09',
+    disabledConcession,
+    licenceLength
+  })
+}
+
+const getSeniorPermission = ({
+  disabledConcession = false,
+  licenceLength
+} = {}) => {
+  return getSamplePermission({
+    birthDate: '1958-01-09',
+    disabledConcession,
+    seniorConcession: true,
+    licenceLength
+  })
+}
+
 describe('The pricing summary calculator', () => {
   beforeAll(() => {
     const mockPermits = getSamplePermits()
@@ -10,82 +90,19 @@ describe('The pricing summary calculator', () => {
 
   describe('for a junior licence', () => {
     it('returns the correct type pricing data', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '2010-01-09'
-        },
-        licenceLength: '12M',
-        licenceStartTime: null,
-        concessions: [
-          {
-            type: 'Junior',
-            proof: {
-              type: 'No Proof'
-            }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09'
-      }
+      const samplePermission = getJuniorPermission()
       const { byType } = await pricingDetail('licence-type', samplePermission)
       expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      const mockPermits = getSamplePermits()
-      jest.mock('../filter-permits.js', () => ({
-        getPermitsJoinPermitConcessions: () => mockPermits
-      }))
-      const samplePermission = {
-        licensee: {
-          birthDate: '2010-01-09'
-        },
-        licenceLength: '12M',
-        licenceStartTime: '0',
-        concessions: [
-          {
-            type: 'Junior',
-            proof: {
-              type: 'No Proof'
-            }
-          },
-          {
-            type: 'Disabled',
-            proof: {
-              type: 'National Insurance Number',
-              referenceNumber: 'NH 34 67 44 A'
-            }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getJuniorPermission({ disabledConcession: true })
       const { byType } = await pricingDetail('licence-type', samplePermission)
       expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data for a 12 month', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '2010-01-09'
-        },
-        licenceLength: '12M',
-        licenceStartTime: null,
-        concessions: [
-          {
-            type: 'Junior',
-            proof: {
-              type: 'No Proof'
-            }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getJuniorPermission()
       const { byLength } = await pricingDetail('licence-length', samplePermission)
       expect(byLength).toMatchSnapshot()
     })
@@ -93,26 +110,7 @@ describe('The pricing summary calculator', () => {
 
   describe('for an adult licence', () => {
     it('returns the correct type pricing data with a disabled concession', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '2006-01-09'
-        },
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        concessions: [
-          {
-            type: 'Disabled',
-            proof: {
-              type: 'National Insurance Number',
-              referenceNumber: 'NH 34 67 44 A'
-            }
-          }
-        ],
-        licenceLength: '12M',
-        licenceStartTime: '0',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getAdultPermission({ disabledConcession: true })
       const { byType } = await pricingDetail('licence-type', samplePermission)
       expect(byType).toMatchSnapshot()
     })
@@ -135,43 +133,13 @@ describe('The pricing summary calculator', () => {
     })
 
     it('returns the correct length pricing data', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '2006-01-09'
-        },
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        concessions: [],
-        licenceLength: '12M',
-        licenceStartTime: '0',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getAdultPermission()
       const { byLength } = await pricingDetail('licence-length', samplePermission)
       expect(byLength).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data for a disabled concession', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '2006-01-09'
-        },
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        concessions: [
-          {
-            type: 'Disabled',
-            proof: {
-              type: 'National Insurance Number',
-              referenceNumber: 'NH 34 67 44 A'
-            }
-          }
-        ],
-        licenceLength: '12M',
-        licenceStartTime: '0',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getAdultPermission({ disabledConcession: true })
       const { byLength } = await pricingDetail('licence-length', samplePermission)
       expect(byLength).toMatchSnapshot()
     })
@@ -179,89 +147,25 @@ describe('The pricing summary calculator', () => {
 
   describe('for an senior licence', () => {
     it('returns the correct type pricing data', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '1958-01-09'
-        },
-        concessions: [
-          {
-            type: 'Senior',
-            proof: { type: 'No Proof' }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09'
-      }
+      const samplePermission = getSeniorPermission()
       const { byType } = await pricingDetail('licence-type', samplePermission)
       expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct type pricing data with a disabled concession', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '1958-01-09'
-        },
-        concessions: [
-          {
-            type: 'Senior',
-            proof: { type: 'No Proof' }
-          },
-          {
-            type: 'Disabled',
-            proof: { type: 'National Insurance Number', referenceNumber: 'NH 34 67 44 A' }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        licenceLength: '12M',
-        licenceStartTime: '0'
-      }
+      const samplePermission = getSeniorPermission({ disabledConcession: true })
       const { byType } = await pricingDetail('licence-type', samplePermission)
       expect(byType).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '1958-01-09'
-        },
-        concessions: [
-          {
-            type: 'Senior',
-            proof: { type: 'No Proof' }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getSeniorPermission()
       const { byLength } = await pricingDetail('licence-length', samplePermission)
       expect(byLength).toMatchSnapshot()
     })
 
     it('returns the correct length pricing data for a disabled concession', async () => {
-      const samplePermission = {
-        licensee: {
-          birthDate: '1958-01-09'
-        },
-        concessions: [
-          {
-            type: 'Senior',
-            proof: { type: 'No Proof' }
-          },
-          {
-            type: 'Disabled',
-            proof: { type: 'National Insurance Number', referenceNumber: 'NH 34 67 44 A' }
-          }
-        ],
-        licenceToStart: 'after-payment',
-        licenceStartDate: '2023-01-09',
-        licenceLength: '12M',
-        licenceStartTime: '0',
-        licenceType: 'Trout and coarse',
-        numberOfRods: '2'
-      }
+      const samplePermission = getSeniorPermission({ disabledConcession: true })
       const { byLength } = await pricingDetail('licence-length', samplePermission)
       expect(byLength).toMatchSnapshot()
     })
