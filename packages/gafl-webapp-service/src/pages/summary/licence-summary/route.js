@@ -184,7 +184,8 @@ export const getData = async request => {
     isRenewal: permission.isRenewal,
     uri: {
       clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    }
+    },
+    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true'
   }
 }
 

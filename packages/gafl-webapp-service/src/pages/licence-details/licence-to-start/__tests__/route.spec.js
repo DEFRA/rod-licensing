@@ -25,5 +25,16 @@ describe('licence-to-start > route', () => {
       const result = await getData(mockRequest)
       expect(result.isLicenceForYou).toBeFalsy()
     })
+
+    it.each([
+      [true, true],
+      [false, false],
+      [undefined, false]
+    ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
+      process.env.SHOW_NOTIFICATION_BANNER = notification
+      const result = await getData(mockRequest)
+      expect(result.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
+    })
   })
 })

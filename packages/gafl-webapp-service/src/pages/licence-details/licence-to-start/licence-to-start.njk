@@ -60,11 +60,9 @@
 {% endset -%}
 
 {% block notificationContent %}
-
-    {% if SHOW_NOTIFICATION_BANNER %}
+    {% if data.SHOW_NOTIFICATION_BANNER %}
         {{ notificationBanner() }}
     {% endif%}
-
 {% endblock %}
 
 {% block pageContent %}

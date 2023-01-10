@@ -244,6 +244,18 @@ describe('licence-summary > route', () => {
 
       expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, catalog)
     })
+
+    it.each([
+      [true, true],
+      [false, false],
+      [undefined, false]
+    ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
+      process.env.SHOW_NOTIFICATION_BANNER = notification
+      const mockRequest = getMockRequest()
+      const data = await getData(mockRequest)
+
+      expect(data.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
+    })
   })
 
   describe('checkNavigation', () => {
