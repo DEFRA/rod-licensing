@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.7 (2023-01-10)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1594](https://github.com/DEFRA/rod-licensing/pull/1594) Add new cost fields ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.30.0-rc.6 (2023-01-10)
 
 #### :rocket: Enhancement
