@@ -1,78 +1,50 @@
 import { NAME } from '../../../../uri.js'
 import updateTransaction from '../update-transaction.js'
 
-const VALID_PAYLOAD = (firstName = 'Luke', lastName = 'Skywalker') => ({
-  'first-name': firstName,
-  'last-name': lastName
-})
-
-const transactionHelperMock = {
-  get: jest.fn(),
-  getCurrentPermission: jest.fn(() => ({ licensee: { firstName: null, lastName: null } })),
-  setCurrentPermission: jest.fn()
-}
-
-const createRequestMock = getCurrentPermission => ({
-  cache: jest.fn(() => ({
+const createRequestMock = (currentPermission, samplePermission, setCurrentPermission = jest.fn()) => ({
+  cache: () => ({
     helpers: {
       page: {
-        get: jest.fn(() => ({
-          permissions: [
-            {
-              [NAME.page]: {
-                payload: VALID_PAYLOAD
-              }
-            }
-          ]
-        })),
-        getCurrentPermission
+        getCurrentPermission: () => currentPermission
       },
-      status: {
-        get: jest.fn()
-      },
-      transaction: transactionHelperMock
+      transaction: {
+        getCurrentPermission: () => samplePermission,
+        setCurrentPermission
+      }
     }
-  }))
+  })
 })
 
 describe('update-transaction', () => {
   beforeEach(jest.clearAllMocks)
+  it('sets current transaction permission to be value of transaction getCurrentPermission', async () => {
+    const samplePermission = { licensee: {} }
+    const setCurrentPermission = jest.fn()
+    const mockRequest = createRequestMock({ payload: { firstName: '', lastName: '' } }, samplePermission, setCurrentPermission)
+    await updateTransaction(mockRequest)
+    expect(setCurrentPermission).toHaveBeenCalledWith(samplePermission)
+  })
+
+  it('sets sample permission first-name and last-name values to the payload values', async () => {
+    const firstName = Symbol('Homer')
+    const lastName = Symbol('Simpson')
+    const samplePayload = { payload: { 'first-name': firstName, 'last-name': lastName } }
+    const samplePermission = { licensee: { firstName: 'Anikan', lastName: 'Skywalker' } }
+    const mockRequest = createRequestMock(samplePayload, samplePermission)
+    await updateTransaction(mockRequest)
+    expect(samplePermission).toEqual(expect.objectContaining({
+      licensee: {
+        firstName,
+        lastName
+      }
+    }))
+  })
+
   it('gets the payload from the name page cache', async () => {
-    const samplePayload = {
-      'first-name': 'Barry',
-      'last-name': 'Chuckle'
-    }
+    const samplePayload = { payload: { 'first-name': 'Howard', 'last-name': 'Moon' }}
     const getCurrentPermission = jest.fn(() => ({ payload: samplePayload }))
-    const mockRequest = createRequestMock(getCurrentPermission)
+    const mockRequest = createRequestMock(getCurrentPermission, samplePayload)
     await updateTransaction(mockRequest)
     expect(getCurrentPermission).toHaveBeenCalledWith(NAME.page)
-  })
-
-  it('sets the first name on the current permission', async () => {
-    const samplePayload = VALID_PAYLOAD()
-    const getCurrentPermission = jest.fn(() => ({ payload: samplePayload }))
-    const mockRequest = createRequestMock(getCurrentPermission)
-    const permission = transactionHelperMock.setCurrentPermission.mock.calls
-    await updateTransaction(mockRequest)
-    expect(permission[0][0].licensee.firstName).toBe(VALID_PAYLOAD()['first-name'])
-  })
-
-  it('sets the last name on the current permission', async () => {
-    const samplePayload = VALID_PAYLOAD()
-    const getCurrentPermission = jest.fn(() => ({ payload: samplePayload }))
-    const mockRequest = createRequestMock(getCurrentPermission)
-    const permission = transactionHelperMock.setCurrentPermission.mock.calls
-    await updateTransaction(mockRequest)
-    expect(permission[0][0].licensee.lastName).toBe(VALID_PAYLOAD()['last-name'])
-  })
-
-  it('compare if has set first and last name for licensee based off payload', async () => {
-    const samplePayload = VALID_PAYLOAD()
-    const getCurrentPermission = jest.fn(() => ({ payload: samplePayload }))
-    const mockRequest = createRequestMock(getCurrentPermission)
-    const noNameLicensee = transactionHelperMock.getCurrentPermission.mock.calls
-    const nameLicensee = transactionHelperMock.setCurrentPermission.mock.calls
-    await updateTransaction(mockRequest)
-    expect(noNameLicensee[0][0]).not.toBe(nameLicensee[0][0])
   })
 })
