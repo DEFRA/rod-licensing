@@ -1,5 +1,4 @@
 import { ANALYTICS } from '../constants.js'
-import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 /**
  * Analytics route handler
  * @param request
@@ -56,8 +55,8 @@ export default async (request, h) => {
 
   if (host === referrerHost) {
     const redirect = referer.replace(origin, '')
-    return h.redirect(redirect)
+    return h.redirectWithLanguageCode(redirect)
   }
 
-  return h.redirect(addLanguageCodeToUri(request, '/buy'))
+  return h.redirectWithLanguageCode('/buy')
 }

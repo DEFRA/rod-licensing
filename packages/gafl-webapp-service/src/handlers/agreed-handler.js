@@ -18,7 +18,6 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
-import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -151,7 +150,7 @@ const processPayment = async (request, transaction, status) => {
       status[COMPLETION_STATUS.paymentFailed] = true
       status.payment = { code: state.code }
       await request.cache().helpers.status.set(status)
-      next = addLanguageCodeToUri(request, PAYMENT_FAILED.uri)
+      next = PAYMENT_FAILED.uri
     }
 
     // The user cancelled the payment
@@ -160,7 +159,7 @@ const processPayment = async (request, transaction, status) => {
       status[COMPLETION_STATUS.paymentCancelled] = true
       status.pay = { code: state.code }
       await request.cache().helpers.status.set(status)
-      next = addLanguageCodeToUri(request, PAYMENT_CANCELLED.uri)
+      next = PAYMENT_CANCELLED.uri
     }
 
     // The payment was rejected
@@ -169,7 +168,7 @@ const processPayment = async (request, transaction, status) => {
       status[COMPLETION_STATUS.paymentFailed] = true
       status.payment = { code: state.code }
       await request.cache().helpers.status.set(status)
-      next = addLanguageCodeToUri(request, PAYMENT_FAILED.uri)
+      next = PAYMENT_FAILED.uri
     }
   }
 
@@ -241,7 +240,7 @@ export default async (request, h) => {
     // Note: At this point payment completed status is never set
     const next = await processPayment(request, transaction, status)
     if (next) {
-      return h.redirect(next)
+      return h.redirectWithLanguageCode(next)
     }
   }
 
@@ -253,5 +252,5 @@ export default async (request, h) => {
   }
 
   // If we are here we have completed
-  return h.redirect(addLanguageCodeToUri(request, ORDER_COMPLETE.uri))
+  return h.redirectWithLanguageCode(ORDER_COMPLETE.uri)
 }

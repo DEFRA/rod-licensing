@@ -137,6 +137,7 @@
   "client_error_continue_with_payment_pre": "To continue with the payment, ",
   "client_error_continue_with_payment_link": "go back to GOV Pay.",
   "client_error_payment_start_again_pre": "Or, if you wish, you can discard this licence and ",
+  "client_error_payment_start_again": "start again",
   "concession_applied": "Concession applied",
   "contact_summary_change": "Change",
   "contact_summary_email": "Email to ",

@@ -1,4 +1,41 @@
 
+## v1.30.0-rc.7 (2023-01-10)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1594](https://github.com/DEFRA/rod-licensing/pull/1594) Add new cost fields ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.6 (2023-01-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1600](https://github.com/DEFRA/rod-licensing/pull/1600) Fix typos in Welsh translation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.5 (2023-01-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1580](https://github.com/DEFRA/rod-licensing/pull/1580) Refactor redirects to automatically use correct language ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.4 (2023-01-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1590](https://github.com/DEFRA/rod-licensing/pull/1590) Add Welsh translations to server error messages ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1591](https://github.com/DEFRA/rod-licensing/pull/1591) Update Welsh translations for client errors ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.30.0-rc.3 (2022-12-23)
 
 #### :rocket: Enhancement

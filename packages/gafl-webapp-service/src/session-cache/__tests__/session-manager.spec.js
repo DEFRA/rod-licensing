@@ -12,11 +12,6 @@ import {
   IDENTIFY,
   AGREED
 } from '../../uri.js'
-import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
-
-jest.mock('../../processors/uri-helper.js', () => ({
-  addLanguageCodeToUri: jest.fn((request, uri) => uri)
-}))
 
 mockSalesApi()
 
@@ -144,7 +139,7 @@ describe('takeover by agreed handler once agreed flag is set', () => {
   })
   const getMockToolkit = (takeover = () => {}) => ({
     state: () => {},
-    redirect: jest.fn(() => ({
+    redirectWithLanguageCode: jest.fn(() => ({
       takeover
     }))
   })
@@ -153,9 +148,10 @@ describe('takeover by agreed handler once agreed flag is set', () => {
   beforeEach(jest.clearAllMocks)
 
   it("redirects to agreed handler when status is already agreed and request path isn't in exempt set", async () => {
+    const request = getMockRequest()
     const toolkit = getMockToolkit()
-    await initialisedSessionManager(getMockRequest(), toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(AGREED.uri)
+    await initialisedSessionManager(request, toolkit)
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(AGREED.uri)
   })
 
   it('returns a takeover response after redirect', async () => {
@@ -165,24 +161,5 @@ describe('takeover by agreed handler once agreed flag is set', () => {
       getMockToolkit(() => takeoverResponse)
     )
     expect(response).toBe(takeoverResponse)
-  })
-
-  it('passes request to addLanguageCodeToUri before redirecting', async () => {
-    const request = getMockRequest()
-    await initialisedSessionManager(request, getMockToolkit())
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.any(String))
-  })
-
-  it('passes AGREED.uri to addLanguageCodeToUri before redirecting', async () => {
-    await initialisedSessionManager(getMockRequest(), getMockToolkit())
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), AGREED.uri)
-  })
-
-  it('passes result of addLanguageCodeToUri to redirect', async () => {
-    const decoratedUri = Symbol('redirect uri')
-    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
-    const toolkit = getMockToolkit()
-    await initialisedSessionManager(getMockRequest(), toolkit)
-    expect(toolkit.redirect).toHaveBeenCalledWith(decoratedUri)
   })
 })
