@@ -36,14 +36,12 @@ const getPermissionThree = () => ({
   permit: { cost: 12 }
 })
 
-const set = jest.fn()
-
-const createRequestMock = (transaction, permission) => ({
+const createRequestMock = (transaction, permission, set = jest.fn()) => ({
   cache: () => ({
     helpers: {
       transaction: {
         get: async () => transaction,
-        set: set,
+        set,
         getCurrentPermission: async () => permission
       }
     }
@@ -56,13 +54,14 @@ describe('remove-licence > update transaction', () => {
   })
 
   it('set is being called with a permission removed', async () => {
+    const set = jest.fn()
     const transaction = {
       permissions: [getPermissionOne(), getPermissionTwo(), getPermissionThree()]
     }
     const result = {
       permissions: [getPermissionOne(), getPermissionThree()]
     }
-    const mockRequest = createRequestMock(transaction, getPermissionTwo())
+    const mockRequest = createRequestMock(transaction, getPermissionTwo(), set)
     await updateTransaction(mockRequest)
     expect(set).toHaveBeenCalledWith(result)
   })
