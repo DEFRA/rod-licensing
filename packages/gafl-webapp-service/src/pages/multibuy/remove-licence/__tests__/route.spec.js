@@ -1,5 +1,4 @@
 import { getData, validator } from '../route.js'
-import { createMockRequest } from '../../../../__mocks__/request.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { VIEW_LICENCES } from '../../../../uri.js'
@@ -34,52 +33,37 @@ describe('remove-licence > default', () => {
 })
 
 describe('remove-licence > getData', () => {
-  const mockRequest = createMockRequest({
-    cache: {
-      transaction: {
-        permissions: [permission]
+  const getMockRequest = permission => ({
+    cache: () => ({
+      helpers: {
+        transaction: {
+          getCurrentPermission: async () => permission
+        },
+        status: {
+          set: jest.fn()
+        }
       }
-    }
-  })
-
-  const getSampleRequest = () => ({
-    ...mockRequest,
+    }),
     i18n: {
       getCatalog: () => catalog
-    }
-  })
-
-  licenceTypeDisplay.mockReturnValue('Trout and coarse, up to 2 rods')
-  licenceTypeAndLengthDisplay.mockReturnValue('8 days')
-  displayStartTime.mockReturnValue('9:32am on 23 June 2021')
-  addLanguageCodeToUri.mockReturnValue('/buy/remove-licence')
-
-  it('expected data from getData', async () => {
-    const data = await getData(getSampleRequest())
-    expect(data).toMatchSnapshot()
-  })
-})
-
-describe('getData', () => {
-  const mockRequest = createMockRequest({
-    cache: {
-      transaction: {
-        permissions: [permission]
-      }
-    }
-  })
-
-  const getSampleRequest = () => ({
-    ...mockRequest,
-    i18n: {
-      getCatalog: () => catalog
-    }
+    },
+    query: {}
   })
 
   beforeEach(() => jest.clearAllMocks())
 
+  it('expected data from getData', async () => {
+    licenceTypeDisplay.mockReturnValueOnce('Trout and coarse, up to 2 rods')
+    licenceTypeAndLengthDisplay.mockReturnValueOnce('8 days')
+    displayStartTime.mockReturnValueOnce('9:32am on 23 June 2021')
+    addLanguageCodeToUri.mockReturnValueOnce('/buy/remove-licence')
+
+    const data = await getData(getMockRequest(permission))
+    expect(data).toMatchSnapshot()
+  })
+
   it('licenceTypeDisplay is called with the expected arguments', async () => {
-    await getData(getSampleRequest())
+    await getData(getMockRequest(permission))
 
     expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
   })
@@ -88,13 +72,13 @@ describe('getData', () => {
     const returnValue = Symbol('return value')
     licenceTypeDisplay.mockReturnValueOnce(returnValue)
 
-    const result = await getData(getSampleRequest())
+    const result = await getData(getMockRequest(permission))
 
     expect(result.type).toEqual(returnValue)
   })
 
   it('licenceTypeAndLengthDisplay is called with the expected arguments', async () => {
-    await getData(getSampleRequest())
+    await getData(getMockRequest(permission))
     expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
   })
 
@@ -102,13 +86,13 @@ describe('getData', () => {
     const returnValue = Symbol('return value')
     licenceTypeAndLengthDisplay.mockReturnValueOnce(returnValue)
 
-    const result = await getData(getSampleRequest())
+    const result = await getData(getMockRequest(permission))
 
     expect(result.length).toEqual(returnValue)
   })
 
   it('displayStartTime is called with the expected arguments', async () => {
-    const sampleRequest = getSampleRequest()
+    const sampleRequest = getMockRequest(permission)
     await getData(sampleRequest)
     expect(displayStartTime).toHaveBeenCalledWith(sampleRequest, permission)
   })
@@ -117,13 +101,13 @@ describe('getData', () => {
     const returnValue = Symbol('return value')
     displayStartTime.mockReturnValueOnce(returnValue)
 
-    const result = await getData(getSampleRequest())
+    const result = await getData(getMockRequest(permission))
 
     expect(result.start).toEqual(returnValue)
   })
 
   it('addLanguageCodeToUri is called with the expected arguments', async () => {
-    const sampleRequest = getSampleRequest()
+    const sampleRequest = getMockRequest(permission)
     await getData(sampleRequest)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, VIEW_LICENCES.uri)
   })
@@ -132,7 +116,7 @@ describe('getData', () => {
     const returnValue = Symbol('return value')
     addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
-    const result = await getData(getSampleRequest())
+    const result = await getData(getMockRequest(permission))
 
     expect(result.uri.view_licences).toEqual(returnValue)
   })
