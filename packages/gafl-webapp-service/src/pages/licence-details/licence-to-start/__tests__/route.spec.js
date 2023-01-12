@@ -27,8 +27,8 @@ describe('licence-to-start > route', () => {
     })
 
     it.each([
-      [true, true],
-      [false, false],
+      ['true', true],
+      ['false', false],
       [undefined, false]
     ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
