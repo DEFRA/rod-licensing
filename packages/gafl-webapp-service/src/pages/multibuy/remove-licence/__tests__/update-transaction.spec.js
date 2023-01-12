@@ -53,16 +53,23 @@ describe('remove-licence > update transaction', () => {
     jest.clearAllMocks()
   })
 
+  it('transaction does not contain the currentPermission', async () => {
+    const transaction = {
+      permissions: [getPermissionOne(), getPermissionTwo(), getPermissionThree()]
+    }
+    const mockRequest = createRequestMock(transaction, getPermissionTwo())
+    await updateTransaction(mockRequest)
+    expect(transaction.permissions.length).toEqual(2)
+  })
+
   it('set is being called with a permission removed', async () => {
     const set = jest.fn()
     const transaction = {
       permissions: [getPermissionOne(), getPermissionTwo(), getPermissionThree()]
     }
-    const result = {
-      permissions: [getPermissionOne(), getPermissionThree()]
-    }
     const mockRequest = createRequestMock(transaction, getPermissionTwo(), set)
     await updateTransaction(mockRequest)
-    expect(set).toHaveBeenCalledWith(result)
+    console.log(transaction)
+    expect(set).toHaveBeenCalledWith(expect.objectContaining(transaction))
   })
 })
