@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.8 (2023-01-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1593](https://github.com/DEFRA/rod-licensing/pull/1593) Notification banner ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.30.0-rc.7 (2023-01-10)
 
 #### :rocket: Enhancement
