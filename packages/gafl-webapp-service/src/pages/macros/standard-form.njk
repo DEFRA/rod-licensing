@@ -20,6 +20,8 @@
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" novalidate>
 
+          {% block notificationContent %}{% endblock %}
+
             {% call govukFieldset({
               legend: {
                 text: title,
