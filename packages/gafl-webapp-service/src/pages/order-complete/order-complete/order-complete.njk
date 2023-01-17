@@ -15,27 +15,24 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
 
         {{ govukPanel({
           titleHtml: titleHtml,
           html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
         }) }}
-        
 
         <div class="govuk-!-margin-bottom-9">
+            <p class="govuk-body">
+                <a class="govuk-link" href="{{ data.uri.licenceDetails }}">{{ mssgs.order_complete_view_details }}</a>
+            </p>
+
+            <h2 class="govuk-heading-l">{{ mssgs.order_complete_subheading }}</h2>
+
             <p class="govuk-body">{{ mssgs.order_complete_conf_info_1 }}</p>
             <p class="govuk-body">{{ mssgs.order_complete_conf_info_2 }}</p>
             <p class="govuk-body">{{ mssgs.order_complete_conf_info_3 }}</p>
 
-            <div class="govuk-!-margin-bottom-3">
-                {{ govukButton({
-                    href: data.uri.licenceDetails,
-                    text: mssgs.order_complete_view_details,
-                    classes: "govuk-button--secondary"
-                }) }}
-            </div>
-                
             {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
                 <div class="govuk-!-margin-bottom-3">
                     <h2 class="govuk-heading-l">{{ mssgs.order_complete_subheading_rcr }}</h2>
@@ -57,15 +54,12 @@
             {% endif %}
 
             <p class="govuk-body">{{ mssgs.order_complete_warning_body_4 }}<a class="govuk-link" rel="noreferrer noopener" href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" target="_blank">{{ mssgs.order_complete_warning_body_4_link }}</a>{{ mssgs.period }}</p>
+
+            <p class="govuk-body">
+                <a class="govuk-link" href="https://www.gov.uk/government/publications/fisheries-annual-report-2019-to-2020/fisheries-annual-report-2019-to-2020">{{ mssgs.order_complete_fisheries_report_link }}</a>{{ mssgs.order_complete_fisheries_report_suffix }}
+            </p>
         </div>
         <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.feedback }}">{{ mssgs.order_complete_tell_us }}</a>{{ mssgs.order_complete_tell_us_link }}</p>
-
-        {{ govukButton({
-            href: data.uri.new,
-            attributes: { id: 'continue' },
-            text: mssgs.buy_another_licence,
-            classes: "govuk-!-margin-top-4 no-print govuk-button--secondary"
-        }) }}
 
     </div>
 </div>
