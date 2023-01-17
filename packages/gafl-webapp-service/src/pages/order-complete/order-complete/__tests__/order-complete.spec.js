@@ -151,7 +151,8 @@ describe('The order completion handler', () => {
       }
     })
     const transaction = () => ({
-      permissions: []
+      permissions: [],
+      cost: 0
     })
 
     const request = mockRequest(status, currentPermission, transaction)
@@ -176,7 +177,8 @@ describe('The order completion handler', () => {
       }
     })
     const transaction = () => ({
-      permissions: []
+      permissions: [],
+      cost: 0
     })
 
     const decoratedUri = Symbol('licence details uri')
@@ -205,10 +207,33 @@ describe('The order completion handler', () => {
       }
     })
     const transaction = () => ({
-      permissions: permissions
+      permissions: permissions,
+      cost: 0
     })
     const request = mockRequest(status, currentPermission, transaction)
     const data = await getData(request)
     expect(data.numberOfLicences).toEqual(count)
+  })
+
+  it('returns the correct totalCost', async () => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const currentPermission = () => ({
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+    const transaction = () => ({
+      permissions: [],
+      cost: 100
+    })
+    const request = mockRequest(status, currentPermission, transaction)
+    const data = await getData(request)
+
+    expect(data.totalCost).toEqual(100)
   })
 })

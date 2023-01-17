@@ -39,6 +39,7 @@ export const getData = async request => {
     isPostalFulfilment: permission.licensee.postalFulfilment,
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     howContacted: mappings.HOW_CONTACTED,
+    totalCost: transaction.cost,
     numberOfLicences: transaction.permissions.length,
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,

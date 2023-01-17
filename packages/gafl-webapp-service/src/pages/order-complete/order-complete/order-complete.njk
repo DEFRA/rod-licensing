@@ -4,12 +4,12 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 
-{% if data.permission.permit.cost === 0 %}
+{% if data.totalCost === 0 %}
     {% set title = mssgs.order_complete_title_application %}
     {% set titleHtml = title %}
 {% else %}
     {% set title = mssgs.order_complete_title_payment %}
-    {% set titleHtml = mssgs.pound + data.permission.permit.cost + '<br />' + title %}
+    {% set titleHtml = mssgs.pound + data.totalCost + '<br />' + title %}
 {% endif %}
 
 {% if data.numberOfLicences === 1 %}
