@@ -11,6 +11,13 @@
     {% set title = mssgs.order_complete_title_payment %}
     {% set titleHtml = mssgs.pound + data.permission.permit.cost + '<br />' + title %}
 {% endif %}
+
+{% if data.numberOfLicences === 1 %}
+    {% set panelLicenceText = data.numberOfLicences + mssgs.order_complete_licence_count_single %}
+{% else %}
+    {% set panelLicenceText = data.numberOfLicences + mssgs.order_complete_licence_count_multiple %}
+{% endif %}
+
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
@@ -19,7 +26,7 @@
 
         {{ govukPanel({
           titleHtml: titleHtml,
-          html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
+          html: mssgs.order_complete_licence_count_prefix + '<strong>' + panelLicenceText + '</strong>'
         }) }}
 
         <div class="govuk-!-margin-bottom-9">

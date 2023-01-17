@@ -10,6 +10,7 @@ import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
+  const transaction = await request.cache().helpers.transaction.get()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // If the agreed flag is not set to true then throw an exception
@@ -38,6 +39,7 @@ export const getData = async request => {
     isPostalFulfilment: permission.licensee.postalFulfilment,
     contactMethod: permission.licensee.preferredMethodOfConfirmation,
     howContacted: mappings.HOW_CONTACTED,
+    numberOfLicences: transaction.permissions.length,
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri)

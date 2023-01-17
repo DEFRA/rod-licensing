@@ -22,7 +22,7 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
 }))
 
-const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+const mockRequest = (statusGet = () => {}, permissionGet = () => {}, transactionGet = () => {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -35,7 +35,8 @@ const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
         })
       },
       transaction: {
-        getCurrentPermission: transactionGet
+        getCurrentPermission: permissionGet,
+        get: transactionGet
       }
     }
   }),
@@ -142,15 +143,18 @@ describe('The order completion handler', () => {
       [COMPLETION_STATUS.posted]: true,
       [COMPLETION_STATUS.finalised]: true
     })
-    const transaction = () => ({
+    const currentPermission = () => ({
       startDate: '2019-12-14T00:00:00Z',
       licensee: {
         postalFulfilment: 'test',
         preferredMethodOfConfirmation: 'test'
       }
     })
+    const transaction = () => ({
+      permissions: []
+    })
 
-    const request = mockRequest(status, transaction)
+    const request = mockRequest(status, currentPermission, transaction)
 
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
 
@@ -164,21 +168,47 @@ describe('The order completion handler', () => {
       [COMPLETION_STATUS.posted]: true,
       [COMPLETION_STATUS.finalised]: true
     })
-    const transaction = () => ({
+    const currentPermission = () => ({
       startDate: '2019-12-14T00:00:00Z',
       licensee: {
         postalFulfilment: 'test',
         preferredMethodOfConfirmation: 'test'
       }
     })
+    const transaction = () => ({
+      permissions: []
+    })
 
     const decoratedUri = Symbol('licence details uri')
     addLanguageCodeToUri.mockReturnValue(decoratedUri)
 
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
+    const request = mockRequest(status, currentPermission, transaction)
 
     const data = await getData(request)
     expect(data.uri.licenceDetails).toEqual(decoratedUri)
+  })
+
+  it.each([
+    [1, ['foo']],
+    [2, ['foo', 'bar']]
+  ])('checks the numberOfLicences correctly when the number of licences is %s', async (count, permissions) => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const currentPermission = () => ({
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+    const transaction = () => ({
+      permissions: permissions
+    })
+    const request = mockRequest(status, currentPermission, transaction)
+    const data = await getData(request)
+    expect(data.numberOfLicences).toEqual(count)
   })
 })
