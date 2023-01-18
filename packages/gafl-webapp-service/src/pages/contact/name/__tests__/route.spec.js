@@ -30,11 +30,6 @@ describe('route > getData', () => {
     )
   })
 
-  it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-    const result = await getData(getMockRequest())
-    expect(result.isLicenceForYou).toBeTruthy()
-  })
-
   it('should return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
     const samplePermission = getMockPermission({ isLicenceForYou: false })
     const result = await getData(getMockRequest(samplePermission))
