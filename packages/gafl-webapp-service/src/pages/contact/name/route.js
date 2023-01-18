@@ -11,8 +11,15 @@ const validator = Joi.object({
 
 export const getData = async request => {
   const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
+  const permissions = await request.cache().helpers.transaction.getCurrentPermission()
+  const firstName = permissions.licensee.firstName
+  const lastName = permissions.licensee.lastName
 
-  return { isLicenceForYou }
+  return {
+    isLicenceForYou,
+    firstName,
+    lastName
+  }
 }
 
 const namePageRoute = pageRoute(NAME.page, NAME.uri, validator, nextPage, getData)
