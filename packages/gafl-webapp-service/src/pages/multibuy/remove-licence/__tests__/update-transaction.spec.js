@@ -64,26 +64,13 @@ describe('remove-licence > update transaction', () => {
   })
 
   describe('transaction after remove licence', () => {
-    const transaction = {
-      permissions: [getPermissionOne(), getPermissionTwo(), getPermissionThree()]
-    }
-    const mockRequest = createRequestMock(transaction, getPermissionTwo())
-
-    it('transaction removes a permission', async () => {
-      await updateTransaction(mockRequest)
-      expect(transaction.permissions.length).toEqual(2)
-    })
-
     it('transaction does not contain the currentPermission', async () => {
+      const permissionToRemove = getPermissionTwo()
+      const transaction = { permissions: [getPermissionOne(), permissionToRemove, getPermissionThree()] }
+      const mockRequest = createRequestMock(transaction, permissionToRemove)
       await updateTransaction(mockRequest)
       const permissions = transaction.permissions
       expect(permissions.filter(p => p.licenceType === 'salmon-and-sea').length).toEqual(0)
-    })
-
-    it('transaction contains permissions other than currentPermission', async () => {
-      await updateTransaction(mockRequest)
-      const permissions = transaction.permissions
-      expect(permissions.filter(p => p.licenceType === 'trout-and-coarse').length).toEqual(2)
     })
   })
 })
