@@ -1,0 +1,653 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The pricing summary calculator for a junior licence returns the correct length pricing data for a 12 month 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct length pricing data for a 12 month when a permission starts after the new price changover 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct length pricing data with a disabled concession 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct length pricing data with a disabled concession when a permission starts after the new price changover 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct type pricing data 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct type pricing data when a permission starts after the new price changover 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct type pricing data with a disabled concession 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for a junior licence returns the correct type pricing data with a disabled concession when a permission starts after the new price changover 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 0,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct length pricing data 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 30,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct length pricing data for a disabled concession 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct length pricing data for a disabled concession when a permission starts after the new price changover 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 22,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 8,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 14,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct length pricing data when a permission starts after the new price changover 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 32,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 8,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 14,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct pricing data for a disabled concession when a permission starts after the new price changover 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 60,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 14,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 30,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 22,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 8,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 14,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 32,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct pricing data when a permission starts after the new price changover 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": 85,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 14,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 30,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": 32,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 8,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 14,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": 50,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct type pricing data 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": 82,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 27,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": 30,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": 45,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an adult licence returns the correct type pricing data with a disabled concession 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 54,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 27,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 30,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct length pricing data 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct length pricing data for a disabled concession 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct length pricing data for a disabled concession when a permission starts after the new price changover 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct length pricing data when a permission starts after the new price changover 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct type pricing data 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 54,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 27,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 30,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct type pricing data when a permission starts after the new price changover 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 54,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 27,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 30,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct type pricing data with a disabled concession 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 54,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 27,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 30,
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator for an senior licence returns the correct type pricing data with a disabled concession when a permission starts after the new price changover 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 54,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 27,
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 20,
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": 6,
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": 12,
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": 30,
+    },
+    "msg": "no-short",
+  },
+}
+`;
