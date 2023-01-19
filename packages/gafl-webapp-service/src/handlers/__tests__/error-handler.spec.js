@@ -194,8 +194,8 @@ describe('error-handler', () => {
     response: {
       isBoom: true,
       output: {
-        statusCode: statusCode,
-        payload: payload
+        statusCode,
+        payload
       }
     },
     url: {
