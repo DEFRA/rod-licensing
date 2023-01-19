@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.9 (2023-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1598](https://github.com/DEFRA/rod-licensing/pull/1598) Use permission start date to calculate price ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.30.0-rc.8 (2023-01-16)
 
 #### :rocket: Enhancement
