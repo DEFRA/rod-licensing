@@ -10,8 +10,7 @@ import {
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
-  REFUND_POLICY,
-  NEW_TRANSACTION
+  REFUND_POLICY
 } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
@@ -23,7 +22,7 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
 }))
 
-const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+const mockRequest = (statusGet = () => {}, permissionGet = () => {}, transactionGet = () => {}) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -36,7 +35,8 @@ const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
         })
       },
       transaction: {
-        getCurrentPermission: transactionGet
+        getCurrentPermission: permissionGet,
+        get: transactionGet
       }
     }
   }),
@@ -125,7 +125,7 @@ describe('The order completion handler', () => {
     [ACCESSIBILITY_STATEMENT.page, ACCESSIBILITY_STATEMENT.uri],
     [PRIVACY_POLICY.page, PRIVACY_POLICY.uri],
     [REFUND_POLICY.page, REFUND_POLICY.uri]
-  ])('succesfully navigates to %s when on the order complete page', async (page, uri) => {
+  ])('successfully navigates to %s when on the order complete page', async (page, uri) => {
     await JUNIOR_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
@@ -137,50 +137,30 @@ describe('The order completion handler', () => {
     expect(data.statusCode).toBe(200)
   })
 
-  it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
+  it('addLanguageCodeToUri is called with request and LICENCE_DETAILS.uri', async () => {
     const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
       [COMPLETION_STATUS.finalised]: true
     })
-    const transaction = () => ({
+    const currentPermission = () => ({
       startDate: '2019-12-14T00:00:00Z',
       licensee: {
         postalFulfilment: 'test',
         preferredMethodOfConfirmation: 'test'
       }
     })
+    const transaction = () => ({
+      permissions: [],
+      cost: 0
+    })
 
-    const request = mockRequest(status, transaction)
+    const request = mockRequest(status, currentPermission, transaction)
 
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
 
     await getData(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
-  })
-
-  it('addLanguageCodeToUri outputs correct value for new', async () => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const decoratedUri = Symbol('order complete uri')
-    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
-
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
-
-    const data = await getData(request)
-    expect(data.uri.new).toEqual(decoratedUri)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, LICENCE_DETAILS.uri)
   })
 
   it('addLanguageCodeToUri outputs correct value for licence details', async () => {
@@ -189,21 +169,71 @@ describe('The order completion handler', () => {
       [COMPLETION_STATUS.posted]: true,
       [COMPLETION_STATUS.finalised]: true
     })
-    const transaction = () => ({
+    const currentPermission = () => ({
       startDate: '2019-12-14T00:00:00Z',
       licensee: {
         postalFulfilment: 'test',
         preferredMethodOfConfirmation: 'test'
       }
     })
+    const transaction = () => ({
+      permissions: [],
+      cost: 0
+    })
 
     const decoratedUri = Symbol('licence details uri')
     addLanguageCodeToUri.mockReturnValue(decoratedUri)
 
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
+    const request = mockRequest(status, currentPermission, transaction)
 
     const data = await getData(request)
     expect(data.uri.licenceDetails).toEqual(decoratedUri)
+  })
+
+  it.each([
+    [1, ['foo']],
+    [2, ['foo', 'bar']]
+  ])('checks the numberOfLicences correctly when the number of licences is %s', async (count, permissions) => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const currentPermission = () => ({
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+    const transaction = () => ({
+      permissions: permissions,
+      cost: 0
+    })
+    const request = mockRequest(status, currentPermission, transaction)
+    const data = await getData(request)
+    expect(data.numberOfLicences).toEqual(count)
+  })
+
+  it('returns the correct totalCost', async () => {
+    const status = () => ({
+      [COMPLETION_STATUS.agreed]: true,
+      [COMPLETION_STATUS.posted]: true,
+      [COMPLETION_STATUS.finalised]: true
+    })
+    const currentPermission = () => ({
+      licensee: {
+        postalFulfilment: 'test',
+        preferredMethodOfConfirmation: 'test'
+      }
+    })
+    const transaction = () => ({
+      permissions: [],
+      cost: 100
+    })
+    const request = mockRequest(status, currentPermission, transaction)
+    const data = await getData(request)
+
+    expect(data.totalCost).toEqual(100)
   })
 })
