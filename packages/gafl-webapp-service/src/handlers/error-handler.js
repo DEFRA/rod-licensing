@@ -65,7 +65,10 @@ export const errorHandler = async (request, h) => {
         prePaymentError,
         postPaymentError,
         serverError,
-        uri: { new: NEW_TRANSACTION.uri, agreed: AGREED.uri }
+        uri: {
+          new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+          agreed: addLanguageCodeToUri(request, AGREED.uri)
+        }
       })
       .code(request.response.output.statusCode)
   }

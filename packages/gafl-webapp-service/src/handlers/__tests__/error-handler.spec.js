@@ -161,6 +161,13 @@ describe('error-handler', () => {
           )
         })
       })
+
+      it.each([[NEW_TRANSACTION.uri], [AGREED.uri]])('calls with expected arguments', async urlToCheck => {
+        const request = getMockRequest({}, 500)
+        const mockToolkit = getMockToolkit()
+        await errorHandler(request, mockToolkit)
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
+      })
     })
   })
 
