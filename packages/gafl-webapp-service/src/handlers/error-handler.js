@@ -55,16 +55,16 @@ export const errorHandler = async (request, h) => {
 
     const serverError = request.response.output.payload
 
-    const isPrePaymentError = serverError.origin && serverError.origin.step === 'pre-payment'
-    const isPostPaymentError = serverError.origin && serverError.origin.step === 'post-payment'
+    const prePaymentError = serverError.origin && serverError.origin.step === 'pre-payment'
+    const postPaymentError = serverError.origin && serverError.origin.step === 'post-payment'
 
     return h
       .view(SERVER_ERROR.page, {
         mssgs,
         altLang,
-        prePaymentError: isPrePaymentError,
-        postPaymentError: isPostPaymentError,
-        serverError: serverError,
+        prePaymentError,
+        postPaymentError,
+        serverError,
         uri: { new: NEW_TRANSACTION.uri, agreed: AGREED.uri }
       })
       .code(request.response.output.statusCode)
