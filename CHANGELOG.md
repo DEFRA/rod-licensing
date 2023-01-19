@@ -1,4 +1,14 @@
 
+## v1.30.0-rc.10 (2023-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1602](https://github.com/DEFRA/rod-licensing/pull/1602) Fix translation and title errors on server error page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1603](https://github.com/DEFRA/rod-licensing/pull/1603) Stop language parameters from being duplicated in URLs ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.30.0-rc.9 (2023-01-19)
 
 #### :rocket: Enhancement
