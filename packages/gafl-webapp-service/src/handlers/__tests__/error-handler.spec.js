@@ -118,6 +118,20 @@ describe('error-handler', () => {
     })
 
     describe('server errors', () => {
+      it('sets the serverError property correctly', async () => {
+        const payload = Symbol('payload')
+        const request = getMockRequest({}, 500, payload)
+        const mockToolkit = getMockToolkit()
+
+        await errorHandler(request, mockToolkit)
+        expect(mockToolkit.view).toHaveBeenCalledWith(
+          SERVER_ERROR.page,
+          expect.objectContaining({
+            serverError: payload
+          })
+        )
+      })
+
       describe.each([
         [true, false, { origin: { step: 'pre-payment' } }],
         [false, true, { origin: { step: 'post-payment' } }],
