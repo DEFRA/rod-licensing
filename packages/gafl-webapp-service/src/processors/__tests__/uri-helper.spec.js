@@ -45,4 +45,22 @@ describe('URI Helpers: addLanguageCodeToURI', () => {
       expect(result).toEqual(decoratedUrl)
     })
   })
+
+  describe.each([
+    ['https://my-url.com/path?data=true&lang=cy', 'https://my-url.com/path?data=true&lang=cy'],
+    ['https://my-url.com/path?lang=cy', 'https://my-url.com/path?lang=cy'],
+    ['https://my-url.com/path?data=true&lang=en', 'https://my-url.com/path?data=true&lang=cy'],
+    ['https://my-url.com/path?lang=en', 'https://my-url.com/path?lang=cy']
+  ])('', (suppliedPath, expectedPath) => {
+    it('if the supplied url already has a language parameter on it, it does not add a duplicate or conflicting parameter', () => {
+      const mockRequest = {
+        path: suppliedPath,
+        url: {
+          search: '?lang=cy'
+        }
+      }
+      const result = addLanguageCodeToUri(mockRequest, suppliedPath)
+      expect(result).toEqual(expectedPath)
+    })
+  })
 })
