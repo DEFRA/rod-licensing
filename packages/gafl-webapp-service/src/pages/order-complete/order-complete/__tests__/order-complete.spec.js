@@ -1,5 +1,4 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
 import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
 import {
@@ -23,11 +22,15 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
 }))
 
-const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+const mockRequest = () => ({
   cache: () => ({
     helpers: {
       status: {
-        get: statusGet,
+        get: () => ({
+          [COMPLETION_STATUS.agreed]: true,
+          [COMPLETION_STATUS.posted]: true,
+          [COMPLETION_STATUS.finalised]: true
+        }),
         setCurrentPermission: async () => ({
           referenceNumber: 'abc-123'
         }),
@@ -36,7 +39,13 @@ const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
         })
       },
       transaction: {
-        getCurrentPermission: transactionGet
+        getCurrentPermission: () => ({
+          startDate: '2019-12-14T00:00:00Z',
+          licensee: {
+            postalFulfilment: 'test',
+            preferredMethodOfConfirmation: 'test'
+          }
+        })
       }
     }
   }),
@@ -47,7 +56,6 @@ const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
     getCatalog: () => 'messages'
   }
 })
-
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
 
@@ -138,72 +146,17 @@ describe('The order completion handler', () => {
   })
 
   it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const request = mockRequest(status, transaction)
-
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-
+    const request = mockRequest()
     await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   })
 
-  it('addLanguageCodeToUri outputs correct value for new', async () => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const decoratedUri = Symbol('order complete uri')
-    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
-
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
-
-    const data = await getData(request)
-    expect(data.uri.new).toEqual(decoratedUri)
-  })
-
-  it('addLanguageCodeToUri outputs correct value for licence details', async () => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const decoratedUri = Symbol('licence details uri')
+  it.each(['new', 'licenceDetails'])('addLanguageCodeToUri outputs correct value for %s uri', async uriName => {
+    const decoratedUri = Symbol(uriName)
     addLanguageCodeToUri.mockReturnValue(decoratedUri)
 
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
+    const data = await getData(mockRequest())
 
-    const data = await getData(request)
-    expect(data.uri.licenceDetails).toEqual(decoratedUri)
+    expect(data.uri[uriName]).toEqual(decoratedUri)
   })
 })
