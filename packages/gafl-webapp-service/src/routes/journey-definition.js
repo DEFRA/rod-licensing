@@ -31,7 +31,8 @@ import {
   ADD_PERMISSION,
   VIEW_LICENCES,
   CHANGE_LICENCE_OPTIONS,
-  CHANGE_CONTACT_DETAILS
+  CHANGE_CONTACT_DETAILS,
+  REMOVE_LICENCE
 } from '../uri.js'
 
 import { CommonResults, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
@@ -381,6 +382,15 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: ADD_LICENCE
+      }
+    }
+  },
+
+  {
+    current: REMOVE_LICENCE,
+    next: {
+      [CommonResults.OK]: {
+        page: VIEW_LICENCES
       }
     }
   },
