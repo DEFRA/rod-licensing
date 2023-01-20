@@ -14,12 +14,21 @@ import {
 } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
-import { COMPLETION_STATUS } from '../../../../constants.js'
+import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.js'
 
 beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
+}))
+jest.mock('../../../../constants.js', () => ({
+  ...jest.requireActual('../../../../constants.js'),
+  COMPLETION_STATUS: {
+    agreed: 'alright then',
+    posted: 'in the letterbox',
+    finalised: 'no going back now'
+  },
+  FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com')
 }))
 
 const mockRequest = () => ({
@@ -151,12 +160,28 @@ describe('The order completion handler', () => {
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   })
 
-  it.each(['new', 'licenceDetails'])('addLanguageCodeToUri outputs correct value for %s uri', async uriName => {
+  it.each(['new', 'licenceDetails'])('data outputs addLanguageCodeToUri decorated value for %s uri', async uriName => {
     const decoratedUri = Symbol(uriName)
     addLanguageCodeToUri.mockReturnValue(decoratedUri)
 
-    const data = await getData(mockRequest())
+    const { uri } = await getData(mockRequest())
 
-    expect(data.uri[uriName]).toEqual(decoratedUri)
+    expect(uri[uriName]).toEqual(decoratedUri)
+  })
+
+  it.each(['http://trustpilot.com', 'http://give-us-a-stinker'])('feedback link set to FEEDBACK_URI env var (%s)', async feedbackUri => {
+    process.env.FEEDBACK_URI = feedbackUri
+    const {
+      uri: { feedback }
+    } = await getData(mockRequest())
+    expect(feedback).toBe(feedbackUri)
+  })
+
+  it("uses FEEDBACK_URI_DEFAULT if FEEDBACK_URI env var isn't set", async () => {
+    delete process.env.FEEDBACK_URI
+    const {
+      uri: { feedback }
+    } = await getData(mockRequest())
+    expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 })
