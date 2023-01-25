@@ -33,14 +33,14 @@ export const getData = async request => {
   const startTimeStringTitle = displayStartTime(request, permission)
 
   return {
+    startTimeStringTitle,
+    isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
     permissionCost: getPermissionCost(permission),
     permissionReference: permission.referenceNumber,
-    isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    startTimeStringTitle,
     uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri)
+      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }
