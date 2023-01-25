@@ -68,7 +68,11 @@ describe('transaction service', () => {
       const mockPermit = MOCK_12MONTH_SENIOR_PERMIT
       getReferenceDataForEntityAndId.mockReturnValueOnce(mockPermit)
       await createTransaction(mockTransactionPayload())
-      const { mock: { calls: [[{ permit }]] } } = getPermissionCost
+      const {
+        mock: {
+          calls: [[{ permit }]]
+        }
+      } = getPermissionCost
       expect(permit).toBe(mockPermit)
     })
 
