@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.12 (2023-01-25)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#1608](https://github.com/DEFRA/rod-licensing/pull/1608) Add getPrice to Permission ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.30.0-rc.10 (2023-01-19)
 
