@@ -65,7 +65,10 @@ async function createTransactionRecord (payload) {
   for (const permission of record.permissions) {
     const permit = await getReferenceDataForEntityAndId(Permit, permission.permitId)
     record.isRecurringPaymentSupported = record.isRecurringPaymentSupported && permit.isRecurringPaymentSupported
-    record.cost += getPermissionCost(permission) // permit.cost
+    record.cost += getPermissionCost({
+      ...permission,
+      permit
+    })
   }
   return record
 }

@@ -8,17 +8,18 @@ import {
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
-  getReferenceDataForEntityAndId: async (entityType, id) => {
+  getReferenceDataForEntityAndId: jest.fn(async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
       item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
     }
     return item
-  }
+  })
 }))
 
 describe('transaction service', () => {
@@ -27,6 +28,7 @@ describe('transaction service', () => {
     getPermissionCost.mockReturnValue(54)
   })
   beforeEach(AwsMock.__resetAll)
+  beforeEach(jest.clearAllMocks)
 
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
@@ -59,7 +61,15 @@ describe('transaction service', () => {
     it('passes permission to getPermissionCost', async () => {
       const mockPayload = mockTransactionPayload()
       await createTransaction(mockPayload)
-      expect(getPermissionCost).toHaveBeenCalledWith(mockPayload.permissions[0])
+      expect(getPermissionCost).toHaveBeenCalledWith(expect.objectContaining(mockPayload.permissions[0]))
+    })
+
+    it('attaches permit to permission', async () => {
+      const mockPermit = MOCK_12MONTH_SENIOR_PERMIT
+      getReferenceDataForEntityAndId.mockReturnValueOnce(mockPermit)
+      await createTransaction(mockTransactionPayload())
+      const { mock: { calls: [[{ permit }]] } } = getPermissionCost
+      expect(permit).toBe(mockPermit)
     })
 
     it('throws exceptions back up the stack', async () => {
