@@ -7,6 +7,7 @@ import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -32,16 +33,14 @@ export const getData = async request => {
   const startTimeStringTitle = displayStartTime(request, permission)
 
   return {
-    permission,
     startTimeStringTitle,
-    licenceTypes: mappings.LICENCE_TYPE,
-    isPostalFulfilment: permission.licensee.postalFulfilment,
-    contactMethod: permission.licensee.preferredMethodOfConfirmation,
-    howContacted: mappings.HOW_CONTACTED,
+    isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
+    permissionCost: getPermissionCost(permission),
+    permissionReference: permission.referenceNumber,
     uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri)
+      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

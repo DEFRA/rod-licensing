@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
 
@@ -64,7 +65,7 @@ async function createTransactionRecord (payload) {
   for (const permission of record.permissions) {
     const permit = await getReferenceDataForEntityAndId(Permit, permission.permitId)
     record.isRecurringPaymentSupported = record.isRecurringPaymentSupported && permit.isRecurringPaymentSupported
-    record.cost += permit.cost
+    record.cost += getPermissionCost(permission) // permit.cost
   }
   return record
 }

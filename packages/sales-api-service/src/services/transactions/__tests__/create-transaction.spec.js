@@ -7,7 +7,9 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
 
+jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
   getReferenceDataForEntityAndId: async (entityType, id) => {
@@ -22,6 +24,7 @@ jest.mock('../../reference-data.service.js', () => ({
 describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    getPermissionCost.mockReturnValue(54)
   })
   beforeEach(AwsMock.__resetAll)
 
@@ -44,6 +47,19 @@ describe('transaction service', () => {
           Item: expectedResult
         })
       )
+    })
+
+    it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
+      getPermissionCost.mockReturnValueOnce(permitPrice)
+      const mockPayload = mockTransactionPayload()
+      const { cost } = await createTransaction(mockPayload)
+      expect(cost).toBe(permitPrice)
+    })
+
+    it('passes permission to getPermissionCost', async () => {
+      const mockPayload = mockTransactionPayload()
+      await createTransaction(mockPayload)
+      expect(getPermissionCost).toHaveBeenCalledWith(mockPayload.permissions[0])
     })
 
     it('throws exceptions back up the stack', async () => {
