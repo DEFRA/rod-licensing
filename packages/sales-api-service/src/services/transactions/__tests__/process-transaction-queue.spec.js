@@ -252,7 +252,11 @@ describe('transaction service', () => {
         const mockRecord = mockFinalisedTransactionRecord()
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
         await processQueue({ id: mockRecord.id })
-        const { mock: { calls: [[[transaction, chargeJournal, paymentJournal]]] } } = persist
+        const {
+          mock: {
+            calls: [[[transaction, chargeJournal, paymentJournal]]]
+          }
+        } = persist
         return { transaction, chargeJournal, paymentJournal }
       }
 
