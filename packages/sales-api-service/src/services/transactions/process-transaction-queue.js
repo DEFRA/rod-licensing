@@ -57,8 +57,6 @@ export async function processQueue ({ id }) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
-    totalTransactionValue += getPermissionCost()
-
     const permission = await mapToPermission(
       referenceNumber,
       transactionRecord,
@@ -69,6 +67,11 @@ export async function processQueue ({ id }) {
       isLicenceForYou,
       isRenewal
     )
+
+    totalTransactionValue += getPermissionCost({
+      startDate,
+      permit
+    })
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)

@@ -25,6 +25,7 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE, getPermissionCost } from '@defra-fish/business-rules-lib'
+import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -34,7 +35,7 @@ jest.mock('../../reference-data.service.js', () => ({
     }
     return []
   },
-  getReferenceDataForEntityAndId: async (entityType, id) => {
+  getReferenceDataForEntityAndId: jest.fn(async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
       item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
@@ -42,7 +43,7 @@ jest.mock('../../reference-data.service.js', () => ({
       item = MOCK_CONCESSION
     }
     return item
-  }
+  })
 }))
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -275,6 +276,22 @@ describe('transaction service', () => {
         expect(paymentJournal.total).toBe(cost)
       })
     })
+  })
+
+  it('passes expected data to getPermissionCost', async () => {
+    const mockRecord = mockFinalisedTransactionRecord()
+    const {
+      permissions: [permission]
+    } = mockRecord
+    getReferenceDataForEntityAndId.mockReturnValueOnce(MOCK_12MONTH_SENIOR_PERMIT)
+    AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+    await processQueue({ id: mockRecord.id })
+    expect(getPermissionCost).toHaveBeenCalledWith(
+      expect.objectContaining({
+        startDate: permission.startDate,
+        permit: MOCK_12MONTH_SENIOR_PERMIT
+      })
+    )
   })
 
   describe('.getTransactionJournalRefNumber', () => {
