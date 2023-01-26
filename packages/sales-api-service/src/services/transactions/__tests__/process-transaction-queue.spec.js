@@ -24,7 +24,7 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
-import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
+import { POCL_DATA_SOURCE, DDE_DATA_SOURCE, getPermissionCost } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -60,7 +60,8 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   POCL_DATA_SOURCE: 'POCL_DATA_SOURCE',
   DDE_DATA_SOURCE: 'DDE_DATA_SOURCE',
   POCL_TRANSACTION_SOURCES: ['POCL_DATA_SOURCE', 'DDE_DATA_SOURCE'],
-  START_AFTER_PAYMENT_MINUTES: 30
+  START_AFTER_PAYMENT_MINUTES: 30,
+  getPermissionCost: jest.fn(() => 1)
 }))
 
 describe('transaction service', () => {
@@ -243,6 +244,32 @@ describe('transaction service', () => {
         expect(e.message).toEqual('A transaction for the specified identifier was not found')
         expect(e.output.statusCode).toEqual(404)
       }
+    })
+
+    describe.each([20, 38.46, 287])('uses getPermissionCost (%d) value ', cost => {
+      const setup = async () => {
+        getPermissionCost.mockReturnValueOnce(cost)
+        const mockRecord = mockFinalisedTransactionRecord()
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        const { mock: { calls: [[[transaction, chargeJournal, paymentJournal]]] } } = persist
+        return { transaction, chargeJournal, paymentJournal }
+      }
+
+      it('for calculating transaction value', async () => {
+        const { transaction } = await setup()
+        expect(transaction.total).toBe(cost)
+      })
+
+      it('for calculating chargeJournal value', async () => {
+        const { chargeJournal } = await setup()
+        expect(chargeJournal.total).toBe(cost * -1)
+      })
+
+      it('for calculating paymentJournal value', async () => {
+        const { paymentJournal } = await setup()
+        expect(paymentJournal.total).toBe(cost)
+      })
     })
   })
 
