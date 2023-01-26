@@ -64,6 +64,9 @@ const getSampleRequest = ({
 jest.mock('@defra-fish/connectors-lib')
 
 describe('The order completion handler', () => {
+  beforeAll(() => {
+    getPermissionCost.mockReturnValue(1)
+  })
   beforeEach(jest.clearAllMocks)
 
   it.each(['agreed', 'posted', 'finalised'])('throws Boom.forbidden error when %s is not set', async completion => {
@@ -123,13 +126,17 @@ describe('The order completion handler', () => {
     expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
-  it('uses business rules to calculate permission cost', async () => {
-    const calculatedCost = Symbol('oodles')
+  it.each([
+    [29, '29'],
+    [37, '37'],
+    [48.5, '48.50'],
+    [99.99, '99.99']
+  ])('uses business rules to calculate permission cost (returns %d, displays £%s)', async (calculatedCost, displayCost) => {
     getPermissionCost.mockReturnValueOnce(calculatedCost)
 
     const { permissionCost } = await getData(getSampleRequest())
 
-    expect(permissionCost).toBe(calculatedCost)
+    expect(permissionCost).toBe(displayCost)
   })
 
   it('passes start date and permit to getPermissionCost function', async () => {
