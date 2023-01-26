@@ -278,7 +278,7 @@ describe('transaction service', () => {
     })
   })
 
-  it('passes expected data to getPermissionCost', async () => {
+  it('passes start date and permit to getPermissionCost', async () => {
     const mockRecord = mockFinalisedTransactionRecord()
     const {
       permissions: [permission]

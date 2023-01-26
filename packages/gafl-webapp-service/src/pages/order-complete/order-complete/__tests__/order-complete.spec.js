@@ -132,10 +132,17 @@ describe('The order completion handler', () => {
     expect(permissionCost).toBe(calculatedCost)
   })
 
-  it('passes permission to getPermissionCost function', async () => {
+  it('passes start date and permit to getPermissionCost function', async () => {
     const permission = getSamplePermission()
+    permission.startDate = Symbol('start date')
+    permission.permit = Symbol('permit')
     await getData(getSampleRequest({ permission }))
-    expect(getPermissionCost).toHaveBeenCalledWith(permission)
+    expect(getPermissionCost).toHaveBeenCalledWith(
+      expect.objectContaining({
+        startDate: permission.startDate,
+        permit: permission.permit
+      })
+    )
   })
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
