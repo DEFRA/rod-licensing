@@ -5,7 +5,7 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
   },
 }
@@ -16,7 +16,7 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
   },
 }
@@ -27,7 +27,7 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
   },
 }
@@ -38,7 +38,7 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
   },
 }
@@ -49,21 +49,21 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
@@ -75,21 +75,21 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
@@ -101,21 +101,21 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
@@ -127,21 +127,21 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 0,
+      "cost": "0",
     },
     "msg": "no-short",
   },
@@ -153,19 +153,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": false,
-      "cost": 30,
+      "cost": "30",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
 }
@@ -176,19 +176,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
 }
@@ -199,19 +199,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 22,
+      "cost": "22",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 8,
+      "cost": "8.60",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 14,
+      "cost": "14",
     },
   },
 }
@@ -222,19 +222,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": false,
-      "cost": 32,
+      "cost": "32",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 8,
+      "cost": "8.60",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 14,
+      "cost": "14",
     },
   },
 }
@@ -245,35 +245,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 60,
+      "cost": "60",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 14,
+      "cost": "14",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 30,
+      "cost": "30",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 22,
+      "cost": "22",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 8,
+      "cost": "8.60",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 14,
+      "cost": "14",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 32,
+      "cost": "32",
     },
     "msg": "no-short",
   },
@@ -285,35 +285,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": false,
-      "cost": 85,
+      "cost": "85",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 14,
+      "cost": "14",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 30,
+      "cost": "30",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": 32,
+      "cost": "32",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 8,
+      "cost": "8.60",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 14,
+      "cost": "14",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": 50,
+      "cost": "50.40",
     },
     "msg": "no-short",
   },
@@ -325,35 +325,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": false,
-      "cost": 82,
+      "cost": "82",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 27,
+      "cost": "27",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": 30,
+      "cost": "30",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": 45,
+      "cost": "45",
     },
     "msg": "no-short",
   },
@@ -365,35 +365,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 54,
+      "cost": "54",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 27,
+      "cost": "27",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 30,
+      "cost": "30",
     },
     "msg": "no-short",
   },
@@ -405,19 +405,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
 }
@@ -428,19 +428,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
 }
@@ -451,19 +451,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
 }
@@ -474,19 +474,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
 }
@@ -497,35 +497,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 54,
+      "cost": "54",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 27,
+      "cost": "27",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 30,
+      "cost": "30",
     },
     "msg": "no-short",
   },
@@ -537,35 +537,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 54,
+      "cost": "54",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 27,
+      "cost": "27",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 30,
+      "cost": "30",
     },
     "msg": "no-short",
   },
@@ -577,35 +577,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 54,
+      "cost": "54",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 27,
+      "cost": "27",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 30,
+      "cost": "30",
     },
     "msg": "no-short",
   },
@@ -617,35 +617,35 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 54,
+      "cost": "54",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 27,
+      "cost": "27",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 20,
+      "cost": "20",
     },
     "1D": Object {
       "concessions": false,
-      "cost": 6,
+      "cost": "6",
     },
     "8D": Object {
       "concessions": false,
-      "cost": 12,
+      "cost": "12",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": 30,
+      "cost": "30",
     },
     "msg": "no-short",
   },
