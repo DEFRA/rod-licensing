@@ -64,6 +64,8 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
   return { len, avail: false }
 }
 
+const formatCost = cost => (Number.isInteger(cost) ? String(cost) : cost.toFixed(2))
+
 /**
  * Fetch the pricing detail - this is modified by the users concessions
  * @param page
@@ -108,7 +110,7 @@ export const pricingDetail = async (page, permission) => {
             .reduce(
               (a, c) => ({
                 ...a,
-                [c.len]: { cost: Number.isInteger(c.cost) ? String(c.cost) : c.cost.toFixed(2), concessions: c.concessions }
+                [c.len]: { cost: formatCost(c.cost), concessions: c.concessions }
               }),
               {}
             )
@@ -142,7 +144,7 @@ export const pricingDetail = async (page, permission) => {
         .reduce(
           (a, c) => ({
             ...a,
-            [c.len]: { total: { cost: Number.isInteger(c.cost) ? String(c.cost) : c.cost.toFixed(2), concessions: c.concessions } }
+            [c.len]: { total: { cost: formatCost(c.cost), concessions: c.concessions } }
           }),
           {}
         )
