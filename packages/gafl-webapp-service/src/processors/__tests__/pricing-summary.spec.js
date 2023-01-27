@@ -11,7 +11,7 @@ jest.mock('../filter-permits.js', () => ({
       durationMagnitude: 1,
       concessions: [],
       cost: 6,
-      newCost: 8,
+      newCost: 8.6,
       newCostStartDate: '2023-04-01T00:00:00+01:00'
     },
     {
@@ -161,7 +161,7 @@ jest.mock('../filter-permits.js', () => ({
         }
       ],
       cost: 20,
-      newCost: 22,
+      newCost: 22.99,
       newCostStartDate: '2023-04-01T00:00:00+01:00'
     },
     {
@@ -249,7 +249,7 @@ jest.mock('../filter-permits.js', () => ({
       durationMagnitude: 12,
       concessions: [],
       cost: 45,
-      newCost: 50,
+      newCost: 50.4,
       newCostStartDate: '2023-04-01T00:00:00+01:00'
     },
     {

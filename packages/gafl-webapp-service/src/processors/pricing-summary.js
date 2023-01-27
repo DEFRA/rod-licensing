@@ -105,7 +105,13 @@ export const pricingDetail = async (page, permission) => {
               )
             )
             .filter(e => e.avail)
-            .reduce((a, c) => ({ ...a, [c.len]: { cost: c.cost, concessions: c.concessions } }), {})
+            .reduce(
+              (a, c) => ({
+                ...a,
+                [c.len]: { cost: Number.isInteger(c.cost) ? String(c.cost) : c.cost.toFixed(2), concessions: c.concessions }
+              }),
+              {}
+            )
           return { [licenceType]: Object.assign(filtered, Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {}) }
         })
         .reduce((a, c) => Object.assign(c, a))
@@ -136,7 +142,7 @@ export const pricingDetail = async (page, permission) => {
         .reduce(
           (a, c) => ({
             ...a,
-            [c.len]: { total: { cost: c.cost, concessions: c.concessions } }
+            [c.len]: { total: { cost: Number.isInteger(c.cost) ? String(c.cost) : c.cost.toFixed(2), concessions: c.concessions } }
           }),
           {}
         )
