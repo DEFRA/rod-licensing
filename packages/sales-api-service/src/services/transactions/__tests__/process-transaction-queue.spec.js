@@ -24,7 +24,8 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
-import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
+import { POCL_DATA_SOURCE, DDE_DATA_SOURCE, getPermissionCost } from '@defra-fish/business-rules-lib'
+import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -34,7 +35,7 @@ jest.mock('../../reference-data.service.js', () => ({
     }
     return []
   },
-  getReferenceDataForEntityAndId: async (entityType, id) => {
+  getReferenceDataForEntityAndId: jest.fn(async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
       item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
@@ -42,7 +43,7 @@ jest.mock('../../reference-data.service.js', () => ({
       item = MOCK_CONCESSION
     }
     return item
-  }
+  })
 }))
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -60,7 +61,8 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   POCL_DATA_SOURCE: 'POCL_DATA_SOURCE',
   DDE_DATA_SOURCE: 'DDE_DATA_SOURCE',
   POCL_TRANSACTION_SOURCES: ['POCL_DATA_SOURCE', 'DDE_DATA_SOURCE'],
-  START_AFTER_PAYMENT_MINUTES: 30
+  START_AFTER_PAYMENT_MINUTES: 30,
+  getPermissionCost: jest.fn(() => 1)
 }))
 
 describe('transaction service', () => {
@@ -244,6 +246,52 @@ describe('transaction service', () => {
         expect(e.output.statusCode).toEqual(404)
       }
     })
+
+    describe.each([20, 38.46, 287])('uses getPermissionCost (%d) value ', cost => {
+      const setup = async () => {
+        getPermissionCost.mockReturnValueOnce(cost)
+        const mockRecord = mockFinalisedTransactionRecord()
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        const {
+          mock: {
+            calls: [[[transaction, chargeJournal, paymentJournal]]]
+          }
+        } = persist
+        return { transaction, chargeJournal, paymentJournal }
+      }
+
+      it('for calculating transaction value', async () => {
+        const { transaction } = await setup()
+        expect(transaction.total).toBe(cost)
+      })
+
+      it('for calculating chargeJournal value', async () => {
+        const { chargeJournal } = await setup()
+        expect(chargeJournal.total).toBe(cost * -1)
+      })
+
+      it('for calculating paymentJournal value', async () => {
+        const { paymentJournal } = await setup()
+        expect(paymentJournal.total).toBe(cost)
+      })
+    })
+  })
+
+  it('passes start date and permit to getPermissionCost', async () => {
+    const mockRecord = mockFinalisedTransactionRecord()
+    const {
+      permissions: [permission]
+    } = mockRecord
+    getReferenceDataForEntityAndId.mockReturnValueOnce(MOCK_12MONTH_SENIOR_PERMIT)
+    AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+    await processQueue({ id: mockRecord.id })
+    expect(getPermissionCost).toHaveBeenCalledWith(
+      expect.objectContaining({
+        startDate: permission.startDate,
+        permit: MOCK_12MONTH_SENIOR_PERMIT
+      })
+    )
   })
 
   describe('.getTransactionJournalRefNumber', () => {

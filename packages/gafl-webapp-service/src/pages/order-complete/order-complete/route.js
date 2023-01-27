@@ -31,11 +31,12 @@ export const getData = async request => {
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
   const startTimeStringTitle = displayStartTime(request, permission)
+  const permissionCost = getPermissionCost(permission)
 
   return {
     startTimeStringTitle,
     isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    permissionCost: getPermissionCost(permission),
+    permissionCost: Number.isInteger(permissionCost) ? String(permissionCost) : permissionCost.toFixed(2),
     permissionReference: permission.referenceNumber,
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,

@@ -58,22 +58,19 @@ describe('transaction service', () => {
       expect(cost).toBe(permitPrice)
     })
 
-    it('passes permission to getPermissionCost', async () => {
+    it('passes startDate and permit to getPermissionCost', async () => {
+      getReferenceDataForEntityAndId.mockReturnValueOnce(MOCK_12MONTH_SENIOR_PERMIT)
       const mockPayload = mockTransactionPayload()
-      await createTransaction(mockPayload)
-      expect(getPermissionCost).toHaveBeenCalledWith(expect.objectContaining(mockPayload.permissions[0]))
-    })
-
-    it('attaches permit to permission', async () => {
-      const mockPermit = MOCK_12MONTH_SENIOR_PERMIT
-      getReferenceDataForEntityAndId.mockReturnValueOnce(mockPermit)
-      await createTransaction(mockTransactionPayload())
       const {
-        mock: {
-          calls: [[{ permit }]]
-        }
-      } = getPermissionCost
-      expect(permit).toBe(mockPermit)
+        permissions: [{ startDate }]
+      } = mockPayload
+      await createTransaction(mockPayload)
+      expect(getPermissionCost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          startDate,
+          permit: MOCK_12MONTH_SENIOR_PERMIT
+        })
+      )
     })
 
     it('throws exceptions back up the stack', async () => {

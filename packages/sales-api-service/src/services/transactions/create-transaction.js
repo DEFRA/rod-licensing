@@ -62,11 +62,11 @@ async function createTransactionRecord (payload) {
   }
 
   // Generate derived fields
-  for (const permission of record.permissions) {
-    const permit = await getReferenceDataForEntityAndId(Permit, permission.permitId)
+  for (const { permitId, startDate } of record.permissions) {
+    const permit = await getReferenceDataForEntityAndId(Permit, permitId)
     record.isRecurringPaymentSupported = record.isRecurringPaymentSupported && permit.isRecurringPaymentSupported
     record.cost += getPermissionCost({
-      ...permission,
+      startDate,
       permit
     })
   }
