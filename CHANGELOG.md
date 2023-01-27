@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.14 (2023-01-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#1613](https://github.com/DEFRA/rod-licensing/pull/1613) Update transaction journal to use new price ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.30.0-rc.13 (2023-01-26)
 
 #### :bug: Bug Fix
