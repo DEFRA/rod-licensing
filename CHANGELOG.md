@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.16 (2023-01-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1616](https://github.com/DEFRA/rod-licensing/pull/1616) Price incorrect on Licence Summary page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.30.0-rc.14 (2023-01-27)
 
