@@ -7,7 +7,7 @@ import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { displayPermissionPrice } from '../../../processors/price-display.js'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -31,12 +31,11 @@ export const getData = async request => {
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
   const startTimeStringTitle = displayStartTime(request, permission)
-  const permissionCost = getPermissionCost(permission)
 
   return {
     startTimeStringTitle,
     isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    permissionCost: Number.isInteger(permissionCost) ? String(permissionCost) : permissionCost.toFixed(2),
+    permissionCost: displayPermissionPrice(permission, request.i18n.getCatalog()),
     permissionReference: permission.referenceNumber,
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
