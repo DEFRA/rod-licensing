@@ -97,7 +97,16 @@ class RowGenerator {
   }
 
   generateCostRow () {
-    return this._generateRow(this.labels.cost, displayPermissionPrice(this.permission, this.labels))
+    return this._generateRow(
+      this.labels.cost,
+      displayPermissionPrice(
+        {
+          startDate: this.permission.licenceStartDate,
+          permit: this.permission.permit
+        },
+        this.labels
+      )
+    )
   }
 
   generateLicenceLengthRow () {

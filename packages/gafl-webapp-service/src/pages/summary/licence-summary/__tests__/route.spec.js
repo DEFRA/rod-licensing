@@ -292,10 +292,20 @@ describe('licence-summary > route', () => {
 
   it('passes permission and labels to displayPermissionPrice', async () => {
     const currentPermission = getMockNewPermission()
+    currentPermission.licenceStartDate = Symbol('licence start date')
+    currentPermission.permit = Symbol('permit')
     const mockRequest = getMockRequest({ currentPermission })
     const catalog = mockRequest.i18n.getCatalog()
+
     await getData(mockRequest)
-    expect(displayPermissionPrice).toHaveBeenCalledWith(currentPermission, catalog)
+
+    expect(displayPermissionPrice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        startDate: currentPermission.licenceStartDate,
+        permit: currentPermission.permit
+      }),
+      catalog
+    )
   })
 
   describe('licence summary rows', () => {
