@@ -10,7 +10,8 @@ import {
   COOKIES,
   ACCESSIBILITY_STATEMENT,
   PRIVACY_POLICY,
-  REFUND_POLICY
+  REFUND_POLICY,
+  NEW_TRANSACTION
 } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
@@ -137,7 +138,7 @@ describe('The order completion handler', () => {
     expect(data.statusCode).toBe(200)
   })
 
-  it('addLanguageCodeToUri is called with request and LICENCE_DETAILS.uri', async () => {
+  it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
     const status = () => ({
       [COMPLETION_STATUS.agreed]: true,
       [COMPLETION_STATUS.posted]: true,
@@ -160,7 +161,7 @@ describe('The order completion handler', () => {
     displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
 
     await getData(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, LICENCE_DETAILS.uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   })
 
   it('addLanguageCodeToUri outputs correct value for licence details', async () => {
