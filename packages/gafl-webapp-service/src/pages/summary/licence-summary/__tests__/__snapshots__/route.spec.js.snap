@@ -486,7 +486,7 @@ Array [
       "text": "damage",
     },
     "value": Object {
-      "html": "#3",
+      "html": "#6",
     },
   },
 ]
@@ -1071,7 +1071,7 @@ Array [
       "text": "damage",
     },
     "value": Object {
-      "html": "gratis",
+      "html": "#6",
     },
   },
 ]

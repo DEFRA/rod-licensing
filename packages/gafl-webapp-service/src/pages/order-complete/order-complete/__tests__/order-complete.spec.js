@@ -2,9 +2,9 @@ import { ORDER_COMPLETE, LICENCE_DETAILS, NEW_TRANSACTION } from '../../../../ur
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.js'
-import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
+import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
@@ -18,7 +18,7 @@ jest.mock('../../../../constants.js', () => ({
   },
   FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com')
 }))
-jest.mock('@defra-fish/business-rules-lib')
+jest.mock('../../../../processors/price-display.js')
 
 const getSamplePermission = ({ referenceNumber = 'AAA111', licenceType = LICENCE_TYPE['trout-and-coarse'] } = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
@@ -36,7 +36,8 @@ const getSampleRequest = ({
   finalised = true,
   permission = getSamplePermission(),
   statusSet = () => {},
-  statusSetCurrentPermission = () => {}
+  statusSetCurrentPermission = () => {},
+  catalog = 'messages'
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -58,14 +59,14 @@ const getSampleRequest = ({
     search: ''
   },
   i18n: {
-    getCatalog: () => 'messages'
+    getCatalog: () => catalog
   }
 })
 jest.mock('@defra-fish/connectors-lib')
 
 describe('The order completion handler', () => {
   beforeAll(() => {
-    getPermissionCost.mockReturnValue(1)
+    displayPermissionPrice.mockReturnValue('1')
   })
   beforeEach(jest.clearAllMocks)
 
@@ -126,30 +127,21 @@ describe('The order completion handler', () => {
     expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
-  it.each([
-    [29, '29'],
-    [37, '37'],
-    [48.5, '48.50'],
-    [99.99, '99.99']
-  ])('uses business rules to calculate permission cost (returns %d, displays £%s)', async (calculatedCost, displayCost) => {
-    getPermissionCost.mockReturnValueOnce(calculatedCost)
+  it('uses value returned by displayPermissionPrice for permissionCost', async () => {
+    const expectedCost = Symbol('expected cost')
+    displayPermissionPrice.mockReturnValueOnce(expectedCost)
 
     const { permissionCost } = await getData(getSampleRequest())
 
-    expect(permissionCost).toBe(displayCost)
+    expect(permissionCost).toBe(expectedCost)
   })
 
-  it('passes start date and permit to getPermissionCost function', async () => {
+  it('passes permission and label catalog to displayPermissionPrice function', async () => {
     const permission = getSamplePermission()
-    permission.startDate = Symbol('start date')
-    permission.permit = Symbol('permit')
-    await getData(getSampleRequest({ permission }))
-    expect(getPermissionCost).toHaveBeenCalledWith(
-      expect.objectContaining({
-        startDate: permission.startDate,
-        permit: permission.permit
-      })
-    )
+    const catalog = Symbol('catalog')
+
+    await getData(getSampleRequest({ permission, catalog }))
+    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
   })
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
