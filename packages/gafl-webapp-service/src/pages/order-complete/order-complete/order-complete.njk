@@ -9,7 +9,7 @@
     {% set titleHtml = title %}
 {% else %}
     {% set title = mssgs.order_complete_title_payment %}
-    {% set titleHtml = mssgs.pound + data.permissionCost + '<br />' + title %}
+    {% set titleHtml = data.permissionCost + '<br />' + title %}
 {% endif %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
