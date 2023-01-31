@@ -1,4 +1,13 @@
 
+## v1.30.0-rc.17 (2023-01-31)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1618](https://github.com/DEFRA/rod-licensing/pull/1618) Remove double pound sign on order complete page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.30.0-rc.16 (2023-01-30)
 
 #### :bug: Bug Fix
