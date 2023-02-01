@@ -1,4 +1,3 @@
-import db from 'debug'
 import { CacheError } from '../session-cache/cache-manager.js'
 import { PAGE_STATE, ANALYTICS } from '../constants.js'
 import {
@@ -16,7 +15,6 @@ import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
-const debug = db('webapp:page-handler')
 const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
 const pagesJourneyBeginning = [LICENCE_FOR.uri, IDENTIFY.uri]
 
@@ -82,25 +80,7 @@ export default (path, view, completion, getData) => ({
    * @returns {Promise<*>}
    */
   get: async (request, h) => {
-    let page
-    // try catch to find out what is causing "Cannot read property 'view' of undefined"
-    try {
-      page = await request.cache().helpers.page.getCurrentPermission(view)
-    } catch (err) {
-      const pageCache = await request.cache().helpers.page.get()
-      debug(`Page cache - ${JSON.stringify(pageCache)}`)
-
-      const statusCache = await request.cache().helpers.status.get()
-      debug(`Status cache - ${JSON.stringify(statusCache)}`)
-
-      const transactionCache = await request.cache().helpers.transaction.get()
-      debug(`Transaction cache - ${JSON.stringify(transactionCache)}`)
-
-      const analyticsCache = await request.cache().helpers.analytics.get()
-      debug(`Analytics cache - ${JSON.stringify(analyticsCache)}`)
-
-      throw err
-    }
+    const page = await request.cache().helpers.page.getCurrentPermission(view)
 
     const pageData = page || {}
 
@@ -112,7 +92,7 @@ export default (path, view, completion, getData) => ({
       } catch (err) {
         // If GetDataRedirect is thrown the getData function is requesting a redirect
         if (err instanceof GetDataRedirect) {
-          return h.redirect(addLanguageCodeToUri(request, err.redirectUrl))
+          return h.redirectWithLanguageCode(err.redirectUrl)
         }
 
         throw err
@@ -156,9 +136,9 @@ export default (path, view, completion, getData) => ({
     await request.cache().helpers.status.setCurrentPermission(status)
 
     if (typeof completion === 'function') {
-      return h.redirect(await completion(request))
+      return h.redirectWithLanguageCode(await completion(request))
     } else {
-      return h.redirect(completion)
+      return h.redirectWithLanguageCode(completion)
     }
   },
   /**
@@ -173,11 +153,11 @@ export default (path, view, completion, getData) => ({
       await request.cache().helpers.page.setCurrentPermission(view, { payload: request.payload, error: errorShimm(err) })
       await request.cache().helpers.status.setCurrentPermission({ [view]: PAGE_STATE.error, currentPage: view })
 
-      return h.redirect(addLanguageCodeToUri(request)).takeover()
+      return h.redirectWithLanguageCode().takeover()
     } catch (err2) {
       // Need a catch here if the user has posted an invalid response with no cookie
       if (err2 instanceof CacheError) {
-        return h.redirect(CONTROLLER.uri).takeover()
+        return h.redirectWithLanguageCode(CONTROLLER.uri).takeover()
       }
 
       throw err2

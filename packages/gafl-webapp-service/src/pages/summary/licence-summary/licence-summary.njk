@@ -5,6 +5,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
+{% from "notification-banner.njk" import notificationBanner %}
 
 {% set title = mssgs.licence_summary_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -34,6 +35,11 @@
               classes: "govuk-!-margin-bottom-7"
             }) }}
         {% endif %}
+        {% block notificationContent %}
+          {% if data.SHOW_NOTIFICATION_BANNER %}
+            {{ notificationBanner() }}
+          {% endif%}
+        {% endblock %}
         <form method="post">
             {{ licenseDetailsSummary | trim | safe }}
 

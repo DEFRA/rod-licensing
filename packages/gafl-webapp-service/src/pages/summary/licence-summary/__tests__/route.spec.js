@@ -5,6 +5,7 @@ import findPermit from '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import mappingConstants from '../../../../processors/mapping-constants.js'
+import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
 jest.mock('../../../../processors/licence-type-display.js', () => ({
   licenceTypeDisplay: jest.fn(() => 'Special Canal Licence, Shopping Trollies and Old Wellies')
@@ -40,6 +41,9 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
   }
 }))
 jest.mock('../../find-permit.js', () => jest.fn())
+jest.mock('../../../../processors/price-display.js', () => ({
+  displayPermissionPrice: jest.fn(() => '#6')
+}))
 
 const getMockRequest = ({ currentPermission = getMockPermission(), statusCache = {}, statusCacheSet = () => {} } = {}) => ({
   cache: () => ({
@@ -244,6 +248,18 @@ describe('licence-summary > route', () => {
 
       expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, catalog)
     })
+
+    it.each([
+      ['true', true],
+      ['false', false],
+      [undefined, false]
+    ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
+      process.env.SHOW_NOTIFICATION_BANNER = notification
+      const mockRequest = getMockRequest()
+      const data = await getData(mockRequest)
+
+      expect(data.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
+    })
   })
 
   describe('checkNavigation', () => {
@@ -265,6 +281,31 @@ describe('licence-summary > route', () => {
       })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(uri)
     })
+  })
+
+  it('uses displayPermissionPrice for permissionPrice', async () => {
+    const displayPrice = Symbol('display price')
+    displayPermissionPrice.mockReturnValueOnce(displayPrice)
+    const data = await getData(getMockRequest())
+    expect(data.licenceSummaryRows.pop().value.html).toBe(displayPrice)
+  })
+
+  it('passes permission and labels to displayPermissionPrice', async () => {
+    const currentPermission = getMockNewPermission()
+    currentPermission.licenceStartDate = Symbol('licence start date')
+    currentPermission.permit = Symbol('permit')
+    const mockRequest = getMockRequest({ currentPermission })
+    const catalog = mockRequest.i18n.getCatalog()
+
+    await getData(mockRequest)
+
+    expect(displayPermissionPrice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        startDate: currentPermission.licenceStartDate,
+        permit: currentPermission.permit
+      }),
+      catalog
+    )
   })
 
   describe('licence summary rows', () => {

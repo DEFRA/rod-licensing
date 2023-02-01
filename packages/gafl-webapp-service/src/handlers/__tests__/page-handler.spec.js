@@ -1,4 +1,3 @@
-import db from 'debug'
 import pageHandler from '../page-handler.js'
 import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
@@ -6,7 +5,6 @@ import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
 import { AGREED, IDENTIFY, LICENCE_DETAILS, LICENCE_FOR, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
 
-jest.mock('debug', () => jest.fn(() => jest.fn()))
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
 
@@ -31,11 +29,6 @@ jest.mock('../../uri.js', () => ({
 }))
 
 describe('The page handler function', () => {
-  let fakeDebug
-
-  beforeAll(() => {
-    fakeDebug = db.mock.results[0].value
-  })
   beforeEach(() => {
     jest.resetAllMocks()
     journeyDefinition.length = 0
@@ -64,35 +57,6 @@ describe('The page handler function', () => {
     } catch (err) {
       expect(err.message).toBe('Random exception')
     }
-  })
-
-  it('logs the cache if getCurrentPermission throws an error', async () => {
-    const request = {
-      cache: () => ({
-        helpers: {
-          page: {
-            getCurrentPermission: () => {
-              throw new Error('Random exception')
-            },
-            get: () => ({})
-          },
-          status: {
-            get: () => ({})
-          },
-          transaction: {
-            get: () => ({})
-          },
-          analytics: {
-            get: () => ({})
-          }
-        }
-      })
-    }
-    await expect(pageHandler().get(request)).rejects.toThrow('Random exception')
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Page cache'))
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Status cache'))
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Transaction cache'))
-    expect(fakeDebug).toHaveBeenCalledWith(expect.stringContaining('Analytics cache'))
   })
 
   it.each([['/previous/page'], ['/last/page']])('get calls addLanguageCodeToUri with request and backLink', async previousPage => {
@@ -145,51 +109,27 @@ describe('The page handler function', () => {
     )
   })
 
-  it.each([['/go/somewhere'], ['/go/somewhere/else']])(
-    'GetDataRedirect being thrown will pass url to be decorated to addLanguageCodeToUri',
-    async redirectUri => {
-      journeyDefinition.push({ current: { page: 'view' }, backLink: '/previous/page' })
-      const getData = () => {
-        throw new GetDataRedirect(redirectUri)
-      }
-      const { get } = pageHandler(null, 'view', '/next/page', getData)
-      const toolkit = getMockToolkit()
-      const request = getMockRequest()
-
-      await get(request, toolkit)
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, redirectUri)
-    }
-  )
-
-  it('GetDataRedirect being thrown will use addLanguageCodeToUri to decorate the redirect target', async () => {
+  it('GetDataRedirect being thrown will redirectWithLanguageCode to the target', async () => {
     journeyDefinition.push({ current: { page: 'view' }, backLink: '/previous/page' })
+    const url = Symbol('/go/somewhere/else')
     const getData = () => {
-      throw new GetDataRedirect('/go/somewhere/else')
+      throw new GetDataRedirect(url)
     }
     const { get } = pageHandler(null, 'view', '/next/page', getData)
-    const returnValue = Symbol('/previous/page')
-    addLanguageCodeToUri.mockReturnValueOnce(returnValue)
-    const toolkit = getMockToolkit()
-
-    await get(getMockRequest(), toolkit)
-
-    expect(toolkit.redirect).toHaveBeenCalledWith(returnValue)
-  })
-
-  it('error calls addLanguageCodeToUri with request', async () => {
-    const { error } = pageHandler('', 'view')
     const request = getMockRequest()
-    await error(request, getMockToolkit(), { details: [] })
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request)
+    const toolkit = getMockToolkit()
+
+    await get(request, toolkit)
+
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(url)
   })
 
-  it.each([['/route/one'], ['/route/sixty-six']])('error redirects to uri decorated by addLanguageCodeToUri', async url => {
+  it.each([['/route/one'], ['/route/sixty-six']])('error redirects with language code', async url => {
     const { error } = pageHandler('', 'view')
+    const request = getMockRequest(undefined, url)
     const toolkit = getMockToolkit()
-    addLanguageCodeToUri.mockReturnValueOnce(`Redirect to url ${url}`)
-    await error(getMockRequest(undefined, url), toolkit, { details: [] })
-    expect(toolkit.redirect).toHaveBeenCalledWith(`Redirect to url ${url}`)
+    await error(request, toolkit, { details: [] })
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith()
   })
 
   it('sets the value of pageData with displayAnalytics true', async () => {
@@ -307,6 +247,6 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/her
 })
 
 const getMockToolkit = () => ({
-  redirect: jest.fn(() => ({ takeover: () => {} })),
+  redirectWithLanguageCode: jest.fn(() => ({ takeover: () => {} })),
   view: jest.fn()
 })

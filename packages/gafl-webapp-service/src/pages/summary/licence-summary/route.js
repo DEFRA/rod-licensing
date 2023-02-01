@@ -20,6 +20,7 @@ import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+import { displayPermissionPrice } from '../../../processors/price-display.js'
 
 class RowGenerator {
   constructor (request, permission) {
@@ -96,9 +97,16 @@ class RowGenerator {
   }
 
   generateCostRow () {
-    const permitCost = this.permission.permit.cost
-    const costText = permitCost === 0 ? this.labels.free : `${this.labels.pound}${permitCost}`
-    return this._generateRow(this.labels.cost, costText)
+    return this._generateRow(
+      this.labels.cost,
+      displayPermissionPrice(
+        {
+          startDate: this.permission.licenceStartDate,
+          permit: this.permission.permit
+        },
+        this.labels
+      )
+    )
   }
 
   generateLicenceLengthRow () {
@@ -184,7 +192,8 @@ export const getData = async request => {
     isRenewal: permission.isRenewal,
     uri: {
       clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    }
+    },
+    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true'
   }
 }
 

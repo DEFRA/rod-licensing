@@ -42,7 +42,8 @@ export const getData = async request => {
     minStartDate: moment().tz(SERVICE_LOCAL_TIME).format(fmt),
     maxStartDate: moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format(fmt),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
-    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
+    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
+    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true'
   }
 }
 

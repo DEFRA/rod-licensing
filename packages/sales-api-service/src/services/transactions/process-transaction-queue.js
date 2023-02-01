@@ -11,7 +11,7 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
-import { DDE_DATA_SOURCE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+import { DDE_DATA_SOURCE, getPermissionCost, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
@@ -57,8 +57,6 @@ export async function processQueue ({ id }) {
     const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
 
-    totalTransactionValue += permit.cost
-
     const permission = await mapToPermission(
       referenceNumber,
       transactionRecord,
@@ -69,6 +67,11 @@ export async function processQueue ({ id }) {
       isLicenceForYou,
       isRenewal
     )
+
+    totalTransactionValue += getPermissionCost({
+      startDate,
+      permit
+    })
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)

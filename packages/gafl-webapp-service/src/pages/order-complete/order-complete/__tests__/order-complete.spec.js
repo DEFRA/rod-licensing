@@ -1,42 +1,57 @@
-import { salesApi } from '@defra-fish/connectors-lib'
-import { displayStartTime } from '../../../../processors/date-and-time-display.js'
-import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../../../__mocks__/test-utils-system'
-import { JUNIOR_LICENCE } from '../../../../__mocks__/mock-journeys.js'
-import {
-  AGREED,
-  ORDER_COMPLETE,
-  TERMS_AND_CONDITIONS,
-  LICENCE_DETAILS,
-  COOKIES,
-  ACCESSIBILITY_STATEMENT,
-  PRIVACY_POLICY,
-  REFUND_POLICY,
-  NEW_TRANSACTION
-} from '../../../../uri.js'
+import { ORDER_COMPLETE, LICENCE_DETAILS, NEW_TRANSACTION } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
-import { COMPLETION_STATUS } from '../../../../constants.js'
+import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.js'
+import { displayStartTime } from '../../../../processors/date-and-time-display.js'
+import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
+import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
-beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/date-and-time-display.js')
-jest.mock('../../../../processors/uri-helper.js', () => ({
-  addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
+jest.mock('../../../../processors/uri-helper.js')
+jest.mock('../../../../constants.js', () => ({
+  ...jest.requireActual('../../../../constants.js'),
+  COMPLETION_STATUS: {
+    agreed: 'alright then',
+    posted: 'in the letterbox',
+    finalised: 'no going back now',
+    completed: 'all done'
+  },
+  FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com')
 }))
+jest.mock('../../../../processors/price-display.js')
 
-const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
+const getSamplePermission = ({ referenceNumber = 'AAA111', licenceType = LICENCE_TYPE['trout-and-coarse'] } = {}) => ({
+  startDate: '2019-12-14T00:00:00Z',
+  licensee: {
+    postalFulfilment: 'test',
+    preferredMethodOfConfirmation: 'test'
+  },
+  licenceType,
+  referenceNumber
+})
+
+const getSampleRequest = ({
+  agreed = true,
+  posted = true,
+  finalised = true,
+  permission = getSamplePermission(),
+  statusSet = () => {},
+  statusSetCurrentPermission = () => {},
+  catalog = 'messages'
+} = {}) => ({
   cache: () => ({
     helpers: {
       status: {
-        get: statusGet,
-        setCurrentPermission: async () => ({
-          referenceNumber: 'abc-123'
+        get: () => ({
+          [COMPLETION_STATUS.agreed]: agreed,
+          [COMPLETION_STATUS.posted]: posted,
+          [COMPLETION_STATUS.finalised]: finalised
         }),
-        set: async () => ({
-          referenceNumber: 'abc-123'
-        })
+        setCurrentPermission: statusSetCurrentPermission,
+        set: statusSet
       },
       transaction: {
-        getCurrentPermission: transactionGet
+        getCurrentPermission: () => permission
       }
     }
   }),
@@ -44,166 +59,118 @@ const mockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
     search: ''
   },
   i18n: {
-    getCatalog: () => 'messages'
+    getCatalog: () => catalog
   }
 })
-
 jest.mock('@defra-fish/connectors-lib')
-mockSalesApi()
-
-beforeAll(() => {
-  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
-})
-beforeAll(() => new Promise(resolve => start(resolve)))
-beforeAll(() => new Promise(resolve => initialize(resolve)))
-afterAll(d => stop(d))
-afterAll(() => {
-  delete process.env.ANALYTICS_PRIMARY_PROPERTY
-  delete process.env.ANALYTICS_XGOV_PROPERTY
-})
 
 describe('The order completion handler', () => {
-  it('throws a status 403 (forbidden) exception if the agreed flag is not set', async () => {
-    const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(data.statusCode).toBe(403)
+  beforeAll(() => {
+    displayPermissionPrice.mockReturnValue('1')
+  })
+  beforeEach(jest.clearAllMocks)
+
+  it.each(['agreed', 'posted', 'finalised'])('throws Boom.forbidden error when %s is not set', async completion => {
+    const request = getSampleRequest({ [completion]: false })
+    const callGetData = () => getData(request)
+    await expect(callGetData).rejects.toThrow(`Attempt to access the completion page handler with no ${completion} flag set`)
   })
 
-  it('throws a status 403 (forbidden) exception if the posted flag is not set', async () => {
-    await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
-    const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(data.statusCode).toBe(403)
+  it('sets completion flag', async () => {
+    const statusSet = jest.fn()
+    await getData(getSampleRequest({ statusSet }))
+    expect(statusSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        [COMPLETION_STATUS.completed]: true
+      })
+    )
   })
 
-  it('throw a status 403 (forbidden) exception if the finalized flag is not set', async () => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockRejectedValue(new Error())
-
-    await injectWithCookies('GET', AGREED.uri)
-    const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(data.statusCode).toBe(403)
-  })
-
-  it('responds with the order completed page if the journey has finished', async () => {
-    addLanguageCodeToUri.mockReturnValue('/buy/order-complete')
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-
-    const data1 = await injectWithCookies('GET', AGREED.uri)
-    expect(data1.statusCode).toBe(302)
-    expect(data1.headers.location).toBe(ORDER_COMPLETE.uri)
-    const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it('sets the currentPage to order-complete in the cache', async () => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-
-    await injectWithCookies('GET', AGREED.uri)
-    const data = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    const permission = await data.request.cache().helpers.status.getCurrentPermission()
-    expect(permission.currentPage).toBe(ORDER_COMPLETE.page)
-  })
-
-  it('responds with the licence information page when requested', async () => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-
-    await injectWithCookies('GET', AGREED.uri)
-    await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    const data = await injectWithCookies('GET', LICENCE_DETAILS.uri)
-    expect(data.statusCode).toBe(200)
-  })
-
-  it.each([
-    [COOKIES.page, COOKIES.uri],
-    [ACCESSIBILITY_STATEMENT.page, ACCESSIBILITY_STATEMENT.uri],
-    [PRIVACY_POLICY.page, PRIVACY_POLICY.uri],
-    [REFUND_POLICY.page, REFUND_POLICY.uri]
-  ])('succesfully navigates to %s when on the order complete page', async (page, uri) => {
-    await JUNIOR_LICENCE.setup()
-    salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-    salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
-
-    await injectWithCookies('GET', AGREED.uri)
-    await injectWithCookies('GET', ORDER_COMPLETE.uri)
-
-    const data = await injectWithCookies('GET', uri)
-    expect(data.statusCode).toBe(200)
+  it('sets current page to order-complete in the cache', async () => {
+    const statusSetCurrentPermission = jest.fn()
+    await getData(getSampleRequest({ statusSetCurrentPermission }))
+    expect(statusSetCurrentPermission).toHaveBeenCalledWith(
+      expect.objectContaining({
+        currentPage: ORDER_COMPLETE.page
+      })
+    )
   })
 
   it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const request = mockRequest(status, transaction)
-
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-
+    const request = getSampleRequest()
     await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   })
 
-  it('addLanguageCodeToUri outputs correct value for new', async () => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const decoratedUri = Symbol('order complete uri')
-    addLanguageCodeToUri.mockReturnValueOnce(decoratedUri)
-
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
-
-    const data = await getData(request)
-    expect(data.uri.new).toEqual(decoratedUri)
-  })
-
-  it('addLanguageCodeToUri outputs correct value for licence details', async () => {
-    const status = () => ({
-      [COMPLETION_STATUS.agreed]: true,
-      [COMPLETION_STATUS.posted]: true,
-      [COMPLETION_STATUS.finalised]: true
-    })
-    const transaction = () => ({
-      startDate: '2019-12-14T00:00:00Z',
-      licensee: {
-        postalFulfilment: 'test',
-        preferredMethodOfConfirmation: 'test'
-      }
-    })
-
-    const decoratedUri = Symbol('licence details uri')
+  it.each(['new', 'licenceDetails'])('data outputs addLanguageCodeToUri decorated value for %s uri', async uriName => {
+    const decoratedUri = Symbol(uriName)
     addLanguageCodeToUri.mockReturnValue(decoratedUri)
 
-    displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
-    const request = mockRequest(status, transaction)
+    const { uri } = await getData(getSampleRequest())
 
-    const data = await getData(request)
-    expect(data.uri.licenceDetails).toEqual(decoratedUri)
+    expect(uri[uriName]).toEqual(decoratedUri)
+  })
+
+  it.each(['http://trustpilot.com', 'http://give-us-a-stinker'])('feedback link set to FEEDBACK_URI env var (%s)', async feedbackUri => {
+    process.env.FEEDBACK_URI = feedbackUri
+    const {
+      uri: { feedback }
+    } = await getData(getSampleRequest())
+    expect(feedback).toBe(feedbackUri)
+  })
+
+  it("uses FEEDBACK_URI_DEFAULT if FEEDBACK_URI env var isn't set", async () => {
+    delete process.env.FEEDBACK_URI
+    const {
+      uri: { feedback }
+    } = await getData(getSampleRequest())
+    expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
+  })
+
+  it('uses value returned by displayPermissionPrice for permissionCost', async () => {
+    const expectedCost = Symbol('expected cost')
+    displayPermissionPrice.mockReturnValueOnce(expectedCost)
+
+    const { permissionCost } = await getData(getSampleRequest())
+
+    expect(permissionCost).toBe(expectedCost)
+  })
+
+  it('passes permission and label catalog to displayPermissionPrice function', async () => {
+    const permission = getSamplePermission()
+    const catalog = Symbol('catalog')
+
+    await getData(getSampleRequest({ permission, catalog }))
+    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
+  })
+
+  it('uses displayStartTime to generate startTimeStringTitle', async () => {
+    const startTime = Symbol('one minute to midnight')
+    displayStartTime.mockReturnValueOnce(startTime)
+    const { startTimeStringTitle } = await getData(getSampleRequest())
+    expect(startTimeStringTitle).toBe(startTime)
+  })
+
+  it('passes request and permission to displayStartTime', async () => {
+    const permission = getSamplePermission(LICENCE_TYPE['salmon-and-sea-trout'])
+    const request = getSampleRequest({ permission })
+    await getData(request)
+    expect(displayStartTime).toHaveBeenCalledWith(request, permission)
+  })
+
+  it.each`
+    permission                                                                    | expectedValue
+    ${getSamplePermission()}                                                      | ${false}
+    ${getSamplePermission({ licenceType: LICENCE_TYPE['salmon-and-sea-trout'] })} | ${true}
+  `('identifies salmon licence of type $permission.licenceType', async ({ permission, expectedValue }) => {
+    const request = getSampleRequest({ permission })
+    const { isSalmonLicence } = await getData(request)
+    expect(isSalmonLicence).toBe(expectedValue)
+  })
+
+  it.each(['ABC123', 'ZXY099'])('passes permission reference %s', async referenceNumber => {
+    const permission = getSamplePermission({ referenceNumber })
+    const { permissionReference } = await getData(getSampleRequest(permission))
+    expect(permissionReference).toBe(permissionReference)
   })
 })

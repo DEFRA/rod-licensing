@@ -65,7 +65,7 @@ describe('The attribution handler', () => {
       }
       const responseToolkit = generateResponseToolkitMock()
       await attributionHandler(generateRequestMock(query), responseToolkit)
-      expect(responseToolkit.redirect).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
+      expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(ATTRIBUTION_REDIRECT_DEFAULT)
     }
   )
 
@@ -81,7 +81,7 @@ describe('The attribution handler', () => {
     }
     const responseToolkit = generateResponseToolkitMock()
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(attributionRedirect)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(attributionRedirect)
     delete process.env.ATTRIBUTION_REDIRECT
   })
 
@@ -96,7 +96,7 @@ describe('The attribution handler', () => {
     const responseToolkit = generateResponseToolkitMock()
 
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(IDENTIFY.uri)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(IDENTIFY.uri)
   })
 
   it('redirects begins with { IDENTIFY } when journey is renewal', async () => {
@@ -111,7 +111,7 @@ describe('The attribution handler', () => {
     const regExMatch = new RegExp(`^${IDENTIFY.uri}`)
 
     await attributionHandler(generateRequestMock(query), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
   })
 
   it.each([['B2F11U'], ['AH56F6'], ['GH330P']])(
@@ -128,7 +128,7 @@ describe('The attribution handler', () => {
       const responseToolkit = generateResponseToolkitMock()
       await attributionHandler(generateRequestMock(query), responseToolkit)
       const regExMatch = new RegExp(`^${RENEWAL_BASE.uri}/${licenceKey}$`)
-      expect(responseToolkit.redirect).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
+      expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(expect.stringMatching(regExMatch))
     }
   )
 
@@ -145,6 +145,6 @@ describe('The attribution handler', () => {
   })
 
   const generateResponseToolkitMock = () => ({
-    redirect: jest.fn()
+    redirectWithLanguageCode: jest.fn()
   })
 })

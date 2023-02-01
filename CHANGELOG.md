@@ -1,4 +1,152 @@
 
+## v1.30.0-rc.17 (2023-01-31)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1618](https://github.com/DEFRA/rod-licensing/pull/1618) Remove double pound sign on order complete page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.16 (2023-01-30)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1616](https://github.com/DEFRA/rod-licensing/pull/1616) Price incorrect on Licence Summary page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.30.0-rc.14 (2023-01-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `sales-api-service`
+  * [#1613](https://github.com/DEFRA/rod-licensing/pull/1613) Update transaction journal to use new price ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.13 (2023-01-26)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1612](https://github.com/DEFRA/rod-licensing/pull/1612) Error after Ts&Cs page purchasing licence ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.12 (2023-01-25)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#1608](https://github.com/DEFRA/rod-licensing/pull/1608) Add getPrice to Permission ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.30.0-rc.10 (2023-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1602](https://github.com/DEFRA/rod-licensing/pull/1602) Fix translation and title errors on server error page ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1603](https://github.com/DEFRA/rod-licensing/pull/1603) Stop language parameters from being duplicated in URLs ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.9 (2023-01-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1598](https://github.com/DEFRA/rod-licensing/pull/1598) Use permission start date to calculate price ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.8 (2023-01-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1593](https://github.com/DEFRA/rod-licensing/pull/1593) Notification banner ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.30.0-rc.7 (2023-01-10)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1594](https://github.com/DEFRA/rod-licensing/pull/1594) Add new cost fields ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.6 (2023-01-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1600](https://github.com/DEFRA/rod-licensing/pull/1600) Fix typos in Welsh translation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.5 (2023-01-06)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1580](https://github.com/DEFRA/rod-licensing/pull/1580) Refactor redirects to automatically use correct language ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.4 (2023-01-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1590](https://github.com/DEFRA/rod-licensing/pull/1590) Add Welsh translations to server error messages ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1591](https://github.com/DEFRA/rod-licensing/pull/1591) Update Welsh translations for client errors ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.3 (2022-12-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1585](https://github.com/DEFRA/rod-licensing/pull/1585) Remove 'order-complete' undefined logging ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.30.0-rc.2 (2022-12-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1579](https://github.com/DEFRA/rod-licensing/pull/1579) Trigger specific error response codes from route ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.30.0-rc.1 (2022-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1573](https://github.com/DEFRA/rod-licensing/pull/1573) Fix cache error ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.30.0-rc.0 (2022-12-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1570](https://github.com/DEFRA/rod-licensing/pull/1570) Back button during payment ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 

@@ -4,12 +4,12 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 
-{% if data.permission.permit.cost === 0 %}
+{% if data.permissionCost === 0 %}
     {% set title = mssgs.order_complete_title_application %}
     {% set titleHtml = title %}
 {% else %}
     {% set title = mssgs.order_complete_title_payment %}
-    {% set titleHtml = mssgs.pound + data.permission.permit.cost + '<br />' + title %}
+    {% set titleHtml = data.permissionCost + '<br />' + title %}
 {% endif %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
@@ -19,7 +19,7 @@
 
         {{ govukPanel({
           titleHtml: titleHtml,
-          html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permission.referenceNumber + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
+          html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permissionReference + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
         }) }}
         
 
@@ -36,7 +36,7 @@
                 }) }}
             </div>
                 
-            {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
+            {% if data.isSalmonLicence %}
                 <div class="govuk-!-margin-bottom-3">
                     <h2 class="govuk-heading-l">{{ mssgs.order_complete_subheading_rcr }}</h2>
                     <div class="govuk-warning-text">

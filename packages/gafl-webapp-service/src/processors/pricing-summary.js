@@ -6,6 +6,7 @@ import { LICENCE_TYPE } from '../uri.js'
 import { getPermitsJoinPermitConcessions } from './filter-permits.js'
 import * as concessionHelper from '../processors/concession-helper.js'
 import * as constants from './mapping-constants.js'
+import moment from 'moment'
 const NO_SHORT = 'no-short'
 
 /**
@@ -29,6 +30,8 @@ const byType = type => {
 const byTypeAndLength = (type, lenStr) => arr => byType(type)(arr) && byLength(lenStr)(arr)
 const byConcessions = concessions => p =>
   p.concessions.every(c => concessions.find(pc => c.name === pc)) && concessions.length === p.concessions.length
+const getPermitCost = (permission, permit) =>
+  moment(permission.licenceStartDate).isSameOrAfter(permit.newCostStartDate) ? permit.newCost : permit.cost
 
 /**
  * The pages needs to know the prices, if a concession has been applied and if the product is available at all.
@@ -43,7 +46,7 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
   if (permitWithConcessions) {
     return {
       len,
-      cost: permitWithConcessions.cost,
+      cost: getPermitCost(permission, permitWithConcessions),
       concessions: permitWithoutConcessions.cost > permitWithConcessions.cost || concessionHelper.hasJunior(permission),
       avail: true
     }
@@ -52,7 +55,7 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
   if (permitWithoutConcessions) {
     return {
       len,
-      cost: permitWithoutConcessions.cost,
+      cost: getPermitCost(permission, permitWithoutConcessions),
       concessions: false,
       avail: true
     }
@@ -60,6 +63,8 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
 
   return { len, avail: false }
 }
+
+const formatCost = cost => (Number.isInteger(cost) ? String(cost) : cost.toFixed(2))
 
 /**
  * Fetch the pricing detail - this is modified by the users concessions
@@ -102,7 +107,13 @@ export const pricingDetail = async (page, permission) => {
               )
             )
             .filter(e => e.avail)
-            .reduce((a, c) => ({ ...a, [c.len]: { cost: c.cost, concessions: c.concessions } }), {})
+            .reduce(
+              (a, c) => ({
+                ...a,
+                [c.len]: { cost: formatCost(c.cost), concessions: c.concessions }
+              }),
+              {}
+            )
           return { [licenceType]: Object.assign(filtered, Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {}) }
         })
         .reduce((a, c) => Object.assign(c, a))
@@ -133,7 +144,7 @@ export const pricingDetail = async (page, permission) => {
         .reduce(
           (a, c) => ({
             ...a,
-            [c.len]: { total: { cost: c.cost, concessions: c.concessions } }
+            [c.len]: { total: { cost: formatCost(c.cost), concessions: c.concessions } }
           }),
           {}
         )

@@ -50,7 +50,7 @@ const cacheDecorator = sessionCookieName =>
      * @returns {*}
      */
     const id = () => {
-      if (!this.state[sessionCookieName]) {
+      if (!this.state || !this.state[sessionCookieName]) {
         throw new CacheError()
       }
 
