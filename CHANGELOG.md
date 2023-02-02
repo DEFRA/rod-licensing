@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.0 (2023-02-02)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#1604](https://github.com/DEFRA/rod-licensing/pull/1604) Change in age of senior concession ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.30.0-rc.17 (2023-01-31)
 
