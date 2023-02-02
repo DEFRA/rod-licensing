@@ -34,12 +34,12 @@ const disabledNi = {
     referenceNumber: '456'
   }
 }
-
-const getLicensee = birthDate => ({
+const LICENCE_START_DATE = '2020-06-06'
+const getLicensee = ({ age, referenceDate = LICENCE_START_DATE } = {}) => ({
   firstName: 'Johnny',
   lastName: 'Test',
   preferredMethodOfConfirmation: HOW_CONTACTED.letter,
-  birthDate
+  birthDate: moment(referenceDate).subtract(age, 'years').format('YYYY-MM-DD')
 })
 
 jest.mock('@defra-fish/business-rules-lib', () => {
@@ -126,39 +126,55 @@ describe('The concession helper', () => {
 
   describe('ageConcessionHelper', () => {
     beforeEach(jest.clearAllMocks)
-    const licenceStartDate = '2020-06-06'
+
+    const getSamplePermission = ({
+      licenceStartDate = LICENCE_START_DATE,
+      licensee = getLicensee(67, licenceStartDate),
+      concessions = []
+    } = {}) => ({
+      licenceStartDate,
+      licensee,
+      concessions: []
+    })
 
     it('if the licensee is a minor, sets noLicenceRequired flag to true', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(8, 'years').format('YYYY-MM-DD'))
-      const permission = { licenceStartDate, licensee, concessions: [] }
+      const licensee = getLicensee({ age: 8 })
+      const permission = getSamplePermission({ licensee })
       f.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
 
     it('if the licensee is a junior, sets license data, junior concession and contact methods', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(14, 'years').format('YYYY-MM-DD'))
-      const permission = { licenceStartDate, licensee, concessions: [] }
+      const licensee = getLicensee({ age: 14 })
+      const permission = getSamplePermission({ licensee })
       f.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
 
     it('if the licensee is a senior, adds senior concession', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(67, 'years').format('YYYY-MM-DD'))
-      const permission = { licenceStartDate, licensee, concessions: [] }
+      const licensee = getLicensee({ age: 67 })
+      const permission = getSamplePermission({ licensee })
       f.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
 
-    it('passes permission start date to isSenior function', () => {
-      const licensee = getLicensee(moment(licenceStartDate).subtract(65, 'years').format('YYYY-MM-DD'))
-      const permission = { licenceStartDate, licensee, concessions: [] }
+    it.each([67, 99, 32])('passes age to isSenior function when age is %d', age => {
+      const licensee = getLicensee({ age })
+      const permission = getSamplePermission({ licensee })
+      f.ageConcessionHelper(permission)
+      expect(isSenior).toHaveBeenCalledWith(age, expect.any(String))
+    })
+
+    it.each(['2020-06-06', '2022-12-15', '2020-02-29'])('passes permission start date of %s to isSenior function', licenceStartDate => {
+      const licensee = getLicensee({ age: 65, referenceDate: licenceStartDate })
+      const permission = getSamplePermission({ licenceStartDate, licensee })
       f.ageConcessionHelper(permission)
       expect(isSenior).toHaveBeenCalledWith(expect.any(Number), licenceStartDate)
     })
     ;[junior, senior].forEach(concession => {
       it(`if is normal licence, removes ${concession.type} concession`, () => {
-        const licensee = getLicensee(moment(licenceStartDate).subtract(35, 'years').format('YYYY-MM-DD'))
-        const permission = { licenceStartDate, licensee, concessions: [concession] }
+        const licensee = getLicensee({ age: 35 })
+        const permission = getSamplePermission({ licensee, concessions: [concession] })
         f.ageConcessionHelper(permission)
         expect(permission).toMatchSnapshot()
       })
