@@ -81,10 +81,7 @@ export const ageConcessionHelper = permission => {
   delete permission.licensee.noLicenceRequired
   const ageAtLicenceStartDate = permission.licenceStartDate
     ? moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
-    : moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
-      .diff(moment(permission.licensee.birthDate), 'years')
+    : moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(permission.licensee.birthDate), 'years')
 
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
@@ -99,7 +96,7 @@ export const ageConcessionHelper = permission => {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
-  } else if (isSenior(ageAtLicenceStartDate)) {
+  } else if (isSenior(ageAtLicenceStartDate, permission.licenceStartDate)) {
     addSenior(permission)
   } else {
     removeJunior(permission)
