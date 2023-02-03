@@ -14,7 +14,8 @@ import {
   OS_TERMS,
   ATTRIBUTION,
   RENEWAL_LICENCE,
-  PROCESS_ANALYTICS_PREFERENCES
+  PROCESS_ANALYTICS_PREFERENCES,
+  NEW_PRICES
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -112,6 +113,21 @@ export default [
           alb: ALB_COOKIE_NAME,
           albcors: ALBCORS_COOKIE_NAME
         },
+        uri: {
+          back: addLanguageCodeToUri(request, CONTROLLER.uri)
+        }
+      })
+    }
+  },
+  {
+    method: 'GET',
+    path: NEW_PRICES.uri,
+    handler: async (request, h) => {
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+
+      return h.view(NEW_PRICES.page, {
+        altLang,
+        mssgs: request.i18n.getCatalog(),
         uri: {
           back: addLanguageCodeToUri(request, CONTROLLER.uri)
         }

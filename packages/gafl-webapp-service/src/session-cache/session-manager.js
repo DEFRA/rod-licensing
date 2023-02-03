@@ -15,7 +15,8 @@ import {
   REFUND_POLICY,
   PRIVACY_POLICY,
   ACCESSIBILITY_STATEMENT,
-  COOKIES
+  COOKIES,
+  NEW_PRICES
 } from '../uri.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
 
@@ -34,7 +35,8 @@ const agreedHandlerProtectionExemptSet = [
   REFUND_POLICY.uri,
   PRIVACY_POLICY.uri,
   ACCESSIBILITY_STATEMENT.uri,
-  COOKIES.uri
+  COOKIES.uri,
+  NEW_PRICES.uri
 ]
 
 // regex for /renew/{referenceNumber?}, /buy/renew/identify and /renew-my-licence/{referenceNumber?}
