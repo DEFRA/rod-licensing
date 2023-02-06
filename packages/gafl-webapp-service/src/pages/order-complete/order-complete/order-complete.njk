@@ -4,7 +4,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 
-{% if data.permissionCost === mssgs.free %}
+{% if data.permissionIsFree %}
     {% set title = mssgs.order_complete_title_application %}
     {% set titleHtml = title %}
 {% else %}

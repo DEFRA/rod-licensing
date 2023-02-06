@@ -8,6 +8,7 @@ import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { displayPermissionPrice } from '../../../processors/price-display.js'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
 
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
@@ -36,6 +37,7 @@ export const getData = async request => {
     startTimeStringTitle,
     isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
     permissionCost: displayPermissionPrice(permission, request.i18n.getCatalog()),
+    permissionIsFree: getPermissionCost(permission) === 0,
     permissionReference: permission.referenceNumber,
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
