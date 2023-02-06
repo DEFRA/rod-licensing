@@ -1,4 +1,8 @@
 import { getData } from '../route'
+import { NEW_PRICES } from '../../../../uri.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+
+jest.mock('../../../../processors/uri-helper.js')
 
 describe('licence-to-start > route', () => {
   const mockTransactionCacheGet = jest.fn()
@@ -35,6 +39,12 @@ describe('licence-to-start > route', () => {
       process.env.SHOW_NOTIFICATION_BANNER = notification
       const result = await getData(mockRequest)
       expect(result.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
+    })
+
+    it('addLanguageCodeToUri is called with request and NEW_PRICES.uri', async () => {
+      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
+      await getData(mockRequest)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_PRICES.uri)
     })
   })
 })
