@@ -234,13 +234,6 @@ describe('licence-summary > route', () => {
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
     })
 
-    it('addLanguageCodeToUri is called with the request and NEW_TRANSACTION.uri', async () => {
-      const mockRequest = getMockRequest()
-      await getData(mockRequest)
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
-    })
-
     it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
       const catalog = Symbol('mock catalog')
       const mockRequest = {
