@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.1 (2023-02-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1625](https://github.com/DEFRA/rod-licensing/pull/1625) Fix completion message for junior licences ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.31.0-rc.0 (2023-02-02)
 
 #### :rocket: Enhancement
