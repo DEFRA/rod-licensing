@@ -61,7 +61,7 @@
 
 {% block notificationContent %}
     {% if data.SHOW_NOTIFICATION_BANNER %}
-        {{ notificationBanner({ newPricesUri: data.uri.newPrices }) }}
+        {{ notificationBanner(data.uri.newPrices, mssgs) }}
     {% endif %}
 {% endblock %}
 
