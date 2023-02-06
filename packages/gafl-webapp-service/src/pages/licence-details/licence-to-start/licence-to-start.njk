@@ -2,7 +2,7 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 {% from "date-input/macro.njk" import govukDateInput %}
-{% from "notification-banner.njk" import notificationBanner %}
+{% from "notification-banner/macro.njk" import govukNotificationBanner %}
 {% set title = mssgs.licence_start_title_you if data.isLicenceForYou else mssgs.licence_start_title_other %}
 
 {%
@@ -59,10 +59,19 @@
     }) }}
 {% endset -%}
 
+{% set notificationHtml %}
+    <h3 class="govuk-notification-banner__heading">
+        {{ mssgs.price_increase_notification_heading }}
+    </h3>
+    <p class="govuk-body">{{ mssgs.price_increase_notification_text }} <a class="govuk-notification-banner__link" href="#">{{ mssgs.price_increase_notification_link_text }}</a></p>
+{% endset %}
+
 {% block notificationContent %}
     {% if data.SHOW_NOTIFICATION_BANNER %}
-        {{ notificationBanner() }}
-    {% endif%}
+        {{ govukNotificationBanner({
+            html: notificationHtml
+        }) }}
+    {% endif %}
 {% endblock %}
 
 {% block pageContent %}
@@ -149,4 +158,3 @@
         }
     })()</script>
 {% endblock %}
-
