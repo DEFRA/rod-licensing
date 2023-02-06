@@ -5,7 +5,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
-{% from "notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "notification-banner.njk" import notificationBanner %}
 
 {% set title = mssgs.licence_summary_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -25,13 +25,6 @@
     {% endcall %}
 {% endset -%}
 
-{% set notificationHtml %}
-    <h3 class="govuk-notification-banner__heading">
-        {{ mssgs.price_increase_notification_heading }}
-    </h3>
-    <p class="govuk-body">{{ mssgs.price_increase_notification_text }} <a class="govuk-notification-banner__link" href="{{ data.uri.newPrices }}">{{ mssgs.price_increase_notification_link_text }}</a></p>
-{% endset %}
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -44,9 +37,7 @@
         {% endif %}
         {% block notificationContent %}
           {% if data.SHOW_NOTIFICATION_BANNER %}
-            {{ govukNotificationBanner({
-              html: notificationHtml
-            }) }}
+            {{ notificationBanner({ newPricesUri: data.uri.newPrices }) }}
           {% endif%}
         {% endblock %}
         <form method="post">
