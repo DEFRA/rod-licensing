@@ -117,7 +117,6 @@ const init = async () => {
     engines: {
       njk: {
         compile: (src, options) => {
-          console.log('src', src, 'options', options)
           const template = Nunjucks.compile(src, options.environment)
           return context => template.render(context)
         },
