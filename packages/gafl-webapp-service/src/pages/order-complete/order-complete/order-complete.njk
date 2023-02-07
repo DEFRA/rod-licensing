@@ -66,6 +66,13 @@
                 <a class="govuk-link" href="https://www.gov.uk/government/publications/fisheries-annual-report-2020-to-2021/fisheries-annual-report-2020-to-2021">{{ mssgs.order_complete_fisheries_report_link }}</a>{{ mssgs.order_complete_fisheries_report_suffix }}
             </p>
             <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.feedback }}">{{ mssgs.order_complete_tell_us }}</a>{{ mssgs.order_complete_tell_us_link }}</p>
+
+            {{ govukButton({
+                href: data.uri.new,
+                attributes: { id: 'continue' },
+                text: mssgs.buy_another_licence,
+                classes: "govuk-!-margin-top-4 no-print govuk-button--secondary"
+            }) }}
         </div>
 
     </div>
