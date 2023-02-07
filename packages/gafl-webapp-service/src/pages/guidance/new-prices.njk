@@ -1,0 +1,62 @@
+{% extends "layout.njk" %}
+{% from "back-link/macro.njk" import govukBackLink %}
+{% from "table/macro.njk" import govukTable %}
+
+{% block pageTitle %}{{ mssgs.new_prices_title }}{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        {{ govukBackLink({
+          text: mssgs.back,
+          href: uri.back,
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
+
+        <h1 class="govuk-heading-l">{{ mssgs.new_prices_heading }}</h1>
+        <p class="govuk-body">{{ mssgs.new_prices_explanation }}</p>
+
+        <p class="govuk-body">{{ mssgs.new_prices_concession }}</p>
+
+        <h2 class="govuk-heading-m">{{ mssgs.new_prices_2_rod_table_heading }}</h2>
+
+        {{ govukTable({
+          firstCellIsHeader: true,
+          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2 }, { text: mssgs.new_prices_column_3 }, { text: mssgs.new_prices_column_4 }, { text: mssgs.new_prices_column_5 } ],
+          rows: [
+            [ { text: mssgs.new_prices_row_1_day }, { text: '£6' }, { text: '£6.60' }, { text: '£7.10' }, { text: '£7.30' } ],
+            [ { text: mssgs.new_prices_row_8_day }, { text: '£12' }, { text: '£13.20' }, { text: '£14.30' }, { text: '£14.70' } ],
+            [ { text: mssgs.new_prices_row_12_month }, { text: '£30' }, { text: '£33' }, { text: '£35.80' }, { text: '£36.80' } ],
+            [ { text: mssgs.new_prices_row_concession }, { text: '£20' }, { text: '£22' }, { text: '£23.80' }, { text: '£24.50' } ],
+            [ { text: mssgs.new_prices_row_junior }, { text: 'Free' }, { text: 'Free' }, { text: 'Free' }, { text: 'Free' } ]
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">{{ mssgs.new_prices_3_rod_table_heading }}</h2>
+
+        {{ govukTable({
+          firstCellIsHeader: true,
+          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2 }, { text: mssgs.new_prices_column_3 }, { text: mssgs.new_prices_column_4 }, { text: mssgs.new_prices_column_5 } ],
+          rows: [
+            [ { text: mssgs.new_prices_row_12_month }, { text: '£45' }, { text: '£49.50' }, { text: '£53.70' }, { text: '£55.30' } ],
+            [ { text: mssgs.new_prices_row_concession }, { text: '£30' }, { text: '£33' }, { text: '£35.80' }, { text: '£36.80' } ],
+            [ { text: mssgs.new_prices_row_junior }, { text: 'Free' }, { text: 'Free' }, { text: 'Free' }, { text: 'Free' } ]
+          ]
+        }) }}
+
+        <h2 class="govuk-heading-m">{{ mssgs.new_prices_salmon_table_heading }}</h2>
+
+        {{ govukTable({
+          firstCellIsHeader: true,
+          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2 }, { text: mssgs.new_prices_column_3 }, { text: mssgs.new_prices_column_4 }, { text: mssgs.new_prices_column_5 } ],
+          rows: [
+            [ { text: mssgs.new_prices_row_1_day }, { text: '£12' }, { text: '£12.60' }, { text: '£13.20' }, { text: '£13.50' } ],
+            [ { text: mssgs.new_prices_row_8_day }, { text: '£27' }, { text: '£28.30' }, { text: '£29.70' }, { text: '£30.50' } ],
+            [ { text: mssgs.new_prices_row_12_month }, { text: '£82' }, { text: '£86.10' }, { text: '£90.40' }, { text: '£93.10' } ],
+            [ { text: mssgs.new_prices_row_concession }, { text: '£54' }, { text: '£57.40' }, { text: '£60.20' }, { text: '£62' } ],
+            [ { text: mssgs.new_prices_row_junior }, { text: 'Free' }, { text: 'Free' }, { text: 'Free' }, { text: 'Free' } ]
+          ]
+        }) }}
+   </div>
+</div>
+{% endblock %}

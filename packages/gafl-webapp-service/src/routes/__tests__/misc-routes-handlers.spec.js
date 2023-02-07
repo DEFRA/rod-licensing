@@ -27,6 +27,7 @@ describe('guidance page handlers', () => {
   const privacyPolicyPageHandler = miscRoutes.find(r => r.path === uri.PRIVACY_POLICY.uri).handler
   const refundPolicyPageHandler = miscRoutes.find(r => r.path === uri.REFUND_POLICY.uri).handler
   const osTermsPageHandler = miscRoutes.find(r => r.path === uri.OS_TERMS.uri).handler
+  const newPricesPageHandler = miscRoutes.find(r => r.path === uri.NEW_PRICES.uri).handler
 
   describe('cookies page handler', () => {
     const processEnv = process.env
@@ -188,6 +189,24 @@ describe('guidance page handlers', () => {
       toolkit.view.mockReturnValue(viewReturn)
       const returned = await cookiesPageHandler(getMockRequest(), toolkit)
       expect(returned).toEqual(viewReturn)
+    })
+  })
+
+  it('New prices page handler provides expected data for new prices page', async () => {
+    const catalog = Symbol('catalog')
+    const mockUri = Symbol('Back')
+    addLanguageCodeToUri.mockReturnValueOnce(mockUri)
+    const mockRequest = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog })
+    const mockToolkit = getMockToolkit()
+
+    await newPricesPageHandler(mockRequest, mockToolkit)
+
+    expect(mockToolkit.view).toHaveBeenCalledWith(uri.NEW_PRICES.page, {
+      altLang: ['that-locale'],
+      mssgs: catalog,
+      uri: {
+        back: mockUri
+      }
     })
   })
 
