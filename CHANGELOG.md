@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.2 (2023-02-07)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1606](https://github.com/DEFRA/rod-licensing/pull/1606) Code coverage in authenticate.js ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.31.0-rc.1 (2023-02-06)
 
 #### :bug: Bug Fix
