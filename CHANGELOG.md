@@ -1,3 +1,4 @@
+Must provide GITHUB_AUTH
 
 ## v1.31.0-rc.2 (2023-02-07)
 
