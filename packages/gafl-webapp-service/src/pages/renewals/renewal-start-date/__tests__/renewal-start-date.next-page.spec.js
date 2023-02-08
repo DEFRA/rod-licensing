@@ -1,12 +1,10 @@
 import pageRoute from '../../../../routes/page-route.js'
-import { RENEWAL_START_VALIDATE } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 require('../route.js') // require rather than import to avoid lint error with unused variable
 
 jest.mock('../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../uri.js', () => ({
-  RENEWAL_START_DATE: { page: 'renewal start date page', uri: 'renewal start date uri' },
-  RENEWAL_START_VALIDATE: { uri: Symbol('renewal start validate uri') }
+  RENEWAL_START_DATE: { page: 'renewal start date page', uri: 'renewal start date uri' }
 }))
 jest.mock('../../../../processors/uri-helper.js')
 

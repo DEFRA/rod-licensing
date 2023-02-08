@@ -8,7 +8,6 @@ import {
   PRIVACY_POLICY,
   REFUND_POLICY,
   AUTHENTICATE,
-  RENEWAL_START_VALIDATE,
   RENEWAL_PUBLIC,
   IDENTIFY,
   OS_TERMS,
@@ -24,7 +23,6 @@ import newSessionHandler from '../handlers/new-session-handler.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
-import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 import attribution from '../handlers/attribution-handler.js'
 import urlHandler from '../handlers/renewals-friendly-url-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
@@ -73,11 +71,6 @@ export default [
       }
       return h.redirectWithLanguageCode(IDENTIFY.uri)
     }
-  },
-  {
-    method: 'GET',
-    path: RENEWAL_START_VALIDATE.uri,
-    handler: renewalValidationHandler
   },
   {
     method: 'GET',

@@ -30,15 +30,22 @@ const validator = (payload, options) => {
   )
 }
 
-const getLicenceToStartAndLicenceStartTime = async (result, permission, request, h) => {
+export const getLicenceToStartAndLicenceStartTime = async (result, request) => {
+  const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { payload } = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
+  console.log('payload', payload)
+  console.log('permission.renewedEndDate', permission.renewedEndDate)
+  console.log('SERVICE_LOCAL_TIME', SERVICE_LOCAL_TIME)
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
+  console.log('endDateMoment', endDateMoment)
+  console.log('cacheDateFormat', cacheDateFormat)
+
   if (result.error) {
     await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, { payload, error: errorShimm(result.error) })
     await request
       .cache()
       .helpers.status.setCurrentPermission({ [RENEWAL_START_DATE.page]: PAGE_STATE.error, currentPage: RENEWAL_START_DATE.page })
-    return h.redirectWithLanguageCode(RENEWAL_START_DATE.uri)
+    return addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
   } else {
     permission.licenceStartDate = moment({
       year: payload['licence-start-date-year'],
@@ -46,6 +53,10 @@ const getLicenceToStartAndLicenceStartTime = async (result, permission, request,
       day: payload['licence-start-date-day']
     }).format(cacheDateFormat)
 
+    // console.log(permission.licenceStartDate)
+    // console.log(permission.cacheDateFormat)
+    // console.log(endDateMoment)
+    // console.log(moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day'))
     if (moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day')) {
       // If today is the day of the renewal
       if (endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))) {
@@ -66,15 +77,14 @@ const getLicenceToStartAndLicenceStartTime = async (result, permission, request,
 
   ageConcessionHelper(permission)
   await request.cache().helpers.transaction.setCurrentPermission(permission)
+  return addLanguageCodeToUri(request, LICENCE_SUMMARY.uri)
 }
 
-const getData = async request => {
+export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   const expiryTimeString = displayExpiryDate(request, permission)
   const endDateMoment = moment.utc(permission.renewedEndDate, null, request.locale).tz(SERVICE_LOCAL_TIME)
-
-  getLicenceToStartAndLicenceStartTime(validator, permission, request)
 
   return {
     expiryTimeString,
@@ -89,6 +99,6 @@ export default pageRoute(
   RENEWAL_START_DATE.page,
   RENEWAL_START_DATE.uri,
   validator,
-  request => addLanguageCodeToUri(request, LICENCE_SUMMARY.uri),
+  request => getLicenceToStartAndLicenceStartTime(validator, request),
   getData
 )
