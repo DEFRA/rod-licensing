@@ -18,7 +18,7 @@
         isPageHeading: true
       }
     }) %}
-    {{ govukSummaryList({ 
+    {{ govukSummaryList({
       classes: 'licence-summary-list',
       rows: data.licenceSummaryRows
     }) }}
@@ -37,7 +37,7 @@
         {% endif %}
         {% block notificationContent %}
           {% if data.SHOW_NOTIFICATION_BANNER %}
-            {{ notificationBanner() }}
+            {{ notificationBanner(data.uri.newPrices, mssgs) }}
           {% endif%}
         {% endblock %}
         <form method="post">
@@ -57,8 +57,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-
-
-
