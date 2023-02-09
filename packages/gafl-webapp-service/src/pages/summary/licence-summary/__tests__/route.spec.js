@@ -1,6 +1,6 @@
 import { getData } from '../route'
 import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
-import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION } from '../../../../uri.js'
+import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION, NEW_PRICES } from '../../../../uri.js'
 import findPermit from '../../find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
@@ -227,11 +227,11 @@ describe('licence-summary > route', () => {
       await getData(mockRequest)
       expect(findPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
     })
-    it('addLanguageCodeToUri is called with the request and NEW_TRANSACTION.uri', async () => {
+
+    it.each([[NEW_TRANSACTION.uri], [NEW_PRICES.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
       const mockRequest = getMockRequest()
       await getData(mockRequest)
-
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
     })
 
     it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
