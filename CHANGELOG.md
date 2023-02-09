@@ -1,3 +1,12 @@
+
+## v1.31.0-rc.4 (2023-02-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1627](https://github.com/DEFRA/rod-licensing/pull/1627) Add price increase notification banner text ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
 Must provide GITHUB_AUTH
 
 ## v1.31.0-rc.2 (2023-02-07)
