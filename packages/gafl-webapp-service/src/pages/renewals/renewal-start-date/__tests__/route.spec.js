@@ -26,18 +26,20 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
 }))
 
 jest.mock('moment-timezone')
-const getMomentMockImpl = (overrides = {}) =>
-  jest.fn(() => ({
-    tz: () => ({
-      isSame: () => {}
-    }),
-    isSame: () => {},
-    utc: jest.fn(() => ({ tz: () => {} })),
-    format: () => {},
-    ...overrides
-  }))
+// const getMomentMockImpl = (overrides = {}) =>
+//   jest.fn(() => ({
+//     tz: () => ({
+//       isSame: () => {}
+//     }),
+//     isSame: () => {},
+//     utc: jest.fn(() => ({ tz: () => {} })),
+//     format: () => {},
+//     ...overrides
+//   }))
 
-const getMockRequest = (startYear = 1970, startMonth = 1, startDay = 1, permission = getSamplePermission()) => ({
+const mockTransactionSet = jest.fn()
+
+const getMockRequest = (permission = getSamplePermission()) => ({
   cache: () => ({
     helpers: {
       status: {
@@ -47,16 +49,16 @@ const getMockRequest = (startYear = 1970, startMonth = 1, startDay = 1, permissi
       page: {
         getCurrentPermission: async () => ({
           payload: {
-            'licence-start-date-year': startYear,
-            'licence-start-date-month': startMonth,
-            'licence-start-date-day': startDay
+            'licence-start-date-year': 1999,
+            'licence-start-date-month': 1,
+            'licence-start-date-day': 1
           }
         }),
         setCurrentPermission: jest.fn()
       },
       transaction: {
         getCurrentPermission: () => permission,
-        setCurrentPermission: jest.fn()
+        setCurrentPermission: mockTransactionSet
       }
     }
   }),
@@ -88,7 +90,7 @@ describe('getData', () => {
 
   it('displayExpiryDate is called with expected arguments', async () => {
     const permission = getSamplePermission()
-    const request = getMockRequest({ permission })
+    const request = getMockRequest()
     await getData(request)
     expect(displayExpiryDate).toHaveBeenCalledWith(request, permission)
   })
@@ -147,33 +149,47 @@ describe('getLicenceToStartAndLicenceStartTime', () => {
 
     expect(expected).toBe(LICENCE_SUMMARY.uri)
   })
-
-  it.only('licenceStartTime = endDateMoment.hours when moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, day) and endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME)', async () => {
-    const result = { error: false }
-    const permission = getSamplePermission()
-    const request = getMockRequest({ permission })
-    // moment.utc.mockImplementation(() => ({
-    //   tz: () => ({
-    //     format: () => {}
-    //   })
-    // }))
-    moment.utc.mockImplementation(getMomentMockImpl())
-    moment.mockImplementation(getMomentMockImpl())
-
-    await getLicenceToStartAndLicenceStartTime(result, request)
-  })
-
-  it('licenceToStart = licenceToStart.ANOTHER_DATE when moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, day) and endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME)', async () => {
-  })
-  // permission.licenceStartTime = endDateMoment.hours()
-  // permission.licenceToStart = licenceToStart.ANOTHER_DATE
-
-  // permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-  // permission.licenceStartTime = null
-
-  // permission.licenceToStart = licenceToStart.ANOTHER_DATE
-  // permission.licenceStartTime = 0
 })
 
-// page route
-// getLicenceToStartAndLicenceStartTime(validator, request) with parameters
+describe('licenceStartTime and licenceToStart values', () => {
+  describe.each([
+    ['licenceStartTime = endDateMoment.hours and licenceToStart = ANOTHER_DATE', Symbol('end hours'), 'another-date', true, true],
+    ['licenceStartTime = null and licenceToStart = AFTER_PAYMENT', null, 'after-payment', true, false],
+    ['licenceStartTime = 0 and licenceToStart = ANOTHER_DATE', 0, 'another-date', false, false]
+  ])(
+    'returns values of: %s', (desc, endHours, licenceToStartResult, isSame, isAfter) => {
+      moment.mockReturnValue({
+        isSame: () => isSame,
+        format: () => {},
+        tz: () => 'Europe/London'
+      })
+
+      moment.utc.mockReturnValue({
+        tz: () => ({
+          isAfter: () => isAfter,
+          hours: () => endHours,
+          tz: () => 'Europe/London'
+        })
+      })
+
+      beforeEach(jest.clearAllMocks)
+
+      it('licenceStartTime', async () => {
+        await getLicenceToStartAndLicenceStartTime({ error: false }, getMockRequest())
+        expect(mockTransactionSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            licenceStartTime: endHours
+          })
+        )
+      })
+
+      it('licenceToStart', async () => {
+        await getLicenceToStartAndLicenceStartTime({ error: false }, getMockRequest())
+        expect(mockTransactionSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            licenceToStart: licenceToStartResult
+          })
+        )
+      })
+    })
+})

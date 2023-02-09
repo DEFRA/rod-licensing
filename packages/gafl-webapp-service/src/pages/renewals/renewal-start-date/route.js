@@ -33,12 +33,7 @@ const validator = (payload, options) => {
 export const getLicenceToStartAndLicenceStartTime = async (result, request) => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { payload } = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
-  console.log('payload', payload)
-  console.log('permission.renewedEndDate', permission.renewedEndDate)
-  console.log('SERVICE_LOCAL_TIME', SERVICE_LOCAL_TIME)
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
-  console.log('endDateMoment', endDateMoment)
-  console.log('cacheDateFormat', cacheDateFormat)
 
   if (result.error) {
     await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, { payload, error: errorShimm(result.error) })
@@ -53,10 +48,6 @@ export const getLicenceToStartAndLicenceStartTime = async (result, request) => {
       day: payload['licence-start-date-day']
     }).format(cacheDateFormat)
 
-    // console.log(permission.licenceStartDate)
-    // console.log(permission.cacheDateFormat)
-    // console.log(endDateMoment)
-    // console.log(moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day'))
     if (moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day')) {
       // If today is the day of the renewal
       if (endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))) {
