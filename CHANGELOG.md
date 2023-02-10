@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.5 (2023-02-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1628](https://github.com/DEFRA/rod-licensing/pull/1628) Add Welsh translations for price change banner ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.31.0-rc.4 (2023-02-09)
 
 #### :rocket: Enhancement
