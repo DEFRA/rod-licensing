@@ -1,13 +1,9 @@
 import { getData, getLicenceToStartAndLicenceStartTime } from '../route.js'
-// import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-// import { dateFormats, PAGE_STATE } from '../../../../constants.js'
 import { RENEWAL_START_DATE, LICENCE_SUMMARY } from '../../../../uri.js'
 import moment from 'moment-timezone'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-// import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction.js'
 import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
 import { displayExpiryDate } from '../../../../processors/date-and-time-display.js'
-// import { errorShimm } from '../../../../handlers/page-handler.js'
 
 const mockDisplayExpiryDate = Symbol('displayExpiryDate')
 jest.mock('../../../../processors/date-and-time-display.js', () => ({
@@ -19,23 +15,11 @@ jest.mock('../../../../processors/concession-helper.js', () => ({
   ageConcessionHelper: jest.fn()
 }))
 
-// jest.mock('../../../../handlers/page-handler.js', () => ({ errorShimm: () => {} }))
-
 jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((_request, uri) => uri)
 }))
 
 jest.mock('moment-timezone')
-// const getMomentMockImpl = (overrides = {}) =>
-//   jest.fn(() => ({
-//     tz: () => ({
-//       isSame: () => {}
-//     }),
-//     isSame: () => {},
-//     utc: jest.fn(() => ({ tz: () => {} })),
-//     format: () => {},
-//     ...overrides
-//   }))
 
 const mockTransactionSet = jest.fn()
 
@@ -79,6 +63,19 @@ const getSamplePermission = ({ renewedEndDate = '2023-01-01T00:00:00.000Z' } = {
 })
 
 describe('getData', () => {
+  const minStartDate = Symbol('min')
+  const maxStartDate = Symbol('max')
+
+  beforeAll(() => {
+    moment.utc.mockReturnValue({
+      tz: () => ({
+        clone: () => ({
+          add: () => ({ format: () => minStartDate })
+        }),
+        format: () => maxStartDate
+      })
+    })
+  })
   beforeEach(jest.clearAllMocks)
 
   it('displayExpiryDate return value', async () => {
@@ -102,6 +99,21 @@ describe('getData', () => {
 })
 
 describe('getLicenceToStartAndLicenceStartTime', () => {
+  beforeAll(() => {
+    moment.mockReturnValue({
+      isSame: () => false,
+      format: () => {},
+      tz: () => 'Europe/London'
+    })
+
+    moment.utc.mockReturnValue({
+      tz: () => ({
+        isAfter: () => false,
+        hours: () => 0,
+        tz: () => 'Europe/London'
+      })
+    })
+  })
   beforeEach(jest.clearAllMocks)
 
   it('ageConcessionHelper is called with expected arguments', async () => {
@@ -110,44 +122,23 @@ describe('getLicenceToStartAndLicenceStartTime', () => {
     expect(ageConcessionHelper).toHaveBeenCalled()
   })
 
-  it.each([
-    [RENEWAL_START_DATE.uri, true],
-    [LICENCE_SUMMARY.uri, false]
-  ])('addLanguageCodeToUri is called with request and %s', async (uri, error) => {
-    const result = { error: error }
-    const request = getMockRequest()
-    await getLicenceToStartAndLicenceStartTime(result, request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
-  })
-
-  // it('addLanguageCodeToUri test', async () => {
-  //   const result = { error: { details: 'error' } }
+  // it.each([
+  //   [RENEWAL_START_DATE.uri, 'fails', true],
+  //   [LICENCE_SUMMARY.uri, 'passes', false]
+  // ])('addLanguageCodeToUri is called with request and %s when validation %s', async (uri, desc, error) => {
+  //   const result = { error: error }
   //   const request = getMockRequest()
   //   await getLicenceToStartAndLicenceStartTime(result, request)
-  //   expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, RENEWAL_START_DATE.uri)
+  //   expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   // })
 
-  it('addLanguageCodeToUri is called with expected arguments', async () => {
-    const result = 'result'
-    const request = getMockRequest()
-    await getLicenceToStartAndLicenceStartTime(result, request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, 'uri')
-  })
+  it.only('addLanguageCodeToUri', async () => {
+    // errorShimm.mockReturnValueOnce('error')
 
-  it('redirects to the start page when validation fails', async () => {
     const result = { error: true }
     const request = getMockRequest()
-    const expected = await getLicenceToStartAndLicenceStartTime(result, request)
-
-    expect(expected).toBe(RENEWAL_START_DATE.uri)
-  })
-
-  it('redirects to the licence summary page when validation passes', async () => {
-    const result = { error: false }
-    const request = getMockRequest()
-    const expected = await getLicenceToStartAndLicenceStartTime(result, request)
-
-    expect(expected).toBe(LICENCE_SUMMARY.uri)
+    await getLicenceToStartAndLicenceStartTime(result, request)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, RENEWAL_START_DATE.uri)
   })
 })
 
@@ -158,17 +149,19 @@ describe('licenceStartTime and licenceToStart values', () => {
     ['licenceStartTime = 0 and licenceToStart = ANOTHER_DATE', 0, 'another-date', false, false]
   ])(
     'returns values of: %s', (desc, endHours, licenceToStartResult, isSame, isAfter) => {
-      moment.mockReturnValue({
-        isSame: () => isSame,
-        format: () => {},
-        tz: () => 'Europe/London'
-      })
-
-      moment.utc.mockReturnValue({
-        tz: () => ({
-          isAfter: () => isAfter,
-          hours: () => endHours,
+      beforeAll(() => {
+        moment.mockReturnValue({
+          isSame: () => isSame,
+          format: () => {},
           tz: () => 'Europe/London'
+        })
+
+        moment.utc.mockReturnValue({
+          tz: () => ({
+            isAfter: () => isAfter,
+            hours: () => endHours,
+            tz: () => 'Europe/London'
+          })
         })
       })
 

@@ -5,17 +5,7 @@ Object {
   "advancedPurchaseMaxDays": 30,
   "expiryTimeString": Symbol(expiryDate),
   "hasExpired": undefined,
-  "maxStartDate": "31 01 2023",
-  "minStartDate": "01 01 2023",
-}
-`;
-
-exports[`page route next getData returns expected outputs 1`] = `
-Object {
-  "advancedPurchaseMaxDays": 30,
-  "expiryTimeString": Symbol(expiryDate),
-  "hasExpired": undefined,
-  "maxStartDate": "31 01 2023",
-  "minStartDate": "01 01 2023",
+  "maxStartDate": Symbol(min),
+  "minStartDate": Symbol(max),
 }
 `;
