@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.6 (2023-02-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1630](https://github.com/DEFRA/rod-licensing/pull/1630) Welsh - Price increase ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.31.0-rc.5 (2023-02-10)
 
 #### :rocket: Enhancement
