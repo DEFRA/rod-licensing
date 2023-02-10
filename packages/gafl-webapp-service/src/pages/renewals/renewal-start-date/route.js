@@ -13,7 +13,7 @@ import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 
 const JoiX = Joi.extend(JoiDate)
 
-const validator = (payload, options) => {
+export const validator = (payload, options) => {
   const { permission } = options.context.app.request
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
   const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`

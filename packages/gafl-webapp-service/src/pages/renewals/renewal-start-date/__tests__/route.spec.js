@@ -1,6 +1,5 @@
-import { getData, getLicenceToStartAndLicenceStartTime } from '../route.js'
+import { getData, getLicenceToStartAndLicenceStartTime, validator } from '../route.js'
 import { RENEWAL_START_DATE, LICENCE_SUMMARY } from '../../../../uri.js'
-import moment from 'moment-timezone'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
 import { displayExpiryDate } from '../../../../processors/date-and-time-display.js'
@@ -19,7 +18,24 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((_request, uri) => uri)
 }))
 
-jest.mock('moment-timezone')
+jest.mock('moment-timezone', () => {
+  const realMoment = jest.requireActual('moment-timezone')
+  return {
+    default: targetDate => {
+      if (targetDate) {
+        return realMoment(targetDate)
+      }
+      return realMoment('2023-02-10T12:00:00.000Z')
+    },
+    utc: realMoment.utc
+  }
+})
+
+jest.mock('../../../../handlers/page-handler.js', () => ({
+  errorShimm: () => {}
+}))
+
+jest.mock('../../../../routes/page-route.js')
 
 const mockTransactionSet = jest.fn()
 
@@ -63,21 +79,7 @@ const getSamplePermission = ({ renewedEndDate = '2023-01-01T00:00:00.000Z' } = {
 })
 
 describe('getData', () => {
-  const minStartDate = Symbol('min')
-  const maxStartDate = Symbol('max')
-
-  beforeAll(() => {
-    moment.utc.mockReturnValue({
-      tz: () => ({
-        clone: () => ({
-          add: () => ({ format: () => minStartDate })
-        }),
-        format: () => maxStartDate
-      })
-    })
-  })
   beforeEach(jest.clearAllMocks)
-
   it('displayExpiryDate return value', async () => {
     const expiryDate = Symbol('expiryDate')
     displayExpiryDate.mockReturnValue(expiryDate)
@@ -99,76 +101,38 @@ describe('getData', () => {
 })
 
 describe('getLicenceToStartAndLicenceStartTime', () => {
-  beforeAll(() => {
-    moment.mockReturnValue({
-      isSame: () => false,
-      format: () => {},
-      tz: () => 'Europe/London'
-    })
-
-    moment.utc.mockReturnValue({
-      tz: () => ({
-        isAfter: () => false,
-        hours: () => 0,
-        tz: () => 'Europe/London'
-      })
-    })
-  })
   beforeEach(jest.clearAllMocks)
 
-  it('ageConcessionHelper is called with expected arguments', async () => {
+  it.only('ageConcessionHelper is called with expected arguments', async () => {
     const result = 'result'
     await getLicenceToStartAndLicenceStartTime(result, getMockRequest())
     expect(ageConcessionHelper).toHaveBeenCalled()
   })
 
-  // it.each([
-  //   [RENEWAL_START_DATE.uri, 'fails', true],
-  //   [LICENCE_SUMMARY.uri, 'passes', false]
-  // ])('addLanguageCodeToUri is called with request and %s when validation %s', async (uri, desc, error) => {
-  //   const result = { error: error }
-  //   const request = getMockRequest()
-  //   await getLicenceToStartAndLicenceStartTime(result, request)
-  //   expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
-  // })
-
-  it.only('addLanguageCodeToUri', async () => {
-    // errorShimm.mockReturnValueOnce('error')
-
-    const result = { error: true }
+  it.each([
+    [RENEWAL_START_DATE.uri, 'fails', true],
+    [LICENCE_SUMMARY.uri, 'passes', false]
+  ])('addLanguageCodeToUri is called with request and %s when validation %s', async (uri, desc, error) => {
+    const result = { error: error }
     const request = getMockRequest()
     await getLicenceToStartAndLicenceStartTime(result, request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, RENEWAL_START_DATE.uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
   })
 })
 
 describe('licenceStartTime and licenceToStart values', () => {
   describe.each([
-    ['licenceStartTime = endDateMoment.hours and licenceToStart = ANOTHER_DATE', Symbol('end hours'), 'another-date', true, true],
-    ['licenceStartTime = null and licenceToStart = AFTER_PAYMENT', null, 'after-payment', true, false],
-    ['licenceStartTime = 0 and licenceToStart = ANOTHER_DATE', 0, 'another-date', false, false]
+    ['licenceStartTime = endDateMoment.hours and licenceToStart = ANOTHER_DATE', Symbol('end hours'), 'another-date', '2023-02-10'],
+    ['licenceStartTime = null and licenceToStart = AFTER_PAYMENT', null, 'after-payment', '2023-02-10'],
+    ['licenceStartTime = 0 and licenceToStart = ANOTHER_DATE', 0, 'another-date', '2023-02-10']
   ])(
-    'returns values of: %s', (desc, endHours, licenceToStartResult, isSame, isAfter) => {
-      beforeAll(() => {
-        moment.mockReturnValue({
-          isSame: () => isSame,
-          format: () => {},
-          tz: () => 'Europe/London'
-        })
-
-        moment.utc.mockReturnValue({
-          tz: () => ({
-            isAfter: () => isAfter,
-            hours: () => endHours,
-            tz: () => 'Europe/London'
-          })
-        })
-      })
-
+    'returns values of: %s', (desc, endHours, licenceToStartResult, licenceStartDate) => {
       beforeEach(jest.clearAllMocks)
 
       it('licenceStartTime', async () => {
-        await getLicenceToStartAndLicenceStartTime({ error: false }, getMockRequest())
+        const permission = { licenceStartDate: licenceStartDate }
+        const payload = { 'licence-start-date-year': 2023, 'licence-start-date-month': 2, 'licence-start-date-day': 10 }
+        await getLicenceToStartAndLicenceStartTime({ error: false }, getMockRequest(payload, permission))
         expect(mockTransactionSet).toHaveBeenCalledWith(
           expect.objectContaining({
             licenceStartTime: endHours
@@ -185,4 +149,28 @@ describe('licenceStartTime and licenceToStart values', () => {
         )
       })
     })
+})
+
+describe('validator', () => {
+  const getMockOptions = renewedEndDate => ({
+    context: {
+      app: {
+        request: {
+          permission: {
+            renewedEndDate
+          }
+        }
+      }
+    }
+  })
+
+  // it('validation fails', () => {
+  //   return expect(validator({ 'licence-start-date-year': 1990, 'licence-start-date-month': 2, 'licence-start-date-day': 1 },
+  //     getMockOptions('1990-02-01'))).toThrow()
+  // })
+
+  it('validation succeeds', () => {
+    return expect(validator({ 'licence-start-date-year': 1990, 'licence-start-date-month': 2, 'licence-start-date-day': 1 },
+      getMockOptions('1990-02-01'))).toBeUndefined()
+  })
 })
