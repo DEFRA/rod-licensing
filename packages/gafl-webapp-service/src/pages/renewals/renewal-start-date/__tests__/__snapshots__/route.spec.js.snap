@@ -5,7 +5,7 @@ Object {
   "advancedPurchaseMaxDays": 30,
   "expiryTimeString": Symbol(expiryDate),
   "hasExpired": undefined,
-  "maxStartDate": "31 01 2023",
-  "minStartDate": "01 01 2023",
+  "maxStartDate": "09 02 2023",
+  "minStartDate": "10 01 2023",
 }
 `;
