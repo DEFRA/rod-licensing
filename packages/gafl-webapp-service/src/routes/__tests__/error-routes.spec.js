@@ -56,6 +56,21 @@ describe('Error route handlers', () => {
         )
       })
 
+      it.each([
+        [['kl', 'vu'], 'kl', 'vu'],
+        [['si', 'we'], 'we', 'si']
+      ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
+        const request = getMockRequest({}, { locales, locale })
+        const toolkit = getMockToolkit()
+        await clientError(request, toolkit)
+        expect(toolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            altLang: [altLang]
+          })
+        )
+      })
+
       describe.each([
         [true, { payment_id: 'abc123', href: 'gov.pay.url' }],
         [true, { payment_id: 'def456', href: 'gov-pay-url' }],
@@ -155,6 +170,21 @@ describe('Error route handlers', () => {
         await serverError(request, mockToolkit)
         expect(consoleErrorSpy).toHaveBeenCalled()
       })
+
+      it.each([
+        [['kl', 'vu'], 'kl', 'vu'],
+        [['si', 'we'], 'we', 'si']
+      ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
+        const request = getMockRequest({}, { locales, locale })
+        const toolkit = getMockToolkit()
+        await serverError(request, toolkit)
+        expect(toolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            altLang: [altLang]
+          })
+        )
+      })
     })
   })
 
@@ -163,7 +193,7 @@ describe('Error route handlers', () => {
   })
 })
 
-const getMockRequest = (payment = {}) => ({
+const getMockRequest = (payment = {}, i18nValues = { locales: [], locale: '' }) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -184,7 +214,8 @@ const getMockRequest = (payment = {}) => ({
   method: {},
   i18n: {
     getCatalog: () => [],
-    getLocales: () => []
+    getLocales: () => i18nValues.locales,
+    getLocale: () => i18nValues.locale
   },
   response: {
     isBoom: true,
