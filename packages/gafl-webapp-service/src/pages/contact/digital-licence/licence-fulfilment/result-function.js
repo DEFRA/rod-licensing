@@ -10,9 +10,13 @@ export default async request => {
     return MultibuyForYou.YES
   }
 
-  return status.fromContactDetailsSeen === CHANGE_CONTACT_DETAILS_SEEN.SEEN
-    ? CommonResults.AMEND
-    : status.fromSummary === CONTACT_SUMMARY_SEEN
-      ? CommonResults.SUMMARY
-      : CommonResults.OK
+  if (status.fromContactDetailsSeen === CHANGE_CONTACT_DETAILS_SEEN.SEEN) {
+    return CommonResults.AMEND
+  }
+
+  if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+    return CommonResults.SUMMARY
+  }
+
+  return CommonResults.OK
 }

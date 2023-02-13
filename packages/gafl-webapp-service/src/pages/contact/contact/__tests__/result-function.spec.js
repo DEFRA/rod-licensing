@@ -2,59 +2,88 @@ import resultFunction from '../result-function'
 import { CommonResults } from '../../../../constants.js'
 
 describe('contact > result-function', () => {
-  const mockStatusCacheGet = jest.fn(() => ({}))
-  const mockTransactionCacheGet = jest.fn(() => ({}))
-
-  const mockRequest = {
+  const getMockRequest = (statusGet = () => {}, transactionGet = () => {}) => ({
     cache: () => ({
       helpers: {
         status: {
-          getCurrentPermission: mockStatusCacheGet
+          getCurrentPermission: async () => statusGet
         },
         transaction: {
-          getCurrentPermission: mockTransactionCacheGet
+          getCurrentPermission: async () => transactionGet
         }
       }
     })
-  }
+  })
+
+  // (fromContactDetailsSeen, summary)
 
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
-    it('should return ok if isLicenceForYou is true', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: true }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.OK)
+    describe('contact details seen', () => {
+      it('should return amend if contact details have been seen', async () => {
+        const status = {
+          fromContactDetailsSeen: 'seen'
+        }
+        const result = await resultFunction(getMockRequest(status))
+        expect(result).toBe(CommonResults.AMEND)
+      })
     })
 
-    it('should return summary if isLicenceForYou is false', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isLicenceForYou: false }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.SUMMARY)
-    })
+    describe('contact details not seen', () => {
+      const status = {
+        fromContactDetailsSeen: 'not-seen'
+      }
 
-    it('should return ok if fromSummary is licence-summary', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'licence-summary' }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.OK)
-    })
+      it('should return ok if licence is for you', async () => {
+        const transaction = {
+          isLicenceForYou: true
+        }
+        const result = await resultFunction(getMockRequest(status, transaction))
+        expect(result).toBe(CommonResults.OK)
+      })
 
-    it('should return summary if fromSummary is contact-summary', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({ fromSummary: 'contact-summary' }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.SUMMARY)
-    })
+      it('should return summary if licence is not for you', async () => {
+        const transaction = {
+          isLicenceForYou: false
+        }
+        const result = await resultFunction(getMockRequest(status, transaction))
+        expect(result).toBe(CommonResults.SUMMARY)
+      })
 
-    it('should return ok if renewal is false', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isRenewal: false }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.OK)
-    })
+      it('should return ok if not been contact summary', async () => {
+        const transaction = {
+          isLicenceForYou: true,
+          fromSummary: 'fake-summary'
+        }
+        const result = await resultFunction(getMockRequest(status, transaction))
+        expect(result).toBe(CommonResults.OK)
+      })
 
-    it('should return summary if renewal is true', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ isRenewal: true }))
-      const result = await resultFunction(mockRequest)
-      expect(result).toBe(CommonResults.SUMMARY)
+      it('should return summary if been too contactmsummary', async () => {
+        const transaction = {
+          fromSummary: 'contact-summary'
+        }
+        const result = await resultFunction(getMockRequest(status, transaction))
+        expect(result).toBe(CommonResults.SUMMARY)
+      })
+
+      it('should return ok if not a renewal', async () => {
+        const transaction = {
+          isLicenceForYou: true,
+          isRenewal: false
+        }
+        const result = await resultFunction(getMockRequest(status, transaction))
+        expect(result).toBe(CommonResults.OK)
+      })
+
+      it('should return summary if is a renewal', async () => {
+        const transaction = {
+          isRenewal: true
+        }
+        const result = await resultFunction(getMockRequest(status, transaction))
+        expect(result).toBe(CommonResults.SUMMARY)
+      })
     })
   })
 })
