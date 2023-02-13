@@ -42,6 +42,8 @@ export async function execute () {
         await Promise.all(localXmlFiles.map(f => stage(f)))
         debug('Processing validation errors')
         await processPoclValidationErrors()
+      } catch (e) {
+        console.log('e', e)
       } finally {
         removeTemp()
       }
