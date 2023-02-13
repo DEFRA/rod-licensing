@@ -195,9 +195,7 @@ describe('s3 operations', () => {
             Contents: [
               {
                 Key: s3Key1,
-                LastModified: moment()
-                  .subtract(1, 'days')
-                  .toISOString(),
+                LastModified: moment().subtract(1, 'days').toISOString(),
                 ETag: 'example-md5',
                 Size: 1024
               }
@@ -211,9 +209,7 @@ describe('s3 operations', () => {
             Contents: [
               {
                 Key: s3Key1,
-                LastModified: moment()
-                  .subtract(1, 'days')
-                  .toISOString(),
+                LastModified: moment().subtract(1, 'days').toISOString(),
                 ETag: 'example-md5',
                 Size: 1024
               }
@@ -225,6 +221,33 @@ describe('s3 operations', () => {
 
       expect(updateFileStagingTable).not.toHaveBeenCalled()
       expect(salesApi.upsertTransactionFile).not.toHaveBeenCalled()
+    })
+
+    it('logs any errors raised by calling s3.listObjectsV2', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
+      const testError = new Error('Test error')
+      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
+        promise: () => {
+          throw testError
+        }
+      })
+
+      await expect(refreshS3Metadata()).rejects.toThrow(testError)
+      expect(consoleErrorSpy).toHaveBeenCalledWith(testError)
+    })
+
+    it('raises a warning if the bucket is empty', async () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+
+      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValueOnce({
+        promise: () => ({
+          IsTruncated: false
+        })
+      })
+
+      await refreshS3Metadata()
+      expect(consoleWarnSpy).toHaveBeenCalledWith('S3 bucket contains no objects')
     })
   })
 })
