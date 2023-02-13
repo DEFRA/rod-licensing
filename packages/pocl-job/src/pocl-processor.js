@@ -30,11 +30,15 @@ export async function execute () {
 
   await lock.obtainAndExecute({
     onLockObtained: async () => {
+      console.log('1')
       try {
         await config.initialise()
+        console.log('2')
         debug('Retrieving files from FTP')
         await ftpToS3()
+        console.log('3')
         await refreshS3Metadata()
+        console.log('4')
         const pendingFileRecords = await getFileRecords(FILE_STAGE.Pending, FILE_STAGE.Staging, FILE_STAGE.Finalising)
         debug('Found %s files remaining to be processed', pendingFileRecords.length)
         const localXmlFiles = await Promise.all(pendingFileRecords.map(record => s3ToLocal(record.s3Key)))
@@ -45,7 +49,9 @@ export async function execute () {
       } catch (e) {
         console.log('e', e)
       } finally {
+        console.log('5')
         removeTemp()
+        console.log('6')
       }
     },
     onLockError: async e => {
