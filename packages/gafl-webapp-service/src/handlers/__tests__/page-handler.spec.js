@@ -206,6 +206,15 @@ describe('The page handler function', () => {
       })
     )
   })
+
+  it('the post method calls redirectWithLanguageCode correctly when completion is not a function', async () => {
+    const { post } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+    const mockRequest = getMockRequest()
+    await post(mockRequest, toolkit)
+
+    expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith('/next/page')
+  })
 })
 
 const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/here', includeAnalytics = true) => ({
