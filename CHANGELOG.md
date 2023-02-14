@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.7 (2023-02-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1637](https://github.com/DEFRA/rod-licensing/pull/1637) Add "GOV.UK" suffix to new prices page title ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.31.0-rc.6 (2023-02-10)
 
 #### :rocket: Enhancement
