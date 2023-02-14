@@ -74,6 +74,15 @@ describe('The analytics handler', () => {
     )
   })
 
+  it('selected not true and response is null, then does not update the settings', async () => {
+    const payload = { analyticsResponse: null }
+    const request = generateRequestMock(payload, 'analytics')
+
+    await analyticsHandler(request, generateResponseToolkitMock())
+
+    expect(mockAnalyticsSet).not.toHaveBeenCalled()
+  })
+
   it('selected is true sets seenMessage to true', async () => {
     const analytics = { [ANALYTICS.selected]: true }
     const request = generateRequestMock('payload', analytics)
@@ -81,6 +90,15 @@ describe('The analytics handler', () => {
     await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.seenMessage]: true }))
+  })
+
+  it('payload is empty, then does not update the settings', async () => {
+    const payload = {}
+    const request = generateRequestMock(payload, 'analytics')
+
+    await analyticsHandler(request, generateResponseToolkitMock())
+
+    expect(mockAnalyticsSet).not.toHaveBeenCalled()
   })
 
   const mockAnalyticsSet = jest.fn()

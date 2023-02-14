@@ -29,7 +29,11 @@ export default async (request, h) => {
   const { payload } = request
   const analytics = await request.cache().helpers.analytics.get()
 
-  if (analytics[ANALYTICS.selected] !== true) {
+  if (analytics[ANALYTICS.selected] === true) {
+    await request.cache().helpers.analytics.set({
+      [ANALYTICS.seenMessage]: true
+    })
+  } else {
     if (payload.analyticsResponse === 'accept') {
       await request.cache().helpers.analytics.set({
         [ANALYTICS.selected]: true,
@@ -41,10 +45,6 @@ export default async (request, h) => {
         [ANALYTICS.acceptTracking]: false
       })
     }
-  } else if (analytics[ANALYTICS.selected] === true) {
-    await request.cache().helpers.analytics.set({
-      [ANALYTICS.seenMessage]: true
-    })
   }
 
   const {
