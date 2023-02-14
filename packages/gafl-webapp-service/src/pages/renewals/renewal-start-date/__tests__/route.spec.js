@@ -122,7 +122,7 @@ describe('getLicenceToStartAndLicenceStartTime', () => {
 describe('licenceStartTime and licenceToStart values', () => {
   describe.each([
     [
-      'licenceStartTime = endDateMoment.hours and licenceToStart = ANOTHER_DATE',
+      'licenceStartTime = current time and licenceToStart = another date when renewal is current day and licence not yet expired',
       13,
       'another-date',
       '2023-02-10T12:00:00.000Z',
@@ -132,7 +132,7 @@ describe('licenceStartTime and licenceToStart values', () => {
       '10'
     ],
     [
-      'licenceStartTime = null and licenceToStart = AFTER_PAYMENT',
+      'licenceStartTime = 30 minutes and licenceToStart = after payment when renewal is current day and licence is expired',
       null,
       'after-payment',
       '2023-02-10T12:00:00.000Z',
@@ -142,7 +142,7 @@ describe('licenceStartTime and licenceToStart values', () => {
       '10'
     ],
     [
-      'licenceStartTime = 0 and licenceToStart = ANOTHER_DATE',
+      'licenceStartTime = midnight and licenceToStart = another date when renewal is different day so renewing in advance',
       0,
       'another-date',
       '2023-02-11T12:00:00.000Z',
