@@ -4,7 +4,6 @@ export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const transaction = await request.cache().helpers.transaction.getCurrentPermission()
 
-  console.log(transaction.isLicenceForYou)
   const showSummary = !transaction.isLicenceForYou || status.fromSummary === CONTACT_SUMMARY_SEEN || transaction.isRenewal
 
   if (status.fromContactDetailsSeen === CHANGE_CONTACT_DETAILS_SEEN.SEEN) {
