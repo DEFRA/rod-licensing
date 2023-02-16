@@ -1,6 +1,7 @@
 {% extends "standard-form.njk" %}
 
 {% from "date-input/macro.njk" import govukDateInput %}
+{% from "inset-text/macro.njk" import govukInsetText %}
 {% set title = mssgs.dob_title_you if data.isLicenceForYou else mssgs.dob_title_other %}
 
 {%
@@ -39,14 +40,28 @@
 %}
 
 {% block pageContent %}
+    <fieldset class="govuk-fieldset" role="group" aria-describedby="passport-issued-hint">
+      <div id="passport-issued-hint" class="govuk-hint">
+        {{ mssgs.dob_entry_hint }}
+      </div>
+    </fieldset>
+
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">{{ mssgs.warning }}</span>
+        {{ mssgs.dob_privacy_link_prefix }} <a class="govuk-link" href="{{ _uri.privacy }}" rel="noreferrer noopener" target="_blank" >{{ mssgs.dob_privacy_link }}</a>.
+      </strong>
+    </div>
+
+    {{ govukInsetText({
+      text: mssgs.dob_inset
+    }) }}
+
     {{ govukDateInput({
       id: "date-of-birth",
       namePrefix: "date-of-birth",
       items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error } if error,
-      hint: {
-        text: mssgs.dob_entry_hint
-      }
+      errorMessage: { text: mssgs.dob_error } if error
     }) }}
-    <div class="govuk-body-m">{{ mssgs.dob_privacy_link_prefix }} <a class="govuk-link" href="{{ _uri.privacy }}">{{ mssgs.dob_privacy_link }}</a>.</div>
 {% endblock %}
