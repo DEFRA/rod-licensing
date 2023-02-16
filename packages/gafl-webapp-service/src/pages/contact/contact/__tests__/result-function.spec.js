@@ -15,8 +15,6 @@ describe('contact > result-function', () => {
     })
   })
 
-  // (fromContactDetailsSeen, summary)
-
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
 
