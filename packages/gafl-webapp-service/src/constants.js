@@ -58,6 +58,11 @@ export const CommonResults = {
   YES: 'yes'
 }
 
+export const LicencesRemaining = {
+  YES: 'yes',
+  NO: 'no'
+}
+
 export const MultibuyForYou = {
   YES: 'yes',
   NO: 'no'
