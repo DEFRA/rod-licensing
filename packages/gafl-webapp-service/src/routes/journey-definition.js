@@ -32,11 +32,10 @@ import {
   VIEW_LICENCES,
   CHANGE_LICENCE_OPTIONS,
   CHANGE_CONTACT_DETAILS,
-  REMOVE_LICENCE,
-  NO_LICENCE
+  REMOVE_LICENCE
 } from '../uri.js'
 
-import { CommonResults, MultibuyForYou, ShowDigitalLicencePages, LicencesRemaining } from '../constants.js'
+import { CommonResults, MultibuyForYou, ShowDigitalLicencePages } from '../constants.js'
 import { licenceTypeResults } from '../pages/licence-details/licence-type/result-function.js'
 import { licenceToStartResults } from '../pages/licence-details/licence-to-start/result-function.js'
 import { addressLookupResults } from '../pages/contact/address/lookup/result-function.js'
@@ -390,11 +389,8 @@ export default [
   {
     current: REMOVE_LICENCE,
     next: {
-      [LicencesRemaining.YES]: {
+      [CommonResults.OK]: {
         page: VIEW_LICENCES
-      },
-      [LicencesRemaining.NO]: {
-        page: NO_LICENCE
       }
     }
   },

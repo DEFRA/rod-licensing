@@ -2,15 +2,19 @@ import { getData, validator } from '../route'
 import { createMockRequest } from '../../../../__mocks__/request.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
-
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { hasDuplicates } from '../../../../processors/multibuy-processor.js'
+import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
+import { LICENCE_FOR } from '../../../../uri'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../processors/multibuy-processor.js')
+jest.mock('../../../../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn((_request, uri) => uri)
+}))
 
 const permission = {
   licensee: {
@@ -21,6 +25,10 @@ const permission = {
   numberOfRods: '2',
   licenceLength: '8D',
   permit: { cost: 12 }
+}
+
+const emptyPermission = {
+  licensee: {}
 }
 
 const catalog = Symbol('mock catalog')
@@ -46,6 +54,9 @@ describe('view licences > getData', () => {
       ...mockRequest,
       i18n: {
         getCatalog: () => catalog
+      },
+      url: {
+        search: ''
       }
     })
 
@@ -85,7 +96,7 @@ describe('view licences > getData', () => {
   })
 
   describe('getData', () => {
-    const mockRequest = createMockRequest({
+    const mockRequestPermission = createMockRequest({
       cache: {
         transaction: {
           permissions: [permission]
@@ -94,17 +105,53 @@ describe('view licences > getData', () => {
     })
 
     const getSampleRequest = () => ({
-      ...mockRequest,
+      ...mockRequestPermission,
       i18n: {
         getCatalog: () => catalog
+      },
+      url: {
+        search: ''
+      }
+    })
+
+    const mockRequestNoPermission = createMockRequest({
+      cache: {
+        transaction: {
+          permissions: [emptyPermission]
+        }
+      }
+    })
+
+    const getMockRequest = () => ({
+      ...mockRequestNoPermission,
+      i18n: {
+        getCatalog: () => catalog
+      },
+      url: {
+        search: ''
       }
     })
 
     beforeEach(() => jest.clearAllMocks())
 
-    it('returns permissions, licences and text for start after minutes text', async () => {
+    it('returns duplicate, licences, licences remaining being true and uri matching licence for', async () => {
       const res = await getData(getSampleRequest())
       expect(res).toMatchSnapshot()
+    })
+
+    it('returns false duplicate, null licences, licences remaining being false and uri matching licence for', async () => {
+      const res = await getData(getMockRequest())
+      expect(res).toMatchSnapshot()
+    })
+
+    it('licences remaining', async () => {
+      const data = await getData(getSampleRequest())
+      expect(data.licencesRemaining).toBe(true)
+    })
+
+    it('no licences remaining', async () => {
+      const data = await getData(getMockRequest())
+      expect(data.licencesRemaining).toBe(false)
     })
 
     it('duplicates', async () => {
@@ -164,6 +211,24 @@ describe('view licences > getData', () => {
       const ret = result.licences[0].start
 
       expect(ret).toEqual(returnValue)
+    })
+
+    it('return value of addLangaugeCodeToUri is used for licence for', async () => {
+      const returnValue = Symbol('return value')
+      addLanguageCodeToUri.mockReturnValueOnce(returnValue)
+
+      const result = await getData(getSampleRequest())
+      const uri = result.uri.licence_for
+
+      expect(uri).toEqual(returnValue)
+    })
+
+    it('addLanguageCodeToUri is called with request and licence for uri', async () => {
+      const request = getSampleRequest()
+
+      await getData(request)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, LICENCE_FOR.uri)
     })
   })
 })

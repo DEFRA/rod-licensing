@@ -9,59 +9,75 @@
 
 {% block content %}
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+{% if data.licencesRemaining === true %}
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
 
+          <h1 class="govuk-heading-l"> {{ mssgs.multibuy_view_licences_heading }} </h1>
+
+          {% if data.duplicate === true %}
+            {{ govukWarningText({
+              text: mssgs.multibuy_licences_warning_duplicate,
+              iconFallbackText: "Warning"
+            }) }}
+          {% endif %}
+
+            {% for licence in data.licences %}
+
+                {% set licenceInfo = [
+                  { key: { text: 'Licence holder' }, value: { text: licence.licenceHolder } }, 
+                  { key: { text: 'Type' }, value: { text: licence.type } }, 
+                  { key: { text: 'Length' }, value: { text: licence.length } }, 
+                  { key: { text: 'Start' }, value: { text: licence.start } }, 
+                  { key: { text: 'Price' }, value: { text: '£' + licence.price } }
+                  ]
+                %}
+
+                  {{ govukSummaryList({
+                    rows: licenceInfo
+                  }) }}
+
+                  {{ govukButton({
+                    text: mssgs.contact_summary_change,
+                    href: "/buy/set-current-permission?permissionIndex=" + licence.index,
+                    attributes: { 'aria-label': "Change licence" },
+                    classes: "govuk-button--secondary"
+                  })}}
+
+                  {{ govukButton({
+                    text: "Remove this licence",
+                    href: "/buy/remove-licence?permissionIndex=" + licence.index,
+                    classes: "govuk-button--secondary"
+                  })}}
+
+              {% endfor %}
+      </div>
+  </div>
+
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+              {{ govukButton({
+                  text: mssgs.continue,
+                  href: data.uri.licence_for
+              })}}
+      </div>
+  </div>
+{% else %}
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l"> {{ mssgs.multibuy_view_licences_heading }} </h1>
+        <p class="govuk-body">{{ mssgs.multibuy_no_licences }}</p>
+      </div>
+  </div>
 
-        {% if data.duplicate === true %}
-          {{ govukWarningText({
-            text: mssgs.multibuy_licences_warning_duplicate,
-            iconFallbackText: "Warning"
-          }) }}
-        {% endif %}
-
-
-          {% for licence in data.licences %}
-
-              {% set licenceInfo = [
-                { key: { text: 'Licence holder' }, value: { text: licence.licenceHolder } }, 
-                { key: { text: 'Type' }, value: { text: licence.type } }, 
-                { key: { text: 'Length' }, value: { text: licence.length } }, 
-                { key: { text: 'Start' }, value: { text: licence.start } }, 
-                { key: { text: 'Price' }, value: { text: '£' + licence.price } }
-                ]
-              %}
-
-                {{ govukSummaryList({
-                  rows: licenceInfo
-                }) }}
-
-                {{ govukButton({
-                  text: mssgs.contact_summary_change,
-                  href: "/buy/set-current-permission?permissionIndex=" + licence.index,
-                  attributes: { 'aria-label': "Change licence" },
-                  classes: "govuk-button--secondary"
-                })}}
-
-                {{ govukButton({
-                  text: "Remove this licence",
-                  href: "/buy/remove-licence?permissionIndex=" + licence.index,
-                  classes: "govuk-button--secondary"
-                })}}
-
-            {% endfor %}
-    </div>
-</div>
-
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-            {{ govukButton({
-                text: "Continue",
-                href: "/buy/add-licence"
-            })}}
-    </div>
-</div>
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {{ govukButton({
+            text: mssgs.add_a_licence,
+            href: data.uri.licence_for
+        })}}
+      </div>
+  </div>
+{% endif %}
 
 {% endblock %}
