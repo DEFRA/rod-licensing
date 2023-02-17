@@ -1,14 +1,21 @@
+import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from './concession-helper.js'
 import * as mappings from './mapping-constants.js'
+import moment from 'moment-timezone'
 
 export const licenceTypeDisplay = (permission, mssgs) => {
+  console.log('licenceTypeDisplay permission', permission)
   const typesStrArr = []
 
   // Build the display string for the licence type
   if (concessionHelper.hasJunior(permission)) {
     typesStrArr.push(mssgs.age_junior)
   } else if (concessionHelper.hasSenior(permission)) {
-    typesStrArr.push(mssgs.over_65)
+    if (moment(permission.licenceStartDate).isSameOrAfter(SENIOR_AGE_CHANGE_DATE)) {
+      typesStrArr.push(mssgs.over_66)
+    } else {
+      typesStrArr.push(mssgs.over_65)
+    }
   }
 
   if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
