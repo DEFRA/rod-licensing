@@ -1,4 +1,14 @@
 
+## v1.31.0-rc.9 (2023-02-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1642](https://github.com/DEFRA/rod-licensing/pull/1642) Remove post office content from privacy page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1643](https://github.com/DEFRA/rod-licensing/pull/1643) Refund policy remove post office and repetition ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.31.0-rc.8 (2023-02-16)
 
 #### :rocket: Enhancement
