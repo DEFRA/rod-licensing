@@ -44,7 +44,7 @@ describe('licenceTypeDisplay', () => {
   })
 
   it.each([
-    ['on', moment(SENIOR_AGE_CHANGE_DATE).format('YYYY-MM-DD')],
+    ['on', SENIOR_AGE_CHANGE_DATE],
     ['after', moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')]
   ])('shows over 66 message for permissions starting %s SENIOR_AGE_CHANGE_DATE', (_d, licenceStartDate) => {
     const permission = {
