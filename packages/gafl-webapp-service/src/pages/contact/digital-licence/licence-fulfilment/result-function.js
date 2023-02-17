@@ -1,4 +1,4 @@
-import { CONTACT_SUMMARY_SEEN, CommonResults, MultibuyForYou } from '../../../../constants.js'
+import { CONTACT_SUMMARY_SEEN, CommonResults, MultibuyForYou, CHANGE_CONTACT_DETAILS_SEEN } from '../../../../constants.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
 
 export default async request => {
@@ -10,5 +10,13 @@ export default async request => {
     return MultibuyForYou.YES
   }
 
-  return status.fromSummary === CONTACT_SUMMARY_SEEN ? CommonResults.SUMMARY : CommonResults.OK
+  if (status.fromContactDetailsSeen === CHANGE_CONTACT_DETAILS_SEEN.SEEN) {
+    return CommonResults.AMEND
+  }
+
+  if (status.fromSummary === CONTACT_SUMMARY_SEEN) {
+    return CommonResults.SUMMARY
+  }
+
+  return CommonResults.OK
 }

@@ -49,5 +49,12 @@ describe('licence-for > result-function', () => {
       const result = await resultFunction(mockRequest)
       expect(result).not.toBe(MultibuyForYou.YES)
     })
+
+    it('should return amend if status.fromContactDetailsSeen equals seen', async () => {
+      mockStatusCacheGet.mockImplementationOnce(() => ({ fromContactDetailsSeen: 'seen' }))
+      isMultibuyForYou.mockImplementationOnce(() => false)
+      const result = await resultFunction(mockRequest)
+      expect(result).toBe(CommonResults.AMEND)
+    })
   })
 })
