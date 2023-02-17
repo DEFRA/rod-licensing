@@ -459,7 +459,7 @@
   "licence_type_troute_three_rod": "Dim ond trwydded tair gwialen y bydd ei hangen arnoch os ydych yn bwriadu pysgota â thair gwialen ar yr un pryd. Gall hyn fod ar gyfer pysgota cerpynnod arbenigol, er enghraifft. Bydd hyn yn addas ar gyfer pob math o bysgota â gwialen ac yn gadael i chi bysgota brithyllod anfudol a physgod bras, yn amodol ar y ",
   "licence_type_troute_two_rod": "Y drwydded pysgod bras â dwy wialen yw’r drwydded wialen symlaf. Bydd hyn yn eich gwarchod ar gyfer pob math o bysgota gyda gwialen ac yn gadael i chi bysgota brithyllod anfudol a physgod bras. Bydd yn caniatáu i chi bysgota gydag un neu ddwy wialen ar yr un pryd, yn amodol ar y ",
   "multibuy_licences_warning_duplicate": "You currently have multiple versions of the same licence in your basket. You can change or remove licences, or select ’Continue’ to proceed without change",
-  "multibuy_no_licences": "You currently have no licences in your basket",
+  "multibuy_no_licences": "You currently have no licences in your basket.",
   "multibuy_remove_licences_heading": "Are you sure you want to remove this licence?",
   "multibuy_remove_licences_title": "Remove licence",
   "multibuy_view_licences_heading": "Your licence basket",
