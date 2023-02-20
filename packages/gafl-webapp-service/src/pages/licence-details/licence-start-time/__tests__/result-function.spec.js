@@ -2,13 +2,11 @@ import resultFunction from '../result-function'
 import { CommonResults } from '../../../../constants.js'
 
 describe('contact > result-function', () => {
-  const mockStatusCacheGet = jest.fn(() => ({}))
-
-  const getMockRequest = () => ({
+  const getMockRequest = (statusPermission = {}) => ({
     cache: () => ({
       helpers: {
         status: {
-          getCurrentPermission: mockStatusCacheGet
+          getCurrentPermission: () => statusPermission
         }
       }
     })
@@ -18,15 +16,14 @@ describe('contact > result-function', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return SUMMARY if status is from summary', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({
-        fromSummary: true
-      }))
-      const result = await resultFunction(getMockRequest())
+      const request = getMockRequest({ fromSummary: true })
+      const result = await resultFunction(request)
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
     it('should return OK if status is not from summary', async () => {
-      const result = await resultFunction(getMockRequest())
+      const request = getMockRequest({ fromSummary: false })
+      const result = await resultFunction(request)
       expect(result).toBe(CommonResults.OK)
     })
   })

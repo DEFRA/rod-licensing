@@ -3,17 +3,14 @@ import { CommonResults } from '../../../../constants.js'
 import { licenceToStart } from '../../licence-to-start/update-transaction.js'
 
 describe('licence-length > result-function', () => {
-  const mockStatusCacheGet = jest.fn(() => ({}))
-  const mockTransactionCacheGet = jest.fn(() => ({}))
-
-  const getMockRequest = () => ({
+  const getMockRequest = (statusPermission = {}, transactionPermission = {}) => ({
     cache: () => ({
       helpers: {
         status: {
-          getCurrentPermission: mockStatusCacheGet
+          getCurrentPermission: () => statusPermission
         },
         transaction: {
-          getCurrentPermission: mockTransactionCacheGet
+          getCurrentPermission: () => transactionPermission
         }
       }
     })
@@ -23,31 +20,26 @@ describe('licence-length > result-function', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return SUMMARY if status is from summary', async () => {
-      mockStatusCacheGet.mockImplementationOnce(() => ({
-        fromSummary: true
-      }))
-      const result = await resultFunction(getMockRequest())
+      const request = getMockRequest({ fromSummary: true })
+      const result = await resultFunction(request)
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
     it('should return OK if status is not from summary and licenceToStart is after payment', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licenceToStart: licenceToStart.AFTER_PAYMENT
-      }))
-      const result = await resultFunction(getMockRequest())
+      const request = getMockRequest({ fromSummary: false }, { licenceToStart: licenceToStart.AFTER_PAYMENT })
+      const result = await resultFunction(request)
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return OK if status is not from summary and licenceLength is 12 months', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({
-        licenceLength: '12M'
-      }))
-      const result = await resultFunction(getMockRequest())
+      const request = getMockRequest({ fromSummary: false }, { licenceLength: '12M' })
+      const result = await resultFunction(request)
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return require-time if status is not from summary, licence does not start after payment and licence length is not 12 months', async () => {
-      const result = await resultFunction(getMockRequest())
+      const request = getMockRequest({ fromSummary: false }, { licenceLength: '1D', licenceToStart: licenceToStart.ANOTHER_DATE })
+      const result = await resultFunction(request)
       expect(result).toBe('require-time')
     })
   })
