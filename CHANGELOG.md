@@ -1,4 +1,18 @@
 
+## v1.31.0-rc.11 (2023-02-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1647](https://github.com/DEFRA/rod-licensing/pull/1647) Add logic to display 'over 65' before 1/4 and 'over 66' on or after 1/4 ([@jaucourt](https://github.com/jaucourt))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1650](https://github.com/DEFRA/rod-licensing/pull/1650) Display price as free rather than £0 ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.31.0-rc.9 (2023-02-17)
 
