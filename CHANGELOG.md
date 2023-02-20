@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.13 (2023-02-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1646](https://github.com/DEFRA/rod-licensing/pull/1646) Welsh - date of birth page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.31.0-rc.11 (2023-02-20)
 
