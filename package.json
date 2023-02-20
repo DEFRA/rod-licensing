@@ -51,7 +51,7 @@
     "lerna": "^4.0.0",
     "lerna-changelog": "^2.2.0",
     "lerna-update-wizard": "^1.1.1",
-    "lint-staged": "^11.2.6",
+    "lint-staged": "^13.1.2",
     "simple-oauth2": "^4.3.0",
     "standard": "^16.0.4"
   },
