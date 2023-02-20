@@ -4,7 +4,7 @@ import { CommonResults } from '../../../../constants.js'
 describe('contact > result-function', () => {
   const mockStatusCacheGet = jest.fn(() => ({}))
 
-  const mockRequest = {
+  const getMockRequest = () => ({
     cache: () => ({
       helpers: {
         status: {
@@ -12,7 +12,7 @@ describe('contact > result-function', () => {
         }
       }
     })
-  }
+  })
 
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
@@ -21,12 +21,12 @@ describe('contact > result-function', () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({
         fromSummary: true
       }))
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
     it('should return OK if status is not from summary', async () => {
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe(CommonResults.OK)
     })
   })

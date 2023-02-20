@@ -6,7 +6,7 @@ describe('licence-length > result-function', () => {
   const mockStatusCacheGet = jest.fn(() => ({}))
   const mockTransactionCacheGet = jest.fn(() => ({}))
 
-  const mockRequest = {
+  const getMockRequest = () => ({
     cache: () => ({
       helpers: {
         status: {
@@ -17,7 +17,7 @@ describe('licence-length > result-function', () => {
         }
       }
     })
-  }
+  })
 
   describe('default', () => {
     beforeEach(jest.clearAllMocks)
@@ -26,7 +26,7 @@ describe('licence-length > result-function', () => {
       mockStatusCacheGet.mockImplementationOnce(() => ({
         fromSummary: true
       }))
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe(CommonResults.SUMMARY)
     })
 
@@ -34,7 +34,7 @@ describe('licence-length > result-function', () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({
         licenceToStart: licenceToStart.AFTER_PAYMENT
       }))
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe(CommonResults.OK)
     })
 
@@ -42,12 +42,12 @@ describe('licence-length > result-function', () => {
       mockTransactionCacheGet.mockImplementationOnce(() => ({
         licenceLength: '12M'
       }))
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe(CommonResults.OK)
     })
 
     it('should return require-time if status is not from summary, licence does not start after payment and licence length is not 12 months', async () => {
-      const result = await resultFunction(mockRequest)
+      const result = await resultFunction(getMockRequest())
       expect(result).toBe('require-time')
     })
   })
