@@ -56,21 +56,6 @@ describe('Error route handlers', () => {
         )
       })
 
-      it.each([
-        [['kl', 'vu'], 'kl', 'vu'],
-        [['si', 'we'], 'we', 'si']
-      ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
-        const request = getMockRequest({}, { locales, locale })
-        const toolkit = getMockToolkit()
-        await clientError(request, toolkit)
-        expect(toolkit.view).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({
-            altLang: [altLang]
-          })
-        )
-      })
-
       describe.each([
         [true, { payment_id: 'abc123', href: 'gov.pay.url' }],
         [true, { payment_id: 'def456', href: 'gov-pay-url' }],
@@ -170,20 +155,28 @@ describe('Error route handlers', () => {
         await serverError(request, mockToolkit)
         expect(consoleErrorSpy).toHaveBeenCalled()
       })
+    })
 
-      it.each([
-        [['kl', 'vu'], 'kl', 'vu'],
-        [['si', 'we'], 'we', 'si']
-      ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
-        const request = getMockRequest({}, { locales, locale })
-        const toolkit = getMockToolkit()
-        await serverError(request, toolkit)
-        expect(toolkit.view).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({
-            altLang: [altLang]
-          })
-        )
+    describe('altLang', () => {
+      describe.each([
+        ['client error', 0],
+        ['server error', 1]
+      ])('when the error is a %s', (_desc, error) => {
+        it.each([
+          [['kl', 'vu'], 'kl', 'vu'],
+          [['si', 'we'], 'we', 'si']
+        ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
+          const errorRoute = errorRoutes[error].handler
+          const request = getMockRequest({}, { locales, locale })
+          const toolkit = getMockToolkit()
+          await errorRoute(request, toolkit)
+          expect(toolkit.view).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              altLang: [altLang]
+            })
+          )
+        })
       })
     })
   })
