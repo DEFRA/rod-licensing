@@ -33,18 +33,16 @@ export default async (request, h) => {
     await request.cache().helpers.analytics.set({
       [ANALYTICS.seenMessage]: true
     })
-  } else {
-    if (payload.analyticsResponse === 'accept') {
-      await request.cache().helpers.analytics.set({
-        [ANALYTICS.selected]: true,
-        [ANALYTICS.acceptTracking]: true
-      })
-    } else if (payload.analyticsResponse === 'reject') {
-      await request.cache().helpers.analytics.set({
-        [ANALYTICS.selected]: true,
-        [ANALYTICS.acceptTracking]: false
-      })
-    }
+  } else if (payload.analyticsResponse === 'accept') {
+    await request.cache().helpers.analytics.set({
+      [ANALYTICS.selected]: true,
+      [ANALYTICS.acceptTracking]: true
+    })
+  } else if (payload.analyticsResponse === 'reject') {
+    await request.cache().helpers.analytics.set({
+      [ANALYTICS.selected]: true,
+      [ANALYTICS.acceptTracking]: false
+    })
   }
 
   const {
