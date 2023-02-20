@@ -4,7 +4,6 @@ import * as mappings from './mapping-constants.js'
 import moment from 'moment-timezone'
 
 export const licenceTypeDisplay = (permission, mssgs) => {
-  console.log('licenceTypeDisplay permission', permission)
   const typesStrArr = []
 
   // Build the display string for the licence type
