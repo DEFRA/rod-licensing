@@ -1,5 +1,5 @@
 import { Permission, Permit } from '@defra-fish/dynamics-lib'
-import { isJunior, isSenior } from '@defra-fish/business-rules-lib'
+import { isJunior, isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import { redis } from './ioredis.service.js'
 import moment from 'moment-timezone'
@@ -63,7 +63,7 @@ export const calculateEndDateMoment = async ({ permitId, startDate }) => {
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
   const duration = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`)
   if (permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M') {
-    return moment(startDate).add(duration).subtract(1, 'day').tz('Europe/London').endOf('day')
+    return moment(startDate).tz(SERVICE_LOCAL_TIME).add(duration).subtract(1, 'day').tz(SERVICE_LOCAL_TIME).endOf('day')
   }
   return moment(startDate).add(duration)
 }
