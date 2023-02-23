@@ -30,7 +30,7 @@ export const validator = (payload, options) => {
   )
 }
 
-export const getLicenceToStartAndLicenceStartTime = async (result, request) => {
+export const setLicenceStartDateAndTime = async (result, request) => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { payload } = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
@@ -41,29 +41,28 @@ export const getLicenceToStartAndLicenceStartTime = async (result, request) => {
       .cache()
       .helpers.status.setCurrentPermission({ [RENEWAL_START_DATE.page]: PAGE_STATE.error, currentPage: RENEWAL_START_DATE.page })
     return addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
-  } else {
-    permission.licenceStartDate = moment({
-      year: payload['licence-start-date-year'],
-      month: Number.parseInt(payload['licence-start-date-month']) - 1,
-      day: payload['licence-start-date-day']
-    }).format(cacheDateFormat)
+  }
+  permission.licenceStartDate = moment({
+    year: payload['licence-start-date-year'],
+    month: Number.parseInt(payload['licence-start-date-month']) - 1,
+    day: payload['licence-start-date-day']
+  }).format(cacheDateFormat)
 
-    if (moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day')) {
-      // If today is the day of the renewal
-      if (endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))) {
-        // Not yet expired - set the start time accordingly
-        permission.licenceStartTime = endDateMoment.hours()
-        permission.licenceToStart = licenceToStart.ANOTHER_DATE
-      } else {
-        // Already expired - set to 30 minutes after payment.
-        permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-        permission.licenceStartTime = null
-      }
-    } else {
-      // Renewing in advance - set the start time to midnight
+  if (moment(permission.licenceStartDate, cacheDateFormat).isSame(endDateMoment, 'day')) {
+    // If today is the day of the renewal
+    if (endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))) {
+      // Not yet expired - set the start time accordingly
+      permission.licenceStartTime = endDateMoment.hours()
       permission.licenceToStart = licenceToStart.ANOTHER_DATE
-      permission.licenceStartTime = 0
+    } else {
+      // Already expired - set to 30 minutes after payment.
+      permission.licenceToStart = licenceToStart.AFTER_PAYMENT
+      permission.licenceStartTime = null
     }
+  } else {
+    // Renewing in advance - set the start time to midnight
+    permission.licenceToStart = licenceToStart.ANOTHER_DATE
+    permission.licenceStartTime = 0
   }
 
   ageConcessionHelper(permission)
@@ -90,6 +89,6 @@ export default pageRoute(
   RENEWAL_START_DATE.page,
   RENEWAL_START_DATE.uri,
   validator,
-  request => getLicenceToStartAndLicenceStartTime(validator, request),
+  request => setLicenceStartDateAndTime(validator, request),
   getData
 )
