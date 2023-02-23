@@ -1,4 +1,13 @@
 
+## v1.31.0-rc.15 (2023-02-23)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `sales-api-service`
+  * [#1651](https://github.com/DEFRA/rod-licensing/pull/1651) Amend permission end date to use locale time ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.31.0-rc.14 (2023-02-23)
 
 #### :rocket: Enhancement
