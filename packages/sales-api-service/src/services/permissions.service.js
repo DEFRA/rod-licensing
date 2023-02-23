@@ -63,7 +63,7 @@ export const calculateEndDateMoment = async ({ permitId, startDate }) => {
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
   const duration = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`)
   if (permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M') {
-    return moment(startDate).tz(SERVICE_LOCAL_TIME).add(duration).subtract(1, 'day').tz(SERVICE_LOCAL_TIME).endOf('day')
+    return moment(startDate).tz(SERVICE_LOCAL_TIME).add(duration).subtract(1, 'day').endOf('day')
   }
   return moment(startDate).add(duration)
 }
