@@ -27,10 +27,6 @@ const permission = {
   permit: { cost: 12 }
 }
 
-const emptyPermission = {
-  licensee: {}
-}
-
 const catalog = Symbol('mock catalog')
 
 describe('view-licences > default', () => {
@@ -96,34 +92,38 @@ describe('view licences > getData', () => {
   })
 
   describe('getData', () => {
-    const mockRequestPermission = createMockRequest({
-      cache: {
-        transaction: {
-          permissions: [permission]
-        }
+    const getMockEmptyPermission = (licenseeOverrides = {}) => ({
+      licensee: {
+        firstName: undefined
       }
     })
 
-    const getSampleRequest = () => ({
-      ...mockRequestPermission,
-      i18n: {
-        getCatalog: () => catalog
+    const getMockPermission = () => ({
+      ...getMockEmptyPermission()
+    })
+
+    const getMockPermissionData = () => ({
+      licensee: {
+        firstName: 'Turanga',
+        lastName: 'Leela'
       },
-      url: {
-        search: ''
-      }
+      licenceType: 'trout-and-coarse',
+      numberOfRods: '2',
+      licenceLength: '8D',
+      permit: { cost: 12 }
     })
 
-    const mockRequestNoPermission = createMockRequest({
-      cache: {
-        transaction: {
-          permissions: [emptyPermission]
+    const getSampleRequest = ({
+      currentPermission = getMockEmptyPermission(),
+      getTransaction = async () => ({ permissions: [currentPermission] })
+    } = {}) => ({
+      cache: () => ({
+        helpers: {
+          transaction: {
+            get: getTransaction
+          }
         }
-      }
-    })
-
-    const getMockRequest = () => ({
-      ...mockRequestNoPermission,
+      }),
       i18n: {
         getCatalog: () => catalog
       },
@@ -135,39 +135,49 @@ describe('view licences > getData', () => {
     beforeEach(() => jest.clearAllMocks())
 
     it('returns duplicate, licences, licences remaining being true and uri matching licence for', async () => {
-      const res = await getData(getSampleRequest())
+      const res = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       expect(res).toMatchSnapshot()
     })
 
     it('returns false duplicate, null licences, licences remaining being false and uri matching licence for', async () => {
-      const res = await getData(getMockRequest())
+      const res = await getData(getSampleRequest(getMockPermission()))
       expect(res).toMatchSnapshot()
     })
 
+    it('licences has value if licences left', async () => {
+      const data = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
+      expect(data.licences).not.toBe(null)
+    })
+
+    it('licences null if no licences', async () => {
+      const data = await getData(getSampleRequest(getMockPermission()))
+      expect(data.licences).toBe(null)
+    })
+
     it('licences remaining', async () => {
-      const data = await getData(getSampleRequest())
+      const data = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       expect(data.licencesRemaining).toBe(true)
     })
 
     it('no licences remaining', async () => {
-      const data = await getData(getMockRequest())
+      const data = await getData(getSampleRequest(getMockPermission()))
       expect(data.licencesRemaining).toBe(false)
     })
 
     it('duplicates', async () => {
       hasDuplicates.mockReturnValueOnce(false)
-      const data = await getData(getSampleRequest())
+      const data = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       expect(data.duplicate).toBe(false)
     })
 
     it('no duplicate', async () => {
       hasDuplicates.mockReturnValueOnce(true)
-      const data = await getData(getSampleRequest())
+      const data = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       expect(data.duplicate).toBe(true)
     })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
-      await getData(getSampleRequest())
+      await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
 
       expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
     })
@@ -176,14 +186,14 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       licenceTypeDisplay.mockReturnValueOnce(returnValue)
 
-      const result = await getData(getSampleRequest())
+      const result = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       const ret = result.licences[0].type
 
       expect(ret).toEqual(returnValue)
     })
 
     it('licenceTypeAndLengthDisplay is called with the expected arguments', async () => {
-      await getData(getSampleRequest())
+      await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
     })
 
@@ -191,14 +201,14 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       licenceTypeAndLengthDisplay.mockReturnValueOnce(returnValue)
 
-      const result = await getData(getSampleRequest())
+      const result = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       const ret = result.licences[0].length
 
       expect(ret).toEqual(returnValue)
     })
 
     it('displayStartTime is called with the expected arguments', async () => {
-      const sampleRequest = getSampleRequest()
+      const sampleRequest = getSampleRequest({ currentPermission: getMockPermissionData() })
       await getData(sampleRequest)
       expect(displayStartTime).toHaveBeenCalledWith(sampleRequest, permission)
     })
@@ -207,7 +217,7 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       displayStartTime.mockReturnValueOnce(returnValue)
 
-      const result = await getData(getSampleRequest())
+      const result = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       const ret = result.licences[0].start
 
       expect(ret).toEqual(returnValue)
@@ -217,14 +227,14 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
-      const result = await getData(getSampleRequest())
+      const result = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
       const uri = result.uri.licence_for
 
       expect(uri).toEqual(returnValue)
     })
 
     it('addLanguageCodeToUri is called with request and licence for uri', async () => {
-      const request = getSampleRequest()
+      const request = getSampleRequest({ currentPermission: getMockPermissionData() })
 
       await getData(request)
 
