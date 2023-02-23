@@ -156,6 +156,29 @@ describe('Error route handlers', () => {
         expect(consoleErrorSpy).toHaveBeenCalled()
       })
     })
+
+    describe('altLang', () => {
+      describe.each([
+        ['client error', 0],
+        ['server error', 1]
+      ])('when the error is a %s', (_desc, error) => {
+        it.each([
+          [['kl', 'vu'], 'kl', 'vu'],
+          [['si', 'we'], 'we', 'si']
+        ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
+          const errorRoute = errorRoutes[error].handler
+          const request = getMockRequest({}, { locales, locale })
+          const toolkit = getMockToolkit()
+          await errorRoute(request, toolkit)
+          expect(toolkit.view).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining({
+              altLang: [altLang]
+            })
+          )
+        })
+      })
+    })
   })
 
   const getMockToolkit = (view = jest.fn(() => ({ code: () => {} }))) => ({
@@ -163,7 +186,7 @@ describe('Error route handlers', () => {
   })
 })
 
-const getMockRequest = (payment = {}) => ({
+const getMockRequest = (payment = {}, i18nValues = { locales: [], locale: '' }) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -184,7 +207,8 @@ const getMockRequest = (payment = {}) => ({
   method: {},
   i18n: {
     getCatalog: () => [],
-    getLocales: () => []
+    getLocales: () => i18nValues.locales,
+    getLocale: () => i18nValues.locale
   },
   response: {
     isBoom: true,
