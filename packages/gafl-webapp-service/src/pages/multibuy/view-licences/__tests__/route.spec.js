@@ -146,12 +146,12 @@ describe('view licences > getData', () => {
 
     it('licences has value if licences left', async () => {
       const data = await getData(getSampleRequest({ currentPermission: getMockPermissionData() }))
-      expect(data.licences).not.toBe(null)
+      expect(data.licences).not.toBe(undefined)
     })
 
     it('licences null if no licences', async () => {
       const data = await getData(getSampleRequest(getMockPermission()))
-      expect(data.licences).toBe(null)
+      expect(data.licences).toBe(undefined)
     })
 
     it('licences remaining', async () => {

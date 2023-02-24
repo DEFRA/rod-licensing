@@ -23,7 +23,7 @@ Object {
 exports[`view licences > getData getData returns false duplicate, null licences, licences remaining being false and uri matching licence for 1`] = `
 Object {
   "duplicate": false,
-  "licences": null,
+  "licences": undefined,
   "licencesRemaining": false,
   "uri": Object {
     "licence_for": "/buy/licence-for",

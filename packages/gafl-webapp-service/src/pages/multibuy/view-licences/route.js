@@ -35,7 +35,7 @@ export const getData = async request => {
   }
   return {
     duplicate: false,
-    licences: null,
+    licences: undefined,
     licencesRemaining,
     uri: {
       licence_for: addLanguageCodeToUri(request, LICENCE_FOR.uri)
