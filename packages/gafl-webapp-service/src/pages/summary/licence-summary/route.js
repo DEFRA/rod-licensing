@@ -13,7 +13,8 @@ import {
   DISABILITY_CONCESSION,
   DATE_OF_BIRTH,
   RENEWAL_START_DATE,
-  NEW_TRANSACTION
+  NEW_TRANSACTION,
+  NEW_PRICES
 } from '../../../uri.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
@@ -191,7 +192,8 @@ export const getData = async request => {
     licenceSummaryRows: getLicenceSummaryRows(request, permission),
     isRenewal: permission.isRenewal,
     uri: {
-      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
+      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+      newPrices: addLanguageCodeToUri(request, NEW_PRICES.uri)
     },
     SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true'
   }

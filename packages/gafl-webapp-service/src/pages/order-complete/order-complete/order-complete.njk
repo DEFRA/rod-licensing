@@ -4,7 +4,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 
-{% if data.permissionCost === 0 %}
+{% if data.permissionIsFree %}
     {% set title = mssgs.order_complete_title_application %}
     {% set titleHtml = title %}
 {% else %}
@@ -21,7 +21,7 @@
           titleHtml: titleHtml,
           html: mssgs.order_complete_conf_1 + '<br><strong><span id="permission-number">' + data.permissionReference + '</span></strong><br /><br />' + mssgs.order_complete_conf_2 + '<br />' + data.startTimeStringTitle
         }) }}
-        
+
 
         <div class="govuk-!-margin-bottom-9">
             <p class="govuk-body">{{ mssgs.order_complete_conf_info_1 }}</p>
@@ -35,7 +35,7 @@
                     classes: "govuk-button--secondary"
                 }) }}
             </div>
-                
+
             {% if data.isSalmonLicence %}
                 <div class="govuk-!-margin-bottom-3">
                     <h2 class="govuk-heading-l">{{ mssgs.order_complete_subheading_rcr }}</h2>

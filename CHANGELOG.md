@@ -1,4 +1,130 @@
 
+## v1.31.0-rc.15 (2023-02-23)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `sales-api-service`
+  * [#1651](https://github.com/DEFRA/rod-licensing/pull/1651) Amend permission end date to use locale time ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.31.0-rc.14 (2023-02-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `pocl-job`
+  * [#1629](https://github.com/DEFRA/rod-licensing/pull/1629) Improve test coverage ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.31.0-rc.13 (2023-02-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1646](https://github.com/DEFRA/rod-licensing/pull/1646) Welsh - date of birth page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.31.0-rc.11 (2023-02-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1647](https://github.com/DEFRA/rod-licensing/pull/1647) Add logic to display 'over 65' before 1/4 and 'over 66' on or after 1/4 ([@jaucourt](https://github.com/jaucourt))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1650](https://github.com/DEFRA/rod-licensing/pull/1650) Display price as free rather than £0 ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 2
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.31.0-rc.9 (2023-02-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1642](https://github.com/DEFRA/rod-licensing/pull/1642) Remove post office content from privacy page ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1643](https://github.com/DEFRA/rod-licensing/pull/1643) Refund policy remove post office and repetition ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.31.0-rc.8 (2023-02-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1641](https://github.com/DEFRA/rod-licensing/pull/1641) Date of birth message ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.31.0-rc.7 (2023-02-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1637](https://github.com/DEFRA/rod-licensing/pull/1637) Add "GOV.UK" suffix to new prices page title ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.31.0-rc.6 (2023-02-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1630](https://github.com/DEFRA/rod-licensing/pull/1630) Welsh - Price increase ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.31.0-rc.5 (2023-02-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1628](https://github.com/DEFRA/rod-licensing/pull/1628) Add Welsh translations for price change banner ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.31.0-rc.4 (2023-02-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1627](https://github.com/DEFRA/rod-licensing/pull/1627) Add price increase notification banner text ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+Must provide GITHUB_AUTH
+
+## v1.31.0-rc.2 (2023-02-07)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1606](https://github.com/DEFRA/rod-licensing/pull/1606) Code coverage in authenticate.js ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.31.0-rc.1 (2023-02-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1625](https://github.com/DEFRA/rod-licensing/pull/1625) Fix completion message for junior licences ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.31.0-rc.0 (2023-02-02)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#1604](https://github.com/DEFRA/rod-licensing/pull/1604) Change in age of senior concession ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.30.0-rc.17 (2023-01-31)
 

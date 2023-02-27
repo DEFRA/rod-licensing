@@ -5,6 +5,7 @@ import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.j
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import { displayPermissionPrice } from '../../../../processors/price-display.js'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
@@ -19,6 +20,7 @@ jest.mock('../../../../constants.js', () => ({
   FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com')
 }))
 jest.mock('../../../../processors/price-display.js')
+jest.mock('@defra-fish/business-rules-lib')
 
 const getSamplePermission = ({ referenceNumber = 'AAA111', licenceType = LICENCE_TYPE['trout-and-coarse'] } = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
@@ -172,5 +174,15 @@ describe('The order completion handler', () => {
     const permission = getSamplePermission({ referenceNumber })
     const { permissionReference } = await getData(getSampleRequest(permission))
     expect(permissionReference).toBe(permissionReference)
+  })
+
+  it.each([
+    [0, true],
+    [10, false]
+  ])('passes permission reference %s', async (cost, isFree) => {
+    const permission = getSamplePermission()
+    getPermissionCost.mockReturnValueOnce(cost)
+    const { permissionIsFree } = await getData(getSampleRequest(permission))
+    expect(permissionIsFree).toBe(isFree)
   })
 })
