@@ -20,7 +20,7 @@ Object {
 }
 `;
 
-exports[`view licences > getData getData returns false duplicate, null licences, licences remaining being false and uri matching licence for 1`] = `
+exports[`view licences > getData getData returns false duplicate, undefined licences, licences remaining being false and uri matching licence for 1`] = `
 Object {
   "duplicate": false,
   "licences": undefined,
