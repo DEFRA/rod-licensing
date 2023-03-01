@@ -135,7 +135,6 @@ describe('view licences > getData', () => {
 
     it('returns false duplicate, undefined licences, licences remaining being false and uri matching licence for', async () => {
       const res = await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
-      await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
       expect(res).toMatchSnapshot()
     })
 
@@ -211,7 +210,7 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       displayStartTime.mockReturnValueOnce(returnValue)
 
-      const result = await getData(getSampleRequest({ currentPermission: getMockPermission() }))
+      const result = await getData(getSampleRequest())
       const ret = result.licences[0].start
 
       expect(ret).toEqual(returnValue)
@@ -221,14 +220,14 @@ describe('view licences > getData', () => {
       const returnValue = Symbol('return value')
       addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
-      const result = await getData(getSampleRequest({ currentPermission: getMockPermission() }))
+      const result = await getData(getSampleRequest())
       const uri = result.uri.licence_for
 
       expect(uri).toEqual(returnValue)
     })
 
     it('addLanguageCodeToUri is called with request and licence for uri', async () => {
-      const request = getSampleRequest({ currentPermission: getMockPermission() })
+      const request = getSampleRequest()
 
       await getData(request)
 
