@@ -33,7 +33,12 @@ export class Contact extends BaseEntity {
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
-      obfuscatedDob: { field: 'defra_obfuscated_dob', type: 'string' }
+      obfuscatedDob: { field: 'defra_obfuscated_dob', type: 'string' },
+      shortTermPreferredMethodOfConfirmation: {
+        field: 'defra_shorttermlicencemethodofconfirmation',
+        type: 'optionset',
+        ref: 'defra_shorttermlicencemethodofconfirmation'
+      }
     }
   }))
 

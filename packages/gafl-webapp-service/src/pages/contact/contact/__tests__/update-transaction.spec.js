@@ -1,4 +1,7 @@
 import updateTransaction from '../update-transaction'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
+
+jest.mock('../../../../processors/licence-type-display.js')
 
 describe('contact > update-transaction', () => {
   beforeEach(() => {
@@ -52,7 +55,7 @@ describe('contact > update-transaction', () => {
       'when how-contacted is %s, should set preferredMethodOfReminder to "%s" and %s',
       async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
         const licenceLength = '12M'
-
+        isPhysical.mockReturnValue(true)
         const pagePermission = getPagePermission(howContacted, ...pagePermissionArgs)
         const transactionPermission = getTransactionPermission(licenceLength, ...transactionPermissionArgs)
         const request = getMockRequest(pagePermission, transactionPermission)
@@ -71,6 +74,74 @@ describe('contact > update-transaction', () => {
       }
     )
   })
+
+  describe('for a 12 month licence (non-physical)', () => {
+    it.each([
+      ['none', 'Prefer not to be contacted', 'not set email or mobilePhone', {}, [], [{ licenceLength: '12M' }]],
+      ['email', 'Email', 'set email', { email }, [email], [{ licenceLength: '12M' }]],
+      ['text', 'Text', 'set mobilePhone', { mobilePhone }, [null, mobilePhone], [{ licenceLength: '12M' }]],
+      [
+        'none',
+        'Prefer not to be contacted',
+        'set email when preferredMethodOfNewsletter is email',
+        { email },
+        [email],
+        [{ preferredMethodOfNewsletter: 'Email', email, licenceLength: '12M' }]
+      ],
+      [
+        'text',
+        'Text',
+        'set text, and set email when preferredMethodOfNewsletter is email',
+        { email, mobilePhone },
+        [null, mobilePhone],
+        [{ preferredMethodOfNewsletter: 'Email', email, licenceLength: '12M' }]
+      ]
+    ])(
+      'when how-contacted is %s, should set preferredMethodOfReminder and preferredMethodOfConfirmation to "%s" and %s',
+      async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
+        const licenceLength = '12M'
+        isPhysical.mockReturnValue(false)
+        const pagePermission = getPagePermission(howContacted, ...pagePermissionArgs)
+        const transactionPermission = getTransactionPermission(licenceLength, ...transactionPermissionArgs)
+        const request = getMockRequest(pagePermission, transactionPermission)
+
+        await updateTransaction(request)
+
+        expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            licenceLength,
+            licensee: expect.objectContaining({
+              preferredMethodOfConfirmation: preferredMethod,
+              preferredMethodOfReminder: preferredMethod,
+              ...expectedLicencee
+            })
+          })
+        )
+      }
+    )
+  })
+
+  // describe('for a 12 licence (non-physical)', () => {
+  //   it.only('TEST', async () => {
+  //     const licenceLength = '12M'
+  //     isPhysical.mockReturnValue(false)
+  //     const pagePermission = getPagePermission('none', {})
+  //     const transactionPermission = getTransactionPermission(licenceLength, { licenceLength: '12M' })
+  //     const request = getMockRequest(pagePermission, transactionPermission)
+
+  //     await updateTransaction(request)
+
+  //     expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+  //       expect.objectContaining({
+  //         licenceLength,
+  //         licensee: expect.objectContaining({
+  //           preferredMethodOfConfirmation: 'Prefer not to be contacted',
+  //           preferredMethodOfReminder: 'Prefer not to be contacted'
+  //         })
+  //       })
+  //     )
+  //   })
+  // })
 
   describe('for a 1 day licence (non-physical)', () => {
     it.each([
@@ -97,6 +168,7 @@ describe('contact > update-transaction', () => {
       'when how-contacted is %s, should set preferredMethodOfReminder and preferredMethodOfConfirmation to "%s" and %s',
       async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
         const licenceLength = '1D'
+        isPhysical.mockReturnValue(false)
         const pagePermission = getPagePermission(howContacted, ...pagePermissionArgs)
         const transactionPermission = getTransactionPermission(licenceLength, ...transactionPermissionArgs)
         const request = getMockRequest(pagePermission, transactionPermission)
@@ -107,7 +179,7 @@ describe('contact > update-transaction', () => {
           expect.objectContaining({
             licenceLength,
             licensee: expect.objectContaining({
-              preferredMethodOfConfirmation: preferredMethod,
+              shortTermPreferredMethodOfConfirmation: preferredMethod,
               preferredMethodOfReminder: preferredMethod,
               ...expectedLicencee
             })
