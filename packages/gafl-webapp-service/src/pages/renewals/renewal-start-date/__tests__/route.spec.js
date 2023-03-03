@@ -121,31 +121,34 @@ describe('setLicenceStartDateAndTime', () => {
 
 describe('licenceStartTime and licenceToStart values', () => {
   describe.each`
-    desc                                                                                                                           | endHours | licenceToStartResult | licenceStartDate              | renewedEndDate                | year      | month  | day
-    ${'licenceStartTime = current time and licenceToStart = another date when renewal is current day and licence not yet expired'} | ${13}    | ${'another-date'}    | ${'2023-02-10T12:00:00.000Z'} | ${'2023-02-10T13:00:00.000Z'} | ${'2023'} | ${'2'} | ${'10'}
-    ${'licenceStartTime = 30 minutes and licenceToStart = after payment when renewal is current day and licence is expired'}       | ${null}  | ${'after-payment'}   | ${'2023-02-10T12:00:00.000Z'} | ${'2023-02-10T11:00:00.000Z'} | ${'2023'} | ${'2'} | ${'10'}
-    ${'licenceStartTime = midnight and licenceToStart = another date when renewal is different day so renewing in advance'}        | ${0}     | ${'another-date'}    | ${'2023-02-11T12:00:00.000Z'} | ${'2023-02-10T12:00:00.000Z'} | ${'2023'} | ${'2'} | ${'11'}
-  `('returns values of: $desc', ({ endHours, licenceToStartResult, licenceStartDate, renewedEndDate, year, month, day }) => {
-    it('licenceStartTime', async () => {
-      const permission = { licenceStartDate: licenceStartDate, renewedEndDate: renewedEndDate }
-      await setLicenceStartDateAndTime({ error: false }, getMockRequest(permission, year, month, day))
-      expect(mockTransactionSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          licenceStartTime: endHours
-        })
-      )
-    })
+    timeDesc          | licenceStartDesc   | reasonDesc                                              | endHours | licenceToStartResult | licenceStartDate              | renewedEndDate                | year      | month  | day
+    ${'current time'} | ${'another date'}  | ${'renewal is current day and licence not yet expired'} | ${13}    | ${'another-date'}    | ${'2023-02-10T12:00:00.000Z'} | ${'2023-02-10T13:00:00.000Z'} | ${'2023'} | ${'2'} | ${'10'}
+    ${'30 minutes'}   | ${'after payment'} | ${'renewal is current day and licence is expired'}      | ${null}  | ${'after-payment'}   | ${'2023-02-10T12:00:00.000Z'} | ${'2023-02-10T11:00:00.000Z'} | ${'2023'} | ${'2'} | ${'10'}
+    ${'midnight'}     | ${'another date'}  | ${'renewal is different day so renewing in advance'}    | ${0}     | ${'another-date'}    | ${'2023-02-11T12:00:00.000Z'} | ${'2023-02-10T12:00:00.000Z'} | ${'2023'} | ${'2'} | ${'11'}
+  `(
+    'returns values of: licenceStartTime = $timeDesc and licenceToStart = $licenceStartDesc when $reasonDesc',
+    ({ endHours, licenceToStartResult, licenceStartDate, renewedEndDate, year, month, day }) => {
+      it('licenceStartTime', async () => {
+        const permission = { licenceStartDate, renewedEndDate }
+        await setLicenceStartDateAndTime({ error: false }, getMockRequest(permission, year, month, day))
+        expect(mockTransactionSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            licenceStartTime: endHours
+          })
+        )
+      })
 
-    it('licenceToStart', async () => {
-      const permission = { licenceStartDate: licenceStartDate, renewedEndDate: renewedEndDate }
-      await setLicenceStartDateAndTime({ error: false }, getMockRequest(permission, year, month, day))
-      expect(mockTransactionSet).toHaveBeenCalledWith(
-        expect.objectContaining({
-          licenceToStart: licenceToStartResult
-        })
-      )
-    })
-  })
+      it('licenceToStart', async () => {
+        const permission = { licenceStartDate: licenceStartDate, renewedEndDate: renewedEndDate }
+        await setLicenceStartDateAndTime({ error: false }, getMockRequest(permission, year, month, day))
+        expect(mockTransactionSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            licenceToStart: licenceToStartResult
+          })
+        )
+      })
+    }
+  )
 })
 
 describe('validator', () => {
