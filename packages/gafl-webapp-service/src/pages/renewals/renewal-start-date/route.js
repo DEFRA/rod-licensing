@@ -77,10 +77,15 @@ const getData = async request => {
   }
 }
 
-export default pageRoute(
-  RENEWAL_START_DATE.page,
-  RENEWAL_START_DATE.uri,
-  validator,
-  request => setLicenceStartDateAndTime(request),
-  getData
-)
+const route = pageRoute(RENEWAL_START_DATE.page, RENEWAL_START_DATE.uri, validator, request => setLicenceStartDateAndTime(request), getData)
+route.find(r => r.method === 'POST').options.ext = {
+  onPostAuth: {
+    method: async (request, reply) => {
+      const permission = await request.cache().helpers.transaction.getCurrentPermission()
+      request.app.permission = permission
+      return reply.continue
+    }
+  }
+}
+
+export default route

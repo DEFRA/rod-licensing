@@ -3,9 +3,16 @@ import { LICENCE_SUMMARY } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
 import { displayExpiryDate } from '../../../../processors/date-and-time-display.js'
-import '../route.js'
+import route from '../route.js'
 
-jest.mock('../../../../routes/page-route.js')
+jest.mock('../../../../routes/page-route.js', () =>
+  jest.fn(() => [
+    {
+      method: 'POST',
+      options: {}
+    }
+  ])
+)
 
 const mockDisplayExpiryDate = Symbol('displayExpiryDate')
 jest.mock('../../../../processors/date-and-time-display.js', () => ({
@@ -74,6 +81,37 @@ const getSamplePermission = ({ renewedEndDate = '2023-01-10:00:00.000Z' } = {}) 
     noLicenceRequired: {}
   },
   renewedEndDate: renewedEndDate
+})
+
+describe('route > onPostAuth', () => {
+  const getMockResponseToolkit = () => ({
+    continue: Symbol('continue')
+  })
+  const getMockRequest = (licenceStartDate = '2023-02-11T12:00:00.000Z') => ({
+    app: {},
+    cache: () => ({
+      helpers: {
+        transaction: {
+          getCurrentPermission: async () => ({
+            licenceStartDate
+          })
+        }
+      }
+    })
+  })
+
+  const { onPostAuth } = route.find(r => r.method === 'POST').options.ext
+  it('returns reply.continue symbol', async () => {
+    const mockResponseToolkit = getMockResponseToolkit()
+    expect(await onPostAuth.method(getMockRequest(), mockResponseToolkit)).toEqual(mockResponseToolkit.continue)
+  })
+
+  it('adds permission to app key', async () => {
+    const mockRequest = getMockRequest()
+    const permission = await mockRequest.cache().helpers.transaction.getCurrentPermission()
+    await onPostAuth.method(mockRequest, getMockResponseToolkit())
+    expect(mockRequest.app.permission).toStrictEqual(permission)
+  })
 })
 
 describe('getData', () => {
