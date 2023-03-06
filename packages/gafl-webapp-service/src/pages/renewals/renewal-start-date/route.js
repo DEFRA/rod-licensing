@@ -1,5 +1,5 @@
 import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { dateFormats, PAGE_STATE } from '../../../constants.js'
+import { dateFormats } from '../../../constants.js'
 import { RENEWAL_START_DATE, LICENCE_SUMMARY } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
@@ -7,7 +7,6 @@ import JoiDate from '@hapi/joi-date'
 import moment from 'moment-timezone'
 import { displayExpiryDate, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-import { errorShimm } from '../../../handlers/page-handler.js'
 import { licenceToStart } from '../../licence-details/licence-to-start/update-transaction.js'
 import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 
@@ -30,18 +29,11 @@ export const validator = (payload, options) => {
   )
 }
 
-export const setLicenceStartDateAndTime = async (result, request) => {
+export const setLicenceStartDateAndTime = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { payload } = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
 
-  if (result.error) {
-    await request.cache().helpers.page.setCurrentPermission(RENEWAL_START_DATE.page, { payload, error: errorShimm(result.error) })
-    await request
-      .cache()
-      .helpers.status.setCurrentPermission({ [RENEWAL_START_DATE.page]: PAGE_STATE.error, currentPage: RENEWAL_START_DATE.page })
-    return addLanguageCodeToUri(request, RENEWAL_START_DATE.uri)
-  }
   permission.licenceStartDate = moment({
     year: payload['licence-start-date-year'],
     month: Number.parseInt(payload['licence-start-date-month']) - 1,
@@ -89,6 +81,6 @@ export default pageRoute(
   RENEWAL_START_DATE.page,
   RENEWAL_START_DATE.uri,
   validator,
-  request => setLicenceStartDateAndTime(validator, request),
+  request => setLicenceStartDateAndTime(request),
   getData
 )
