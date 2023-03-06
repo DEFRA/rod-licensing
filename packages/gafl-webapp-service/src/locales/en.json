@@ -461,7 +461,7 @@
   "multibuy_licences_warning_duplicate": "You currently have multiple versions of the same licence in your basket. You can change or remove licences, or select ’Continue’ to proceed without change",
   "multibuy_no_licences": "You currently have no licences in your basket.",
   "multibuy_remove_licences_heading": "Are you sure you want to remove this licence?",
-  "multibuy_remove_licences_title": "Remove licence",
+  "multibuy_remove_licences_title": "Are you sure you want to remove this licence?",
   "multibuy_view_licences_heading": "Your licence basket",
   "multibuy_view_licences_title": "Licence basket",
   "name_abbr_hint": "Do not use abbreviations or nicknames",
