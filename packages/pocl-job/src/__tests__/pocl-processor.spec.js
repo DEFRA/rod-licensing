@@ -68,10 +68,6 @@ describe('pocl-processor', () => {
       expect(config.initialise).toHaveBeenCalled()
     })
 
-    it('retrieves files from FTP', () => {
-      expect(ftpToS3).toHaveBeenCalled()
-    })
-
     it('refreshes S3 metadata', () => {
       expect(refreshS3Metadata).toHaveBeenCalled()
     })
