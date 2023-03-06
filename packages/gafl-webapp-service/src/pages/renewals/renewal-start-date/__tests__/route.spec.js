@@ -1,8 +1,10 @@
-import { getData, setLicenceStartDateAndTime, validator } from '../route.js'
+// import { getData, setLicenceStartDateAndTime, validator } from '../route.js'
+import pageRoute from '../../../../routes/page-route.js'
 import { LICENCE_SUMMARY } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
 import { displayExpiryDate } from '../../../../processors/date-and-time-display.js'
+jest.mock('../../../../routes/page-route.js', () => jest.fn())
 
 const mockDisplayExpiryDate = Symbol('displayExpiryDate')
 jest.mock('../../../../processors/date-and-time-display.js', () => ({
@@ -75,7 +77,9 @@ const getSamplePermission = ({ renewedEndDate = '2023-01-10:00:00.000Z' } = {}) 
 
 describe('getData', () => {
   beforeEach(jest.clearAllMocks)
-  it('expiryTimeString is set to return value of displayExpiryDate', async () => {
+  it.only('expiryTimeString is set to return value of displayExpiryDate', async () => {
+    console.log(pageRoute.mock.calls)
+    const getData = pageRoute.mock.calls[1][4]
     const expiryDate = Symbol('expiryDate')
     displayExpiryDate.mockReturnValue(expiryDate)
     const expected = await getData(getMockRequest())

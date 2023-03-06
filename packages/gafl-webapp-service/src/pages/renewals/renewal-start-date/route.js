@@ -12,7 +12,7 @@ import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 
 const JoiX = Joi.extend(JoiDate)
 
-export const validator = (payload, options) => {
+const validator = (payload, options) => {
   const { permission } = options.context.app.request
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
   const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
@@ -29,7 +29,7 @@ export const validator = (payload, options) => {
   )
 }
 
-export const setLicenceStartDateAndTime = async request => {
+const setLicenceStartDateAndTime = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { payload } = await request.cache().helpers.page.getCurrentPermission(RENEWAL_START_DATE.page)
   const endDateMoment = moment.utc(permission.renewedEndDate).tz(SERVICE_LOCAL_TIME)
@@ -62,7 +62,7 @@ export const setLicenceStartDateAndTime = async request => {
   return addLanguageCodeToUri(request, LICENCE_SUMMARY.uri)
 }
 
-export const getData = async request => {
+const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   const expiryTimeString = displayExpiryDate(request, permission)
