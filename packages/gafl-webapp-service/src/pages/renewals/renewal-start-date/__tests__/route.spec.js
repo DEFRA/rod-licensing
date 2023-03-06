@@ -1,10 +1,11 @@
-// import { getData, setLicenceStartDateAndTime, validator } from '../route.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { LICENCE_SUMMARY } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
 import { displayExpiryDate } from '../../../../processors/date-and-time-display.js'
-jest.mock('../../../../routes/page-route.js', () => jest.fn())
+import '../route.js'
+
+jest.mock('../../../../routes/page-route.js')
 
 const mockDisplayExpiryDate = Symbol('displayExpiryDate')
 jest.mock('../../../../processors/date-and-time-display.js', () => ({
@@ -76,10 +77,9 @@ const getSamplePermission = ({ renewedEndDate = '2023-01-10:00:00.000Z' } = {}) 
 })
 
 describe('getData', () => {
+  const getData = pageRoute.mock.calls[0][4]
   beforeEach(jest.clearAllMocks)
-  it.only('expiryTimeString is set to return value of displayExpiryDate', async () => {
-    console.log(pageRoute.mock.calls)
-    const getData = pageRoute.mock.calls[1][4]
+  it('expiryTimeString is set to return value of displayExpiryDate', async () => {
     const expiryDate = Symbol('expiryDate')
     displayExpiryDate.mockReturnValue(expiryDate)
     const expected = await getData(getMockRequest())
@@ -100,6 +100,7 @@ describe('getData', () => {
 })
 
 describe('setLicenceStartDateAndTime', () => {
+  const setLicenceStartDateAndTime = pageRoute.mock.calls[0][3]
   beforeEach(jest.clearAllMocks)
 
   it('ageConcessionHelper is called with permission', async () => {
@@ -116,6 +117,8 @@ describe('setLicenceStartDateAndTime', () => {
 })
 
 describe('licenceStartTime and licenceToStart values', () => {
+  const setLicenceStartDateAndTime = pageRoute.mock.calls[0][3]
+  beforeEach(jest.clearAllMocks)
   describe.each`
     timeDesc          | licenceStartDesc   | reasonDesc                                              | endHours | licenceToStartResult | licenceStartDate              | renewedEndDate                | year      | month  | day
     ${'current time'} | ${'another date'}  | ${'renewal is current day and licence not yet expired'} | ${13}    | ${'another-date'}    | ${'2023-02-10T12:00:00.000Z'} | ${'2023-02-10T13:00:00.000Z'} | ${'2023'} | ${'2'} | ${'10'}
@@ -159,6 +162,9 @@ describe('validator', () => {
       }
     }
   })
+
+  const validator = pageRoute.mock.calls[0][2]
+  beforeEach(jest.clearAllMocks)
 
   it('validation fails', () => {
     return expect(() =>
