@@ -1,6 +1,5 @@
 import config from '../config.js'
 import { execute } from '../pocl-processor.js'
-import { ftpToS3 } from '../transport/ftp-to-s3.js'
 import { s3ToLocal } from '../transport/s3-to-local.js'
 import { getFileRecords } from '../io/db.js'
 import { refreshS3Metadata } from '../io/s3.js'

@@ -1,6 +1,5 @@
 import config from './config.js'
 import { DistributedLock, airbrake } from '@defra-fish/connectors-lib'
-import { ftpToS3 } from './transport/ftp-to-s3.js'
 import { s3ToLocal } from './transport/s3-to-local.js'
 import { getFileRecords } from './io/db.js'
 import { removeTemp } from './io/file.js'
