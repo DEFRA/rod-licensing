@@ -1,4 +1,13 @@
 
+## v1.32.0-rc.0 (2023-03-07)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#1655](https://github.com/DEFRA/rod-licensing/pull/1655) Stop checking SFTP ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.31.0-rc.15 (2023-02-23)
 
