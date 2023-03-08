@@ -254,4 +254,16 @@ export class Contact extends BaseEntity {
   set obfuscatedDob (obfuscatedDob) {
     super._setState('obfuscatedDob', obfuscatedDob)
   }
+
+  /**
+   * The preferred method of confirmation communications of the contact for short term licences
+   * @type {GlobalOptionSetDefinition}
+   */
+  get shortTermPreferredMethodOfConfirmation () {
+    return super._getState('shortTermPreferredMethodOfConfirmation')
+  }
+
+  set shortTermPreferredMethodOfConfirmation (shortTermPreferredMethodOfConfirmation) {
+    super._setState('shortTermPreferredMethodOfConfirmation', shortTermPreferredMethodOfConfirmation)
+  }
 }

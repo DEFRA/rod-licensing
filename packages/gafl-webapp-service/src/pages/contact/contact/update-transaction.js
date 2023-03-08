@@ -40,6 +40,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
       case 'email':
         return {
           postalFulfilment: false,
+          shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.email,
           preferredMethodOfConfirmation: HOW_CONTACTED.email,
           preferredMethodOfReminder: HOW_CONTACTED.email,
           email: payload.email,
@@ -48,6 +49,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
       case 'text':
         return {
           postalFulfilment: false,
+          shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.text,
           preferredMethodOfConfirmation: HOW_CONTACTED.text,
           preferredMethodOfReminder: HOW_CONTACTED.text,
           mobilePhone: payload.text,
@@ -56,6 +58,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
       default:
         return {
           postalFulfilment: false,
+          shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.none,
           preferredMethodOfConfirmation: HOW_CONTACTED.none,
           preferredMethodOfReminder: HOW_CONTACTED.none,
           mobilePhone: null,

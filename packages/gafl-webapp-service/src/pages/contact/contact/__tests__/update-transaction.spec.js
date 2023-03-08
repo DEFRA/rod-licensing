@@ -112,6 +112,7 @@ describe('contact > update-transaction', () => {
             licenceLength,
             licensee: expect.objectContaining({
               preferredMethodOfConfirmation: preferredMethod,
+              shortTermPreferredMethodOfConfirmation: preferredMethod,
               preferredMethodOfReminder: preferredMethod,
               ...expectedLicencee
             })
@@ -120,28 +121,6 @@ describe('contact > update-transaction', () => {
       }
     )
   })
-
-  // describe('for a 12 licence (non-physical)', () => {
-  //   it.only('TEST', async () => {
-  //     const licenceLength = '12M'
-  //     isPhysical.mockReturnValue(false)
-  //     const pagePermission = getPagePermission('none', {})
-  //     const transactionPermission = getTransactionPermission(licenceLength, { licenceLength: '12M' })
-  //     const request = getMockRequest(pagePermission, transactionPermission)
-
-  //     await updateTransaction(request)
-
-  //     expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-  //       expect.objectContaining({
-  //         licenceLength,
-  //         licensee: expect.objectContaining({
-  //           preferredMethodOfConfirmation: 'Prefer not to be contacted',
-  //           preferredMethodOfReminder: 'Prefer not to be contacted'
-  //         })
-  //       })
-  //     )
-  //   })
-  // })
 
   describe('for a 1 day licence (non-physical)', () => {
     it.each([
