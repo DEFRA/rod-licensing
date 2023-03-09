@@ -3,7 +3,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { isPhysical } from '../../../../processors/licence-type-display.js'
+import { isPhysicalOld } from '../../../../processors/licence-type-display.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 
@@ -19,7 +19,7 @@ export const getData = async request => {
     isLicenceForYou: permission.isLicenceForYou,
     licenceLength: permission.licenceLength,
     junior: concessionHelper.hasJunior(permission),
-    isPhysical: isPhysical(permission),
+    isPhysical: isPhysicalOld(permission),
     uri: {
       entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri),
       osTerms: addLanguageCodeToUri(request, OS_TERMS.uri)

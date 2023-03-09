@@ -1,5 +1,5 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
-import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical } from '../licence-type-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, isPhysicalOld } from '../licence-type-display.js'
 import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
@@ -100,18 +100,40 @@ describe('licenceTypeAndLengthDisplay', () => {
   })
 })
 
-describe('isPhysical', () => {
+describe('isPhysicalOld', () => {
   it('returns true if licence length is 12 months and is not a junior', () => {
     const permission = getPermission()
     hasJunior.mockImplementationOnce(() => false)
-    const result = isPhysical(permission)
+    const result = isPhysicalOld(permission)
     expect(result).toEqual(true)
   })
 
   it('returns false if licence length is not 12 months and a junior', () => {
     const permission = getPermission({ licenceLength: '8D' })
     hasJunior.mockImplementationOnce(() => true)
+    const result = isPhysicalOld(permission)
+    expect(result).toEqual(false)
+  })
+})
+
+describe('isPhysical', () => {
+  it('returns true if isForFulfilment is true', () => {
+    const permit = { isForFulfilment: true }
+    const permission = getPermission({ permit })
+    const result = isPhysical(permission)
+    expect(result).toEqual(true)
+  })
+
+  it('returns true if isForFulfilment is false', () => {
+    const permit = { isForFulfilment: false }
+    const permission = getPermission({ permit })
     const result = isPhysical(permission)
     expect(result).toEqual(false)
+  })
+
+  it('returns undefined if there is no permit set', () => {
+    const permission = getPermission()
+    const result = isPhysical(permission)
+    expect(result).toEqual(undefined)
   })
 })

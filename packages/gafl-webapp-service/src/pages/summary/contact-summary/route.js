@@ -3,7 +3,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { countries } from '../../../processors/refdata-helper.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../constants.js'
-import { isPhysical } from '../../../processors/licence-type-display.js'
+import { isPhysicalOld } from '../../../processors/licence-type-display.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
@@ -131,7 +131,7 @@ const checkNavigation = (status, permission) => {
     }
   }
 
-  if (isPhysical(permission)) {
+  if (isPhysicalOld(permission)) {
     if (!status[LICENCE_FULFILMENT.page]) {
       throw new GetDataRedirect(LICENCE_FULFILMENT.uri)
     }
@@ -145,7 +145,7 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   const rowGenerator = new RowGenerator(request, permission)
 
   const licenseeSummaryArray = [rowGenerator.generateAddressRow(countryName)]
-  if (isPhysical(permission)) {
+  if (isPhysicalOld(permission)) {
     if (permission.licensee.postalFulfilment) {
       licenseeSummaryArray.push(
         rowGenerator.generateStandardRow(

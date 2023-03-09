@@ -1,6 +1,6 @@
 import { CONTACT } from '../../../uri.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
-import { isPhysical } from '../../../processors/licence-type-display.js'
+import { isPhysicalOld } from '../../../processors/licence-type-display.js'
 
 export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
@@ -9,7 +9,7 @@ export default async request => {
   permission.licensee = {
     preferredMethodOfNewsletter: HOW_CONTACTED.none,
     ...permission.licensee,
-    ...(isPhysical(permission) ? getPhysicalReminders(payload) : getDigitalConfirmationsAndReminders(permission.licensee, payload))
+    ...(isPhysicalOld(permission) ? getPhysicalReminders(payload) : getDigitalConfirmationsAndReminders(permission.licensee, payload))
   }
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)

@@ -4,7 +4,7 @@ import * as concessionHelper from '../../../processors/concession-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { isPhysical } from '../../../processors/licence-type-display.js'
+import { isPhysicalOld } from '../../../processors/licence-type-display.js'
 import { licenceToStart } from '../licence-to-start/update-transaction.js'
 
 /**
@@ -16,7 +16,7 @@ const checkContactDetails = permission => {
   const preferredMethodOfReminder = permission?.licensee?.preferredMethodOfReminder
 
   const physicalContactNone =
-    isPhysical(permission) &&
+    isPhysicalOld(permission) &&
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.none || preferredMethodOfReminder === mappings.HOW_CONTACTED.none)
 
   if (physicalContactNone) {
@@ -26,7 +26,7 @@ const checkContactDetails = permission => {
   }
 
   const digitalContactLeter =
-    !isPhysical(permission) &&
+    !isPhysicalOld(permission) &&
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.letter || preferredMethodOfReminder === mappings.HOW_CONTACTED.letter)
 
   if (digitalContactLeter) {

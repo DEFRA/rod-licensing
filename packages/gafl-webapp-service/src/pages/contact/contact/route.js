@@ -4,7 +4,7 @@ import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
-import { isPhysical } from '../../../processors/licence-type-display.js'
+import { isPhysicalOld } from '../../../processors/licence-type-display.js'
 import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
@@ -29,7 +29,7 @@ export const getData = async request => {
   return {
     isLicenceForYou: permission.isLicenceForYou,
     licensee: permission.licensee,
-    isPhysical: isPhysical(permission),
+    isPhysical: isPhysicalOld(permission),
     isJunior: hasJunior(permission),
     howContacted: HOW_CONTACTED
   }
