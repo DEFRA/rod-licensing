@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import findPermit from '../find-permit.js'
+import { findPermit } from '../../../processors/find-permit.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {

@@ -1,7 +1,7 @@
-import filterPermits from '../../processors/filter-permits.js'
+import filterPermits from './filter-permits.js'
 import crypto from 'crypto'
 
-export default async (permission, request) => {
+export const findPermit = async (permission, request) => {
   /*
    * To stop repeated reads of the API with users repeatably refreshing the page, the transaction cache stores
    * a hash of itself. If the transaction cache has not changed the permit is not recalculated.

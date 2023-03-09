@@ -1,7 +1,7 @@
 import { getData } from '../route'
 import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
 import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION, NEW_PRICES } from '../../../../uri.js'
-import findPermit from '../../find-permit.js'
+import { findPermit } from '../../../../processors/find-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import mappingConstants from '../../../../processors/mapping-constants.js'
@@ -40,7 +40,9 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
     none: 'Not Proof'
   }
 }))
-jest.mock('../../find-permit.js', () => jest.fn())
+jest.mock('../../../../processors/find-permit.js', () => ({
+  findPermit: jest.fn((_permission, _request) => {})
+}))
 jest.mock('../../../../processors/price-display.js', () => ({
   displayPermissionPrice: jest.fn(() => '#6')
 }))
