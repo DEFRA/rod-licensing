@@ -35,7 +35,7 @@
     "pre-push": "prettier-standard --check --lint --since develop"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.2",
+    "@babel/core": "^7.21.0",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@ksmithut/prettier-standard": "0.0.10",
