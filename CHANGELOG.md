@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.0 (2023-03-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1622](https://github.com/DEFRA/rod-licensing/pull/1622) Refactor renewal start date validator ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.32.0-rc.0 (2023-03-07)
 
