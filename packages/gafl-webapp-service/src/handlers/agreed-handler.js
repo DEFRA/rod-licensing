@@ -18,6 +18,7 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import methodOfConfirmationHandler from './method-of-confirmation-handler.js'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -29,6 +30,11 @@ const debug = db('webapp:agreed-handler')
  */
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
+
+  if (transaction.permission.licenceLength !== '12M') {
+    await methodOfConfirmationHandler(request, transaction.permission)
+  }
+
   let response
   try {
     response = await salesApi.createTransaction(apiTransactionPayload)

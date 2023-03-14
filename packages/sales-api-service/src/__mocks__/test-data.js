@@ -249,7 +249,8 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
     defra_town: 'Tersterton',
     defra_postcode: 'AB12 3CD',
     defra_country: 910400195,
-    defra_postalfulfilment: true
+    defra_postalfulfilment: true,
+    defra_preferredmethodofconfirmation: 'Prefer not to be contacted'
   },
   optionSetData
 )
