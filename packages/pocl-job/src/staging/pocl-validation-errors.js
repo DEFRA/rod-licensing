@@ -66,6 +66,7 @@ const processSucceeded = async succeeded => {
 }
 
 const createTransactions = async records => {
+  debug('creating transactions', JSON.stringify(records, undefined, '\t'))
   const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionPayload))
 
   const succeeded = []
