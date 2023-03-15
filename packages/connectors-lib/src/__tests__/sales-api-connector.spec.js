@@ -476,7 +476,7 @@ describe('sales-api-connector', () => {
   })
 
   describe('query endpoints', () => {
-    describe.each(['permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals'])(
+    describe.each(['contacts', 'permits', 'concessions', 'permitConcessions', 'transactionCurrencies', 'paymentJournals'])(
       'allows %s to be queried with different methods',
       endpoint => {
         it('retrieves all items using .getAll()', async () => {

@@ -31,8 +31,8 @@ const debug = db('webapp:agreed-handler')
 const sendToSalesApi = async (request, transaction, status) => {
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
 
-  if (transaction.permission.licenceLength !== '12M') {
-    await methodOfConfirmationHandler(request, transaction.permission)
+  if (transaction.permissions[0].licenceLength !== '12M') {
+    await methodOfConfirmationHandler(request, transaction.permissions[0])
   }
 
   let response
