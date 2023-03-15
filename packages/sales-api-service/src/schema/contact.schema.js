@@ -76,7 +76,8 @@ export const contactRequestSchema = Joi.object({
   country: buildJoiOptionSetValidator('defra_country', 'GB'),
   preferredMethodOfConfirmation: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Text'),
   preferredMethodOfNewsletter: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Email'),
-  preferredMethodOfReminder: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Letter')
+  preferredMethodOfReminder: buildJoiOptionSetValidator('defra_preferredcontactmethod', 'Letter'),
+  shortTermPreferredMethodOfConfirmation: buildJoiOptionSetValidator('defra_shorttermlicencemethodofconfirmation', 'Text')
 })
   .required()
   .description('Details of the associated contact')
@@ -87,7 +88,8 @@ export const contactResponseSchema = Joi.object({
   country: optionSetOption,
   preferredMethodOfConfirmation: optionSetOption,
   preferredMethodOfNewsletter: optionSetOption,
-  preferredMethodOfReminder: optionSetOption
+  preferredMethodOfReminder: optionSetOption,
+  shortTermPreferredMethodOfConfirmation: optionSetOption
 })
   .required()
   .label('contact-response')

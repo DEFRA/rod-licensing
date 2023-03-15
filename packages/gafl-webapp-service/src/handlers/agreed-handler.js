@@ -18,6 +18,7 @@ import { preparePayment } from '../processors/payment.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import methodOfConfirmationHandler from './method-of-confirmation-handler.js'
 const debug = db('webapp:agreed-handler')
 
 /**
@@ -32,11 +33,10 @@ const sendToSalesApi = async (request, transaction, status) => {
 
   let response
   try {
-    if (apiTransactionPayload.permissions[0].licensee.preferredMethodOfConfirmation === null) {
-      apiTransactionPayload.permissions[0].licensee.preferredMethodOfConfirmation = await salesApi.preferredMethodOfConfirmation(apiTransactionPayload.permissions[0].licensee)
+    if (apiTransactionPayload.permissions[0].licensee.preferredMethodOfConfirmation === undefined) {
+      apiTransactionPayload.permissions[0].licensee.preferredMethodOfConfirmation = await methodOfConfirmationHandler(apiTransactionPayload.permissions[0].licensee)
     }
-
-    if (apiTransactionPayload.permissions[0].licensee.shortTermPreferredMethodOfConfirmation === null) {
+    if (apiTransactionPayload.permissions[0].licensee.shortTermPreferredMethodOfConfirmation === undefined) {
       apiTransactionPayload.permissions[0].licensee.shortTermPreferredMethodOfConfirmation = apiTransactionPayload.permissions[0].licensee.preferredMethodOfConfirmation
     }
     response = await salesApi.createTransaction(apiTransactionPayload)
