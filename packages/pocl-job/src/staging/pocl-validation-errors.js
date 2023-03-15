@@ -116,5 +116,6 @@ export const processPoclValidationErrors = async () => {
     return undefined
   }
   const createResults = await createTransactions(mapRecords(validationErrors))
+  debug(`Found ${createResults.length} validation error records to process`)
   return finaliseTransactions(createResults)
 }
