@@ -1,4 +1,5 @@
-import { AGREED, CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR } from '../uri.js'
+import { AGREED, CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR } from '../uri.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 export default [
   {
@@ -16,7 +17,9 @@ export default [
         mssgs,
         altLang,
         uri: {
-          new: NEW_TRANSACTION.uri,
+          new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+          controller: addLanguageCodeToUri(request, CONTROLLER.uri),
+          agreed: addLanguageCodeToUri(request, AGREED.uri),
           ...(transaction?.payment?.href ? { payment: transaction.payment.href } : {})
         }
       })
@@ -46,8 +49,8 @@ export default [
         mssgs,
         altLang,
         uri: {
-          new: NEW_TRANSACTION.uri,
-          agreed: AGREED.uri
+          new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+          agreed: addLanguageCodeToUri(request, AGREED.uri)
         }
       })
     }
