@@ -21,7 +21,6 @@ afterAll(() => {
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
-jest.mock('../method-of-confirmation-handler.js')
 
 const paymentStatusSuccess = cost => ({
   amount: cost,

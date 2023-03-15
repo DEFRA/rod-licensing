@@ -216,12 +216,6 @@ class QueryBuilder {
  * Query support for permits
  * @type {QueryBuilder}
  */
-export const contacts = new QueryBuilder(new URL('contacts', urlBase))
-
-/**
- * Query support for permits
- * @type {QueryBuilder}
- */
 export const permits = new QueryBuilder(new URL('permits', urlBase))
 
 /**
@@ -282,3 +276,26 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
  * @returns {boolean} true if the status code represents a system error, false otherwise
  */
 export const isSystemError = statusCode => Math.floor(statusCode / 100) === 5
+
+/**
+ * Set preferredMethodOfConfirmation
+ * @param licensee
+ * @returns {Promise<*>}
+ */
+
+export const preferredMethodOfConfirmation = async (licensee) =>
+  exec2xxOrNull(
+    call(
+      new URL(
+        `?${querystring.stringify({
+          licenseeFirstName: licensee.firstName,
+          licenseeLastName: licensee.lastName,
+          licenseeBirthDate: licensee.birthDate,
+          licenseePremises: licensee.premises,
+          licenseePostcode: licensee.postcode
+        })}`,
+        urlBase
+      ),
+      'get'
+    )
+  )

@@ -6,6 +6,7 @@ import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { findContactInCRM } from '../contacts.service.js'
 const { docClient } = AWS()
 const debug = db('sales:transactions')
 
@@ -21,6 +22,23 @@ export async function createTransaction (payload) {
     .promise()
   debug('Transaction %s successfully created in DynamoDB table %s', record.id, TRANSACTION_STAGING_TABLE.TableName)
   return record
+}
+
+/**
+ * Set preferredMethodOfConfirmation
+ * @param {*} licensee
+ * @returns {Promise<*>}
+ */
+export const setPreferredMethodOfConfirmation = async licensee => {
+  console.log('HIT 2')
+  const contactInCRM = await findContactInCRM(licensee)
+  if (contactInCRM !== undefined) {
+    licensee.preferredMethodOfConfirmation = contactInCRM.preferredMethodOfConfirmation
+  } else {
+    licensee.preferredMethodOfConfirmation = licensee.shortTermPreferredMethodOfConfirmation
+  }
+
+  return licensee.preferredMethodOfConfirmation
 }
 
 /**

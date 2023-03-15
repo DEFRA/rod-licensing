@@ -26,7 +26,6 @@ afterAll(() => {
 
 jest.mock('@defra-fish/connectors-lib')
 mockSalesApi()
-jest.mock('../method-of-confirmation-handler.js')
 
 const TRY_AGAIN_STR = 'Try again'
 

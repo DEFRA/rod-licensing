@@ -56,20 +56,7 @@ export const getObfuscatedDob = async licensee => {
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
 }
 
-export const getExistingContacts = async licensee => {
-  const lookup = new Contact()
-  lookup.firstName = licensee.firstName
-  lookup.lastName = licensee.lastName
-  lookup.birthDate = licensee.birthDate
-  lookup.premises = licensee.premises
-  lookup.postcode = licensee.postcode
-
-  const contacts = await findByExample(lookup)
-
-  return contacts
-}
-
-const findContactInCRM = async licensee => {
+export const findContactInCRM = async licensee => {
   let contact
   if (licensee.id) {
     // Resolve an existing contact id
