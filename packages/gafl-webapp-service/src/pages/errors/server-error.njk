@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
+{% from "inset-text/macro.njk" import govukInsetText %}
 
 {% set title = '' %}
 {% if prePaymentError %}
@@ -28,16 +29,14 @@
 
           {% if prePaymentError %}
               <p class="govuk-body-m">{{ mssgs.server_error_try_again }}</p>
-              <p class="govuk-body-m">{{ mssgs.server_error_post_office }}</p>
-              <p class="govuk-body-m">{{ mssgs.server_error_post_office_check }}<a class="govuk-link" href="https://www.postoffice.co.uk/branch-finder" rel="noreferrer noopener" target="_blank">{{ mssgs.server_error_post_office_check_link }}</a></p>
-              {{ govukButton({
-                  attributes: { id: "try-again" },
-                  preventDoubleClick: true,
-                  name: "try-again",
-                  text: mssgs.try_again,
-                  href: uri.agreed,
-                  classes: "govuk-!-margin-top-5"
-              }) }}
+              <p class="govuk-body-m">{{ mssgs.server_error_environment_agency }}</p>
+            {{ govukInsetText({
+                html: mssgs.server_error_environment_agency_name + '<br/>'
+                + mssgs.server_error_environment_agency_telephone + '<br/>'
+                + mssgs.server_error_environment_agency_opening + '<br/>'
+                + '<a href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" class="govuk_link" rel="noreferrer noopener" target="_blank">' + mssgs.server_error_environment_agency_link + '</a>',
+                classes: "no-print"
+            }) }}
           {% elseif postPaymentError %}
               <p class="govuk-body-m">{{ mssgs.server_error_unable_to_retrieve_pay_details }}</p>
               <p class="govuk-body-m">{{ mssgs.server_error_if_seeing_page }}</p>
