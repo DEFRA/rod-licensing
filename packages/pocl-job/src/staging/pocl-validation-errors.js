@@ -5,7 +5,7 @@ const debug = db('pocl:validation-errors')
 // const mapRecords = records =>
 const mapRecords = records => {
   // records.map(record => ({
-  console.log('records[0].dataSource', records[0].dataSource)
+  console.log('records[0]', JSON.stringify(records[0], undefined, '\t'))
   return records.map(record => ({
     poclValidationErrorId: record.id,
     createTransactionPayload: {
