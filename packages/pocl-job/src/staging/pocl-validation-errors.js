@@ -2,8 +2,11 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
-const mapRecords = records =>
-  records.map(record => ({
+// const mapRecords = records =>
+const mapRecords = records => {
+  // records.map(record => ({
+  console.log('records[0].dataSource', records[0].dataSource)
+  return records.map(record => ({
     poclValidationErrorId: record.id,
     createTransactionPayload: {
       dataSource: record.dataSource.label,
@@ -46,6 +49,7 @@ const mapRecords = records =>
       }
     }
   }))
+}
 
 /**
  * Calls Sales Api to update Dynamics record
