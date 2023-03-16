@@ -9,7 +9,7 @@ export const findPermit = async (permission, request) => {
    * The section of the transaction cache subject to the hashing algorithm excludes
    * name, address, or anything not effecting permit filter
    */
-  const hashOperand = (({ hash, permit, licensee, ...p }) => p)(permission)
+  const hashOperand = (({ _hash, _permit, _licensee, ...p }) => p)(permission)
 
   // To calculate a permit, hash and save
   const addHashAndPermit = async () => {
