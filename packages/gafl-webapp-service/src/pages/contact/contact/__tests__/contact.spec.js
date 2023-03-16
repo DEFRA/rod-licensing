@@ -22,6 +22,8 @@ import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../
 import { ADULT_TODAY, dobHelper, JUNIOR_TODAY } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
+jest.mock('../../../../processors/licence-type-display.js')
 
 mockSalesApi()
 
@@ -72,6 +74,8 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+
+      isPhysical.mockReturnValueOnce(true)
     })
 
     it('return the page on request', async () => {
@@ -189,6 +193,8 @@ describe('The contact preferences page', () => {
       await injectWithCookies('GET', NEW_TRANSACTION.uri)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+
+      isPhysical.mockReturnValueOnce(false)
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
@@ -205,6 +211,8 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+
+      isPhysical.mockReturnValueOnce(false)
     })
 
     it('post response none sets how-contacted - none in the cache', async () => {
