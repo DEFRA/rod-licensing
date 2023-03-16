@@ -19,6 +19,9 @@ import searchResultsMany from '../../../../../services/address-lookup/__mocks__/
 import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
+import { isPhysical } from '../../../../../processors/licence-type-display.js'
+
+jest.mock('../../../../../processors/licence-type-display.js')
 
 mockSalesApi()
 
@@ -101,6 +104,7 @@ describe('The address select page', () => {
     it('redirects to the licence fulfilment page if licence length is 12 months and not junior', async () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      isPhysical.mockReturnValueOnce(true)
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
