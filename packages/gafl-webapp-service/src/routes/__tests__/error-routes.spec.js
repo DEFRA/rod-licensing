@@ -1,5 +1,5 @@
 import errorRoutes from '../error-routes'
-import { CLIENT_ERROR, CONTROLLER, NEW_TRANSACTION, SERVER_ERROR, AGREED } from '../../uri.js'
+import { CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR, AGREED } from '../../uri.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 
 jest.mock('../../processors/uri-helper.js')
@@ -21,14 +21,11 @@ describe('Error route handlers', () => {
         expect(mockToolkit.view).toMatchSnapshot()
       })
 
-      it.each([[NEW_TRANSACTION.uri], [AGREED.uri], [CONTROLLER.uri]])(
-        'addLanguageCodeToUri is called with expected request and uri',
-        async urlToCheck => {
-          const request = getMockRequest()
-          await clientError(request, getMockToolkit())
-          expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
-        }
-      )
+      it('addLanguageCodeToUri is called with expected request and NEW_TRANSACTION.uri', async () => {
+        const request = getMockRequest()
+        await clientError(request, getMockToolkit())
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
+      })
 
       it('second argument of handler return correct values', async () => {
         const href = Symbol('gov.pay.url')
@@ -44,8 +41,6 @@ describe('Error route handlers', () => {
           altLang: [],
           uri: {
             new: decoratedUri,
-            controller: decoratedUri,
-            agreed: decoratedUri,
             payment: href
           }
         })

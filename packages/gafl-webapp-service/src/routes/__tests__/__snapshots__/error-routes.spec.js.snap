@@ -11,8 +11,6 @@ exports[`Error route handlers error route CLIENT_ERROR handler handler should re
         "mssgs": Array [],
         "paymentInProgress": false,
         "uri": Object {
-          "agreed": Symbol(uri),
-          "controller": Symbol(uri),
           "new": Symbol(uri),
         },
       },
