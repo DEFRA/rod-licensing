@@ -6,7 +6,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
-import { isPhysicalOld } from '../../../../processors/licence-type-display.js'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
 import { mobilePhoneValidator } from '../../../../processors/contact-validator.js'
 
 export const getData = async request => {
@@ -14,7 +14,7 @@ export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // page is only permitted for physical licences
-  if (!isPhysicalOld(permission)) {
+  if (!isPhysical(permission)) {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
