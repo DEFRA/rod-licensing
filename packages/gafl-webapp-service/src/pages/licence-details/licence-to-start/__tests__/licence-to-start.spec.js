@@ -1,4 +1,4 @@
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import {
   LICENCE_TO_START,
   DATE_OF_BIRTH,
@@ -19,6 +19,8 @@ import {
 } from '../../../../__mocks__/test-utils-business-rules.js'
 import { licenceToStart } from '../update-transaction.js'
 import moment from 'moment'
+
+mockSalesApi()
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))

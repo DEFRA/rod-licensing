@@ -4,8 +4,9 @@ import * as concessionHelper from '../../../processors/concession-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { isPhysicalOld } from '../../../processors/licence-type-display.js'
+import { isPhysical } from '../../../processors/licence-type-display.js'
 import { licenceToStart } from '../licence-to-start/update-transaction.js'
+import { findPermit } from '../../../processors/find-permit.js'
 
 /**
  * If we have set the licence type to physical change the method of contact from 'none' to 'letter' and vice-versa
@@ -16,7 +17,7 @@ const checkContactDetails = permission => {
   const preferredMethodOfReminder = permission?.licensee?.preferredMethodOfReminder
 
   const physicalContactNone =
-    isPhysicalOld(permission) &&
+    isPhysical(permission) &&
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.none || preferredMethodOfReminder === mappings.HOW_CONTACTED.none)
 
   if (physicalContactNone) {
@@ -26,7 +27,7 @@ const checkContactDetails = permission => {
   }
 
   const digitalContactLeter =
-    !isPhysicalOld(permission) &&
+    !isPhysical(permission) &&
     (preferredMethodOfConfirmation === mappings.HOW_CONTACTED.letter || preferredMethodOfReminder === mappings.HOW_CONTACTED.letter)
 
   if (digitalContactLeter) {
@@ -86,6 +87,8 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_LENGTH.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.licenceLength = payload['licence-length']
+
+  await findPermit(permission, request)
   onLengthChange(permission)
 
   // Clear the licence fulfilment here otherwise it can end up being set incorrectly

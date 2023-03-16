@@ -1,6 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import mockDefraCountries from '../../../../../__mocks__/data/defra-country.js'
-import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../../__mocks__/test-utils-system.js'
 import {
   ADDRESS_ENTRY,
   LICENCE_FULFILMENT,
@@ -21,6 +21,8 @@ import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/t
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 import { getCountryDropDownOptions } from '../route'
+
+mockSalesApi()
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))

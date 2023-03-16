@@ -17,11 +17,13 @@ import {
 
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 
 import { ADULT_TODAY, dobHelper, JUNIOR_TODAY } from '../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../licence-details/licence-type/route'
+
+mockSalesApi()
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
