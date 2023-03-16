@@ -21,6 +21,9 @@ import { ADULT_TODAY, JUNIOR_TODAY, dobHelper } from '../../../../../__mocks__/t
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
 import { getCountryDropDownOptions } from '../route'
+import { isPhysical } from '../../../../../processors/licence-type-display.js'
+
+jest.mock('../../../../../processors/licence-type-display.js')
 
 mockSalesApi()
 
@@ -160,6 +163,7 @@ describe('The manual address entry page', () => {
       const addr = Object.assign({}, goodAddress)
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+      isPhysical.mockReturnValueOnce(true)
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
       expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
