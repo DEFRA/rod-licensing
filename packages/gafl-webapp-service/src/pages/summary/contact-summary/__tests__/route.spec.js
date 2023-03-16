@@ -12,6 +12,7 @@ import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants'
 import pageRoute from '../../../../routes/page-route.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
 
 const mockDecoratedUri = Symbol('addLanguageCodeToUri')
 jest.mock('../../../../processors/uri-helper.js', () => ({
@@ -31,6 +32,10 @@ jest.mock('../../../../processors/refdata-helper.js', () => ({
   countries: {
     nameFromCode: async () => 'GB'
   }
+}))
+
+jest.mock('../../../../processors/licence-type-display.js', () => ({
+  isPhysical: jest.fn(() => true)
 }))
 
 const mockRoute = Symbol('mock-route')
@@ -246,6 +251,8 @@ describe('contact-summary > route', () => {
         [HOW_CONTACTED.text, HOW_CONTACTED.none],
         [HOW_CONTACTED.none, HOW_CONTACTED.none]
       ])('should display the Licence as %s and Newsletter as %s', async (preferredMethodOfReminder, preferredMethodOfNewsletter) => {
+        isPhysical.mockReturnValueOnce(false).mockReturnValueOnce(false)
+
         const samplePermission = getMockPermission(
           {
             preferredMethodOfReminder,
