@@ -1,5 +1,5 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
-import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, isPhysicalOld } from '../licence-type-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical } from '../licence-type-display.js'
 import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 
@@ -97,22 +97,6 @@ describe('licenceTypeAndLengthDisplay', () => {
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('over_65, Salmon and sea trout, 12 months')
-  })
-})
-
-describe('isPhysicalOld', () => {
-  it('returns true if licence length is 12 months and is not a junior', () => {
-    const permission = getPermission()
-    hasJunior.mockImplementationOnce(() => false)
-    const result = isPhysicalOld(permission)
-    expect(result).toEqual(true)
-  })
-
-  it('returns false if licence length is not 12 months and a junior', () => {
-    const permission = getPermission({ licenceLength: '8D' })
-    hasJunior.mockImplementationOnce(() => true)
-    const result = isPhysicalOld(permission)
-    expect(result).toEqual(false)
   })
 })
 
