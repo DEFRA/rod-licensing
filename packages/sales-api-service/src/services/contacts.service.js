@@ -42,32 +42,21 @@ export const resolveContactPayload = async (permission, payload) => {
     Contact.definition.mappings.preferredMethodOfNewsletter.ref,
     preferredMethodOfNewsletter
   )
+  contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+    Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
+    preferredMethodOfConfirmation
+  )
 
-  if (permission.licenceLength === '12M') {
+  if (permission.licenceLength !== '12M' && contactInCRM) {
     contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
       Contact.definition.mappings.preferredMethodOfConfirmation.ref,
-      preferredMethodOfConfirmation
-    )
-    contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
-      Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
-      preferredMethodOfConfirmation
+      contactInCRM.preferredMethodOfConfirmation.description
     )
   } else {
-    contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+    contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
       Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
       preferredMethodOfConfirmation
     )
-    if (contactInCRM) {
-      contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
-        Contact.definition.mappings.preferredMethodOfConfirmation.ref,
-        contactInCRM.preferredMethodOfConfirmation
-      )
-    } else {
-      contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
-        Contact.definition.mappings.preferredMethodOfConfirmation.ref,
-        preferredMethodOfConfirmation
-      )
-    }
   }
 
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
@@ -80,7 +69,7 @@ export const getObfuscatedDob = async licensee => {
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
 }
 
-export const findContactInCRM = async licensee => {
+const findContactInCRM = async licensee => {
   let contact
   if (licensee.id) {
     // Resolve an existing contact id

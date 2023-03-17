@@ -44,6 +44,7 @@ describe('contact > update-transaction', () => {
         'text',
         'Text',
         'set mobilePhone and email when both are provided, and preserve the original email if a different email is passed in',
+        { email, mobilePhone },
         ['someone@example.com', mobilePhone],
         [{ email }]
       ]

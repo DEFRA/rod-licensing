@@ -37,7 +37,7 @@ export class Contact extends BaseEntity {
       shortTermPreferredMethodOfConfirmation: {
         field: 'defra_shorttermlicencemethodofconfirmation',
         type: 'optionset',
-        ref: 'defra_shorttermlicencemethodofconfirmation'
+        ref: 'defra_preferredcontactmethod'
       }
     }
   }))

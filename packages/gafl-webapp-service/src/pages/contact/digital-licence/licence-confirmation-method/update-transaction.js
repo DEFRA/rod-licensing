@@ -8,15 +8,15 @@ export default async request => {
 
   switch (payload['licence-confirmation-method']) {
     case 'email':
-      licensee.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
       licensee.email = payload.email
       break
     case 'text':
-      licensee.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
       licensee.mobilePhone = payload.text
       break
     default:
-      licensee.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
+      licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       break
   }
 

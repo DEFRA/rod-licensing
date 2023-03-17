@@ -3,7 +3,8 @@ import {
   mockContactPayload,
   mockContactWithIdPayload,
   MOCK_EXISTING_CONTACT_ENTITY,
-  MOCK_OBFUSCATED_DOB
+  MOCK_OBFUSCATED_DOB,
+  mockPermissionPayload
 } from '../../__mocks__/test-data.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 
@@ -27,32 +28,54 @@ describe('contacts service', () => {
 
     it('resolves an existing contact by id', async () => {
       const mockPayload = mockContactWithIdPayload()
-      const contact = await resolveContactPayload(mockPayload)
+      const mockPermission = mockPermissionPayload()
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
       expect(contact.isNew()).toBeFalsy()
       expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
     })
 
     it('creates a new contact entity if no contact found for an id', async () => {
       const mockPayload = mockContactWithIdPayload()
+      const mockPermission = mockPermissionPayload()
       dynamicsLib.findById.mockImplementationOnce(() => undefined)
-      const contact = await resolveContactPayload(mockPayload)
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
       expect(contact.isNew()).toBeTruthy()
       expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
     })
 
     it('resolves an existing contact by key fields', async () => {
       const mockPayload = mockContactPayload()
-      const contact = await resolveContactPayload(mockPayload)
+      const mockPermission = mockPermissionPayload()
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
       expect(contact.isNew()).toBeFalsy()
       expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
     })
 
     it('creates a new contact entity if no contact found key fields', async () => {
       const mockPayload = mockContactPayload()
+      const mockPermission = mockPermissionPayload()
       dynamicsLib.findByExample.mockImplementationOnce(() => [])
-      const contact = await resolveContactPayload(mockPayload)
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
       expect(contact.isNew()).toBeTruthy()
       expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
+    })
+
+    it('licence is not 12 months and contact exists in CRM', async () => {
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: '1D'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation.description).not.toEqual(contact.shortTermPreferredMethodOfConfirmation.description)
+    })
+
+    it('licence is 12 months and contact exists in CRM', async () => {
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: '12M'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation.description).toEqual(contact.shortTermPreferredMethodOfConfirmation.description)
     })
   })
 
