@@ -6,37 +6,18 @@ export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   const { licensee } = permission
 
-  if (permission.licenceLength === '12M') {
-    switch (payload['licence-confirmation-method']) {
-      case 'email':
-        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.email
-        licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.email
-        licensee.email = payload.email
-        break
-      case 'text':
-        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.text
-        licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.text
-        licensee.mobilePhone = payload.text
-        break
-      default:
-        licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
-        licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.none
-        break
-    }
-  } else {
-    switch (payload['licence-confirmation-method']) {
-      case 'email':
-        licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.email
-        licensee.email = payload.email
-        break
-      case 'text':
-        licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.text
-        licensee.mobilePhone = payload.text
-        break
-      default:
-        licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.none
-        break
-    }
+  switch (payload['licence-confirmation-method']) {
+    case 'email':
+      licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.email
+      licensee.email = payload.email
+      break
+    case 'text':
+      licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.text
+      licensee.mobilePhone = payload.text
+      break
+    default:
+      licensee.shortTermPreferredMethodOfConfirmation = HOW_CONTACTED.none
+      break
   }
 
   await request.cache().helpers.status.setCurrentPermission({ [CONTACT.page]: false })

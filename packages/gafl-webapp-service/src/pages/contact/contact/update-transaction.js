@@ -35,42 +35,11 @@ const getPhysicalReminders = payload => {
 }
 
 const getDigitalConfirmationsAndReminders = (licensee, payload) => {
-  if (licensee.licenceLength === '12M') {
-    switch (payload['how-contacted']) {
-      case 'email':
-        return {
-          postalFulfilment: false,
-          shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.email,
-          preferredMethodOfConfirmation: HOW_CONTACTED.email,
-          preferredMethodOfReminder: HOW_CONTACTED.email,
-          email: payload.email,
-          mobilePhone: null
-        }
-      case 'text':
-        return {
-          postalFulfilment: false,
-          shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.text,
-          preferredMethodOfConfirmation: HOW_CONTACTED.text,
-          preferredMethodOfReminder: HOW_CONTACTED.text,
-          mobilePhone: payload.text,
-          email: licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
-        }
-      default:
-        return {
-          postalFulfilment: false,
-          shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.none,
-          preferredMethodOfConfirmation: HOW_CONTACTED.none,
-          preferredMethodOfReminder: HOW_CONTACTED.none,
-          mobilePhone: null,
-          email: licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
-        }
-    }
-  }
   switch (payload['how-contacted']) {
     case 'email':
       return {
         postalFulfilment: false,
-        shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.email,
+        preferredMethodOfConfirmation: HOW_CONTACTED.email,
         preferredMethodOfReminder: HOW_CONTACTED.email,
         email: payload.email,
         mobilePhone: null
@@ -78,7 +47,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
     case 'text':
       return {
         postalFulfilment: false,
-        shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.text,
+        preferredMethodOfConfirmation: HOW_CONTACTED.text,
         preferredMethodOfReminder: HOW_CONTACTED.text,
         mobilePhone: payload.text,
         email: licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null
@@ -86,7 +55,7 @@ const getDigitalConfirmationsAndReminders = (licensee, payload) => {
     default:
       return {
         postalFulfilment: false,
-        shortTermPreferredMethodOfConfirmation: HOW_CONTACTED.none,
+        preferredMethodOfConfirmation: HOW_CONTACTED.none,
         preferredMethodOfReminder: HOW_CONTACTED.none,
         mobilePhone: null,
         email: licensee.preferredMethodOfNewsletter === HOW_CONTACTED.email ? licensee.email : null

@@ -28,24 +28,48 @@ const debug = db('sales:transformers')
  * @param {!ContactPayload} payload The payload to be transformed
  * @returns {Promise<Contact>}
  */
-export const resolveContactPayload = async payload => {
+export const resolveContactPayload = async (permission, payload) => {
   const { id, country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...primitives } = payload
 
   const contactInCRM = await findContactInCRM(payload)
   const contact = Object.assign(contactInCRM || new Contact(), primitives)
 
-  contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
-    Contact.definition.mappings.preferredMethodOfConfirmation.ref,
-    preferredMethodOfConfirmation
+  contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
+    Contact.definition.mappings.preferredMethodOfReminder.ref,
+    preferredMethodOfReminder
   )
   contact.preferredMethodOfNewsletter = await getGlobalOptionSetValue(
     Contact.definition.mappings.preferredMethodOfNewsletter.ref,
     preferredMethodOfNewsletter
   )
-  contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
-    Contact.definition.mappings.preferredMethodOfReminder.ref,
-    preferredMethodOfReminder
-  )
+
+  if (permission.licenceLength === '12M') {
+    contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
+      Contact.definition.mappings.preferredMethodOfConfirmation.ref,
+      preferredMethodOfConfirmation
+    )
+    contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+      Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
+      preferredMethodOfConfirmation
+    )
+  } else {
+    contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+      Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
+      preferredMethodOfConfirmation
+    )
+    if (contactInCRM) {
+      contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
+        Contact.definition.mappings.preferredMethodOfConfirmation.ref,
+        contactInCRM.preferredMethodOfConfirmation
+      )
+    } else {
+      contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
+        Contact.definition.mappings.preferredMethodOfConfirmation.ref,
+        preferredMethodOfConfirmation
+      )
+    }
+  }
+
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
 
   return contact

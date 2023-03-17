@@ -213,12 +213,6 @@ class QueryBuilder {
 }
 
 /**
- * Query support for contacts
- * @type {QueryBuilder}
- */
-export const contacts = new QueryBuilder(new URL('contacts', urlBase))
-
-/**
  * Query support for permits
  * @type {QueryBuilder}
  */
