@@ -192,6 +192,7 @@ describe('The contact preferences page', () => {
     it('post response none sets how-contacted - none in the cache', async () => {
       await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
       expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfReminder).toEqual(HOW_CONTACTED.none)
     })
   })
