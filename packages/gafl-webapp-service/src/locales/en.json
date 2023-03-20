@@ -607,7 +607,7 @@
   "server_error_if_seeing_page": "If you keep seeing this page:  ",
   "server_error_logged": "We have logged the error and we will look into it, and make sure it doesn’t happen again. However if you keep seeing this page, please send your ",
   "server_error_occured": "Sorry, an error occurred while processing your request",
-  "server_error_environment_agency": "If you keep seeing this page, you can buy a fishing licence by by calling the Environment Agency:",
+  "server_error_environment_agency": "If you keep seeing this page, you can buy a fishing licence by calling the Environment Agency:",
   "server_error_environment_agency_link": "Find out about call charges (opens in new tab)",
   "server_error_environment_agency_name": "Licence sales and extensions",
   "server_error_environment_agency_opening": "Monday to Friday, 8am to 6pm (except public holidays)",
