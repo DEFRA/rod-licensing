@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`view licences > getData getData returns duplicate, licences, licences remaining being true and uri matching licence for 1`] = `
+exports[`view licences > getData getData returns duplicate, licences, licences remaining being true and uri matching add licence 1`] = `
 Object {
   "duplicate": undefined,
   "licences": Array [
@@ -15,7 +15,7 @@ Object {
   ],
   "licencesRemaining": true,
   "uri": Object {
-    "licence_for": "/buy/licence-for",
+    "add_licence": "/buy/add-licence",
   },
 }
 `;

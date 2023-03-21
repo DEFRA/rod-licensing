@@ -6,7 +6,7 @@ import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../pro
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { hasDuplicates } from '../../../../processors/multibuy-processor.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { LICENCE_FOR } from '../../../../uri'
+import { ADD_LICENCE, LICENCE_FOR } from '../../../../uri'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -128,7 +128,7 @@ describe('view licences > getData', () => {
 
     beforeEach(() => jest.clearAllMocks())
 
-    it('returns duplicate, licences, licences remaining being true and uri matching licence for', async () => {
+    it('returns duplicate, licences, licences remaining being true and uri matching add licence', async () => {
       const res = await getData(getSampleRequest())
       expect(res).toMatchSnapshot()
     })
@@ -216,18 +216,36 @@ describe('view licences > getData', () => {
       expect(ret).toEqual(returnValue)
     })
 
-    it('return value of addLangaugeCodeToUri is used for licence for', async () => {
+    it('return value of addLangaugeCodeToUri is used for add licence', async () => {
       const returnValue = Symbol('return value')
       addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
       const result = await getData(getSampleRequest())
+      const uri = result.uri.add_licence
+
+      expect(uri).toEqual(returnValue)
+    })
+
+    it('addLanguageCodeToUri is called with request and add licence uri', async () => {
+      const request = getSampleRequest()
+
+      await getData(request)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, ADD_LICENCE.uri)
+    })
+
+    it('return value of addLangaugeCodeToUri is used for licence for', async () => {
+      const returnValue = Symbol('return value')
+      addLanguageCodeToUri.mockReturnValueOnce(returnValue)
+
+      const result = await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
       const uri = result.uri.licence_for
 
       expect(uri).toEqual(returnValue)
     })
 
     it('addLanguageCodeToUri is called with request and licence for uri', async () => {
-      const request = getSampleRequest()
+      const request = getSampleRequest({ currentPermission: getMockEmptyPermission() })
 
       await getData(request)
 
