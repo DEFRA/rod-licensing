@@ -1,4 +1,18 @@
 
+## v1.33.0-rc.2 (2023-03-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1660](https://github.com/DEFRA/rod-licensing/pull/1660) Refund policy welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1662](https://github.com/DEFRA/rod-licensing/pull/1662) Remove reference to post office on gov pay fail ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1661](https://github.com/DEFRA/rod-licensing/pull/1661) Error page persist welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.33.0-rc.1 (2023-03-20)
 
 #### :rocket: Enhancement
