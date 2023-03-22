@@ -1,6 +1,6 @@
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
-import { ADD_LICENCE, LICENCE_FOR, VIEW_LICENCES } from '../../../uri.js'
+import { ADD_LICENCE, NEW_TRANSACTION, VIEW_LICENCES } from '../../../uri.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { nextPage } from '../../../routes/next-page.js'
@@ -38,7 +38,7 @@ export const getData = async request => {
     licences: undefined,
     licencesRemaining,
     uri: {
-      licence_for: addLanguageCodeToUri(request, LICENCE_FOR.uri)
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

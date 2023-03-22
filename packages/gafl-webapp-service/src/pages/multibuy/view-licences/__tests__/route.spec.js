@@ -6,7 +6,7 @@ import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../pro
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { hasDuplicates } from '../../../../processors/multibuy-processor.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { ADD_LICENCE, LICENCE_FOR } from '../../../../uri'
+import { ADD_LICENCE, NEW_TRANSACTION } from '../../../../uri'
 
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -133,7 +133,7 @@ describe('view licences > getData', () => {
       expect(res).toMatchSnapshot()
     })
 
-    it('returns false duplicate, undefined licences, licences remaining being false and uri matching licence for', async () => {
+    it('returns false duplicate, undefined licences, licences remaining being false and uri matching new transaction', async () => {
       const res = await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
       expect(res).toMatchSnapshot()
     })
@@ -234,22 +234,22 @@ describe('view licences > getData', () => {
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, ADD_LICENCE.uri)
     })
 
-    it('return value of addLangaugeCodeToUri is used for licence for', async () => {
+    it('return value of addLangaugeCodeToUri is used for new transaction', async () => {
       const returnValue = Symbol('return value')
       addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
       const result = await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
-      const uri = result.uri.licence_for
+      const uri = result.uri.new
 
       expect(uri).toEqual(returnValue)
     })
 
-    it('addLanguageCodeToUri is called with request and licence for uri', async () => {
+    it('addLanguageCodeToUri is called with request and new uri', async () => {
       const request = getSampleRequest({ currentPermission: getMockEmptyPermission() })
 
       await getData(request)
 
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, LICENCE_FOR.uri)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
     })
   })
 })
