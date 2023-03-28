@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.5 (2023-03-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1665](https://github.com/DEFRA/rod-licensing/pull/1665) Fishing byelaws link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.33.0-rc.2 (2023-03-21)
