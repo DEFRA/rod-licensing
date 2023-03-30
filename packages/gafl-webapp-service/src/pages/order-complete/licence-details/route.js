@@ -7,6 +7,8 @@ import { nextPage } from '../../../routes/next-page.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
+import moment from 'moment-timezone'
+import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
 
 export const getData = async request => {
   const mssgs = request.i18n.getCatalog()
@@ -35,7 +37,7 @@ export const getData = async request => {
     end: displayEndTime(request, permission),
     price: permission.permit.cost,
     disabled: concessionHelper.hasDisabled(permission),
-    ageConcession: ageConcessionText(permission, mssgs),
+    ageConcession: getAgeConcessionText(permission, mssgs),
     index
   }))
 
@@ -44,17 +46,16 @@ export const getData = async request => {
   }
 }
 
-const ageConcessionText = (permission, mssgs) => {
-  const concession = concessionHelper.getAgeConcession(permission)
-
-  if (concession) {
-    if (concession.type === 'Senior') {
-      return mssgs.age_senior_concession
-    } else if (concession.type === 'Junior') {
-      return mssgs.age_junior_concession
+const getAgeConcessionText = (permission, catalog) => {
+  if (concessionHelper.hasSenior(permission)) {
+    if (moment(permission.startDate).isSameOrAfter(SENIOR_AGE_CHANGE_DATE)) {
+      return catalog.age_senior_concession_new
     }
+    return catalog.age_senior_concession
   }
-
+  if (concessionHelper.hasJunior(permission)) {
+    return catalog.age_junior_concession
+  }
   return false
 }
 

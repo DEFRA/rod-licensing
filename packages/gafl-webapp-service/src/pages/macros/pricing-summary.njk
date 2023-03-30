@@ -8,10 +8,10 @@
             {% if content[k].desc %}
                 <div class="govuk-body" id="pricing-summary-element-cost">
                     <span/>{{content[k].desc}}</span>
-                    {% if v.cost === 0  %}
+                    {% if v.cost === "0" %}
                         <strong/>{{ mssgs.free }}</strong>
                     {% else %}
-                        <strong/>{{ mssgs.pound }}{{v.cost}}</strong>
+                        <strong/>{{ mssgs.pound }}{{ v.cost }}</strong>
                     {% endif %}
                     {% if v.concessions %}
                         <div class="govuk-body-s" id="pricing-summary-element-concession">

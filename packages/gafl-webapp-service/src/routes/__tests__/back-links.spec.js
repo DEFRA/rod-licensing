@@ -21,6 +21,8 @@ import {
   CHANGE_CONTACT_DETAILS
 } from '../../uri.js'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN, CHANGE_LICENCE_OPTIONS_SEEN, CHANGE_CONTACT_DETAILS_SEEN } from '../../constants.js'
+import { isPhysical } from '../../processors/licence-type-display.js'
+jest.mock('../../processors/licence-type-display.js')
 
 describe('The licence-for page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === LICENCE_FOR.page)
@@ -256,6 +258,7 @@ describe('The contact page', () => {
   it('has a back-link to the licence confirmation method page if the contact summary has not been seen and is a physical licence', async () => {
     const status = {}
     const transaction = { licenceLength: '12M' }
+    isPhysical.mockReturnValueOnce(true)
     const result = await currentPage.backLink(status, transaction)
     expect(result).toBe(LICENCE_CONFIRMATION_METHOD.uri)
   })

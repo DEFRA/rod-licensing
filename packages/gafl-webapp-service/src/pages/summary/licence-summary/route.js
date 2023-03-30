@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import findPermit from '../find-permit.js'
+import { findPermit } from '../../../processors/find-permit.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { getErrorPage, licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
@@ -13,7 +13,8 @@ import {
   DISABILITY_CONCESSION,
   DATE_OF_BIRTH,
   RENEWAL_START_DATE,
-  NEW_TRANSACTION
+  NEW_TRANSACTION,
+  NEW_PRICES
 } from '../../../uri.js'
 import { START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import { LICENCE_SUMMARY_SEEN } from '../../../constants.js'
@@ -21,6 +22,7 @@ import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-consta
 import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
+import { displayPermissionPrice } from '../../../processors/price-display.js'
 
 class RowGenerator {
   constructor (request, permission) {
@@ -97,9 +99,16 @@ class RowGenerator {
   }
 
   generateCostRow () {
-    const permitCost = this.permission.permit.cost
-    const costText = permitCost === 0 ? this.labels.free : `${this.labels.pound}${permitCost}`
-    return this._generateRow(this.labels.cost, costText)
+    return this._generateRow(
+      this.labels.cost,
+      displayPermissionPrice(
+        {
+          startDate: this.permission.licenceStartDate,
+          permit: this.permission.permit
+        },
+        this.labels
+      )
+    )
   }
 
   generateLicenceLengthRow () {
@@ -199,8 +208,10 @@ export const getData = async request => {
     licenceSummaryRows: getLicenceSummaryRows(request, permission),
     isRenewal: permission.isRenewal,
     uri: {
-      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    }
+      clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+      newPrices: addLanguageCodeToUri(request, NEW_PRICES.uri)
+    },
+    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true'
   }
 }
 

@@ -1,3 +1,4 @@
+import { CacheError } from '../cache-manager.js'
 import { cacheDecorator } from '../cache-decorator.js'
 
 describe('Cache decorator', () => {
@@ -9,6 +10,25 @@ describe('Cache decorator', () => {
     })
 
     expect(generateCacheDecorator(context).getId()).toBe(sessionId)
+  })
+
+  it.each([
+    { context: { state: { sid: null } }, sessionCookieName: 'sid', description: 'session cookie is null' },
+    { context: { state: { scn: undefined } }, sessionCookieName: 'scn', description: 'session cookie is undefined' },
+    { context: { state: {} }, sessionCookieName: 'garibaldi', description: "session cookie doesn't exist" },
+    { context: { state: null }, sessionCookieName: 'chocolate-chip', description: 'state is null' },
+    { context: { state: undefined }, sessionCookieName: 'hobnob', description: 'state is undefined' }
+  ])('getting id throws cache error if $description', ({ context, sessionCookieName }) => {
+    const cacheDecorator = generateCacheDecorator(getCacheDecoratorContext(context), sessionCookieName)
+    const error = (() => {
+      try {
+        cacheDecorator.getId()
+      } catch (e) {
+        return e
+      }
+    })()
+
+    expect(error instanceof CacheError).toBeTruthy()
   })
 
   // it.each([
@@ -33,7 +53,6 @@ const getCacheDecoratorContext = context => ({
   ...context
 })
 
-const generateCacheDecorator = context => {
-  const sessionCookieName = Object.keys(context.state)[0]
+const generateCacheDecorator = (context, sessionCookieName = Object.keys(context.state)[0]) => {
   return cacheDecorator(sessionCookieName).call(context)
 }

@@ -1,12 +1,13 @@
 import { getData } from '../route'
 import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
-import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION } from '../../../../uri.js'
-import findPermit from '../../find-permit.js'
+import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION, NEW_PRICES } from '../../../../uri.js'
 import { licenceTypeDisplay, getErrorPage } from '../../../../processors/licence-type-display.js'
+import { findPermit } from '../../../../processors/find-permit.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
 import moment from 'moment-timezone'
 import mappingConstants from '../../../../processors/mapping-constants.js'
+import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
 jest.mock('../../../../processors/licence-type-display.js', () => ({
   licenceTypeDisplay: jest.fn(() => 'Special Canal Licence, Shopping Trollies and Old Wellies'),
@@ -42,8 +43,13 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
     none: 'Not Proof'
   }
 }))
-jest.mock('../../find-permit.js', () => jest.fn())
 jest.mock('../../../../handlers/multibuy-for-you-handler.js')
+jest.mock('../../../../processors/find-permit.js', () => ({
+  findPermit: jest.fn((_permission, _request) => {})
+}))
+jest.mock('../../../../processors/price-display.js', () => ({
+  displayPermissionPrice: jest.fn(() => '#6')
+}))
 
 const getMockRequest = ({
   currentPermission = getMockPermission(),
@@ -94,6 +100,7 @@ const getMockRequest = ({
   path: '',
   locale: 'en'
 })
+
 const getMockPermission = (licenseeOverrides = {}) => ({
   licensee: {
     firstName: 'Brenin',
@@ -237,11 +244,55 @@ describe('licence-summary > route', () => {
       await getData(mockRequest)
       expect(findPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
     })
-    it('addLanguageCodeToUri is called with the request and NEW_TRANSACTION.uri', async () => {
+
+    it.each([
+      { statusCache: { sampleValue: 'abc-123' }, currentPermission: getMockNewPermission() },
+      { statusCache: { number: 22, otherValue: false, startDate: '15-12-2022' } },
+      { statusCache: { tag: Symbol('prince') }, currentPermission: getMockNewPermission() }
+    ])('persists existing status cache values $statusCache', async params => {
+      const statusCacheSet = jest.fn()
+      const mockRequest = getMockRequest({ ...params, statusCacheSet })
+      await getData(mockRequest)
+      expect(statusCacheSet).toHaveBeenCalledWith(expect.objectContaining(params.statusCache))
+    })
+
+    it.each([[NEW_TRANSACTION.uri], [NEW_PRICES.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
       const mockRequest = getMockRequest()
       await getData(mockRequest)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
+    })
 
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
+    it("doesn't throw a GetDataRedirect if getErrorPage returns an empty string", async () => {
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => getSamplePermission({ isRenewal: false })
+      })
+      getErrorPage.mockReturnValueOnce('')
+      const getDataResult = async () => {
+        try {
+          await getData(request)
+        } catch (e) {
+          return e
+        }
+      }
+
+      const result = await getDataResult()
+
+      await expect(result).toBeUndefined()
+    })
+
+    it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
+      const catalog = Symbol('mock catalog')
+      const mockRequest = {
+        ...getMockRequest(),
+        i18n: {
+          getCatalog: () => catalog
+        }
+      }
+      const mockPermission = await mockRequest.cache().helpers.transaction.getCurrentPermission()
+
+      await getData(mockRequest)
+
+      expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, catalog)
     })
 
     it("throws a GetDataRedirect if getErrorPage returns a value and it isn't a renewal", async () => {
@@ -309,6 +360,25 @@ describe('licence-summary > route', () => {
 
       expect(getErrorPage).toHaveBeenCalledWith(permission)
     })
+
+    it('passes permission to getErrorPage', async () => {
+      const permission = getSamplePermission({ isRenewal: false })
+      const request = getSampleRequest({
+        getCurrentTransactionPermission: () => permission
+      })
+      const runGetData = async () => {
+        try {
+          await getData(request)
+        } catch (e) {
+          return e
+        }
+      }
+
+      await runGetData()
+
+      expect(getErrorPage).toHaveBeenCalledWith(permission)
+    })
+
     it('birthDateStr should return locale-specific date string', async () => {
       const expectedLocale = Symbol('expected locale')
       const mockRequest = getMockRequest({ currentPermission: getMockNewPermission() })
@@ -323,6 +393,18 @@ describe('licence-summary > route', () => {
       await getData(mockRequest)
 
       expect(locale).toHaveBeenCalledWith(expectedLocale)
+    })
+
+    it.each([
+      ['true', true],
+      ['false', false],
+      [undefined, false]
+    ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
+      process.env.SHOW_NOTIFICATION_BANNER = notification
+      const mockRequest = getMockRequest()
+      const data = await getData(mockRequest)
+
+      expect(data.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
     })
 
     it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
@@ -359,6 +441,31 @@ describe('licence-summary > route', () => {
         }
       })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(uri)
+    })
+
+    it('uses displayPermissionPrice for permissionPrice', async () => {
+      const displayPrice = Symbol('display price')
+      displayPermissionPrice.mockReturnValueOnce(displayPrice)
+      const data = await getData(getMockRequest())
+      expect(data.licenceSummaryRows.pop().value.html).toBe(displayPrice)
+    })
+
+    it('passes permission and labels to displayPermissionPrice', async () => {
+      const currentPermission = getMockNewPermission()
+      currentPermission.licenceStartDate = Symbol('licence start date')
+      currentPermission.permit = Symbol('permit')
+      const mockRequest = getMockRequest({ currentPermission })
+      const catalog = mockRequest.i18n.getCatalog()
+
+      await getData(mockRequest)
+
+      expect(displayPermissionPrice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          startDate: currentPermission.licenceStartDate,
+          permit: currentPermission.permit
+        }),
+        catalog
+      )
     })
   })
 
@@ -428,54 +535,54 @@ describe('licence-summary > route', () => {
       expect(data.licenceSummaryRows).toMatchSnapshot()
     })
   })
-})
 
-const getSampleRequest = ({
-  getCurrentStatusPermission = () => ({}),
-  setCurrentStatusPermission = () => {},
-  getCurrentTransactionPermission = () => getSamplePermission(),
-  setCurrentTransactionPermission = () => {},
-  getTransaction = () => ({ permissions: [getSamplePermission()] }),
-  getCatalog = () => ({
-    licence_type_radio_salmon: 'Salmon and sea trout'
-  })
-} = {}) => ({
-  cache: () => ({
-    helpers: {
-      status: {
-        getCurrentPermission: getCurrentStatusPermission,
-        setCurrentPermission: setCurrentStatusPermission
-      },
-      transaction: {
-        get: getTransaction,
-        set: () => {},
-        getCurrentPermission: getCurrentTransactionPermission,
-        setCurrentPermission: setCurrentTransactionPermission
+  const getSampleRequest = ({
+    getCurrentStatusPermission = () => ({}),
+    setCurrentStatusPermission = () => {},
+    getCurrentTransactionPermission = () => getSamplePermission(),
+    setCurrentTransactionPermission = () => {},
+    getTransaction = () => ({ permissions: [getSamplePermission()] }),
+    getCatalog = () => ({
+      licence_type_radio_salmon: 'Salmon and sea trout'
+    })
+  } = {}) => ({
+    cache: () => ({
+      helpers: {
+        status: {
+          getCurrentPermission: getCurrentStatusPermission,
+          setCurrentPermission: setCurrentStatusPermission
+        },
+        transaction: {
+          get: getTransaction,
+          set: () => {},
+          getCurrentPermission: getCurrentTransactionPermission,
+          setCurrentPermission: setCurrentTransactionPermission
+        }
       }
-    }
-  }),
-  i18n: {
-    getCatalog
-  },
-  url: {
-    search: ''
-  },
-  path: ''
-})
+    }),
+    i18n: {
+      getCatalog
+    },
+    url: {
+      search: ''
+    },
+    path: ''
+  })
 
-const getSamplePermission = (overrides = {}) => ({
-  isLicenceForYou: true,
-  licenceStartDate: '2021-07-01',
-  numberOfRods: '3',
-  licenceType: 'Salmon and sea trout',
-  licenceLength: '12M',
-  licensee: {
-    firstName: 'Brenin',
-    lastName: 'Pysgotwr',
-    birthDate: '1946-01-01'
-  },
-  permit: {
-    cost: 6
-  },
-  ...overrides
+  const getSamplePermission = (overrides = {}) => ({
+    isLicenceForYou: true,
+    licenceStartDate: '2021-07-01',
+    numberOfRods: '3',
+    licenceType: 'Salmon and sea trout',
+    licenceLength: '12M',
+    licensee: {
+      firstName: 'Brenin',
+      lastName: 'Pysgotwr',
+      birthDate: '1946-01-01'
+    },
+    permit: {
+      cost: 6
+    },
+    ...overrides
+  })
 })

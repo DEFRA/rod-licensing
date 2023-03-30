@@ -1,5 +1,4 @@
 import pageRoute from '../../../../routes/page-route.js'
-import { AUTHENTICATE } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 require('../route.js') // require rather than import to avoid lint error with unused variable
 
@@ -27,12 +26,6 @@ describe('page route next', () => {
     const request = Symbol('request')
     nextPage(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
-  })
-
-  it('passes RENEWAL_START_VALIDATE to addLangaugeCodeToUri', () => {
-    const request = Symbol('request')
-    nextPage(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.anything(), AUTHENTICATE.uri)
   })
 
   it('next page returns result of addLanguageCodeToUri', () => {

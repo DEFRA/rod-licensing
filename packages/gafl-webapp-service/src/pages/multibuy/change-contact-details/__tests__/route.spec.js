@@ -11,10 +11,13 @@ import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants'
 import pageRoute from '../../../../routes/page-route.js'
 import { CHANGE_CONTACT_DETAILS_SEEN } from '../../../../constants.js'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
 
 jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn(() => Symbol('addLanguageCodeToUri'))
 }))
+
+jest.mock('../../../../processors/licence-type-display.js')
 
 jest.mock('../../../../processors/mapping-constants', () => ({
   HOW_CONTACTED: {
@@ -147,7 +150,7 @@ describe('change-contact-details > route', () => {
         catalog: mssgCatalog
       })
     )
-    expect(summaryTable[4].value.text).toBe(mssg)
+    expect(summaryTable[2].value.text).toBe(mssg)
   })
 
   describe('getLicenseeDetailsSummaryRows', () => {
@@ -244,6 +247,7 @@ describe('change-contact-details > route', () => {
     it.each([[ADDRESS_LOOKUP.uri], [LICENCE_FULFILMENT.uri], [LICENCE_CONFIRMATION_METHOD.uri], [CONTACT.uri], [NEWSLETTER.uri]])(
       'test addLanguageCodeToUri is called correctly',
       async urlToCheck => {
+        isPhysical.mockReturnValue(true)
         const sampleRequest = getRequestMock(getMockPermission({}))
         await getData(sampleRequest)
         expect(addLanguageCodeToUri).toHaveBeenCalledWith(sampleRequest, urlToCheck)

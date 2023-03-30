@@ -2,7 +2,7 @@ import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { licenceTypeDisplay, getErrorPage } from '../../../processors/licence-type-display.js'
 import { displayStartTime, cacheDateFormat } from '../../../processors/date-and-time-display.js'
-import findPermit from '../../summary/find-permit.js'
+import { findPermit } from '../../../processors/find-permit.js'
 import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../../constants.js'
 import moment from 'moment-timezone'
 import {

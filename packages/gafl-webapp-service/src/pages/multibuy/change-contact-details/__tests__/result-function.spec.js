@@ -1,6 +1,9 @@
 import resultFunction from '../result-function'
 import { CommonResults, MultibuyForYou, ShowDigitalLicencePages } from '../../../../constants.js'
 import { isMultibuyForYou } from '../../../../handlers/multibuy-for-you-handler.js'
+import { isPhysical } from '../../../../processors/licence-type-display'
+
+jest.mock('../../../../processors/licence-type-display.js')
 
 jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
@@ -28,6 +31,7 @@ describe('change-contact-details > result-function', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should return the digital licence screen, if licence is in renewal, is 12 months and showDigitalLicencePages is true', async () => {
+      isPhysical.mockReturnValue(true)
       const mockStatus = { renewal: true, showDigitalLicencePages: true }
       const mockTransaction = {
         licenceLength: '12M',
