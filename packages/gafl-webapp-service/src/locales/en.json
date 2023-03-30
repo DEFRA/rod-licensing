@@ -305,8 +305,6 @@
   "licence_confirm_method_how_body_text": "This is where we will send confirmation of the fishing licence",
   "licence_confirm_method_how_title_other": "How do they want their fishing licence confirmation?",
   "licence_confirm_method_how_title_you": "How do you want your fishing licence confirmation?",
-  "licence_confirm_method_where_body_hint_other": "Licence information will be sent by email or text message only. We will not send a licence card.",
-  "licence_confirm_method_where_body_hint_you": "You will receive your licence information by email or text message only. You will not receive a licence card.",
   "licence_confirm_method_where_body_text": "This is where we will send the licence after payment.",
   "licence_confirm_method_where_title_other": "Where should we send the fishing licence?",
   "licence_confirm_method_where_title_you": "Where should we send your fishing licence?",
