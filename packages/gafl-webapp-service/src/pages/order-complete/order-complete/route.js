@@ -7,10 +7,18 @@ import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
+const checkForSalmonPermits = transaction => {
+  for (const permission of transaction.permissions) {
+    if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
+      return true
+    }
+  }
+  return false
+}
+
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   // If the agreed flag is not set to true then throw an exception
   if (!status[COMPLETION_STATUS.agreed]) {
@@ -31,11 +39,10 @@ export const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
 
   return {
-    isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    licenceTypes: mappings.LICENCE_TYPE,
     howContacted: mappings.HOW_CONTACTED,
     totalCost: transaction.cost,
     numberOfLicences: transaction.permissions.length,
+    displayCatchReturnInfo: checkForSalmonPermits(transaction),
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
