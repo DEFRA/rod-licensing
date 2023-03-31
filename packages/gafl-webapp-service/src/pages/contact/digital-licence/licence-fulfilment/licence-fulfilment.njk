@@ -1,9 +1,7 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = mssgs.licence_fulfilment_title_you if data.isLicenceForYou else mssgs.licence_fulfilment_title_other %}
-
-{% set errorMsg = mssgs.licence_fulfilment_error %}
+{% set title = mssgs['licence_fulfilment_title_' + data.youOrOther] %}
 
 {% set errorMap = {
         'licence-option': {
@@ -23,7 +21,7 @@
                 text: mssgs.licence_fulfilment_radio_paperless,
                 checked: payload['licence-option'] === 'digital',
                 hint: {
-                    html: mssgs.licence_fulfilment_radio_paperless_hint_you if data.isLicenceForYou else mssgs.licence_fulfilment_radio_paperless_hint_other
+                    html: mssgs['licence_fulfilment_radio_paperless_hint_' + data.youOrOther]
                 }
             },
             {
@@ -31,7 +29,7 @@
                 text: mssgs.licence_fulfilment_radio_card,
                 checked: payload['licence-option'] === 'paper-licence',
                 hint: {
-                    html: mssgs.licence_fulfilment_radio_card_hint_you if data.isLicenceForYou else mssgs.licence_fulfilment_radio_card_hint_other
+                    html: mssgs['licence_fulfilment_radio_card_hint_' + data.youOrOther]
                 }
             }
         ],
