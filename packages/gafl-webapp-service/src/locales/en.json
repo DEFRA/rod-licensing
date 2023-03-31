@@ -76,7 +76,7 @@
   "address_entry_error_pattern_postcode": "The postcode doesn’t look right. Check and enter again",
   "address_entry_other": "Enter their address",
   "address_entry_you": "Enter your address",
-  "address_lookup_content_info": "This is where we will send the licence card. A bankside enforcement officer may ask for this information if the licence is checked.",
+  "address_lookup_content_info": "A bankside enforcement officer may ask for this information if the licence is checked.",
   "address_lookup_crown_copyright_new_tab": "OS (opens in a new tab)",
   "address_lookup_crown_copyright_ref": "100024198.",
   "address_lookup_crown_copyright_terms_link": "terms and conditions",
