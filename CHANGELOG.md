@@ -1,4 +1,14 @@
 
+## v1.33.0-rc.7 (2023-03-31)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1672](https://github.com/DEFRA/rod-licensing/pull/1672) Remove redundant text from user journey ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1671](https://github.com/DEFRA/rod-licensing/pull/1671) Remove text from address lookup page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.33.0-rc.6 (2023-03-30)
 
 #### :rocket: Enhancement
