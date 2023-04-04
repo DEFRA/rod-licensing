@@ -40,7 +40,7 @@ describe('licenceTypeDisplay', () => {
   })
 
   it('returns senior if person is senior', () => {
-    const permission = getPermission()
+    const permission = getPermission({ licenceStartDate: moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD') })
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
     expect(result).toEqual('over_65, Salmon and sea trout')
@@ -93,7 +93,7 @@ describe('licenceTypeAndLengthDisplay', () => {
   })
 
   it('returns senior if licence length is senior', () => {
-    const permission = getPermission()
+    const permission = getPermission({ licenceStartDate: moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD') })
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('over_65, Salmon and sea trout, 12 months')
