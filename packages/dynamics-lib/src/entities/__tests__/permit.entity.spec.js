@@ -22,6 +22,8 @@ describe('permit entity', () => {
         defra_iscountersales: true,
         defra_recurringsupported: false,
         defra_advertisedprice: 6.0,
+        defra_newadvertisedprice: 7.2,
+        defra_dateofpricechange: '2023-04-01T00:00:00Z',
         defra_itemid: '42289'
       },
       optionSetData
@@ -41,6 +43,8 @@ describe('permit entity', () => {
       isCounterSales: true,
       isRecurringPaymentSupported: false,
       cost: 6,
+      newCost: 7.2,
+      newCostStartDate: '2023-04-01T00:00:00Z',
       itemId: '42289'
     }
 

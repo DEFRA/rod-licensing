@@ -55,7 +55,6 @@ export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
 export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 export const RENEWAL_START_DATE = { uri: '/buy/renew/renewal-start-date', page: 'renewal-start-date' }
-export const RENEWAL_START_VALIDATE = { uri: '/buy/renew/renewal-start-date/validate' }
 export const RENEWAL_LICENCE = { uri: '/renew-my-licence/{reference?}' }
 
 export const CONTROLLER = { uri: '/buy' }
@@ -66,6 +65,7 @@ export const SET_CURRENT_PERMISSION = { uri: '/buy/set-current-permission' }
 
 export const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
+export const ERROR_TESTING = { uri: '/buy/throw-error' }
 
 /**
  * These are informational static pages
@@ -75,6 +75,7 @@ export const ACCESSIBILITY_STATEMENT = { uri: '/guidance/accessibility-statement
 export const PRIVACY_POLICY = { uri: '/guidance/privacy-policy', page: 'privacy-policy' }
 export const REFUND_POLICY = { uri: '/guidance/refund-policy', page: 'refund-policy' }
 export const OS_TERMS = { uri: '/guidance/os-terms', page: 'os-terms' }
+export const NEW_PRICES = { uri: '/guidance/new-prices', page: 'new-prices' }
 
 /**
  * These are inserted at runtime by the test framework but the session manager needs to know about them

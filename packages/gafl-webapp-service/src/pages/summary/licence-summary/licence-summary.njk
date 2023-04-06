@@ -5,6 +5,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
 {% from "back-link/macro.njk" import govukBackLink %}
+{% from "notification-banner.njk" import notificationBanner %}
 
 {% set title = mssgs.licence_summary_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -17,7 +18,7 @@
         isPageHeading: true
       }
     }) %}
-    {{ govukSummaryList({ 
+    {{ govukSummaryList({
       classes: 'licence-summary-list',
       rows: data.licenceSummaryRows
     }) }}
@@ -34,6 +35,11 @@
               classes: "govuk-!-margin-bottom-7"
             }) }}
         {% endif %}
+        {% block notificationContent %}
+          {% if data.SHOW_NOTIFICATION_BANNER %}
+            {{ notificationBanner(data.uri.newPrices, mssgs) }}
+          {% endif%}
+        {% endblock %}
         <form method="post">
             {{ licenseDetailsSummary | trim | safe }}
 
@@ -51,8 +57,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-
-
-

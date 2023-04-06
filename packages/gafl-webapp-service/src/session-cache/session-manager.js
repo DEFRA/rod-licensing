@@ -15,10 +15,10 @@ import {
   REFUND_POLICY,
   PRIVACY_POLICY,
   ACCESSIBILITY_STATEMENT,
-  COOKIES
+  COOKIES,
+  NEW_PRICES
 } from '../uri.js'
 import { initialiseAnalyticsSessionData } from '../processors/analytics.js'
-import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
 const debug = db('webapp:session-manager')
 
@@ -35,7 +35,8 @@ const agreedHandlerProtectionExemptSet = [
   REFUND_POLICY.uri,
   PRIVACY_POLICY.uri,
   ACCESSIBILITY_STATEMENT.uri,
-  COOKIES.uri
+  COOKIES.uri,
+  NEW_PRICES.uri
 ]
 
 // regex for /renew/{referenceNumber?}, /buy/renew/identify and /renew-my-licence/{referenceNumber?}
@@ -91,7 +92,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
      */
     const status = await request.cache().helpers.status.get()
     if (status.agreed && !agreedHandlerProtectionExemptSet.includes(request.path)) {
-      return h.redirect(addLanguageCodeToUri(request, AGREED.uri)).takeover()
+      return h.redirectWithLanguageCode(AGREED.uri).takeover()
     }
 
     /*
@@ -110,7 +111,7 @@ const sessionManager = sessionCookieName => async (request, h) => {
     if (initialized) {
       await initialiseAnalyticsSessionData(request)
       if (!includesRegex(request.path, startProtectionExemptSet)) {
-        return h.redirect(CONTROLLER.uri).takeover()
+        return h.redirectWithLanguageCode(CONTROLLER.uri).takeover()
       }
     }
   }

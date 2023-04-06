@@ -1,5 +1,4 @@
 import handler from '../authentication-handler.js'
-import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { IDENTIFY, CONTROLLER, RENEWAL_INACTIVE } from '../../uri.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
@@ -54,25 +53,30 @@ describe.each([
   })
 
   it(`redirects to decorated uri if auth ${authResult ? 'passes' : 'fails'}`, async () => {
-    const expectedUri = Symbol('decorated uri')
-    addLanguageCodeToUri.mockReturnValueOnce(expectedUri)
+    const mockRequest = getSampleRequest()
     const responseToolkit = getSampleResponseToolkit()
-    await handler(getSampleRequest(), responseToolkit)
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(expectedUri)
+    await handler(mockRequest, responseToolkit)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(redirectUri)
   })
 
-  it(`passes request to addLanguageCodeToUri if auth ${authResult ? 'passes' : 'fails'}`, async () => {
-    const request = getSampleRequest()
-    await handler(request, getSampleResponseToolkit())
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expect.anything())
+  it('calls salesApi.authenticate with the date of birth, postcode and payload reference number if present', async () => {
+    const reference = Symbol('reference')
+    const mockRequest = getSampleRequest(reference)
+    const responseToolkit = getSampleResponseToolkit()
+    await handler(mockRequest, responseToolkit)
+    expect(salesApi.authenticate).toHaveBeenCalledWith(reference, '1970-01-01', 'AB1 1AB')
   })
 
-  it(`passes ${uriDescription} uri to addLangaugeCodeToUri if result error ${authResult ? 'passes' : 'fails'}`, async () => {
-    await handler(getSampleRequest(), getSampleResponseToolkit())
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(expect.any(Object), redirectUri)
+  it('calls salesApi.authenticate with the date of birth, postcode and permission reference number if the payload reference number is not present', async () => {
+    const reference = Symbol('reference')
+    const mockRequest = getSampleRequest(null, reference)
+    const responseToolkit = getSampleResponseToolkit()
+    await handler(mockRequest, responseToolkit)
+
+    expect(salesApi.authenticate).toHaveBeenCalledWith(reference, '1970-01-01', 'AB1 1AB')
   })
 
-  const getSampleRequest = () => ({
+  const getSampleRequest = (payloadReference = 'ABC123', permissionReference = null) => ({
     cache: () => ({
       helpers: {
         page: {
@@ -82,7 +86,7 @@ describe.each([
               'date-of-birth-month': 1,
               'date-of-birth-day': 1,
               postcode: 'AB1 1AB',
-              referenceNumber: 'ABC123'
+              referenceNumber: payloadReference
             }
           }),
           setCurrentPermission: async () => {}
@@ -94,13 +98,15 @@ describe.each([
           setCurrentPermission: async () => {}
         },
         status: {
-          getCurrentPermission: async () => {},
+          getCurrentPermission: async () => ({
+            referenceNumber: permissionReference
+          }),
           setCurrentPermission: async () => {}
         }
       }
     })
   })
   const getSampleResponseToolkit = () => ({
-    redirect: jest.fn()
+    redirectWithLanguageCode: jest.fn()
   })
 })

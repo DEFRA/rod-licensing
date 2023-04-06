@@ -9,7 +9,8 @@ jest.mock('../uri.js', () => ({
   COOKIES: { uri: '/COOKIES' },
   PRIVACY_POLICY: { uri: '/PRIVACY_POLICY' },
   REFUND_POLICY: { uri: '/REFUND_POLICY' },
-  NEW_TRANSACTION: { uri: '/NEW_TRANSACTION' }
+  NEW_TRANSACTION: { uri: '/NEW_TRANSACTION' },
+  NEW_PRICES: { uri: '/NEW_PRICES' }
 }))
 
 export const catboxOptions = {
@@ -31,6 +32,16 @@ describe('The server', () => {
 
     await init()
     expect(server.info.port).toBe(1234)
+    await server.stop()
+  })
+
+  it('decorates the toolkit with redirectWithLanguageCode', async () => {
+    createServer(catboxOptions)
+
+    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(jest.fn())
+
+    await init()
+    expect(serverDecorateSpy).toHaveBeenCalledWith('toolkit', 'redirectWithLanguageCode', expect.any(Function))
     await server.stop()
   })
 
@@ -106,7 +117,8 @@ describe('The server', () => {
       ['refunds', 'refunds.url', 'REFUND_POLICY'],
       ['accessibility', 'access.ibility.uri', 'ACCESSIBILITY_STATEMENT'],
       ['privacy', 'privacy.uri', 'PRIVACY_POLICY'],
-      ['clear', 'new-transaction.url', 'NEW_TRANSACTION']
+      ['clear', 'new-transaction.url', 'NEW_TRANSACTION'],
+      ['newPrices', 'new-prices.url', 'NEW_PRICES']
     ])('should append Welsh language code to _uri elements if the current page contains it', (element, uri, uriConst) => {
       const request = getSampleRequest({
         url: {
@@ -115,7 +127,6 @@ describe('The server', () => {
       })
       uris[uriConst] = { uri }
       const regexMatch = new RegExp(`^${uri}\\?lang=cy$`)
-      console.log('request?.url?.path?.search', request?.url?.path?.search)
       layoutContextAmalgamation(request, {})
       expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
     })
@@ -125,7 +136,8 @@ describe('The server', () => {
       ['refunds', 'i-want-my-money-back.url', 'REFUND_POLICY'],
       ['accessibility', 'easy-to-use.uri', 'ACCESSIBILITY_STATEMENT'],
       ['privacy', 'private.uri', 'PRIVACY_POLICY'],
-      ['clear', 'clear.url', 'NEW_TRANSACTION']
+      ['clear', 'clear.url', 'NEW_TRANSACTION'],
+      ['newPrices', 'new-prices.url', 'NEW_PRICES']
     ])("should omit Welsh language code from _uri elements if the current page doesn't contain it", (element, uri, uriConst) => {
       const request = getSampleRequest({
         url: {

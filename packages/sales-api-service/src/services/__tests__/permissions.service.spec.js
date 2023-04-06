@@ -7,7 +7,15 @@ import {
   MOCK_1DAY_FULL_PERMIT_ENTITY,
   MOCK_CONCESSION
 } from '../../__mocks__/test-data.js'
-import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
+import { JUNIOR_MAX_AGE, NEW_SENIOR_MIN_AGE, isSenior } from '@defra-fish/business-rules-lib'
+
+jest.mock('@defra-fish/business-rules-lib', () => {
+  const brl = jest.requireActual('@defra-fish/business-rules-lib')
+  return {
+    ...brl,
+    isSenior: jest.fn(brl.isSenior)
+  }
+})
 
 jest.mock('../reference-data.service.js', () => ({
   ...jest.requireActual('../reference-data.service.js'),
@@ -32,70 +40,62 @@ jest.mock('../reference-data.service.js', () => ({
   }
 }))
 
+const getSamplePermission = ({
+  permitId = MOCK_1DAY_FULL_PERMIT_ENTITY.id,
+  birthDate = moment().subtract(NEW_SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
+} = {}) => ({
+  permitId,
+  issueDate: moment().toISOString(),
+  startDate: moment().toISOString(),
+  licensee: {
+    firstName: 'Fester',
+    lastName: 'Tester',
+    birthDate
+  }
+})
+
 describe('permissions service', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('generatePermissionNumber', () => {
     it('generates a permission number for adults', async () => {
-      const now = moment()
       const number = await generatePermissionNumber(
-        {
+        getSamplePermission({
           permitId: MOCK_12MONTH_DISABLED_PERMIT.id,
-          issueDate: now.toISOString(),
-          startDate: now.toISOString(),
-          licensee: {
-            firstName: 'Fester',
-            lastName: 'Tester',
-            birthDate: moment(now).subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
-          }
-        },
+          birthDate: moment().subtract(JUNIOR_MAX_AGE, 'years').format('YYYY-MM-DD')
+        }),
         'Telesales'
       )
-      const block1 = moment(now).add(1, 'year').subtract(1, 'day').endOf('day').format('HHDDMMYY')
+      const block1 = moment().add(1, 'year').subtract(1, 'day').endOf('day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
 
     it('generates a permission number for juniors', async () => {
-      const now = moment()
       const number = await generatePermissionNumber(
-        {
-          permitId: MOCK_1DAY_FULL_PERMIT_ENTITY.id,
-          issueDate: now.toISOString(),
-          startDate: now.toISOString(),
-          licensee: {
-            firstName: 'Fester',
-            lastName: 'Tester',
-            birthDate: moment(now)
-              .subtract(JUNIOR_MAX_AGE - 1, 'years')
-              .format('YYYY-MM-DD')
-          }
-        },
+        getSamplePermission({
+          birthDate: moment()
+            .subtract(JUNIOR_MAX_AGE - 1, 'years')
+            .format('YYYY-MM-DD')
+        }),
         'Web Sales'
       )
-      const block1 = moment(now).add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
+      const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1JFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
 
     it('generates a permission number for seniors', async () => {
-      const now = moment()
-      const number = await generatePermissionNumber(
-        {
-          permitId: MOCK_1DAY_FULL_PERMIT_ENTITY.id,
-          issueDate: now.toISOString(),
-          startDate: now.toISOString(),
-          licensee: {
-            firstName: 'Fester',
-            lastName: 'Tester',
-            birthDate: moment(now).subtract(SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
-          }
-        },
-        'Web Sales'
-      )
-      const block1 = moment(now).add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
+      const number = await generatePermissionNumber(getSamplePermission(), 'Web Sales')
+      const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
+    })
+
+    it('passes permission start date to isSenior', async () => {
+      const samplePermission = getSamplePermission()
+      await generatePermissionNumber(samplePermission, 'Web Sales')
+      expect(isSenior).toHaveBeenCalledWith(expect.any(Number), samplePermission.startDate)
     })
   })
 

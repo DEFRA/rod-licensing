@@ -1,81 +1,65 @@
 {% extends "layout.njk" %}
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
+{% from "inset-text/macro.njk" import govukInsetText %}
 
-{% block pageTitle %}{{ mssgs.server_error_title }}{% endblock %}
+{% set title = '' %}
+{% if prePaymentError %}
+    {% set title = mssgs.server_error_unable_to_process_payment %}
+{% elseif postPaymentError %}
+    {% set title = mssgs.server_error_unable_to_retrieve %}
+{% else %}
+    {% set title = mssgs.server_error_occured %}
+{% endif %}
 
-{% macro standard() %}
-   {% call govukFieldset({
-       legend: {
-         text: mssgs.server_error_occured,
-         classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-         isPageHeading: true
-       }
-     }) %}
-     <p class="govuk-body-m">{{ mssgs.server_error_logged }}<a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank">{{ mssgs.feedback_link_text }}</a>{{ mssgs.feedback_link_suffix_alt }}</p>
-     <h2 class="govuk-heading-m">{{ mssgs.server_error_what_now }}</h2>
-     <a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a>
-   {% endcall %}
-{% endmacro %}
+{% block pageTitle %}{{ title }}{{ mssgs.server_error_title_suffix }}{% endblock %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
     {% block pageContent %}
-        {% if serverError.origin %}
-            {% if serverError.origin.step === 'pre-payment' %}
-               {% call govukFieldset({
-                   legend: {
-                     text: mssgs.server_error_unable_to_process_payment,
-                     classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-                     isPageHeading: true
-                   }
-                 }) %}
-                    <p class="govuk-body-m">{{ mssgs.server_error_try_again }}</p>
-                    <p class="govuk-body-m">{{ mssgs.server_error_post_office }}</p>
-                    <p class="govuk-body-m">{{ mssgs.server_error_post_office_check }}<a class="govuk-link" href="https://www.postoffice.co.uk/branch-finder" rel="noreferrer noopener" target="_blank">{{ mssgs.server_error_post_office_check_link }}</a></p>
-                    {{ govukButton({
-                        attributes: { id: "try-again" },
-                        preventDoubleClick: true,
-                        name: "try-again",
-                        text: mssgs.try_again,
-                        href: uri.agreed,
-                        classes: "govuk-!-margin-top-5"
-                    }) }}
-               {% endcall %}
-               <a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a>
-            {% elseif serverError.origin.step === 'post-payment' %}
-               {% call govukFieldset({
-                   legend: {
-                     text: mssgs.server_error_unable_to_retrieve,
-                     classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
-                     isPageHeading: true
-                   }
-                 }) %}
-                    <p class="govuk-body-m">{{ mssgs.server_error_unable_to_retrieve_pay_details }}</p>
-                    <p class="govuk-body-m">{{ mssgs.server_error_if_seeing_page }}</p>
-                    <ul class="govuk-list govuk-list--bullet">
-                      <li>{{ mssgs.server_error_bulletpoint_1 }}</li>
-                      <li>{{ mssgs.server_error_bulletpoint_2 }}</li>
-                      <li>{{ mssgs.server_error_bulletpoint_3 }}</li>
-                    </ul>
-                    {{ govukButton({
-                        attributes: { id: "try-again" },
-                        preventDoubleClick: true,
-                        name: "try-again",
-                        text: mssgs.try_again,
-                        href: uri.agreed,
-                        classes: "govuk-!-margin-top-5"
-                    }) }}
-                {% endcall %}
-                <a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a>
-            {% else %}
-                {{ standard() }}
-            {% endif %}
-        {% else %}
-            {{ standard() }}
-        {% endif %}
+        {% call govukFieldset({
+            legend: {
+              text: title,
+              classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+              isPageHeading: true
+            }
+          }) %}
+
+          {% if prePaymentError %}
+              <p class="govuk-body-m">{{ mssgs.server_error_try_again }}</p>
+              <p class="govuk-body-m">{{ mssgs.server_error_environment_agency }}</p>
+            {{ govukInsetText({
+                html: mssgs.server_error_environment_agency_name + '<br/>'
+                + mssgs.server_error_environment_agency_telephone + '<br/>'
+                + mssgs.server_error_environment_agency_opening + '<br/>'
+                + '<a href="https://www.gov.uk/call-charges" class="govuk_link" rel="noreferrer noopener" target="_blank">' + mssgs.server_error_environment_agency_link + '</a>',
+                classes: "no-print"
+            }) }}
+          {% elseif postPaymentError %}
+              <p class="govuk-body-m">{{ mssgs.server_error_unable_to_retrieve_pay_details }}</p>
+              <p class="govuk-body-m">{{ mssgs.server_error_if_seeing_page }}</p>
+              <ul class="govuk-list govuk-list--bullet">
+                <li>{{ mssgs.server_error_bulletpoint_1 }}</li>
+                <li>{{ mssgs.server_error_bulletpoint_2 }}</li>
+                <li>{{ mssgs.server_error_bulletpoint_3 }}</li>
+              </ul>
+              {{ govukButton({
+                  attributes: { id: "try-again" },
+                  preventDoubleClick: true,
+                  name: "try-again",
+                  text: mssgs.try_again,
+                  href: uri.agreed,
+                  classes: "govuk-!-margin-top-5"
+              }) }}
+          {% else %}
+              <p class="govuk-body-m">{{ mssgs.server_error_logged }}<a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank">{{ mssgs.server_error_feedback_link_text }}</a>{{ mssgs.feedback_link_suffix_alt }}</p>
+              <h2 class="govuk-heading-m">{{ mssgs.server_error_what_now }}</h2>
+          {% endif %}
+
+        {% endcall %}
+        <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a></p>
      {% endblock %}
      </div>
 </div>

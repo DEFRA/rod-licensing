@@ -1,10 +1,5 @@
 import { ANALYTICS } from '../../constants.js'
 import analyticsHandler from '../analytics-handler.js'
-import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
-
-jest.mock('../../processors/uri-helper.js', () => ({
-  addLanguageCodeToUri: jest.fn((_request, uri) => uri)
-}))
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -36,7 +31,7 @@ describe('The analytics handler', () => {
 
     await analyticsHandler(request, responseToolkit)
 
-    expect(responseToolkit.redirect).toHaveBeenCalledWith(redirect)
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(redirect)
   })
 
   it.each([
@@ -56,30 +51,7 @@ describe('The analytics handler', () => {
 
     await analyticsHandler(request, responseToolkit)
 
-    expect(responseToolkit.redirect).toHaveBeenCalledWith('/buy')
-  })
-
-  it('calls addLanguageCodeToUri with request and /buy', async () => {
-    const headers = { origin: 'https://localhost:1234', referer: 'https://localhost:3000/buy' }
-    const redirect = '/buy'
-    const payload = { analyticsResponse: 'accept' }
-    const responseToolkit = generateResponseToolkitMock()
-    const request = generateRequestMock(payload, 'analytics', headers, 'localhost:1234')
-
-    await analyticsHandler(request, responseToolkit)
-
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, redirect)
-  })
-
-  it('addLanguageCodeToUri is not called when HTTP_REFERER host matches the host of the current page', async () => {
-    const headers = { origin: 'https://localhost:3000', referer: 'https://localhost:3000/example/test' }
-    const payload = { analyticsResponse: 'accept' }
-    const responseToolkit = generateResponseToolkitMock()
-    const request = generateRequestMock(payload, 'analytics', headers, 'localhost:3000')
-
-    await analyticsHandler(request, responseToolkit)
-
-    expect(addLanguageCodeToUri).not.toBeCalled()
+    expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith('/buy')
   })
 
   it('selected not true and response is accept sets selected to true and acceptTracking to true', async () => {
@@ -102,6 +74,15 @@ describe('The analytics handler', () => {
     )
   })
 
+  it('selected not true and response is null, then does not update the settings', async () => {
+    const payload = { analyticsResponse: null }
+    const request = generateRequestMock(payload, 'analytics')
+
+    await analyticsHandler(request, generateResponseToolkitMock())
+
+    expect(mockAnalyticsSet).not.toHaveBeenCalled()
+  })
+
   it('selected is true sets seenMessage to true', async () => {
     const analytics = { [ANALYTICS.selected]: true }
     const request = generateRequestMock('payload', analytics)
@@ -109,6 +90,15 @@ describe('The analytics handler', () => {
     await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).toHaveBeenCalledWith(expect.objectContaining({ [ANALYTICS.seenMessage]: true }))
+  })
+
+  it('payload is empty, then does not update the settings', async () => {
+    const payload = {}
+    const request = generateRequestMock(payload, 'analytics')
+
+    await analyticsHandler(request, generateResponseToolkitMock())
+
+    expect(mockAnalyticsSet).not.toHaveBeenCalled()
   })
 
   const mockAnalyticsSet = jest.fn()
@@ -136,6 +126,6 @@ describe('The analytics handler', () => {
   })
 
   const generateResponseToolkitMock = () => ({
-    redirect: jest.fn()
+    redirectWithLanguageCode: jest.fn()
   })
 })

@@ -17,7 +17,7 @@ import {
   SESSION_COOKIE_NAME_DEFAULT,
   SESSION_TTL_MS_DEFAULT
 } from './constants.js'
-import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TRANSACTION } from './uri.js'
+import { ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, REFUND_POLICY, NEW_TRANSACTION, NEW_PRICES } from './uri.js'
 
 import sessionManager, { isStaticResource } from './session-cache/session-manager.js'
 import { cacheDecorator } from './session-cache/cache-decorator.js'
@@ -25,6 +25,7 @@ import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
+import { addLanguageCodeToUri } from './processors/uri-helper.js'
 airbrake.initialise()
 let server
 
@@ -86,6 +87,7 @@ export const layoutContextAmalgamation = (request, h) => {
         privacy: `${PRIVACY_POLICY.uri}${queryString}`,
         feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
         clear: `${NEW_TRANSACTION.uri}${queryString}`,
+        newPrices: `${NEW_PRICES.uri}${queryString}`,
         queryParams: request.query
       },
       credentials: request.auth.credentials
@@ -178,6 +180,12 @@ const init = async () => {
    * simple setters and getters hiding the session key.
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
+
+  server.decorate('toolkit', 'redirectWithLanguageCode', function (redirect) {
+    const uriWithLanguage = addLanguageCodeToUri(this.request, redirect)
+
+    return this.redirect(uriWithLanguage)
+  })
 
   if (process.env.CHANNEL === 'telesales') {
     await initialiseOIDC(server)

@@ -53,12 +53,22 @@ export const errorHandler = async (request, h) => {
     }
     console.error('Error processing request. Request: %j, Exception: %o', requestDetail, request.response)
 
+    const serverError = request.response.output.payload
+
+    const prePaymentError = serverError.origin && serverError.origin.step === 'pre-payment'
+    const postPaymentError = serverError.origin && serverError.origin.step === 'post-payment'
+
     return h
       .view(SERVER_ERROR.page, {
         mssgs,
         altLang,
-        serverError: request.response.output.payload,
-        uri: { new: NEW_TRANSACTION.uri, agreed: AGREED.uri }
+        prePaymentError,
+        postPaymentError,
+        serverError,
+        uri: {
+          new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
+          agreed: addLanguageCodeToUri(request, AGREED.uri)
+        }
       })
       .code(request.response.output.statusCode)
   }

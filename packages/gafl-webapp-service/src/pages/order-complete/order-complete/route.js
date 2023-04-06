@@ -3,7 +3,6 @@ import pageRoute from '../../../routes/page-route.js'
 import Boom from '@hapi/boom'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../constants.js'
 import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_DETAILS } from '../../../uri.js'
-import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
@@ -30,21 +29,17 @@ export const getData = async request => {
 
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
-  const startTimeStringTitle = displayStartTime(request, permission)
 
   return {
-    permission,
-    startTimeStringTitle,
+    isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
     licenceTypes: mappings.LICENCE_TYPE,
-    isPostalFulfilment: permission.licensee.postalFulfilment,
-    contactMethod: permission.licensee.preferredMethodOfConfirmation,
     howContacted: mappings.HOW_CONTACTED,
     totalCost: transaction.cost,
     numberOfLicences: transaction.permissions.length,
     uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
-      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri)
+      licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
     }
   }
 }

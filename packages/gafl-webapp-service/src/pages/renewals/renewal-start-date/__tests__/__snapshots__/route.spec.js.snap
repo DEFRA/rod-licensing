@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getData getData returns expected outputs 1`] = `
+Object {
+  "advancedPurchaseMaxDays": 30,
+  "expiryTimeString": Symbol(expiryDate),
+  "hasExpired": undefined,
+  "maxStartDate": "09 02 2023",
+  "minStartDate": "10 01 2023",
+}
+`;

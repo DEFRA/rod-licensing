@@ -7,23 +7,28 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
 
+jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
-  getReferenceDataForEntityAndId: async (entityType, id) => {
+  getReferenceDataForEntityAndId: jest.fn(async (entityType, id) => {
     let item = null
     if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
       item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
     }
     return item
-  }
+  })
 }))
 
 describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    getPermissionCost.mockReturnValue(54)
   })
   beforeEach(AwsMock.__resetAll)
+  beforeEach(jest.clearAllMocks)
 
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
@@ -42,6 +47,28 @@ describe('transaction service', () => {
         expect.objectContaining({
           TableName: TRANSACTION_STAGING_TABLE.TableName,
           Item: expectedResult
+        })
+      )
+    })
+
+    it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
+      getPermissionCost.mockReturnValueOnce(permitPrice)
+      const mockPayload = mockTransactionPayload()
+      const { cost } = await createTransaction(mockPayload)
+      expect(cost).toBe(permitPrice)
+    })
+
+    it('passes startDate and permit to getPermissionCost', async () => {
+      getReferenceDataForEntityAndId.mockReturnValueOnce(MOCK_12MONTH_SENIOR_PERMIT)
+      const mockPayload = mockTransactionPayload()
+      const {
+        permissions: [{ startDate }]
+      } = mockPayload
+      await createTransaction(mockPayload)
+      expect(getPermissionCost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          startDate,
+          permit: MOCK_12MONTH_SENIOR_PERMIT
         })
       )
     })

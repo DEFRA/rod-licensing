@@ -23,6 +23,13 @@ mockSalesApi()
 
 describe('The licence type page', () => {
   it('returns success on requesting', async () => {
+    await injectWithCookies('GET', NEW_TRANSACTION.uri)
+    await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
+    await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
+    await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {
+      'disability-concession': disabilityConcessionTypes.blueBadge,
+      'blue-badge-number': '1234'
+    })
     const response = await injectWithCookies('GET', LICENCE_TYPE.uri)
     expect(response.statusCode).toBe(200)
   })

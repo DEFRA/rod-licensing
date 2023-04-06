@@ -8,7 +8,6 @@ import {
   PRIVACY_POLICY,
   REFUND_POLICY,
   AUTHENTICATE,
-  RENEWAL_START_VALIDATE,
   RENEWAL_PUBLIC,
   IDENTIFY,
   OS_TERMS,
@@ -16,7 +15,8 @@ import {
   SET_CURRENT_PERMISSION,
   CHANGE_LICENCE_OPTIONS,
   RENEWAL_LICENCE,
-  PROCESS_ANALYTICS_PREFERENCES
+  PROCESS_ANALYTICS_PREFERENCES,
+  NEW_PRICES
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -26,7 +26,6 @@ import newSessionHandler from '../handlers/new-session-handler.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
-import renewalValidationHandler from '../handlers/renewal-start-date-validation-handler.js'
 import attribution from '../handlers/attribution-handler.js'
 import urlHandler from '../handlers/renewals-friendly-url-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
@@ -52,7 +51,7 @@ export default [
   {
     method: 'GET',
     path: '/',
-    handler: async (request, h) => h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
+    handler: async (_request, h) => h.redirectWithLanguageCode(CONTROLLER.uri)
   },
   {
     method: 'GET',
@@ -73,13 +72,8 @@ export default [
       if (request.params.referenceNumber) {
         await request.cache().helpers.status.setCurrentPermission({ referenceNumber: request.params.referenceNumber })
       }
-      return h.redirect(IDENTIFY.uri)
+      return h.redirectWithLanguageCode(IDENTIFY.uri)
     }
-  },
-  {
-    method: 'GET',
-    path: RENEWAL_START_VALIDATE.uri,
-    handler: renewalValidationHandler
   },
   {
     method: 'GET',
@@ -96,7 +90,7 @@ export default [
     path: ADD_PERMISSION.uri,
     handler: async (request, h) => {
       await addPermission(request)
-      return h.redirect(addLanguageCodeToUri(request, CONTROLLER.uri))
+      return h.redirectWithLanguageCode(CONTROLLER.uri)
     }
   },
   {
@@ -114,6 +108,21 @@ export default [
           alb: ALB_COOKIE_NAME,
           albcors: ALBCORS_COOKIE_NAME
         },
+        uri: {
+          back: addLanguageCodeToUri(request, CONTROLLER.uri)
+        }
+      })
+    }
+  },
+  {
+    method: 'GET',
+    path: NEW_PRICES.uri,
+    handler: async (request, h) => {
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+
+      return h.view(NEW_PRICES.page, {
+        altLang,
+        mssgs: request.i18n.getCatalog(),
         uri: {
           back: addLanguageCodeToUri(request, CONTROLLER.uri)
         }

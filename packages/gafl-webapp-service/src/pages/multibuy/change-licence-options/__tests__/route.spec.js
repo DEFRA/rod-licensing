@@ -3,9 +3,9 @@ import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 import { CONCESSION } from '../../../../processors/mapping-constants.js'
 import { licenceTypeDisplay, getErrorPage } from '../../../../processors/licence-type-display.js'
 import { CHANGE_LICENCE_OPTIONS_SEEN } from '../../../../constants.js'
-import findPermit from '../../../summary/find-permit'
+import { findPermit } from '../../../../processors/find-permit.js'
 
-jest.mock('../../../summary/find-permit.js')
+jest.mock('../../../../processors/find-permit.js')
 jest.mock('../../../../processors/mapping-constants.js', () => ({
   CONCESSION: {
     SENIOR: 'Senior person',
@@ -30,7 +30,6 @@ jest.mock('../../../../processors/licence-type-display.js', () => ({
   licenceTypeDisplay: jest.fn(),
   getErrorPage: jest.fn(() => '')
 }))
-jest.mock('../../../summary/find-permit')
 
 const getSamplePermission = overrides => ({
   licenceStartDate: '2021-07-01',

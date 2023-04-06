@@ -40,7 +40,15 @@
             <p class="govuk-body">{{ mssgs.order_complete_conf_info_2 }}</p>
             <p class="govuk-body">{{ mssgs.order_complete_conf_info_3 }}</p>
 
-            {% if data.permission.licenceType === data.licenceTypes['salmon-and-sea-trout'] %}
+            <div class="govuk-!-margin-bottom-3">
+                {{ govukButton({
+                    href: data.uri.licenceDetails,
+                    text: mssgs.order_complete_view_details,
+                    classes: "govuk-button--secondary"
+                }) }}
+            </div>
+
+            {% if data.isSalmonLicence %}
                 <div class="govuk-!-margin-bottom-3">
                     <h2 class="govuk-heading-l">{{ mssgs.order_complete_subheading_rcr }}</h2>
                     <div class="govuk-warning-text">
