@@ -59,7 +59,24 @@ describe.each([
     expect(responseToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(redirectUri)
   })
 
-  const getSampleRequest = () => ({
+  it('calls salesApi.authenticate with the date of birth, postcode and payload reference number if present', async () => {
+    const reference = Symbol('reference')
+    const mockRequest = getSampleRequest(reference)
+    const responseToolkit = getSampleResponseToolkit()
+    await handler(mockRequest, responseToolkit)
+    expect(salesApi.authenticate).toHaveBeenCalledWith(reference, '1970-01-01', 'AB1 1AB')
+  })
+
+  it('calls salesApi.authenticate with the date of birth, postcode and permission reference number if the payload reference number is not present', async () => {
+    const reference = Symbol('reference')
+    const mockRequest = getSampleRequest(null, reference)
+    const responseToolkit = getSampleResponseToolkit()
+    await handler(mockRequest, responseToolkit)
+
+    expect(salesApi.authenticate).toHaveBeenCalledWith(reference, '1970-01-01', 'AB1 1AB')
+  })
+
+  const getSampleRequest = (payloadReference = 'ABC123', permissionReference = null) => ({
     cache: () => ({
       helpers: {
         page: {
@@ -69,7 +86,7 @@ describe.each([
               'date-of-birth-month': 1,
               'date-of-birth-day': 1,
               postcode: 'AB1 1AB',
-              referenceNumber: 'ABC123'
+              referenceNumber: payloadReference
             }
           }),
           setCurrentPermission: async () => {}
@@ -81,7 +98,9 @@ describe.each([
           setCurrentPermission: async () => {}
         },
         status: {
-          getCurrentPermission: async () => {},
+          getCurrentPermission: async () => ({
+            referenceNumber: permissionReference
+          }),
           setCurrentPermission: async () => {}
         }
       }

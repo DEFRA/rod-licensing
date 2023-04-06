@@ -29,38 +29,27 @@ jest.mock('../../../../constants.js', () => ({
   }
 }))
 
-jest.mock('@hapi/boom', () => ({
-  forbidden: () => {
-    Symbol('403 Forbidden error')
-  }
-}))
-
 describe('The licence details page', () => {
   describe('.getData', () => {
     licenceTypeAndLengthDisplay.mockReturnValue('length')
+
     describe('throws a Boom forbidden error', () => {
-      it('test that boom is called when no status flag is set', async () => {
-        expect(async () => await getData(createMockRequest({}, {}))).rejects.toThrow(Boom)
+      it('if status agreed flag is not set', async () => {
+        const mockRequest = createMockRequest({ status: {} })
+        const boomError = Boom.forbidden('Attempt to access the licence information handler with no agreed flag set')
+        await expect(getData(mockRequest)).rejects.toThrow(boomError)
       })
 
-      it.each([
-        {
-          status: {},
-          boomError: 'Attempt to access the licence information handler with no agreed flag set',
-          description: 'status agreed flag is not set'
-        },
-        {
-          status: { [COMPLETION_STATUS.agreed]: 'agreed' },
-          boomError: 'Attempt to access the licence information handler with no posted flag set',
-          description: 'status posted flag is not set'
-        },
-        {
-          status: { [COMPLETION_STATUS.agreed]: 'agreed', [COMPLETION_STATUS.posted]: 'posted' },
-          boomError: 'Attempt to access the licence information handler with no finalised flag set',
-          description: 'status finalised flag is not set'
-        }
-      ])('boom error thrown if $description', async ({ status, boomError }) => {
-        expect(async () => await getData(createMockRequest(status, {}))).rejects.toThrow(boomError)
+      it('if status posted flag is not set', async () => {
+        const mockRequest = createMockRequest({ status: { [COMPLETION_STATUS.agreed]: true } })
+        const boomError = Boom.forbidden('Attempt to access the licence information handler with no posted flag set')
+        await expect(getData(mockRequest)).rejects.toThrow(boomError)
+      })
+
+      it('if status finalised flag is not set', async () => {
+        const mockRequest = createMockRequest({ status: { [COMPLETION_STATUS.agreed]: true, [COMPLETION_STATUS.posted]: true } })
+        const boomError = Boom.forbidden('Attempt to access the licence information handler with no finalised flag set')
+        await expect(getData(mockRequest)).rejects.toThrow(boomError)
       })
     })
 

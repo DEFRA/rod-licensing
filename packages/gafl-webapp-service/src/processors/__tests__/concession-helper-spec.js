@@ -166,7 +166,7 @@ describe('The concession helper', () => {
     })
 
     it.each(['2020-06-06', '2022-12-15', '2020-02-29'])('passes permission start date of %s to isSenior function', licenceStartDate => {
-      const licensee = getLicensee({ age: 65, referenceDate: licenceStartDate })
+      const licensee = getLicensee({ age: 66, referenceDate: licenceStartDate })
       const permission = getSamplePermission({ licenceStartDate, licensee })
       f.ageConcessionHelper(permission)
       expect(isSenior).toHaveBeenCalledWith(expect.any(Number), licenceStartDate)
