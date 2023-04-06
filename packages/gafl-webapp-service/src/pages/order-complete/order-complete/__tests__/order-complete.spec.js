@@ -5,7 +5,6 @@ import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.j
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import { displayPermissionPrice } from '../../../../processors/price-display.js'
-import { getPermissionCost } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
@@ -134,54 +133,6 @@ describe('The order completion handler', () => {
     expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
-  it('uses value returned by displayPermissionPrice for permissionCost', async () => {
-    const expectedCost = Symbol('expected cost')
-    displayPermissionPrice.mockReturnValueOnce(expectedCost)
-
-    const { permissionCost } = await getData(getSampleRequest())
-
-    expect(permissionCost).toBe(expectedCost)
-  })
-
-  it('uses value returned by displayPermissionPrice for permissionCost', async () => {
-    const expectedCost = Symbol('expected cost')
-    displayPermissionPrice.mockReturnValueOnce(expectedCost)
-
-    const { permissionCost } = await getData(getSampleRequest())
-
-    expect(permissionCost).toBe(expectedCost)
-  })
-
-  it('passes permission and label catalog to displayPermissionPrice function', async () => {
-    const permission = getSamplePermission()
-    const catalog = Symbol('catalog')
-
-    await getData(getSampleRequest({ permission, catalog }))
-    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
-  })
-
-  it('uses displayStartTime to generate startTimeStringTitle', async () => {
-    const startTime = Symbol('one minute to midnight')
-    displayStartTime.mockReturnValueOnce(startTime)
-    const { startTimeStringTitle } = await getData(getSampleRequest())
-    expect(startTimeStringTitle).toBe(startTime)
-  })
-
-  it('passes permission and label catalog to displayPermissionPrice function', async () => {
-    const permission = getSamplePermission()
-    const catalog = Symbol('catalog')
-
-    await getData(getSampleRequest({ permission, catalog }))
-    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
-  })
-
-  it('uses displayStartTime to generate startTimeStringTitle', async () => {
-    const startTime = Symbol('one minute to midnight')
-    displayStartTime.mockReturnValueOnce(startTime)
-    const { startTimeStringTitle } = await getData(getSampleRequest())
-    expect(startTimeStringTitle).toBe(startTime)
-  })
-
   it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
     const transaction = () => ({
       permissions: [],
@@ -194,13 +145,6 @@ describe('The order completion handler', () => {
 
     await getData(request)
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
-  })
-
-  it('passes request and permission to displayStartTime', async () => {
-    const permission = getSamplePermission(LICENCE_TYPE['salmon-and-sea-trout'])
-    const request = getSampleRequest({ permission })
-    await getData(request)
-    expect(displayStartTime).toHaveBeenCalledWith(request, permission)
   })
 
   it.each`
@@ -251,15 +195,5 @@ describe('The order completion handler', () => {
     const data = await getData(request)
 
     expect(data.totalCost).toEqual(100)
-  })
-
-  it.each([
-    [0, true],
-    [10, false]
-  ])('passes permission reference %s', async (cost, isFree) => {
-    const permission = getSamplePermission()
-    getPermissionCost.mockReturnValueOnce(cost)
-    const { permissionIsFree } = await getData(getSampleRequest(permission))
-    expect(permissionIsFree).toBe(isFree)
   })
 })

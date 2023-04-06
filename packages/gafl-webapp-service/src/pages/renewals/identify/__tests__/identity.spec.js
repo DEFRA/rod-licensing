@@ -267,10 +267,10 @@ describe('The easy renewal identification page', () => {
     expect(JSON.parse(payload).permissions[0].licenceType).toEqual(obj.licenceType)
   })
 
-  it('that an adult licence holder who is now over 65 gets a senior concession', async () => {
+  it('that an adult licence holder who is now over the senior concession date gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
-    newAuthenticationResult.permission.licensee.birthDate = moment().add(-65, 'years').add(-1, 'days')
+    newAuthenticationResult.permission.licensee.birthDate = moment().add(-66, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)

@@ -237,7 +237,6 @@ const getData = async request => {
   const countryName = await countries.nameFromCode(permission.licensee.countryCode)
   const changeLicenceDetails = permission.isLicenceForYou ? mssgs.change_licence_details_you : mssgs.change_licence_details_other
 
-  console.log('permission: ', permission)
   return {
     summaryTable: getLicenseeDetailsSummaryRows(permission, countryName, request),
     uri: {

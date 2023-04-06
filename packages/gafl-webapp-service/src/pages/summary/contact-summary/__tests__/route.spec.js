@@ -367,6 +367,7 @@ describe('contact-summary > route', () => {
       addLanguageCodeToUri.mockReturnValue(mockDecoratedUri)
     })
   })
+
   describe('checkNavigation', () => {
     describe.each([
       ['licence fulfilment', { [LICENCE_FULFILMENT.page]: false }, LICENCE_FULFILMENT.uri],
@@ -400,7 +401,7 @@ describe('contact-summary > route', () => {
       })
     })
 
-    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+    it('should throw a GetDataRedirect if address page is false on the status', async () => {
       const status = {
         [ADDRESS_ENTRY.page]: false,
         [ADDRESS_SELECT.page]: false
@@ -409,7 +410,7 @@ describe('contact-summary > route', () => {
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(ADDRESS_LOOKUP.uri)
     })
 
-    it('should throw a GetDataRedirect if licence-fulfilment page is false on the status', async () => {
+    it('should throw a GetDataRedirect if contact page is false on the status', async () => {
       const status = {
         [CONTACT.page]: false
       }
