@@ -58,7 +58,7 @@
     "joi": "^17.6.0",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.34",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.3.1",
     "nunjucks": "^3.2.3",
     "openid-client": "^4.9.1",
     "pdfmake": "^0.1.72",
