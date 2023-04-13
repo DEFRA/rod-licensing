@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Error payment test route handler error route has a return value with a method of GET and path of /buy/payment-error 1`] = `
+Array [
+  Object {
+    "handler": [Function],
+    "method": "GET",
+    "path": "/buy/payment-error",
+  },
+]
+`;

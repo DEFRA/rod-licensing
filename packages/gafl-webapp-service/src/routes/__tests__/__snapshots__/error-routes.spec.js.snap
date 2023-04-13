@@ -7,7 +7,7 @@ exports[`Error route handlers error route CLIENT_ERROR handler handler should re
       "client-error",
       Object {
         "altLang": Array [],
-        "clientError": "payload",
+        "clientError": Object {},
         "mssgs": Array [],
         "paymentInProgress": false,
         "uri": Object {
@@ -35,7 +35,8 @@ exports[`Error route handlers error route SERVER_ERROR handler handler should re
       Object {
         "altLang": Array [],
         "mssgs": Array [],
-        "serverError": "payload",
+        "postPaymentError": false,
+        "prePaymentError": false,
         "uri": Object {
           "agreed": Symbol(uri),
           "new": Symbol(uri),

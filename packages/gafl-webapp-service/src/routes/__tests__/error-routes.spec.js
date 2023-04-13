@@ -4,6 +4,13 @@ import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 
 jest.mock('../../processors/uri-helper.js')
 
+jest.mock('../../constants', () => ({
+  GOVPAYFAIL: {
+    prePaymentRetry: { step: 'pre-payment' },
+    postPaymentRetry: { step: 'post-payment' }
+  }
+}))
+
 describe('Error route handlers', () => {
   describe('error route', () => {
     it('has a return value with a method of GET and path of /buy/client-error and /buy/server-error', async () => {
@@ -33,7 +40,7 @@ describe('Error route handlers', () => {
         const mockToolkit = getMockToolkit()
         const decoratedUri = Symbol('uri')
         addLanguageCodeToUri.mockReturnValue(decoratedUri)
-        await clientError(getMockRequest(payment), mockToolkit)
+        await clientError(getMockRequest(payment, 'payload'), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(CLIENT_ERROR.page, {
           paymentInProgress: true,
           clientError: 'payload',
@@ -60,7 +67,7 @@ describe('Error route handlers', () => {
 
       it('should respond with the output of the client error to the view if it is present', async () => {
         const mockToolkit = getMockToolkit()
-        await clientError(getMockRequest(), mockToolkit)
+        await clientError(getMockRequest({}, 'payload'), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(
           CLIENT_ERROR.page,
           expect.objectContaining({
@@ -120,7 +127,7 @@ describe('Error route handlers', () => {
 
       it('handler should return correct values', async () => {
         const mockToolkit = getMockToolkit()
-        await serverError(getMockRequest(), mockToolkit)
+        await serverError(getMockRequest({}, { origin: { step: undefined } }), mockToolkit)
         expect(mockToolkit.view).toMatchSnapshot()
       })
 
@@ -128,9 +135,10 @@ describe('Error route handlers', () => {
         const mockToolkit = getMockToolkit()
         const decoratedUri = Symbol('uri')
         addLanguageCodeToUri.mockReturnValue(decoratedUri)
-        await serverError(getMockRequest(), mockToolkit)
+        await serverError(getMockRequest({}, { origin: { step: undefined } }), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(SERVER_ERROR.page, {
-          serverError: 'payload',
+          postPaymentError: false,
+          prePaymentError: false,
           mssgs: [],
           altLang: [],
           uri: {
@@ -141,14 +149,14 @@ describe('Error route handlers', () => {
       })
 
       it.each([[NEW_TRANSACTION.uri], [AGREED.uri]])('addLanguageCodeToUri is called with expected request and uri', async urlToCheck => {
-        const request = getMockRequest()
+        const request = getMockRequest({}, { origin: { step: undefined } })
         await serverError(request, getMockToolkit())
         expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
       })
 
       it('should pass the catalog and language to the view if it is present', async () => {
         const mockToolkit = getMockToolkit()
-        await serverError(getMockRequest(), mockToolkit)
+        await serverError(getMockRequest({}, { origin: { step: undefined } }), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(
           SERVER_ERROR.page,
           expect.objectContaining({
@@ -158,23 +166,42 @@ describe('Error route handlers', () => {
         )
       })
 
-      it('should respond with the output of the server error to the view if it is present', async () => {
-        const mockToolkit = getMockToolkit()
-        await serverError(getMockRequest(), mockToolkit)
-        expect(mockToolkit.view).toBeCalledWith(
-          SERVER_ERROR.page,
-          expect.objectContaining({
-            serverError: 'payload'
-          })
-        )
-      })
-
       it('should log the server error', async () => {
         const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
         const mockToolkit = getMockToolkit()
-        const request = getMockRequest()
+        const request = getMockRequest({}, { origin: { step: undefined } })
         await serverError(request, mockToolkit)
         expect(consoleErrorSpy).toHaveBeenCalled()
+      })
+
+      describe.each([
+        [true, false, { origin: { step: 'pre-payment' } }],
+        [false, true, { origin: { step: 'post-payment' } }],
+        [false, false, { origin: { step: null } }]
+      ])('includes correct data when step is %p', (prePaymentError, postPaymentError, payload) => {
+        it(`includes prePaymentError flag with value set to ${prePaymentError} to correspond to payload origin step ${payload.origin.step}`, async () => {
+          const request = getMockRequest({}, payload)
+          const mockToolkit = getMockToolkit()
+          await serverError(request, mockToolkit)
+          expect(mockToolkit.view).toHaveBeenCalledWith(
+            SERVER_ERROR.page,
+            expect.objectContaining({
+              prePaymentError: prePaymentError
+            })
+          )
+        })
+
+        it(`includes postPaymentError flag with value set to ${postPaymentError} to correspond to payload origin step ${payload.origin.step}`, async () => {
+          const request = getMockRequest({}, payload)
+          const mockToolkit = getMockToolkit()
+          await serverError(request, mockToolkit)
+          expect(mockToolkit.view).toHaveBeenCalledWith(
+            SERVER_ERROR.page,
+            expect.objectContaining({
+              postPaymentError: postPaymentError
+            })
+          )
+        })
       })
     })
 
@@ -188,7 +215,7 @@ describe('Error route handlers', () => {
           [['si', 'we'], 'we', 'si']
         ])('sets altLang to be other item in two-item language array', async (locales, locale, altLang) => {
           const errorRoute = errorRoutes[error].handler
-          const request = getMockRequest({}, { locales, locale })
+          const request = getMockRequest({}, { origin: { step: undefined } }, { locales, locale })
           const toolkit = getMockToolkit()
           await errorRoute(request, toolkit)
           expect(toolkit.view).toHaveBeenCalledWith(
@@ -207,7 +234,7 @@ describe('Error route handlers', () => {
   })
 })
 
-const getMockRequest = (payment = {}, i18nValues = { locales: [], locale: '' }) => ({
+const getMockRequest = (payment = {}, payload = {}, i18nValues = { locales: [], locale: '' }) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -235,7 +262,7 @@ const getMockRequest = (payment = {}, i18nValues = { locales: [], locale: '' }) 
     isBoom: true,
     output: {
       statusCode: 400,
-      payload: 'payload'
+      payload
     }
   }
 })

@@ -36,6 +36,7 @@ import miscRoutes from './misc-routes.js'
 import telesalesRoutes from './telesales-routes.js'
 import errorRoutes from './error-routes.js'
 import errorTestRoutes from './error-test-routes.js'
+import errorPaymentTestRoutes from './error-payment-test-routes.js'
 
 const routes = [
   ...staticAssets,
@@ -79,6 +80,10 @@ if (process.env.ERROR_PAGE_ROUTE === 'true') {
 
 if (process.env.ERROR_PAGE_ROUTE === 'true') {
   routes.push(...errorTestRoutes)
+}
+
+if (process.env.ERROR_PAGE_ROUTE === 'true') {
+  routes.push(...errorPaymentTestRoutes)
 }
 
 export default routes

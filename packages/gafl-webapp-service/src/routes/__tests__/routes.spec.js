@@ -4,6 +4,9 @@ jest.mock('../error-routes.js', () => mockErrorRoutes)
 const mockErrorTestingRoutes = [Symbol('error-testing')]
 jest.mock('../error-test-routes.js', () => mockErrorTestingRoutes)
 
+const mockPaymentTestingRoutes = [Symbol('payment-testing')]
+jest.mock('../error-payment-test-routes.js', () => mockPaymentTestingRoutes)
+
 const mockTelesalesRoutes = [Symbol('telesales')]
 jest.mock('../telesales-routes.js', () => mockTelesalesRoutes)
 
@@ -31,6 +34,12 @@ describe('route', () => {
     expect(routes.default).toEqual(expect.arrayContaining(mockErrorTestingRoutes))
   })
 
+  it('if ERROR_PAGE environment variable is true error payment testing route is added to the routes array', async () => {
+    process.env.ERROR_PAGE_ROUTE = 'true'
+    const routes = require('../routes.js')
+    expect(routes.default).toEqual(expect.arrayContaining(mockPaymentTestingRoutes))
+  })
+
   it('if channel environment variables are not for telesales then telesales route is not added to the routes array', async () => {
     process.env.CHANNEL = 'not_telesales'
     const routes = require('../routes.js')
@@ -47,5 +56,11 @@ describe('route', () => {
     process.env.ERROR_PAGE_ROUTE = 'false'
     const routes = require('../routes.js')
     expect(routes.default).toEqual(expect.not.arrayContaining(mockErrorTestingRoutes))
+  })
+
+  it('if ERROR_PAGE environment variable is false error payment testing route is not added to the routes array', async () => {
+    process.env.ERROR_PAGE_ROUTE = 'false'
+    const routes = require('../routes.js')
+    expect(routes.default).toEqual(expect.not.arrayContaining(mockPaymentTestingRoutes))
   })
 })

@@ -55,8 +55,8 @@ export const errorHandler = async (request, h) => {
 
     const serverError = request.response.output.payload
 
-    const prePaymentError = serverError.origin && serverError.origin.step === 'pre-payment'
-    const postPaymentError = serverError.origin && serverError.origin.step === 'post-payment'
+    const prePaymentError = serverError.origin.step === 'pre-payment'
+    const postPaymentError = serverError.origin.step === 'post-payment'
 
     return h
       .view(SERVER_ERROR.page, {
@@ -64,7 +64,6 @@ export const errorHandler = async (request, h) => {
         altLang,
         prePaymentError,
         postPaymentError,
-        serverError,
         uri: {
           new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
           agreed: addLanguageCodeToUri(request, AGREED.uri)

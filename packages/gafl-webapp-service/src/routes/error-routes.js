@@ -40,10 +40,13 @@ export default [
       console.error('Error processing request. Request: %j, Exception: %o', requestDetail, request.response)
 
       const serverError = request.response?.output.payload
+      const prePaymentError = serverError.origin.step === 'pre-payment'
+      const postPaymentError = serverError.origin.step === 'post-payment'
       const mssgs = request.i18n.getCatalog()
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
       return h.view(SERVER_ERROR.page, {
-        serverError,
+        prePaymentError,
+        postPaymentError,
         mssgs,
         altLang,
         uri: {
