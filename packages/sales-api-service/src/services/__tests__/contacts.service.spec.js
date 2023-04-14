@@ -1,4 +1,5 @@
-import { resolveContactPayload, getObfuscatedDob } from '../contacts.service.js'
+// import { resolveContactPayload, getObfuscatedDob, findContactInCRM } from '../contacts.service.js'
+import contactsService from '../contacts.service.js'
 import {
   mockContactPayload,
   mockContactWithIdPayload,
@@ -15,8 +16,13 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 }))
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
+jest.mock('../contacts.service.js', () => ({
+  ...jest.requireActual('../contacts.service.js'),
+  findContactInCRM: jest.fn()
+}))
+
 describe('contacts service', () => {
-  describe('resolveContactPayload', () => {
+  describe.only('resolveContactPayload', () => {
     const mockPayload = mockContactPayload()
     const findByExampleCallExpectation = expect.objectContaining({
       firstName: mockPayload.firstName,
@@ -60,22 +66,45 @@ describe('contacts service', () => {
       expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
     })
 
-    it('licence is not 12 months and contact exists in CRM', async () => {
+    it('shortTermPreferredMethodOfConfirmation is set to value of payload preferredMethodOfConfirmation', async () => {
       const mockPayload = mockContactPayload()
-      const mockPermission = {
-        licenceLength: '1D'
-      }
+      const mockPermission = {}
       const contact = await resolveContactPayload(mockPermission, mockPayload)
-      expect(contact.preferredMethodOfConfirmation.description).not.toEqual(contact.shortTermPreferredMethodOfConfirmation.description)
+      expect(contact.shortTermPreferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
     })
 
-    it('licence is 12 months and contact exists in CRM', async () => {
+    it('short term licence where exists in crm shortTermPreferredMethodOfConfirmation is set to value of contact in crm preferredMethodOfConfirmation', async () => {
+      const contactCRM = { preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' } }
+      findContactInCRM.mockReturnValueOnce(contactCRM)
       const mockPayload = mockContactPayload()
       const mockPermission = {
         licenceLength: '12M'
       }
       const contact = await resolveContactPayload(mockPermission, mockPayload)
-      expect(contact.preferredMethodOfConfirmation.description).toEqual(contact.shortTermPreferredMethodOfConfirmation.description)
+      expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM.preferredMethodOfConfirmation)
+    })
+
+    it.only('short term does not exist crm sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation', async () => {
+      contactsService.findContactInCRM.mockReturnValueOnce(undefined)
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: '1D'
+      }
+      const contact = await contactsService.resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
+    })
+
+    it.each([
+      ['short', 'does not', '1D'],
+      ['long', 'does', '12M'],
+      ['long', 'does not', '12M']
+    ])('%s term licence where %s exist in CRM, sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation', async (term, crm, length) => {
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: length
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
     })
   })
 
