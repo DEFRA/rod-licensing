@@ -24,20 +24,23 @@ jest.mock('../mapping-constants', () => ({
   }
 }))
 
+const getPermission = overrides => ({
+  licenceLength: '12M',
+  licenceType: 'Salmon and sea trout',
+  numberOfRods: null,
+  ...overrides
+})
+
 describe('licenceTypeDisplay', () => {
   it('returns junior if person is junior', () => {
-    const permission = {
-      licenceType: 'Salmon and sea trout'
-    }
+    const permission = getPermission()
     hasJunior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
     expect(result).toEqual('Junior, Salmon and sea trout')
   })
 
   it('returns senior if person is senior', () => {
-    const permission = {
-      licenceType: 'Salmon and sea trout'
-    }
+    const permission = getPermission({ licenceStartDate: moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD') })
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
     expect(result).toEqual('over_65, Salmon and sea trout')
@@ -47,10 +50,7 @@ describe('licenceTypeDisplay', () => {
     ['on', SENIOR_AGE_CHANGE_DATE],
     ['after', moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')]
   ])('shows over 66 message for permissions starting %s SENIOR_AGE_CHANGE_DATE', (_d, licenceStartDate) => {
-    const permission = {
-      licenceType: 'Salmon and sea trout',
-      licenceStartDate
-    }
+    const permission = getPermission({ licenceStartDate })
     const catalog = getCatalog()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, catalog)
@@ -62,9 +62,7 @@ describe('licenceTypeDisplay', () => {
     ['Trout and coarse', '2', 'Trout and coarse, up to 2 rods'],
     ['Trout and coarse', '3', 'Trout and coarse, up to 3 rods']
   ])('returns correct licence type', (licenceType, numberOfRods, expected) => {
-    const permission = {}
-    permission.licenceType = licenceType
-    permission.numberOfRods = numberOfRods
+    const permission = getPermission({ licenceType, numberOfRods })
     const result = licenceTypeDisplay(permission, getCatalog())
     expect(result).toEqual(expected)
   })
@@ -82,30 +80,20 @@ describe('licenceTypeAndLengthDisplay', () => {
     ['1D', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 1 day'],
     ['1D', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 1 day']
   ])('returns correct licence length', (licenceLength, licenceType, numberOfRods, expected) => {
-    const permission = {
-      licenceLength: licenceLength,
-      licenceType: licenceType,
-      numberOfRods: numberOfRods
-    }
+    const permission = getPermission({ licenceLength, licenceType, numberOfRods })
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual(expected)
   })
 
   it('returns junior if licence length is junior', () => {
-    const permission = {
-      licenceLength: '12M',
-      licenceType: 'Salmon and sea trout'
-    }
+    const permission = getPermission()
     hasJunior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('Junior, Salmon and sea trout, 12 months')
   })
 
   it('returns senior if licence length is senior', () => {
-    const permission = {
-      licenceLength: '12M',
-      licenceType: 'Salmon and sea trout'
-    }
+    const permission = getPermission({ licenceStartDate: moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD') })
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('over_65, Salmon and sea trout, 12 months')
@@ -113,21 +101,23 @@ describe('licenceTypeAndLengthDisplay', () => {
 })
 
 describe('isPhysical', () => {
-  it('returns true if licence length is 12 months and is not a junior', () => {
-    const permission = {
-      licenceLength: '12M'
-    }
-    hasJunior.mockImplementationOnce(() => false)
+  it('returns true if isForFulfilment is true', () => {
+    const permit = { isForFulfilment: true }
+    const permission = getPermission({ permit })
     const result = isPhysical(permission)
     expect(result).toEqual(true)
   })
 
-  it('returns false if licence length is not 12 months and a junior', () => {
-    const permission = {
-      licenceLength: '8D'
-    }
-    hasJunior.mockImplementationOnce(() => true)
+  it('returns true if isForFulfilment is false', () => {
+    const permit = { isForFulfilment: false }
+    const permission = getPermission({ permit })
     const result = isPhysical(permission)
     expect(result).toEqual(false)
+  })
+
+  it('returns undefined if there is no permit set', () => {
+    const permission = getPermission()
+    const result = isPhysical(permission)
+    expect(result).toEqual(undefined)
   })
 })

@@ -7,7 +7,7 @@ export const JUNIOR_MAX_AGE = 16
 /** The minimum age at which an angler becomes entitled to a senior concession */
 export const SENIOR_MIN_AGE = 65
 export const NEW_SENIOR_MIN_AGE = 66
-export const SENIOR_AGE_CHANGE_DATE = '2023-04-01'
+export const SENIOR_AGE_CHANGE_DATE = '2023-04-01T00:00:00.000+01:00'
 const changeoverMoment = moment(SENIOR_AGE_CHANGE_DATE)
 
 /**

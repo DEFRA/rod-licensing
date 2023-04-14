@@ -1,4 +1,105 @@
 
+## v1.33.0-rc.10 (2023-04-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1686](https://github.com/DEFRA/rod-licensing/pull/1686) Fix typo in paperless message ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.33.0-rc.9 (2023-04-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1673](https://github.com/DEFRA/rod-licensing/pull/1673) Clarify content on licence fulfilment page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.33.0-rc.7 (2023-03-31)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1672](https://github.com/DEFRA/rod-licensing/pull/1672) Remove redundant text from user journey ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1671](https://github.com/DEFRA/rod-licensing/pull/1671) Remove text from address lookup page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.33.0-rc.6 (2023-03-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1669](https://github.com/DEFRA/rod-licensing/pull/1669) Welsh language refund policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.33.0-rc.5 (2023-03-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1665](https://github.com/DEFRA/rod-licensing/pull/1665) Fishing byelaws link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.33.0-rc.2 (2023-03-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1660](https://github.com/DEFRA/rod-licensing/pull/1660) Refund policy welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1662](https://github.com/DEFRA/rod-licensing/pull/1662) Remove reference to post office on gov pay fail ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1661](https://github.com/DEFRA/rod-licensing/pull/1661) Error page persist welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.33.0-rc.1 (2023-03-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1657](https://github.com/DEFRA/rod-licensing/pull/1657) Refactor how we determine whether a licence can be posted ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.33.0-rc.0 (2023-03-14)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1622](https://github.com/DEFRA/rod-licensing/pull/1622) Refactor renewal start date validator ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.32.0-rc.0 (2023-03-07)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#1655](https://github.com/DEFRA/rod-licensing/pull/1655) Stop checking SFTP ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.31.0-rc.15 (2023-02-23)
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `sales-api-service`
+  * [#1651](https://github.com/DEFRA/rod-licensing/pull/1651) Amend permission end date to use locale time ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.31.0-rc.14 (2023-02-23)
 
 #### :rocket: Enhancement

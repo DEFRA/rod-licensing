@@ -11,7 +11,7 @@ exports[`Error route handlers error route CLIENT_ERROR handler handler should re
         "mssgs": Array [],
         "paymentInProgress": false,
         "uri": Object {
-          "new": "/buy/new",
+          "new": Symbol(uri),
         },
       },
     ],
@@ -37,8 +37,8 @@ exports[`Error route handlers error route SERVER_ERROR handler handler should re
         "mssgs": Array [],
         "serverError": "payload",
         "uri": Object {
-          "agreed": "/buy/agreed",
-          "new": "/buy/new",
+          "agreed": Symbol(uri),
+          "new": Symbol(uri),
         },
       },
     ],

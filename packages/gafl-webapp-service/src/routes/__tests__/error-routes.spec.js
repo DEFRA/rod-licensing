@@ -1,5 +1,8 @@
 import errorRoutes from '../error-routes'
 import { CLIENT_ERROR, NEW_TRANSACTION, SERVER_ERROR, AGREED } from '../../uri.js'
+import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+
+jest.mock('../../processors/uri-helper.js')
 
 describe('Error route handlers', () => {
   describe('error route', () => {
@@ -12,14 +15,24 @@ describe('Error route handlers', () => {
 
       it('handler should return correct values', async () => {
         const mockToolkit = getMockToolkit()
+        const decoratedUri = Symbol('uri')
+        addLanguageCodeToUri.mockReturnValue(decoratedUri)
         await clientError(getMockRequest(), mockToolkit)
         expect(mockToolkit.view).toMatchSnapshot()
+      })
+
+      it('addLanguageCodeToUri is called with expected request and NEW_TRANSACTION.uri', async () => {
+        const request = getMockRequest()
+        await clientError(request, getMockToolkit())
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, NEW_TRANSACTION.uri)
       })
 
       it('second argument of handler return correct values', async () => {
         const href = Symbol('gov.pay.url')
         const payment = { payment_id: 'abc123', href: href }
         const mockToolkit = getMockToolkit()
+        const decoratedUri = Symbol('uri')
+        addLanguageCodeToUri.mockReturnValue(decoratedUri)
         await clientError(getMockRequest(payment), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(CLIENT_ERROR.page, {
           paymentInProgress: true,
@@ -27,7 +40,7 @@ describe('Error route handlers', () => {
           mssgs: [],
           altLang: [],
           uri: {
-            new: NEW_TRANSACTION.uri,
+            new: decoratedUri,
             payment: href
           }
         })
@@ -113,16 +126,24 @@ describe('Error route handlers', () => {
 
       it('second argument of handler return correct values', async () => {
         const mockToolkit = getMockToolkit()
+        const decoratedUri = Symbol('uri')
+        addLanguageCodeToUri.mockReturnValue(decoratedUri)
         await serverError(getMockRequest(), mockToolkit)
         expect(mockToolkit.view).toBeCalledWith(SERVER_ERROR.page, {
           serverError: 'payload',
           mssgs: [],
           altLang: [],
           uri: {
-            new: NEW_TRANSACTION.uri,
-            agreed: AGREED.uri
+            new: decoratedUri,
+            agreed: decoratedUri
           }
         })
+      })
+
+      it.each([[NEW_TRANSACTION.uri], [AGREED.uri]])('addLanguageCodeToUri is called with expected request and uri', async urlToCheck => {
+        const request = getMockRequest()
+        await serverError(request, getMockToolkit())
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, urlToCheck)
       })
 
       it('should pass the catalog and language to the view if it is present', async () => {

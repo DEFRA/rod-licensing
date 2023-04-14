@@ -1,4 +1,6 @@
 import updateTransaction from '../update-transaction'
+import { isPhysical } from '../../../../processors/licence-type-display.js'
+jest.mock('../../../../processors/licence-type-display.js')
 
 describe('contact > update-transaction', () => {
   beforeEach(() => {
@@ -51,6 +53,8 @@ describe('contact > update-transaction', () => {
     ])(
       'when how-contacted is %s, should set preferredMethodOfReminder to "%s" and %s',
       async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
+        isPhysical.mockReturnValueOnce(true)
+
         const licenceLength = '12M'
 
         const pagePermission = getPagePermission(howContacted, ...pagePermissionArgs)
@@ -96,6 +100,8 @@ describe('contact > update-transaction', () => {
     ])(
       'when how-contacted is %s, should set preferredMethodOfReminder and preferredMethodOfConfirmation to "%s" and %s',
       async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
+        isPhysical.mockReturnValueOnce(false)
+
         const licenceLength = '1D'
         const pagePermission = getPagePermission(howContacted, ...pagePermissionArgs)
         const transactionPermission = getTransactionPermission(licenceLength, ...transactionPermissionArgs)

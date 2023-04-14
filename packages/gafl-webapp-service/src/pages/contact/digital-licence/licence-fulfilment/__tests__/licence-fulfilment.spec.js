@@ -15,10 +15,16 @@ import {
   TEST_TRANSACTION
 } from '../../../../../uri.js'
 
-import { start, stop, initialize, injectWithCookies } from '../../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../../__mocks__/test-utils-system.js'
 import { ADULT_TODAY, dobHelper } from '../../../../../__mocks__/test-utils-business-rules'
 import { licenceToStart } from '../../../../licence-details/licence-to-start/update-transaction'
 import { licenseTypes } from '../../../../licence-details/licence-type/route'
+import { isPhysical } from '../../../../../processors/licence-type-display.js'
+jest.mock('../../../../../processors/licence-type-display.js', () => ({
+  isPhysical: jest.fn(() => true)
+}))
+
+mockSalesApi()
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
@@ -78,6 +84,8 @@ describe('The licence fulfilment page', () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+
+      isPhysical.mockReturnValueOnce(false)
     })
 
     it('redirects to the contact page', async () => {

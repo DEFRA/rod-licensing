@@ -1,8 +1,10 @@
-import { start, stop, initialize, injectWithCookies } from '../../../../__mocks__/test-utils-system.js'
+import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { DISABILITY_CONCESSION, LICENCE_TO_START, TEST_TRANSACTION, LICENCE_LENGTH } from '../../../../uri.js'
 import { disabilityConcessionTypes } from '../update-transaction.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
+
+mockSalesApi()
 
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
