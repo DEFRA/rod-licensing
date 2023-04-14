@@ -15,11 +15,6 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 }))
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
-jest.mock('../contacts.service.js', () => ({
-  ...jest.requireActual('../contacts.service.js'),
-  findContactInCRM: jest.fn()
-}))
-
 describe('contacts service', () => {
   describe('getObfuscatedDob', () => {
     it('generates an obfuscated date of birth if it is not present', async () => {
@@ -94,8 +89,8 @@ describe('contacts service', () => {
           preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
         }
       ]
-      dynamicsLib.findById.mockImplementationOnce(() => ({ }))
-      dynamicsLib.findByExample.mockImplementationOnce(() => (contactCRM))
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
       const mockPayload = mockContactPayload()
       const mockPermission = {
         licenceLength: '12M'
@@ -108,15 +103,18 @@ describe('contacts service', () => {
       ['short', 'does not', '1D'],
       ['long', 'does', '12M'],
       ['long', 'does not', '12M']
-    ])('%s term licence where %s exist in CRM, sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation', async (term, crm, length) => {
-      dynamicsLib.findById.mockImplementationOnce(() => ({ }))
-      dynamicsLib.findByExample.mockImplementationOnce(() => ([]))
-      const mockPayload = mockContactPayload()
-      const mockPermission = {
-        licenceLength: length
+    ])(
+      '%s term licence where %s exist in CRM, sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation',
+      async (term, crm, length) => {
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => [])
+        const mockPayload = mockContactPayload()
+        const mockPermission = {
+          licenceLength: length
+        }
+        const contact = await resolveContactPayload(mockPermission, mockPayload)
+        expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
       }
-      const contact = await resolveContactPayload(mockPermission, mockPayload)
-      expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
-    })
+    )
   })
 })
