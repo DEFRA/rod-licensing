@@ -1,5 +1,4 @@
-// import { resolveContactPayload, getObfuscatedDob, findContactInCRM } from '../contacts.service.js'
-import contactsService from '../contacts.service.js'
+import { resolveContactPayload, getObfuscatedDob } from '../contacts.service.js'
 import {
   mockContactPayload,
   mockContactWithIdPayload,
@@ -22,7 +21,23 @@ jest.mock('../contacts.service.js', () => ({
 }))
 
 describe('contacts service', () => {
-  describe.only('resolveContactPayload', () => {
+  describe('getObfuscatedDob', () => {
+    it('generates an obfuscated date of birth if it is not present', async () => {
+      const mockPayload = mockContactWithIdPayload()
+      dynamicsLib.findById.mockImplementationOnce(() => {})
+      const obfuscatedDob = await getObfuscatedDob(mockPayload)
+      expect(obfuscatedDob).toContain('20000101')
+    })
+
+    it('does not generate a new obfuscated date of birth if it is already present', async () => {
+      const mockPayload = mockContactWithIdPayload()
+      dynamicsLib.findById.mockImplementationOnce(() => ({ obfuscatedDob: MOCK_OBFUSCATED_DOB }))
+      const obfuscatedDob = await getObfuscatedDob(mockPayload)
+      expect(obfuscatedDob).toBe(MOCK_OBFUSCATED_DOB)
+    })
+  })
+
+  describe('resolveContactPayload', () => {
     const mockPayload = mockContactPayload()
     const findByExampleCallExpectation = expect.objectContaining({
       firstName: mockPayload.firstName,
@@ -74,24 +89,19 @@ describe('contacts service', () => {
     })
 
     it('short term licence where exists in crm shortTermPreferredMethodOfConfirmation is set to value of contact in crm preferredMethodOfConfirmation', async () => {
-      const contactCRM = { preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' } }
-      findContactInCRM.mockReturnValueOnce(contactCRM)
+      const contactCRM = [
+        {
+          preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
+        }
+      ]
+      dynamicsLib.findById.mockImplementationOnce(() => ({ }))
+      dynamicsLib.findByExample.mockImplementationOnce(() => (contactCRM))
       const mockPayload = mockContactPayload()
       const mockPermission = {
         licenceLength: '12M'
       }
       const contact = await resolveContactPayload(mockPermission, mockPayload)
-      expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM.preferredMethodOfConfirmation)
-    })
-
-    it.only('short term does not exist crm sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation', async () => {
-      contactsService.findContactInCRM.mockReturnValueOnce(undefined)
-      const mockPayload = mockContactPayload()
-      const mockPermission = {
-        licenceLength: '1D'
-      }
-      const contact = await contactsService.resolveContactPayload(mockPermission, mockPayload)
-      expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
+      expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM[0].preferredMethodOfConfirmation)
     })
 
     it.each([
@@ -99,28 +109,14 @@ describe('contacts service', () => {
       ['long', 'does', '12M'],
       ['long', 'does not', '12M']
     ])('%s term licence where %s exist in CRM, sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation', async (term, crm, length) => {
+      dynamicsLib.findById.mockImplementationOnce(() => ({ }))
+      dynamicsLib.findByExample.mockImplementationOnce(() => ([]))
       const mockPayload = mockContactPayload()
       const mockPermission = {
         licenceLength: length
       }
       const contact = await resolveContactPayload(mockPermission, mockPayload)
       expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
-    })
-  })
-
-  describe('getObfuscatedDob', () => {
-    it('generates an obfuscated date of birth if it is not present', async () => {
-      const mockPayload = mockContactWithIdPayload()
-      dynamicsLib.findById.mockImplementationOnce(() => {})
-      const obfuscatedDob = await getObfuscatedDob(mockPayload)
-      expect(obfuscatedDob).toContain('20000101')
-    })
-
-    it('does not generate a new obfuscated date of birth if it is already present', async () => {
-      const mockPayload = mockContactWithIdPayload()
-      dynamicsLib.findById.mockImplementationOnce(() => ({ obfuscatedDob: MOCK_OBFUSCATED_DOB }))
-      const obfuscatedDob = await getObfuscatedDob(mockPayload)
-      expect(obfuscatedDob).toBe(MOCK_OBFUSCATED_DOB)
     })
   })
 })

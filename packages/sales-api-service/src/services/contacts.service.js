@@ -34,8 +34,6 @@ export const resolveContactPayload = async (permission, payload) => {
   const contactInCRM = await findContactInCRM(payload)
   const contact = Object.assign(contactInCRM || new Contact(), primitives)
 
-  console.log('HIT')
-
   contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
     Contact.definition.mappings.preferredMethodOfReminder.ref,
     preferredMethodOfReminder
@@ -68,10 +66,11 @@ export const resolveContactPayload = async (permission, payload) => {
 
 export const getObfuscatedDob = async licensee => {
   const contactInCRM = await findContactInCRM(licensee)
+  console.log(contactInCRM)
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
 }
 
-export const findContactInCRM = async licensee => {
+const findContactInCRM = async licensee => {
   let contact
   if (licensee.id) {
     // Resolve an existing contact id
