@@ -1,13 +1,16 @@
 import { findPermit } from '../find-permit.js'
 import filterPermits from '../filter-permits.js'
 import crypto from 'crypto'
+import db from 'debug'
 
 jest.mock('../filter-permits.js')
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+const debugMock = db.mock.results[0].value
 
 const getMockHashImplementation = (overrides = {}) =>
   jest.fn(() => ({
     update: () => {},
-    digest: () => {},
+    digest: () => 'abc123',
     ...overrides
   }))
 
@@ -17,6 +20,26 @@ jest.mock('crypto', () => ({
 
 describe('findPermit', () => {
   beforeEach(jest.clearAllMocks)
+
+  describe('debug', () => {
+    it('logs permit missing', async () => {
+      await findPermit(getMockPermission(), getMockRequest())
+      expect(debugMock).toHaveBeenCalledWith("permit wasn't retrieved", expect.any(Object))
+    })
+
+    it('logs permit missing data', async () => {
+      filterPermits.mockReturnValueOnce({})
+      await findPermit(getMockPermission(), getMockRequest())
+      expect(debugMock).toHaveBeenCalledWith('permit missing new cost details', expect.any(Object))
+    })
+
+    it('logs permit data present and up to date', async () => {
+      const mockPermission = getMockPermission()
+      mockPermission.hash = 'abc123'
+      await findPermit(mockPermission, getMockRequest())
+      expect(debugMock).toHaveBeenCalledWith("permit data present and doesn't need updating")
+    })
+  })
 
   describe('when the permission has no hash', () => {
     it('generates a new hash', async () => {
