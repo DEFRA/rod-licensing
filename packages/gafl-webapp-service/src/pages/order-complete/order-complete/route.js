@@ -8,12 +8,7 @@ import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 const checkForSalmonPermits = transaction => {
-  for (const permission of transaction.permissions) {
-    if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
-      return true
-    }
-  }
-  return false
+  return transaction.permissions.some(p => p.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'])
 }
 
 export const getData = async request => {
