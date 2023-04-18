@@ -38,6 +38,8 @@ export const findPermit = async (permission, request) => {
     hash.update(JSON.stringify(hashOperand))
     if (hash.digest('hex') !== permission.hash) {
       await addHashAndPermit()
+    } else {
+      debug("permit data present and doesn't need updating")
     }
   }
 }
