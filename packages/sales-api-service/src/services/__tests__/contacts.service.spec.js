@@ -83,7 +83,18 @@ describe('contacts service', () => {
       expect(contact.shortTermPreferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
     })
 
-    it('short term licence where exists in crm shortTermPreferredMethodOfConfirmation is set to value of contact in crm preferredMethodOfConfirmation', async () => {
+    it('licence length is 12 months so preferredMethodOfConfirmation is set to preferredMethodOfConfirmation', async () => {
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => [])
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: '12M'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
+    })
+
+    it('contact exists in CRM so preferredMethodOfConfirmation is set to preferredMethodOfConfirmation', async () => {
       const contactCRM = [
         {
           preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
@@ -93,28 +104,25 @@ describe('contacts service', () => {
       dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
       const mockPayload = mockContactPayload()
       const mockPermission = {
-        licenceLength: '12M'
+        licenceLength: '1D'
       }
       const contact = await resolveContactPayload(mockPermission, mockPayload)
       expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM[0].preferredMethodOfConfirmation)
     })
 
-    it.each([
-      ['short', 'does not', '1D'],
-      ['long', 'does', '12M'],
-      ['long', 'does not', '12M']
-    ])(
-      '%s term licence where %s exist in CRM, sets preferredMethodOfConfirmation as payload preferredMethodOfConfirmation',
-      async (term, crm, length) => {
-        dynamicsLib.findById.mockImplementationOnce(() => ({}))
-        dynamicsLib.findByExample.mockImplementationOnce(() => [])
-        const mockPayload = mockContactPayload()
-        const mockPermission = {
-          licenceLength: length
-        }
-        const contact = await resolveContactPayload(mockPermission, mockPayload)
-        expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
+    it('contact does not exist in CRM and licence lenght isnt 12 months so preferredMethodOfConfirmation is not set', async () => {
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => [])
+      const mockPayload = {
+        country: 'GB-ENG',
+        preferredMethodOfNewsletter: 'Email',
+        preferredMethodOfReminder: 'Letter'
       }
-    )
+      const mockPermission = {
+        licenceLength: '1D'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation).toEqual(undefined)
+    })
   })
 })

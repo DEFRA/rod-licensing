@@ -47,14 +47,9 @@ export const resolveContactPayload = async (permission, payload) => {
     preferredMethodOfConfirmation
   )
 
-  if (permission.licenceLength !== '12M' && contactInCRM !== undefined) {
+  if (permission.licenceLength === '12M' || contactInCRM === undefined) {
     contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
       Contact.definition.mappings.preferredMethodOfConfirmation.ref,
-      contactInCRM.preferredMethodOfConfirmation.description
-    )
-  } else {
-    contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
-      Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
       preferredMethodOfConfirmation
     )
   }
@@ -66,7 +61,6 @@ export const resolveContactPayload = async (permission, payload) => {
 
 export const getObfuscatedDob = async licensee => {
   const contactInCRM = await findContactInCRM(licensee)
-  console.log(contactInCRM)
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
 }
 
