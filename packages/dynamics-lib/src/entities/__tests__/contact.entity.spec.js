@@ -26,6 +26,7 @@ describe('contact entity', () => {
         defra_preferredmethodofconfirmation: 910400002,
         defra_preferredmethodofnewsletter: 910400000,
         defra_preferredmethodofreminder: 910400001,
+        defra_shorttermlicencemethodofconfirmation: 910400002,
         defra_postalfulfilment: true,
         defra_obfuscated_dob: '87200001013460'
       },
@@ -49,6 +50,7 @@ describe('contact entity', () => {
       preferredMethodOfConfirmation: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
       preferredMethodOfNewsletter: expect.objectContaining({ id: 910400000, label: 'Email', description: 'Email' }),
       preferredMethodOfReminder: expect.objectContaining({ id: 910400001, label: 'Letter', description: 'Letter' }),
+      shortTermPreferredMethodOfConfirmation: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
       postalFulfilment: true,
       obfuscatedDob: '87200001013460'
     }
@@ -76,6 +78,7 @@ describe('contact entity', () => {
     contact.preferredMethodOfConfirmation = optionSetData.defra_preferredcontactmethod.options['910400002']
     contact.preferredMethodOfNewsletter = optionSetData.defra_preferredcontactmethod.options['910400000']
     contact.preferredMethodOfReminder = optionSetData.defra_preferredcontactmethod.options['910400001']
+    contact.shortTermPreferredMethodOfConfirmation = optionSetData.defra_preferredcontactmethod.options['910400002']
     contact.postalFulfilment = true
     contact.obfuscatedDob = '87200001013460'
 
@@ -97,6 +100,7 @@ describe('contact entity', () => {
         defra_preferredmethodofconfirmation: 910400002,
         defra_preferredmethodofnewsletter: 910400000,
         defra_preferredmethodofreminder: 910400001,
+        defra_shorttermlicencemethodofconfirmation: 910400002,
         defra_postalfulfilment: true,
         defra_obfuscated_dob: '87200001013460'
       })

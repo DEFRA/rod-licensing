@@ -3,7 +3,8 @@ import {
   mockContactPayload,
   mockContactWithIdPayload,
   MOCK_EXISTING_CONTACT_ENTITY,
-  MOCK_OBFUSCATED_DOB
+  MOCK_OBFUSCATED_DOB,
+  mockPermissionPayload
 } from '../../__mocks__/test-data.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 
@@ -15,47 +16,6 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
 describe('contacts service', () => {
-  describe('resolveContactPayload', () => {
-    const mockPayload = mockContactPayload()
-    const findByExampleCallExpectation = expect.objectContaining({
-      firstName: mockPayload.firstName,
-      lastName: mockPayload.lastName,
-      birthDate: mockPayload.birthDate,
-      premises: mockPayload.premises,
-      postcode: mockPayload.postcode
-    })
-
-    it('resolves an existing contact by id', async () => {
-      const mockPayload = mockContactWithIdPayload()
-      const contact = await resolveContactPayload(mockPayload)
-      expect(contact.isNew()).toBeFalsy()
-      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
-    })
-
-    it('creates a new contact entity if no contact found for an id', async () => {
-      const mockPayload = mockContactWithIdPayload()
-      dynamicsLib.findById.mockImplementationOnce(() => undefined)
-      const contact = await resolveContactPayload(mockPayload)
-      expect(contact.isNew()).toBeTruthy()
-      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
-    })
-
-    it('resolves an existing contact by key fields', async () => {
-      const mockPayload = mockContactPayload()
-      const contact = await resolveContactPayload(mockPayload)
-      expect(contact.isNew()).toBeFalsy()
-      expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
-    })
-
-    it('creates a new contact entity if no contact found key fields', async () => {
-      const mockPayload = mockContactPayload()
-      dynamicsLib.findByExample.mockImplementationOnce(() => [])
-      const contact = await resolveContactPayload(mockPayload)
-      expect(contact.isNew()).toBeTruthy()
-      expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
-    })
-  })
-
   describe('getObfuscatedDob', () => {
     it('generates an obfuscated date of birth if it is not present', async () => {
       const mockPayload = mockContactWithIdPayload()
@@ -69,6 +29,100 @@ describe('contacts service', () => {
       dynamicsLib.findById.mockImplementationOnce(() => ({ obfuscatedDob: MOCK_OBFUSCATED_DOB }))
       const obfuscatedDob = await getObfuscatedDob(mockPayload)
       expect(obfuscatedDob).toBe(MOCK_OBFUSCATED_DOB)
+    })
+  })
+
+  describe('resolveContactPayload', () => {
+    const mockPayload = mockContactPayload()
+    const findByExampleCallExpectation = expect.objectContaining({
+      firstName: mockPayload.firstName,
+      lastName: mockPayload.lastName,
+      birthDate: mockPayload.birthDate,
+      premises: mockPayload.premises,
+      postcode: mockPayload.postcode
+    })
+
+    it('resolves an existing contact by id', async () => {
+      const mockPayload = mockContactWithIdPayload()
+      const mockPermission = mockPermissionPayload()
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.isNew()).toBeFalsy()
+      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
+    })
+
+    it('creates a new contact entity if no contact found for an id', async () => {
+      const mockPayload = mockContactWithIdPayload()
+      const mockPermission = mockPermissionPayload()
+      dynamicsLib.findById.mockImplementationOnce(() => undefined)
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.isNew()).toBeTruthy()
+      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, mockPayload.id)
+    })
+
+    it('resolves an existing contact by key fields', async () => {
+      const mockPayload = mockContactPayload()
+      const mockPermission = mockPermissionPayload()
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.isNew()).toBeFalsy()
+      expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
+    })
+
+    it('creates a new contact entity if no contact found key fields', async () => {
+      const mockPayload = mockContactPayload()
+      const mockPermission = mockPermissionPayload()
+      dynamicsLib.findByExample.mockImplementationOnce(() => [])
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.isNew()).toBeTruthy()
+      expect(dynamicsLib.findByExample).toHaveBeenCalledWith(findByExampleCallExpectation)
+    })
+
+    it('shortTermPreferredMethodOfConfirmation is set to value of payload preferredMethodOfConfirmation', async () => {
+      const mockPayload = mockContactPayload()
+      const mockPermission = {}
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.shortTermPreferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
+    })
+
+    it('licence length is 12 months so preferredMethodOfConfirmation is set to preferredMethodOfConfirmation', async () => {
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => [])
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: '12M'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation.description).toEqual(mockPayload.preferredMethodOfConfirmation)
+    })
+
+    it('contact exists in CRM so preferredMethodOfConfirmation is set to preferredMethodOfConfirmation', async () => {
+      const contactCRM = [
+        {
+          preferredMethodOfConfirmation: { id: 910400000, label: 'Email', description: 'Email' }
+        }
+      ]
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+      const mockPayload = mockContactPayload()
+      const mockPermission = {
+        licenceLength: '1D'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM[0].preferredMethodOfConfirmation)
+    })
+
+    it('contact does not exist in CRM and licence lenght isnt 12 months so preferredMethodOfConfirmation is not set', async () => {
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => [])
+      const mockPayload = {
+        country: 'GB-ENG',
+        preferredMethodOfNewsletter: 'Email',
+        preferredMethodOfReminder: 'Letter'
+      }
+      const mockPermission = {
+        licenceLength: '1D'
+      }
+      const contact = await resolveContactPayload(mockPermission, mockPayload)
+      expect(contact.preferredMethodOfConfirmation).toEqual(undefined)
     })
   })
 })

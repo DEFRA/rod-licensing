@@ -28,24 +28,32 @@ const debug = db('sales:transformers')
  * @param {!ContactPayload} payload The payload to be transformed
  * @returns {Promise<Contact>}
  */
-export const resolveContactPayload = async payload => {
+export const resolveContactPayload = async (permission, payload) => {
   const { id, country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...primitives } = payload
 
   const contactInCRM = await findContactInCRM(payload)
   const contact = Object.assign(contactInCRM || new Contact(), primitives)
 
-  contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
-    Contact.definition.mappings.preferredMethodOfConfirmation.ref,
-    preferredMethodOfConfirmation
+  contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
+    Contact.definition.mappings.preferredMethodOfReminder.ref,
+    preferredMethodOfReminder
   )
   contact.preferredMethodOfNewsletter = await getGlobalOptionSetValue(
     Contact.definition.mappings.preferredMethodOfNewsletter.ref,
     preferredMethodOfNewsletter
   )
-  contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
-    Contact.definition.mappings.preferredMethodOfReminder.ref,
-    preferredMethodOfReminder
+  contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+    Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
+    preferredMethodOfConfirmation
   )
+
+  if (permission.licenceLength === '12M' || contactInCRM === undefined) {
+    contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
+      Contact.definition.mappings.preferredMethodOfConfirmation.ref,
+      preferredMethodOfConfirmation
+    )
+  }
+
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
 
   return contact
