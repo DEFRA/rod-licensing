@@ -29,12 +29,18 @@ describe('findPermit', () => {
 
     it.each([
       ['newCostStartDate', { newCost: 1 }],
-      ['newCost', { newCostStartDate: '01/04/2023' }],
+      ['newCost', { newCostStartDate: '2023-04-01' }],
       ['newCost and newCostStartDate', {}]
     ])('logs permit missing %s', async (_d, p) => {
       filterPermits.mockReturnValueOnce(p)
       await findPermit(getMockPermission(), getMockRequest())
       expect(debugMock).toHaveBeenCalledWith('permit missing new cost details', expect.any(Object))
+    })
+
+    it("doesn't log if newCost and newCostStartDate are defined", async () => {
+      filterPermits.mockReturnValueOnce({ newCost: 1, newCostStartDate: '2023-04-01' })
+      await findPermit(getMockPermission(), getMockRequest())
+      expect(debugMock).not.toHaveBeenCalledWith('permit missing new cost details', expect.any(Object))
     })
 
     it('logs permit data present and up to date', async () => {
