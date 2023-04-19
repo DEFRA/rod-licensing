@@ -29,7 +29,8 @@ describe('findPermit', () => {
 
     it.each([
       ['newCostStartDate', { newCost: 1 }],
-      ['newCost', { newCostStartDate: '01/04/2023' }]
+      ['newCost', { newCostStartDate: '01/04/2023' }],
+      ['newCost and newCostStartDate', {}]
     ])('logs permit missing %s', async (_d, p) => {
       filterPermits.mockReturnValueOnce(p)
       await findPermit(getMockPermission(), getMockRequest())
