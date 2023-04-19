@@ -27,8 +27,11 @@ describe('findPermit', () => {
       expect(debugMock).toHaveBeenCalledWith("permit wasn't retrieved", expect.any(Object))
     })
 
-    it('logs permit missing data', async () => {
-      filterPermits.mockReturnValueOnce({})
+    it.each([
+      ['newCostStartDate', { newCost: 1 }],
+      ['newCost', { newCostStartDate: '01/04/2023' }]
+    ])('logs permit missing %s', async (_d, p) => {
+      filterPermits.mockReturnValueOnce(p)
       await findPermit(getMockPermission(), getMockRequest())
       expect(debugMock).toHaveBeenCalledWith('permit missing new cost details', expect.any(Object))
     })
