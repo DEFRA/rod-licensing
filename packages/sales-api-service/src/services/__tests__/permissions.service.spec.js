@@ -7,7 +7,7 @@ import {
   MOCK_1DAY_FULL_PERMIT_ENTITY,
   MOCK_CONCESSION
 } from '../../__mocks__/test-data.js'
-import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE, isSenior } from '@defra-fish/business-rules-lib'
+import { JUNIOR_MAX_AGE, NEW_SENIOR_MIN_AGE, isSenior } from '@defra-fish/business-rules-lib'
 
 jest.mock('@defra-fish/business-rules-lib', () => {
   const brl = jest.requireActual('@defra-fish/business-rules-lib')
@@ -42,7 +42,7 @@ jest.mock('../reference-data.service.js', () => ({
 
 const getSamplePermission = ({
   permitId = MOCK_1DAY_FULL_PERMIT_ENTITY.id,
-  birthDate = moment().subtract(SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
+  birthDate = moment().subtract(NEW_SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
 } = {}) => ({
   permitId,
   issueDate: moment().toISOString(),

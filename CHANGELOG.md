@@ -1,4 +1,22 @@
 
+## v1.33.0-rc.10 (2023-04-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1686](https://github.com/DEFRA/rod-licensing/pull/1686) Fix typo in paperless message ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.33.0-rc.9 (2023-04-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1673](https://github.com/DEFRA/rod-licensing/pull/1673) Clarify content on licence fulfilment page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.33.0-rc.7 (2023-03-31)
 

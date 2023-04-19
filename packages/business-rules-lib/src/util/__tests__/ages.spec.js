@@ -33,11 +33,11 @@ describe('age determination', () => {
 
   describe('isSenior', () => {
     it.each(Array.from({ length: 10 }, (_v, index) => SENIOR_MIN_AGE + index))('age of %d is a senior', age => {
-      expect(isSenior(age)).toBeTruthy()
+      expect(isSenior(age, moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD'))).toBeTruthy()
     })
 
     it(`age of ${SENIOR_MIN_AGE - 1} is not a senior`, () => {
-      expect(isSenior(SENIOR_MIN_AGE - 1)).toBeFalsy()
+      expect(isSenior(SENIOR_MIN_AGE - 1, moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD'))).toBeFalsy()
     })
 
     it.each([moment(SENIOR_AGE_CHANGE_DATE).format('YYYY-MM-DD'), moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')])(
