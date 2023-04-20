@@ -58,8 +58,7 @@ elif [ "$BRANCH" == "develop" ]; then
         # Most recent version is already a pre-release on the develop branch, just increment the pre-release number
         NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)"
     fi
-else//v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?
-
+else
     echo "Skipping deployment for branch ${BRANCH}"
     exit 0
 fi
