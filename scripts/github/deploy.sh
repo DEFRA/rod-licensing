@@ -44,12 +44,12 @@ git config --global --add versionsort.suffix -rc.
 echo "Determining versions for release"
 if [ "${BRANCH}" == "master" ]; then
     # Creating new release on the master branch, determine latest release version on master branch only
-    PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | tail -1)
+    PREVIOUS_VERSION=$(git tag --list --merged master --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)
     echo "Latest build on the master branch is ${PREVIOUS_VERSION}"
     NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i ${RELEASE_TYPE})"
 elif [ "$BRANCH" == "develop" ]; then
     # Creating new release on the develop branch, determine latest release version on either develop or master
-    PREVIOUS_VERSION=$(git tag --list --sort=version:refname | tail -1)
+    PREVIOUS_VERSION=$(git tag --list --sort=version:refname | egrep '^v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?$' | tail -1)
     echo "Latest build in the repository is ${PREVIOUS_VERSION}"
     if [[ ${PREVIOUS_VERSION} =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         # Most recent version is a production release on master, start a new prerelease on develop
@@ -58,7 +58,8 @@ elif [ "$BRANCH" == "develop" ]; then
         # Most recent version is already a pre-release on the develop branch, just increment the pre-release number
         NEW_VERSION="v$(semver "${PREVIOUS_VERSION}" -i prerelease --preid rc)"
     fi
-else
+else//v[0-9]*\.[0-9]*\.[0-9]*(-rc\.[0-9]*)?
+
     echo "Skipping deployment for branch ${BRANCH}"
     exit 0
 fi
