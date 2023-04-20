@@ -16,8 +16,8 @@ import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
 
 beforeAll(() => {
-  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
   process.env.CHANNEL = ''
 })
 beforeAll(() => new Promise(resolve => start(resolve)))
@@ -26,8 +26,8 @@ afterAll(d => {
   stop(d)
 })
 afterAll(() => {
-  delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PROPERTY_API
   delete process.env.CHANNEL
 })
 

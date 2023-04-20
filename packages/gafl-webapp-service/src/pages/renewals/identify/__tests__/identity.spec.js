@@ -29,8 +29,8 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
 jest.mock('../../../../routes/page-route.js', () => jest.fn(jest.requireActual('../../../../routes/page-route.js').default))
 
 beforeAll(() => {
-  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+  process.env.ANALYTICS_XGOV_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
 })
 
 beforeAll(() => new Promise(resolve => start(resolve)))
@@ -38,8 +38,8 @@ beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 afterAll(() => {
-  delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PROPERTY_API
 })
 
 const VALID_RENEWAL_PUBLIC = RENEWAL_PUBLIC.uri.replace('{referenceNumber?}', 'AAAAAA')
