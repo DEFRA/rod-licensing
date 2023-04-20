@@ -1,4 +1,15 @@
 
+## v1.33.0-rc.11 (2023-04-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1688](https://github.com/DEFRA/rod-licensing/pull/1688) Update Hapi-Gapi to v2 ([@MickStein](https://github.com/MickStein))
+* `dynamics-lib`, `sales-api-service`
+  * [#1652](https://github.com/DEFRA/rod-licensing/pull/1652) Add new field for short-term licence confirmation preferences ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.33.0-rc.10 (2023-04-11)
 
 #### :bug: Bug Fix
