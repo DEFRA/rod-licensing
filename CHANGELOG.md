@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.14 (2023-04-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1695](https://github.com/DEFRA/rod-licensing/pull/1695) Update GA secret property env var name ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 
 ## v1.33.0-rc.11 (2023-04-20)
