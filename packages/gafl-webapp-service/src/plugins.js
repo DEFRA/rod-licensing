@@ -71,14 +71,14 @@ const initialiseCrumbPlugin = () => ({
 
 const initialiseHapiGapiPlugin = () => {
   const hapiGapiPropertySettings = []
-  if (process.env.ANALYTICS_XGOV_PROPERTY) {
+  if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
     hapiGapiPropertySettings.push({
-      id: process.env.ANALYTICS_XGOV_PROPERTY,
+      id: process.env.ANALYTICS_PRIMARY_PROPERTY,
       key: process.env.ANALYTICS_PROPERTY_API,
       hitTypes: ['page_view']
     })
   } else {
-    console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
+    console.warn("ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won't track this")
   }
 
   return {
