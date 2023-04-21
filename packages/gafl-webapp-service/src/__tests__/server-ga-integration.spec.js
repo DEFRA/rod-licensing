@@ -38,14 +38,14 @@ describe('Server GA integration', () => {
   const { createServer, init } = require('../server.js')
 
   beforeEach(() => {
-    process.env.ANALYTICS_XGOV_PROPERTY = 'G-XXXXXXX'
+    process.env.ANALYTICS_PRIMARY_PROPERTY = 'G-XXXXXXX'
     process.env.ANALYTICS_PROPERTY_API = 'XXXXXXX-YYYYYYY-ZZZZZZZ'
     jest.clearAllMocks()
     createServer()
   })
 
   afterEach(() => {
-    delete process.env.ANALYTICS_XGOV_PROPERTY
+    delete process.env.ANALYTICS_PRIMARY_PROPERTY
   })
 
   it('registers HapiGapi plugin', async () => {
@@ -78,19 +78,19 @@ describe('Server GA integration', () => {
     await expect(hapiGapiPlugin.options.sessionIdProducer(request)).resolves.toEqual(null)
   })
 
-  it('initialises property settings for ANALYTICS_XGOV_PROPERTY', async () => {
+  it('initialises property settings for ANALYTICS_PRIMARY_PROPERTY', async () => {
     await init()
-    const analyticsXGovProperty = getHapiGapiPlugin().options.propertySettings[0]
-    expect(analyticsXGovProperty).toEqual(
+    const analyticsPrimaryProperty = getHapiGapiPlugin().options.propertySettings[0]
+    expect(analyticsPrimaryProperty).toEqual(
       expect.objectContaining({
-        id: process.env.ANALYTICS_XGOV_PROPERTY,
+        id: process.env.ANALYTICS_PRIMARY_PROPERTY,
         hitTypes: ['page_view']
       })
     )
   })
 
-  it("does not add property if ANALYTICS_XGOV_PROPERTY settings if it's not set", async () => {
-    delete process.env.ANALYTICS_XGOV_PROPERTY
+  it("does not add property if ANALYTICS_PRIMARY_PROPERTY settings if it's not set", async () => {
+    delete process.env.ANALYTICS_PRIMARY_PROPERTY
     await init()
     expect(getHapiGapiPlugin().options.propertySettings.length).toBe(0)
   })

@@ -20,13 +20,13 @@ import { licenceToStart } from '../../licence-details/licence-to-start/update-tr
 import { licenseTypes } from '../../licence-details/licence-type/route.js'
 
 beforeAll(() => {
-  process.env.ANALYTICS_XGOV_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
   process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
 })
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => {
-  delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_PROPERTY_API
   stop(d)
 })

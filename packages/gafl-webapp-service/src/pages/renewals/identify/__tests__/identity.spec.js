@@ -29,7 +29,7 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
 jest.mock('../../../../routes/page-route.js', () => jest.fn(jest.requireActual('../../../../routes/page-route.js').default))
 
 beforeAll(() => {
-  process.env.ANALYTICS_XGOV_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
   process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
 })
 
@@ -38,7 +38,7 @@ beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 afterAll(() => {
-  delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_PROPERTY_API
 })
 

@@ -20,7 +20,7 @@ import { disabilityConcessionTypes } from '../../../concessions/disability/updat
 mockSalesApi()
 
 beforeAll(() => {
-  process.env.ANALYTICS_XGOV_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
   process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
 })
 
@@ -28,7 +28,7 @@ beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 afterAll(() => {
-  delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PRIMARY_PROPERTY
   delete process.env.ANALYTICS_PROPERTY_API
 })
 
