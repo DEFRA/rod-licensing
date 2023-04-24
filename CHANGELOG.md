@@ -1,4 +1,12 @@
 
+## v1.33.0-rc.15 (2023-04-24)
+
+#### :rocket: Enhancement
+* [#1699](https://github.com/DEFRA/rod-licensing/pull/1699) Update to envvar for analytics ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.33.0-rc.14 (2023-04-21)
 
 #### :rocket: Enhancement
