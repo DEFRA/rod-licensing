@@ -1,14 +1,4 @@
-import {
-  isMinor,
-  isJunior,
-  isSenior,
-  MINOR_MAX_AGE,
-  JUNIOR_MAX_AGE,
-  SENIOR_MIN_AGE,
-  NEW_SENIOR_MIN_AGE,
-  SENIOR_AGE_CHANGE_DATE
-} from '../ages.js'
-import moment from 'moment'
+import { isMinor, isJunior, isSenior, MINOR_MAX_AGE, JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '../ages.js'
 
 describe('age determination', () => {
   describe('isMinor', () => {
@@ -33,41 +23,11 @@ describe('age determination', () => {
 
   describe('isSenior', () => {
     it.each(Array.from({ length: 10 }, (_v, index) => SENIOR_MIN_AGE + index))('age of %d is a senior', age => {
-      expect(isSenior(age, moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD'))).toBeTruthy()
+      expect(isSenior(age)).toBeTruthy()
     })
 
     it(`age of ${SENIOR_MIN_AGE - 1} is not a senior`, () => {
-      expect(isSenior(SENIOR_MIN_AGE - 1, moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD'))).toBeFalsy()
-    })
-
-    it.each([moment(SENIOR_AGE_CHANGE_DATE).format('YYYY-MM-DD'), moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')])(
-      `age of ${SENIOR_MIN_AGE} isn't a senior for permissions starting on %s`,
-      () => {
-        expect(isSenior(SENIOR_MIN_AGE, SENIOR_AGE_CHANGE_DATE)).toBeFalsy()
-      }
-    )
-
-    it.each([
-      moment(SENIOR_AGE_CHANGE_DATE).subtract(1, 'day').format('YYYY-MM-DD'),
-      moment(SENIOR_AGE_CHANGE_DATE).subtract(2, 'day').format('YYYY-MM-DD'),
-      moment(SENIOR_AGE_CHANGE_DATE).subtract(1, 'week').format('YYYY-MM-DD'),
-      moment(SENIOR_AGE_CHANGE_DATE).subtract(1, 'month').format('YYYY-MM-DD')
-    ])(`age of ${SENIOR_MIN_AGE} is senior for permissions starting on %s (before SENIOR_AGE_CHANGE_DATE)`, startDate => {
-      expect(isSenior(SENIOR_MIN_AGE, startDate)).toBeTruthy()
-    })
-
-    it.each`
-      age                        | startDate
-      ${NEW_SENIOR_MIN_AGE}      | ${moment(SENIOR_AGE_CHANGE_DATE).format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE}      | ${moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE}      | ${moment(SENIOR_AGE_CHANGE_DATE).add(1, 'week').format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE}      | ${moment(SENIOR_AGE_CHANGE_DATE).add(1, 'month').format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE + 1}  | ${moment(SENIOR_AGE_CHANGE_DATE).format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE + 5}  | ${moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE + 10} | ${moment(SENIOR_AGE_CHANGE_DATE).add(1, 'week').format('YYYY-MM-DD')}
-      ${NEW_SENIOR_MIN_AGE + 15} | ${moment(SENIOR_AGE_CHANGE_DATE).add(1, 'month').format('YYYY-MM-DD')}
-    `('age of $age is senior for permissions starting on $startDate (on or after SENIOR_AGE_CHANGE_DATE)', ({ age, startDate }) => {
-      expect(isSenior(age, startDate)).toBeTruthy()
+      expect(isSenior(SENIOR_MIN_AGE - 1)).toBeFalsy()
     })
   })
 })

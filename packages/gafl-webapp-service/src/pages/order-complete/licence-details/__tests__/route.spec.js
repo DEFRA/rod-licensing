@@ -5,8 +5,6 @@ import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processo
 import * as dtDisplay from '../../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
-import moment from 'moment-timezone'
 
 beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -115,20 +113,6 @@ describe('The licence details page', () => {
       expect(ageConcessionText).toBe(ageConcession)
     })
 
-    it.each([
-      ['on', SENIOR_AGE_CHANGE_DATE],
-      ['after', moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')]
-    ])('displays age_senior_concession_new for senior concessions starting %s SENIOR_AGE_CHANGE_DATE', async (_d, startDate) => {
-      concessionHelper.hasSenior.mockReturnValueOnce(true)
-      // prettier-ignore
-      const age_senior_concession_new = 'New Senior Age Concession Text'
-      const i18nCatalog = { ...getSampleCatalog(), age_senior_concession_new }
-      const permission = { ...getSamplePermission(), startDate }
-      const mockRequest = createMockRequest({ i18nCatalog, permission })
-      const { ageConcessionText } = await getData(mockRequest)
-      expect(ageConcessionText).toBe(age_senior_concession_new)
-    })
-
     it('returns the expected data', async () => {
       const mockRequest = createMockRequest()
       dtDisplay.displayStartTime.mockReturnValueOnce('1:00am on 6 June 2020')
@@ -167,7 +151,6 @@ const getSamplePermission = () => ({
 
 const getSampleCatalog = () => ({
   age_senior_concession: 'age_senior_concession',
-  age_senior_concession_new: 'age_senior_concession_new',
   age_junior_concession: 'age_junior_concession'
 })
 
