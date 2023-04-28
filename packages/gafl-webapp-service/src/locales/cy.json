@@ -617,7 +617,7 @@
   "server_error_unable_to_retrieve_pay_details": "Nid oedd modd i ni ddod o hyd i’ch manylion talu’r tro hwn oherwydd problem annisgwyl gyda’r gwasanaeth. Arhoswch ychydig funudau a rhowch gynnig arall arni drwy glicio ar y botwm 'Cynnig arall' isod.",
   "server_error_unable_to_retrieve": "Mae’n ddrwg gennym, nid oedd modd i ni ddod o hyd i’ch manylion talu",
   "server_error_what_now": "Beth nesaf?",
-  "server_error_feedback_link_text": "adborth (sy’n agor mewn tab newydd)",
+  "server_error_feedback_link_text": "adborth (yn agor ar dudalen newydd)",
   "starts": "Dechrau",
   "terms_conds_body": "Pan fyddwch yn prynu'r drwydded hon, rydych yn cytuno i'r canlynol:",
   "terms_conds_bulletpoint_1": "mae'r drwydded yn ddilys ar gyfer yr unigolyn sydd wedi'i enwi arni yn unig (deiliad y drwydded)",
