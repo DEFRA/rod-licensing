@@ -166,7 +166,7 @@ export const SENIOR_12_MONTH_LICENCE = {
       {
         permitId: 'dd1b34a0-0c66-e611-80dc-c4346bad0190',
         licensee: {
-          birthDate: '1955-04-30',
+          birthDate: '1950-01-01',
           firstName: 'Graham',
           lastName: 'Willis',
           premises: '14 Howecroft Court',
