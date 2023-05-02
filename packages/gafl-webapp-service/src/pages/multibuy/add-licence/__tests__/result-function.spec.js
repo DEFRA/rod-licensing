@@ -2,9 +2,17 @@ import resultFunction from '../result-function.js'
 import { CommonResults } from '../../../../constants.js'
 
 const createRequest = addLicence => ({
-  payload: {
-    'add-licence': addLicence
-  }
+  cache: () => ({
+    helpers: {
+      page: {
+        getCurrentPermission: async () => ({
+          payload: {
+            'add-licence': addLicence
+          }
+        })
+      }
+    }
+  })
 })
 
 describe('multibuy/add-licence/result-function', () => {
