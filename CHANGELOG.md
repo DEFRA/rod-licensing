@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.16 (2023-05-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1703](https://github.com/DEFRA/rod-licensing/pull/1703) Remove a from opens in a new tab ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.33.0-rc.15 (2023-04-24)
 
 #### :rocket: Enhancement
