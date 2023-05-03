@@ -38,16 +38,16 @@ const getTransactionPermissionThree = () => ({
 })
 
 const getPagePermissionOne = () => ({
-  [ADD_LICENCE.page]: true
+  [ADD_LICENCE.page]: [Object]
 })
 
 const getPagePermissionTwo = () => ({
-  [ADD_LICENCE.page]: true,
-  [REMOVE_LICENCE]: true
+  [ADD_LICENCE.page]: [Object],
+  [REMOVE_LICENCE]: [Object]
 })
 
 const getPagePermissionThree = () => ({
-  [ADD_LICENCE.page]: true
+  [ADD_LICENCE.page]: [Object]
 })
 
 const getStatusPermissionOne = () => ({
@@ -74,10 +74,8 @@ const createRequestMock = (
   transactionPermission,
   setTransaction = jest.fn(),
   page,
-  pagePermission,
   setPage = jest.fn(),
   status,
-  statusPermission,
   setStatus = jest.fn(),
   setCurrentStatusPermission = jest.fn(),
   addressLookup,
@@ -93,12 +91,10 @@ const createRequestMock = (
       },
       page: {
         get: async () => page,
-        getCurrentPermission: async () => pagePermission,
         set: setPage
       },
       status: {
         get: async () => status,
-        getCurrentPermission: async () => statusPermission,
         set: setStatus,
         setCurrentPermission: setCurrentStatusPermission
       },
@@ -140,10 +136,8 @@ describe('remove-licence > update transaction', () => {
       getTransactionPermissionTwo(),
       jest.fn(),
       page,
-      getPagePermissionTwo(),
       jest.fn(),
       status,
-      getStatusPermissionTwo(),
       jest.fn(),
       setCurrentPermission,
       addressLookup,
@@ -161,10 +155,8 @@ describe('remove-licence > update transaction', () => {
       getTransactionPermissionTwo(),
       set,
       page,
-      getPagePermissionTwo(),
       jest.fn(),
       status,
-      getStatusPermissionTwo(),
       jest.fn(),
       jest.fn(),
       addressLookup,
@@ -182,10 +174,8 @@ describe('remove-licence > update transaction', () => {
       getTransactionPermissionTwo(),
       jest.fn(),
       page,
-      getPagePermissionTwo(),
       set,
       status,
-      getStatusPermissionTwo(),
       jest.fn(),
       jest.fn(),
       addressLookup,
@@ -203,10 +193,8 @@ describe('remove-licence > update transaction', () => {
       getTransactionPermissionTwo(),
       jest.fn(),
       page,
-      getPagePermissionTwo(),
       jest.fn(),
       status,
-      getStatusPermissionTwo(),
       set,
       jest.fn(),
       addressLookup,
@@ -224,10 +212,8 @@ describe('remove-licence > update transaction', () => {
       getTransactionPermissionTwo(),
       jest.fn(),
       page,
-      getPagePermissionTwo(),
       jest.fn(),
       status,
-      getStatusPermissionTwo(),
       jest.fn(),
       jest.fn(),
       addressLookup,
@@ -240,8 +226,7 @@ describe('remove-licence > update transaction', () => {
 
   describe('after remove licence', () => {
     it('transaction does not contain the transaction currentPermission', async () => {
-      const permissionToRemove = getTransactionPermissionTwo()
-      const transaction = { permissions: [getTransactionPermissionOne(), permissionToRemove, getTransactionPermissionThree()] }
+      const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
       const page = { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] }
       const status = { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] }
       const addressLookup = {
@@ -249,13 +234,11 @@ describe('remove-licence > update transaction', () => {
       }
       const mockRequest = createRequestMock(
         transaction,
-        permissionToRemove,
+        getTransactionPermissionTwo(),
         jest.fn(),
         page,
-        getPagePermissionTwo(),
         jest.fn(),
         status,
-        getStatusPermissionTwo(),
         jest.fn(),
         jest.fn(),
         addressLookup,
@@ -268,9 +251,8 @@ describe('remove-licence > update transaction', () => {
     })
 
     it('page does not contain the page currentPermission', async () => {
-      const permissionToRemove = getPagePermissionTwo()
       const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
-      const page = { permissions: [getPagePermissionOne(), permissionToRemove, getPagePermissionThree()] }
+      const page = { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] }
       const status = { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] }
       const addressLookup = {
         permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
@@ -280,10 +262,8 @@ describe('remove-licence > update transaction', () => {
         getTransactionPermissionTwo(),
         jest.fn(),
         page,
-        permissionToRemove,
         jest.fn(),
         status,
-        getStatusPermissionTwo(),
         jest.fn(),
         jest.fn(),
         addressLookup,
@@ -296,10 +276,9 @@ describe('remove-licence > update transaction', () => {
     })
 
     it('status does not contain the status currentPermission', async () => {
-      const permissionToRemove = getStatusPermissionTwo()
       const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
       const page = { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] }
-      const status = { permissions: [getStatusPermissionOne(), permissionToRemove, getStatusPermissionThree()] }
+      const status = { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] }
       const addressLookup = {
         permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
       }
@@ -308,10 +287,8 @@ describe('remove-licence > update transaction', () => {
         getTransactionPermissionTwo(),
         jest.fn(),
         page,
-        getPagePermissionTwo(),
         jest.fn(),
         status,
-        permissionToRemove,
         jest.fn(),
         jest.fn(),
         addressLookup,
@@ -324,24 +301,23 @@ describe('remove-licence > update transaction', () => {
     })
 
     it('addressLookup does not contain the addressLookup currentPermission', async () => {
-      const permissionToRemove = getAddressLookupPermissionTwo()
       const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
       const page = { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] }
       const status = { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] }
-      const addressLookup = { permissions: [getAddressLookupPermissionOne(), permissionToRemove, getAddressLookupPermissionThree()] }
+      const addressLookup = {
+        permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
+      }
       const mockRequest = createRequestMock(
         transaction,
         getTransactionPermissionTwo(),
         jest.fn(),
         page,
-        getPagePermissionTwo(),
         jest.fn(),
         status,
-        getStatusPermissionTwo(),
         jest.fn(),
         jest.fn(),
         addressLookup,
-        permissionToRemove,
+        getAddressLookupPermissionTwo(),
         jest.fn()
       )
       await updateTransaction(mockRequest)
@@ -363,10 +339,8 @@ describe('remove-licence > update transaction', () => {
         getTransactionPermissionTwo(),
         jest.fn(),
         page,
-        getPagePermissionTwo(),
         jest.fn(),
         status,
-        getStatusPermissionTwo(),
         jest.fn(),
         setCurrentPermission,
         addressLookup,
