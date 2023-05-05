@@ -254,3 +254,8 @@ export const MOCK_EXISTING_CONTACT_ENTITY = Contact.fromResponse(
   },
   optionSetData
 )
+
+export const mockPermit = () => ({
+  durationMagnitude: 12,
+  durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' }
+})

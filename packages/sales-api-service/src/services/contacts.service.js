@@ -28,30 +28,59 @@ const debug = db('sales:transformers')
  * @param {!ContactPayload} payload The payload to be transformed
  * @returns {Promise<Contact>}
  */
-export const resolveContactPayload = async (permission, payload) => {
-  const { id, country, preferredMethodOfConfirmation, preferredMethodOfNewsletter, preferredMethodOfReminder, ...primitives } = payload
+export const resolveContactPayload = async (permit, payload) => {
+  const {
+    id,
+    country,
+    email,
+    mobilePhone,
+    preferredMethodOfConfirmation,
+    preferredMethodOfNewsletter,
+    preferredMethodOfReminder,
+    ...primitives
+  } = payload
 
   const contactInCRM = await findContactInCRM(payload)
   const contact = Object.assign(contactInCRM || new Contact(), primitives)
 
-  contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
-    Contact.definition.mappings.preferredMethodOfReminder.ref,
-    preferredMethodOfReminder
-  )
   contact.preferredMethodOfNewsletter = await getGlobalOptionSetValue(
     Contact.definition.mappings.preferredMethodOfNewsletter.ref,
     preferredMethodOfNewsletter
   )
-  contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
-    Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
-    preferredMethodOfConfirmation
-  )
 
-  if (permission.licenceLength === '12M' || contactInCRM === undefined) {
+  if (contactInCRM === undefined) {
+    contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
+      Contact.definition.mappings.preferredMethodOfReminder.ref,
+      preferredMethodOfReminder
+    )
+
     contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
       Contact.definition.mappings.preferredMethodOfConfirmation.ref,
       preferredMethodOfConfirmation
     )
+
+    contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+      Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
+      preferredMethodOfConfirmation
+    )
+  } else {
+    if (permit.durationMagnitude === '12' && permit.durationDesignator.description === 'M') {
+      contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
+        Contact.definition.mappings.preferredMethodOfReminder.ref,
+        preferredMethodOfReminder
+      )
+      contact.preferredMethodOfConfirmation = await getGlobalOptionSetValue(
+        Contact.definition.mappings.preferredMethodOfConfirmation.ref,
+        preferredMethodOfConfirmation
+      )
+    } else {
+      contact.shortTermPreferredMethodOfConfirmation = await getGlobalOptionSetValue(
+        Contact.definition.mappings.shortTermPreferredMethodOfConfirmation.ref,
+        preferredMethodOfConfirmation
+      )
+    }
+
+    await updateEmailOrPhone(contactInCRM, email, mobilePhone)
   }
 
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
@@ -62,6 +91,16 @@ export const resolveContactPayload = async (permission, payload) => {
 export const getObfuscatedDob = async licensee => {
   const contactInCRM = await findContactInCRM(licensee)
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
+}
+
+const updateEmailOrPhone = async (contact, email, mobilePhone) => {
+  if (contact.email !== null) {
+    contact.email = await getGlobalOptionSetValue(Contact.definition.mappings.email.ref, email)
+  }
+
+  if (contact.mobilePhone !== null) {
+    contact.mobilePhone = await getGlobalOptionSetValue(Contact.definition.mappings.mobilePhone.ref, mobilePhone)
+  }
 }
 
 const findContactInCRM = async licensee => {
