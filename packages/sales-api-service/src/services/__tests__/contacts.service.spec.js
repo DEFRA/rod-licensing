@@ -202,7 +202,7 @@ describe('contacts service', () => {
           }
         )
 
-        it.each([['Letter'], ['Email', 'Text']])(
+        it.each([['Letter'], ['Email'], ['Text']])(
           'preferredMethodOfConfirmation is set to value of preferredMethodOfConfirmation',
           async preferredMethodOfConfirmation => {
             const contactCRM = [

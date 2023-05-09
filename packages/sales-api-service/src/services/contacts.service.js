@@ -64,7 +64,7 @@ export const resolveContactPayload = async (permit, payload) => {
       preferredMethodOfConfirmation
     )
   } else {
-    if (permit.durationMagnitude === '12' && permit.durationDesignator.description === 'M') {
+    if (permit.durationMagnitude === 12 && permit.durationDesignator.description === 'M') {
       contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
         Contact.definition.mappings.preferredMethodOfReminder.ref,
         preferredMethodOfReminder
