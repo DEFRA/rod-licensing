@@ -1,4 +1,14 @@
 
+## v1.33.0-rc.18 (2023-05-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1707](https://github.com/DEFRA/rod-licensing/pull/1707) Licence details byelaws content ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1702](https://github.com/DEFRA/rod-licensing/pull/1702) Remove post office reference error page add button ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.33.0-rc.16 (2023-05-02)
 
