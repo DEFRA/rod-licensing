@@ -79,9 +79,10 @@ export const resolveContactPayload = async (permit, payload) => {
         preferredMethodOfConfirmation
       )
     }
-
-    await updateEmailOrPhone(contactInCRM, email, mobilePhone)
   }
+
+  contact.mobilePhone = await updateMobilePhone(contact, mobilePhone)
+  contact.email = await updateEmail(contact, email)
 
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
 
@@ -93,14 +94,18 @@ export const getObfuscatedDob = async licensee => {
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
 }
 
-const updateEmailOrPhone = async (contact, email, mobilePhone) => {
-  if (contact.email !== null) {
-    contact.email = await getGlobalOptionSetValue(Contact.definition.mappings.email.ref, email)
+const updateMobilePhone = async (contact, mobilePhone) => {
+  if ((mobilePhone === null && contact.mobilePhone !== null) || (mobilePhone === undefined && contact.mobilePhone !== null)) {
+    return contact.mobilePhone
   }
+  return mobilePhone
+}
 
-  if (contact.mobilePhone !== null) {
-    contact.mobilePhone = await getGlobalOptionSetValue(Contact.definition.mappings.mobilePhone.ref, mobilePhone)
+const updateEmail = async (contact, email) => {
+  if ((email === null && contact.email !== null) || (email === undefined && contact.email !== null)) {
+    return contact.email
   }
+  return email
 }
 
 const findContactInCRM = async licensee => {

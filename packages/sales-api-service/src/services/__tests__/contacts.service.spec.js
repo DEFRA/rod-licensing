@@ -83,6 +83,114 @@ describe('contacts service', () => {
       expect(contact.preferredMethodOfNewsletter.description).toEqual(mockPayload.preferredMethodOfNewsletter)
     })
 
+    it.each([[null], [447111111111], [447222222222]])(
+      'no mobile number in crm so mobile number set to value in payload',
+      async mobilePhone => {
+        const contactCRM = [
+          {
+            mobilePhone: null
+          }
+        ]
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+        const mockPayload = {
+          mobilePhone: mobilePhone
+        }
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.mobilePhone).toEqual(mobilePhone)
+      }
+    )
+
+    it.each([[447111111111], [447222222222], [447333333333]])('mobile number in crm overwritten by value in payload', async mobilePhone => {
+      const contactCRM = [
+        {
+          mobilePhone: 447444444444
+        }
+      ]
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+      const mockPayload = {
+        mobilePhone: mobilePhone
+      }
+      const permit = mockPermit()
+      const contact = await resolveContactPayload(permit, mockPayload)
+      expect(contact.mobilePhone).toEqual(mobilePhone)
+    })
+
+    it.each([[447111111111], [447222222222], [447333333333]])(
+      'payload for mobile number is null but crm has value so crm value is saved again',
+      async mobilePhone => {
+        const contactCRM = [
+          {
+            mobilePhone: mobilePhone
+          }
+        ]
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+        const mockPayload = {
+          mobilePhone: null
+        }
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.mobilePhone).toEqual(mobilePhone)
+      }
+    )
+
+    it.each([[null], ['test@test.com'], ['example@example.com']])('no email in crm so email set to value in payload', async email => {
+      const contactCRM = [
+        {
+          email: null
+        }
+      ]
+      dynamicsLib.findById.mockImplementationOnce(() => ({}))
+      dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+      const mockPayload = {
+        email: email
+      }
+      const permit = mockPermit()
+      const contact = await resolveContactPayload(permit, mockPayload)
+      expect(contact.email).toEqual(email)
+    })
+
+    it.each([['test@test.com'], ['example@example.com'], ['email@email.com']])(
+      'email in crm overwritten by value in payload',
+      async email => {
+        const contactCRM = [
+          {
+            email: 'testing@example.com'
+          }
+        ]
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+        const mockPayload = {
+          email: email
+        }
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.email).toEqual(email)
+      }
+    )
+
+    it.each([['test@test.com'], ['example@example.com'], ['email@email.com']])(
+      'payload for email is null but crm has value so crm value is saved again',
+      async email => {
+        const contactCRM = [
+          {
+            mobilePhone: email
+          }
+        ]
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+        const mockPayload = {
+          email: null
+        }
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.mobilePhone).toEqual(email)
+      }
+    )
+
     describe('contact does not exist in crm', () => {
       it.each([['Letter'], ['Email'], ['Text']])(
         'preferredMethodOfReminder is set to value of payload preferredMethodOfReminder',
@@ -128,62 +236,6 @@ describe('contacts service', () => {
     })
 
     describe('contact exists in crm', () => {
-      it('contact has no mobilePhone value so mobilePhone is not set from contactInCRM', async () => {
-        const contactCRM = [
-          {
-            mobilePhone: null
-          }
-        ]
-        dynamicsLib.findById.mockImplementationOnce(() => ({}))
-        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-        const mockPayload = mockContactPayload()
-        const permit = mockPermit()
-        const contact = await resolveContactPayload(permit, mockPayload)
-        expect(contact.mobilePhone).toEqual(null)
-      })
-
-      it('contact has no email so email is not set from contactInCRM', async () => {
-        const contactCRM = [
-          {
-            email: null
-          }
-        ]
-        dynamicsLib.findById.mockImplementationOnce(() => ({}))
-        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-        const mockPayload = mockContactPayload()
-        const permit = mockPermit()
-        const contact = await resolveContactPayload(permit, mockPayload)
-        expect(contact.email).toEqual(null)
-      })
-
-      it('contact has email value so email is set to value in contactInCRM', async () => {
-        const contactCRM = [
-          {
-            email: 'test@email.com'
-          }
-        ]
-        dynamicsLib.findById.mockImplementationOnce(() => ({}))
-        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-        const mockPayload = mockContactPayload()
-        const permit = mockPermit()
-        const contact = await resolveContactPayload(permit, mockPayload)
-        expect(contact.email).toEqual(contactCRM[0].email)
-      })
-
-      it('contact has mobilePhone value so mobilePhone value is set to value in contactInCRM', async () => {
-        const contactCRM = [
-          {
-            mobilePhone: '07111111111'
-          }
-        ]
-        dynamicsLib.findById.mockImplementationOnce(() => ({}))
-        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-        const mockPayload = mockContactPayload()
-        const permit = mockPermit()
-        const contact = await resolveContactPayload(permit, mockPayload)
-        expect(contact.mobilePhone).toEqual(contactCRM[0].mobilePhone)
-      })
-
       describe('long term licence', () => {
         it.each([['Letter'], ['Email'], ['Text']])(
           'preferredMethodOfReminder is set to value of preferredMethodOfReminder',
