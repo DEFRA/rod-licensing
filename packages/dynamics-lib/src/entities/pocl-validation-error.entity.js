@@ -34,6 +34,7 @@ export class PoclValidationError extends BaseEntity {
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
       concessions: { field: 'defra_concessions', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
+      newStartDate: { field: 'defra_newstartdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
       transactionDate: { field: 'defra_transactiondate', type: 'string' },
@@ -271,6 +272,18 @@ export class PoclValidationError extends BaseEntity {
 
   set startDate (startDate) {
     super._setState('startDate', startDate)
+  }
+
+  /**
+   * The licence new start date associated with this pocl record
+   * @type {string}
+   */
+  get newStartDate () {
+    return super._getState('startDate')
+  }
+
+  set newStartDate (newStartDate) {
+    super._setState('newStartDate', newStartDate)
   }
 
   /**

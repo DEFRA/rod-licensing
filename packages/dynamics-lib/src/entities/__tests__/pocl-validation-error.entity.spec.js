@@ -31,6 +31,7 @@ describe('pocl staging exception entity', () => {
           defra_postalfulfilment: true,
           defra_concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
           defra_startdate: '2021-06-15',
+          defra_newstartdate: '2021-06-15',
           defra_serialnumber: '14345-48457J',
           defra_permitid: 'test-permit-id',
           defra_transactiondate: '2020-01-01T14:00:00Z',
@@ -80,6 +81,7 @@ describe('pocl staging exception entity', () => {
         postalFulfilment: true,
         concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
         startDate: '2021-06-15',
+        newStartDate: '2021-06-15',
         serialNumber: '14345-48457J',
         permitId: 'test-permit-id',
         transactionDate: '2020-01-01T14:00:00Z',
@@ -118,6 +120,7 @@ describe('pocl staging exception entity', () => {
     validationError.postalFulfilment = true
     validationError.concessions = '[{"type":"Blue Badge","referenceNumber":123456789}]'
     validationError.startDate = '2021-06-15'
+    validationError.newStartDate = '2021-06-15'
     validationError.serialNumber = '14345-48457J'
     validationError.permitId = 'test-permit-id'
     validationError.transactionDate = '2020-01-01T14:00:00Z'
