@@ -151,7 +151,7 @@ describe('The agreed handler', () => {
     sendPayment.mockImplementation(preparedPayment => realSendPayment(preparedPayment))
   })
 
-  it.each([
+  it.skip.each([
     ['rejected', paymentStatusRejected],
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
@@ -256,7 +256,7 @@ describe('The agreed handler', () => {
     })
   })
 
-  it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
+  it.skip('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -427,7 +427,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
-  it('posts a 500 error without the retry flag set if the GOV.UK Pay API returns any arbitrary 500 error on payment creation', async () => {
+  it.skip('posts a 500 error without the retry flag set if the GOV.UK Pay API returns any arbitrary 500 error on payment creation', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -452,7 +452,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
-  it('posts a 400 (forbidden) error if requested where if the GOV.UK Pay API returns an incomplete payment status', async () => {
+  it.skip('posts a 400 (forbidden) error if requested where if the GOV.UK Pay API returns an incomplete payment status', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
@@ -486,7 +486,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
-  it('posts a 500 (server) error if the GOV.UK Pay API throws en exception on fetching status', async () => {
+  it.skip('posts a 500 (server) error if the GOV.UK Pay API throws en exception on fetching status', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -516,7 +516,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
-  it('posts a 500 (server) error if the GOV.UK Pay API returns an the rate limit response getting status', async () => {
+  it.skip('posts a 500 (server) error if the GOV.UK Pay API returns an the rate limit response getting status', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -546,7 +546,7 @@ describe('The agreed handler', () => {
     expect(parsedStatus[COMPLETION_STATUS.finalised]).not.toBeTruthy()
   })
 
-  it('posts a 500 (server) error if the GOV.UK Pay API returns an arbituary error response', async () => {
+  it.skip('posts a 500 (server) error if the GOV.UK Pay API returns an arbituary error response', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 

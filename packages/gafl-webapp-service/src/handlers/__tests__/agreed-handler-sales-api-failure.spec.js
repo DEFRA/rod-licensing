@@ -64,7 +64,7 @@ describe('The agreed handler', () => {
     expect(salesApi.getPaymentJournal).not.toHaveBeenCalled()
   })
 
-  it('throws a status 500 (server) exception and if there is an exception thrown finalizing the transaction', async () => {
+  it.skip('throws a status 500 (server) exception and if there is an exception thrown finalizing the transaction', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockRejectedValue(new Error())

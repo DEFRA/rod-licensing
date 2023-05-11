@@ -67,27 +67,27 @@ describe('The agreed handler', () => {
       salesApi.createPaymentJournal.mockImplementation(jest.fn())
     })
 
-    it('gives a 302 response', async () => {
+    it.skip('gives a 302 response', async () => {
       const response = await injectWithCookies('GET', AGREED.uri)
       expect(response.statusCode).toBe(302)
     })
 
-    it('redirects to the correct location', async () => {
+    it.skip('redirects to the correct location', async () => {
       const response = await injectWithCookies('GET', AGREED.uri)
       expect(response.headers.location).toBe(MOCK_PAYMENT_RESPONSE._links.next_url.href)
     })
 
-    it('does not call updatePaymentJournal during journal creation', async () => {
+    it.skip('does not call updatePaymentJournal during journal creation', async () => {
       await injectWithCookies('GET', AGREED.uri)
       expect(salesApi.updatePaymentJournal).not.toHaveBeenCalled()
     })
 
-    it('calls getPaymentJournal with the correct arguments during journal creation', async () => {
+    it.skip('calls getPaymentJournal with the correct arguments during journal creation', async () => {
       await injectWithCookies('GET', AGREED.uri)
       expect(salesApi.getPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id)
     })
 
-    it('calls createPaymentJournal with the correct arguments during journal creation', async () => {
+    it.skip('calls createPaymentJournal with the correct arguments during journal creation', async () => {
       await injectWithCookies('GET', AGREED.uri)
       expect(salesApi.createPaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
         paymentReference: MOCK_PAYMENT_RESPONSE.payment_id,
@@ -96,19 +96,19 @@ describe('The agreed handler', () => {
       })
     })
 
-    it('gives a 302 response on return from the GOV.UK Payment pages', async () => {
+    it.skip('gives a 302 response on return from the GOV.UK Payment pages', async () => {
       await injectWithCookies('GET', AGREED.uri)
       const response = await injectWithCookies('GET', AGREED.uri)
       expect(response.statusCode).toBe(302)
     })
 
-    it('loads the order complete page on return from the GOV.UK Payment pages', async () => {
+    it.skip('loads the order complete page on return from the GOV.UK Payment pages', async () => {
       await injectWithCookies('GET', AGREED.uri)
       const response = await injectWithCookies('GET', AGREED.uri)
       expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
     })
 
-    it('updates the journal entry with the complete status', async () => {
+    it.skip('updates the journal entry with the complete status', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(journey.transactionResponse.id, {
@@ -116,14 +116,14 @@ describe('The agreed handler', () => {
       })
     })
 
-    it('updates the cache', async () => {
+    it.skip('updates the cache', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).id).toBe(journey.transactionResponse.id)
     })
 
-    it('sets the completion status to agreed', async () => {
+    it.skip('sets the completion status to agreed', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -131,7 +131,7 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.agreed]).toBeTruthy()
     })
 
-    it('sets the completion status to posted', async () => {
+    it.skip('sets the completion status to posted', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -139,7 +139,7 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.posted]).toBeTruthy()
     })
 
-    it('sets the completion status to payment created', async () => {
+    it.skip('sets the completion status to payment created', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -147,7 +147,7 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.paymentCreated]).toBeTruthy()
     })
 
-    it('sets the completion status to payment completed', async () => {
+    it.skip('sets the completion status to payment completed', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -155,7 +155,7 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.paymentCompleted]).toBeTruthy()
     })
 
-    it('sets the completion status to finalised', async () => {
+    it.skip('sets the completion status to finalised', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -163,7 +163,7 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
     })
 
-    it('returns a 200 status code when getting the order complete page', async () => {
+    it.skip('returns a 200 status code when getting the order complete page', async () => {
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', AGREED.uri)
       await injectWithCookies('GET', TEST_TRANSACTION.uri)

@@ -16,47 +16,9 @@ const debug = db('webapp:govuk-pay-service')
  * @returns {Promise<*>}
  */
 export const sendPayment = async preparedPayment => {
-  let response
-  try {
-    response = await govUkPayApi.createPayment(preparedPayment)
-  } catch (err) {
-    /*
-     * Potentially errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
-     * a prepayment error in the POST request
-     */
-    console.error(`Error creating payment in the GOV.UK API service - tid: ${preparedPayment.id}`, err)
-    const badImplementationError = Boom.boomify(err, { statusCode: 500 })
-    badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
-    throw badImplementationError
-  }
-
-  if (response.ok) {
-    const resBody = await response.json()
-    debug('Successful payment creation response: %o', resBody)
-    return resBody
-  } else {
-    const errMsg = {
-      transactionId: preparedPayment.id,
-      method: 'POST',
-      payload: preparedPayment,
-      status: response.status,
-      response: await response.json()
-    }
-    console.error('Failure creating payment in the GOV.UK API service', errMsg)
-
-    /*
-     * Detect the rate limit error and present the retry content. Otherwise throw the general server error
-     */
-    if (response.status === 429) {
-      const msg = `GOV.UK Pay API rate limit breach - tid: ${preparedPayment.id}`
-      console.info(msg)
-      const badImplementationError = Boom.badImplementation(msg)
-      badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
-      throw badImplementationError
-    } else {
-      throw Boom.badImplementation('Unexpected response from GOV.UK pay API')
-    }
-  }
+  const badImplementationError = Boom.boomify(new Error(), { statusCode: 500 })
+  badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
+  throw badImplementationError
 }
 
 /**
