@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.19 (2023-05-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1700](https://github.com/DEFRA/rod-licensing/pull/1700) Remove obsolete analytics attribution data ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.33.0-rc.18 (2023-05-09)
 
 #### :rocket: Enhancement
