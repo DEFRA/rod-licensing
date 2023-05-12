@@ -32,7 +32,6 @@ To run from this directory:
 | FEEDBACK_URI                      | Location of feedback survey                                      |    no    | #                                                         |                               |
 | ANALYTICS_PRIMARY_PROPERTY        | Analytics ID for tracking inc ecommerce                          |    no    |                                                           |                               |
 | ANALYTICS_PROPERTY_API            | Analytics property API key for linking Analytics.google property |    no    |                                                           |                               |
-| ATTRIBUTION_REDIRECT              | Target for redirect of attribution endpoint                      |    no    | /                                                         |                               |
 | SERVICE_PAGE                      | GOV.UK service page                                              |    no    | https://www.gov.uk/fishing-licences/buy-a-fishing-licence |                               |
 | AIRBRAKE_HOST                     | URL of airbrake host                                             |    no    |                                                           |                               |
 | AIRBRAKE_PROJECT_KEY              | Project key for airbrake logging                                 |    no    |                                                           |                               |
