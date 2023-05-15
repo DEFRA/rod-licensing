@@ -15,7 +15,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { sendPayment, getPaymentStatus } from '../services/payment/govuk-pay-service.js'
 import { preparePayment } from '../processors/payment.js'
-import { COMPLETION_STATUS, GOVPAYFAIL } from '../constants.js'
+import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 const debug = db('webapp:agreed-handler')
@@ -68,17 +68,6 @@ const createPayment = async (request, transaction, status) => {
   /*
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
-  const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  permission.displayPrePaymentError = permission.displayPrePaymentError + 1
-
-  await request.cache().helpers.transaction.setCurrentPermission(permission)
-
-  if (permission.displayPrePaymentError === 1) {
-    const badImplementationError = Boom.boomify(new Error(), { statusCode: 500 })
-    badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
-    throw badImplementationError
-  }
-
   const paymentResponse = await sendPayment(preparedPayment)
 
   /*

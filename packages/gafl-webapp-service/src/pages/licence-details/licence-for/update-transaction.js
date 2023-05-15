@@ -6,7 +6,6 @@ export default async request => {
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.isLicenceForYou = isLicenceForYou
-  permission.displayPrePaymentError = 0
 
   await request.cache().helpers.transaction.setCurrentPermission(permission)
 }

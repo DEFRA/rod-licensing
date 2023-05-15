@@ -22,7 +22,7 @@ describe('licence-for > update-transaction', () => {
   }
 
   describe('default', () => {
-    it.skip('should set isLicenceForYou to true on the transaction cache, if user has selected you', async () => {
+    it('should set isLicenceForYou to true on the transaction cache, if user has selected you', async () => {
       mockPageCacheGet.mockImplementationOnce(() => ({ payload: { 'licence-for': 'you' } }))
       mockTransactionCacheGet.mockImplementationOnce(() => ({}))
 
@@ -30,7 +30,7 @@ describe('licence-for > update-transaction', () => {
       expect(mockTransactionCacheSet).toHaveBeenCalledWith({ isLicenceForYou: true })
     })
 
-    it.skip('should set isLicenceForYou to false on the transaction cache, if user has selected someone-else', async () => {
+    it('should set isLicenceForYou to false on the transaction cache, if user has selected someone-else', async () => {
       mockPageCacheGet.mockImplementationOnce(() => ({ payload: { 'licence-for': 'someone-else' } }))
       mockTransactionCacheGet.mockImplementationOnce(() => ({}))
 
