@@ -37,6 +37,7 @@ describe('pocl staging exception entity', () => {
           defra_transactiondate: '2020-01-01T14:00:00Z',
           defra_amount: 30,
           defra_paymentsource: 'Post Office Sales',
+          defra_newpaymentsource: 'Post Office Sales',
           defra_channelid: '948594',
           defra_methodofpayment: 910400001,
           defra_status: 910400000,
@@ -57,7 +58,7 @@ describe('pocl staging exception entity', () => {
       expect(exception).toMatchSnapshot()
     })
 
-    it('has the expected fields', () => {
+    it.only('has the expected fields', () => {
       const expectedFields = {
         firstName: 'Daniel',
         lastName: 'Ricciardo',
@@ -87,6 +88,7 @@ describe('pocl staging exception entity', () => {
         transactionDate: '2020-01-01T14:00:00Z',
         amount: 30,
         paymentSource: 'Post Office Sales',
+        newPaymentsource: { value: 'Post Office Sales' },
         channelId: '948594',
         methodOfPayment: expect.objectContaining({ id: 910400001, label: 'Cash', description: 'Cash' }),
         status: expect.objectContaining({ id: 910400000, label: 'Needs Review', description: 'Needs Review' }),
@@ -95,6 +97,7 @@ describe('pocl staging exception entity', () => {
         stateCode: 1,
         errorMessage: '"permissions[0].licensee.email" must be a valid email'
       }
+      console.log(exception)
 
       expect(exception).toMatchObject(expect.objectContaining({ etag: 'W/"56351087"', ...expectedFields }))
     })

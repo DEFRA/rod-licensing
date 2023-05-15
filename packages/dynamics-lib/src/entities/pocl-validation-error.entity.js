@@ -40,6 +40,7 @@ export class PoclValidationError extends BaseEntity {
       transactionDate: { field: 'defra_transactiondate', type: 'string' },
       amount: { field: 'defra_amount', type: 'decimal' },
       paymentSource: { field: 'defra_paymentsource', type: 'string' },
+      defra_newpaymentsource: { field: 'defra_newpaymentsource', type: 'optionset', ref: 'defra_financialtransactionsource' },
       channelId: { field: 'defra_channelid', type: 'string' },
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
