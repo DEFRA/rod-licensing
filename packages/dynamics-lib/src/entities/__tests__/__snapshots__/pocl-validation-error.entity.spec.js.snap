@@ -24,6 +24,11 @@ Object {
     "label": "Cash",
   },
   "mobilePhone": "07722 123456",
+  "newPaymentSource": Object {
+    "description": "Worldpay",
+    "id": 910400003,
+    "label": "Worldpay",
+  },
   "newStartDate": "2021-06-15",
   "organisation": "Fishy Endeavours",
   "paymentSource": "Post Office Sales",
