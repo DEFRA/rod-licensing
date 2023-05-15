@@ -132,6 +132,7 @@ describe('pocl staging exception entity', () => {
     validationError.transactionDate = '2020-01-01T14:00:00Z'
     validationError.amount = 30
     validationError.paymentSource = 'Post Office Sales'
+    validationError.newPaymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
     validationError.channelId = '948594'
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']
     validationError.status = optionSetData.defra_poclvalidationerrorstatus.options['910400000']

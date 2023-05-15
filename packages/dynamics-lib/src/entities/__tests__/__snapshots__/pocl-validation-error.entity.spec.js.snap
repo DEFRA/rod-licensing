@@ -81,6 +81,7 @@ Object {
   "defra_methodofpayment": 910400001,
   "defra_mobilenumber": "07722 123456",
   "defra_name": "Ricciardo",
+  "defra_newpaymentsource": 910400003,
   "defra_newstartdate": "2021-06-15",
   "defra_organisation": "Fishy Endeavours",
   "defra_paymentsource": "Post Office Sales",
