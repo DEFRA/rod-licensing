@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.20 (2023-05-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1714](https://github.com/DEFRA/rod-licensing/pull/1714) Remove hyperlink gov pay fail ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.33.0-rc.19 (2023-05-12)
 
 #### :rocket: Enhancement
