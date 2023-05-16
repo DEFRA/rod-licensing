@@ -61,12 +61,13 @@
                   href: uri.agreed,
                   classes: "govuk-!-margin-top-5"
               }) }}
-              <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a></p>
           {% else %}
               <p class="govuk-body-m">{{ mssgs.server_error_logged }}<a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank">{{ mssgs.server_error_feedback_link_text }}</a>{{ mssgs.feedback_link_suffix_alt }}</p>
               <h2 class="govuk-heading-m">{{ mssgs.server_error_what_now }}</h2>
-              <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a></p>
           {% endif %}
+          {% if not prePaymentError %}
+            <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a></p>
+            {% endif %}
 
         {% endcall %}
      {% endblock %}
