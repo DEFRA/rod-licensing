@@ -191,115 +191,97 @@ describe('contacts service', () => {
       }
     )
 
-    describe('contact does not exist in crm', () => {
-      it.each([['Letter'], ['Email'], ['Text']])(
-        'preferredMethodOfReminder is set to value of payload preferredMethodOfReminder',
-        async preferredMethodOfReminder => {
-          dynamicsLib.findById.mockImplementationOnce(() => ({}))
-          dynamicsLib.findByExample.mockImplementationOnce(() => [])
-          const mockPayload = {
-            preferredMethodOfReminder: preferredMethodOfReminder
-          }
-          const permit = mockPermit()
-          const contact = await resolveContactPayload(permit, mockPayload)
-          expect(contact.preferredMethodOfReminder.description).toEqual(preferredMethodOfReminder)
+    describe.each(['Letter', 'Email', 'Text'])('contact does not exist in crm', method => {
+      it(`preferredMethodOfReminder is set to ${method}`, async () => {
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => [])
+        const mockPayload = {
+          preferredMethodOfReminder: method
         }
-      )
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.preferredMethodOfReminder.description).toEqual(method)
+      })
 
-      it.each([['Letter'], ['Email'], ['Text']])(
-        'preferredMethodOfConfirmation is set to value of payload preferredMethodOfConfirmation',
-        async preferredMethodOfConfirmation => {
-          dynamicsLib.findById.mockImplementationOnce(() => ({}))
-          dynamicsLib.findByExample.mockImplementationOnce(() => [])
-          const mockPayload = {
-            preferredMethodOfConfirmation: preferredMethodOfConfirmation
-          }
-          const permit = mockPermit()
-          const contact = await resolveContactPayload(permit, mockPayload)
-          expect(contact.preferredMethodOfConfirmation.description).toEqual(preferredMethodOfConfirmation)
+      it(`preferredMethodOfConfirmation is set to ${method}`, async () => {
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => [])
+        const mockPayload = {
+          preferredMethodOfConfirmation: method
         }
-      )
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.preferredMethodOfConfirmation.description).toEqual(method)
+      })
 
-      it.each([['Letter'], ['Email'], ['Text']])(
-        'shortTermPreferredMethodOfConfirmation is set to value of payload preferredMethodOfConfirmation',
-        async preferredMethodOfConfirmation => {
-          dynamicsLib.findById.mockImplementationOnce(() => ({}))
-          dynamicsLib.findByExample.mockImplementationOnce(() => [])
-          const mockPayload = {
-            preferredMethodOfConfirmation: preferredMethodOfConfirmation
-          }
-          const permit = mockPermit()
-          const contact = await resolveContactPayload(permit, mockPayload)
-          expect(contact.shortTermPreferredMethodOfConfirmation.description).toEqual(preferredMethodOfConfirmation)
+      it(`shortTermPreferredMethodOfConfirmation is set to ${method}`, async () => {
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => [])
+        const mockPayload = {
+          preferredMethodOfConfirmation: method
         }
-      )
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.shortTermPreferredMethodOfConfirmation.description).toEqual(method)
+      })
     })
 
-    describe('contact exists in crm', () => {
+    describe.each(['Letter', 'Email', 'Text'])('contact exists in crm', method => {
       describe('long term licence', () => {
-        it.each([['Letter'], ['Email'], ['Text']])(
-          'preferredMethodOfReminder is set to value of preferredMethodOfReminder',
-          async preferredMethodOfReminder => {
-            const contactCRM = [
-              {
-                preferredMethodOfReminder: { id: 910400000, label: preferredMethodOfReminder, description: preferredMethodOfReminder }
-              }
-            ]
-            dynamicsLib.findById.mockImplementationOnce(() => ({}))
-            dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-            const mockPayload = mockContactPayload()
-            const permit = mockPermit()
-            const contact = await resolveContactPayload(permit, mockPayload)
-            expect(contact.preferredMethodOfReminder).toEqual(contactCRM[0].preferredMethodOfReminder)
-          }
-        )
+        it(`preferredMethodOfReminder is set to ${method}`, async () => {
+          const contactCRM = [
+            {
+              preferredMethodOfReminder: { id: 910400000, label: method, description: method }
+            }
+          ]
+          dynamicsLib.findById.mockImplementationOnce(() => ({}))
+          dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+          const mockPayload = mockContactPayload()
+          const permit = mockPermit()
+          const contact = await resolveContactPayload(permit, mockPayload)
+          expect(contact.preferredMethodOfReminder).toEqual(contactCRM[0].preferredMethodOfReminder)
+        })
 
-        it.each([['Letter'], ['Email'], ['Text']])(
-          'preferredMethodOfConfirmation is set to value of preferredMethodOfConfirmation',
-          async preferredMethodOfConfirmation => {
-            const contactCRM = [
-              {
-                preferredMethodOfConfirmation: {
-                  id: 910400000,
-                  label: preferredMethodOfConfirmation,
-                  description: preferredMethodOfConfirmation
-                }
+        it(`preferredMethodOfConfirmation is set to ${method}`, async () => {
+          const contactCRM = [
+            {
+              preferredMethodOfConfirmation: {
+                id: 910400000,
+                label: method,
+                description: method
               }
-            ]
-            dynamicsLib.findById.mockImplementationOnce(() => ({}))
-            dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-            const mockPayload = mockContactPayload()
-            const permit = mockPermit()
-            const contact = await resolveContactPayload(permit, mockPayload)
-            expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM[0].preferredMethodOfConfirmation)
-          }
-        )
+            }
+          ]
+          dynamicsLib.findById.mockImplementationOnce(() => ({}))
+          dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+          const mockPayload = mockContactPayload()
+          const permit = mockPermit()
+          const contact = await resolveContactPayload(permit, mockPayload)
+          expect(contact.preferredMethodOfConfirmation).toEqual(contactCRM[0].preferredMethodOfConfirmation)
+        })
       })
 
       describe('short term licence', () => {
-        it.each([['Letter'], ['Email'], ['Text']])(
-          'shortTermPreferredMethodOfConfirmation is set to value of preferredMethodOfConfirmation',
-          async preferredMethodOfConfirmation => {
-            const contactCRM = [
-              {
-                preferredMethodOfConfirmation: {
-                  id: 910400000,
-                  label: preferredMethodOfConfirmation,
-                  description: preferredMethodOfConfirmation
-                }
+        it(`shortTermPreferredMethodOfConfirmation is set to ${method}`, async () => {
+          const contactCRM = [
+            {
+              preferredMethodOfConfirmation: {
+                id: 910400000,
+                label: method,
+                description: method
               }
-            ]
-            dynamicsLib.findById.mockImplementationOnce(() => ({}))
-            dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-            const mockPayload = mockContactPayload()
-            const mockShortPermit = {
-              durationMagnitude: 1,
-              durationDesignator: { id: 910400001, label: 'Month(s)', description: 'D' }
             }
-            const contact = await resolveContactPayload(mockShortPermit, mockPayload)
-            expect(contact.shortTermPreferredMethodOfConfirmation).toEqual(contactCRM[0].shortTermPreferredMethodOfConfirmation)
+          ]
+          dynamicsLib.findById.mockImplementationOnce(() => ({}))
+          dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+          const mockPayload = mockContactPayload()
+          const mockShortPermit = {
+            durationMagnitude: 1,
+            durationDesignator: { id: 910400001, label: 'Month(s)', description: 'D' }
           }
-        )
+          const contact = await resolveContactPayload(mockShortPermit, mockPayload)
+          expect(contact.shortTermPreferredMethodOfConfirmation).toEqual(contactCRM[0].shortTermPreferredMethodOfConfirmation)
+        })
       })
     })
   })

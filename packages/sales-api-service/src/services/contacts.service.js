@@ -48,7 +48,7 @@ export const resolveContactPayload = async (permit, payload) => {
     preferredMethodOfNewsletter
   )
 
-  if (contactInCRM === undefined) {
+  if (!contactInCRM) {
     contact.preferredMethodOfReminder = await getGlobalOptionSetValue(
       Contact.definition.mappings.preferredMethodOfReminder.ref,
       preferredMethodOfReminder
@@ -81,8 +81,8 @@ export const resolveContactPayload = async (permit, payload) => {
     }
   }
 
-  contact.mobilePhone = await updateMobilePhone(contact, mobilePhone)
-  contact.email = await updateEmail(contact, email)
+  contact.mobilePhone = mobilePhone || contact.mobilePhone
+  contact.email = email || contact.email
 
   contact.country = await getGlobalOptionSetValue(Contact.definition.mappings.country.ref, country)
 
@@ -92,20 +92,6 @@ export const resolveContactPayload = async (permit, payload) => {
 export const getObfuscatedDob = async licensee => {
   const contactInCRM = await findContactInCRM(licensee)
   return contactInCRM?.obfuscatedDob ? contactInCRM.obfuscatedDob : generateDobId(licensee.birthDate)
-}
-
-const updateMobilePhone = async (contact, mobilePhone) => {
-  if ((mobilePhone === null && contact.mobilePhone !== null) || (mobilePhone === undefined && contact.mobilePhone !== null)) {
-    return contact.mobilePhone
-  }
-  return mobilePhone
-}
-
-const updateEmail = async (contact, email) => {
-  if ((email === null && contact.email !== null) || (email === undefined && contact.email !== null)) {
-    return contact.email
-  }
-  return email
 }
 
 const findContactInCRM = async licensee => {
