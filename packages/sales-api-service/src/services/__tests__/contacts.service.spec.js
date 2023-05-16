@@ -3,8 +3,7 @@ import {
   mockContactPayload,
   mockContactWithIdPayload,
   MOCK_EXISTING_CONTACT_ENTITY,
-  MOCK_OBFUSCATED_DOB,
-  mockPermit
+  MOCK_OBFUSCATED_DOB
 } from '../../__mocks__/test-data.js'
 import { Contact } from '@defra-fish/dynamics-lib'
 
@@ -40,6 +39,10 @@ describe('contacts service', () => {
       birthDate: mockPayload.birthDate,
       premises: mockPayload.premises,
       postcode: mockPayload.postcode
+    })
+    const mockPermit = () => ({
+      durationMagnitude: 12,
+      durationDesignator: { id: 910400001, label: 'Month(s)', description: 'M' }
     })
 
     it('resolves an existing contact by id', async () => {
