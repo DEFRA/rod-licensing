@@ -12,4 +12,20 @@ describe('permissions helper', () => {
     const cost = getPermissionCost(permission)
     expect(cost).toBe(expectedCost)
   })
+
+  it('returns new cost if no start date provided and current date / time is after new cost start date', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2023-04-02T00:00:00.000Z'))
+    const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-01T00:00:00.000' } }
+    const cost = getPermissionCost(permission)
+    expect(cost).toBe(permission.permit.newCost)
+  })
+
+  it('returns old cost if no start date provided and current date / time is before new cost start date', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2023-03-31T00:00:00.000Z'))
+    const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-01T00:00:00.000' } }
+    const cost = getPermissionCost(permission)
+    expect(cost).toBe(permission.permit.cost)
+  })
 })

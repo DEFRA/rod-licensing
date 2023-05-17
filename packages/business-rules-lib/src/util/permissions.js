@@ -1,5 +1,6 @@
 export const getPermissionCost = permission => {
-  if (Date.parse(permission.startDate) >= Date.parse(permission.permit.newCostStartDate)) {
+  const permissionStartDate = permission.startDate || new Date().toISOString()
+  if (Date.parse(permissionStartDate) >= Date.parse(permission.permit.newCostStartDate)) {
     return permission.permit.newCost
   }
   return permission.permit.cost
