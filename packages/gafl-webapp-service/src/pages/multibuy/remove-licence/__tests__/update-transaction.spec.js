@@ -118,8 +118,7 @@ describe('remove-licence > update transaction', () => {
       const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
       const mockRequest = createMockRequest({ cache: { transaction: transaction } })
       await updateTransaction(mockRequest)
-      const permissions = transaction.permissions
-      expect(permissions.filter(p => p).length).toEqual(2)
+      expect(transaction.permissions.every(p => p.licenceType === 'trout-and-coarse')).toBeTruthy()
     })
 
     it('page does not contain the page currentPermission', async () => {
@@ -127,7 +126,7 @@ describe('remove-licence > update transaction', () => {
       const mockRequest = createMockRequest({ cache: { page: page } })
       await updateTransaction(mockRequest)
       const permissions = page.permissions
-      expect(permissions.filter(p => p).length).toEqual(2)
+      expect(permissions.length).toEqual(2)
     })
 
     it('status does not contain the status currentPermission', async () => {
@@ -135,7 +134,7 @@ describe('remove-licence > update transaction', () => {
       const mockRequest = createMockRequest({ cache: { status: status } })
       await updateTransaction(mockRequest)
       const permissions = status.permissions
-      expect(permissions.filter(p => p).length).toEqual(2)
+      expect(permissions.length).toEqual(2)
     })
 
     it('addressLookup does not contain the addressLookup currentPermission', async () => {
@@ -143,7 +142,7 @@ describe('remove-licence > update transaction', () => {
       const mockRequest = createMockRequest({ cache: { addressLookup: addressLookup } })
       await updateTransaction(mockRequest)
       const permissions = addressLookup.permissions
-      expect(permissions.filter(p => p).length).toEqual(2)
+      expect(permissions.length).toEqual(2)
     })
 
     it('setCurrentPermission is called with latest permission for status', async () => {
