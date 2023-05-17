@@ -1,8 +1,8 @@
 const createCache = (cache = {}) => ({
   helpers: {
     status: {
-      getCurrentPermission: () => cache.status?.permissions[0] || {},
-      set: () => cache.status || (() => {})
+      getCurrentPermission: () => cache.status || {},
+      set: cache.status?.set || (() => {})
     },
     transaction: {
       getCurrentPermission: () => cache.transaction?.permissions[0] || {},
