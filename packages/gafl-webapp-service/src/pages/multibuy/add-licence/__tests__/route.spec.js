@@ -15,7 +15,7 @@ describe('add-licence > route', () => {
     })
 
     it('redirects to the contact summary page if the user has not visited it yet', async () => {
-      const mockRequest = createMockRequest({ cache: { status: { permissions: [{ [LICENCE_SUMMARY.page]: true }] } } })
+      const mockRequest = createMockRequest({ cache: { status: { [LICENCE_SUMMARY.page]: true } } })
       await expect(() => getData(mockRequest)).rejects.toBeInstanceOf(GetDataRedirect)
       expect(GetDataRedirect).toBeCalledWith(CONTACT_SUMMARY.uri)
     })
@@ -23,7 +23,7 @@ describe('add-licence > route', () => {
     it('does not redirect if user has visited both summary pages', async () => {
       const mockRequest = createMockRequest({
         cache: {
-          status: { permissions: [{ [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true }] }
+          status: { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true }
         }
       })
       await getData(mockRequest)
@@ -35,7 +35,7 @@ describe('add-licence > route', () => {
       async permissions => {
         const mockRequest = createMockRequest({
           cache: {
-            status: { permissions: [{ [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true }] },
+            status: { [LICENCE_SUMMARY.page]: true, [CONTACT_SUMMARY.page]: true },
             transaction: { permissions }
           }
         })

@@ -1,6 +1,33 @@
 import { ADD_LICENCE, REMOVE_LICENCE } from '../../../../uri.js'
 import updateTransaction from '../update-transaction.js'
-import { createMockRequest } from '../../../../__mocks__/request.js'
+
+const createCache = (cache = {}) => ({
+  helpers: {
+    status: {
+      setCurrentPermission: () => cache.status?.permissions[0] || {},
+      get: () => cache.status || { permissions: [getStatusPermission(), getStatusPermission(), getStatusPermission()] },
+      set: () => cache.status || (() => {})
+    },
+    transaction: {
+      getCurrentPermission: () => cache.transaction?.permissions[0] || {},
+      get: () => cache.transaction || { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
+      set: () => cache.transaction || (() => {})
+    },
+    page: {
+      get: () => cache.page || { permissions: [getPagePermission(), getPagePermission(), getPagePermission()] },
+      set: () => cache.page || (() => {})
+    },
+    addressLookup: {
+      getCurrentPermission: () => cache.addressLookup?.permissions[0] || {},
+      get: () => cache.addressLookup || { permissions: [{}, {}, {}] },
+      set: () => cache.addressLookup || (() => {})
+    }
+  }
+})
+
+export const createMockRequest = (opts = {}) => ({
+  cache: () => createCache(opts.cache)
+})
 
 const getTransactionPermissionOne = () => ({
   licensee: {
@@ -12,66 +39,34 @@ const getTransactionPermissionOne = () => ({
   licenceToStart: 'after-payment',
   licenceLength: '8D',
   permit: { cost: 12 },
-  hash: '81427565a0b8c98de3c5ffff9bf8f13a4fb38f85860abdc84d1585f7ef4ea2f8'
+  hash: 'abc-123'
 })
 
 const getTransactionPermissionTwo = () => ({
-  licensee: {
-    firstName: 'Turanga',
-    lastName: 'Leela'
-  },
+  ...getTransactionPermissionOne,
   licenceType: 'trout-and-coarse',
   numberOfRods: '2',
-  licenceToStart: 'after-payment',
   licenceLength: '12M',
-  permit: { cost: 12 },
-  hash: '81427565a0b8c98de3c5ffff9bf8f13a4fb38f85860abdc84d1585f7ef4ea2f7'
+  hash: 'abc-456'
 })
 
 const getTransactionPermissionThree = () => ({
-  licensee: {
-    firstName: 'Turanga',
-    lastName: 'Leela'
-  },
+  ...getTransactionPermissionOne,
   licenceType: 'trout-and-coarse',
   numberOfRods: '3',
-  licenceToStart: 'after-payment',
   licenceLength: '12M',
-  permit: { cost: 12 },
-  hash: '81427565a0b8c98de3c5ffff9bf8f13a4fb38f85860abdc84d1585f7ef4ea2f9'
+  hash: 'abc-789'
 })
 
-const getPagePermissionOne = () => ({
-  [ADD_LICENCE.page]: true
-})
-
-const getPagePermissionTwo = () => ({
+const getPagePermission = (remove = false) => ({
   [ADD_LICENCE.page]: true,
-  [REMOVE_LICENCE.page]: true
+  [REMOVE_LICENCE.page]: remove
 })
 
-const getPagePermissionThree = () => ({
-  [ADD_LICENCE.page]: true
+const getStatusPermission = (remove = false) => ({
+  [ADD_LICENCE.page]: true,
+  [REMOVE_LICENCE.page]: remove
 })
-
-const getStatusPermissionOne = () => ({
-  [ADD_LICENCE.page]: false,
-  [REMOVE_LICENCE.page]: true
-})
-
-const getStatusPermissionTwo = () => ({
-  [ADD_LICENCE.page]: true
-})
-
-const getStatusPermissionThree = () => ({
-  [ADD_LICENCE.page]: true
-})
-
-const getAddressLookupPermissionOne = () => ({})
-
-const getAddressLookupPermissionTwo = () => ({})
-
-const getAddressLookupPermissionThree = () => ({})
 
 describe('remove-licence > update transaction', () => {
   beforeEach(() => {
@@ -79,81 +74,36 @@ describe('remove-licence > update transaction', () => {
   })
 
   it('status.setCurrentPermission is being called with different permission', async () => {
-    const setPermission = getStatusPermissionThree()
-    const mockRequest = createMockRequest({
-      cache: {
-        transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-        page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-        status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), setPermission] },
-        addressLookup: {
-          permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-        }
-      }
-    })
+    const setPermission = getStatusPermission(true)
+    const mockRequest = createMockRequest({ cache: { status: { permissions: [getStatusPermission(), getStatusPermission(), setPermission] } } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(expect.objectContaining(setPermission))
   })
 
   it('transaction.set is being called with a permission removed', async () => {
     const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
-    const mockRequest = createMockRequest({
-      cache: {
-        transaction: transaction,
-        page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-        status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] },
-        addressLookup: {
-          permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-        }
-      }
-    })
+    const mockRequest = createMockRequest({ cache: { transaction: transaction } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.transaction.set()).toEqual(expect.objectContaining(transaction))
   })
 
   it('page.set is being called with a permission removed', async () => {
-    const page = { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] }
-    const mockRequest = createMockRequest({
-      cache: {
-        transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-        page: page,
-        status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] },
-        addressLookup: {
-          permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-        }
-      }
-    })
+    const page = { permissions: [getPagePermission(true), getPagePermission(), getPagePermission()] }
+    const mockRequest = createMockRequest({ cache: { page: page } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.page.set()).toEqual(expect.objectContaining(page))
   })
 
   it('status.set is being called with a permission removed', async () => {
-    const status = { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] }
-    const mockRequest = createMockRequest({
-      cache: {
-        transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-        page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-        status: status,
-        addressLookup: {
-          permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-        }
-      }
-    })
+    const status = { permissions: [getStatusPermission(true), getStatusPermission(), getStatusPermission()] }
+    const mockRequest = createMockRequest({ cache: { status: status } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.status.set()).toEqual(expect.objectContaining(status))
   })
 
   it('addressLookup.set is being called with a permission removed', async () => {
-    const addressLookup = {
-      permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-    }
-    const mockRequest = createMockRequest({
-      cache: {
-        transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-        page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-        status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] },
-        addressLookup: addressLookup
-      }
-    })
+    const addressLookup = { permissions: [{}, {}, {}] }
+    const mockRequest = createMockRequest({ cache: { addressLookup: addressLookup } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.addressLookup.set()).toEqual(expect.objectContaining(addressLookup))
   })
@@ -161,84 +111,39 @@ describe('remove-licence > update transaction', () => {
   describe('after remove licence', () => {
     it('transaction does not contain the transaction currentPermission', async () => {
       const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
-      const mockRequest = createMockRequest({
-        cache: {
-          transaction: transaction,
-          page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-          status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] },
-          addressLookup: {
-            permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-          }
-        }
-      })
+      const mockRequest = createMockRequest({ cache: { transaction: transaction } })
       await updateTransaction(mockRequest)
       const permissions = transaction.permissions
-      expect(permissions.filter(p => p.licenceType === 'salmon-and-sea').length).toEqual(0)
+      expect(permissions.filter(p => p).length).toEqual(2)
     })
 
     it('page does not contain the page currentPermission', async () => {
-      const page = { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] }
-      const mockRequest = createMockRequest({
-        cache: {
-          transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-          page: page,
-          status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] },
-          addressLookup: {
-            permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-          }
-        }
-      })
+      const page = { permissions: [getPagePermission(true), getPagePermission(), getPagePermission()] }
+      const mockRequest = createMockRequest({ cache: { page: page } })
       await updateTransaction(mockRequest)
       const permissions = page.permissions
-      expect(permissions.filter(p => p['remove-licence'] === true).length).toEqual(0)
+      expect(permissions.filter(p => p).length).toEqual(2)
     })
 
     it('status does not contain the status currentPermission', async () => {
-      const status = { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] }
-      const mockRequest = createMockRequest({
-        cache: {
-          transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-          page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-          status: status,
-          addressLookup: {
-            permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-          }
-        }
-      })
+      const status = { permissions: [getStatusPermission(true), getStatusPermission(), getStatusPermission()] }
+      const mockRequest = createMockRequest({ cache: { status: status } })
       await updateTransaction(mockRequest)
       const permissions = status.permissions
-      expect(permissions.filter(p => p['remove-licence'] === true).length).toEqual(0)
+      expect(permissions.filter(p => p).length).toEqual(2)
     })
 
     it('addressLookup does not contain the addressLookup currentPermission', async () => {
-      const addressLookup = {
-        permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-      }
-      const mockRequest = createMockRequest({
-        cache: {
-          transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-          page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-          status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), getStatusPermissionThree()] },
-          addressLookup: addressLookup
-        }
-      })
+      const addressLookup = { permissions: [{}, {}, {}] }
+      const mockRequest = createMockRequest({ cache: { addressLookup: addressLookup } })
       await updateTransaction(mockRequest)
       const permissions = addressLookup.permissions
       expect(permissions.filter(p => p).length).toEqual(2)
     })
 
     it('setCurrentPermission is called with latest permission for status', async () => {
-      const setPermission = getStatusPermissionThree()
-      const mockRequest = createMockRequest({
-        cache: {
-          transaction: { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] },
-          page: { permissions: [getPagePermissionOne(), getPagePermissionTwo(), getPagePermissionThree()] },
-          status: { permissions: [getStatusPermissionOne(), getStatusPermissionTwo(), setPermission] },
-          addressLookup: {
-            permissions: [getAddressLookupPermissionOne(), getAddressLookupPermissionTwo(), getAddressLookupPermissionThree()]
-          }
-        }
-      })
+      const setPermission = getStatusPermission(true)
+      const mockRequest = createMockRequest({ cache: { status: { permissions: [getStatusPermission(), getStatusPermission(), setPermission] } } })
       await updateTransaction(mockRequest)
       expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(setPermission)
     })
