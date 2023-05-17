@@ -4,8 +4,6 @@ export default async request => {
   const status = await request.cache().helpers.status.get()
   const addressLookup = await request.cache().helpers.addressLookup.get()
 
-  console.log(status)
-
   const transactionPermission = await request.cache().helpers.transaction.getCurrentPermission()
   const addressPermission = await request.cache().helpers.addressLookup.getCurrentPermission()
 
@@ -18,8 +16,6 @@ export default async request => {
   await request.cache().helpers.page.set(page)
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.addressLookup.set(addressLookup)
-
-  console.log(status)
 
   const lastStatusPermission = status.permissions[status.permissions.length - 1]
   await request.cache().helpers.status.set({ currentPermissionIdx: transaction.permissions.length - 1 })
