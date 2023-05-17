@@ -156,9 +156,8 @@ describe('contacts service', () => {
       expect(contact.email).toEqual(email)
     })
 
-    it.each([['test@test.com'], ['example@example.com'], ['email@email.com']])(
-      'email in crm overwritten by value in payload',
-      async email => {
+    describe.each(['test@test.com', 'example@example.com', 'email@email.com'])('updating email value', email => {
+      it('email in crm overwritten by value in payload', async () => {
         const contactCRM = [
           {
             email: 'testing@example.com'
@@ -172,12 +171,9 @@ describe('contacts service', () => {
         const permit = mockPermit()
         const contact = await resolveContactPayload(permit, mockPayload)
         expect(contact.email).toEqual(email)
-      }
-    )
+      })
 
-    it.each([['test@test.com'], ['example@example.com'], ['email@email.com']])(
-      'payload for email is null but crm has value so crm value is saved again',
-      async email => {
+      it('payload for email is null but crm has value so crm value is saved again', async () => {
         const contactCRM = [
           {
             mobilePhone: email
@@ -191,8 +187,8 @@ describe('contacts service', () => {
         const permit = mockPermit()
         const contact = await resolveContactPayload(permit, mockPayload)
         expect(contact.mobilePhone).toEqual(email)
-      }
-    )
+      })
+    })
 
     describe.each(['Letter', 'Email', 'Text'])('contact does not exist in crm', method => {
       it(`preferredMethodOfReminder is set to ${method}`, async () => {
