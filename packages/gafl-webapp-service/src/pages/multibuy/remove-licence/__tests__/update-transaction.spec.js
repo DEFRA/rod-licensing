@@ -1,39 +1,23 @@
 import updateTransaction from '../update-transaction.js'
 
-const getPermissionOne = () => ({
+const createNewPermission = ({
+  firstName = 'Turanga',
+  lastName = 'Leela',
+  licenceType = 'trout-and-coarse',
+  numberOfRods = '2',
+  licenceToStart = 'after-payment',
+  licenceLength = '12M',
+  cost = 12
+} = {}) => ({
   licensee: {
-    firstName: 'Turanga',
-    lastName: 'Leela'
+    firstName,
+    lastName
   },
-  licenceType: 'trout-and-coarse',
-  numberOfRods: '2',
-  licenceToStart: 'after-payment',
-  licenceLength: '12M',
-  permit: { cost: 12 }
-})
-
-const getPermissionTwo = () => ({
-  licensee: {
-    firstName: 'Turanga',
-    lastName: 'Leela'
-  },
-  licenceType: 'salmon-and-sea',
-  numberOfRods: '1',
-  licenceToStart: 'after-payment',
-  licenceLength: '8D',
-  permit: { cost: 12 }
-})
-
-const getPermissionThree = () => ({
-  licensee: {
-    firstName: 'Turanga',
-    lastName: 'Leela'
-  },
-  licenceType: 'trout-and-coarse',
-  numberOfRods: '3',
-  licenceToStart: 'after-payment',
-  licenceLength: '12M',
-  permit: { cost: 12 }
+  licenceType,
+  numberOfRods,
+  licenceToStart,
+  licenceLength,
+  permit: { cost }
 })
 
 const createRequestMock = (transaction, permission, set = jest.fn()) => ({
@@ -56,21 +40,33 @@ describe('remove-licence > update transaction', () => {
   it('set is being called with a permission removed', async () => {
     const set = jest.fn()
     const transaction = {
-      permissions: [getPermissionOne(), getPermissionTwo(), getPermissionThree()]
+      permissions: [createNewPermission(), createNewPermission({ firstName: 'Bobby' }), createNewPermission({ licenceLength: '8 days' })]
     }
-    const mockRequest = createRequestMock(transaction, getPermissionTwo(), set)
+    const mockRequest = createRequestMock(transaction, createNewPermission(), set)
     await updateTransaction(mockRequest)
     expect(set).toHaveBeenCalledWith(expect.objectContaining(transaction))
   })
 
   describe('transaction after remove licence', () => {
     it('transaction does not contain the currentPermission', async () => {
-      const permissionToRemove = getPermissionTwo()
-      const transaction = { permissions: [getPermissionOne(), permissionToRemove, getPermissionThree()] }
+      const permissionToRemove = createNewPermission({ licenceType: 'salmon-and-sea' })
+      const transaction = { permissions: [createNewPermission(), permissionToRemove, createNewPermission()] }
       const mockRequest = createRequestMock(transaction, permissionToRemove)
       await updateTransaction(mockRequest)
       const permissions = transaction.permissions
       expect(permissions.filter(p => p.licenceType === 'salmon-and-sea').length).toEqual(0)
     })
+
+    it.each([[createNewPermission(), createNewPermission({ firstName: 'Brie' }), createNewPermission()]])(
+      'only deletes one entry of a duplicate permission',
+      async (permissionOne, permissionTwo, permissionThreeToRemove) => {
+        const transaction = { permissions: [permissionOne, permissionTwo, permissionThreeToRemove] }
+        const expectedResult = [permissionTwo, permissionOne]
+        const mockRequest = createRequestMock(transaction, permissionThreeToRemove)
+        await updateTransaction(mockRequest)
+        const permissions = transaction.permissions
+        expect(permissions).toEqual(expectedResult)
+      }
+    )
   })
 })
