@@ -1,4 +1,13 @@
 
+## v1.33.0-rc.21 (2023-05-17)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1708](https://github.com/DEFRA/rod-licensing/pull/1708) Short term licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.33.0-rc.20 (2023-05-16)
 
 #### :rocket: Enhancement
