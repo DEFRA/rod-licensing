@@ -105,25 +105,24 @@ describe('contacts service', () => {
       }
     )
 
-    it.each([[447111111111], [447222222222], [447333333333]])('mobile number in crm overwritten by value in payload', async mobilePhone => {
-      const contactCRM = [
-        {
-          mobilePhone: 447444444444
+    describe.each([447111111111, 447222222222, 447333333333])('updating mobile phone value', mobilePhone => {
+      it('mobile number in crm overwritten by value in payload', async () => {
+        const contactCRM = [
+          {
+            mobilePhone: 447444444444
+          }
+        ]
+        dynamicsLib.findById.mockImplementationOnce(() => ({}))
+        dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
+        const mockPayload = {
+          mobilePhone: mobilePhone
         }
-      ]
-      dynamicsLib.findById.mockImplementationOnce(() => ({}))
-      dynamicsLib.findByExample.mockImplementationOnce(() => contactCRM)
-      const mockPayload = {
-        mobilePhone: mobilePhone
-      }
-      const permit = mockPermit()
-      const contact = await resolveContactPayload(permit, mockPayload)
-      expect(contact.mobilePhone).toEqual(mobilePhone)
-    })
+        const permit = mockPermit()
+        const contact = await resolveContactPayload(permit, mockPayload)
+        expect(contact.mobilePhone).toEqual(mobilePhone)
+      })
 
-    it.each([[447111111111], [447222222222], [447333333333]])(
-      'payload for mobile number is null but crm has value so crm value is saved again',
-      async mobilePhone => {
+      it('payload for mobile number is null but crm has value so crm value is saved again', async () => {
         const contactCRM = [
           {
             mobilePhone: mobilePhone
@@ -137,8 +136,8 @@ describe('contacts service', () => {
         const permit = mockPermit()
         const contact = await resolveContactPayload(permit, mockPayload)
         expect(contact.mobilePhone).toEqual(mobilePhone)
-      }
-    )
+      })
+    })
 
     it.each([[null], ['test@test.com'], ['example@example.com']])('no email in crm so email set to value in payload', async email => {
       const contactCRM = [
