@@ -28,7 +28,7 @@ const createCache = (cache = {}) => ({
   }
 })
 
-export const createMockRequest = (opts = {}) => ({
+const createMockRequest = (opts = {}) => ({
   cache: () => createCache(opts.cache)
 })
 
@@ -77,9 +77,10 @@ describe('remove-licence > update transaction', () => {
   })
 
   it('status.setCurrentPermission is being called with different permission', async () => {
-    const removePermission = getStatusPermission({ [REMOVE_LICENCE.page]: true })
     const setPermission = getStatusPermission()
-    const mockRequest = createMockRequest({ cache: { status: { permissions: [getStatusPermission(), setPermission, removePermission] } } })
+    const mockRequest = createMockRequest({
+      cache: { status: { permissions: [getStatusPermission(), setPermission, getStatusPermission({ [REMOVE_LICENCE.page]: true })] } }
+    })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(expect.objectContaining(setPermission))
   })
@@ -146,9 +147,9 @@ describe('remove-licence > update transaction', () => {
     })
 
     it('setCurrentPermission is called with latest permission for status', async () => {
-      const setPermission = getStatusPermission(true)
+      const setPermission = getStatusPermission()
       const mockRequest = createMockRequest({
-        cache: { status: { permissions: [getStatusPermission(), getStatusPermission(), setPermission] } }
+        cache: { status: { permissions: [getStatusPermission(), setPermission, getStatusPermission({ [REMOVE_LICENCE.page]: true })] } }
       })
       await updateTransaction(mockRequest)
       expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(setPermission)
