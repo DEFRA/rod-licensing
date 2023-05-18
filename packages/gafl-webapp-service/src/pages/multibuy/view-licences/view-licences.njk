@@ -25,11 +25,11 @@
             {% for licence in data.licences %}
 
                 {% set licenceInfo = [
-                  { key: { text: 'Licence holder' }, value: { text: licence.licenceHolder } }, 
-                  { key: { text: 'Type' }, value: { text: licence.type } }, 
-                  { key: { text: 'Length' }, value: { text: licence.length } }, 
-                  { key: { text: 'Start' }, value: { text: licence.start } }, 
-                  { key: { text: 'Price' }, value: { text: '£' + licence.price } }
+                  { key: { text: mssgs.licence_summary_licence_holder }, value: { text: licence.licenceHolder } }, 
+                  { key: { text: mssgs.licence_summary_type }, value: { text: licence.type } }, 
+                  { key: { text: mssgs.licence_summary_length }, value: { text: licence.length } }, 
+                  { key: { text: mssgs.licence_summary_start }, value: { text: licence.start } }, 
+                  { key: { text: mssgs.licence_summary_price }, value: { text: mssgs.pound + licence.price } }
                   ]
                 %}
 
@@ -45,7 +45,7 @@
                   })}}
 
                   {{ govukButton({
-                    text: "Remove this licence",
+                    text: mssgs.remove,
                     href: "/buy/remove-licence?permissionIndex=" + licence.index,
                     classes: "govuk-button--secondary"
                   })}}
