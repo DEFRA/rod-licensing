@@ -16,6 +16,7 @@ Object {
   "licencesRemaining": true,
   "uri": Object {
     "add_licence": "/buy/add-licence",
+    "new": "/buy/new",
   },
 }
 `;

@@ -12,6 +12,15 @@ export const getData = async request => {
   const mssgs = request.i18n.getCatalog()
   const licencesRemaining = transaction.permissions[0].licensee.firstName !== undefined
 
+  const data = {
+    duplicate: false,
+    licences: undefined,
+    licencesRemaining,
+    uri: {
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
+    }
+  }
+
   if (licencesRemaining) {
     const licences = transaction.permissions.map((permission, index) => ({
       licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
@@ -24,23 +33,12 @@ export const getData = async request => {
 
     const duplicate = await hasDuplicates(licences)
 
-    return {
-      duplicate,
-      licences,
-      licencesRemaining,
-      uri: {
-        add_licence: addLanguageCodeToUri(request, ADD_LICENCE.uri)
-      }
-    }
+    data.duplicate = duplicate
+    data.licences = licences
+    data.uri.add_licence = addLanguageCodeToUri(request, ADD_LICENCE.uri)
   }
-  return {
-    duplicate: false,
-    licences: undefined,
-    licencesRemaining,
-    uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    }
-  }
+
+  return data
 }
 
 export const validator = Joi.object({

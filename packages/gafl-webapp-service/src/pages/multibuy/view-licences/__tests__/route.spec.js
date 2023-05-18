@@ -217,7 +217,7 @@ describe('view licences > getData', () => {
     })
 
     it('return value of addLangaugeCodeToUri is used for add licence', async () => {
-      const returnValue = Symbol('return value')
+      const returnValue = '/buy/add-licence'
       addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
       const result = await getData(getSampleRequest())
