@@ -1,5 +1,4 @@
 import { getData, validator } from '../route'
-import { createMockRequest } from '../../../../__mocks__/request.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
@@ -38,16 +37,14 @@ describe('view-licences > default', () => {
 describe('view licences > getData', () => {
   let data
   beforeAll(async () => {
-    const mockRequest = createMockRequest({
-      cache: {
-        transaction: {
-          permissions: [permission]
-        }
-      }
-    })
-
     const getSampleRequest = () => ({
-      ...mockRequest,
+      cache: () => ({
+        helpers: {
+          transaction: {
+            get: async () => ({ permissions: [permission] })
+          }
+        }
+      }),
       i18n: {
         getCatalog: () => catalog
       },
