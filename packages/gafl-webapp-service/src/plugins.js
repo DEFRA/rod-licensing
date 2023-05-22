@@ -9,7 +9,6 @@ import HapiGapi from '@defra/hapi-gapi'
 import Cookie from '@hapi/cookie'
 import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
-import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
 import { checkAnalytics, getAnalyticsSessionId } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
@@ -73,14 +72,13 @@ const initialiseCrumbPlugin = () => ({
 const initialiseHapiGapiPlugin = () => {
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
-    hapiGapiPropertySettings.push({ id: process.env.ANALYTICS_PRIMARY_PROPERTY, hitTypes: ['pageview', 'event', 'ecommerce'] })
+    hapiGapiPropertySettings.push({
+      id: process.env.ANALYTICS_PRIMARY_PROPERTY,
+      key: process.env.ANALYTICS_PROPERTY_API,
+      hitTypes: ['page_view']
+    })
   } else {
     console.warn("ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won't track this")
-  }
-  if (process.env.ANALYTICS_XGOV_PROPERTY) {
-    hapiGapiPropertySettings.push({ id: process.env.ANALYTICS_XGOV_PROPERTY, hitTypes: ['pageview'] })
-  } else {
-    console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
   }
 
   return {
@@ -95,22 +93,6 @@ const initialiseHapiGapiPlugin = () => {
           sessionId = gaClientId ?? (await request.cache().getId())
         }
         return sessionId
-      },
-      attributionProducer: async request => {
-        if (useSessionCookie(request)) {
-          const { attribution } = await request.cache().helpers.status.get()
-
-          if (attribution) {
-            return {
-              campaign: attribution[UTM.CAMPAIGN],
-              content: attribution[UTM.CONTENT],
-              medium: attribution[UTM.MEDIUM],
-              source: attribution[UTM.SOURCE],
-              term: attribution[UTM.TERM]
-            }
-          }
-        }
-        return {}
       }
     }
   }

@@ -1,4 +1,4 @@
-import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, TEST_TRANSACTION, CONTACT } from '../../../../uri.js'
+import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, LICENCE_TYPE, TEST_TRANSACTION, CONTACT } from '../../../../uri.js'
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -52,6 +52,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none' setting a 12 month licence changes it to 'post'", async () => {
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -59,6 +60,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none' setting a 12 month licence, then changing it to 1 day sets preferredMethodOfConfirmation to none and sets postalFulfilment to false", async () => {
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
@@ -68,6 +70,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
@@ -75,6 +78,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none' setting a 1 day licence, then changing to 12 months sets preferredMethodOfConfirmation to letter and set postalFulfilment to true", async () => {
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })

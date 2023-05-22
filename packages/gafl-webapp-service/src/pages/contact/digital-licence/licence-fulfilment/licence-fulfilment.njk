@@ -1,48 +1,38 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = mssgs.licence_fufilment_title_you if data.isLicenceForYou else mssgs.licence_fufilment_title_other %}
-
-{% set errorMsg = mssgs.licence_fufilment_error %}
+{% set title = mssgs['licence_fulfilment_title_' + data.youOrOther] %}
 
 {% set errorMap = {
         'licence-option': {
-            'any.required': { ref: '#licence-option', text: errorMsg }
+            'any.required': { ref: '#licence-option', text: mssgs.licence_fulfilment_error }
         }
     }
 %}
 
 {% block pageContent %}
-    <p class="govuk-body">{{ mssgs.licence_fufilment_content_info }}</p>
+    <p class="govuk-body">{{ mssgs.licence_fulfilment_content_info }}</p>
     {{ govukRadios({
         idPrefix: "licence-option",
         name: "licence-option",
         items: [
             {
                 value: "digital",
-                text: mssgs.licence_fufilment_radio_paperless,
+                text: mssgs.licence_fulfilment_radio_paperless,
                 checked: payload['licence-option'] === 'digital',
                 hint: {
-                    html: '<ul class="govuk-list govuk-list--bullet"><li>' + mssgs.licence_fufilment_radio_paperless_hint1 + '</li><li>' + mssgs.licence_fufilment_radio_paperless_hint2 + '</li></ul>'
+                    html: mssgs['licence_fulfilment_radio_paperless_hint_' + data.youOrOther]
                 }
             },
             {
                 value: "paper-licence",
-                text: mssgs.licence_fufilment_radio_card,
+                text: mssgs.licence_fulfilment_radio_card,
                 checked: payload['licence-option'] === 'paper-licence',
                 hint: {
-                    html: '<ul class="govuk-list govuk-list--bullet"><li>' + mssgs.licence_fufilment_radio_card_hint1 + '</li><li>' + mssgs.licence_fufilment_radio_card_hint2 + '</li></ul>'
+                    html: mssgs['licence_fulfilment_radio_card_hint_' + data.youOrOther]
                 }
             }
         ],
-        errorMessage: { text: errorMsg } if error['licence-option']
+        errorMessage: { text: mssgs.licence_fulfilment_error_msg } if error['licence-option']
     }) }}
-{% endblock %}
-
-{% block pricingSummary %}
-<div class="govuk-grid-column-two-thirds">
-    <p class="govuk-body">
-        <a href="https://www.gov.uk/government/publications/fisheries-annual-report-2020-to-2021/fisheries-annual-report-2020-to-2021" rel="noreferrer noopener" class="govuk-link" target="_blank">{{ mssgs.licence_fufilment_how_we_spend_link }}</a>
-    </p>
-</div>
 {% endblock %}

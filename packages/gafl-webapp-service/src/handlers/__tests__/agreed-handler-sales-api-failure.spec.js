@@ -8,15 +8,15 @@ import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri
 import mockPermits from '../../__mocks__/data/permits.js'
 
 beforeAll(() => {
-  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
 })
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 afterAll(() => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
-  delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PROPERTY_API
 })
 
 jest.mock('@defra-fish/connectors-lib')

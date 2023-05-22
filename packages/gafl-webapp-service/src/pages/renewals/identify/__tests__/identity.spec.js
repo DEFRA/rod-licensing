@@ -29,8 +29,8 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
 jest.mock('../../../../routes/page-route.js', () => jest.fn(jest.requireActual('../../../../routes/page-route.js').default))
 
 beforeAll(() => {
-  process.env.ANALYTICS_PRIMARY_PROPERTY = 'UA-123456789-0'
-  process.env.ANALYTICS_XGOV_PROPERTY = 'UA-987654321-0'
+  process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
+  process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
 })
 
 beforeAll(() => new Promise(resolve => start(resolve)))
@@ -39,7 +39,7 @@ afterAll(d => stop(d))
 
 afterAll(() => {
   delete process.env.ANALYTICS_PRIMARY_PROPERTY
-  delete process.env.ANALYTICS_XGOV_PROPERTY
+  delete process.env.ANALYTICS_PROPERTY_API
 })
 
 const VALID_RENEWAL_PUBLIC = RENEWAL_PUBLIC.uri.replace('{referenceNumber?}', 'AAAAAA')
@@ -267,10 +267,10 @@ describe('The easy renewal identification page', () => {
     expect(JSON.parse(payload).permissions[0].licenceType).toEqual(obj.licenceType)
   })
 
-  it('that an adult licence holder who is now over 65 gets a senior concession', async () => {
+  it('that an adult licence holder who is now over the senior concession date gets a senior concession', async () => {
     const newAuthenticationResult = Object.assign({}, authenticationResult)
     newAuthenticationResult.permission.endDate = moment().startOf('day').toISOString()
-    newAuthenticationResult.permission.licensee.birthDate = moment().add(-65, 'years').add(-1, 'days')
+    newAuthenticationResult.permission.licensee.birthDate = moment().add(-66, 'years').add(-1, 'days')
     salesApi.authenticate.mockImplementation(jest.fn(async () => new Promise(resolve => resolve(newAuthenticationResult))))
     await injectWithCookies('GET', VALID_RENEWAL_PUBLIC)
     await injectWithCookies('GET', IDENTIFY.uri)

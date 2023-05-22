@@ -33,7 +33,12 @@ export class Contact extends BaseEntity {
       preferredMethodOfNewsletter: { field: 'defra_preferredmethodofnewsletter', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       preferredMethodOfReminder: { field: 'defra_preferredmethodofreminder', type: 'optionset', ref: 'defra_preferredcontactmethod' },
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
-      obfuscatedDob: { field: 'defra_obfuscated_dob', type: 'string' }
+      obfuscatedDob: { field: 'defra_obfuscated_dob', type: 'string' },
+      shortTermPreferredMethodOfConfirmation: {
+        field: 'defra_shorttermlicencemethodofconfirmation',
+        type: 'optionset',
+        ref: 'defra_preferredcontactmethod'
+      }
     }
   }))
 
@@ -248,5 +253,17 @@ export class Contact extends BaseEntity {
 
   set obfuscatedDob (obfuscatedDob) {
     super._setState('obfuscatedDob', obfuscatedDob)
+  }
+
+  /**
+   * The preferred method of confirmation communications of the contact for short term licences
+   * @type {GlobalOptionSetDefinition}
+   */
+  get shortTermPreferredMethodOfConfirmation () {
+    return super._getState('shortTermPreferredMethodOfConfirmation')
+  }
+
+  set shortTermPreferredMethodOfConfirmation (shortTermPreferredMethodOfConfirmation) {
+    super._setState('shortTermPreferredMethodOfConfirmation', shortTermPreferredMethodOfConfirmation)
   }
 }

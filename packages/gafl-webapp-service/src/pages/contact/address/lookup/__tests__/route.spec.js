@@ -1,6 +1,7 @@
 import { getData } from '../route'
 import uri from '../../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../../processors/uri-helper.js'
+import { isPhysical } from '../../../../../processors/licence-type-display.js'
 
 jest.mock('../../../../../uri.js', () => ({
   ADDRESS_LOOKUP: { uri: '/address/lookup' },
@@ -10,6 +11,7 @@ jest.mock('../../../../../uri.js', () => ({
 jest.mock('../../../../../routes/next-page.js', () => ({ nextPage: () => {} }))
 jest.mock('../../../../../routes/page-route.js', () => () => {})
 jest.mock('../../../../../processors/uri-helper.js', () => ({ addLanguageCodeToUri: jest.fn() }))
+jest.mock('../../../../../processors/licence-type-display.js')
 
 describe('address-lookup > route', () => {
   describe('getData', () => {
@@ -23,6 +25,18 @@ describe('address-lookup > route', () => {
     it('return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
       const result = await getData(getMockRequest(() => ({ concessions: [], isLicenceForYou: false })))
       expect(result.isLicenceForYou).toBeFalsy()
+    })
+
+    it('return isPhysical as true, if isPhysical is true for the permission', async () => {
+      isPhysical.mockReturnValueOnce(true)
+      const result = await getData(getMockRequest())
+      expect(result.isPhysical).toBeTruthy()
+    })
+
+    it('return isPhysical as false, if isPhysical is false for the permission', async () => {
+      isPhysical.mockReturnValueOnce(false)
+      const result = await getData(getMockRequest())
+      expect(result.isPhysical).toBeFalsy()
     })
 
     describe.each([

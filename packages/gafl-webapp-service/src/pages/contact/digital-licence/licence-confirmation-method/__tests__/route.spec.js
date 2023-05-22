@@ -1,9 +1,14 @@
 import { CONTACT } from '../../../../../uri.js'
 import { getData } from '../route.js'
+import { isPhysical } from '../../../../../processors/licence-type-display.js'
+
+jest.mock('../../../../../processors/licence-type-display.js', () => ({
+  isPhysical: jest.fn(() => true)
+}))
 
 describe('licence-confirmation-method > route', () => {
   describe('getData', () => {
-    const createRequestMock = (options = {}) => ({
+    const getMockRequest = (options = {}) => ({
       cache: jest.fn(() => ({
         helpers: {
           transaction: {
@@ -24,18 +29,19 @@ describe('licence-confirmation-method > route', () => {
     beforeEach(jest.clearAllMocks)
 
     it('should reject and redirect to the contact page, if licence is not physical', async () => {
-      const func = async () => await getData(createRequestMock({ licenceLength: '1D' }))
+      isPhysical.mockReturnValueOnce(false)
+      const func = async () => await getData(getMockRequest())
       await expect(func).rejects.toThrowRedirectTo(CONTACT.uri)
     })
 
     it('returns the expected data', async () => {
-      expect(await getData(createRequestMock())).toMatchSnapshot()
+      expect(await getData(getMockRequest())).toMatchSnapshot()
     })
 
     describe('if change query is undefined,', () => {
       let result
       beforeEach(async () => {
-        result = await getData(createRequestMock())
+        result = await getData(getMockRequest())
       })
 
       it("doesn't return changeEmail", async () => {
@@ -48,22 +54,22 @@ describe('licence-confirmation-method > route', () => {
     })
 
     it('if change query param is "email", returns changeEmail set to true', async () => {
-      const result = await getData(createRequestMock({ query: { change: 'email' } }))
+      const result = await getData(getMockRequest({ query: { change: 'email' } }))
       expect(result.changeEmail).toBe(true)
     })
 
     it('if change query param is "mobile", returns changeMobile set to true', async () => {
-      const result = await getData(createRequestMock({ query: { change: 'mobile' } }))
+      const result = await getData(getMockRequest({ query: { change: 'mobile' } }))
       expect(result.changeMobile).toBe(true)
     })
 
     it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      const result = await getData(createRequestMock({ isLicenceForYou: true }))
+      const result = await getData(getMockRequest({ isLicenceForYou: true }))
       expect(result.isLicenceForYou).toBeTruthy()
     })
 
     it('should return isLicenceForYou as false, if isLicenceForYou is false on the transaction cache', async () => {
-      const result = await getData(createRequestMock({ isLicenceForYou: false }))
+      const result = await getData(getMockRequest({ isLicenceForYou: false }))
       expect(result.isLicenceForYou).toBeFalsy()
     })
   })

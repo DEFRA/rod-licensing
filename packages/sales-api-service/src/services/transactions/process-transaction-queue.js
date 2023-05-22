@@ -54,8 +54,8 @@ export async function processQueue ({ id }) {
     isRenewal,
     isLicenceForYou
   } of transactionRecord.permissions) {
-    const contact = await resolveContactPayload(licensee)
     const permit = await getReferenceDataForEntityAndId(Permit, permitId)
+    const contact = await resolveContactPayload(permit, licensee)
 
     const permission = await mapToPermission(
       referenceNumber,

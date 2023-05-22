@@ -1,37 +1,45 @@
 import { getData } from '../route'
 import { CONTACT } from '../../../../../uri'
+import { isPhysical } from '../../../../../processors/licence-type-display.js'
+import { youOrOther } from '../../../../../processors/message-helper.js'
+
+jest.mock('../../../../../processors/licence-type-display.js', () => ({
+  isPhysical: jest.fn(() => true)
+}))
+jest.mock('../../../../../processors/message-helper.js')
 
 describe('licence-fulfilment > route', () => {
-  const mockTransactionCacheGet = jest.fn()
-
-  const mockRequest = {
+  const getMockRequest = (permission = {}) => ({
     cache: () => ({
       helpers: {
         transaction: {
-          getCurrentPermission: mockTransactionCacheGet
+          getCurrentPermission: () => permission
         }
       }
     })
-  }
+  })
 
   describe('getData', () => {
     beforeEach(jest.clearAllMocks)
 
-    it('should throw an error if the licence is not 12M', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '1D' }))
-      const func = async () => await getData(mockRequest)
+    it('should throw an error if the licence is not physical', async () => {
+      isPhysical.mockReturnValueOnce(false)
+      const func = async () => await getData(getMockRequest())
       await expect(func).rejects.toThrowRedirectTo(CONTACT.uri)
     })
-    it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '12M', isLicenceForYou: true }))
-      const result = await getData(mockRequest)
-      expect(result.isLicenceForYou).toBeTruthy()
+
+    it('should call youOrOther with the permission', async () => {
+      const permission = Symbol('permission')
+      await getData(getMockRequest(permission))
+      expect(youOrOther).toHaveBeenCalledWith(permission)
     })
 
-    it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      mockTransactionCacheGet.mockImplementationOnce(() => ({ licenceLength: '12M', isLicenceForYou: false }))
-      const result = await getData(mockRequest)
-      expect(result.isLicenceForYou).toBeFalsy()
+    it('should use the value returned by youOrOther', async () => {
+      const returnedValue = Symbol('value')
+      youOrOther.mockReturnValueOnce(returnedValue)
+
+      const result = await getData(getMockRequest())
+      expect(result.youOrOther).toEqual(returnedValue)
     })
   })
 })

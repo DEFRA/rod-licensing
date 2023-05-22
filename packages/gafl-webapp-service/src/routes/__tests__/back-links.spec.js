@@ -18,6 +18,8 @@ import {
   NEWSLETTER
 } from '../../uri.js'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../constants.js'
+import { isPhysical } from '../../processors/licence-type-display.js'
+jest.mock('../../processors/licence-type-display.js')
 
 describe('The licence-for page', () => {
   const n = journeyDefinition.find(n => n.current.page === LICENCE_FOR.page)
@@ -159,7 +161,8 @@ describe('The contact page', () => {
     expect(n.backLink({}, {})).toBe(ADDRESS_LOOKUP.uri)
   })
   it('has a back-link to the licence confirmation method page if the contact summary has not been seen and is a physical licence', () => {
-    expect(n.backLink({}, { licenceLength: '12M' })).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+    isPhysical.mockReturnValueOnce(true)
+    expect(n.backLink({}, {})).toBe(LICENCE_CONFIRMATION_METHOD.uri)
   })
   it('has a back-link to the licence confirmation method page if the contact summary has been seen and the last submitted page is licence confirmation method', () => {
     expect(n.backLink({ currentPage: LICENCE_CONFIRMATION_METHOD.page, fromSummary: CONTACT_SUMMARY_SEEN })).toBe(

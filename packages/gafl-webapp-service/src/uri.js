@@ -33,7 +33,6 @@ export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-faile
 export const TERMS_AND_CONDITIONS = { uri: '/buy/conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 export const LICENCE_DETAILS = { uri: '/buy/licence-details', page: 'licence-details' }
-export const ATTRIBUTION = { uri: '/buy/attribution' }
 
 export const OIDC_SIGNIN = { uri: '/oidc/signin' }
 export const OIDC_ROLE_REQUIRED = { uri: '/oidc/role-required', page: 'role-required' }
@@ -49,8 +48,6 @@ export const IDENTIFY = { uri: '/buy/renew/identify', page: 'identify' }
 export const RENEWAL_INACTIVE = { uri: '/buy/renew/inactive', page: 'renewal-inactive' }
 export const AUTHENTICATE = { uri: '/buy/renew/authenticate' }
 export const RENEWAL_START_DATE = { uri: '/buy/renew/renewal-start-date', page: 'renewal-start-date' }
-export const RENEWAL_START_VALIDATE = { uri: '/buy/renew/renewal-start-date/validate' }
-export const RENEWAL_LICENCE = { uri: '/renew-my-licence/{reference?}' }
 
 export const CONTROLLER = { uri: '/buy' }
 export const NEW_TRANSACTION = { uri: '/buy/new' }
