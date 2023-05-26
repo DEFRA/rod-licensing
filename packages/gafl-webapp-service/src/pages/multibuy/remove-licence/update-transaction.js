@@ -17,7 +17,7 @@ export default async request => {
   await request.cache().helpers.status.set(status)
   await request.cache().helpers.addressLookup.set(addressLookup)
 
-  if (transaction.permissions.length !== 0) {
+  if (transaction.permissions.length > 0) {
     const lastStatusPermission = status.permissions[status.permissions.length - 1]
     await request.cache().helpers.status.set({ currentPermissionIdx: transaction.permissions.length - 1 })
     await request.cache().helpers.status.setCurrentPermission(lastStatusPermission)

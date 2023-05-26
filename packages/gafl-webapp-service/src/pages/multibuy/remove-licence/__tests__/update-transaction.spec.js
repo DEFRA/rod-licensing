@@ -146,7 +146,6 @@ describe('remove-licence > update transaction', () => {
       const setPermission = getStatusPermission()
       const mockRequest = createMockRequest({
         cache: {
-          transaction: { permissions: [] },
           status: { permissions: [getStatusPermission(), setPermission, getStatusPermission({ [REMOVE_LICENCE.page]: true })] }
         }
       })
