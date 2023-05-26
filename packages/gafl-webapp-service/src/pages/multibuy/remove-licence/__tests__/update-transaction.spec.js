@@ -145,7 +145,10 @@ describe('remove-licence > update transaction', () => {
     it('setCurrentPermission is called with latest permission for status', async () => {
       const setPermission = getStatusPermission()
       const mockRequest = createMockRequest({
-        cache: { status: { permissions: [getStatusPermission(), setPermission, getStatusPermission({ [REMOVE_LICENCE.page]: true })] } }
+        cache: {
+          transaction: { permissions: [] },
+          status: { permissions: [getStatusPermission(), setPermission, getStatusPermission({ [REMOVE_LICENCE.page]: true })] }
+        }
       })
       await updateTransaction(mockRequest)
       expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(setPermission)
