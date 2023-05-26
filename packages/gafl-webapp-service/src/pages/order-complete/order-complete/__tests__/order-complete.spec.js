@@ -39,7 +39,8 @@ const getSampleRequest = ({
   permission = getSamplePermission(),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
-  catalog = 'messages'
+  catalog = 'messages',
+  date = '26/04/2023'
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -53,6 +54,11 @@ const getSampleRequest = ({
         set: statusSet
       },
       transaction: {
+        get: async () => ({
+          payment: {
+            created_date: date
+          }
+        }),
         getCurrentPermission: () => permission
       }
     }
@@ -138,12 +144,13 @@ describe('The order completion handler', () => {
     expect(permissionCost).toBe(expectedCost)
   })
 
-  it('passes permission and label catalog to displayPermissionPrice function', async () => {
+  it('passes permission, created_date and label catalog to displayPermissionPrice function', async () => {
     const permission = getSamplePermission()
     const catalog = Symbol('catalog')
+    const date = Symbol('created date')
 
-    await getData(getSampleRequest({ permission, catalog }))
-    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
+    await getData(getSampleRequest({ permission, catalog, date }))
+    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog, date)
   })
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
