@@ -1,3 +1,5 @@
+import { hasDuplicates } from '../../../processors/multibuy-processor.js'
+
 export default async request => {
   const transaction = await request.cache().helpers.transaction.get()
   const page = await request.cache().helpers.page.get()
@@ -7,10 +9,17 @@ export default async request => {
   const transactionPermission = await request.cache().helpers.transaction.getCurrentPermission()
   const addressPermission = await request.cache().helpers.addressLookup.getCurrentPermission()
 
-  transaction.permissions = transaction.permissions.filter(item => item.hash !== transactionPermission.hash)
+  const duplicate = await hasDuplicates(transaction.permissions)
+
+  if (duplicate) {
+    removeDuplicates(transaction.permissions, transactionPermission)
+  } else {
+    transaction.permissions = transaction.permissions.filter(item => item.hash !== transactionPermission.hash)
+  }
+
   page.permissions = page.permissions.filter(item => Object.keys(item).includes('remove-licence') !== true)
   status.permissions = status.permissions.filter(item => Object.keys(item).includes('remove-licence') !== true)
-  removeAddressLookup(addressLookup, addressPermission)
+  removeDuplicates(addressLookup.permissions, addressPermission)
 
   await request.cache().helpers.transaction.set(transaction)
   await request.cache().helpers.page.set(page)
@@ -22,10 +31,10 @@ export default async request => {
   await request.cache().helpers.status.setCurrentPermission(lastStatusPermission)
 }
 
-const removeAddressLookup = async (addressLookup, addressPermission) => {
-  for (let permission = 0; permission < addressLookup.permissions.length; permission++) {
-    if (JSON.stringify(addressLookup.permissions[permission]) === JSON.stringify(addressPermission)) {
-      addressLookup.permissions.splice(permission, 1)
+const removeDuplicates = async (permissions, currentPermission) => {
+  for (let permission = 0; permission < permissions.length; permission++) {
+    if (JSON.stringify(permissions[permission]) === JSON.stringify(currentPermission)) {
+      permissions.splice(permission, 1)
       break
     }
   }

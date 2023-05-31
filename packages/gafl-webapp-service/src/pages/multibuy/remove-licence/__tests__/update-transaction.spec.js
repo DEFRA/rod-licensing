@@ -1,5 +1,8 @@
 import { ADD_LICENCE, REMOVE_LICENCE } from '../../../../uri.js'
 import updateTransaction from '../update-transaction.js'
+import { hasDuplicates } from '../../../../processors/multibuy-processor.js'
+
+jest.mock('../../../../processors/multibuy-processor.js')
 
 const createCache = (cache = {}) => ({
   helpers: {
@@ -76,6 +79,14 @@ describe('remove-licence > update transaction', () => {
     jest.clearAllMocks()
   })
 
+  it('hasDuplicates is called with transaction.permissions', async () => {
+    const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
+    const mockRequest = createMockRequest()
+    await updateTransaction(mockRequest)
+
+    expect(hasDuplicates).toHaveBeenCalledWith(transaction.permissions)
+  })
+
   it('status.setCurrentPermission is being called with different permission', async () => {
     const setPermission = getStatusPermission()
     const mockRequest = createMockRequest({
@@ -85,8 +96,17 @@ describe('remove-licence > update transaction', () => {
     expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(expect.objectContaining(setPermission))
   })
 
-  it('transaction.set is being called with a permission removed', async () => {
+  it('transaction.set is being called with a permission removed with no duplciates', async () => {
+    hasDuplicates.mockReturnValueOnce(false)
     const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
+    const mockRequest = createMockRequest({ cache: { transaction: transaction } })
+    await updateTransaction(mockRequest)
+    expect(mockRequest.cache().helpers.transaction.set()).toEqual(expect.objectContaining(transaction))
+  })
+
+  it('transaction.set is being called with a permission removed with duplciates', async () => {
+    hasDuplicates.mockReturnValueOnce(true)
+    const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionOne()] }
     const mockRequest = createMockRequest({ cache: { transaction: transaction } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.transaction.set()).toEqual(expect.objectContaining(transaction))
