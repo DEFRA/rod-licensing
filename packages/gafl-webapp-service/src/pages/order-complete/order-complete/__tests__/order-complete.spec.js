@@ -32,10 +32,14 @@ const getSamplePermission = ({ referenceNumber = 'AAA111', licenceType = LICENCE
   referenceNumber
 })
 
+const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true } = {}) => ({
+  [COMPLETION_STATUS.agreed]: agreed,
+  [COMPLETION_STATUS.posted]: posted,
+  [COMPLETION_STATUS.finalised]: finalised
+})
+
 const getSampleRequest = ({
-  agreed = true,
-  posted = true,
-  finalised = true,
+  completionStatus = getSampleCompletionStatus(),
   permission = getSamplePermission(),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
@@ -45,11 +49,7 @@ const getSampleRequest = ({
   cache: () => ({
     helpers: {
       status: {
-        get: () => ({
-          [COMPLETION_STATUS.agreed]: agreed,
-          [COMPLETION_STATUS.posted]: posted,
-          [COMPLETION_STATUS.finalised]: finalised
-        }),
+        get: () => completionStatus,
         setCurrentPermission: statusSetCurrentPermission,
         set: statusSet
       },
@@ -79,7 +79,8 @@ describe('The order completion handler', () => {
   beforeEach(jest.clearAllMocks)
 
   it.each(['agreed', 'posted', 'finalised'])('throws Boom.forbidden error when %s is not set', async completion => {
-    const request = getSampleRequest({ [completion]: false })
+    const completionStatus = getSampleCompletionStatus({ [completion]: false })
+    const request = getSampleRequest({ completionStatus })
     const callGetData = () => getData(request)
     await expect(callGetData).rejects.toThrow(`Attempt to access the completion page handler with no ${completion} flag set`)
   })
