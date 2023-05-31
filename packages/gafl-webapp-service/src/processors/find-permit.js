@@ -1,7 +1,33 @@
 import filterPermits from './filter-permits.js'
 import crypto from 'crypto'
 import db from 'debug'
+
 const debug = db('webapp:find-permit')
+
+const addHashAndPermit = async (permission, request) => {
+  // To calculate a permit, hash and save
+
+  const { hash: _hash, permit: _permit, licensee: _licensee, ...hashOperand } = permission
+  const permit = await filterPermits(permission)
+  const updatedPermission = { ...permission, permit }
+
+  if (permit) {
+    if (!permit.newCostStartDate || !permit.newCost) {
+      debug('permit missing new cost details', updatedPermission)
+    }
+  } else {
+    debug("permit wasn't retrieved", updatedPermission)
+  }
+
+  const hash = crypto.createHash('sha256')
+  hash.update(JSON.stringify(hashOperand))
+  const updatedHash = hash.digest('hex')
+  const updatedRequest = await request.cache().helpers.transaction.setCurrentPermission({
+    ...updatedPermission,
+    hash: updatedHash
+  })
+  return updatedRequest
+}
 
 export const findPermit = async (permission, request) => {
   /*
@@ -11,33 +37,15 @@ export const findPermit = async (permission, request) => {
    * The section of the transaction cache subject to the hashing algorithm excludes
    * name, address, or anything not effecting permit filter
    */
-  const hashOperand = (({ hash: _hash, permit: _permit, licensee: _licensee, ...p }) => p)(permission)
-
-  // To calculate a permit, hash and save
-  const addHashAndPermit = async () => {
-    const permit = await filterPermits(permission)
-    permission.permit = permit
-    if (permit) {
-      if (!permit.newCostStartDate || !permit.newCost) {
-        debug('permit missing new cost details', permission)
-      }
-    } else {
-      debug("permit wasn't retrieved", permission)
-    }
-
-    const hash = crypto.createHash('sha256')
-    hash.update(JSON.stringify(hashOperand))
-    permission.hash = hash.digest('hex')
-    await request.cache().helpers.transaction.setCurrentPermission(permission)
-  }
-
   if (!permission.hash) {
-    await addHashAndPermit()
+    await addHashAndPermit(permission, request)
   } else {
+    const { hash: _hash, permit: _permit, licensee: _licensee, ...hashOperand } = permission
     const hash = crypto.createHash('sha256')
     hash.update(JSON.stringify(hashOperand))
-    if (hash.digest('hex') !== permission.hash) {
-      await addHashAndPermit()
+    const currentHash = hash.digest('hex')
+    if (currentHash !== permission.hash) {
+      await addHashAndPermit(permission, request)
     } else {
       debug("permit data present and doesn't need updating")
     }
