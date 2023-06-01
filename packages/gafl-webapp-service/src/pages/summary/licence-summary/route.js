@@ -189,7 +189,8 @@ export const getData = async request => {
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   debug('retrieving permit info')
-  await findPermit(permission, request)
+  const foundPermit = await findPermit(permission, request)
+  await request.cache().helpers.transaction.setCurrentPermission(foundPermit)
   debug('retrieved permit', JSON.stringify(permission))
 
   return {

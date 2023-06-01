@@ -205,6 +205,7 @@ describe('The easy renewal identification page', () => {
       await injectWithCookies('GET', CONTROLLER.uri)
 
       const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      console.log(data)
 
       expect(data.statusCode).toBe(200)
     })

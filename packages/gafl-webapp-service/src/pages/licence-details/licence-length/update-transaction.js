@@ -87,12 +87,13 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_LENGTH.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.licenceLength = payload['licence-length']
-
-  await findPermit(permission, request)
-  onLengthChange(permission)
+  console.log('permission ', permission)
+  const foundPermit = await findPermit(permission, request)
+  console.log('foundPermit ', foundPermit)
+  onLengthChange(foundPermit)
 
   // Clear the licence fulfilment here otherwise it can end up being set incorrectly
   await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page]: false })
 
-  await request.cache().helpers.transaction.setCurrentPermission(permission)
+  await request.cache().helpers.transaction.setCurrentPermission(foundPermit)
 }
