@@ -81,6 +81,8 @@ const initialiseHapiGapiPlugin = () => {
     console.warn("ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won't track this")
   }
 
+  console.log('hapiGapiPropertySettings', hapiGapiPropertySettings)
+
   return {
     plugin: HapiGapi,
     options: {
