@@ -70,8 +70,11 @@ const initialiseCrumbPlugin = () => ({
 })
 
 const initialiseHapiGapiPlugin = () => {
+  console.log('initialising hapi gapi plugin')
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
+    console.log('analytics primary property present', process.env.ANALYTICS_PRIMARY_PROPERTY)
+    console.log('analytics property api: ', process.env.ANALYTICS_PROPERTY_API)
     hapiGapiPropertySettings.push({
       id: process.env.ANALYTICS_PRIMARY_PROPERTY,
       key: process.env.ANALYTICS_PROPERTY_API,
