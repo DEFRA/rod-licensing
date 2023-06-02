@@ -140,7 +140,7 @@ describe('remove-licence > update transaction', () => {
       expect(statusSet).toHaveBeenCalledWith({ currentPermissionIdx: 1 })
     })
 
-    it('all transactions are deleted so is no status to set', async () => {
+    it('all transactions are deleted so status is onyl set once and not with currentPermissionIdx', async () => {
       const statusSet = jest.fn()
       const transaction = { permissions: [getTransactionPermissionOne()] }
       const status = { permissions: [getStatusPermission({ [REMOVE_LICENCE.page]: true }), getStatusPermission(), getStatusPermission()] }
