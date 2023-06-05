@@ -96,18 +96,21 @@ describe('remove-licence > update transaction', () => {
     expect(mockRequest.cache().helpers.status.setCurrentPermission()).toEqual(expect.objectContaining(setPermission))
   })
 
-  it('transaction.set is being called with a permission removed with no duplciates', async () => {
+  it('transaction cache is updated after permission is deleted where there are no duplicates', async () => {
     hasDuplicates.mockReturnValueOnce(false)
     const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionThree()] }
-    const mockRequest = createMockRequest({ cache: { transaction: transaction } })
+    const mockRequest = createMockRequest({ cache: { transaction } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.transaction.set()).toEqual(expect.objectContaining(transaction))
   })
 
-  it('transaction.set is being called with a permission removed with duplciates', async () => {
-    hasDuplicates.mockReturnValueOnce(true)
-    const transaction = { permissions: [getTransactionPermissionOne(), getTransactionPermissionOne()] }
-    const mockRequest = createMockRequest({ cache: { transaction: transaction } })
+  it.each`
+    desc                                                                                                           | transaction
+    ${'two identical permissions'}                                                                                 | ${{ permissions: [getTransactionPermissionOne(), getTransactionPermissionOne()] }}
+    ${'several permissions, all different apart from two identical permissions that arent consecutively placed'}   | ${{ permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionOne()] }}
+    ${'several permissions, all different apart from three identical permissions that arent consecutively placed'} | ${{ permissions: [getTransactionPermissionOne(), getTransactionPermissionTwo(), getTransactionPermissionOne(), getTransactionPermissionThree(), getTransactionPermissionOne()] }}
+  `('transaction cache is updated after permission is deleted with $desc', async ({ transaction }) => {
+    const mockRequest = createMockRequest({ cache: { transaction } })
     await updateTransaction(mockRequest)
     expect(mockRequest.cache().helpers.transaction.set()).toEqual(expect.objectContaining(transaction))
   })
