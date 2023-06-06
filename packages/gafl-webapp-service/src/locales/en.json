@@ -224,7 +224,6 @@
   "dob_error_format_min": "Enter the date of birth and include a day, month and year",
   "dob_error_format": "Enter the licence holder’s date of birth and include a day, month and year",
   "dob_error": "Enter the date of birth",
-  "dob_inset": "For licences starting on or after 1 April 2023, the age a licence holder can get a discounted 12-month licence is changing from 65 to 66.",
   "dob_month": "month",
   "dob_privacy_link_prefix": "If you do not provide a correct date of birth, this may cause delays when a licence is renewed or mean that a licence is not valid. Read about ",
   "dob_privacy_link": "how we use personal information (opens in new tab)",
