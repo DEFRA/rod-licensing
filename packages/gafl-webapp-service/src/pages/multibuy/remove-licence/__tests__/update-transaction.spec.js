@@ -122,6 +122,7 @@ describe('update transaction', () => {
   })
 
   it('status current permission is set to the latest permission', async () => {
+    const transactionPermissions = [{ hash: 'abc-999' }, { hash: 'aaa-111' }, { hash: 'zzz-010' }]
     const statusPermissions = [
       { [ADD_LICENCE.page]: true },
       { [REMOVE_LICENCE.page]: true, [ADD_LICENCE.page]: true },
@@ -130,6 +131,7 @@ describe('update transaction', () => {
     const [, , permission3] = statusPermissions
     const setCurrentStatus = jest.fn()
     const mockRequest = createMockRequest({
+      transactionPermissions,
       statusPermissions,
       setCurrentStatus
     })
@@ -158,5 +160,41 @@ describe('update transaction', () => {
 
     const { currentPermissionIdx } = setStatus.mock.calls[1][0]
     expect(currentPermissionIdx).toBe(statusPermissions.length - 1)
+  })
+
+  describe('all licences removed', () => {
+    it('current permission of the status is not updated to the latest current permission', async () => {
+      const currentTransactionPermission = { hash: 'abc-123' }
+      const transactionPermissions = [currentTransactionPermission]
+      const setCurrentStatus = jest.fn()
+      const mockRequest = createMockRequest({
+        currentTransactionPermission,
+        transactionPermissions,
+        setCurrentStatus
+      })
+
+      await updateTransaction(mockRequest)
+
+      expect(setCurrentStatus).toBeCalledTimes(0)
+    })
+
+    it('current permission of the status is not updated with updated currentPermissionIdx', async () => {
+      const currentTransactionPermission = { hash: 'abc-123' }
+      const transactionPermissions = [currentTransactionPermission]
+      const statusPermissions = [{ [REMOVE_LICENCE.page]: true, [ADD_LICENCE.page]: true }]
+      const setStatus = jest.fn()
+
+      const mockRequest = createMockRequest({
+        currentTransactionPermission,
+        transactionPermissions,
+        statusPermissions,
+        setStatus
+      })
+
+      await updateTransaction(mockRequest)
+
+      expect(setStatus).toHaveBeenCalledWith(expect.objectContaining({ permissions: [] }))
+      expect(setStatus).toBeCalledTimes(1)
+    })
   })
 })
