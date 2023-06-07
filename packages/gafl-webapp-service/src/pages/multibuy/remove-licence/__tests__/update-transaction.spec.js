@@ -164,7 +164,7 @@ describe('remove-licence > update transaction', () => {
     it('all transactions are deleted so setCurrentPermission is not called', async () => {
       const statusSetCurrentPermission = jest.fn()
       const transaction = { permissions: [getTransactionPermissionOne()] }
-      const mockRequest = createMockRequest({ cache: { transaction } }, jest.fn(), statusSetCurrentPermission)
+      const mockRequest = createMockRequest({ cache: { transaction, statusSetCurrentPermission } })
       await updateTransaction(mockRequest)
       expect(statusSetCurrentPermission).toBeCalledTimes(0)
     })
