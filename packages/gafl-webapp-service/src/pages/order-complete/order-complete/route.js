@@ -37,8 +37,8 @@ export const getData = async request => {
   return {
     startTimeStringTitle,
     isSalmonLicence: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    permissionCost: displayPermissionPrice(permission, request.i18n.getCatalog(), transaction.payment.created_date),
-    permissionIsFree: getPermissionCost(permission, transaction.payment.created_date) === 0,
+    permissionCost: displayPermissionPrice(permission, request.i18n.getCatalog(), transaction.payment?.created_date),
+    permissionIsFree: getPermissionCost(permission, transaction.payment?.created_date) === 0,
     permissionReference: permission.referenceNumber,
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,

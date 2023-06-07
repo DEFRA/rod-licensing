@@ -44,7 +44,7 @@ const getSampleRequest = ({
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
   catalog = 'messages',
-  date = '26/04/2023'
+  payment = { created_date: undefined }
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -55,9 +55,7 @@ const getSampleRequest = ({
       },
       transaction: {
         get: async () => ({
-          payment: {
-            created_date: date
-          }
+          payment
         }),
         getCurrentPermission: () => permission
       }
@@ -145,13 +143,16 @@ describe('The order completion handler', () => {
     expect(permissionCost).toBe(expectedCost)
   })
 
-  it('passes permission, created_date and label catalog to displayPermissionPrice function', async () => {
+  it.each`
+    desc                                            | payment
+    ${'permission, created_date and label catalog'} | ${{ created_date: Symbol('created date') }}
+    ${'permission and label catalog'}               | ${undefined}
+  `('passes $desc to displayPermissionPrice function', async ({ desc, payment }) => {
     const permission = getSamplePermission()
     const catalog = Symbol('catalog')
-    const date = Symbol('created date')
-
-    await getData(getSampleRequest({ permission, catalog, date }))
-    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog, date)
+    const result = payment?.created_date
+    await getData(getSampleRequest({ permission, catalog, payment }))
+    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog, result)
   })
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
@@ -190,7 +191,18 @@ describe('The order completion handler', () => {
   ])('passes permission reference %s', async (cost, isFree) => {
     const permission = getSamplePermission()
     getPermissionCost.mockReturnValueOnce(cost)
-    const { permissionIsFree } = await getData(getSampleRequest(permission))
+    const { permissionIsFree } = await getData(getSampleRequest({ permission }))
     expect(permissionIsFree).toBe(isFree)
+  })
+
+  it.each`
+    desc                             | payment
+    ${'permission and created_date'} | ${{ created_date: Symbol('created date') }}
+    ${'permission'}                  | ${undefined}
+  `('passes $desc to getPermissionCost function', async ({ desc, payment }) => {
+    const permission = getSamplePermission()
+    const result = payment?.created_date
+    await getData(getSampleRequest({ permission, payment }))
+    expect(getPermissionCost).toHaveBeenCalledWith(permission, result)
   })
 })
