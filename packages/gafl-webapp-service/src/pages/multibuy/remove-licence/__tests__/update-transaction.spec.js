@@ -114,24 +114,27 @@ describe('remove-licence > update transaction', () => {
     })
 
     it('page cache has a permission removed', async () => {
-      const page = { permissions: [getPagePermission({ [REMOVE_LICENCE.page]: true }), getPagePermission(), getPagePermission()] }
+      const removePage = { [REMOVE_LICENCE.page]: true }
+      const page = { permissions: [getPagePermission(removePage), getPagePermission(), getPagePermission()] }
       const mockRequest = createMockRequest({ cache: { page } })
       await updateTransaction(mockRequest)
-      expect(page.permissions.length).toEqual(2)
+      expect(page.permissions.filter(item => Object.keys(item).includes(removePage)).length).toEqual(0)
     })
 
     it('status cache has a permission removed', async () => {
+      const removeStatus = { [REMOVE_LICENCE.page]: true }
       const status = { permissions: [getStatusPermission({ [REMOVE_LICENCE.page]: true }), getStatusPermission(), getStatusPermission()] }
       const mockRequest = createMockRequest({ cache: { status } })
       await updateTransaction(mockRequest)
-      expect(status.permissions.length).toEqual(2)
+      expect(status.permissions.filter(item => Object.keys(item).includes(removeStatus)).length).toEqual(0)
     })
 
     it('addressLookup cache has a permission removed', async () => {
-      const addressLookup = { permissions: [{}, {}, {}] }
+      const removeAddress = { example: true }
+      const addressLookup = { permissions: [{ removeAddress }, {}, {}] }
       const mockRequest = createMockRequest({ cache: { addressLookup } })
       await updateTransaction(mockRequest)
-      expect(addressLookup.permissions.length).toEqual(2)
+      expect(addressLookup.permissions.filter(item => Object.keys(item).includes(removeAddress)).length).toEqual(0)
     })
 
     it('update the status cache to the number of transactions left (currentPermissionIdx)', async () => {
@@ -143,7 +146,7 @@ describe('remove-licence > update transaction', () => {
       expect(statusSet).toHaveBeenCalledWith({ currentPermissionIdx: 1 })
     })
 
-    it('all transactions are deleted so status is onyl set once and not with currentPermissionIdx', async () => {
+    it('all transactions are deleted so status is only set once and not with currentPermissionIdx', async () => {
       const statusSet = jest.fn()
       const transaction = { permissions: [getTransactionPermissionOne()] }
       const status = { permissions: [getStatusPermission({ [REMOVE_LICENCE.page]: true }), getStatusPermission(), getStatusPermission()] }
