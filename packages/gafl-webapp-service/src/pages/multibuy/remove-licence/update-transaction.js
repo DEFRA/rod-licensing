@@ -10,23 +10,25 @@ export default async request => {
   transaction.permissions = transaction.permissions.filter(item => item.hash !== transactionPermission.hash)
   page.permissions = page.permissions.filter(item => Object.keys(item).includes('remove-licence') !== true)
   status.permissions = status.permissions.filter(item => Object.keys(item).includes('remove-licence') !== true)
-  removeAddressLookup(addressLookup, addressPermission)
+  const addressFiltered = removeAddressLookup(addressLookup, addressPermission)
 
   await request.cache().helpers.transaction.set(transaction)
   await request.cache().helpers.page.set(page)
   await request.cache().helpers.status.set(status)
-  await request.cache().helpers.addressLookup.set(addressLookup)
+  await request.cache().helpers.addressLookup.set(addressFiltered)
 
   const lastStatusPermission = status.permissions[status.permissions.length - 1]
   await request.cache().helpers.status.set({ currentPermissionIdx: transaction.permissions.length - 1 })
   await request.cache().helpers.status.setCurrentPermission(lastStatusPermission)
 }
 
-const removeAddressLookup = async (addressLookup, addressPermission) => {
-  for (let permission = 0; permission < addressLookup.permissions.length; permission++) {
-    if (JSON.stringify(addressLookup.permissions[permission]) === JSON.stringify(addressPermission)) {
-      addressLookup.permissions.splice(permission, 1)
+const removeAddressLookup = (addressLookup, addressPermission) => {
+  const filterAddress = { ...addressLookup }
+  for (let idx = 0; idx < addressLookup.permissions.length; idx++) {
+    if (JSON.stringify(addressLookup.permissions[idx]) === JSON.stringify(addressPermission)) {
+      filterAddress.permissions.splice(idx, 1)
       break
     }
   }
+  return filterAddress
 }
