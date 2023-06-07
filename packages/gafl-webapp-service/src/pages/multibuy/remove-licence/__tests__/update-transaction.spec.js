@@ -2,7 +2,7 @@ import { ADD_LICENCE, REMOVE_LICENCE } from '../../../../uri.js'
 import updateTransaction from '../update-transaction.js'
 
 const createMockRequest = ({
-  addressLookupItems = [],
+  addressLookupPermissions = [],
   setAddressLookup = () => {},
   currentAddressLookupPermission = {},
 
@@ -34,7 +34,7 @@ const createMockRequest = ({
         setCurrentPermission: setCurrentStatus
       },
       addressLookup: {
-        get: () => ({ permissions: addressLookupItems }),
+        get: () => ({ permissions: addressLookupPermissions }),
         getCurrentPermission: () => currentAddressLookupPermission,
         set: setAddressLookup
       }
@@ -44,10 +44,14 @@ const createMockRequest = ({
 
 describe('update transaction', () => {
   it('address lookup is removed', async () => {
-    const addressLookupItems = [{}, {}, {}]
-    const [addressLookup1, addressLookup2, addressLookup3] = addressLookupItems
+    const addressLookupPermissions = [{}, {}, {}]
+    const [addressLookup1, addressLookup2, addressLookup3] = addressLookupPermissions
     const setAddressLookup = jest.fn()
-    const mockRequest = createMockRequest({ addressLookupItems, setAddressLookup, currentAddressLookupPermission: addressLookup2 })
+    const mockRequest = createMockRequest({
+      addressLookupPermissions,
+      setAddressLookup,
+      currentAddressLookupPermission: addressLookup2
+    })
 
     await updateTransaction(mockRequest)
 
@@ -60,12 +64,11 @@ describe('update transaction', () => {
   it('transaction is removed', async () => {
     const transactionPermissions = [{ hash: 'abc-999' }, { hash: 'aaa-111' }, { hash: 'zzz-010' }]
     const [permission1, permission2, permission3] = transactionPermissions
-    const currentTransactionPermission = permission2
     const setTransaction = jest.fn()
     const mockRequest = createMockRequest({
       transactionPermissions,
       setTransaction,
-      currentTransactionPermission
+      currentTransactionPermission: permission2
     })
 
     await updateTransaction(mockRequest)
