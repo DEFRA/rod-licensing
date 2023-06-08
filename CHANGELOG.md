@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.0 (2023-06-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1725](https://github.com/DEFRA/rod-licensing/pull/1725) Remove inset text about concession age ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 
