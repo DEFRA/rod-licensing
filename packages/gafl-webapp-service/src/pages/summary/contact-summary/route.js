@@ -196,7 +196,6 @@ const getLicenseeDetailsSummaryRows = (permission, countryName, request) => {
   }
 
   if (permission.isLicenceForYou) {
-    console.log('text')
     const text = permission.licensee.preferredMethodOfNewsletter === HOW_CONTACTED.none ? 'no' : 'yes'
     licenseeSummaryArray.push(
       rowGenerator.generateStandardRow(
