@@ -208,11 +208,9 @@ describe('The easy renewal identification page', () => {
           birthDate: dobHelper(ADULT_TODAY)
         },
         licenceLength: '12M',
-        // startDate: '2023-04-01',
         permit: {
           newCostStartDate: '2023-04-01',
           newCost: 1
-          // description: 'Coarse 12 month 2 Rod Licence (Full)'
         }
       }))
       await injectWithCookies(
