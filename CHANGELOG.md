@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.1 (2023-06-08)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1713](https://github.com/DEFRA/rod-licensing/pull/1713) Update dynamics-lib to handle postal order ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 ## v1.35.0-rc.0 (2023-06-08)
 
 #### :rocket: Enhancement
