@@ -224,7 +224,6 @@
   "dob_error_format_min": "Nodwch eich dyddiad geni a chynnwys y diwrnod, y mis a’r flwyddyn",
   "dob_error_format": "Nodwch ddyddiad geni deiliad y drwydded a chynnwys diwrnod, mis a blwyddyn",
   "dob_error": "Rhowch y dyddiad geni",
-  "dob_inset": "Ar gyfer trwyddedau sy’n dechrau ar 1 Ebrill 2023 neu wedi hynny, mae’r oedran lle gall deiliad trwydded brynu trwydded blwyddyn am bris gostyngedig yn newid o 65 i 66",
   "dob_month": "Mis",
   "dob_privacy_link_prefix": "Os nad ydych yn darparu dyddiad geni cywir, gallai hynny achosi oedi wrth adnewyddu trwydded, neu olygu nad yw’r drwydded yn ddilys. Darllenwch am ",
   "dob_privacy_link": "sut yr ydym ni'n defnyddio data personol (yn agor ar dudalen newydd)",
