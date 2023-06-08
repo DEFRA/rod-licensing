@@ -11,12 +11,35 @@ mockSalesApi()
 jest.mock('../../../../processors/find-permit.js', () => ({
   findPermit: jest.fn()
 }))
-// failing tests: I have created a mock for findPermit but it needs to be altered for each test. There are console logs
-// in the last test as this is what I was working on last.
+
+afterEach(() => {
+  jest.resetAllMocks()
+})
+
 describe('The licence length page', () => {
   it('returns success on requesting', async () => {
+    findPermit.mockImplementationOnce(() => ({ licenceLength: '8D' }))
     const response = await injectWithCookies('GET', LICENCE_LENGTH.uri)
     expect(response.statusCode).toBe(200)
+  })
+
+  it("where contact is 'none' setting a 12 month licence, then changing it to 1 day sets preferredMethodOfConfirmation to none and sets postalFulfilment to false", async () => {
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeFalsy()
+  })
+
+  it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
+    findPermit.mockImplementationOnce(() => ({ licenceLength: '1D' }))
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
   })
 
   it('redirects back to itself on posting no response', async () => {
@@ -26,7 +49,8 @@ describe('The licence length page', () => {
   })
 
   it('redirects back to itself on posting an invalid response', async () => {
-    const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8M' })
+    findPermit.mockImplementationOnce(() => ({ licenceLength: '8D' }))
+    const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8L' })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
   })
@@ -36,6 +60,7 @@ describe('The licence length page', () => {
     ['8 day', '8D'],
     ['1 day', '1D']
   ])('stores the transaction on a successful submission of %s', async (desc, lenCode) => {
+    findPermit.mockImplementationOnce(() => ({ licenceLength: lenCode }))
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe(lenCode)
@@ -52,41 +77,31 @@ describe('The licence length page', () => {
     ['8 day', '8D'],
     ['1 day', '1D']
   ])('redirects into the time to start page for licence length %s', async (desc, lenCode) => {
+    findPermit.mockImplementationOnce(() => ({ licenceLength: lenCode }))
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
 
   it("where contact is 'none' setting a 12 month licence changes it to 'post'", async () => {
+    findPermit.mockImplementationOnce(() => ({
+      licensee: {
+        preferredMethodOfConfirmation: 'Letter'
+      },
+      licenceLength: '12M',
+      permit: {
+        isForFulfilment: true
+      }
+    }))
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    console.log(payload)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
   })
 
-  it("where contact is 'none' setting a 12 month licence, then changing it to 1 day sets preferredMethodOfConfirmation to none and sets postalFulfilment to false", async () => {
-    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
-    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    console.log(payload2)
-    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
-    expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeFalsy()
-  })
-
-  it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
-    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
-    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
-  })
-
   it("where contact is 'none' setting a 1 day licence, then changing to 12 months sets preferredMethodOfConfirmation to letter and set postalFulfilment to true", async () => {
-    findPermit.mockImplementation(() => ({
+    findPermit.mockImplementationOnce(() => ({
       licensee: {
         preferredMethodOfNewsletter: 'Prefer not to be contacted',
         postalFulfilment: false,
@@ -97,15 +112,17 @@ describe('The licence length page', () => {
       },
       licenceType: 'Trout and coarse',
       numberOfRods: '2',
-      licenceLength: '12M'
+      licenceLength: '12M',
+      permit: {
+        isForFulfilment: true
+      }
     }))
     await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
     await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    console.log('next round')
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
-    // expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeTruthy()
+    expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeTruthy()
   })
 })

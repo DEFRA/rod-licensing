@@ -22,6 +22,11 @@ import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import pageRoute from '../../../../routes/page-route.js'
+import { findPermit } from '../../../../processors/find-permit.js'
+
+jest.mock('../../../../processors/find-permit.js', () => ({
+  findPermit: jest.fn()
+}))
 
 jest.mock('../../../../processors/uri-helper.js', () => ({
   addLanguageCodeToUri: jest.fn((request, uri) => uri || request.path)
@@ -196,6 +201,20 @@ describe('The easy renewal identification page', () => {
     })
 
     it('returns a 200 status code on a GET request to the licence summary', async () => {
+      findPermit.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Willis',
+          lastName: 'Graham',
+          birthDate: dobHelper(ADULT_TODAY)
+        },
+        licenceLength: '12M',
+        // startDate: '2023-04-01',
+        permit: {
+          newCostStartDate: '2023-04-01',
+          newCost: 1
+          // description: 'Coarse 12 month 2 Rod Licence (Full)'
+        }
+      }))
       await injectWithCookies(
         'POST',
         IDENTIFY.uri,
@@ -205,7 +224,6 @@ describe('The easy renewal identification page', () => {
       await injectWithCookies('GET', CONTROLLER.uri)
 
       const data = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-      console.log(data)
 
       expect(data.statusCode).toBe(200)
     })

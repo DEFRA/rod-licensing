@@ -16,8 +16,12 @@ import {
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../../../licence-details/licence-type/route.js'
 import { disabilityConcessionTypes } from '../../../concessions/disability/update-transaction.js'
+import { findPermit } from '../../../../processors/find-permit.js'
 
 mockSalesApi()
+jest.mock('../../../../processors/find-permit.js', () => ({
+  findPermit: jest.fn()
+}))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -83,24 +87,76 @@ describe('The licence summary page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     })
 
-    it('displays the page on request', async () => {
-      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-      expect(response.statusCode).toBe(200)
+    beforeEach(() => {
+      jest.resetAllMocks()
+    })
+
+    it('re-filters the correct permit on a material change', async () => {
+      findPermit.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Willis',
+          lastName: 'Graham',
+          birthDate: '2006-06-06'
+        },
+        licenceLength: '12M',
+        startDate: '2023-04-01',
+        permit: {
+          newCostStartDate: '2023-04-01',
+          newCost: 1,
+          description: 'Coarse 12 month 3 Rod Licence (Full)'
+        }
+      }))
+      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
+      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      const permit = JSON.parse(payload).permissions[0].permit
+      expect(permit.description).toEqual('Coarse 12 month 3 Rod Licence (Full)')
     })
 
     it('filters the correct permit', async () => {
+      findPermit.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Willis',
+          lastName: 'Graham',
+          birthDate: '2006-06-06'
+        },
+        licenceLength: '12M',
+        startDate: '2023-04-01',
+        permit: {
+          newCostStartDate: '2023-04-01',
+          newCost: 1,
+          description: 'Coarse 12 month 2 Rod Licence (Full)'
+        }
+      }))
       await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permit = JSON.parse(payload).permissions[0].permit
       expect(permit.description).toEqual('Coarse 12 month 2 Rod Licence (Full)')
     })
 
-    it('re-filters the correct permit on a material change', async () => {
-      await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
-      await injectWithCookies('GET', LICENCE_SUMMARY.uri)
-      const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-      const permit = JSON.parse(payload).permissions[0].permit
-      expect(permit.description).toEqual('Coarse 12 month 3 Rod Licence (Full)')
+    it('displays the page on request', async () => {
+      findPermit.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Willis',
+          lastName: 'Graham',
+          birthDate: '2006-06-06',
+          preferredMethodOfNewsletter: 'Prefer not to be contacted',
+          postalFulfilment: false,
+          preferredMethodOfConfirmation: 'Prefer not to be contacted',
+          preferredMethodOfReminder: 'Prefer not to be contacted',
+          mobilePhone: null,
+          email: null
+        },
+        licenceLength: '12M',
+        startDate: '2023-04-01',
+        permit: {
+          newCostStartDate: '2023-04-01',
+          newCost: 1,
+          isForFulfilment: true
+        }
+      }))
+      const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
+      expect(response.statusCode).toBe(200)
     })
   })
 
@@ -117,12 +173,43 @@ describe('The licence summary page', () => {
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     })
 
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
     it('displays the page on request', async () => {
+      findPermit.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Willis',
+          lastName: 'Graham',
+          birthDate: '2006-06-06'
+        },
+        licenceLength: '12M',
+        startDate: '2023-04-01',
+        permit: {
+          newCostStartDate: '2023-04-01',
+          newCost: 1
+        }
+      }))
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(200)
     })
 
     it('filters the correct permit', async () => {
+      findPermit.mockImplementationOnce(() => ({
+        licensee: {
+          firstName: 'Willis',
+          lastName: 'Graham',
+          birthDate: '2006-06-06'
+        },
+        licenceLength: '12M',
+        startDate: '2023-04-01',
+        permit: {
+          newCostStartDate: '2023-04-01',
+          newCost: 1,
+          description: 'Coarse 12 month 2 Rod Licence (Full, Disabled)'
+        }
+      }))
       await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       const permit = JSON.parse(payload).permissions[0].permit

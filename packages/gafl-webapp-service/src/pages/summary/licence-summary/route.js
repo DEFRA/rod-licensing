@@ -194,7 +194,7 @@ export const getData = async request => {
   debug('retrieved permit', JSON.stringify(permission))
 
   return {
-    licenceSummaryRows: getLicenceSummaryRows(request, permission),
+    licenceSummaryRows: getLicenceSummaryRows(request, foundPermit),
     isRenewal: permission.isRenewal,
     uri: {
       clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),

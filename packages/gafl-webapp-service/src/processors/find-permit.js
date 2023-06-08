@@ -37,17 +37,20 @@ export const findPermit = async (permission, request) => {
    * The section of the transaction cache subject to the hashing algorithm excludes
    * name, address, or anything not effecting permit filter
    */
-  if (!permission.hash) {
-    await addHashAndPermit(permission, request)
+  const permitPermission = { ...permission }
+  if (!permitPermission.hash) {
+    await addHashAndPermit(permitPermission, request)
   } else {
-    const { hash: _hash, permit: _permit, licensee: _licensee, ...hashOperand } = permission
+    const { hash: _hash, permit: _permit, licensee: _licensee, ...hashOperand } = permitPermission
     const hash = crypto.createHash('sha256')
     hash.update(JSON.stringify(hashOperand))
     const currentHash = hash.digest('hex')
-    if (currentHash !== permission.hash) {
-      await addHashAndPermit(permission, request)
+    if (currentHash !== permitPermission.hash) {
+      await addHashAndPermit(permitPermission, request)
     } else {
       debug("permit data present and doesn't need updating")
     }
   }
+
+  return permitPermission
 }
