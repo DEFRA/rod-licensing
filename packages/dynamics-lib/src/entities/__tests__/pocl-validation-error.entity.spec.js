@@ -31,11 +31,13 @@ describe('pocl staging exception entity', () => {
           defra_postalfulfilment: true,
           defra_concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
           defra_startdate: '2021-06-15',
+          defra_newstartdate: '2021-06-15',
           defra_serialnumber: '14345-48457J',
           defra_permitid: 'test-permit-id',
           defra_transactiondate: '2020-01-01T14:00:00Z',
           defra_amount: 30,
           defra_paymentsource: 'Post Office Sales',
+          defra_newpaymentsource: 910400003,
           defra_channelid: '948594',
           defra_methodofpayment: 910400001,
           defra_status: 910400000,
@@ -80,11 +82,17 @@ describe('pocl staging exception entity', () => {
         postalFulfilment: true,
         concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
         startDate: '2021-06-15',
+        newStartDate: '2021-06-15',
         serialNumber: '14345-48457J',
         permitId: 'test-permit-id',
         transactionDate: '2020-01-01T14:00:00Z',
         amount: 30,
         paymentSource: 'Post Office Sales',
+        newPaymentSource: {
+          description: 'Worldpay',
+          id: 910400003,
+          label: 'Worldpay'
+        },
         channelId: '948594',
         methodOfPayment: expect.objectContaining({ id: 910400001, label: 'Cash', description: 'Cash' }),
         status: expect.objectContaining({ id: 910400000, label: 'Needs Review', description: 'Needs Review' }),
@@ -118,11 +126,13 @@ describe('pocl staging exception entity', () => {
     validationError.postalFulfilment = true
     validationError.concessions = '[{"type":"Blue Badge","referenceNumber":123456789}]'
     validationError.startDate = '2021-06-15'
+    validationError.newStartDate = '2021-06-15'
     validationError.serialNumber = '14345-48457J'
     validationError.permitId = 'test-permit-id'
     validationError.transactionDate = '2020-01-01T14:00:00Z'
     validationError.amount = 30
     validationError.paymentSource = 'Post Office Sales'
+    validationError.newPaymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
     validationError.channelId = '948594'
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']
     validationError.status = optionSetData.defra_poclvalidationerrorstatus.options['910400000']

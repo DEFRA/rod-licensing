@@ -34,11 +34,13 @@ export class PoclValidationError extends BaseEntity {
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
       concessions: { field: 'defra_concessions', type: 'string' },
       startDate: { field: 'defra_startdate', type: 'string' },
+      newStartDate: { field: 'defra_newstartdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
       transactionDate: { field: 'defra_transactiondate', type: 'string' },
       amount: { field: 'defra_amount', type: 'decimal' },
       paymentSource: { field: 'defra_paymentsource', type: 'string' },
+      newPaymentSource: { field: 'defra_newpaymentsource', type: 'optionset', ref: 'defra_financialtransactionsource' },
       channelId: { field: 'defra_channelid', type: 'string' },
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
       status: { field: 'defra_status', type: 'optionset', ref: 'defra_poclvalidationerrorstatus' },
@@ -274,6 +276,18 @@ export class PoclValidationError extends BaseEntity {
   }
 
   /**
+   * The licence new start date associated with this pocl record
+   * @type {string}
+   */
+  get newStartDate () {
+    return super._getState('newStartDate')
+  }
+
+  set newStartDate (newStartDate) {
+    super._setState('newStartDate', newStartDate)
+  }
+
+  /**
    * The serial number associated with this pocl record
    * @type {string}
    */
@@ -323,6 +337,18 @@ export class PoclValidationError extends BaseEntity {
 
   /**
    * The payment source associated with this pocl record
+   * @type {GlobalOptionSetDefinition}
+   */
+  get newPaymentSource () {
+    return super._getState('newPaymentSource')
+  }
+
+  set newPaymentSource (newPaymentSource) {
+    super._setState('newPaymentSource', newPaymentSource)
+  }
+
+  /**
+   * The new payment source associated with this pocl record
    * @type {string}
    */
   get paymentSource () {
