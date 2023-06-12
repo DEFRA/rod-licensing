@@ -61,8 +61,12 @@ describe('update transaction', () => {
     expect(newAddressLookupItems.permissions[1]).toStrictEqual(addressLookup3)
   })
 
-  it('transaction is removed', async () => {
-    const transactionPermissions = [{ hash: 'abc-999' }, { hash: 'aaa-111' }, { hash: 'zzz-010' }]
+  it('transaction is removed - no duplicates', async () => {
+    const transactionPermissions = [
+      { hash: 'abc-999', length: '12M' },
+      { hash: 'aaa-111', length: '1D' },
+      { hash: 'zzz-010', length: '8D' }
+    ]
     const [permission1, permission2, permission3] = transactionPermissions
     const setTransaction = jest.fn()
     const mockRequest = createMockRequest({
@@ -77,6 +81,35 @@ describe('update transaction', () => {
     expect(newTransactionPermissions.permissions.length).toBe(2)
     expect(newTransactionPermissions.permissions[0]).toStrictEqual(permission1)
     expect(newTransactionPermissions.permissions[1]).toStrictEqual(permission3)
+  })
+
+  const getTransactionPermission = length => ({
+    licenceHolder: 'Test Person',
+    start: '2021-01-01',
+    type: 'salmon-and-sea',
+    length,
+    hash: 'abc-999'
+  })
+
+  describe('duplicate licences', () => {
+    it.each`
+      desc                                                                                                           | transactionPermissions                                                                                                                                                 | result
+      ${'two identical permissions'}                                                                                 | ${[getTransactionPermission('12M'), getTransactionPermission('12M')]}                                                                                                  | ${[getTransactionPermission('12M')]}
+      ${'several permissions, all different apart from two identical permissions that arent consecutively placed'}   | ${[getTransactionPermission('12M'), getTransactionPermission('1D'), getTransactionPermission('12M')]}                                                                  | ${[getTransactionPermission('1D'), getTransactionPermission('12M')]}
+      ${'several permissions, all different apart from three identical permissions that arent consecutively placed'} | ${[getTransactionPermission('12M'), getTransactionPermission('1D'), getTransactionPermission('12M'), getTransactionPermission('8D'), getTransactionPermission('12M')]} | ${[getTransactionPermission('1D'), getTransactionPermission('12M'), getTransactionPermission('8D'), getTransactionPermission('12M')]}
+    `('only remove one duplicate when $desc', async ({ transactionPermissions, result }) => {
+      const setTransaction = jest.fn()
+      const mockRequest = createMockRequest({
+        transactionPermissions,
+        setTransaction,
+        currentTransactionPermission: getTransactionPermission('12M')
+      })
+
+      await updateTransaction(mockRequest)
+
+      const newTransactionPermissions = setTransaction.mock.calls[0][0]
+      expect(newTransactionPermissions.permissions).toStrictEqual(result)
+    })
   })
 
   it('page is removed', async () => {
@@ -122,7 +155,11 @@ describe('update transaction', () => {
   })
 
   it('status current permission is set to the latest permission', async () => {
-    const transactionPermissions = [{ hash: 'abc-999' }, { hash: 'aaa-111' }, { hash: 'zzz-010' }]
+    const transactionPermissions = [
+      { hash: 'abc-999', length: '12M' },
+      { hash: 'aaa-111', length: '1D' },
+      { hash: 'zzz-010', length: '8D' }
+    ]
     const statusPermissions = [
       { [ADD_LICENCE.page]: true },
       { [REMOVE_LICENCE.page]: true, [ADD_LICENCE.page]: true },
@@ -143,7 +180,11 @@ describe('update transaction', () => {
   })
 
   it('status sets current permission Idx to the length of permissions in status', async () => {
-    const transactionPermissions = [{ hash: 'abc-999' }, { hash: 'aaa-111' }, { hash: 'zzz-010' }]
+    const transactionPermissions = [
+      { hash: 'abc-999', length: '12M' },
+      { hash: 'aaa-111', length: '1D' },
+      { hash: 'zzz-010', length: '8D' }
+    ]
     const statusPermissions = [
       { [ADD_LICENCE.page]: true },
       { [REMOVE_LICENCE.page]: true, [ADD_LICENCE.page]: true },
@@ -164,11 +205,9 @@ describe('update transaction', () => {
 
   describe('all licences removed', () => {
     it('current permission of the status is not updated to the latest current permission', async () => {
-      const currentTransactionPermission = { hash: 'abc-123' }
-      const transactionPermissions = [currentTransactionPermission]
+      const transactionPermissions = []
       const setCurrentStatus = jest.fn()
       const mockRequest = createMockRequest({
-        currentTransactionPermission,
         transactionPermissions,
         setCurrentStatus
       })
@@ -179,13 +218,11 @@ describe('update transaction', () => {
     })
 
     it('current permission of the status is not updated with updated currentPermissionIdx', async () => {
-      const currentTransactionPermission = { hash: 'abc-123' }
-      const transactionPermissions = [currentTransactionPermission]
+      const transactionPermissions = []
       const statusPermissions = [{ [REMOVE_LICENCE.page]: true, [ADD_LICENCE.page]: true }]
       const setStatus = jest.fn()
 
       const mockRequest = createMockRequest({
-        currentTransactionPermission,
         transactionPermissions,
         statusPermissions,
         setStatus
