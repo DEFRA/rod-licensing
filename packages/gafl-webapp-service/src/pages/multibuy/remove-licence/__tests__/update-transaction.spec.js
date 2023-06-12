@@ -1,5 +1,8 @@
 import { ADD_LICENCE, REMOVE_LICENCE } from '../../../../uri.js'
+import { hasDuplicates } from '../../../../processors/multibuy-processor.js'
 import updateTransaction from '../update-transaction.js'
+
+jest.mock('../../../../processors/multibuy-processor.js')
 
 const createMockRequest = ({
   addressLookupPermissions = [],
@@ -105,6 +108,7 @@ describe('update transaction', () => {
         currentTransactionPermission: getTransactionPermission('12M')
       })
 
+      hasDuplicates.mockReturnValue(true)
       await updateTransaction(mockRequest)
 
       const newTransactionPermissions = setTransaction.mock.calls[0][0]
@@ -201,6 +205,18 @@ describe('update transaction', () => {
 
     const { currentPermissionIdx } = setStatus.mock.calls[1][0]
     expect(currentPermissionIdx).toBe(statusPermissions.length - 1)
+  })
+
+  it('hasDuplicates to be called with transaction.permissions', async () => {
+    const transactionPermissions = [{ hash: 'abc-999', length: '12M' }]
+    const setTransaction = jest.fn()
+    const mockRequest = createMockRequest({
+      transactionPermissions,
+      setTransaction
+    })
+
+    await updateTransaction(mockRequest)
+    expect(hasDuplicates).toHaveBeenCalledWith(transactionPermissions)
   })
 
   describe('all licences removed', () => {
