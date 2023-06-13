@@ -23,25 +23,6 @@ describe('The licence length page', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  it("where contact is 'none' setting a 12 month licence, then changing it to 1 day sets preferredMethodOfConfirmation to none and sets postalFulfilment to false", async () => {
-    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
-    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
-    expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeFalsy()
-  })
-
-  it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
-    findPermit.mockImplementationOnce(() => ({ licenceLength: '1D' }))
-    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
-    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
-    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
-    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
-  })
-
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, {})
     expect(response.statusCode).toBe(302)
@@ -98,6 +79,47 @@ describe('The licence length page', () => {
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.letter)
+  })
+
+  it("where contact is 'none' setting a 12 month licence, then changing it to 1 day sets preferredMethodOfConfirmation to none and sets postalFulfilment to false", async () => {
+    findPermit.mockImplementationOnce(() => ({
+      licensee: {
+        preferredMethodOfNewsletter: 'Prefer not to be contacted',
+        postalFulfilment: false,
+        preferredMethodOfConfirmation: 'Prefer not to be contacted',
+        preferredMethodOfReminder: 'Prefer not to be contacted',
+        mobilePhone: null,
+        email: null
+      }
+    }))
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload2).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
+    expect(JSON.parse(payload2).permissions[0].licensee.postalFulfilment).toBeFalsy()
+  })
+
+  it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
+    findPermit.mockImplementationOnce(() => ({
+      licensee: {
+        preferredMethodOfNewsletter: 'Prefer not to be contacted',
+        postalFulfilment: false,
+        preferredMethodOfConfirmation: 'Prefer not to be contacted',
+        preferredMethodOfReminder: 'Prefer not to be contacted',
+        mobilePhone: null,
+        email: null
+      },
+      licenceType: 'Trout and coarse',
+      numberOfRods: '2',
+      licenceLength: '1D'
+    }))
+    await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'trout-and-coarse-2-rod' })
+    await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
+    await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
+    const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
+    expect(JSON.parse(payload).permissions[0].licensee.preferredMethodOfConfirmation).toEqual(HOW_CONTACTED.none)
   })
 
   it("where contact is 'none' setting a 1 day licence, then changing to 12 months sets preferredMethodOfConfirmation to letter and set postalFulfilment to true", async () => {
