@@ -2,7 +2,9 @@ import { ADD_LICENCE, REMOVE_LICENCE } from '../../../../uri.js'
 import { hasDuplicates } from '../../../../processors/multibuy-processor.js'
 import updateTransaction from '../update-transaction.js'
 
-jest.mock('../../../../processors/multibuy-processor.js')
+jest.mock('../../../../processors/multibuy-processor.js', () => ({
+  hasDuplicates: jest.fn(() => false)
+}))
 
 const createMockRequest = ({
   addressLookupPermissions = [],
