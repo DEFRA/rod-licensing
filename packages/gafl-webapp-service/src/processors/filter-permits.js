@@ -2,7 +2,6 @@ import { salesApi } from '@defra-fish/connectors-lib'
 
 export const getPermitsJoinPermitConcessions = async () => {
   const permits = await salesApi.permits.getAll()
-  console.log(permits)
   const permitConcessions = await salesApi.permitConcessions.getAll()
   const concessions = await salesApi.concessions.getAll()
   return permits.map(p => ({
