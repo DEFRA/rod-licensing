@@ -4,7 +4,7 @@ import db from 'debug'
 
 const debug = db('webapp:find-permit')
 
-export const addHashAndPermit = async (permission, request) => {
+const addHashAndPermit = async (permission, request) => {
   // To calculate a permit, hash and save
 
   const { hash: _hash, permit: _permit, licensee: _licensee, ...hashOperand } = permission
