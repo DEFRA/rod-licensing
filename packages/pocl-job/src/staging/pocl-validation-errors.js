@@ -30,6 +30,7 @@ const mapRecords = records =>
           },
           issueDate: record.transactionDate,
           startDate: record.startDate,
+          newStartDate: record.startDate,
           permitId: record.permitId,
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
@@ -41,6 +42,7 @@ const mapRecords = records =>
         timestamp: record.transactionDate,
         amount: record.amount,
         source: record.paymentSource,
+        newPaymentSource: record.paymentSource,
         channelId: record.channelId,
         method: record.methodOfPayment.label
       }
