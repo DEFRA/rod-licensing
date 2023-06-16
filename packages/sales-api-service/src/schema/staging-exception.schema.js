@@ -38,6 +38,7 @@ const schemaObject = {
       payment: Joi.object({
         timestamp: Joi.string(),
         amount: Joi.number(),
+        newPaymentSource: Joi.string(),
         source: Joi.string(),
         channelId: Joi.string(),
         method: Joi.string()
@@ -75,15 +76,17 @@ export const poclValidationErrorItemSchema = Joi.object({
   postalFulfilment: Joi.boolean().required(),
   concessions: concessionProofSchema.optional(),
   startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+  newStartDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
   serialNumber: Joi.string().trim().required(),
   transactionFile: Joi.string().trim().required(),
   permitId: Joi.string().guid().required(),
   amount: Joi.number().required(),
   transactionDate: TRANSACTION_DATE,
   paymentSource: Joi.string().trim().required(),
+  newPaymentSource: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Direct Debit'),
   channelId: Joi.string().trim().required().description('Channel specific identifier'),
   methodOfPayment: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
-  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'DDE File'),
   status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
   stateCode: Joi.number().required()
 }).label('pocl-validation-error-item')
@@ -106,6 +109,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
         licensee: Joi.object(),
         issueDate: TRANSACTION_DATE,
         startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+        newStartDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
         permitId: Joi.string().guid().required(),
         concessions: Joi.array()
           .items(
@@ -127,6 +131,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
       source: Joi.string().trim().required(),
+      newPaymentSource: Joi.string().trim().required(),
       channelId: Joi.string().trim().required().description('Channel specific identifier'),
       method: Joi.string().trim().required()
     }

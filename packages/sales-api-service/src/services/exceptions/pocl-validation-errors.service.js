@@ -42,6 +42,7 @@ const mapRecordPayload = async (record, transactionFile = null) => {
     permissions: [permission]
   } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
+  const { newPaymentSource } = record.finaliseTransactionPayload.payment
   return {
     serialNumber,
     transactionDate,
@@ -64,7 +65,8 @@ const mapRecordPayload = async (record, transactionFile = null) => {
     preferredMethodOfReminder: await getGlobalOptionSetValue(
       PoclValidationError.definition.mappings.preferredMethodOfReminder.ref,
       licensee.preferredMethodOfReminder
-    )
+    ),
+    newPaymentSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.newPaymentSource.ref, newPaymentSource)
   }
 }
 

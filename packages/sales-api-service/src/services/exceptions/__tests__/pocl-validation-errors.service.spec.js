@@ -14,7 +14,7 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 const getPayload = () => ({
   id: 'test-id',
   createTransactionPayload: {
-    dataSource: 'Post Office Sales',
+    dataSource: 'DDE File',
     serialNumber: '14345-48457J',
     permissions: [
       {
@@ -37,6 +37,7 @@ const getPayload = () => ({
         },
         permitId: 'test-permit-id',
         startDate: '2021-06-15',
+        newStartDate: '2021-06-15',
         concessions: [{ type: 'Blue Badge', referenceNumber: '123456789' }]
       }
     ]
@@ -46,7 +47,8 @@ const getPayload = () => ({
     payment: {
       timestamp: '2020-01-01T14:00:00Z',
       amount: 30,
-      source: 'Post Office Sales',
+      newPaymentSource: 'Direct Debit',
+      source: 'Direct Debit',
       channelId: '948594',
       method: 'Cash'
     }
@@ -65,10 +67,12 @@ const getValidationError = payload => ({
   transactionDate: payload.createTransactionPayload.permissions[0].issueDate,
   permitId: payload.createTransactionPayload.permissions[0].permitId,
   startDate: payload.createTransactionPayload.permissions[0].startDate,
+  newStartDate: payload.createTransactionPayload.permissions[0].newStartDate,
   concessions: JSON.stringify(payload.createTransactionPayload.permissions[0].concessions),
   timestamp: payload.finaliseTransactionPayload.payment.timestamp,
   amount: payload.finaliseTransactionPayload.payment.amount,
   channelId: payload.finaliseTransactionPayload.payment.channelId,
+  newPaymentSource: payload.finaliseTransactionPayload.payment.newPaymentSource,
   paymentSource: payload.finaliseTransactionPayload.payment.source,
   methodOfPayment: payload.finaliseTransactionPayload.payment.method,
   status: 'Ready for Processing',
