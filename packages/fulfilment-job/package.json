@@ -37,7 +37,7 @@
   "dependencies": {
     "@defra-fish/connectors-lib": "1.23.0-rc.62",
     "@defra-fish/dynamics-lib": "1.23.0-rc.62",
-    "commander": "^7.2.0",
+    "commander": "^11.0.0",
     "debug": "^4.3.3",
     "merge2": "^1.4.1",
     "moment": "^2.29.1",
