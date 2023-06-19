@@ -178,6 +178,7 @@ export class BaseEntity {
     ) {
       throw new Error('Value is not a valid GlobalOptionSetDefinition')
     }
+    console.log('Setting property %s to %s', property, value)
     this._localState[property] = value
   }
 
@@ -195,9 +196,7 @@ export class BaseEntity {
       if (type === 'date') {
         value = moment(value).format('YYYY-MM-DD')
       } else if (type === 'datetime') {
-        value = moment(value)
-          .utc()
-          .format('YYYY-MM-DDTHH:mm:ss[Z]')
+        value = moment(value).utc().format('YYYY-MM-DDTHH:mm:ss[Z]')
       } else if (type === 'optionset') {
         value = value.id
       }
@@ -375,30 +374,20 @@ export class BaseEntity {
  */
 const metadataSchema = Joi.object({
   // Local entity name
-  localName: Joi.string()
-    .min(1)
-    .required(),
+  localName: Joi.string().min(1).required(),
   // Dynamics entity collection name
-  dynamicsCollection: Joi.string()
-    .min(1)
-    .required(),
+  dynamicsCollection: Joi.string().min(1).required(),
   // Default filter to apply
   defaultFilter: Joi.string(),
   // Mapping definition used by the mapping functions
   mappings: Joi.object().pattern(
     Joi.string(),
     Joi.object({
-      field: Joi.string()
-        .min(1)
-        .required(),
-      type: Joi.string()
-        .valid('string', 'integer', 'decimal', 'boolean', 'date', 'datetime', 'optionset')
-        .required(),
+      field: Joi.string().min(1).required(),
+      type: Joi.string().valid('string', 'integer', 'decimal', 'boolean', 'date', 'datetime', 'optionset').required(),
       ref: Joi.when('type', {
         is: 'optionset',
-        then: Joi.string()
-          .min(1)
-          .required(),
+        then: Joi.string().min(1).required(),
         otherwise: Joi.forbidden()
       })
     })
@@ -406,9 +395,7 @@ const metadataSchema = Joi.object({
   relationships: Joi.object().pattern(
     Joi.string(),
     Joi.object({
-      property: Joi.string()
-        .min(1)
-        .required(),
+      property: Joi.string().min(1).required(),
       entity: Joi.function()
         .class()
         .custom(value => {
@@ -420,9 +407,7 @@ const metadataSchema = Joi.object({
       parent: Joi.boolean()
     })
   ),
-  alternateKey: Joi.string()
-    .min(1)
-    .optional()
+  alternateKey: Joi.string().min(1).optional()
 }).required()
 
 /**

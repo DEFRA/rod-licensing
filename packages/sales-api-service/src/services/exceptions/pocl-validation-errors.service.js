@@ -80,8 +80,11 @@ const mapRecordPayload = async (record, transactionFile = null) => {
  */
 export const createPoclValidationError = async (record, transactionFile) => {
   debug('Adding exception for POCL record: %o & transaction file %s', record, transactionFile)
+  debug('permission: ' + record.createTransactionPayload.permissions[0])
+  debug('payment: ' + record.finaliseTransactionPayload)
   const data = await mapRecordPayload(record, transactionFile)
   const validationError = Object.assign(new PoclValidationError(), data)
+  debug('Creating POCL validation error %s', validationError)
   return persist([validationError])
 }
 
