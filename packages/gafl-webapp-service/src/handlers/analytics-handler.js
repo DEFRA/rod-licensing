@@ -10,10 +10,23 @@ export const checkAnalytics = async request => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
     if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
+      const pageSkip = await skipPage(request)
+      if (pageSkip) {
+        return false
+      }
       return true
     }
   } catch {}
 
+  return false
+}
+
+export const skipPage = async request => {
+  console.log('hit 2')
+  const analytics = await request.cache().helpers.analytics.get()
+  if (analytics[ANALYTICS.seenMessage] === true && analytics[ANALYTICS.skipPage] === undefined) {
+    return true
+  }
   return false
 }
 

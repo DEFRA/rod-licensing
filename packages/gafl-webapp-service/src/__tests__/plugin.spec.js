@@ -1,11 +1,13 @@
 import { getPlugins } from '../plugins'
 import { ANALYTICS } from '../constants.js'
-import { checkAnalytics, getAnalyticsSessionId } from '../handlers/analytics-handler.js'
+import { checkAnalytics, getAnalyticsSessionId, skipPage } from '../handlers/analytics-handler.js'
 import db from 'debug'
 
 jest.mock('../constants', () => ({
   ANALYTICS: {
-    acceptTracking: 'accepted-tracking'
+    acceptTracking: 'accept',
+    seenMessage: 'seen',
+    skipPage: 'skip'
   },
   CommonResults: {
     OK: 'ok'
@@ -15,7 +17,11 @@ jest.mock('../constants', () => ({
   }
 }))
 
-jest.mock('../handlers/analytics-handler.js')
+jest.mock('../handlers/analytics-handler.js', () => ({
+  skipPage: jest.fn(() => false),
+  checkAnalytics: jest.fn(() => true),
+  getAnalyticsSessionId: jest.fn(() => '123')
+}))
 jest.mock('../server.js', () => ({
   getCsrfTokenCookieName: jest.fn()
 }))
@@ -77,17 +83,21 @@ describe('plugins', () => {
     })
 
     it.each([
-      [true, 'session_id_example', 'Session is being tracked for: session_id_example'],
-      [false, 'testing_session_id', 'Session is not being tracked for: testing_session_id'],
-      [true, 'example_session_id', 'Session is being tracked for: example_session_id']
-    ])('debug is called with session id and set ENABLE_ANALYTICS_OPT_IN_DEBUGGING to true', async (tracking, id, expectedResult) => {
+      [true, 'session_id_example', 'Session is being tracked for: session_id_example', undefined],
+      [false, 'testing_session_id', 'Session is not being tracked for: testing_session_id', undefined],
+      [true, 'example_session_id', 'Session is being tracked for: example_session_id', undefined],
+      [true, 'test_session_id', 'Session is skipping page. Not tracking current page for: test_session_id', true]
+    ])('debug is called with session id and set ENABLE_ANALYTICS_OPT_IN_DEBUGGING to true', async (tracking, id, expectedResult, skip) => {
       const analytics = {
-        [ANALYTICS.acceptTracking]: tracking
+        [ANALYTICS.acceptTracking]: tracking,
+        [ANALYTICS.seenMessage]: true,
+        [ANALYTICS.skipPage]: skip
       }
       process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = true
 
       checkAnalytics.mockReturnValueOnce(tracking)
       getAnalyticsSessionId.mockReturnValueOnce(id)
+      skipPage.mockReturnValue(skip)
 
       await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
 

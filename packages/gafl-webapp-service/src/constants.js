@@ -18,7 +18,8 @@ export const AEN_INVITATION_ID = 'aen_invitation'
 export const ANALYTICS = {
   selected: 'selected',
   acceptTracking: 'accepted-tracking',
-  seenMessage: 'seen-message'
+  seenMessage: 'seen-message',
+  skipPage: 'skip-page'
 }
 
 export const COMPLETION_STATUS = {
