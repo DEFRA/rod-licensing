@@ -9,7 +9,8 @@ const getMockRequest = ({
   statusGetOverrides = {},
   statusSetCurrentPermission = () => {},
   statusSet = () => {},
-  transaction = getMockTransaction()
+  transaction = getMockTransaction(),
+  catalog = getMockCatalog()
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -32,13 +33,20 @@ const getMockRequest = ({
     search: ''
   },
   i18n: {
-    getCatalog: () => 'messages'
+    getCatalog: () => catalog
   }
 })
 
-const getMockTransaction = (permissions = [], cost = 0) => ({
+const getMockTransaction = ({ permissions = [], cost = 0 } = {}) => ({
   permissions,
   cost
+})
+
+const getMockCatalog = (overrides = {}) => ({
+  order_complete_title_application: 'order_complete_title_application',
+  order_complete_title_payment: 'order_complete_title_payment',
+  pound: '£',
+  ...overrides
 })
 
 jest.mock('@defra-fish/connectors-lib')
@@ -113,25 +121,6 @@ describe('The order completion handler', () => {
   })
 
   it.each([
-    [1, ['foo']],
-    [2, ['foo', 'bar']]
-  ])('checks the numberOfLicences correctly when the number of licences is %s', async (count, permissions) => {
-    const transaction = getMockTransaction(permissions)
-    const request = getMockRequest({ transaction })
-
-    const data = await getData(request)
-    expect(data.numberOfLicences).toEqual(count)
-  })
-
-  it('returns the correct totalCost', async () => {
-    const transaction = getMockTransaction([], 100)
-    const request = getMockRequest({ transaction })
-
-    const data = await getData(request)
-    expect(data.totalCost).toEqual(100)
-  })
-
-  it.each([
     ['no permits are for salmon fishing', false, ['Trout and coarse']],
     ['the most recently-added permit is for salmon fishing', true, ['Trout and coarse', 'Salmon and sea trout']],
     ['a previously-added permit is for salmon fishing', true, ['Salmon and sea trout', 'Trout and coarse']]
@@ -140,10 +129,52 @@ describe('The order completion handler', () => {
     for (const licenceType of licenceTypes) {
       permissions.push({ licenceType })
     }
-    const transaction = getMockTransaction(permissions)
+    const transaction = getMockTransaction({ permissions })
     const request = getMockRequest({ transaction })
 
     const data = await getData(request)
     expect(data.displayCatchReturnInfo).toEqual(expected)
+  })
+
+  it.each([
+    ['order_complete_title_application', 0, 'zero cost title'],
+    ['order_complete_title_payment', 9.99, 'paid for title']
+  ])('sets page title to %s if cost is %d', async (titleKey, cost, expectedTitle) => {
+    const request = getMockRequest({
+      transaction: getMockTransaction({ cost }),
+      catalog: getMockCatalog({
+        [titleKey]: expectedTitle
+      })
+    })
+    const data = await getData(request)
+    expect(data.title).toBe(expectedTitle)
+  })
+
+  it.each([
+    ['zero cost title', 0, 'order_complete_title_application', 'zero cost title'],
+    ['£9.99<br />paid for title', 9.99, 'order_complete_title_payment', 'paid for title']
+  ])('sets page html to %s when cost is %d', async (expectedHTML, cost, titleKey, titleVal) => {
+    const request = getMockRequest({
+      transaction: getMockTransaction({ cost }),
+      catalog: getMockCatalog({
+        [titleKey]: titleVal
+      })
+    })
+    const data = await getData(request)
+    expect(data.titleHTML).toBe(expectedHTML)
+  })
+
+  it.each([
+    ['1 licence', 1, 'order_complete_licence_count_single', ' licence'],
+    ['3 licences', 3, 'order_complete_licence_count_multiple', ' licences']
+  ])('sets licencePanelText to %s when number of licences is %i', async (expectedText, numberOfLicences, msgKey, msgVal) => {
+    const request = getMockRequest({
+      transaction: getMockTransaction({ permissions: Array(numberOfLicences).fill({}) }),
+      catalog: getMockCatalog({
+        [msgKey]: msgVal
+      })
+    })
+    const data = await getData(request)
+    expect(data.licencePanelText).toBe(expectedText)
   })
 })

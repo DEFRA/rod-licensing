@@ -4,29 +4,15 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "panel/macro.njk" import govukPanel %}
 
-{% if data.totalCost === 0 %}
-    {% set title = mssgs.order_complete_title_application %}
-    {% set titleHtml = title %}
-{% else %}
-    {% set title = mssgs.order_complete_title_payment %}
-    {% set titleHtml = mssgs.pound + data.totalCost + '<br />' + title %}
-{% endif %}
-
-{% if data.numberOfLicences === 1 %}
-    {% set panelLicenceText = data.numberOfLicences + mssgs.order_complete_licence_count_single %}
-{% else %}
-    {% set panelLicenceText = data.numberOfLicences + mssgs.order_complete_licence_count_multiple %}
-{% endif %}
-
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ data.title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
         {{ govukPanel({
-          titleHtml: titleHtml,
-          html: mssgs.order_complete_licence_count_prefix + '<strong>' + panelLicenceText + '</strong>'
+          titleHtml: data.titleHtml,
+          html: mssgs.order_complete_licence_count_prefix + '<strong>' + data.licencePanelText + '</strong>'
         }) }}
 
         <div class="govuk-!-margin-bottom-9">

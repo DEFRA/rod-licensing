@@ -14,6 +14,7 @@ const checkForSalmonPermits = transaction => {
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
+  const mssgs = request.i18n.getCatalog()
 
   // If the agreed flag is not set to true then throw an exception
   if (!status[COMPLETION_STATUS.agreed]) {
@@ -32,12 +33,17 @@ export const getData = async request => {
 
   await request.cache().helpers.status.set({ [COMPLETION_STATUS.completed]: true })
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
+  const title = transaction.cost > 0 ? mssgs.order_complete_title_payment : mssgs.order_complete_title_application
+  const numberOfLicences = transaction.permissions.length
 
   return {
-    howContacted: mappings.HOW_CONTACTED,
-    totalCost: transaction.cost,
-    numberOfLicences: transaction.permissions.length,
     displayCatchReturnInfo: checkForSalmonPermits(transaction),
+    title,
+    titleHTML: transaction.cost > 0 ? `${mssgs.pound}${transaction.cost}<br />${title}` : title,
+    licencePanelText: `${numberOfLicences}${
+      numberOfLicences > 1 ? mssgs.order_complete_licence_count_multiple : mssgs.order_complete_licence_count_single
+    }`,
+
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
