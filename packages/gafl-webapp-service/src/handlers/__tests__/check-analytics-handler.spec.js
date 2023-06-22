@@ -1,6 +1,6 @@
 import { ANALYTICS } from '../../constants.js'
 import { CacheError } from '../../session-cache/cache-manager.js'
-import { checkAnalytics, getAnalyticsSessionId, skipPage } from '../analytics-handler.js'
+import { checkAnalytics, getAnalyticsSessionId, checkPage } from '../analytics-handler.js'
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -17,19 +17,43 @@ describe('checkAnalytics', () => {
   })
 
   it.each`
-  desc                                                                                                                         | analytics                                                                                           | trackingResult
-  ${'analytics has value including accept tracking as true, page should not be skipped then return of checkAnalytics is true'} | ${{ [ANALYTICS.acceptTracking]: true, [ANALYTICS.skipPage]: false, [ANALYTICS.seenMessage]: true }} | ${true}
-  ${'analytics has value including accept tracking as true, page should be skipped then return of checkAnalytics is false'}    | ${{ [ANALYTICS.acceptTracking]: true, [ANALYTICS.skipPage]: true, [ANALYTICS.seenMessage]: true }}  | ${false}
-  ${'analytics has no value so return of checkAnalytics is false'}                                                             | ${undefined}                                                                                        | ${false}
-  ${'analytics has value but accept tracking is false so return of checkAnalytics is false'}                                   | ${{ [ANALYTICS.acceptTracking]: false }}                                                            | ${false}
-  `('when $desc', async ({ analytics, trackingResult }) => {
-    const result = await checkAnalytics(generateRequestMock(analytics))
+    desc                                                                                                                  | analytics                                                           | page     | trackingResult
+    ${'analytics has value of accept tracking as true, page should not be skipped then return of checkAnalytics is true'} | ${{ [ANALYTICS.acceptTracking]: true }}                             | ${false} | ${true}
+    ${'analytics has value of accept tracking as true, page should be skipped then return of checkAnalytics is false'}    | ${{ [ANALYTICS.acceptTracking]: true, [ANALYTICS.skipPage]: true }} | ${true}  | ${false}
+    ${'analytics has value but accept tracking is false so return of checkAnalytics is false'}                            | ${{ [ANALYTICS.acceptTracking]: false }}                            | ${false} | ${false}
+  `('when $desc', async ({ analytics, page, trackingResult }) => {
+    const result = await checkAnalytics(generateRequestMock(analytics), page)
 
     expect(result).toBe(trackingResult)
   })
 
   it('empty session cache returns false', async () => {
     const result = await checkAnalytics(
+      generateRequestMock(() => {
+        throw new CacheError()
+      })
+    )
+    expect(result).toEqual(false)
+  })
+})
+
+describe('checkPage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it.each([
+    [true, true],
+    [false, false]
+  ])('when analytics skip page is %s, returns %s', async (skipPage, expected) => {
+    const analytics = { [ANALYTICS.skipPage]: skipPage }
+    const result = await checkPage(generateRequestMock(analytics))
+
+    expect(result).toBe(expected)
+  })
+
+  it('empty session cache returns false', async () => {
+    const result = await checkPage(
       generateRequestMock(() => {
         throw new CacheError()
       })
@@ -66,33 +90,12 @@ describe('getAnalyticsSessionId', () => {
   })
 })
 
-describe('skipPage', () => {
-  it.each`
-  desc                                                                       | analytics                                                                  | skipResult
-  ${'user has seen banner and next page view tracking has not been skipped'} | ${{ [ANALYTICS.seenMessage]: true, [ANALYTICS.skipPage]: undefined }}      | ${true}
-  ${'user has seen banner and next page view tracking has been skipped'}     | ${{ [ANALYTICS.seenMessage]: true, [ANALYTICS.skipPage]: true }}           | ${false}
-  ${'user has not seen banner'}                                              | ${{ [ANALYTICS.seenMessage]: false, [ANALYTICS.skipPage]: undefined }}     | ${false}
-  `('when $desc', async ({ analytics, skipResult }) => {
-    const result = await skipPage(generateRequestMock(analytics))
-
-    expect(result).toBe(skipResult)
-  })
-
-  it('user has seen banner and next page view tracking has not been skipped so analytics is updated with page view as skipped', async () => {
-    await skipPage(generateRequestMock({ [ANALYTICS.seenMessage]: true, [ANALYTICS.skipPage]: false }))
-    expect(mockAnalyticsSet).toHaveBeenCalledWith({ [ANALYTICS.skipPage]: true })
-  })
-})
-
-const mockAnalyticsSet = jest.fn()
-
 const generateRequestMock = (analytics, getId = () => {}) => ({
   cache: jest.fn(() => ({
     getId: jest.fn(getId),
     helpers: {
       analytics: {
-        get: jest.fn(() => analytics),
-        set: mockAnalyticsSet
+        get: jest.fn(() => analytics)
       }
     }
   }))

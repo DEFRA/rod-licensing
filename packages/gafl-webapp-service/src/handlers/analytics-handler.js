@@ -6,12 +6,11 @@ import { ANALYTICS } from '../constants.js'
  * @returns {Promise}
  */
 
-export const checkAnalytics = async request => {
+export const checkAnalytics = async (request, pageSkip) => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
-    if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
-      const pageSkip = await skipPage(request)
-      if (pageSkip) {
+    if (analytics[ANALYTICS.acceptTracking] === true) {
+      if (pageSkip === true) {
         return false
       }
       return true
@@ -21,15 +20,16 @@ export const checkAnalytics = async request => {
   return false
 }
 
-export const skipPage = async request => {
-  console.log('hit 2')
-  const analytics = await request.cache().helpers.analytics.get()
-  if (analytics[ANALYTICS.seenMessage] === true && analytics[ANALYTICS.skipPage] === undefined) {
-    return true
-  }
+export const checkPage = async request => {
+  try {
+    const analytics = await request.cache().helpers.analytics.get()
+    if (analytics[ANALYTICS.skipPage] === true) {
+      return true
+    }
+  } catch {}
+
   return false
 }
-
 export const getAnalyticsSessionId = async request => {
   try {
     return request.cache().getId()

@@ -12,7 +12,9 @@ jest.mock('../../constants', () => ({
   ANALYTICS: {
     selected: 'selected',
     acceptTracking: 'accepted-tracking',
-    seenMessage: 'seen-message'
+    seenMessage: 'seen-message',
+    skipPage: 'skip-page',
+    pageSkipped: 'page-skipped'
   },
   PAGE_STATE: { completed: true, error: false }
 }))
@@ -49,8 +51,10 @@ describe('The page handler function', () => {
   })
 
   it('the error method re-throws any exceptions which are not transaction errors ', async () => {
-    const request = getMockRequest(() => {
-      throw new Error('Random exception')
+    const request = getMockRequest({
+      setCurrentPermission: () => {
+        throw new Error('Random exception')
+      }
     })
     try {
       await pageHandler().error(request, null, { details: [] })
@@ -144,7 +148,7 @@ describe('The page handler function', () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
-    await get(getMockRequest(null, '/we/are/here'), toolkit)
+    await get(getMockRequest({ path: '/we/are/here' }), toolkit)
     expect(toolkit.view).toMatchSnapshot()
   })
 
@@ -154,10 +158,10 @@ describe('The page handler function', () => {
     ['agreed', AGREED.uri],
     ['order complete', ORDER_COMPLETE.uri],
     ['licence details', LICENCE_DETAILS.uri]
-  ])('hides the analytics banner for %s page', async (_pageLabel, pageUri) => {
+  ])('hides the analytics banner for %s page', async (_pageLabel, path) => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
-    const mockRequest = getMockRequest(null, pageUri)
+    const mockRequest = getMockRequest({ path })
     await get(mockRequest, toolkit)
     const pageData = toolkit.view.mock.calls[0][1]
     expect(pageData.displayAnalytics).toBeFalsy()
@@ -166,7 +170,7 @@ describe('The page handler function', () => {
   it('sets analytics values to default values if analytics key is not set', async () => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
-    const mockRequest = getMockRequest(null, '/current/page', false)
+    const mockRequest = getMockRequest('/current/page', false)
     await get(mockRequest, toolkit)
     const pageData = toolkit.view.mock.calls[0][1]
     expect(pageData).toEqual(
@@ -183,7 +187,7 @@ describe('The page handler function', () => {
     async pageUri => {
       const { get } = pageHandler('', 'view', '/next/page')
       const toolkit = getMockToolkit()
-      const mockRequest = getMockRequest(null, pageUri)
+      const mockRequest = getMockRequest(pageUri)
       await get(mockRequest, toolkit)
       const pageData = toolkit.view.mock.calls[0][1]
       expect(pageData).toEqual(
@@ -194,10 +198,10 @@ describe('The page handler function', () => {
     }
   )
 
-  it.each([[IDENTIFY.uri], [LICENCE_FOR.uri]])('sets journeyBeginning to true if on licence_for or identify page', async pageUri => {
+  it.each([[IDENTIFY.uri], [LICENCE_FOR.uri]])('sets journeyBeginning to true if on licence_for or identify page', async path => {
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
-    const mockRequest = getMockRequest(null, pageUri)
+    const mockRequest = getMockRequest({ path })
     await get(mockRequest, toolkit)
     const pageData = toolkit.view.mock.calls[0][1]
     expect(pageData).toEqual(
@@ -218,9 +222,42 @@ describe('The page handler function', () => {
       expect(toolkit.redirectWithLanguageCode).toHaveBeenCalledWith(pageUri)
     }
   )
+
+  describe('skipPage', () => {
+    it('called with undefined when analytics is undefined on initial get request', async () => {
+      const set = jest.fn()
+      const { get } = pageHandler('', 'view', 'next-page')
+      const toolkit = getMockToolkit()
+      const mockRequest = getMockRequest({ analytics: undefined, set })
+      await get(mockRequest, toolkit)
+      expect(set).toBeCalledWith({ [ANALYTICS.skipPage]: false })
+    })
+
+    it.each`
+      desc                                                                                                                          | values                                                                        | result
+      ${'analytics defined, pageskip != true, seenmessage = true, skippage != true, set called with skippage and pageskipped true'} | ${{ [ANALYTICS.seenMessage]: 'seen-message' }}                                | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true }}
+      ${'analytics defined, pageskip = true, seenmessage = true, skippage != true, set called with skippage false'}                 | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.seenMessage]: 'seen-message' }}    | ${{ [ANALYTICS.skipPage]: false }}
+      ${'analytics defined, pageskip != true, seenmessage != true, skippage != true, set called with skippage false'}               | ${{}}                                                                         | ${{ [ANALYTICS.skipPage]: false }}
+      ${'analytics defined, pageskip != true, seenmessage = true, skippage = true, set called with skippage false'}                 | ${{ [ANALYTICS.seenMessage]: 'seen-message', [ANALYTICS.pageSkipped]: true }} | ${{ [ANALYTICS.skipPage]: false }}
+    `('when $desc', async ({ values, result }) => {
+      const set = jest.fn()
+      const analytics = getAnalytics(values)
+      const { get } = pageHandler('', 'view', 'next-page')
+      const toolkit = getMockToolkit()
+      const mockRequest = getMockRequest({ analytics, set })
+      await get(mockRequest, toolkit)
+      expect(set).toBeCalledWith(result)
+    })
+  })
 })
 
-const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/here', includeAnalytics = true) => ({
+const getAnalytics = overides => ({
+  [ANALYTICS.acceptTracking]: 'accepted-tracking',
+  [ANALYTICS.selected]: 'selected',
+  ...overides
+})
+
+const getMockRequest = ({ setCurrentPermission = () => {}, path = '/buy/we/are/here', analytics, set = () => {} } = {}) => ({
   cache: () => ({
     helpers: {
       page: {
@@ -235,15 +272,8 @@ const getMockRequest = (setCurrentPermission = () => {}, path = '/buy/we/are/her
         getCurrentPermission: () => {}
       },
       analytics: {
-        get: () =>
-          // prettier-ignore
-          includeAnalytics
-            ? {
-                [ANALYTICS.selected]: 'selected',
-                [ANALYTICS.acceptTracking]: 'accepted-tracking',
-                [ANALYTICS.seenMessage]: 'seen-message'
-              }
-            : undefined
+        get: async () => analytics,
+        set
       }
     }
   }),

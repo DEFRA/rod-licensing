@@ -25,6 +25,20 @@ const displayAnalytics = request => {
   return request.path.startsWith('/buy')
 }
 
+const skipPage = async request => {
+  const analytics = await request.cache().helpers.analytics.get()
+
+  if (analytics) {
+    if (analytics[ANALYTICS.pageSkipped] !== true && analytics[ANALYTICS.seenMessage] && analytics[ANALYTICS.skipPage] !== true) {
+      await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true })
+      return true
+    }
+  }
+
+  await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: false })
+  return false
+}
+
 /**
  * Flattens the error structure from joi for use in the templates
  * @param e
@@ -115,6 +129,8 @@ export default (path, view, completion, getData) => ({
     pageData.acceptedTracking = analytics ? analytics[ANALYTICS.acceptTracking] : false
 
     pageData.displayAnalytics = displayAnalytics(request)
+
+    await skipPage(request)
 
     if (pagesJourneyBeginning.includes(request.path)) {
       pageData.journeyBeginning = true
