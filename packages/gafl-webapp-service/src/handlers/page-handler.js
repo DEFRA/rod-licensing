@@ -28,11 +28,14 @@ const displayAnalytics = request => {
 const skipPage = async request => {
   const analytics = await request.cache().helpers.analytics.get()
 
-  if (analytics) {
-    if (analytics[ANALYTICS.pageSkipped] !== true && analytics[ANALYTICS.seenMessage] && analytics[ANALYTICS.skipPage] !== true) {
-      await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true })
-      return true
-    }
+  if (
+    analytics &&
+    analytics[ANALYTICS.pageSkipped] !== true &&
+    analytics[ANALYTICS.seenMessage] &&
+    analytics[ANALYTICS.skipPage] !== true
+  ) {
+    await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true })
+    return true
   }
 
   await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: false })

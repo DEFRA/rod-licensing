@@ -9,10 +9,7 @@ import { ANALYTICS } from '../constants.js'
 export const checkAnalytics = async (request, pageSkip) => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
-    if (analytics[ANALYTICS.acceptTracking] === true) {
-      if (pageSkip === true) {
-        return false
-      }
+    if (analytics[ANALYTICS.acceptTracking] === true && pageSkip !== true) {
       return true
     }
   } catch {}

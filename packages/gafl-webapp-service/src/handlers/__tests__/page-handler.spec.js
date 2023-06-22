@@ -235,9 +235,10 @@ describe('The page handler function', () => {
 
     it.each`
       desc                                                                                                                          | values                                                                        | result
+      ${'analytics undefined, set called with skippage false'}                                                                      | ${{}}                                                                         | ${{ [ANALYTICS.skipPage]: false }}
       ${'analytics defined, pageskip != true, seenmessage = true, skippage != true, set called with skippage and pageskipped true'} | ${{ [ANALYTICS.seenMessage]: 'seen-message' }}                                | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true }}
       ${'analytics defined, pageskip = true, seenmessage = true, skippage != true, set called with skippage false'}                 | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.seenMessage]: 'seen-message' }}    | ${{ [ANALYTICS.skipPage]: false }}
-      ${'analytics defined, pageskip != true, seenmessage != true, skippage != true, set called with skippage false'}               | ${{}}                                                                         | ${{ [ANALYTICS.skipPage]: false }}
+      ${'analytics defined, pageskip != true, seenmessage != true, skippage != true, set called with skippage false'}               | ${{ [ANALYTICS.seenMessage]: false }}                                         | ${{ [ANALYTICS.skipPage]: false }}
       ${'analytics defined, pageskip != true, seenmessage = true, skippage = true, set called with skippage false'}                 | ${{ [ANALYTICS.seenMessage]: 'seen-message', [ANALYTICS.pageSkipped]: true }} | ${{ [ANALYTICS.skipPage]: false }}
     `('when $desc', async ({ values, result }) => {
       const set = jest.fn()
