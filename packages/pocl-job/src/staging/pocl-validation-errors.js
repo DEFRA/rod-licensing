@@ -1,4 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
+import { POSTAL_ORDER_DATASOURCE, POSTAL_ORDER_PAYMENTSOURCE } from './constants.js'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
@@ -6,7 +7,7 @@ const mapRecords = records =>
   records.map(record => ({
     poclValidationErrorId: record.id,
     createTransactionPayload: {
-      dataSource: record.dataSource.label,
+      dataSource: backfillDataSource(record),
       serialNumber: record.serialNumber,
       permissions: [
         {
@@ -48,6 +49,14 @@ const mapRecords = records =>
       }
     }
   }))
+
+const backfillDataSource = record => {
+  if (record.dataSource) {
+    return record.dataSource.label
+  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    return POSTAL_ORDER_DATASOURCE
+  }
+}
 
 /**
  * Calls Sales Api to update Dynamics record

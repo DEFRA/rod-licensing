@@ -164,4 +164,45 @@ describe('pocl-validation-errors', () => {
       expect(record).toMatchSnapshot()
     })
   })
+
+  describe('when an existing POCL validation error has no datasource', () => {
+    it('fills it with the correct data for postal orders', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.dataSource = null
+      poclValidationError.newPaymentSource = { label: 'Postal Order' }
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      expect(validationError.dataSource).toBe('Postal Order Sales')
+    })
+
+    it('leaves the datatype blank if payment source is not postal order', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.dataSource = null
+      poclValidationError.newPaymentSource = { label: 'Magic Beans' }
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      expect(validationError.dataSource).toBe(undefined)
+    })
+
+    it('leaves the datatype blank if payment source is not set', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.dataSource = null
+      poclValidationError.newPaymentSource = null
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      expect(validationError.dataSource).toBe(undefined)
+    })
+  })
 })
