@@ -205,4 +205,45 @@ describe('pocl-validation-errors', () => {
       expect(validationError.dataSource).toBe(undefined)
     })
   })
+
+  describe('when an existing POCL validation error has no method of payment', () => {
+    it('fills it with the correct data for postal orders', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.methodOfPayment = null
+      poclValidationError.newPaymentSource = { label: 'Postal Order' }
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(validationError.payment.method).toBe('Other')
+    })
+
+    it('leaves the payment method blank if payment source is not postal order', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.methodOfPayment = null
+      poclValidationError.newPaymentSource = { label: 'Magic Beans' }
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(validationError.payment.method).toBe(undefined)
+    })
+
+    it('leaves the payment method blank if payment source is not set', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.methodOfPayment = null
+      poclValidationError.newPaymentSource = null
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(validationError.payment.method).toBe(undefined)
+    })
+  })
 })

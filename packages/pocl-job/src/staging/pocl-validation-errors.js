@@ -1,5 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { POSTAL_ORDER_DATASOURCE, POSTAL_ORDER_PAYMENTSOURCE } from './constants.js'
+import { POSTAL_ORDER_DATASOURCE, POSTAL_ORDER_PAYMENTSOURCE, POSTAL_ORDER_PAYMENTMETHOD } from './constants.js'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
@@ -45,7 +45,7 @@ const mapRecords = records =>
         source: record.paymentSource,
         newPaymentSource: record.paymentSource,
         channelId: record.channelId,
-        method: record.methodOfPayment.label
+        method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
       }
     }
   }))
@@ -55,6 +55,14 @@ const backfillDataSource = record => {
     return record.dataSource.label
   } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
+  }
+}
+
+const backfillPaymentMethod = (method, newPaymentSource) => {
+  if (method) {
+    return method.label
+  } else if (newPaymentSource && newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    return POSTAL_ORDER_PAYMENTMETHOD
   }
 }
 
@@ -89,11 +97,18 @@ const createTransactions = async records => {
   return { succeeded, failed }
 }
 
+const finaliseTransaction = async rec => {
+  const payment = rec.record.finaliseTransactionPayload.payment
+  const finaliseTransactionPayload = {
+    payment: { method: backfillPaymentMethod(payment.method, payment.newPaymentSource) },
+    ...rec.record.finaliseTransactionPayload
+  }
+  return salesApi.finaliseTransaction(rec.result.response.id, finaliseTransactionPayload)
+}
+
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records
-  const finalisationResults = await Promise.allSettled(
-    created.map(rec => salesApi.finaliseTransaction(rec.result.response.id, rec.record.finaliseTransactionPayload))
-  )
+  const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
 
   const succeeded = []
   created.forEach(({ record }, idx) => {
