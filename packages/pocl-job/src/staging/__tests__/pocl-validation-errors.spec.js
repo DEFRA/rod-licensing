@@ -291,7 +291,7 @@ describe('pocl-validation-errors', () => {
   describe('when a transaction date is not in ISO format', () => {
     it('converts the issueDate to ISO format without milliseconds', async () => {
       const poclValidationError = getPoclValidationError()
-      poclValidationError.transactionDate = '2023-01-01'
+      poclValidationError.transactionDate = '01/01/2023'
 
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
       salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
@@ -304,7 +304,7 @@ describe('pocl-validation-errors', () => {
 
     it('converts the payment timestamp to ISO format without milliseconds', async () => {
       const poclValidationError = getPoclValidationError()
-      poclValidationError.transactionDate = '2023-01-01'
+      poclValidationError.transactionDate = '01/01/2023'
 
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
       salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])

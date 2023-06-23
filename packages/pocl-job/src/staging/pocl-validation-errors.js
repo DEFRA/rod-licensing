@@ -1,5 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { POSTAL_ORDER_DATASOURCE, POSTAL_ORDER_PAYMENTSOURCE, POSTAL_ORDER_PAYMENTMETHOD } from './constants.js'
+import moment from 'moment'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
@@ -29,7 +30,7 @@ const mapRecords = records =>
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
-          issueDate: processTransactionDate(record),
+          issueDate: processTransactionDate(record.transactionDate),
           startDate: record.startDate,
           newStartDate: record.startDate,
           permitId: record.permitId,
@@ -40,7 +41,7 @@ const mapRecords = records =>
     finaliseTransactionPayload: {
       transactionFile: record.transactionFile,
       payment: {
-        timestamp: processTransactionDate(record),
+        timestamp: processTransactionDate(record.transactionDate),
         amount: record.amount,
         source: record.paymentSource,
         newPaymentSource: record.paymentSource,
@@ -74,8 +75,14 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
   }
 }
 
-const processTransactionDate = record => {
-  return new Date(record.transactionDate).toISOString().split('.')[0] + 'Z'
+const processTransactionDate = transactionDate => {
+  const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
+
+  if (transactionDate.match(manuallyEnteredDateFormat)) {
+    return moment(transactionDate, 'DD/MM/YYYY').toISOString().split('.')[0] + 'Z'
+  } else {
+    return transactionDate
+  }
 }
 
 /**
