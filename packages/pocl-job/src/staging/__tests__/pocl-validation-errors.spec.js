@@ -206,6 +206,47 @@ describe('pocl-validation-errors', () => {
     })
   })
 
+  describe('when an existing POCL validation error has no serial number', () => {
+    it('fills it with the correct data for postal orders', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.serialNumber = null
+      poclValidationError.newPaymentSource = { label: 'Postal Order' }
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      expect(validationError.serialNumber).toBe('Postal Order Sales')
+    })
+
+    it('leaves the datatype blank if payment source is not postal order', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.serialNumber = null
+      poclValidationError.newPaymentSource = { label: 'Magic Beans' }
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      expect(validationError.serialNumber).toBe(undefined)
+    })
+
+    it('leaves the datatype blank if payment source is not set', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.serialNumber = null
+      poclValidationError.newPaymentSource = null
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      expect(validationError.serialNumber).toBe(undefined)
+    })
+  })
+
   describe('when an existing POCL validation error has no method of payment', () => {
     it('fills it with the correct data for postal orders', async () => {
       const poclValidationError = getPoclValidationError()

@@ -8,7 +8,7 @@ const mapRecords = records =>
     poclValidationErrorId: record.id,
     createTransactionPayload: {
       dataSource: backfillDataSource(record),
-      serialNumber: record.serialNumber,
+      serialNumber: backfillSerialNumber(record),
       permissions: [
         {
           licensee: {
@@ -53,6 +53,14 @@ const mapRecords = records =>
 const backfillDataSource = record => {
   if (record.dataSource) {
     return record.dataSource.label
+  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    return POSTAL_ORDER_DATASOURCE
+  }
+}
+
+const backfillSerialNumber = record => {
+  if (record.serialNumber) {
+    return record.serialNumber
   } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
   }
