@@ -287,4 +287,32 @@ describe('pocl-validation-errors', () => {
       expect(validationError.payment.method).toBe(undefined)
     })
   })
+
+  describe('when a transaction date is not in ISO format', () => {
+    it('converts the issueDate to ISO format without milliseconds', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.transactionDate = '2023-01-01'
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      const expectedDate = '2023-01-01T00:00:00Z'
+      expect(validationError.permissions[0].issueDate).toEqual(expectedDate)
+    })
+
+    it('converts the payment timestamp to ISO format without milliseconds', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.transactionDate = '2023-01-01'
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
+      const expectedDate = '2023-01-01T00:00:00Z'
+      expect(validationError.payment.timestamp).toEqual(expectedDate)
+    })
+  })
 })

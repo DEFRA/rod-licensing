@@ -29,7 +29,7 @@ const mapRecords = records =>
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
-          issueDate: record.transactionDate,
+          issueDate: processTransactionDate(record),
           startDate: record.startDate,
           newStartDate: record.startDate,
           permitId: record.permitId,
@@ -40,7 +40,7 @@ const mapRecords = records =>
     finaliseTransactionPayload: {
       transactionFile: record.transactionFile,
       payment: {
-        timestamp: record.transactionDate,
+        timestamp: processTransactionDate(record),
         amount: record.amount,
         source: record.paymentSource,
         newPaymentSource: record.paymentSource,
@@ -72,6 +72,10 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
   } else if (newPaymentSource && newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_PAYMENTMETHOD
   }
+}
+
+const processTransactionDate = record => {
+  return new Date(record.transactionDate).toISOString().split('.')[0] + 'Z'
 }
 
 /**
