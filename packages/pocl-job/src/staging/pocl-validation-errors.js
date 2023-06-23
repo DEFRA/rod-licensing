@@ -76,10 +76,14 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
 }
 
 const processTransactionDate = transactionDate => {
+  debug('transactionDate: ' + transactionDate)
   const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
 
   if (transactionDate.match(manuallyEnteredDateFormat)) {
-    return moment(transactionDate, 'DD/MM/YYYY').toISOString().split('.')[0] + 'Z'
+    debug('Processing transactionDate')
+    const processedDate = moment(transactionDate, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
+    debug('Processed date: ' + processedDate)
+    return processedDate
   } else {
     return transactionDate
   }
