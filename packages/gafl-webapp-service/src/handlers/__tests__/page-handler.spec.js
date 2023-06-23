@@ -224,23 +224,14 @@ describe('The page handler function', () => {
   )
 
   describe('skipPage', () => {
-    it('called with undefined when analytics is undefined on initial get request', async () => {
-      const set = jest.fn()
-      const { get } = pageHandler('', 'view', 'next-page')
-      const toolkit = getMockToolkit()
-      const mockRequest = getMockRequest({ analytics: undefined, set })
-      await get(mockRequest, toolkit)
-      expect(set).toBeCalledWith({ [ANALYTICS.skipPage]: false })
-    })
-
     it.each`
-      desc                                                                                                                          | values                                                                        | result
-      ${'analytics undefined, set called with skippage false'}                                                                      | ${{}}                                                                         | ${{ [ANALYTICS.skipPage]: false }}
-      ${'analytics defined, pageskip != true, seenmessage = true, skippage != true, set called with skippage and pageskipped true'} | ${{ [ANALYTICS.seenMessage]: 'seen-message' }}                                | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true }}
-      ${'analytics defined, pageskip = true, seenmessage = true, skippage != true, set called with skippage false'}                 | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.seenMessage]: 'seen-message' }}    | ${{ [ANALYTICS.skipPage]: false }}
-      ${'analytics defined, pageskip != true, seenmessage != true, skippage != true, set called with skippage false'}               | ${{ [ANALYTICS.seenMessage]: false }}                                         | ${{ [ANALYTICS.skipPage]: false }}
-      ${'analytics defined, pageskip != true, seenmessage = true, skippage = true, set called with skippage false'}                 | ${{ [ANALYTICS.seenMessage]: 'seen-message', [ANALYTICS.pageSkipped]: true }} | ${{ [ANALYTICS.skipPage]: false }}
-    `('when $desc', async ({ values, result }) => {
+      desc                                                                                                                                                                              | values                                                                        | result
+      ${'undefined: skipPage property is set to false'}                                                                                                                                 | ${{}}                                                                         | ${{ [ANALYTICS.skipPage]: false }}
+      ${'defined with pageSkip property not equal to true, seenMessage property equals true and skipPage property not equal to true: skipPage and pageSkipped property is set to true'} | ${{ [ANALYTICS.seenMessage]: 'seen-message' }}                                | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true }}
+      ${'defined, pageSkip property equals true, seenMessage property equals true and skipPage property not equal to true: skipPage property is set to false'}                          | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.seenMessage]: 'seen-message' }}    | ${{ [ANALYTICS.skipPage]: false }}
+      ${'defined, pageSkip property not equal to true, seenMessage property not equal to true and skipPage property not equal to true: skipPage property is set to false'}              | ${{ [ANALYTICS.seenMessage]: false }}                                         | ${{ [ANALYTICS.skipPage]: false }}
+      ${'defined, pageSkip property not equal to true, seenMessage property equals true and skipPage property equals true: skipPage property is set to false'}                          | ${{ [ANALYTICS.seenMessage]: 'seen-message', [ANALYTICS.pageSkipped]: true }} | ${{ [ANALYTICS.skipPage]: false }}
+    `('when analytics cache is $desc', async ({ values, result }) => {
       const set = jest.fn()
       const analytics = getAnalytics(values)
       const { get } = pageHandler('', 'view', 'next-page')

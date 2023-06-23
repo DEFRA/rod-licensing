@@ -17,11 +17,11 @@ describe('checkAnalytics', () => {
   })
 
   it.each`
-    desc                                                                                                                  | analytics                                                           | page     | trackingResult
-    ${'analytics has value of accept tracking as true, page should not be skipped then return of checkAnalytics is true'} | ${{ [ANALYTICS.acceptTracking]: true }}                             | ${false} | ${true}
-    ${'analytics has value of accept tracking as true, page should be skipped then return of checkAnalytics is false'}    | ${{ [ANALYTICS.acceptTracking]: true, [ANALYTICS.skipPage]: true }} | ${true}  | ${false}
-    ${'analytics has value but accept tracking is false so return of checkAnalytics is false'}                            | ${{ [ANALYTICS.acceptTracking]: false }}                            | ${false} | ${false}
-  `('when $desc', async ({ analytics, page, trackingResult }) => {
+    desc                                                                                           | analytics                                                           | page     | trackingResult
+    ${'of accept tracking as true, page should not be skipped then return checkAnalytics as true'} | ${{ [ANALYTICS.acceptTracking]: true }}                             | ${false} | ${true}
+    ${'of accept tracking as true, page should be skipped then return checkAnalytics as false'}    | ${{ [ANALYTICS.acceptTracking]: true, [ANALYTICS.skipPage]: true }} | ${true}  | ${false}
+    ${'but accept tracking is false so return checkAnalytics as false'}                            | ${{ [ANALYTICS.acceptTracking]: false }}                            | ${false} | ${false}
+  `('when analytics has a value $desc', async ({ analytics, page, trackingResult }) => {
     const result = await checkAnalytics(generateRequestMock(analytics), page)
 
     expect(result).toBe(trackingResult)
@@ -45,7 +45,7 @@ describe('checkPage', () => {
   it.each([
     [true, true],
     [false, false]
-  ])('when analytics skip page is %s, returns %s', async (skipPage, expected) => {
+  ])('when analytics skipPage property is %s, skipPage returns %s', async (skipPage, expected) => {
     const analytics = { [ANALYTICS.skipPage]: skipPage }
     const result = await checkPage(generateRequestMock(analytics))
 

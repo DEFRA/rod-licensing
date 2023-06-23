@@ -51,7 +51,7 @@ describe('plugins', () => {
     )
   })
 
-  describe('initialiseHapiGapiPlugin', () => {
+  describe('trackAnalytics', () => {
     const generateRequestMock = (analytics = {}) => ({
       cache: jest.fn(() => ({
         hasSession: () => true,
@@ -71,7 +71,7 @@ describe('plugins', () => {
     it.each([
       [true, true],
       [false, false]
-    ])('trackAnalytics to be set to value of checkAnalytics', async (tracking, expectedResult) => {
+    ])('when acceptedTracking property equals %s, trackAnalytics should return %s', async (tracking, expectedResult) => {
       const analytics = {
         [ANALYTICS.acceptTracking]: tracking
       }
