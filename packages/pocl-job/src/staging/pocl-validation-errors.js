@@ -30,9 +30,9 @@ const mapRecords = records =>
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
-          issueDate: processTransactionDate(record.transactionDate),
-          startDate: record.startDate,
-          newStartDate: record.startDate,
+          issueDate: formatDateToShortenedISO(record.transactionDate, 'issueDate'),
+          startDate: formatDateToShortenedISO(record.startDate, 'startDate'),
+          newStartDate: formatDateToShortenedISO(record.startDate, 'newStartDate'),
           permitId: record.permitId,
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
@@ -41,7 +41,7 @@ const mapRecords = records =>
     finaliseTransactionPayload: {
       transactionFile: record.transactionFile,
       payment: {
-        timestamp: processTransactionDate(record.transactionDate),
+        timestamp: formatDateToShortenedISO(record.transactionDate, 'payment timestamp'),
         amount: record.amount,
         source: record.paymentSource,
         newPaymentSource: record.paymentSource,
@@ -75,17 +75,16 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
   }
 }
 
-const processTransactionDate = transactionDate => {
-  debug('transactionDate: ' + transactionDate)
+const formatDateToShortenedISO = (date, field) => {
+  debug('Processing date field ' + field + date)
   const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
 
-  if (transactionDate.match(manuallyEnteredDateFormat)) {
-    debug('Processing transactionDate')
-    const processedDate = moment(transactionDate, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
-    debug('Processed date: ' + processedDate)
-    return processedDate
+  if (date.match(manuallyEnteredDateFormat)) {
+    const formattedDate = moment(date, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
+    debug('Date ' + field + ' reformatted to ' + formattedDate)
+    return formattedDate
   } else {
-    return transactionDate
+    return date
   }
 }
 

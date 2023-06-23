@@ -288,7 +288,7 @@ describe('pocl-validation-errors', () => {
     })
   })
 
-  describe('when a transaction date is not in ISO format', () => {
+  describe('when a date is not in ISO format', () => {
     it('converts the issueDate to ISO format without milliseconds', async () => {
       const poclValidationError = getPoclValidationError()
       poclValidationError.transactionDate = '01/01/2023'
@@ -300,6 +300,32 @@ describe('pocl-validation-errors', () => {
       const validationError = salesApi.createTransactions.mock.calls[0][0][0]
       const expectedDate = '2023-01-01T00:00:00Z'
       expect(validationError.permissions[0].issueDate).toEqual(expectedDate)
+    })
+
+    it('converts the startDate to ISO format without milliseconds', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.startDate = '01/01/2023'
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      const expectedDate = '2023-01-01T00:00:00Z'
+      expect(validationError.permissions[0].startDate).toEqual(expectedDate)
+    })
+
+    it('converts the newStartDate to ISO format without milliseconds', async () => {
+      const poclValidationError = getPoclValidationError()
+      poclValidationError.startDate = '01/01/2023'
+
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
+      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      await processPoclValidationErrors()
+
+      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      const expectedDate = '2023-01-01T00:00:00Z'
+      expect(validationError.permissions[0].newStartDate).toEqual(expectedDate)
     })
 
     it('converts the payment timestamp to ISO format without milliseconds', async () => {
