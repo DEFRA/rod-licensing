@@ -46,6 +46,11 @@ const getMockCatalog = (overrides = {}) => ({
   order_complete_title_application: 'order_complete_title_application',
   order_complete_title_payment: 'order_complete_title_payment',
   pound: '£',
+  order_complete_panel_text_free_prefix: 'order_complete_panel_text_free_prefix',
+  order_complete_panel_text_prefix: 'order_complete_panel_text_prefix',
+  order_complete_panel_text_join: 'order_complete_panel_text_join',
+  order_complete_panel_text_single_licence: 'order_complete_panel_text_single_licence',
+  order_complete_panel_text_multiple_licences: 'order_complete_panel_text_multiple_licences',
   ...overrides
 })
 
@@ -151,27 +156,23 @@ describe('The order completion handler', () => {
   })
 
   it.each([
-    ['zero cost title', 0, 'order_complete_title_application', 'zero cost title'],
-    ['£9.99<br />paid for title', 9.99, 'order_complete_title_payment', 'paid for title']
-  ])('sets page html to %s when cost is %d', async (expectedHTML, cost, titleKey, titleVal) => {
+    ["You've shelled out £9.99 and that got you 2 angling permits", 9.99, 2],
+    ["You've shelled out £23.46 and that got you 5 angling permits", 23.46, 5],
+    ["You've shelled out £98.74 and that got you 9 angling permits", 98.74, 9],
+    ["You've shelled out £12.50 and that got you 2 angling permits", 12.5, 2],
+    ["You've shelled out £23.00 and that got you 5 angling permits", 23, 5],
+    ["You've shelled out £59.80 and that got you 1 angling permit", 59.8, 1],
+    ["You've paid nowt for 3 angling permits", 0, 3],
+    ["You've paid nowt for 1 angling permit", 0, 1]
+  ])("sets licencePanelText to '%s' when price is %d and number of licences is %i", async (expectedText, cost, numberOfLicences) => {
     const request = getMockRequest({
-      transaction: getMockTransaction({ cost }),
+      transaction: getMockTransaction({ permissions: Array(numberOfLicences).fill({}), cost }),
       catalog: getMockCatalog({
-        [titleKey]: titleVal
-      })
-    })
-    const data = await getData(request)
-    expect(data.titleHTML).toBe(expectedHTML)
-  })
-
-  it.each([
-    ['1 licence', 1, 'order_complete_licence_count_single', ' licence'],
-    ['3 licences', 3, 'order_complete_licence_count_multiple', ' licences']
-  ])('sets licencePanelText to %s when number of licences is %i', async (expectedText, numberOfLicences, msgKey, msgVal) => {
-    const request = getMockRequest({
-      transaction: getMockTransaction({ permissions: Array(numberOfLicences).fill({}) }),
-      catalog: getMockCatalog({
-        [msgKey]: msgVal
+        order_complete_panel_text_free_prefix: "You've paid nowt for ",
+        order_complete_panel_text_prefix: "You've shelled out £",
+        order_complete_panel_text_join: ' and that got you ',
+        order_complete_panel_text_single_licence: ' angling permit',
+        order_complete_panel_text_multiple_licences: ' angling permits'
       })
     })
     const data = await getData(request)

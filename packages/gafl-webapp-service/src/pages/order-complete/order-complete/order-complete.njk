@@ -8,11 +8,11 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-two-thirds">
 
         {{ govukPanel({
-          titleHtml: data.titleHtml,
-          html: mssgs.order_complete_licence_count_prefix + '<strong>' + data.licencePanelText + '</strong>'
+          titleText: data.title,
+          text: data.licencePanelText
         }) }}
 
         <div class="govuk-!-margin-bottom-9">

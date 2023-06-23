@@ -11,6 +11,14 @@ const checkForSalmonPermits = transaction => {
   return transaction.permissions.some(p => p.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'])
 }
 
+const getLicencePanelText = (price, numberOfLicences, mssgs) => {
+  const suffix = numberOfLicences === 1 ? mssgs.order_complete_panel_text_single_licence : mssgs.order_complete_panel_text_multiple_licences
+  if (price > 0) {
+    return `${mssgs.order_complete_panel_text_prefix}${price.toFixed(2)}${mssgs.order_complete_panel_text_join}${numberOfLicences}${suffix}`
+  }
+  return `${mssgs.order_complete_panel_text_free_prefix}${numberOfLicences}${suffix}`
+}
+
 export const getData = async request => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
@@ -40,9 +48,7 @@ export const getData = async request => {
     displayCatchReturnInfo: checkForSalmonPermits(transaction),
     title,
     titleHTML: transaction.cost > 0 ? `${mssgs.pound}${transaction.cost}<br />${title}` : title,
-    licencePanelText: `${numberOfLicences}${
-      numberOfLicences > 1 ? mssgs.order_complete_licence_count_multiple : mssgs.order_complete_licence_count_single
-    }`,
+    licencePanelText: getLicencePanelText(transaction.cost, numberOfLicences, mssgs),
 
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
