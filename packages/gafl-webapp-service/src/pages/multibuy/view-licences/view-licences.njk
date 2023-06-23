@@ -22,35 +22,26 @@
             }) }}
           {% endif %}
 
-            {% for licence in data.licences %}
+          {% for licence in data.licences %}
 
-                {% set licenceInfo = [
-                  { key: { text: 'Licence holder' }, value: { text: licence.licenceHolder } }, 
-                  { key: { text: 'Type' }, value: { text: licence.type } }, 
-                  { key: { text: 'Length' }, value: { text: licence.length } }, 
-                  { key: { text: 'Start' }, value: { text: licence.start } }, 
-                  { key: { text: 'Price' }, value: { text: '£' + licence.price } }
-                  ]
-                %}
+              {{ govukSummaryList({
+                rows: data.licenceInfo[licence.index]
+              }) }}
 
-                  {{ govukSummaryList({
-                    rows: licenceInfo
-                  }) }}
+              {{ govukButton({
+                text: mssgs.contact_summary_change,
+                href: "/buy/set-current-permission?permissionIndex=" + licence.index,
+                attributes: { 'aria-label': "Change licence" },
+                classes: "govuk-button--secondary"
+              })}}
 
-                  {{ govukButton({
-                    text: mssgs.contact_summary_change,
-                    href: "/buy/set-current-permission?permissionIndex=" + licence.index,
-                    attributes: { 'aria-label': "Change licence" },
-                    classes: "govuk-button--secondary"
-                  })}}
+              {{ govukButton({
+                text: mssgs.remove,
+                href: "/buy/remove-licence?permissionIndex=" + licence.index,
+                classes: "govuk-button--secondary"
+              })}}
 
-                  {{ govukButton({
-                    text: "Remove this licence",
-                    href: "/buy/remove-licence?permissionIndex=" + licence.index,
-                    classes: "govuk-button--secondary"
-                  })}}
-
-              {% endfor %}
+          {% endfor %}
       </div>
   </div>
 

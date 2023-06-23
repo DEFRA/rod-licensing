@@ -12,6 +12,16 @@ export const getData = async request => {
   const mssgs = request.i18n.getCatalog()
   const licencesRemaining = transaction.permissions[0].licensee.firstName !== undefined
 
+  const data = {
+    duplicate: false,
+    licences: [],
+    licenceInfo: [],
+    licencesRemaining,
+    uri: {
+      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
+    }
+  }
+
   if (licencesRemaining) {
     const licences = transaction.permissions.map((permission, index) => ({
       licenceHolder: `${permission.licensee.firstName} ${permission.licensee.lastName}`,
@@ -24,23 +34,23 @@ export const getData = async request => {
 
     const duplicate = await hasDuplicates(licences)
 
-    return {
-      duplicate,
-      licences,
-      licencesRemaining,
-      uri: {
-        add_licence: addLanguageCodeToUri(request, ADD_LICENCE.uri)
-      }
-    }
+    data.duplicate = duplicate
+    data.licences = licences
+    data.uri.add_licence = addLanguageCodeToUri(request, ADD_LICENCE.uri)
   }
-  return {
-    duplicate: false,
-    licences: undefined,
-    licencesRemaining,
-    uri: {
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    }
-  }
+
+  data.licences.forEach(licence => {
+    const licenceDetails = [
+      { key: { text: mssgs.licence_summary_licence_holder }, value: { text: licence.licenceHolder } },
+      { key: { text: mssgs.licence_summary_type }, value: { text: licence.type } },
+      { key: { text: mssgs.licence_summary_length }, value: { text: licence.length } },
+      { key: { text: mssgs.licence_summary_start }, value: { text: licence.start } },
+      { key: { text: mssgs.licence_summary_price }, value: { text: mssgs.pound + licence.price } }
+    ]
+    data.licenceInfo.push(licenceDetails)
+  })
+
+  return data
 }
 
 export const validator = Joi.object({

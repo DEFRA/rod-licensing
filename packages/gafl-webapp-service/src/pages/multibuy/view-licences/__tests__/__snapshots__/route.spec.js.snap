@@ -3,6 +3,50 @@
 exports[`view licences > getData getData returns duplicate, licences, licences remaining being true and uri matching add licence 1`] = `
 Object {
   "duplicate": undefined,
+  "licenceInfo": Array [
+    Array [
+      Object {
+        "key": Object {
+          "text": "Name",
+        },
+        "value": Object {
+          "text": "Turanga Leela",
+        },
+      },
+      Object {
+        "key": Object {
+          "text": "Type",
+        },
+        "value": Object {
+          "text": "Trout and coarse, up to 2 rods",
+        },
+      },
+      Object {
+        "key": Object {
+          "text": "Length",
+        },
+        "value": Object {
+          "text": "8 days",
+        },
+      },
+      Object {
+        "key": Object {
+          "text": "Start",
+        },
+        "value": Object {
+          "text": "9:32am on 23 June 2021",
+        },
+      },
+      Object {
+        "key": Object {
+          "text": "Price",
+        },
+        "value": Object {
+          "text": "£12",
+        },
+      },
+    ],
+  ],
   "licences": Array [
     Object {
       "index": 0,
@@ -16,14 +60,16 @@ Object {
   "licencesRemaining": true,
   "uri": Object {
     "add_licence": "/buy/add-licence",
+    "new": "/buy/new",
   },
 }
 `;
 
-exports[`view licences > getData getData returns false duplicate, undefined licences, licences remaining being false and uri matching new transaction 1`] = `
+exports[`view licences > getData getData returns false duplicate, licence information, undefined licences, licences remaining being false and uri matching new transaction 1`] = `
 Object {
   "duplicate": false,
-  "licences": undefined,
+  "licenceInfo": Array [],
+  "licences": Array [],
   "licencesRemaining": false,
   "uri": Object {
     "new": "/buy/new",

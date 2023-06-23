@@ -28,6 +28,15 @@ const permission = {
 
 const catalog = Symbol('mock catalog')
 
+const getSampleCatalog = () => ({
+  licence_summary_licence_holder: 'Name',
+  licence_summary_type: 'Type',
+  licence_summary_length: 'Length',
+  licence_summary_start: 'Start',
+  licence_summary_price: 'Price',
+  pound: '£'
+})
+
 describe('view-licences > default', () => {
   it('should call the pageRoute with view-licences, /buy/view-licences, validator and nextPage', async () => {
     expect(pageRoute).toBeCalledWith('view-licences', '/buy/view-licences', validator, nextPage, getData)
@@ -106,7 +115,8 @@ describe('view licences > getData', () => {
 
     const getSampleRequest = ({
       currentPermission = getMockPermission(),
-      getTransaction = async () => ({ permissions: [currentPermission] })
+      getTransaction = async () => ({ permissions: [currentPermission] }),
+      getCatalog = () => getSampleCatalog()
     } = {}) => ({
       cache: () => ({
         helpers: {
@@ -116,7 +126,7 @@ describe('view licences > getData', () => {
         }
       }),
       i18n: {
-        getCatalog: () => catalog
+        getCatalog
       },
       url: {
         search: ''
@@ -130,7 +140,7 @@ describe('view licences > getData', () => {
       expect(res).toMatchSnapshot()
     })
 
-    it('returns false duplicate, undefined licences, licences remaining being false and uri matching new transaction', async () => {
+    it('returns false duplicate, licence information, undefined licences, licences remaining being false and uri matching new transaction', async () => {
       const res = await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
       expect(res).toMatchSnapshot()
     })
@@ -140,9 +150,9 @@ describe('view licences > getData', () => {
       expect(data.licences).not.toBe(undefined)
     })
 
-    it('licences undefined if no licences', async () => {
+    it('licences to be empty array if no licences', async () => {
       const data = await getData(getSampleRequest({ currentPermission: getMockEmptyPermission() }))
-      expect(data.licences).toBe(undefined)
+      expect(data.licences).toStrictEqual([])
     })
 
     it('licences remaining', async () => {
@@ -168,7 +178,7 @@ describe('view licences > getData', () => {
     })
 
     it('licenceTypeDisplay is called with the expected arguments', async () => {
-      await getData(getSampleRequest())
+      await getData(getSampleRequest({ getCatalog: () => catalog }))
       expect(licenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
     })
 
@@ -183,7 +193,7 @@ describe('view licences > getData', () => {
     })
 
     it('licenceTypeAndLengthDisplay is called with the expected arguments', async () => {
-      await getData(getSampleRequest())
+      await getData(getSampleRequest({ getCatalog: () => catalog }))
       expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
     })
 
@@ -214,7 +224,7 @@ describe('view licences > getData', () => {
     })
 
     it('return value of addLangaugeCodeToUri is used for add licence', async () => {
-      const returnValue = Symbol('return value')
+      const returnValue = '/buy/add-licence'
       addLanguageCodeToUri.mockReturnValueOnce(returnValue)
 
       const result = await getData(getSampleRequest())
