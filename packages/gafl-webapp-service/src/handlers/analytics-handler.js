@@ -6,7 +6,7 @@ import { ANALYTICS } from '../constants.js'
  * @returns {Promise}
  */
 
-export const checkAnalytics = async (request, pageSkip) => {
+export const trackAnalyticsAccepted = async (request, pageSkip) => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
     if (analytics[ANALYTICS.acceptTracking] === true && pageSkip !== true) {
@@ -17,10 +17,10 @@ export const checkAnalytics = async (request, pageSkip) => {
   return false
 }
 
-export const checkPage = async request => {
+export const pageOmitted = async request => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
-    if (analytics[ANALYTICS.skipPage] === true) {
+    if (analytics[ANALYTICS.omitPageFromAnalytics] === true) {
       return true
     }
   } catch {}

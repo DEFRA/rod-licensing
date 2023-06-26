@@ -1,13 +1,13 @@
 import { getPlugins } from '../plugins'
 import { ANALYTICS } from '../constants.js'
-import { checkAnalytics, getAnalyticsSessionId, checkPage } from '../handlers/analytics-handler.js'
+import { trackAnalyticsAccepted, getAnalyticsSessionId, pageOmitted } from '../handlers/analytics-handler.js'
 import db from 'debug'
 
 jest.mock('../constants', () => ({
   ANALYTICS: {
-    acceptTracking: 'accept',
-    seenMessage: 'seen',
-    skipPage: 'skip-page'
+    acceptTracking: 'you-may-watch-me',
+    seenMessage: 'seen-it',
+    pageAnalyticsOmitted: 'ignored-page'
   },
   CommonResults: {
     OK: 'ok'
@@ -18,8 +18,8 @@ jest.mock('../constants', () => ({
 }))
 
 jest.mock('../handlers/analytics-handler.js', () => ({
-  checkPage: jest.fn(() => false),
-  checkAnalytics: jest.fn(() => true),
+  pageOmitted: jest.fn(() => false),
+  trackAnalyticsAccepted: jest.fn(() => true),
   getAnalyticsSessionId: jest.fn(() => '123')
 }))
 jest.mock('../server.js', () => ({
@@ -75,7 +75,7 @@ describe('plugins', () => {
       const analytics = {
         [ANALYTICS.acceptTracking]: tracking
       }
-      checkAnalytics.mockReturnValueOnce(tracking)
+      trackAnalyticsAccepted.mockReturnValueOnce(tracking)
 
       const result = await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
 
@@ -87,21 +87,24 @@ describe('plugins', () => {
       [false, 'testing_session_id', 'Session is not being tracked for: testing_session_id', false],
       [true, 'example_session_id', 'Session is being tracked for: example_session_id', false],
       [false, 'test_session_id', 'Session is not tracking current page for: test_session_id', true]
-    ])('debug is called with session id and set ENABLE_ANALYTICS_OPT_IN_DEBUGGING to true', async (tracking, id, expectedResult, skip) => {
-      const analytics = {
-        [ANALYTICS.acceptTracking]: tracking,
-        [ANALYTICS.skipPage]: skip
+    ])(
+      'when tracking is %s it logs an ID of %s and %s and sets ENABLE_ANALYTICS_OPT_IN_DEBUGGING to true when pageOmitted returns %s',
+      async (tracking, id, expectedResult, skip) => {
+        const analytics = {
+          [ANALYTICS.acceptTracking]: tracking,
+          [ANALYTICS.omitPageFromAnalytics]: skip
+        }
+        process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = true
+
+        trackAnalyticsAccepted.mockReturnValueOnce(tracking)
+        getAnalyticsSessionId.mockReturnValueOnce(id)
+        pageOmitted.mockReturnValueOnce(skip)
+
+        await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
+
+        expect(debug).toHaveBeenCalledWith(expectedResult)
       }
-      process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = true
-
-      checkAnalytics.mockReturnValueOnce(tracking)
-      getAnalyticsSessionId.mockReturnValueOnce(id)
-      checkPage.mockReturnValueOnce(skip)
-
-      await hapiGapiPlugin.options.trackAnalytics(generateRequestMock(analytics))
-
-      expect(debug).toHaveBeenCalledWith(expectedResult)
-    })
+    )
 
     it('debug isnt called if ENABLE_ANALYTICS_OPT_IN_DEBUGGING is set to false', async () => {
       const analytics = {

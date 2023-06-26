@@ -10,11 +10,11 @@ jest.mock('../../processors/uri-helper.js')
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
-    selected: 'selected',
-    acceptTracking: 'accepted-tracking',
-    seenMessage: 'seen-message',
-    skipPage: 'skip-page',
-    pageSkipped: 'page-skipped'
+    selected: 'chosen-one',
+    acceptTracking: 'you-may-watch-me',
+    seenMessage: 'seen-it',
+    omitPageFromAnalytics: 'no-tracky',
+    pageSkipped: 'ignored-page'
   },
   PAGE_STATE: { completed: true, error: false }
 }))
@@ -223,14 +223,14 @@ describe('The page handler function', () => {
     }
   )
 
-  describe('skipPage', () => {
+  describe('omitPageFromAnalytics', () => {
     it.each`
-      desc                                                                                                                                                                              | values                                                                        | result
-      ${'undefined: skipPage property is set to false'}                                                                                                                                 | ${{}}                                                                         | ${{ [ANALYTICS.skipPage]: false }}
-      ${'defined with pageSkip property not equal to true, seenMessage property equals true and skipPage property not equal to true: skipPage and pageSkipped property is set to true'} | ${{ [ANALYTICS.seenMessage]: 'seen-message' }}                                | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true }}
-      ${'defined, pageSkip property equals true, seenMessage property equals true and skipPage property not equal to true: skipPage property is set to false'}                          | ${{ [ANALYTICS.skipPage]: true, [ANALYTICS.seenMessage]: 'seen-message' }}    | ${{ [ANALYTICS.skipPage]: false }}
-      ${'defined, pageSkip property not equal to true, seenMessage property not equal to true and skipPage property not equal to true: skipPage property is set to false'}              | ${{ [ANALYTICS.seenMessage]: false }}                                         | ${{ [ANALYTICS.skipPage]: false }}
-      ${'defined, pageSkip property not equal to true, seenMessage property equals true and skipPage property equals true: skipPage property is set to false'}                          | ${{ [ANALYTICS.seenMessage]: 'seen-message', [ANALYTICS.pageSkipped]: true }} | ${{ [ANALYTICS.skipPage]: false }}
+      desc                                                                                                                                                                                                        | values                                                                                  | result
+      ${'undefined: omitPageFromAnalytics property is set to false'}                                                                                                                                              | ${{}}                                                                                   | ${{ [ANALYTICS.omitPageFromAnalytics]: false }}
+      ${'defined with pageSkip property not equal to true, seenMessage property equals true and omitPageFromAnalytics property not equal to true: omitPageFromAnalytics and pageSkipped property is set to true'} | ${{ [ANALYTICS.seenMessage]: 'seen-message' }}                                          | ${{ [ANALYTICS.omitPageFromAnalytics]: true, [ANALYTICS.pageSkipped]: true }}
+      ${'defined, pageSkip property equals true, seenMessage property equals true and omitPageFromAnalytics property not equal to true: omitPageFromAnalytics property is set to false'}                          | ${{ [ANALYTICS.omitPageFromAnalytics]: true, [ANALYTICS.seenMessage]: 'seen-message' }} | ${{ [ANALYTICS.omitPageFromAnalytics]: false }}
+      ${'defined, pageSkip property not equal to true, seenMessage property not equal to true and omitPageFromAnalytics property not equal to true: omitPageFromAnalytics property is set to false'}              | ${{ [ANALYTICS.seenMessage]: false }}                                                   | ${{ [ANALYTICS.omitPageFromAnalytics]: false }}
+      ${'defined, pageSkip property not equal to true, seenMessage property equals true and omitPageFromAnalytics property equals true: omitPageFromAnalytics property is set to false'}                          | ${{ [ANALYTICS.seenMessage]: 'seen-message', [ANALYTICS.pageSkipped]: true }}           | ${{ [ANALYTICS.omitPageFromAnalytics]: false }}
     `('when analytics cache is $desc', async ({ values, result }) => {
       const set = jest.fn()
       const analytics = getAnalytics(values)

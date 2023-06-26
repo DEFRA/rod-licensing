@@ -19,7 +19,7 @@ export const ANALYTICS = {
   selected: 'selected',
   acceptTracking: 'accepted-tracking',
   seenMessage: 'seen-message',
-  skipPage: 'skip-page',
+  omitPageFromAnalytics: 'skip-page',
   pageSkipped: 'page-skipped'
 }
 

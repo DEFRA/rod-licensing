@@ -10,7 +10,7 @@ import Cookie from '@hapi/cookie'
 import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
 import { getCsrfTokenCookieName } from './server.js'
-import { checkAnalytics, getAnalyticsSessionId, checkPage } from '../src/handlers/analytics-handler.js'
+import { trackAnalyticsAccepted, getAnalyticsSessionId, pageOmitted } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
 
@@ -21,15 +21,15 @@ const debug = db('webapp:plugin')
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
 const trackAnalytics = async request => {
-  const pageSkip = await checkPage(request)
-  const canTrack = await checkAnalytics(request, pageSkip)
+  const pageOmit = await pageOmitted(request)
+  const canTrack = await trackAnalyticsAccepted(request, pageOmit)
   const optDebug = process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING?.toLowerCase() === 'true'
   if (optDebug) {
     const sessionId = await getAnalyticsSessionId(request)
     if (canTrack === true) {
       debug(`Session is being tracked for: ${sessionId}`)
     } else {
-      if (pageSkip === true) {
+      if (pageOmit === true) {
         debug(`Session is not tracking current page for: ${sessionId}`)
       } else {
         debug(`Session is not being tracked for: ${sessionId}`)

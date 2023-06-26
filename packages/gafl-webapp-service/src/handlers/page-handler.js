@@ -25,21 +25,20 @@ const displayAnalytics = request => {
   return request.path.startsWith('/buy')
 }
 
-const skipPage = async request => {
+const omitPageFromAnalytics = async request => {
   const analytics = await request.cache().helpers.analytics.get()
 
   if (
     analytics &&
     analytics[ANALYTICS.pageSkipped] !== true &&
     analytics[ANALYTICS.seenMessage] &&
-    analytics[ANALYTICS.skipPage] !== true
+    analytics[ANALYTICS.omitPageFromAnalytics] !== true
   ) {
-    await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: true, [ANALYTICS.pageSkipped]: true })
-    return true
+    await request.cache().helpers.analytics.set({ [ANALYTICS.omitPageFromAnalytics]: true, [ANALYTICS.pageSkipped]: true })
+    return
   }
 
-  await request.cache().helpers.analytics.set({ [ANALYTICS.skipPage]: false })
-  return false
+  await request.cache().helpers.analytics.set({ [ANALYTICS.omitPageFromAnalytics]: false })
 }
 
 /**
@@ -133,7 +132,7 @@ export default (path, view, completion, getData) => ({
 
     pageData.displayAnalytics = displayAnalytics(request)
 
-    await skipPage(request)
+    await omitPageFromAnalytics(request)
 
     if (pagesJourneyBeginning.includes(request.path)) {
       pageData.journeyBeginning = true
