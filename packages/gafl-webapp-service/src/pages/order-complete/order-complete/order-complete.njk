@@ -12,53 +12,41 @@
 
         {{ govukPanel({
           titleText: data.title,
-          text: data.licencePanelText
+          html: data.licencePanelHTML
         }) }}
 
         <div class="govuk-!-margin-bottom-9">
+            <h2 class="govuk-heading-m">{{ mssgs.order_complete_subheading }}</h2>
             <p class="govuk-body">
                 <a class="govuk-link" href="{{ data.uri.licenceDetails }}">{{ mssgs.order_complete_view_details }}</a>
             </p>
 
-            <h2 class="govuk-heading-m">{{ mssgs.order_complete_subheading }}</h2>
+            {% for paragraph in data.viewDetailsParagraphs %}
+            <p class="govuk-body">{{ paragraph }}</p>
+            {% endfor %}
 
-            <p class="govuk-body">{{ mssgs.order_complete_conf_info_1 }}</p>
-            <p class="govuk-body">{{ mssgs.order_complete_conf_info_2 }}</p>
-            <p class="govuk-body">{{ mssgs.order_complete_conf_info_3 }}</p>
+            <h2 class="govuk-heading-m">{{ mssgs.order_complete_when_fishing }}</h2>
 
-            {% if data.displayCatchReturnInfo %}
-                <div class="govuk-!-margin-bottom-3">
-                    <h2 class="govuk-heading-l">{{ mssgs.order_complete_subheading_rcr }}</h2>
-                    <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">{{ mssgs.explination }}</span>
-                            <strong class="govuk-warning-text__text">
-                                <span class="govuk-warning-text__assistive">{{ mssgs.warning }}</span>
-                                <p class="govuk-body no-print">
-                                    <strong>
-                                        {{ mssgs.order_complete_warning_body_1 }}<span><a class="govuk-link" href="https://www.gov.uk/catch-return">{{ mssgs.order_complete_warning_body_1_link }}</a></span>{{ mssgs.order_complete_warning_body_2 }}
-                                    </strong>
-                                </p>
-                                <p class="govuk-body print-area">
-                                    {{ mssgs.order_complete_warning_body_3 }}
-                                </p>
-                            </strong>
-                        </div>
-                    </div>
-            {% endif %}
-
-            <p class="govuk-body">{{ mssgs.order_complete_warning_body_4 }}<a class="govuk-link" rel="noreferrer noopener" href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line" target="_blank">{{ mssgs.order_complete_warning_body_4_link }}</a>{{ mssgs.period }}</p>
+            <p class="govuk-body">{{ data.whenFishingParagraph | safe }}</p>
 
             <p class="govuk-body">
-                <a class="govuk-link" href="https://www.gov.uk/government/publications/fisheries-annual-report-2020-to-2021/fisheries-annual-report-2020-to-2021">{{ mssgs.order_complete_fisheries_report_link }}</a>{{ mssgs.order_complete_fisheries_report_suffix }}
+                {{ mssgs.order_complete_when_fishing_byelaws_preamble }}
+                <a class="govuk-link" href="{{ data.uri.byelaws }}">{{ mssgs.order_complete_when_fishing_byelaws_link }}</a>
             </p>
-            <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.feedback }}">{{ mssgs.order_complete_tell_us }}</a>{{ mssgs.order_complete_tell_us_link }}</p>
 
-            {{ govukButton({
-                href: data.uri.new,
-                attributes: { id: 'continue' },
-                text: mssgs.buy_another_licence,
-                classes: "govuk-!-margin-top-4 no-print govuk-button--secondary"
-            }) }}
+            {% if data.displayCatchReturnInfo %}
+            <p class="govuk-body">
+                {{ mssgs.order_complete_when_fishing_salmon_para_part1 }}
+                <a class="govuk-link" href="{{ data.uri.salmonAndSeaTrout }}">{{ mssgs.order_complete_when_fishing_salmon_link }}</a>
+                {{ mssgs.order_complete_when_fishing_salmon_para_part2 }}
+            </p>
+            {% endif %}
+
+            <h2 class="govuk-heading-m no-print">{{  mssgs.order_complete_help_us }}</h2>
+            <p class="govuk-body no-print">
+                {{ mssgs.order_complete_tell_us }}
+                <a class="govuk-link" href="{{ data.uri.feedback }}">{{ mssgs.order_complete_tell_us_link }}</a>
+            </p>
         </div>
 
     </div>

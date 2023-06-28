@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The order completion handler sets byelaws and catch return url 1`] = `
+Object {
+  "byelaws": "https://www.gov.uk/government/collections/local-fishing-byelaws",
+  "salmonAndSeaTrout": "https://www.gov.uk/catch-return",
+}
+`;

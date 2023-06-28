@@ -51,13 +51,134 @@ const getMockCatalog = (overrides = {}) => ({
   order_complete_panel_text_join: 'order_complete_panel_text_join',
   order_complete_panel_text_single_licence: 'order_complete_panel_text_single_licence',
   order_complete_panel_text_multiple_licences: 'order_complete_panel_text_multiple_licences',
+  order_complete_view_details_postal: 'order_complete_view_details_postal',
+  order_complete_view_details_digital: 'order_complete_view_details_digital',
+  pound: '#',
   ...overrides
+})
+
+const getPostalPermission = () => ({
+  licensee: {
+    postalFulfilment: true,
+    preferredMethodOfConfirmation: 'Prefer not to be contacted'
+  }
+})
+
+const getDigitalPermission = () => ({
+  licensee: {
+    postalFulfilment: false
+  }
 })
 
 jest.mock('@defra-fish/connectors-lib')
 
 describe('The order completion handler', () => {
   beforeEach(jest.clearAllMocks)
+
+  it.each([
+    ['digital', [getDigitalPermission(), getDigitalPermission()]],
+    ['digital and postal', [getDigitalPermission(), getPostalPermission()]]
+  ])('When %s licences are purchased, viewDetailsParagraphs should have digital paragraph', async (_d, permissions) => {
+    const viewDetailsDigital = Symbol('order_complete_view_details_digital')
+    const request = getMockRequest({
+      transaction: getMockTransaction({ permissions }),
+      catalog: getMockCatalog({
+        order_complete_view_details_digital: viewDetailsDigital
+      })
+    })
+    const data = await getData(request)
+    expect(data.viewDetailsParagraphs[0]).toBe(viewDetailsDigital)
+  })
+
+  it.each([
+    ['postal', [getPostalPermission(), getPostalPermission()]],
+    ['digital and postal', [getDigitalPermission(), getPostalPermission()]]
+  ])('When %s licences are purchased, viewDetailsParagraphs should have postal paragraph', async (_d, permissions) => {
+    const viewDetailsPostal = Symbol('order_complete_view_details_postal')
+    const request = getMockRequest({
+      transaction: getMockTransaction({ permissions }),
+      catalog: getMockCatalog({
+        order_complete_view_details_postal: viewDetailsPostal
+      })
+    })
+    const data = await getData(request)
+    expect(data.viewDetailsParagraphs[data.viewDetailsParagraphs.length - 1]).toBe(viewDetailsPostal)
+  })
+
+  it.each([
+    ['digital', 'order_complete_when_fishing_digital', [getDigitalPermission(), getDigitalPermission()]],
+    ['digital and postal', 'order_complete_when_fishing_mixed', [getDigitalPermission(), getPostalPermission()]]
+  ])('When %s licences are purchased, whenFishingParagraph is set to %s', async (_d, label, permissions) => {
+    const whenFishingLabel = Symbol(label)
+    const request = getMockRequest({
+      transaction: getMockTransaction({ permissions }),
+      catalog: getMockCatalog({
+        [label]: whenFishingLabel
+      })
+    })
+    const data = await getData(request)
+    expect(data.whenFishingParagraph).toBe(whenFishingLabel)
+  })
+
+  it('When postal licences are purchased, whenFishingParagraph is set to expected value', async () => {
+    const order_complete_when_fishing_postal = 'when fishing postal text'
+    const order_complete_when_fishing_postal_link = 'when fishing postal link'
+    const request = getMockRequest({
+      transaction: getMockTransaction({ permissions: [getPostalPermission(), getPostalPermission()] }),
+      catalog: getMockCatalog({
+        order_complete_when_fishing_postal,
+        order_complete_when_fishing_postal_link
+      })
+    })
+    const data = await getData(request)
+    expect(data.whenFishingParagraph).toMatch(new RegExp(`${order_complete_when_fishing_postal}<a href="(.*)">${order_complete_when_fishing_postal_link}<\/a>`))
+  })
+
+  it('When postal licences are purchased, whenFishingParagraph contains link to LICENCE_DETAILS', async () => {
+    const request = getMockRequest({
+      transaction: getMockTransaction({ permissions: [getPostalPermission(), getPostalPermission()] }),
+      catalog: getMockCatalog({
+        order_complete_when_fishing_postal: 'when fishing postal text',
+        order_complete_when_fishing_postal_link: 'when fishing postal link'
+      })
+    })
+    const data = await getData(request)
+    expect(data.whenFishingParagraph).toMatch(new RegExp(`.*<a href="${LICENCE_DETAILS.uri}">(.*)<\\/a>`))
+  })
+
+
+  describe.skip.each([
+    ['only postal', true, false, [getPostalPermission(), getPostalPermission()]],
+    ['only digital', false, true, [getDigitalPermission(), getDigitalPermission()]],
+    ['mixed postal and digital', true, true, [getPostalPermission(), getDigitalPermission()]]
+  ])('fulfilment flags on %s permissions', (desc, hasPostal, hasDigital, permissions) => {
+    it(`When licences are ${desc}, viewDetailsParagraphs ${hasDigital ? 'should' : "shouldn't"} have digital paragraph`, async () => {
+      const viewDetailsDigital = Symbol('order_complete_view_details_digital')
+      const request = getMockRequest({
+        transaction: getMockTransaction({ permissions }),
+        catalog: getMockCatalog({
+          order_complete_view_details_digital: viewDetailsDigital
+        })
+      })
+      const data = await getData(request)
+      expect(data.viewDetailsParagraphs[0]).toBe(viewDetailsDigital)
+    })
+    // it(`When licences are ${desc}, licenceFulfilmentPostal is set to ${expectedPostalFulfilmentFlag}`, async () => {
+    //   const request = getMockRequest({
+    //     transaction: getMockTransaction({ permissions })
+    //   })
+    //   const data = await getData(request)
+    //   expect(data.licenceFulfilmentPostal).toBe(expectedPostalFulfilmentFlag)
+    // })
+
+    // it(`When licences are ${desc}, licenceFulfilmentDigital is set to ${expectedDigitalFulfilmentFlag}`, async () => {
+    //   const request = getMockRequest({
+    //     transaction: getMockTransaction({ permissions })
+    //   })
+    //   const data = await getData(request)
+    //   expect(data.licenceFulfilmentDigital).toBe(expectedDigitalFulfilmentFlag)
+    // })
+  })
 
   it.each([COMPLETION_STATUS.agreed, COMPLETION_STATUS.posted, COMPLETION_STATUS.finalised])(
     'throws Boom.forbidden error when %s is not set',
@@ -125,6 +246,11 @@ describe('The order completion handler', () => {
     expect(data.uri.feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
+  it('sets byelaws and catch return url', async () => {
+    const { uri: { byelaws, salmonAndSeaTrout }} = await getData(getMockRequest())
+    expect({ byelaws, salmonAndSeaTrout}).toMatchSnapshot()
+  })
+
   it.each([
     ['no permits are for salmon fishing', false, ['Trout and coarse']],
     ['the most recently-added permit is for salmon fishing', true, ['Trout and coarse', 'Salmon and sea trout']],
@@ -132,7 +258,7 @@ describe('The order completion handler', () => {
   ])('returns the correct displayCatchReturnInfo when %s', async (_desc, expected, licenceTypes) => {
     const permissions = []
     for (const licenceType of licenceTypes) {
-      permissions.push({ licenceType })
+      permissions.push({ ...getDigitalPermission(), licenceType })
     }
     const transaction = getMockTransaction({ permissions })
     const request = getMockRequest({ transaction })
@@ -156,26 +282,26 @@ describe('The order completion handler', () => {
   })
 
   it.each([
-    ["You've shelled out £9.99 and that got you 2 angling permits", 9.99, 2],
-    ["You've shelled out £23.46 and that got you 5 angling permits", 23.46, 5],
-    ["You've shelled out £98.74 and that got you 9 angling permits", 98.74, 9],
-    ["You've shelled out £12.50 and that got you 2 angling permits", 12.5, 2],
-    ["You've shelled out £23.00 and that got you 5 angling permits", 23, 5],
-    ["You've shelled out £59.80 and that got you 1 angling permit", 59.8, 1],
+    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#9.99</span> and that got you 2 angling permits", 9.99, 2],
+    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#23.46</span> and that got you 5 angling permits", 23.46, 5],
+    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#98.74</span> and that got you 9 angling permits", 98.74, 9],
+    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#12.50</span> and that got you 2 angling permits", 12.5, 2],
+    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#23.00</span> and that got you 5 angling permits", 23, 5],
+    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#59.80</span> and that got you 1 angling permit", 59.8, 1],
     ["You've paid nowt for 3 angling permits", 0, 3],
     ["You've paid nowt for 1 angling permit", 0, 1]
   ])("sets licencePanelText to '%s' when price is %d and number of licences is %i", async (expectedText, cost, numberOfLicences) => {
     const request = getMockRequest({
-      transaction: getMockTransaction({ permissions: Array(numberOfLicences).fill({}), cost }),
+      transaction: getMockTransaction({ permissions: Array(numberOfLicences).fill(getDigitalPermission()), cost }),
       catalog: getMockCatalog({
         order_complete_panel_text_free_prefix: "You've paid nowt for ",
-        order_complete_panel_text_prefix: "You've shelled out £",
+        order_complete_panel_text_prefix: "You've shelled out ",
         order_complete_panel_text_join: ' and that got you ',
         order_complete_panel_text_single_licence: ' angling permit',
         order_complete_panel_text_multiple_licences: ' angling permits'
       })
     })
     const data = await getData(request)
-    expect(data.licencePanelText).toBe(expectedText)
+    expect(data.licencePanelHTML).toBe(expectedText)
   })
 })
