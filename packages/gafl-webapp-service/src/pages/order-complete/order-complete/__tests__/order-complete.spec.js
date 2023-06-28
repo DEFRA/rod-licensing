@@ -1,4 +1,4 @@
-import { LICENCE_DETAILS, NEW_TRANSACTION, ORDER_COMPLETE } from '../../../../uri.js'
+import { LICENCE_DETAILS, ORDER_COMPLETE } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData } from '../route.js'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.js'
@@ -45,7 +45,6 @@ const getMockTransaction = ({ permissions = [], cost = 0 } = {}) => ({
 const getMockCatalog = (overrides = {}) => ({
   order_complete_title_application: 'order_complete_title_application',
   order_complete_title_payment: 'order_complete_title_payment',
-  pound: '£',
   order_complete_panel_text_free_prefix: 'order_complete_panel_text_free_prefix',
   order_complete_panel_text_prefix: 'order_complete_panel_text_prefix',
   order_complete_panel_text_join: 'order_complete_panel_text_join',
@@ -121,17 +120,19 @@ describe('The order completion handler', () => {
   })
 
   it('When postal licences are purchased, whenFishingParagraph is set to expected value', async () => {
-    const order_complete_when_fishing_postal = 'when fishing postal text'
-    const order_complete_when_fishing_postal_link = 'when fishing postal link'
+    const orderCompleteWhenFishingPostal = 'when fishing postal text'
+    const orderCompleteWhenFishingPostalLink = 'when fishing postal link'
     const request = getMockRequest({
       transaction: getMockTransaction({ permissions: [getPostalPermission(), getPostalPermission()] }),
       catalog: getMockCatalog({
-        order_complete_when_fishing_postal,
-        order_complete_when_fishing_postal_link
+        order_complete_when_fishing_postal: orderCompleteWhenFishingPostal,
+        order_complete_when_fishing_postal_link: orderCompleteWhenFishingPostalLink
       })
     })
     const data = await getData(request)
-    expect(data.whenFishingParagraph).toMatch(new RegExp(`${order_complete_when_fishing_postal}<a href="(.*)">${order_complete_when_fishing_postal_link}<\/a>`))
+    expect(data.whenFishingParagraph).toMatch(
+      new RegExp(`${orderCompleteWhenFishingPostal}<a href="(.*)">${orderCompleteWhenFishingPostalLink}</a>`)
+    )
   })
 
   it('When postal licences are purchased, whenFishingParagraph contains link to LICENCE_DETAILS', async () => {
@@ -143,41 +144,7 @@ describe('The order completion handler', () => {
       })
     })
     const data = await getData(request)
-    expect(data.whenFishingParagraph).toMatch(new RegExp(`.*<a href="${LICENCE_DETAILS.uri}">(.*)<\\/a>`))
-  })
-
-
-  describe.skip.each([
-    ['only postal', true, false, [getPostalPermission(), getPostalPermission()]],
-    ['only digital', false, true, [getDigitalPermission(), getDigitalPermission()]],
-    ['mixed postal and digital', true, true, [getPostalPermission(), getDigitalPermission()]]
-  ])('fulfilment flags on %s permissions', (desc, hasPostal, hasDigital, permissions) => {
-    it(`When licences are ${desc}, viewDetailsParagraphs ${hasDigital ? 'should' : "shouldn't"} have digital paragraph`, async () => {
-      const viewDetailsDigital = Symbol('order_complete_view_details_digital')
-      const request = getMockRequest({
-        transaction: getMockTransaction({ permissions }),
-        catalog: getMockCatalog({
-          order_complete_view_details_digital: viewDetailsDigital
-        })
-      })
-      const data = await getData(request)
-      expect(data.viewDetailsParagraphs[0]).toBe(viewDetailsDigital)
-    })
-    // it(`When licences are ${desc}, licenceFulfilmentPostal is set to ${expectedPostalFulfilmentFlag}`, async () => {
-    //   const request = getMockRequest({
-    //     transaction: getMockTransaction({ permissions })
-    //   })
-    //   const data = await getData(request)
-    //   expect(data.licenceFulfilmentPostal).toBe(expectedPostalFulfilmentFlag)
-    // })
-
-    // it(`When licences are ${desc}, licenceFulfilmentDigital is set to ${expectedDigitalFulfilmentFlag}`, async () => {
-    //   const request = getMockRequest({
-    //     transaction: getMockTransaction({ permissions })
-    //   })
-    //   const data = await getData(request)
-    //   expect(data.licenceFulfilmentDigital).toBe(expectedDigitalFulfilmentFlag)
-    // })
+    expect(data.whenFishingParagraph).toMatch(new RegExp(`.*<a href="${LICENCE_DETAILS.uri}">(.*)</a>`))
   })
 
   it.each([COMPLETION_STATUS.agreed, COMPLETION_STATUS.posted, COMPLETION_STATUS.finalised])(
@@ -214,20 +181,19 @@ describe('The order completion handler', () => {
     )
   })
 
-  it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
+  it(`addLanguageCodeToUri is called with request and ${LICENCE_DETAILS.uri}`, async () => {
     const request = getMockRequest()
-
     await getData(request)
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, LICENCE_DETAILS.uri)
   })
 
-  it.each(['new', 'licenceDetails'])('data outputs addLanguageCodeToUri decorated value for %s uri', async uriName => {
-    const decoratedUri = Symbol(uriName)
+  it('data outputs addLanguageCodeToUri decorated value for licence details uri', async () => {
+    const decoratedUri = Symbol('licenceDetails')
     addLanguageCodeToUri.mockReturnValue(decoratedUri)
     const request = getMockRequest()
 
     const data = await getData(request)
-    expect(data.uri[uriName]).toEqual(decoratedUri)
+    expect(data.uri.licenceDetails).toEqual(decoratedUri)
   })
 
   it.each(['http://trustpilot.com', 'http://give-us-a-stinker'])('feedback link set to FEEDBACK_URI env var (%s)', async feedbackUri => {
@@ -246,9 +212,11 @@ describe('The order completion handler', () => {
     expect(data.uri.feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
-  it('sets byelaws and catch return url', async () => {
-    const { uri: { byelaws, salmonAndSeaTrout }} = await getData(getMockRequest())
-    expect({ byelaws, salmonAndSeaTrout}).toMatchSnapshot()
+  it('sets byelaws, catch return and annual report urls', async () => {
+    const {
+      uri: { byelaws, salmonAndSeaTrout, annualReport }
+    } = await getData(getMockRequest())
+    expect({ byelaws, salmonAndSeaTrout, annualReport }).toMatchSnapshot()
   })
 
   it.each([
@@ -282,12 +250,12 @@ describe('The order completion handler', () => {
   })
 
   it.each([
-    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#9.99</span> and that got you 2 angling permits", 9.99, 2],
-    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#23.46</span> and that got you 5 angling permits", 23.46, 5],
-    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#98.74</span> and that got you 9 angling permits", 98.74, 9],
-    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#12.50</span> and that got you 2 angling permits", 12.5, 2],
-    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#23.00</span> and that got you 5 angling permits", 23, 5],
-    ["You've shelled out <span class=\"govuk-!-font-weight-bold\">#59.80</span> and that got you 1 angling permit", 59.8, 1],
+    ['You\'ve shelled out <span class="govuk-!-font-weight-bold">#9.99</span> and that got you 2 angling permits', 9.99, 2],
+    ['You\'ve shelled out <span class="govuk-!-font-weight-bold">#23.46</span> and that got you 5 angling permits', 23.46, 5],
+    ['You\'ve shelled out <span class="govuk-!-font-weight-bold">#98.74</span> and that got you 9 angling permits', 98.74, 9],
+    ['You\'ve shelled out <span class="govuk-!-font-weight-bold">#12.50</span> and that got you 2 angling permits', 12.5, 2],
+    ['You\'ve shelled out <span class="govuk-!-font-weight-bold">#23.00</span> and that got you 5 angling permits', 23, 5],
+    ['You\'ve shelled out <span class="govuk-!-font-weight-bold">#59.80</span> and that got you 1 angling permit', 59.8, 1],
     ["You've paid nowt for 3 angling permits", 0, 3],
     ["You've paid nowt for 1 angling permit", 0, 1]
   ])("sets licencePanelText to '%s' when price is %d and number of licences is %i", async (expectedText, cost, numberOfLicences) => {

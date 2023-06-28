@@ -31,21 +31,28 @@
 
             <p class="govuk-body">
                 {{ mssgs.order_complete_when_fishing_byelaws_preamble }}
-                <a class="govuk-link" href="{{ data.uri.byelaws }}">{{ mssgs.order_complete_when_fishing_byelaws_link }}</a>
+                <a class="govuk-link" href="{{ data.uri.byelaws }}" target="_blank">{{ mssgs.order_complete_when_fishing_byelaws_link }}</a>
             </p>
 
             {% if data.displayCatchReturnInfo %}
             <p class="govuk-body">
                 {{ mssgs.order_complete_when_fishing_salmon_para_part1 }}
-                <a class="govuk-link" href="{{ data.uri.salmonAndSeaTrout }}">{{ mssgs.order_complete_when_fishing_salmon_link }}</a>
+                <a class="govuk-link" href="{{ data.uri.salmonAndSeaTrout }}" target="_blank">{{ mssgs.order_complete_when_fishing_salmon_link }}</a>
                 {{ mssgs.order_complete_when_fishing_salmon_para_part2 }}
             </p>
             {% endif %}
 
             <h2 class="govuk-heading-m no-print">{{  mssgs.order_complete_help_us }}</h2>
             <p class="govuk-body no-print">
-                {{ mssgs.order_complete_tell_us }}
                 <a class="govuk-link" href="{{ data.uri.feedback }}">{{ mssgs.order_complete_tell_us_link }}</a>
+                {{ mssgs.order_complete_tell_us_time }}
+            </p>
+
+            <h2 class="govuk-heading-m no-print">{{ mssgs.order_complete_income_spend }}</h2>
+            <p class="govuk-body no-print">
+                {{ mssgs.order_complete_annual_report_part1 }}
+                <a class="govuk-link" href="{{ data.uri.annualReport }}">{{ mssgs.order_complete_annual_report_link }}</a>
+                {{ mssgs.order_complete_annual_report_part2 }}
             </p>
         </div>
 

@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`The order completion handler sets byelaws and catch return url 1`] = `
+exports[`The order completion handler sets byelaws, catch return and annual report urls 1`] = `
 Object {
+  "annualReport": "https://www.gov.uk/government/publications/fisheries-annual-report-2021-to-2022/fisheries-annual-report-2021-to-2022",
   "byelaws": "https://www.gov.uk/government/collections/local-fishing-byelaws",
   "salmonAndSeaTrout": "https://www.gov.uk/catch-return",
 }

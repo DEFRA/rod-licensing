@@ -1,7 +1,7 @@
 import pageRoute from '../../../routes/page-route.js'
 import Boom from '@hapi/boom'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../constants.js'
-import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_DETAILS, LOCAL_BYELAWS, CATCH_RETURN } from '../../../uri.js'
+import { ORDER_COMPLETE, LICENCE_DETAILS, LOCAL_BYELAWS, CATCH_RETURN, ANNUAL_REPORT } from '../../../uri.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
@@ -12,14 +12,12 @@ const checkForSalmonPermits = transaction => {
 
 const getLicencePanelHTML = (price, numberOfLicences, mssgs) => {
   const suffix = numberOfLicences === 1 ? mssgs.order_complete_panel_text_single_licence : mssgs.order_complete_panel_text_multiple_licences
-  let retVal
   if (price > 0) {
-    retVal = `${mssgs.order_complete_panel_text_prefix}<span class=\"govuk-!-font-weight-bold\">${mssgs.pound}${price.toFixed(2)}</span>${mssgs.order_complete_panel_text_join}${numberOfLicences}${suffix}`
-  } else {
-    retVal = `${mssgs.order_complete_panel_text_free_prefix}${numberOfLicences}${suffix}`
+    return `${mssgs.order_complete_panel_text_prefix}<span class="govuk-!-font-weight-bold">${mssgs.pound}${price.toFixed(2)}</span>${
+      mssgs.order_complete_panel_text_join
+    }${numberOfLicences}${suffix}`
   }
-  console.log('licencePanelHTML', retVal)
-  return retVal
+  return `${mssgs.order_complete_panel_text_free_prefix}${numberOfLicences}${suffix}`
 }
 
 const getViewDetailParagraphs = (licenceFulfilmentDigital, licenceFulfilmentPostal, mssgs) => {
@@ -35,12 +33,12 @@ const getViewDetailParagraphs = (licenceFulfilmentDigital, licenceFulfilmentPost
 
 const getWhenFishingParagraph = (licenceFulfilmentDigital, licenceFulfilmentPostal, mssgs) => {
   if (licenceFulfilmentDigital && licenceFulfilmentPostal) {
-    return mssgs['order_complete_when_fishing_mixed']
+    return mssgs.order_complete_when_fishing_mixed
   }
   if (licenceFulfilmentDigital) {
-    return mssgs['order_complete_when_fishing_digital']
+    return mssgs.order_complete_when_fishing_digital
   }
-  return `${mssgs['order_complete_when_fishing_postal']}<a href="${LICENCE_DETAILS.uri}">${mssgs['order_complete_when_fishing_postal_link']}</a>`
+  return `${mssgs.order_complete_when_fishing_postal}<a href="${LICENCE_DETAILS.uri}">${mssgs.order_complete_when_fishing_postal_link}</a>`
 }
 
 export const getData = async request => {
@@ -67,7 +65,9 @@ export const getData = async request => {
   await request.cache().helpers.status.setCurrentPermission({ currentPage: ORDER_COMPLETE.page })
   const title = transaction.cost > 0 ? mssgs.order_complete_title_payment : mssgs.order_complete_title_application
   const numberOfLicences = transaction.permissions.length
-  const licenceFulfilmentPostal = transaction.permissions.some(({ licensee }) => licensee.postalFulfilment && licensee.preferredMethodOfConfirmation === 'Prefer not to be contacted')
+  const licenceFulfilmentPostal = transaction.permissions.some(
+    ({ licensee }) => licensee.postalFulfilment && licensee.preferredMethodOfConfirmation === 'Prefer not to be contacted'
+  )
   const licenceFulfilmentDigital = transaction.permissions.some(({ licensee }) => !licensee.postalFulfilment)
 
   return {
@@ -81,9 +81,9 @@ export const getData = async request => {
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
-      new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),
       byelaws: LOCAL_BYELAWS.uri,
-      salmonAndSeaTrout: CATCH_RETURN.uri
+      salmonAndSeaTrout: CATCH_RETURN.uri,
+      annualReport: ANNUAL_REPORT.uri
     }
   }
 }
