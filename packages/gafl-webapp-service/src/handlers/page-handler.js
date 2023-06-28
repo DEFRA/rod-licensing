@@ -35,10 +35,9 @@ const omitPageFromAnalytics = async request => {
     analytics[ANALYTICS.omitPageFromAnalytics] !== true
   ) {
     await request.cache().helpers.analytics.set({ [ANALYTICS.omitPageFromAnalytics]: true, [ANALYTICS.pageSkipped]: true })
-    return
+  } else {
+    await request.cache().helpers.analytics.set({ [ANALYTICS.omitPageFromAnalytics]: false })
   }
-
-  await request.cache().helpers.analytics.set({ [ANALYTICS.omitPageFromAnalytics]: false })
 }
 
 /**
