@@ -4,8 +4,11 @@ import moment from 'moment'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
-const mapRecords = records =>
-  records.map(record => ({
+const mapRecords = records => {
+  records.forEach((r, idx) => {
+    console.log(`record ${idx + 1}`, JSON.stringify(r, undefined, '\t'))
+  })
+  return records.map(record => ({
     poclValidationErrorId: record.id,
     createTransactionPayload: {
       dataSource: backfillDataSource(record),
@@ -50,7 +53,7 @@ const mapRecords = records =>
       }
     }
   }))
-
+}
 const backfillDataSource = record => {
   if (record.dataSource) {
     return record.dataSource.label
