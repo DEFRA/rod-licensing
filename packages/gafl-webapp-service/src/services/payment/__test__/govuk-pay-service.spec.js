@@ -54,7 +54,7 @@ describe('The govuk-pay-service', () => {
         {
           i18n: {
             getCatalog: () => ({
-              over_66: 'Over 66',
+              over_66: ' (Over 66)',
               licence_type_radio_salmon: 'Salmon and sea trout'
             })
           },
@@ -67,7 +67,7 @@ describe('The govuk-pay-service', () => {
     ).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Over 66, Salmon and sea trout, 12 months',
+      description: 'Salmon and sea trout (Over 66), 12 months',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
@@ -96,7 +96,7 @@ describe('The govuk-pay-service', () => {
         {
           i18n: {
             getCatalog: () => ({
-              over_66: 'Over 66',
+              over_66: ' (Over 66)',
               licence_type_radio_salmon: 'Salmon and sea trout'
             })
           },
@@ -108,7 +108,7 @@ describe('The govuk-pay-service', () => {
     ).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Over 66, Salmon and sea trout, 8 days',
+      description: 'Salmon and sea trout (Over 66), 8 days',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,

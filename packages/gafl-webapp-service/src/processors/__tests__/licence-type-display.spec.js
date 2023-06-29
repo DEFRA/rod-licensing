@@ -2,7 +2,7 @@ import { hasJunior, hasSenior } from '../concession-helper.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical } from '../licence-type-display.js'
 
 const getCatalog = () => ({
-  over_66: 'over_66',
+  over_66: ' (over_66)',
   age_junior: 'Junior',
   licence_type_radio_salmon: 'Salmon and sea trout',
   licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
@@ -40,7 +40,7 @@ describe('licenceTypeDisplay', () => {
     const permission = getPermission()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
-    expect(result).toEqual('over_66, Salmon and sea trout')
+    expect(result).toEqual('Salmon and sea trout (over_66)')
   })
 
   it.each([
@@ -82,7 +82,7 @@ describe('licenceTypeAndLengthDisplay', () => {
     const permission = getPermission()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('over_66, Salmon and sea trout, 12 months')
+    expect(result).toEqual('Salmon and sea trout (over_66), 12 months')
   })
 })
 

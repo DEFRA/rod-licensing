@@ -7,10 +7,8 @@ export const licenceTypeDisplay = (permission, mssgs) => {
   // Build the display string for the licence type
   if (concessionHelper.hasJunior(permission)) {
     typesStrArr.push(mssgs.age_junior)
-  } else if (concessionHelper.hasSenior(permission)) {
-    typesStrArr.push(mssgs.over_66)
+    typesStrArr.push(', ')
   }
-
   if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
     typesStrArr.push(mssgs.licence_type_radio_salmon)
   } else if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
@@ -21,7 +19,11 @@ export const licenceTypeDisplay = (permission, mssgs) => {
     }
   }
 
-  return typesStrArr.join(', ')
+  if (concessionHelper.hasSenior(permission)) {
+    typesStrArr.push(mssgs.over_66)
+  }
+
+  return typesStrArr.join('')
 }
 
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
