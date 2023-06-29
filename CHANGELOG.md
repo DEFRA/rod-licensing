@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.3 (2023-06-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1738](https://github.com/DEFRA/rod-licensing/pull/1738) Fix double count of page views from analytics banner ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
 
 ## v1.35.0-rc.1 (2023-06-08)
 
