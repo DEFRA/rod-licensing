@@ -42,7 +42,7 @@ const mapRecords = records => {
       ]
     },
     finaliseTransactionPayload: {
-      transactionFile: record.transactionFile,
+      ...(record.transactionFile ? {transactionFile: record.transactionFile} : {}),
       payment: {
         timestamp: formatDateToShortenedISO(record.transactionDate, 'payment timestamp'),
         amount: record.amount,
