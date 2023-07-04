@@ -1,8 +1,9 @@
 import Joi from 'joi'
-import { PoclFile } from '@defra-fish/dynamics-lib'
+// import { PoclFile } from '@defra-fish/dynamics-lib'
 import { finalisePermissionResponseSchema, stagedPermissionSchema } from './permission.schema.js'
 import { contactRequestSchema } from './contact.schema.js'
-import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
+// import { createAlternateKeyValidator, buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
+import { buildJoiOptionSetValidator, createPermitConcessionValidator } from './validators/validators.js'
 import { MAX_PERMISSIONS_PER_TRANSACTION, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -92,9 +93,10 @@ export const createTransactionBatchResponseSchema = Joi.array()
   .label('create-transaction-batch-response')
 
 const finaliseTransactionRequestSchemaContent = {
-  transactionFile: Joi.string()
-    .optional()
-    .external(createAlternateKeyValidator(PoclFile, { cache: TRANSACTION_FILE_VALIDATION_CACHE_TTL })),
+  transactionFile: Joi.string().optional(),
+  // transactionFile: Joi.string()
+  //   .optional(),
+  //   .external(createAlternateKeyValidator(PoclFile, { cache: TRANSACTION_FILE_VALIDATION_CACHE_TTL })),
   payment: Joi.object({
     amount: Joi.number().required(),
     timestamp: Joi.string()
