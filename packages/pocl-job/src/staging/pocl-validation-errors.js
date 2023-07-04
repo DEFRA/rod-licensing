@@ -128,6 +128,7 @@ const finaliseTransaction = async rec => {
     payment: { method: backfillPaymentMethod(payment.method, payment.newPaymentSource) },
     ...rec.record.finaliseTransactionPayload
   }
+  debug('finalising transaction: %o', finaliseTransactionPayload)
   return salesApi.finaliseTransaction(rec.result.response.id, finaliseTransactionPayload)
 }
 

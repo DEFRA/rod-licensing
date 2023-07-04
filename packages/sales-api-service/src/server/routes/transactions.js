@@ -20,12 +20,7 @@ import db from 'debug'
 const debug = db('sales:routes')
 
 const stagingIdSchema = Joi.object({
-  id: Joi.string()
-    .trim()
-    .guid()
-    .min(1)
-    .required()
-    .description('the staging identifier')
+  id: Joi.string().trim().guid().min(1).required().description('the staging identifier')
 }).label('finalise-transaction-request-parameters')
 
 export default [
@@ -65,8 +60,11 @@ export default [
         for (let i = 0; i < request.payload.length; i++) {
           try {
             validPayloadsByIndex[i] = await createTransactionSchema.validateAsync(request.payload[i])
+            debug('Request payload valid: %o', request.payload[i])
           } catch (e) {
             responsesByIndex[i] = Boom.badData(e).output.payload
+            debug('Request payload invalid: %o', request.payload[i])
+            debug('Reason: %s', responsesByIndex[i])
           }
         }
         const validEntries = Object.entries(validPayloadsByIndex)
