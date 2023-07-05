@@ -109,7 +109,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
         licensee: Joi.object(),
         issueDate: TRANSACTION_DATE,
         startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
-        newStartDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+        // newStartDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
         permitId: Joi.string().guid().required(),
         concessions: Joi.array()
           .items(
