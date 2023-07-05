@@ -63,7 +63,7 @@ export default [
             debug('Request payload valid: %o', request.payload[i])
           } catch (e) {
             responsesByIndex[i] = Boom.badData(e).output.payload
-            debug('Request payload invalid: %o', request.payload[i])
+            debug('Request payload invalid: %s', JSON.stringify(request.payload[i], undefined, '\t'))
             debug('Reason: %s', responsesByIndex[i])
           }
         }
