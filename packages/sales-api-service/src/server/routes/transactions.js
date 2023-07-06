@@ -60,7 +60,7 @@ export default [
         for (let i = 0; i < request.payload.length; i++) {
           try {
             validPayloadsByIndex[i] = await createTransactionSchema.validateAsync(request.payload[i])
-            debug('Request payload valid: %o', request.payload[i])
+            debug('Request payload valid: %s', JSON.stringify(request.payload[i], undefined, '\t'))
           } catch (e) {
             responsesByIndex[i] = Boom.badData(e).output.payload
             debug('Request payload invalid: %s', JSON.stringify(request.payload[i], undefined, '\t'))
