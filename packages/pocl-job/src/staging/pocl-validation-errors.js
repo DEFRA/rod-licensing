@@ -134,7 +134,16 @@ const finaliseTransaction = async rec => {
 
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records
-  const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
+  // const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
+  const finalisationResults = []
+  for (const c of created) {
+    try {
+      finalisationResults.push(await finaliseTransaction(c))
+    } catch (e) {
+      console.log('Error finalising transaction: ', e)
+      throw e
+    }
+  }
 
   const succeeded = []
   created.forEach(({ record }, idx) => {
