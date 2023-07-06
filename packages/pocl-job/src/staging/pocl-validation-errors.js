@@ -36,7 +36,7 @@ const mapRecords = records => {
           issueDate: formatDateToShortenedISO(record.transactionDate, 'issueDate'),
           startDate: formatDateToShortenedISO(record.startDate, 'startDate'),
           // newStartDate: formatDateToShortenedISO(record.startDate, 'newStartDate'),
-          permitId: record.permitId.replace(/(^\{|\}$)/g, ''),
+          permitId: record.permitId.replace(/(^\{|\}$)/g, '').toLowerCase(),
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
       ]
