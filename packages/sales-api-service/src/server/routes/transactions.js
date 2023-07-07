@@ -12,7 +12,7 @@ import {
   createTransactionResponseSchema,
   createTransactionBatchSchema,
   createTransactionBatchResponseSchema,
-  finaliseTransactionRequestSchema,
+  // finaliseTransactionRequestSchema,
   finaliseTransactionResponseSchema,
   BATCH_CREATE_MAX_COUNT
 } from '../../schema/transaction.schema.js'
@@ -110,10 +110,10 @@ export default [
         Marks an existing transaction as finalised at which point it will become eligible for insertion into Dynamics.
       `,
       tags: ['api', 'transactions'],
-      validate: {
+      /* validate: {
         params: stagingIdSchema,
         payload: finaliseTransactionRequestSchema
-      },
+      }, */
       plugins: {
         'hapi-swagger': {
           responses: {
