@@ -148,6 +148,7 @@ const finaliseTransactions = async records => {
   const succeeded = []
   created.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
+    debug('finalisation result %s', JSON.stringify(result, undefined, '\t'))
     if (result.status === 'fulfilled') {
       succeeded.push({ record, result: result.value })
     } else if (result.reason.status === 410) {
