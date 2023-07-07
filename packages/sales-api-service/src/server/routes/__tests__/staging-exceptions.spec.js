@@ -42,7 +42,7 @@ const poclValidationError = Object.freeze([
     lastName: 'string',
     birthDate: '1987-01-05',
     postcode: 'AB12 3CD',
-    country: 'GB',
+    country: 910400195,
     preferredMethodOfConfirmation: 'Text',
     preferredMethodOfNewsletter: 'Email',
     preferredMethodOfReminder: 'Email',
