@@ -6,7 +6,11 @@ Object {
   "birthDate": "1989-07-01",
   "channelId": "948594",
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
-  "country": "GB",
+  "country": Object {
+    "description": "GB-ENG",
+    "id": 910400195,
+    "label": "England",
+  },
   "dataSource": Object {
     "description": "Post Office Sales",
     "id": 910400000,
@@ -74,7 +78,11 @@ Object {
   "birthDate": "1989-07-01",
   "channelId": "948594",
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
-  "country": "GB",
+  "country": Object {
+    "description": "GB-ENG",
+    "id": 910400195,
+    "label": "England",
+  },
   "dataSource": Object {
     "description": "Post Office Sales",
     "id": 910400000,
@@ -133,7 +141,11 @@ Object {
   "birthDate": "1989-07-01",
   "channelId": "948594",
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
-  "country": "GB",
+  "country": Object {
+    "description": "GB-ENG",
+    "id": 910400195,
+    "label": "England",
+  },
   "dataSource": Object {
     "description": "Post Office Sales",
     "id": 910400000,

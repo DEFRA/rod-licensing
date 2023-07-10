@@ -6,7 +6,11 @@ Object {
   "birthDate": "1989-07-01",
   "channelId": "948594",
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":123456789}]",
-  "country": "GB",
+  "country": Object {
+    "description": "GB-ENG",
+    "id": 910400195,
+    "label": "England",
+  },
   "dataSource": Object {
     "description": "Post Office Sales",
     "id": 910400000,
@@ -72,7 +76,7 @@ Object {
   "defra_birthdate": "1989-07-01",
   "defra_channelid": "948594",
   "defra_concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":123456789}]",
-  "defra_country": "GB",
+  "defra_countrylist": 910400195,
   "defra_datasource": 910400000,
   "defra_emailaddress": "daniel-ricc@example.couk",
   "defra_errormessage": "\\"permissions[0].licensee.email\\" must be a valid email",

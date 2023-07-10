@@ -15,7 +15,7 @@ export class PoclValidationError extends BaseEntity {
       firstName: { field: 'defra_firstname', type: 'string' },
       lastName: { field: 'defra_name', type: 'string' },
       birthDate: { field: 'defra_birthdate', type: 'string' },
-      country: { field: 'defra_country', type: 'string' },
+      country: { field: 'defra_countrylist', type: 'optionset', ref: 'defra_country' },
       postcode: { field: 'defra_postcode', type: 'string' },
       town: { field: 'defra_town', type: 'string' },
       locality: { field: 'defra_locality', type: 'string' },
