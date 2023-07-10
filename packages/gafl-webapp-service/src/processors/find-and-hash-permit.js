@@ -4,11 +4,12 @@ import db from 'debug'
 
 const debug = db('webapp:find-and-hash-permit')
 
-export const hashPermission = async permission => {
+export const hashPermission = async (permission, request) => {
   const clonedPermission = { ...permission }
   const generatedHash = crypto.createHash('sha256')
   const currentHash = generatedHash.update(JSON.stringify(clonedPermission))
   const newSingleUseHash = generatedHash.digest('hex')
+
   if (!clonedPermission.hash) {
     clonedPermission.hash = newSingleUseHash
   } else {
@@ -18,11 +19,15 @@ export const hashPermission = async permission => {
       debug("permit data present and doesn't need updating")
     }
   }
-  return clonedPermission.hash
+
+  await request.cache().helpers.transaction.setCurrentPermission(clonedPermission)
+  return clonedPermission
 }
 
-export const findPermit = async permission => {
+export const assignPermit = async (permission, request) => {
+  const hashedPermission = await hashPermission(permission, request)
   const permit = await filterPermits(permission)
+  hashedPermission.permit = permit
   if (permit) {
     if (!permit.newCostStartDate || !permit.newCost) {
       debug('permit missing new cost details', permission)
@@ -31,5 +36,6 @@ export const findPermit = async permission => {
     debug("permit wasn't retrieved", permission)
   }
 
-  return permit
+  await request.cache().helpers.transaction.setCurrentPermission(hashedPermission)
+  return hashedPermission
 }

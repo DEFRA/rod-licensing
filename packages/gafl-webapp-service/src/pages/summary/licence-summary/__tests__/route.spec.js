@@ -1,7 +1,7 @@
 import { getData } from '../route'
 import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
 import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION, NEW_PRICES } from '../../../../uri.js'
-import { findPermit } from '../../../../processors/find-permit.js'
+import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import mappingConstants from '../../../../processors/mapping-constants.js'
@@ -40,8 +40,8 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
     none: 'Not Proof'
   }
 }))
-jest.mock('../../../../processors/find-permit.js', () => ({
-  findPermit: jest.fn((_permission, _request) => {})
+jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+  assignPermit: jest.fn((_permission, _request) => {})
 }))
 jest.mock('../../../../processors/price-display.js', () => ({
   displayPermissionPrice: jest.fn(() => '#6')
@@ -179,7 +179,7 @@ describe('licence-summary > route', () => {
     it('adds LICENCE_SUMMARY_SEEN to status.fromSummary for a renewal', async () => {
       const statusCacheSet = jest.fn()
       const mockRequest = getMockRequest({ statusCacheSet })
-      findPermit.mockReturnValue(getMockPermission())
+      assignPermit.mockReturnValue(getMockPermission())
       await getData(mockRequest)
       expect(statusCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -196,7 +196,7 @@ describe('licence-summary > route', () => {
         statusCache,
         statusCacheSet
       })
-      findPermit.mockReturnValue(getMockNewPermission())
+      assignPermit.mockReturnValue(getMockNewPermission())
       await getData(mockRequest)
       expect(statusCacheSet).toHaveBeenCalledWith(expect.objectContaining(statusCache))
     })
@@ -207,7 +207,7 @@ describe('licence-summary > route', () => {
         currentPermission: getMockNewPermission(),
         statusCacheSet
       })
-      findPermit.mockReturnValue(getMockNewPermission())
+      assignPermit.mockReturnValue(getMockNewPermission())
       await getData(mockRequest)
       expect(statusCacheSet).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -222,7 +222,7 @@ describe('licence-summary > route', () => {
       { statusCache: { tag: Symbol('prince') }, currentPermission: getMockNewPermission() }
     ])('persists existing status cache values $statusCache', async params => {
       const statusCacheSet = jest.fn()
-      findPermit.mockReturnValue(getMockNewPermission())
+      assignPermit.mockReturnValue(getMockNewPermission())
       const mockRequest = getMockRequest({ ...params, statusCacheSet })
       await getData(mockRequest)
       expect(statusCacheSet).toHaveBeenCalledWith(expect.objectContaining(params.statusCache))
@@ -233,17 +233,17 @@ describe('licence-summary > route', () => {
     it.each([
       { desc: 'renewal', currentPermission: getMockPermission() },
       { desc: 'new', currentPermission: getMockNewPermission() }
-    ])('calls findPermit with permission and request where permission is a $desc permission', async ({ currentPermission }) => {
+    ])('calls assignPermit with permission and request where permission is a $desc permission', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
-      findPermit.mockReturnValue(currentPermission)
+      assignPermit.mockReturnValue(currentPermission)
       await getData(mockRequest)
-      expect(findPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
+      expect(assignPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
     })
 
     it('transaction cache is updated with the permit when setting current permission', async () => {
       const transactionCacheSet = jest.fn()
       const permission = getMockPermission()
-      findPermit.mockReturnValue(permission)
+      assignPermit.mockReturnValue(permission)
       const mockRequest = getMockRequest({ transactionCacheSet })
       await getData(mockRequest)
       expect(transactionCacheSet).toHaveBeenCalledWith(permission)
@@ -251,7 +251,7 @@ describe('licence-summary > route', () => {
 
     it.each([[NEW_TRANSACTION.uri], [NEW_PRICES.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
       const mockRequest = getMockRequest()
-      findPermit.mockReturnValue(getMockPermission())
+      assignPermit.mockReturnValue(getMockPermission())
       await getData(mockRequest)
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
     })
@@ -265,7 +265,7 @@ describe('licence-summary > route', () => {
         }
       }
       const mockPermission = await mockRequest.cache().helpers.transaction.getCurrentPermission()
-      findPermit.mockReturnValue(mockPermission)
+      assignPermit.mockReturnValue(mockPermission)
 
       await getData(mockRequest)
 
@@ -319,7 +319,7 @@ describe('licence-summary > route', () => {
     currentPermission.permit = Symbol('permit')
     const mockRequest = getMockRequest({ currentPermission })
     const catalog = mockRequest.i18n.getCatalog()
-    findPermit.mockReturnValue(currentPermission)
+    assignPermit.mockReturnValue(currentPermission)
 
     await getData(mockRequest)
 
@@ -346,7 +346,7 @@ describe('licence-summary > route', () => {
       ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
     `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
-      findPermit.mockReturnValue(currentPermission)
+      assignPermit.mockReturnValue(currentPermission)
       const data = await getData(mockRequest)
       expect(data.licenceSummaryRows).toMatchSnapshot()
     })

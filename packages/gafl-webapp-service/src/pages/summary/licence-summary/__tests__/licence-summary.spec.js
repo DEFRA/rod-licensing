@@ -16,11 +16,11 @@ import {
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../../../licence-details/licence-type/route.js'
 import { disabilityConcessionTypes } from '../../../concessions/disability/update-transaction.js'
-import { findPermit } from '../../../../processors/find-permit.js'
+import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
 
 mockSalesApi()
-jest.mock('../../../../processors/find-permit.js', () => ({
-  findPermit: jest.fn()
+jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+  assignPermit: jest.fn()
 }))
 
 beforeAll(() => {
@@ -92,7 +92,7 @@ describe('The licence summary page', () => {
     })
 
     it('re-filters the correct permit on a material change', async () => {
-      findPermit.mockImplementationOnce(() => ({
+      assignPermit.mockImplementationOnce(() => ({
         licensee: {
           firstName: 'Willis',
           lastName: 'Graham',
@@ -114,7 +114,7 @@ describe('The licence summary page', () => {
     })
 
     it('filters the correct permit', async () => {
-      findPermit.mockImplementationOnce(() => ({
+      assignPermit.mockImplementationOnce(() => ({
         licensee: {
           firstName: 'Willis',
           lastName: 'Graham',
@@ -135,7 +135,7 @@ describe('The licence summary page', () => {
     })
 
     it('displays the page on request', async () => {
-      findPermit.mockImplementationOnce(() => ({
+      assignPermit.mockImplementationOnce(() => ({
         licensee: {
           firstName: 'Willis',
           lastName: 'Graham',
@@ -178,7 +178,7 @@ describe('The licence summary page', () => {
     })
 
     it('displays the page on request', async () => {
-      findPermit.mockImplementationOnce(() => ({
+      assignPermit.mockImplementationOnce(() => ({
         licensee: {
           firstName: 'Willis',
           lastName: 'Graham',
@@ -196,7 +196,7 @@ describe('The licence summary page', () => {
     })
 
     it('filters the correct permit', async () => {
-      findPermit.mockImplementationOnce(() => ({
+      assignPermit.mockImplementationOnce(() => ({
         licensee: {
           firstName: 'Willis',
           lastName: 'Graham',

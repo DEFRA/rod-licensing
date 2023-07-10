@@ -1,7 +1,7 @@
 import moment from 'moment-timezone'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { findPermit } from '../../../processors/find-permit.js'
+import { assignPermit } from '../../../processors/find-and-hash-permit.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
@@ -189,12 +189,12 @@ export const getData = async request => {
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   debug('retrieving permit info')
-  const foundPermit = await findPermit(permission, request)
-  await request.cache().helpers.transaction.setCurrentPermission(foundPermit)
+  const permissionWithPermit = await assignPermit(permission, request)
+  await request.cache().helpers.transaction.setCurrentPermission(permissionWithPermit)
   debug('retrieved permit', JSON.stringify(permission))
 
   return {
-    licenceSummaryRows: getLicenceSummaryRows(request, foundPermit),
+    licenceSummaryRows: getLicenceSummaryRows(request, permissionWithPermit),
     isRenewal: permission.isRenewal,
     uri: {
       clear: addLanguageCodeToUri(request, NEW_TRANSACTION.uri),

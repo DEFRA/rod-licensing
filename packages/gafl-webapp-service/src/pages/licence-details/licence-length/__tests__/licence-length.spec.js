@@ -1,5 +1,5 @@
 import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, LICENCE_TYPE, TEST_TRANSACTION, CONTACT } from '../../../../uri.js'
-import { findPermit } from '../../../../processors/find-permit.js'
+import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -8,8 +8,8 @@ beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 mockSalesApi()
-jest.mock('../../../../processors/find-permit.js', () => ({
-  findPermit: jest.fn()
+jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+  assignPermit: jest.fn()
 }))
 
 afterEach(() => {
@@ -18,7 +18,7 @@ afterEach(() => {
 
 describe('The licence length page', () => {
   it('returns success on requesting', async () => {
-    findPermit.mockImplementationOnce(() => ({ licenceLength: '8D' }))
+    assignPermit.mockImplementationOnce(() => ({ licenceLength: '8D' }))
     const response = await injectWithCookies('GET', LICENCE_LENGTH.uri)
     expect(response.statusCode).toBe(200)
   })
@@ -30,7 +30,7 @@ describe('The licence length page', () => {
   })
 
   it('redirects back to itself on posting an invalid response', async () => {
-    findPermit.mockImplementationOnce(() => ({ licenceLength: '8D' }))
+    assignPermit.mockImplementationOnce(() => ({ licenceLength: '8D' }))
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8L' })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
@@ -41,14 +41,14 @@ describe('The licence length page', () => {
     ['8 day', '8D'],
     ['1 day', '1D']
   ])('stores the transaction on a successful submission of %s', async (desc, lenCode) => {
-    findPermit.mockImplementationOnce(() => ({ licenceLength: lenCode }))
+    assignPermit.mockImplementationOnce(() => ({ licenceLength: lenCode }))
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licenceLength).toBe(lenCode)
   })
 
   it('redirects into the licence summary page for licence length of 12 months', async () => {
-    findPermit.mockImplementationOnce(() => ({ licenceLength: '12M' }))
+    assignPermit.mockImplementationOnce(() => ({ licenceLength: '12M' }))
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
@@ -58,14 +58,14 @@ describe('The licence length page', () => {
     ['8 day', '8D'],
     ['1 day', '1D']
   ])('redirects into the time to start page for licence length %s', async (desc, lenCode) => {
-    findPermit.mockImplementationOnce(() => ({ licenceLength: lenCode }))
+    assignPermit.mockImplementationOnce(() => ({ licenceLength: lenCode }))
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
   })
 
   it("where contact is 'none' setting a 12 month licence changes it to 'post'", async () => {
-    findPermit.mockImplementationOnce(() => ({
+    assignPermit.mockImplementationOnce(() => ({
       licensee: {
         preferredMethodOfConfirmation: 'Letter'
       },
@@ -82,7 +82,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none' setting a 12 month licence, then changing it to 1 day sets preferredMethodOfConfirmation to none and sets postalFulfilment to false", async () => {
-    findPermit.mockImplementationOnce(() => ({
+    assignPermit.mockImplementationOnce(() => ({
       licensee: {
         preferredMethodOfNewsletter: 'Prefer not to be contacted',
         postalFulfilment: false,
@@ -102,7 +102,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none', setting a 1 day licence keeps it at 'none'", async () => {
-    findPermit.mockImplementationOnce(() => ({
+    assignPermit.mockImplementationOnce(() => ({
       licensee: {
         preferredMethodOfNewsletter: 'Prefer not to be contacted',
         postalFulfilment: false,
@@ -123,7 +123,7 @@ describe('The licence length page', () => {
   })
 
   it("where contact is 'none' setting a 1 day licence, then changing to 12 months sets preferredMethodOfConfirmation to letter and set postalFulfilment to true", async () => {
-    findPermit.mockImplementationOnce(() => ({
+    assignPermit.mockImplementationOnce(() => ({
       licensee: {
         preferredMethodOfNewsletter: 'Prefer not to be contacted',
         postalFulfilment: false,

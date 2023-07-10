@@ -22,10 +22,10 @@ import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import pageRoute from '../../../../routes/page-route.js'
-import { findPermit } from '../../../../processors/find-permit.js'
+import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
 
-jest.mock('../../../../processors/find-permit.js', () => ({
-  findPermit: jest.fn()
+jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+  assignPermit: jest.fn()
 }))
 
 jest.mock('../../../../processors/uri-helper.js', () => ({
@@ -201,7 +201,7 @@ describe('The easy renewal identification page', () => {
     })
 
     it('returns a 200 status code on a GET request to the licence summary', async () => {
-      findPermit.mockImplementationOnce(() => ({
+      assignPermit.mockImplementationOnce(() => ({
         licensee: {
           firstName: 'Willis',
           lastName: 'Graham',
