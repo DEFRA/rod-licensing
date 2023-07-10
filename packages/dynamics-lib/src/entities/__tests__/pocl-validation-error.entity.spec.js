@@ -21,7 +21,7 @@ describe('pocl staging exception entity', () => {
           defra_locality: 'Stoke Bishop',
           defra_town: 'Bristol',
           defra_postcode: 'BS9 1HJ',
-          defra_country: 'GB',
+          defra_countrylist: 910400195,
           defra_birthdate: '1989-07-01',
           defra_emailaddress: 'daniel-ricc@example.couk',
           defra_mobilenumber: '07722 123456',
@@ -68,7 +68,7 @@ describe('pocl staging exception entity', () => {
         locality: 'Stoke Bishop',
         town: 'Bristol',
         postcode: 'BS9 1HJ',
-        country: 'GB',
+        country: expect.objectContaining({ id: 910400195, label: 'England', description: 'GB-ENG' }),
         birthDate: '1989-07-01',
         email: 'daniel-ricc@example.couk',
         mobilePhone: '07722 123456',
@@ -116,7 +116,7 @@ describe('pocl staging exception entity', () => {
     validationError.locality = 'Stoke Bishop'
     validationError.town = 'Bristol'
     validationError.postcode = 'BS9 1HJ'
-    validationError.country = 'GB'
+    validationError.country = optionSetData.defra_country.options['910400195']
     validationError.birthDate = '1989-07-01'
     validationError.email = 'daniel-ricc@example.couk'
     validationError.mobilePhone = '07722 123456'

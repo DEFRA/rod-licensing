@@ -32,27 +32,31 @@ const getSamplePermission = ({ referenceNumber = 'AAA111', licenceType = LICENCE
   referenceNumber
 })
 
+const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true } = {}) => ({
+  [COMPLETION_STATUS.agreed]: agreed,
+  [COMPLETION_STATUS.posted]: posted,
+  [COMPLETION_STATUS.finalised]: finalised
+})
+
 const getSampleRequest = ({
-  agreed = true,
-  posted = true,
-  finalised = true,
+  completionStatus = getSampleCompletionStatus(),
   permission = getSamplePermission(),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
-  catalog = 'messages'
+  catalog = 'messages',
+  payment = { created_date: undefined }
 } = {}) => ({
   cache: () => ({
     helpers: {
       status: {
-        get: () => ({
-          [COMPLETION_STATUS.agreed]: agreed,
-          [COMPLETION_STATUS.posted]: posted,
-          [COMPLETION_STATUS.finalised]: finalised
-        }),
+        get: () => completionStatus,
         setCurrentPermission: statusSetCurrentPermission,
         set: statusSet
       },
       transaction: {
+        get: async () => ({
+          payment
+        }),
         getCurrentPermission: () => permission
       }
     }
@@ -73,7 +77,8 @@ describe('The order completion handler', () => {
   beforeEach(jest.clearAllMocks)
 
   it.each(['agreed', 'posted', 'finalised'])('throws Boom.forbidden error when %s is not set', async completion => {
-    const request = getSampleRequest({ [completion]: false })
+    const completionStatus = getSampleCompletionStatus({ [completion]: false })
+    const request = getSampleRequest({ completionStatus })
     const callGetData = () => getData(request)
     await expect(callGetData).rejects.toThrow(`Attempt to access the completion page handler with no ${completion} flag set`)
   })
@@ -138,12 +143,16 @@ describe('The order completion handler', () => {
     expect(permissionCost).toBe(expectedCost)
   })
 
-  it('passes permission and label catalog to displayPermissionPrice function', async () => {
+  it.each`
+    desc                                            | payment
+    ${'permission, created_date and label catalog'} | ${{ created_date: Symbol('created date') }}
+    ${'permission and label catalog'}               | ${undefined}
+  `('passes $desc to displayPermissionPrice function', async ({ desc, payment }) => {
     const permission = getSamplePermission()
     const catalog = Symbol('catalog')
-
-    await getData(getSampleRequest({ permission, catalog }))
-    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
+    const result = payment?.created_date
+    await getData(getSampleRequest({ permission, catalog, payment }))
+    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog, result)
   })
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
@@ -182,7 +191,18 @@ describe('The order completion handler', () => {
   ])('passes permission reference %s', async (cost, isFree) => {
     const permission = getSamplePermission()
     getPermissionCost.mockReturnValueOnce(cost)
-    const { permissionIsFree } = await getData(getSampleRequest(permission))
+    const { permissionIsFree } = await getData(getSampleRequest({ permission }))
     expect(permissionIsFree).toBe(isFree)
+  })
+
+  it.each`
+    desc                             | payment
+    ${'permission and created_date'} | ${{ created_date: Symbol('created date') }}
+    ${'permission'}                  | ${undefined}
+  `('passes $desc to getPermissionCost function', async ({ desc, payment }) => {
+    const permission = getSamplePermission()
+    const result = payment?.created_date
+    await getData(getSampleRequest({ permission, payment }))
+    expect(getPermissionCost).toHaveBeenCalledWith(permission, result)
   })
 })

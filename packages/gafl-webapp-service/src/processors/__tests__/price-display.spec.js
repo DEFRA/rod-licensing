@@ -13,8 +13,15 @@ const getSampleLabels = ({ free = 'Free', pound = '£' } = {}) => ({
 describe('displayPermissionPrice', () => {
   it('passes permission to getPermissionCost', () => {
     const permission = Symbol('permission')
-    displayPermissionPrice(permission, getSampleLabels())
-    expect(getPermissionCost).toHaveBeenCalledWith(permission)
+    displayPermissionPrice(permission, getSampleLabels(), undefined)
+    expect(getPermissionCost).toHaveBeenCalledWith(permission, undefined)
+  })
+
+  it('passes createdDate to getPermissionCost', () => {
+    const permission = Symbol('permission')
+    const createdDate = Symbol('createdDate')
+    displayPermissionPrice(permission, getSampleLabels(), createdDate)
+    expect(getPermissionCost).toHaveBeenCalledWith(permission, createdDate)
   })
 
   it.each([

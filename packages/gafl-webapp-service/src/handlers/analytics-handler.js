@@ -6,10 +6,10 @@ import { ANALYTICS } from '../constants.js'
  * @returns {Promise}
  */
 
-export const checkAnalytics = async request => {
+export const trackAnalyticsAccepted = async (request, pageSkip) => {
   try {
     const analytics = await request.cache().helpers.analytics.get()
-    if (analytics && analytics[ANALYTICS.acceptTracking] === true) {
+    if (analytics[ANALYTICS.acceptTracking] === true && pageSkip !== true) {
       return true
     }
   } catch {}
@@ -17,6 +17,16 @@ export const checkAnalytics = async request => {
   return false
 }
 
+export const pageOmitted = async request => {
+  try {
+    const analytics = await request.cache().helpers.analytics.get()
+    if (analytics[ANALYTICS.omitPageFromAnalytics] === true) {
+      return true
+    }
+  } catch {}
+
+  return false
+}
 export const getAnalyticsSessionId = async request => {
   try {
     return request.cache().getId()
