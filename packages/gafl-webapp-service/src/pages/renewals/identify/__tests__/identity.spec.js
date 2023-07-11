@@ -22,9 +22,9 @@ import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import pageRoute from '../../../../routes/page-route.js'
-import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
+import { assignPermit } from '../../../../processors/assign-permit.js'
 
-jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+jest.mock('../../../../processors/assign-permit.js', () => ({
   assignPermit: jest.fn()
 }))
 

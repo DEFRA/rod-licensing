@@ -6,7 +6,8 @@ import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { licenceToStart } from '../licence-to-start/update-transaction.js'
-import { assignPermit } from '../../../processors/find-and-hash-permit.js'
+import { assignPermit } from '../../../processors/assign-permit.js'
+import { hashPermission } from '../../../processors/hash-permission.js'
 
 /**
  * If we have set the licence type to physical change the method of contact from 'none' to 'letter' and vice-versa
@@ -87,7 +88,10 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_LENGTH.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.licenceLength = payload['licence-length']
-  const permissionWithPermit = await assignPermit(permission, request)
+  console.log(payload)
+  console.log(permission)
+  const hashedPermission = await hashPermission(permission, request)
+  const permissionWithPermit = await assignPermit(hashedPermission, request)
   onLengthChange(permissionWithPermit)
   // Clear the licence fulfilment here otherwise it can end up being set incorrectly
   await request.cache().helpers.status.setCurrentPermission({ [LICENCE_FULFILMENT.page]: false })

@@ -1,5 +1,5 @@
 import { LICENCE_LENGTH, LICENCE_SUMMARY, LICENCE_START_TIME, LICENCE_TYPE, TEST_TRANSACTION, CONTACT } from '../../../../uri.js'
-import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
+import { assignPermit } from '../../../../processors/assign-permit.js'
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { HOW_CONTACTED } from '../../../../processors/mapping-constants.js'
 
@@ -8,7 +8,7 @@ beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 mockSalesApi()
-jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+jest.mock('../../../../processors/assign-permit.js', () => ({
   assignPermit: jest.fn()
 }))
 

@@ -16,10 +16,10 @@ import {
 import { licenceToStart } from '../../../licence-details/licence-to-start/update-transaction.js'
 import { licenseTypes } from '../../../licence-details/licence-type/route.js'
 import { disabilityConcessionTypes } from '../../../concessions/disability/update-transaction.js'
-import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
+import { assignPermit } from '../../../../processors/assign-permit.js'
 
 mockSalesApi()
-jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+jest.mock('../../../../processors/assign-permit.js', () => ({
   assignPermit: jest.fn()
 }))
 

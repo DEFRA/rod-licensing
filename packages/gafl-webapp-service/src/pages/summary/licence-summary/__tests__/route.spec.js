@@ -1,7 +1,8 @@
 import { getData } from '../route'
 import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
 import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION, NEW_PRICES } from '../../../../uri.js'
-import { assignPermit } from '../../../../processors/find-and-hash-permit.js'
+import { assignPermit } from '../../../../processors/assign-permit.js'
+import { hashPermission } from '../../../../processors/hash-permission.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import mappingConstants from '../../../../processors/mapping-constants.js'
@@ -40,11 +41,14 @@ jest.mock('../../../../processors/mapping-constants.js', () => ({
     none: 'Not Proof'
   }
 }))
-jest.mock('../../../../processors/find-and-hash-permit.js', () => ({
+jest.mock('../../../../processors/assign-permit.js', () => ({
   assignPermit: jest.fn((_permission, _request) => {})
 }))
 jest.mock('../../../../processors/price-display.js', () => ({
   displayPermissionPrice: jest.fn(() => '#6')
+}))
+jest.mock('../../../../processors/hash-permission.js', () => ({
+  hashPermission: jest.fn((_permission, _request) => {})
 }))
 
 const getMockRequest = ({
@@ -235,9 +239,18 @@ describe('licence-summary > route', () => {
       { desc: 'new', currentPermission: getMockNewPermission() }
     ])('calls assignPermit with permission and request where permission is a $desc permission', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
-      assignPermit.mockReturnValue(currentPermission)
+      hashPermission.mockReturnValueOnce(currentPermission)
       await getData(mockRequest)
       expect(assignPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
+    })
+
+    it.each([
+      { desc: 'renewal', currentPermission: getMockPermission() },
+      { desc: 'new', currentPermission: getMockNewPermission() }
+    ])('calls hashPermission with permission and request where permission is a $desc permission', async ({ currentPermission }) => {
+      const mockRequest = getMockRequest({ currentPermission })
+      await getData(mockRequest)
+      expect(hashPermission).toHaveBeenCalledWith(currentPermission, mockRequest)
     })
 
     it('transaction cache is updated with the permit when setting current permission', async () => {
