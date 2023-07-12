@@ -27,7 +27,7 @@ const mapRecords = records => {
             locality: record.locality,
             town: record.town,
             postcode: record.postcode,
-            country: record.country,
+            country: record.country.label,
             preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
             preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
