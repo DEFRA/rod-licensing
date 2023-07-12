@@ -3,7 +3,7 @@ import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical } from '../
 
 const getCatalog = () => ({
   over_66: ' (over_66)',
-  age_junior: 'Junior',
+  age_junior: 'Junior, ',
   licence_type_radio_salmon: 'Salmon and sea trout',
   licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
   licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
