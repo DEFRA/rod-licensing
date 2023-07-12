@@ -88,8 +88,6 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(LICENCE_LENGTH.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
   permission.licenceLength = payload['licence-length']
-  console.log(payload)
-  console.log(permission)
   const hashedPermission = await hashPermission(permission, request)
   const permissionWithPermit = await assignPermit(hashedPermission, request)
   onLengthChange(permissionWithPermit)

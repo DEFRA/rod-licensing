@@ -75,11 +75,11 @@ describe('licence-details > update-transaction', () => {
       })
     })
 
-    it('should set the transaction to update with the permit', async () => {
+    it('should set the transaction to update with the assignPermit return', async () => {
       const mockPermission = Symbol('permission')
-      hashPermission.mockReturnValue(mockPermission)
-      assignPermit.mockReturnValue(mockPermission)
       const permission = { licenceLength: '12M' }
+      hashPermission.mockReturnValue(permission)
+      assignPermit.mockReturnValue(mockPermission)
       const request = getMockRequest('12M', permission)
       await updateTransaction(request)
       expect(request.cache.mock.results[3].value.helpers.transaction.setCurrentPermission).toHaveBeenCalledWith(mockPermission)
