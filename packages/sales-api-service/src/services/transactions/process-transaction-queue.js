@@ -105,6 +105,7 @@ export async function processQueue ({ id }) {
   debug('Persisting %d entities for staging id %s', entities.length, id)
   const e = JSON.stringify(entities.map(entity => entity.toPersistRequest()), undefined, '\t')
   debug('entities:', e)
+  debug('createdBy %s', JSON.stringify(transactionRecord, undefined, '\t'))
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
   await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
