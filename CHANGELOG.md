@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.7 (2023-07-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1752](https://github.com/DEFRA/rod-licensing/pull/1752) Update English language version of accessibility statement ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.35.0-rc.6 (2023-07-12)
 
 #### :rocket: Enhancement
