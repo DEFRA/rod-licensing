@@ -151,15 +151,15 @@ const finaliseTransactions = async records => {
     debug('finalisation result %s', JSON.stringify(result, undefined, '\t'))
     if (result.status === 'fulfilled' || result.status.id === 'FINALISED') {
       succeeded.push({ record, result: result.value })
-    } else if (result.reason.status === 410) {
+    } else if (result?.reason?.status === 410) {
       /*
         HTTP-410 errors indicate that the record has already been finalised.  This can occur if the process is terminated while finalising records
         (between the API call and the database update.) As the transaction has already been finalised, treat these as successful.  The data for the
         previously finalised record is returned under the data key of the error structure returned by the Sales API
        */
-      succeeded.push({ record, result: result.reason.body.data })
+      succeeded.push({ record, result: result?.reason?.body?.data || '410: already finalised but unrecognised response' })
     } else {
-      failed.push({ record, result: result.reason })
+      failed.push({ record, result: result?.reason || 'unknown reason for failure' })
     }
   })
 
