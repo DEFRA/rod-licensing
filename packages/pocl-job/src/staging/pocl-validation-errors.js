@@ -135,6 +135,8 @@ const finaliseTransaction = async rec => {
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records
   // const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
+  debug('succeeded %s', JSON.stringify(created, undefined, '\t'))
+  debug('failed %s', JSON.stringify(failed, undefined, '\t'))
   const finalisationResults = []
   for (const c of created) {
     try {
@@ -149,7 +151,7 @@ const finaliseTransactions = async records => {
   created.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
     debug('finalisation result %s', JSON.stringify(result, undefined, '\t'))
-    if (result.status === 'fulfilled' || result.status.id === 'FINALISED') {
+    if (result?.status === 'fulfilled' || result?.status?.id === 'FINALISED') {
       succeeded.push({ record, result: result.value })
     } else if (result?.reason?.status === 410) {
       /*
