@@ -108,14 +108,16 @@ export async function processQueue ({ id }) {
   debug('createdBy %s', JSON.stringify(transactionRecord.createdBy, undefined, '\t'))
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
-  await docClient
+  const delRes = await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }).promise()
+  debug('Deleted record %s', JSON.stringify(delRes, undefined, '\t'))
+  const putRes = await docClient
     .put({
       TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
       Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
       ConditionExpression: 'attribute_not_exists(id)'
     })
     .promise()
+  debug('Put record in history table: %s', JSON.stringify(putRes, undefined, '\t'))
 }
 
 const mapToPermission = async (
