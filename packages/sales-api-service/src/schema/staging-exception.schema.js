@@ -126,13 +126,13 @@ export const updatePoclValidationErrorPayload = Joi.object({
     )
   },
   finaliseTransactionPayload: {
-    transactionFile: Joi.string().required(),
+    transactionFile: Joi.string().optional(),
     payment: {
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
       source: Joi.string().trim().required(),
       newPaymentSource: Joi.string().trim().required(),
-      channelId: Joi.string().trim().required().description('Channel specific identifier'),
+      channelId: Joi.string().trim().optional().description('Channel specific identifier'),
       method: Joi.string().trim().required()
     }
   },
