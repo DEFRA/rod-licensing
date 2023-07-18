@@ -165,19 +165,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:30",
+      "cost": "£30",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
     },
   },
 }
@@ -188,19 +188,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
     },
   },
 }
@@ -211,19 +211,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": "£:22",
+      "cost": "£22",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:8.60",
+      "cost": "£8.60",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:14",
+      "cost": "£14",
     },
   },
 }
@@ -234,19 +234,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:32",
+      "cost": "£32",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:8.60",
+      "cost": "£8.60",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:14",
+      "cost": "£14",
     },
   },
 }
@@ -257,41 +257,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:60",
+      "cost": "£60",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:14",
+      "cost": "£14",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:22",
+      "cost": "£22",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:8.60",
+      "cost": "£8.60",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:14",
+      "cost": "£14",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:32",
+      "cost": "£32",
       "length": "12M",
     },
     "msg": "no-short",
@@ -304,41 +304,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": false,
-      "cost": "£:85",
+      "cost": "£85",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:14",
+      "cost": "£14",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": "£:32",
+      "cost": "£32",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:8.60",
+      "cost": "£8.60",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:14",
+      "cost": "£14",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": "£:50.40",
+      "cost": "£50.40",
       "length": "12M",
     },
     "msg": "no-short",
@@ -351,41 +351,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": false,
-      "cost": "£:82",
+      "cost": "£82",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:27",
+      "cost": "£27",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": false,
-      "cost": "£:45",
+      "cost": "£45",
       "length": "12M",
     },
     "msg": "no-short",
@@ -398,41 +398,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:54",
+      "cost": "£54",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:27",
+      "cost": "£27",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "12M",
     },
     "msg": "no-short",
@@ -445,19 +445,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
     },
   },
 }
@@ -468,19 +468,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
     },
   },
 }
@@ -491,19 +491,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
     },
   },
 }
@@ -514,19 +514,19 @@ Object {
   "12M": Object {
     "total": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
     },
   },
   "1D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
     },
   },
   "8D": Object {
     "total": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
     },
   },
 }
@@ -537,41 +537,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:54",
+      "cost": "£54",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:27",
+      "cost": "£27",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "12M",
     },
     "msg": "no-short",
@@ -584,41 +584,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:54",
+      "cost": "£54",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:27",
+      "cost": "£27",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "12M",
     },
     "msg": "no-short",
@@ -631,41 +631,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:54",
+      "cost": "£54",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:27",
+      "cost": "£27",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "12M",
     },
     "msg": "no-short",
@@ -678,41 +678,41 @@ Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:54",
+      "cost": "£54",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:27",
+      "cost": "£27",
       "length": "8D",
     },
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:20",
+      "cost": "£20",
       "length": "12M",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "£:6",
+      "cost": "£6",
       "length": "1D",
     },
     "8D": Object {
       "concessions": false,
-      "cost": "£:12",
+      "cost": "£12",
       "length": "8D",
     },
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "£:30",
+      "cost": "£30",
       "length": "12M",
     },
     "msg": "no-short",

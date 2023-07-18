@@ -42,7 +42,7 @@ describe('licence-type > route', () => {
       expect(result.hasJunior).toEqual(junior)
     })
 
-    it('output of pricingDetail is used for pricing', async () => {
+    it('return value of pricingDetail is used for pricing', async () => {
       const pricing = Symbol('mock pricing')
       pricingDetail.mockReturnValue(pricing)
       const mockRequest = createMockRequest()
