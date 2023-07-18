@@ -35,6 +35,7 @@ const byConcessions = concessions => p =>
  * The pages needs to know the prices, if a concession has been applied and if the product is available at all.
  * This is true independent of the filtering context
  * @param permitWithConcessions
+ * @param permitWithOutConcessions
  * @param length
  * @param permission
  * @param label
