@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`licence-type > route getData getData returns expected output 1`] = `
+Object {
+  "hasJunior": true,
+  "isLicenceForYou": undefined,
+  "licenseTypes": Object {
+    "salmonAndSeaTrout": "salmon-and-sea-trout",
+    "troutAndCoarse2Rod": "trout-and-coarse-2-rod",
+    "troutAndCoarse3Rod": "trout-and-coarse-3-rod",
+  },
+  "permission": Symbol(mock permission),
+  "pricing": "test",
+  "uri": Object {
+    "freshWaterFishingRules": "https://www.gov.uk/freshwater-rod-fishing-rules",
+    "localByelaws": "https://www.gov.uk/government/collections/local-fishing-byelaws",
+  },
+}
+`;

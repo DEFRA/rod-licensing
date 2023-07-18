@@ -19,7 +19,7 @@ export const validator = Joi.object({
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const pricing = await pricingDetail(LICENCE_TYPE.page, permission)
+  const pricing = await pricingDetail(LICENCE_TYPE.page, permission, request.i18n.getCatalog())
 
   return {
     licenseTypes,
