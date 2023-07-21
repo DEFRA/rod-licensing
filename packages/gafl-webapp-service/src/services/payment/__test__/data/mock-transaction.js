@@ -2,6 +2,7 @@ export default {
   payment: {},
   permissions: [
     {
+      isLicenceForYou: true,
       licensee: {
         birthDate: '1910-01-01',
         firstName: 'Graham',
