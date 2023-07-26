@@ -48,7 +48,7 @@ const mapRecords = records => {
         amount: record.amount,
         source: record.paymentSource,
         newPaymentSource: record.paymentSource,
-        channelId: record.channelId,
+        channelId: record.channelId || 'N/A',
         method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
       }
     }
