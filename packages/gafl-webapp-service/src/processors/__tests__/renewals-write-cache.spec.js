@@ -57,6 +57,11 @@ describe('renewals-write-cache', () => {
             label: 'Text',
             description: 'Text'
           },
+          shortTermPreferredMethodOfConfirmation: {
+            id: 910400002,
+            label: 'Text',
+            description: 'Text'
+          },
           street: 'Blackthorn Mews',
           town: 'Chippenham'
         },
@@ -198,6 +203,17 @@ describe('renewals-write-cache', () => {
             preferredMethodOfNewsletter: 'Email',
             preferredMethodOfConfirmation: 'Text',
             preferredMethodOfReminder: 'Text'
+          })
+        })
+      )
+    })
+
+    it('should not assign shortTermPreferredMethodOfConfirmation to the licensee', async () => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+        expect.objectContaining({
+          licensee: expect.not.objectContaining({
+            shortTermPreferredMethodOfConfirmation: expect.any(Object)
           })
         })
       )
