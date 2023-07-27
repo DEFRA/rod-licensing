@@ -11,8 +11,6 @@ import {
   getPoclValidationErrors,
   updatePoclValidationError
 } from '../../services/exceptions/pocl-validation-errors.service.js'
-import db from 'debug'
-const debug = db('sales:staging-exceptions')
 
 const SWAGGER_TAGS = ['api', 'staging-exceptions']
 
@@ -35,8 +33,7 @@ export default [
         if (transactionFileException) {
           response.transactionFileException = await createTransactionFileException(transactionFileException)
           if (isDataValidationError(request.payload)) {
-            const foo = await createPoclValidationError(request.payload.record, transactionFileException.transactionFile)
-            debug(foo)
+            await createPoclValidationError(request.payload.record, transactionFileException.transactionFile)
           }
         }
         return h.response(response).code(200)

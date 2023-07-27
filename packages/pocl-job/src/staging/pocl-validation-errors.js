@@ -79,16 +79,12 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
 }
 
 const formatDateToShortenedISO = (date, field) => {
-  debug('Processing date field ' + field + date)
   const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
 
   if (date.match(manuallyEnteredDateFormat)) {
-    const formattedDate = moment(date, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
-    debug('Date ' + field + ' reformatted to ' + formattedDate)
-    return formattedDate
-  } else {
-    return date
+    return moment(date, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
   }
+  return date
 }
 
 /**
@@ -132,26 +128,18 @@ const finaliseTransaction = async rec => {
   return salesApi.finaliseTransaction(rec.result.response.id, finaliseTransactionPayload)
 }
 
+const isFulfilled = result => {
+  return (result?.status === 'fulfilled' || result?.status?.id === 'FINALISED') === true
+}
+
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records
-  // const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
-  debug('succeeded %s', JSON.stringify(created, undefined, '\t'))
-  debug('failed %s', JSON.stringify(failed, undefined, '\t'))
-  const finalisationResults = []
-  for (const c of created) {
-    try {
-      finalisationResults.push(await finaliseTransaction(c))
-    } catch (e) {
-      console.log('Error finalising transaction: ', e)
-      throw e
-    }
-  }
+  const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
 
   const succeeded = []
   created.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
-    debug('finalisation result %s', JSON.stringify(result, undefined, '\t'))
-    if (result?.status === 'fulfilled' || result?.status?.id === 'FINALISED') {
+    if (isFulfilled(result)) {
       succeeded.push({ record, result: result.value })
     } else if (result?.reason?.status === 410) {
       /*
@@ -159,9 +147,9 @@ const finaliseTransactions = async records => {
         (between the API call and the database update.) As the transaction has already been finalised, treat these as successful.  The data for the
         previously finalised record is returned under the data key of the error structure returned by the Sales API
        */
-      succeeded.push({ record, result: result?.reason?.body?.data || '410: already finalised but unrecognised response' })
+      succeeded.push({ record, result: result?.reason?.body?.data })
     } else {
-      failed.push({ record, result: result?.reason || 'unknown reason for failure' })
+      failed.push({ record, result: result?.reason })
     }
   })
 

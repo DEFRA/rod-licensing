@@ -178,7 +178,6 @@ export class BaseEntity {
     ) {
       throw new Error('Value is not a valid GlobalOptionSetDefinition')
     }
-    console.log('Setting property %s to %s', property, value)
     this._localState[property] = value
   }
 

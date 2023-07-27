@@ -3,8 +3,6 @@ import { isJunior, isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rul
 import { getGlobalOptionSetValue, getReferenceDataForEntityAndId } from './reference-data.service.js'
 import { redis } from './ioredis.service.js'
 import moment from 'moment-timezone'
-import db from 'debug'
-const debug = db('sales:permissions-service')
 
 const DICTIONARIES = [
   'ABCDEFGHJKLMNPQRSTUVWXYZ1234567890',
@@ -30,9 +28,7 @@ export const generatePermissionNumber = async (
   { permitId, issueDate, startDate, licensee: { firstName, lastName, birthDate } },
   dataSource
 ) => {
-  debug('get permit entity ref and id', permitId)
   const permit = await getReferenceDataForEntityAndId(Permit, permitId)
-  debug('got permit entity ref and id', permit)
 
   const endDate = await calculateEndDateMoment({ permitId, startDate })
   const endTime =
