@@ -15,6 +15,7 @@ export class PoclValidationError extends BaseEntity {
       firstName: { field: 'defra_firstname', type: 'string' },
       lastName: { field: 'defra_name', type: 'string' },
       birthDate: { field: 'defra_birthdate', type: 'string' },
+      countryUV: { field: 'defra_country', type: 'string' },
       country: { field: 'defra_countrylist', type: 'optionset', ref: 'defra_country' },
       postcode: { field: 'defra_postcode', type: 'string' },
       town: { field: 'defra_town', type: 'string' },
@@ -33,8 +34,8 @@ export class PoclValidationError extends BaseEntity {
       },
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
       concessions: { field: 'defra_concessions', type: 'string' },
-      startDate: { field: 'defra_startdate', type: 'string' },
-      newStartDate: { field: 'defra_newstartdate', type: 'string' },
+      startDateUV: { field: 'defra_startdate', type: 'string' },
+      startDate: { field: 'defra_newstartdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
       transactionDate: { field: 'defra_transactiondate', type: 'string' },
@@ -99,6 +100,14 @@ export class PoclValidationError extends BaseEntity {
    * The country in the licensee address associated with this pocl record
    * @type {string}
    */
+  get countryUV () {
+    return super._getState('countryUV')
+  }
+
+  set countryUV (countryUV) {
+    super._setState('countryUV', countryUV)
+  }
+
   get country () {
     return super._getState('country')
   }
@@ -267,24 +276,24 @@ export class PoclValidationError extends BaseEntity {
    * The licence start date associated with this pocl record
    * @type {string}
    */
-  get startDate () {
-    return super._getState('startDate')
+  get startDateUV () {
+    return super._getState('startDateUV')
   }
 
-  set startDate (startDate) {
-    super._setState('startDate', startDate)
+  set startDateUV (startDateUV) {
+    super._setState('startDateUV', startDateUV)
   }
 
   /**
    * The licence new start date associated with this pocl record
    * @type {string}
    */
-  get newStartDate () {
-    return super._getState('newStartDate')
+  get startDate () {
+    return super._getState('startDate')
   }
 
-  set newStartDate (newStartDate) {
-    super._setState('newStartDate', newStartDate)
+  set startDate (startDate) {
+    super._setState('startDate', startDate)
   }
 
   /**

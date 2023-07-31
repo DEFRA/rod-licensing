@@ -11,6 +11,7 @@ Object {
     "id": 910400195,
     "label": "England",
   },
+  "countryUV": "GB-ENG",
   "dataSource": Object {
     "description": "Post Office Sales",
     "id": 910400000,
@@ -33,7 +34,6 @@ Object {
     "id": 910400003,
     "label": "Worldpay",
   },
-  "newStartDate": "2021-06-15",
   "organisation": "Fishy Endeavours",
   "paymentSource": "Post Office Sales",
   "permitId": "test-permit-id",
@@ -57,6 +57,7 @@ Object {
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
+  "startDateUV": "2021-06-15",
   "stateCode": 1,
   "status": Object {
     "description": "Needs Review",
@@ -76,6 +77,7 @@ Object {
   "defra_birthdate": "1989-07-01",
   "defra_channelid": "948594",
   "defra_concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":123456789}]",
+  "defra_country": "GB-ENG",
   "defra_countrylist": 910400195,
   "defra_datasource": 910400000,
   "defra_emailaddress": "daniel-ricc@example.couk",
