@@ -38,7 +38,7 @@
     "aws-sdk": "^2.1074.0",
     "debug": "^4.3.3",
     "ioredis": "^4.28.5",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.3.2",
     "redlock": "^4.2.0"
   }
 }
