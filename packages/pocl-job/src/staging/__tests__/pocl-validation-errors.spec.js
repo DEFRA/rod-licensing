@@ -4,13 +4,13 @@ import { salesApi } from '@defra-fish/connectors-lib'
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     getPoclValidationErrorsForProcessing: jest.fn(),
-    createTransactions: jest.fn(),
+    createTransactions: jest.fn(() => [{ statusCode: 201, response: { id: 'test-response-id' } }]),
     finaliseTransaction: jest.fn(),
     updatePoclValidationError: jest.fn()
   }
 }))
 
-const getPoclValidationError = () => ({
+const getPoclValidationError = overrides => ({
   id: 'test-pocl-validation-error-id',
   dataSource: { label: 'Post Office Sales' },
   serialNumber: '12345-ABCDE',
@@ -40,7 +40,8 @@ const getPoclValidationError = () => ({
   channelId: '948594',
   methodOfPayment: { label: 'Cash' },
   status: { label: 'Ready for Processing' },
-  transactionFile: 'test-pocl-file.xml'
+  transactionFile: 'test-pocl-file.xml',
+  ...overrides
 })
 
 const getFinalisationError = (status, error) => ({
@@ -61,46 +62,78 @@ describe('pocl-validation-errors', () => {
   })
 
   describe('when no validation errors are returned from Sales Api', () => {
-    let result
-    beforeEach(async () => {
+    beforeAll(() => {
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue(null)
-      result = await processPoclValidationErrors()
     })
 
-    it('returns undefined', () => {
-      expect(result).toBe(undefined)
+    it('returns undefined', async () => {
+      const result = await processPoclValidationErrors()
+      expect(result).toBeUndefined()
     })
 
-    it('does not attempt to create transactions', () => {
+    it('does not attempt to create transactions', async () => {
+      await processPoclValidationErrors()
       expect(salesApi.createTransactions).not.toBeCalled()
     })
 
-    it('does not finalise transactions which have failed', () => {
+    it('does not finalise transactions which have failed', async () => {
+      await processPoclValidationErrors()
       expect(salesApi.finaliseTransaction).not.toBeCalled()
     })
   })
 
   describe('processes successfully fixed validation errors', () => {
-    let poclValidationError
-    beforeEach(async () => {
-      poclValidationError = getPoclValidationError()
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+    beforeAll(() => {
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([getPoclValidationError()])
+    })
+
+    it('creates transaction in the Sales Api', async () => {
       await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload).toMatchSnapshot()
     })
 
-    it('creates transaction in the Sales Api', () => {
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError).toMatchSnapshot()
+    it('uses startDate if this is provided', async () => {
+      const startDate = '2023-07-15'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ startDate })])
+      await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.permissions[0].startDate).toBe(startDate)
     })
 
-    it('finalises the transaction in the Sales Api', () => {
-      const record = salesApi.finaliseTransaction.mock.calls[0]
+    it("uses startDateUV if startDate isn't provided", async () => {
+      const startDateUV = '2023-07-15'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ startDateUV, startDate: undefined })])
+      await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.permissions[0].startDate).toBe(startDateUV)
+    })
+
+    it('uses country if this is provided', async () => {
+      const country = 'GB-ENG'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ country })])
+      await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.permissions[0].licensee.country).toBe(country)
+    })
+
+    it("uses countryUV if country isn't provided", async () => {
+      const countryUV = 'GB-ENG'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ countryUV, country: undefined })])
+      await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.permissions[0].licensee.country).toBe(countryUV)
+    })
+
+    it('finalises the transaction in the Sales Api', async () => {
+      await processPoclValidationErrors()
+      const [record] = salesApi.finaliseTransaction.mock.calls
       expect(record).toMatchSnapshot()
     })
 
-    it('updates POCL validation error record in the Sales Api', () => {
-      const record = salesApi.updatePoclValidationError.mock.calls[0]
+    it('updates POCL validation error record in the Sales Api', async () => {
+      await processPoclValidationErrors()
+      const [record] = salesApi.updatePoclValidationError.mock.calls
       expect(record).toMatchSnapshot()
     })
 
@@ -108,183 +141,156 @@ describe('pocl-validation-errors', () => {
       salesApi.finaliseTransaction.mockRejectedValueOnce(getFinalisationError(410, 'Gone'))
       await processPoclValidationErrors()
 
-      const record = salesApi.updatePoclValidationError.mock.calls[0]
+      const [record] = salesApi.updatePoclValidationError.mock.calls
       expect(record).toMatchSnapshot()
     })
   })
 
   describe('processes failed fixes of validation errors', () => {
-    let poclValidationError
-    beforeEach(async () => {
-      poclValidationError = getPoclValidationError()
-      poclValidationError.email = 'daniel-ricc@example.couk'
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 422, message: '"permissions[0].licensee.email" must be a valid email' }])
+    beforeEach(() => {
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ email: 'daniel-ricc@example.couk' })])
+      salesApi.createTransactions.mockResolvedValueOnce([
+        { statusCode: 422, message: '"permissions[0].licensee.email" must be a valid email' }
+      ])
+    })
+
+    it('creates transaction in the Sales Api', async () => {
       await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload).toMatchSnapshot()
     })
 
-    it('creates transaction in the Sales Api', () => {
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError).toMatchSnapshot()
-    })
-
-    it('does not finalise transactions which have failed', () => {
+    it('does not finalise transactions which have failed', async () => {
+      await processPoclValidationErrors()
       expect(salesApi.finaliseTransaction).not.toBeCalled()
     })
 
-    it('updates POCL validation error record in the Sales Api', () => {
-      const record = salesApi.updatePoclValidationError.mock.calls[0]
+    it('updates POCL validation error record in the Sales Api', async () => {
+      await processPoclValidationErrors()
+      const [record] = salesApi.updatePoclValidationError.mock.calls
       expect(record).toMatchSnapshot()
     })
   })
 
   describe('processes records which failed during finalising', () => {
-    let poclValidationError
-    beforeEach(async () => {
-      poclValidationError = getPoclValidationError()
-      poclValidationError.email = 'daniel-ricc@example.couk'
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+    beforeAll(() => {
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([getPoclValidationError({ email: 'daniel-ricc@example.couk' })])
+    })
+
+    it('creates transaction in the Sales Api', async () => {
       salesApi.finaliseTransaction.mockRejectedValueOnce(getFinalisationError(500, 'Internal server error'))
       await processPoclValidationErrors()
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload).toMatchSnapshot()
     })
 
-    it('creates transaction in the Sales Api', () => {
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError).toMatchSnapshot()
-    })
-
-    it('attempts to finalise transaction in the Sales Api', () => {
-      const record = salesApi.finaliseTransaction.mock.calls[0]
+    it('attempts to finalise transaction in the Sales Api', async () => {
+      salesApi.finaliseTransaction.mockRejectedValueOnce(getFinalisationError(500, 'Internal server error'))
+      await processPoclValidationErrors()
+      const [record] = salesApi.finaliseTransaction.mock.calls
       expect(record).toMatchSnapshot()
     })
 
-    it('updates POCL validation error record in the Sales Api', () => {
-      const record = salesApi.updatePoclValidationError.mock.calls[0]
+    it('updates POCL validation error record in the Sales Api', async () => {
+      salesApi.finaliseTransaction.mockRejectedValueOnce(getFinalisationError(500, 'Internal server error'))
+      await processPoclValidationErrors()
+      const [record] = salesApi.updatePoclValidationError.mock.calls
       expect(record).toMatchSnapshot()
     })
   })
 
   describe('when an existing POCL validation error has no datasource', () => {
     it('fills it with the correct data for postal orders', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.dataSource = null
-      poclValidationError.newPaymentSource = { label: 'Postal Order' }
-
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: { label: 'Postal Order' } })
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError.dataSource).toBe('Postal Order Sales')
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.dataSource).toBe('Postal Order Sales')
     })
 
     it('leaves the datatype blank if payment source is not postal order', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.dataSource = null
-      poclValidationError.newPaymentSource = { label: 'Magic Beans' }
-
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: { label: 'Magic beans' } })
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError.dataSource).toBe(undefined)
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.dataSource).toBeUndefined()
     })
 
     it('leaves the datatype blank if payment source is not set', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.dataSource = null
-      poclValidationError.newPaymentSource = null
-
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+      const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: null })
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError.dataSource).toBe(undefined)
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.dataSource).toBeUndefined()
     })
   })
 
   describe('when an existing POCL validation error has no serial number', () => {
     it('fills it with the correct data for postal orders', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.serialNumber = null
-      poclValidationError.newPaymentSource = { label: 'Postal Order' }
+      const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: { label: 'Postal Order' } })
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
 
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError.serialNumber).toBe('Postal Order Sales')
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.serialNumber).toBe('Postal Order Sales')
     })
 
     it('leaves the datatype blank if payment source is not postal order', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.serialNumber = null
-      poclValidationError.newPaymentSource = { label: 'Magic Beans' }
+      const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: { label: 'Magic Beans' } })
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
 
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError.serialNumber).toBe(undefined)
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.serialNumber).toBeUndefined()
     })
 
     it('leaves the datatype blank if payment source is not set', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.serialNumber = null
-      poclValidationError.newPaymentSource = null
-
+      const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      expect(validationError.serialNumber).toBe(undefined)
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
+      expect(createTransactionPayload.serialNumber).toBeUndefined()
     })
   })
 
   describe('when an existing POCL validation error has no method of payment', () => {
     it('fills it with the correct data for postal orders', async () => {
-      const poclValidationError = getPoclValidationError()
+      const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: { label: 'Postal Order' } })
       poclValidationError.methodOfPayment = null
       poclValidationError.newPaymentSource = { label: 'Postal Order' }
-
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+
       await processPoclValidationErrors()
 
-      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
-      expect(validationError.payment.method).toBe('Other')
+      const finaliseTransactionPayload = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransactionPayload.payment.method).toBe('Other')
     })
 
     it('leaves the payment method blank if payment source is not postal order', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.methodOfPayment = null
-      poclValidationError.newPaymentSource = { label: 'Magic Beans' }
-
+      const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: { label: 'Magic Beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+
       await processPoclValidationErrors()
 
-      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
-      expect(validationError.payment.method).toBe(undefined)
+      const finaliseTransactionPayload = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransactionPayload.payment.method).toBeUndefined()
     })
 
     it('leaves the payment method blank if payment source is not set', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.methodOfPayment = null
-      poclValidationError.newPaymentSource = null
-
+      const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
+
       await processPoclValidationErrors()
 
-      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
-      expect(validationError.payment.method).toBe(undefined)
+      const finaliseTransactionPayload = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransactionPayload.payment.method).toBeUndefined()
     })
   })
 
@@ -297,9 +303,9 @@ describe('pocl-validation-errors', () => {
       salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
       const expectedDate = '2023-01-01T00:00:00Z'
-      expect(validationError.permissions[0].issueDate).toEqual(expectedDate)
+      expect(createTransactionPayload.permissions[0].issueDate).toBe(expectedDate)
     })
 
     it('converts the startDate to ISO format without milliseconds', async () => {
@@ -312,10 +318,10 @@ describe('pocl-validation-errors', () => {
 
       const validationError = salesApi.createTransactions.mock.calls[0][0][0]
       const expectedDate = '2023-01-01T00:00:00Z'
-      expect(validationError.permissions[0].startDate).toEqual(expectedDate)
+      expect(validationError.permissions[0].startDate).toBe(expectedDate)
     })
 
-    it('converts the newStartDate to ISO format without milliseconds', async () => {
+    it('converts the startDate to ISO format without milliseconds', async () => {
       const poclValidationError = getPoclValidationError()
       poclValidationError.startDate = '01/01/2023'
 
@@ -323,9 +329,9 @@ describe('pocl-validation-errors', () => {
       salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
+      const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
       const expectedDate = '2023-01-01T00:00:00Z'
-      expect(validationError.permissions[0].newStartDate).toEqual(expectedDate)
+      expect(createTransactionPayload.permissions[0].startDate).toBe(expectedDate)
     })
 
     it('converts the payment timestamp to ISO format without milliseconds', async () => {
@@ -336,9 +342,9 @@ describe('pocl-validation-errors', () => {
       salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
       await processPoclValidationErrors()
 
-      const validationError = salesApi.finaliseTransaction.mock.calls[0][1]
+      const finaliseTransactionPayload = salesApi.finaliseTransaction.mock.calls[0][1]
       const expectedDate = '2023-01-01T00:00:00Z'
-      expect(validationError.payment.timestamp).toEqual(expectedDate)
+      expect(finaliseTransactionPayload.payment.timestamp).toBe(expectedDate)
     })
   })
 })

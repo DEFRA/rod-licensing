@@ -4,11 +4,8 @@ import moment from 'moment'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
-const mapRecords = records => {
-  records.forEach((r, idx) => {
-    console.log(`record ${idx + 1}`, JSON.stringify(r, undefined, '\t'))
-  })
-  return records.map(record => ({
+const mapRecords = records =>
+  records.map(record => ({
     poclValidationErrorId: record.id,
     createTransactionPayload: {
       dataSource: backfillDataSource(record),
@@ -27,15 +24,14 @@ const mapRecords = records => {
             locality: record.locality,
             town: record.town,
             postcode: record.postcode,
-            country: record.country,
+            country: record.country || record.countryUV,
             preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
             preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
           issueDate: formatDateToShortenedISO(record.transactionDate, 'issueDate'),
-          startDate: formatDateToShortenedISO(record.startDate, 'startDate'),
-          // newStartDate: formatDateToShortenedISO(record.startDate, 'newStartDate'),
+          startDate: formatDateToShortenedISO(record.startDate || record.startDateUV, 'startDate'),
           permitId: record.permitId.replace(/(^\{|\}$)/g, '').toLowerCase(),
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
@@ -53,7 +49,7 @@ const mapRecords = records => {
       }
     }
   }))
-}
+
 const backfillDataSource = record => {
   if (record.dataSource) {
     return record.dataSource.label
