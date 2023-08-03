@@ -37,7 +37,6 @@ const getPayload = () => ({
         },
         permitId: 'test-permit-id',
         startDate: '2021-06-15',
-        newStartDate: '2021-06-15',
         concessions: [{ type: 'Blue Badge', referenceNumber: '123456789' }]
       }
     ]
@@ -79,99 +78,159 @@ const getValidationError = payload => ({
   errorMessage: payload.errorMessage
 })
 
+jest.mock('../../reference-data.service.js', () => ({
+  getGlobalOptionSetValue: async (name, lookup) => {
+    const optionSets = {
+      defra_poclvalidationerrorstatus: [
+        { id: 910400000, label: 'Needs Review', description: 'Needs Review' },
+        { id: 910400002, label: 'Processed', description: 'Processed' },
+        { id: 910400001, label: 'Ready for Processing', description: 'Ready for Processing' }
+      ],
+      defra_paymenttype: [{ id: 910400001, label: 'Cash', description: 'Cash' }],
+      defra_datasource: [{ id: 910400005, label: 'DDE File', description: 'DDE File' }],
+      defra_preferredcontactmethod: [
+        { id: 910400000, label: 'Email', description: 'Email' },
+        { id: 910400003, label: 'Prefer not to be contacted', description: 'Prefer not to be contacted' },
+        { id: 910400002, label: 'Text', description: 'Text' }
+      ],
+      defra_financialtransactionsource: [{ id: 910400002, label: 'Direct Debit', description: 'Direct Debit' }],
+      defra_country: [{ id: 910400195, label: 'England', description: 'GB-ENG' }]
+    }
+    const optionSet = optionSets[name].find(os => os.description === lookup)
+    if (optionSet) {
+      return optionSet
+    }
+    throw new Error(`Optionset ${name}:${lookup} not found, should be defined in optionSets data for reference data mock`)
+  }
+}))
+
 describe('POCL validation error service', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('createPoclValidationError', () => {
-    let payload
-    beforeEach(async () => {
-      payload = getPayload()
+    const getPayloadWithoutTransactionFile = () => {
+      const payload = getPayload()
       delete payload.finaliseTransactionPayload.transactionFile
-      await createPoclValidationError(payload, 'test-pocl-file.xml')
-    })
+      return payload
+    }
 
     it('maps the record to an instance of PoclValidationError', async () => {
+      await createPoclValidationError(getPayloadWithoutTransactionFile(), 'test-pocl-file.xml')
       const [[[poclValidationError]]] = persist.mock.calls
       expect(poclValidationError).toBeInstanceOf(PoclValidationError)
     })
 
     it('creates the validation record', async () => {
+      await createPoclValidationError(getPayloadWithoutTransactionFile(), 'test-pocl-file.xml')
       const [[[poclValidationError]]] = persist.mock.calls
       expect(poclValidationError).toMatchSnapshot()
     })
+
+    // it('maps an invalid country to countryUV', async () => {
+    //   const [[[poclValidationError]]] = persist.mock.calls
+    //   expect(poclValidationError)
+    // })
   })
 
   describe('updatePoclValidationError', () => {
-    let payload
-    beforeEach(async () => {
-      payload = getPayload()
+    const getPayloadWithoutCreateTransactionError = () => {
+      const payload = getPayload()
       delete payload.createTransactionError
       payload.errorMessage = 'Invalid email address'
-    })
+      return payload
+    }
+    // let payload
+    // beforeEach(async () => {
+    //   payload = getPayload()
+    //   delete payload.createTransactionError
+    //   payload.errorMessage = 'Invalid email address'
+    // })
 
     describe('when validation error record exists', () => {
-      let poclValidationError
-      beforeEach(async () => {
+      it('retrieves existing record', async () => {
+        const payload = getPayloadWithoutCreateTransactionError()
         findById.mockResolvedValue(getValidationError(payload))
         await updatePoclValidationError('pocl-validation-error-id', payload)
-        poclValidationError = persist.mock.calls[0][0][0]
-      })
-
-      it('retrieves existing record', async () => {
         expect(findById).toBeCalledWith(PoclValidationError, 'pocl-validation-error-id')
       })
 
       describe('and status is not provided', () => {
         it('sets the status to "Needs Review"', async () => {
+          const payload = getPayloadWithoutCreateTransactionError()
+          findById.mockResolvedValue(getValidationError(payload))
+
+          await updatePoclValidationError('pocl-validation-error-id', payload)
+
+          const [[[poclValidationError]]] = persist.mock.calls
           expect(poclValidationError.status.label).toBe('Needs Review')
         })
 
         it('the state code is not set', async () => {
+          const payload = getPayloadWithoutCreateTransactionError()
+          findById.mockResolvedValue(getValidationError(payload))
+
+          await updatePoclValidationError('pocl-validation-error-id', payload)
+
+          const [[[poclValidationError]]] = persist.mock.calls
           expect(poclValidationError.stateCode).toBe(undefined)
         })
 
         it('updates the validation record', async () => {
+          const payload = getPayloadWithoutCreateTransactionError()
+          findById.mockResolvedValue(getValidationError(payload))
+
+          await updatePoclValidationError('pocl-validation-error-id', payload)
+
+          const [[[poclValidationError]]] = persist.mock.calls
           expect(poclValidationError).toMatchSnapshot()
         })
       })
 
       describe('and status equals "Processed"', () => {
-        beforeEach(async () => {
+        const getProcessedPayload = () => {
+          const payload = getPayloadWithoutCreateTransactionError()
           payload.status = 'Processed'
+          return payload
+        }
+
+        const updateAndRetrieveError = async () => {
+          const payload = getProcessedPayload()
           await updatePoclValidationError('pocl-validation-error-id', payload)
-        })
+          const [[[poclValidationError]]] = persist.mock.calls
+          return poclValidationError
+        }
 
         it('the status is set to "Processed"', async () => {
-          const [[[poclValidationError]]] = persist.mock.calls
+          const poclValidationError = await updateAndRetrieveError()
           expect(poclValidationError.status.label).toBe('Processed')
         })
 
         it('the state code is set to 1', async () => {
-          const [[[poclValidationError]]] = persist.mock.calls
+          const poclValidationError = await updateAndRetrieveError()
           expect(poclValidationError.stateCode).toBe(1)
         })
 
         it('updates the validation record', async () => {
-          const [[[poclValidationError]]] = persist.mock.calls
+          const poclValidationError = await updateAndRetrieveError()
           expect(poclValidationError).toMatchSnapshot()
         })
       })
     })
 
     describe('when the validation error record does not exist', () => {
-      beforeEach(async () => {
+      beforeAll(async () => {
         findById.mockResolvedValue(null)
       })
 
       it('throws a 404 error', async () => {
-        await expect(updatePoclValidationError('pocl-validation-error-id', payload)).rejects.toEqual(
+        await expect(updatePoclValidationError('pocl-validation-error-id', getPayloadWithoutCreateTransactionError())).rejects.toEqual(
           Boom.notFound('A POCL validation error with the given identifier could not be found')
         )
       })
 
       it('does not call persist to update record', async () => {
         try {
-          await updatePoclValidationError('pocl-validation-error-id', payload)
+          await updatePoclValidationError('pocl-validation-error-id', getPayloadWithoutCreateTransactionError())
         } catch (err) {}
         expect(persist).not.toBeCalled()
       })
@@ -179,9 +238,7 @@ describe('POCL validation error service', () => {
   })
 
   describe('getPoclValidationErrors', () => {
-    let status, result
-    beforeEach(async () => {
-      status = await await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Ready for Processing')
+    beforeAll(async () => {
       findPoclValidationErrors.mockReturnValue({ foo: 'bar' })
       executeQuery.mockResolvedValue([
         {
@@ -193,18 +250,21 @@ describe('POCL validation error service', () => {
           entity: { another: 'result' }
         }
       ])
-      result = await getPoclValidationErrors()
     })
 
     it('passes the "Ready for Processing" status to the findPoclValidationErrors query', async () => {
+      const status = await getGlobalOptionSetValue(PoclValidationError.definition.mappings.status.ref, 'Ready for Processing')
+      await getPoclValidationErrors()
       expect(findPoclValidationErrors).toHaveBeenCalledWith(status)
     })
 
     it('executes the output of the Pocl query', async () => {
+      await getPoclValidationErrors()
       expect(executeQuery).toHaveBeenCalledWith({ foo: 'bar' })
     })
 
     it('returns the entities retrieved from Dynamics', async () => {
+      const result = await getPoclValidationErrors()
       expect(result).toMatchSnapshot()
     })
   })
