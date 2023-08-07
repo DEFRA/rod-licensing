@@ -82,19 +82,19 @@ jest.mock('../../reference-data.service.js', () => ({
   getGlobalOptionSetValue: async (name, lookup) => {
     const optionSets = {
       defra_poclvalidationerrorstatus: [
-        { id: 910400000, label: 'Needs Review', description: 'Needs Review' },
-        { id: 910400002, label: 'Processed', description: 'Processed' },
-        { id: 910400001, label: 'Ready for Processing', description: 'Ready for Processing' }
+        { id: 1000, label: 'needs_review', description: 'Needs Review' },
+        { id: 1001, label: 'processed', description: 'Processed' },
+        { id: 1002, label: 'ready_for_processing', description: 'Ready for Processing' }
       ],
-      defra_paymenttype: [{ id: 910400001, label: 'Cash', description: 'Cash' }],
-      defra_datasource: [{ id: 910400005, label: 'DDE File', description: 'DDE File' }],
+      defra_paymenttype: [{ id: 1010, label: 'cash', description: 'Cash' }],
+      defra_datasource: [{ id: 1020, label: 'dde_file', description: 'DDE File' }],
       defra_preferredcontactmethod: [
-        { id: 910400000, label: 'Email', description: 'Email' },
-        { id: 910400003, label: 'Prefer not to be contacted', description: 'Prefer not to be contacted' },
-        { id: 910400002, label: 'Text', description: 'Text' }
+        { id: 1030, label: 'e-mail', description: 'Email' },
+        { id: 1031, label: 'prefer_no_contact', description: 'Prefer not to be contacted' },
+        { id: 1032, label: 'sms', description: 'Text' }
       ],
-      defra_financialtransactionsource: [{ id: 910400002, label: 'Direct Debit', description: 'Direct Debit' }],
-      defra_country: [{ id: 910400195, label: 'England', description: 'GB-ENG' }]
+      defra_financialtransactionsource: [{ id: 1040, label: 'direct_debit', description: 'Direct Debit' }],
+      defra_country: [{ id: 1050, label: 'uk_eng', description: 'GB-ENG' }]
     }
     const optionSet = optionSets[name].find(os => os.description === lookup)
     if (optionSet) {
@@ -105,6 +105,9 @@ jest.mock('../../reference-data.service.js', () => ({
 }))
 
 describe('POCL validation error service', () => {
+  beforeAll(() => {
+    findById.mockResolvedValue(getValidationError(getPayload()))
+  })
   beforeEach(jest.clearAllMocks)
 
   describe('createPoclValidationError', () => {
@@ -139,12 +142,6 @@ describe('POCL validation error service', () => {
       payload.errorMessage = 'Invalid email address'
       return payload
     }
-    // let payload
-    // beforeEach(async () => {
-    //   payload = getPayload()
-    //   delete payload.createTransactionError
-    //   payload.errorMessage = 'Invalid email address'
-    // })
 
     describe('when validation error record exists', () => {
       it('retrieves existing record', async () => {
@@ -156,18 +153,17 @@ describe('POCL validation error service', () => {
 
       describe('and status is not provided', () => {
         it('sets the status to "Needs Review"', async () => {
+          const validationErrorNeedsReview = await getGlobalOptionSetValue('defra_poclvalidationerrorstatus', 'Needs Review')
           const payload = getPayloadWithoutCreateTransactionError()
-          findById.mockResolvedValue(getValidationError(payload))
 
           await updatePoclValidationError('pocl-validation-error-id', payload)
 
           const [[[poclValidationError]]] = persist.mock.calls
-          expect(poclValidationError.status.label).toBe('Needs Review')
+          expect(poclValidationError.status.label).toBe(validationErrorNeedsReview.label)
         })
 
         it('the state code is not set', async () => {
           const payload = getPayloadWithoutCreateTransactionError()
-          findById.mockResolvedValue(getValidationError(payload))
 
           await updatePoclValidationError('pocl-validation-error-id', payload)
 
@@ -177,7 +173,6 @@ describe('POCL validation error service', () => {
 
         it('updates the validation record', async () => {
           const payload = getPayloadWithoutCreateTransactionError()
-          findById.mockResolvedValue(getValidationError(payload))
 
           await updatePoclValidationError('pocl-validation-error-id', payload)
 
@@ -186,7 +181,7 @@ describe('POCL validation error service', () => {
         })
       })
 
-      describe('and status equals "Processed"', () => {
+      describe('and status is processed', () => {
         const getProcessedPayload = () => {
           const payload = getPayloadWithoutCreateTransactionError()
           payload.status = 'Processed'
@@ -200,9 +195,10 @@ describe('POCL validation error service', () => {
           return poclValidationError
         }
 
-        it('the status is set to "Processed"', async () => {
+        it('the status is set to processed', async () => {
+          const validationErrorProcessed = await getGlobalOptionSetValue('defra_poclvalidationerrorstatus', 'Processed')
           const poclValidationError = await updateAndRetrieveError()
-          expect(poclValidationError.status.label).toBe('Processed')
+          expect(poclValidationError.status.label).toBe(validationErrorProcessed.label)
         })
 
         it('the state code is set to 1', async () => {

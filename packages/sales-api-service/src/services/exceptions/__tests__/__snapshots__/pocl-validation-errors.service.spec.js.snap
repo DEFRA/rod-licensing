@@ -8,13 +8,13 @@ Object {
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
   "country": Object {
     "description": "GB-ENG",
-    "id": 910400195,
-    "label": "England",
+    "id": 1050,
+    "label": "uk_eng",
   },
   "dataSource": Object {
     "description": "DDE File",
-    "id": 910400005,
-    "label": "DDE File",
+    "id": 1020,
+    "label": "dde_file",
   },
   "email": "daniel-ricc@example.com",
   "errorMessage": "Error",
@@ -22,14 +22,14 @@ Object {
   "lastName": "Ricciardo",
   "methodOfPayment": Object {
     "description": "Cash",
-    "id": 910400001,
-    "label": "Cash",
+    "id": 1010,
+    "label": "cash",
   },
   "mobilePhone": "07722 123456",
   "newPaymentSource": Object {
     "description": "Direct Debit",
-    "id": 910400002,
-    "label": "Direct Debit",
+    "id": 1040,
+    "label": "direct_debit",
   },
   "organisation": "Fishy Endeavours",
   "paymentSource": "Direct Debit",
@@ -38,26 +38,26 @@ Object {
   "postcode": "BS9 1HJ",
   "preferredMethodOfConfirmation": Object {
     "description": "Email",
-    "id": 910400000,
-    "label": "Email",
+    "id": 1030,
+    "label": "e-mail",
   },
   "preferredMethodOfNewsletter": Object {
     "description": "Prefer not to be contacted",
-    "id": 910400003,
-    "label": "Prefer not to be contacted",
+    "id": 1031,
+    "label": "prefer_no_contact",
   },
   "preferredMethodOfReminder": Object {
     "description": "Text",
-    "id": 910400002,
-    "label": "Text",
+    "id": 1032,
+    "label": "sms",
   },
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
   "status": Object {
     "description": "Needs Review",
-    "id": 910400000,
-    "label": "Needs Review",
+    "id": 1000,
+    "label": "needs_review",
   },
   "street": "Eastmead Lane",
   "town": "Bristol",
@@ -77,7 +77,7 @@ Array [
 ]
 `;
 
-exports[`POCL validation error service updatePoclValidationError when validation error record exists and status equals "Processed" updates the validation record 1`] = `
+exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is not provided updates the validation record 1`] = `
 Object {
   "amount": 30,
   "birthDate": "1989-07-01",
@@ -85,13 +85,13 @@ Object {
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
   "country": Object {
     "description": "GB-ENG",
-    "id": 910400195,
-    "label": "England",
+    "id": 1050,
+    "label": "uk_eng",
   },
   "dataSource": Object {
     "description": "DDE File",
-    "id": 910400005,
-    "label": "DDE File",
+    "id": 1020,
+    "label": "dde_file",
   },
   "email": "daniel-ricc@example.com",
   "errorMessage": "Invalid email address",
@@ -99,14 +99,14 @@ Object {
   "lastName": "Ricciardo",
   "methodOfPayment": Object {
     "description": "Cash",
-    "id": 910400001,
-    "label": "Cash",
+    "id": 1010,
+    "label": "cash",
   },
   "mobilePhone": "07722 123456",
   "newPaymentSource": Object {
     "description": "Direct Debit",
-    "id": 910400002,
-    "label": "Direct Debit",
+    "id": 1040,
+    "label": "direct_debit",
   },
   "newStartDate": undefined,
   "organisation": "Fishy Endeavours",
@@ -116,27 +116,26 @@ Object {
   "postcode": "BS9 1HJ",
   "preferredMethodOfConfirmation": Object {
     "description": "Email",
-    "id": 910400000,
-    "label": "Email",
+    "id": 1030,
+    "label": "e-mail",
   },
   "preferredMethodOfNewsletter": Object {
     "description": "Prefer not to be contacted",
-    "id": 910400003,
-    "label": "Prefer not to be contacted",
+    "id": 1031,
+    "label": "prefer_no_contact",
   },
   "preferredMethodOfReminder": Object {
     "description": "Text",
-    "id": 910400002,
-    "label": "Text",
+    "id": 1032,
+    "label": "sms",
   },
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
-  "stateCode": 1,
   "status": Object {
-    "description": "Processed",
-    "id": 910400002,
-    "label": "Processed",
+    "description": "Needs Review",
+    "id": 1000,
+    "label": "needs_review",
   },
   "street": "Eastmead Lane",
   "timestamp": "2020-01-01T14:00:00Z",
@@ -146,7 +145,7 @@ Object {
 }
 `;
 
-exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is not provided updates the validation record 1`] = `
+exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is processed updates the validation record 1`] = `
 Object {
   "amount": 30,
   "birthDate": "1989-07-01",
@@ -154,13 +153,13 @@ Object {
   "concessions": "[{\\"type\\":\\"Blue Badge\\",\\"referenceNumber\\":\\"123456789\\"}]",
   "country": Object {
     "description": "GB-ENG",
-    "id": 910400195,
-    "label": "England",
+    "id": 1050,
+    "label": "uk_eng",
   },
   "dataSource": Object {
     "description": "DDE File",
-    "id": 910400005,
-    "label": "DDE File",
+    "id": 1020,
+    "label": "dde_file",
   },
   "email": "daniel-ricc@example.com",
   "errorMessage": "Invalid email address",
@@ -168,14 +167,14 @@ Object {
   "lastName": "Ricciardo",
   "methodOfPayment": Object {
     "description": "Cash",
-    "id": 910400001,
-    "label": "Cash",
+    "id": 1010,
+    "label": "cash",
   },
   "mobilePhone": "07722 123456",
   "newPaymentSource": Object {
     "description": "Direct Debit",
-    "id": 910400002,
-    "label": "Direct Debit",
+    "id": 1040,
+    "label": "direct_debit",
   },
   "newStartDate": undefined,
   "organisation": "Fishy Endeavours",
@@ -185,26 +184,27 @@ Object {
   "postcode": "BS9 1HJ",
   "preferredMethodOfConfirmation": Object {
     "description": "Email",
-    "id": 910400000,
-    "label": "Email",
+    "id": 1030,
+    "label": "e-mail",
   },
   "preferredMethodOfNewsletter": Object {
     "description": "Prefer not to be contacted",
-    "id": 910400003,
-    "label": "Prefer not to be contacted",
+    "id": 1031,
+    "label": "prefer_no_contact",
   },
   "preferredMethodOfReminder": Object {
     "description": "Text",
-    "id": 910400002,
-    "label": "Text",
+    "id": 1032,
+    "label": "sms",
   },
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
+  "stateCode": 1,
   "status": Object {
-    "description": "Needs Review",
-    "id": 910400000,
-    "label": "Needs Review",
+    "description": "Processed",
+    "id": 1001,
+    "label": "processed",
   },
   "street": "Eastmead Lane",
   "timestamp": "2020-01-01T14:00:00Z",
