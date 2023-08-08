@@ -100,13 +100,12 @@ jest.mock('../../reference-data.service.js', () => ({
     if (optionSet) {
       return optionSet
     }
-    throw new Error(`Optionset ${name}:${lookup} not found, should be defined in optionSets data for reference data mock`)
   }
 }))
 
 describe('POCL validation error service', () => {
   beforeAll(() => {
-    findById.mockResolvedValue(getValidationError(getPayload()))
+    findById.mockImplementation(() => getValidationError(getPayload()))
   })
   beforeEach(jest.clearAllMocks)
 
@@ -128,11 +127,6 @@ describe('POCL validation error service', () => {
       const [[[poclValidationError]]] = persist.mock.calls
       expect(poclValidationError).toMatchSnapshot()
     })
-
-    // it('maps an invalid country to countryUV', async () => {
-    //   const [[[poclValidationError]]] = persist.mock.calls
-    //   expect(poclValidationError)
-    // })
   })
 
   describe('updatePoclValidationError', () => {
@@ -146,9 +140,28 @@ describe('POCL validation error service', () => {
     describe('when validation error record exists', () => {
       it('retrieves existing record', async () => {
         const payload = getPayloadWithoutCreateTransactionError()
-        findById.mockResolvedValue(getValidationError(payload))
+
         await updatePoclValidationError('pocl-validation-error-id', payload)
+
         expect(findById).toBeCalledWith(PoclValidationError, 'pocl-validation-error-id')
+      })
+
+      it("maps a country not in optionset to countryUV", async () => {
+        const payload = getPayload()
+        payload.createTransactionPayload.permissions[0].licensee.country = 'WAK'
+
+        await updatePoclValidationError('abc-123-def-456', payload)
+        const [[[poclValidationError]]] = persist.mock.calls
+        expect(poclValidationError.countryUV).toBe('WAK')
+      })
+
+      it("maps an invalid date to startDateUV", async () => {
+        const payload = getPayload()
+        payload.createTransactionPayload.permissions[0].startDate = '15/6/2021'
+
+        await updatePoclValidationError('abc-123-def-456', payload)
+        const [[[poclValidationError]]] = persist.mock.calls
+        expect(poclValidationError.startDateUV).toBe('15/6/2021')
       })
 
       describe('and status is not provided', () => {
@@ -214,8 +227,8 @@ describe('POCL validation error service', () => {
     })
 
     describe('when the validation error record does not exist', () => {
-      beforeAll(async () => {
-        findById.mockResolvedValue(null)
+      beforeEach(async () => {
+        findById.mockResolvedValueOnce(null)
       })
 
       it('throws a 404 error', async () => {
