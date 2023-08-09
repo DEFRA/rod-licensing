@@ -208,22 +208,11 @@ describe('renewals-write-cache', () => {
       )
     })
 
-    // it('should not assign shortTermPreferredMethodOfConfirmation to the licensee', async () => {
-    //   await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
-    //   expect(mockTransactionCacheSet).toHaveBeenCalledWith(
-    //     expect.objectContaining({
-    //       licensee: expect.not.objectContaining({
-    //         shortTermPreferredMethodOfConfirmation: expect.any(Object)
-    //       })
-    //     })
-    //   )
-    // })
-    it.each(['country', 'shortTermPreferredMethodOfConfirmation'])(
-        'should not assign %s to the licensee', async prop => {
-        await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
-        const [[{licensee}]] = mockTransactionCacheSet.mock.calls
-        expect(licensee[prop]).toBeUndefined()
-      })
+    it.each(['country', 'shortTermPreferredMethodOfConfirmation'])('should not assign %s to the licensee', async prop => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      const [[{ licensee }]] = mockTransactionCacheSet.mock.calls
+      expect(licensee[prop]).toBeUndefined()
+    })
 
     it('should have an empty array if no concessions are present', async () => {
       await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
