@@ -146,7 +146,7 @@ describe('POCL validation error service', () => {
         expect(findById).toBeCalledWith(PoclValidationError, 'pocl-validation-error-id')
       })
 
-      it("maps a country not in optionset to countryUV", async () => {
+      it('maps a country not in optionset to countryUV', async () => {
         const payload = getPayload()
         payload.createTransactionPayload.permissions[0].licensee.country = 'WAK'
 
@@ -155,7 +155,7 @@ describe('POCL validation error service', () => {
         expect(poclValidationError.countryUV).toBe('WAK')
       })
 
-      it("maps an invalid date to startDateUV", async () => {
+      it('maps an invalid date to startDateUV', async () => {
         const payload = getPayload()
         payload.createTransactionPayload.permissions[0].startDate = '15/6/2021'
 
