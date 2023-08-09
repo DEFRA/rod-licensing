@@ -35,9 +35,6 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
   permission.licensee = Object.assign(
     (({
       country: _country,
-      preferredMethodOfConfirmation: _preferredMethodOfConfirmation,
-      preferredMethodOfNewsletter: _preferredMethodOfNewsletter,
-      preferredMethodOfReminder: _preferredMethodOfReminder,
       shortTermPreferredMethodOfConfirmation: _shortTermPreferredMethodOfConfirmation,
       ...l
     }) => l)(authenticationResult.permission.licensee),
