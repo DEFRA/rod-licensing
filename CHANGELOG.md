@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.12 (2023-08-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1766](https://github.com/DEFRA/rod-licensing/pull/1766) Stop easy renewals from copying shortTermPreferredMethodOfConfirmation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 ## v1.35.0-rc.9 (2023-07-18)
