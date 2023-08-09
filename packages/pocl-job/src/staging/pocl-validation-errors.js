@@ -56,6 +56,7 @@ const backfillDataSource = record => {
   } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
   }
+  return undefined
 }
 
 const backfillSerialNumber = record => {
@@ -64,6 +65,7 @@ const backfillSerialNumber = record => {
   } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
   }
+  return undefined
 }
 
 const backfillPaymentMethod = (method, newPaymentSource) => {
@@ -72,6 +74,7 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
   } else if (newPaymentSource && newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_PAYMENTMETHOD
   }
+  return undefined
 }
 
 const formatDateToShortenedISO = (date, field) => {
