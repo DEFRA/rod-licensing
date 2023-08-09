@@ -99,6 +99,8 @@ cp pocl_job.env.example .pocl_job.env
 cp sales_api.env.example .sales_api.env
 cp sales_api.secrets.env.example .sales_api.secrets.env
 cp sqs_receiver.env.example .sqs_receiver.env
+cp recurring_payments_job.env.example . recurring_payments_job.env
+cp recurring_payments_job.secrets.env.example . recurring_payments_job.secrets.env
 ```
 
 ### How to run

@@ -70,6 +70,7 @@ packages/
   > Handles processing of post-office counter sales
 - [fulfilment-job](packages/fulfilment-job/README.md)
   > Handles processing of licence fulfilment requirements
+- [recurring-payments-job](packages/recurring-payments-job/README.md)
 
 docker/
 
