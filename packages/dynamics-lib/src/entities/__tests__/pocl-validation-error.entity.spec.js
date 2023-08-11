@@ -87,8 +87,8 @@ describe('pocl staging exception entity', () => {
         permitId: 'test-permit-id',
         transactionDate: '2020-01-01T14:00:00Z',
         amount: 30,
-        paymentSource: 'Post Office Sales',
-        newPaymentSource: {
+        paymentSourceUV: 'Post Office Sales',
+        paymentSource: {
           description: 'Worldpay',
           id: 910400003,
           label: 'Worldpay'
@@ -131,8 +131,8 @@ describe('pocl staging exception entity', () => {
     validationError.permitId = 'test-permit-id'
     validationError.transactionDate = '2020-01-01T14:00:00Z'
     validationError.amount = 30
-    validationError.paymentSource = 'Post Office Sales'
-    validationError.newPaymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
+    validationError.paymentSourceUV = 'Post Office Sales'
+    validationError.paymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
     validationError.channelId = '948594'
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']
     validationError.status = optionSetData.defra_poclvalidationerrorstatus.options['910400000']

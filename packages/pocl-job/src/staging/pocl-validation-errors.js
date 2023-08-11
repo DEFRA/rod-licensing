@@ -92,7 +92,7 @@ const formatDateToShortenedISO = (date, field) => {
  */
 const processFailed = async failed => {
   for (const { record, result } of failed) {
-    debug('Failed when reprocessing record: %o', record)
+    debug('Failed when reprocessing record: %s', JSON.stringify(record))
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, errorMessage: result.message })
   }
 }

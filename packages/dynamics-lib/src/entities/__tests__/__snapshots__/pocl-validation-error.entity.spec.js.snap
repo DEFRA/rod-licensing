@@ -29,13 +29,13 @@ Object {
     "label": "Cash",
   },
   "mobilePhone": "07722 123456",
-  "newPaymentSource": Object {
+  "organisation": "Fishy Endeavours",
+  "paymentSource": Object {
     "description": "Worldpay",
     "id": 910400003,
     "label": "Worldpay",
   },
-  "organisation": "Fishy Endeavours",
-  "paymentSource": "Post Office Sales",
+  "paymentSourceUV": "Post Office Sales",
   "permitId": "test-permit-id",
   "postalFulfilment": true,
   "postcode": "BS9 1HJ",
