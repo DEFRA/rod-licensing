@@ -125,6 +125,24 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.permissions[0].licensee.country).toBe(countryUV)
     })
 
+    it('uses paymentSource if this is provided', async () => {
+      const paymentSource = 'Post Office Sales'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ paymentSource })])
+      await processPoclValidationErrors()
+      const finaliseTransaction = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransaction.payment.source).toBe(paymentSource)
+    })
+
+    it("uses paymentSourceUV if paymentSource isn't provided", async () => {
+      const paymentSourceUV = 'Fire Sales'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([
+        getPoclValidationError({ paymentSourceUV, paymentSource: undefined })
+      ])
+      await processPoclValidationErrors()
+      const finaliseTransaction = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransaction.payment.source).toBe(paymentSourceUV)
+    })
+
     it('finalises the transaction in the Sales Api', async () => {
       await processPoclValidationErrors()
       const [record] = salesApi.finaliseTransaction.mock.calls

@@ -42,8 +42,7 @@ const mapRecords = records =>
       payment: {
         timestamp: formatDateToShortenedISO(record.transactionDate, 'payment timestamp'),
         amount: record.amount,
-        source: record.paymentSource,
-        newPaymentSource: record.paymentSource,
+        source: record.paymentSource || record.paymentSourceUV,
         channelId: record.channelId || 'N/A',
         method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
       }
