@@ -26,13 +26,12 @@ Object {
     "label": "cash",
   },
   "mobilePhone": "07722 123456",
-  "newPaymentSource": Object {
+  "organisation": "Fishy Endeavours",
+  "paymentSource": Object {
     "description": "Direct Debit",
     "id": 1040,
     "label": "direct_debit",
   },
-  "organisation": "Fishy Endeavours",
-  "paymentSource": "Direct Debit",
   "permitId": "test-permit-id",
   "postalFulfilment": true,
   "postcode": "BS9 1HJ",
@@ -79,6 +78,7 @@ Array [
 
 exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is not provided updates the validation record 1`] = `
 Object {
+  "PaymentSource": undefined,
   "amount": 30,
   "birthDate": "1989-07-01",
   "channelId": "948594",
@@ -103,14 +103,13 @@ Object {
     "label": "cash",
   },
   "mobilePhone": "07722 123456",
-  "newPaymentSource": Object {
+  "organisation": "Fishy Endeavours",
+  "paymentSource": Object {
     "description": "Direct Debit",
     "id": 1040,
     "label": "direct_debit",
   },
-  "newStartDate": undefined,
-  "organisation": "Fishy Endeavours",
-  "paymentSource": "Direct Debit",
+  "paymentSourceUV": "Direct Debit",
   "permitId": "test-permit-id",
   "postalFulfilment": true,
   "postcode": "BS9 1HJ",
@@ -132,6 +131,7 @@ Object {
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
+  "startDateUV": "2021-06-15",
   "status": Object {
     "description": "Needs Review",
     "id": 1000,
@@ -147,6 +147,7 @@ Object {
 
 exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is processed updates the validation record 1`] = `
 Object {
+  "PaymentSource": undefined,
   "amount": 30,
   "birthDate": "1989-07-01",
   "channelId": "948594",
@@ -171,14 +172,13 @@ Object {
     "label": "cash",
   },
   "mobilePhone": "07722 123456",
-  "newPaymentSource": Object {
+  "organisation": "Fishy Endeavours",
+  "paymentSource": Object {
     "description": "Direct Debit",
     "id": 1040,
     "label": "direct_debit",
   },
-  "newStartDate": undefined,
-  "organisation": "Fishy Endeavours",
-  "paymentSource": "Direct Debit",
+  "paymentSourceUV": "Direct Debit",
   "permitId": "test-permit-id",
   "postalFulfilment": true,
   "postcode": "BS9 1HJ",
@@ -200,6 +200,7 @@ Object {
   "premises": "14 Howecroft Court",
   "serialNumber": "14345-48457J",
   "startDate": "2021-06-15",
+  "startDateUV": "2021-06-15",
   "stateCode": 1,
   "status": Object {
     "description": "Processed",

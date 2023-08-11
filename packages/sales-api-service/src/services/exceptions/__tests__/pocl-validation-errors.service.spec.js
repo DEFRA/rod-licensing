@@ -46,7 +46,6 @@ const getPayload = () => ({
     payment: {
       timestamp: '2020-01-01T14:00:00Z',
       amount: 30,
-      newPaymentSource: 'Direct Debit',
       source: 'Direct Debit',
       channelId: '948594',
       method: 'Cash'
@@ -65,14 +64,14 @@ const getValidationError = payload => ({
   dataSource: payload.createTransactionPayload.serialNumber.dataSource,
   transactionDate: payload.createTransactionPayload.permissions[0].issueDate,
   permitId: payload.createTransactionPayload.permissions[0].permitId,
-  startDate: payload.createTransactionPayload.permissions[0].startDate,
-  newStartDate: payload.createTransactionPayload.permissions[0].newStartDate,
+  startDateUV: payload.createTransactionPayload.permissions[0].startDate,
+  startDate: payload.createTransactionPayload.permissions[0].newStartDate,
   concessions: JSON.stringify(payload.createTransactionPayload.permissions[0].concessions),
   timestamp: payload.finaliseTransactionPayload.payment.timestamp,
   amount: payload.finaliseTransactionPayload.payment.amount,
   channelId: payload.finaliseTransactionPayload.payment.channelId,
-  newPaymentSource: payload.finaliseTransactionPayload.payment.newPaymentSource,
-  paymentSource: payload.finaliseTransactionPayload.payment.source,
+  PaymentSource: payload.finaliseTransactionPayload.payment.newPaymentSource,
+  paymentSourceUV: payload.finaliseTransactionPayload.payment.source,
   methodOfPayment: payload.finaliseTransactionPayload.payment.method,
   status: 'Ready for Processing',
   errorMessage: payload.errorMessage
