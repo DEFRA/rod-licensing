@@ -38,7 +38,6 @@ const schemaObject = {
       payment: Joi.object({
         timestamp: Joi.string(),
         amount: Joi.number(),
-        newPaymentSource: Joi.string(),
         source: Joi.string(),
         channelId: Joi.string(),
         method: Joi.string()
@@ -131,7 +130,6 @@ export const updatePoclValidationErrorPayload = Joi.object({
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
       source: Joi.string().trim().required(),
-      newPaymentSource: Joi.string().trim().required(),
       channelId: Joi.string().trim().optional().description('Channel specific identifier'),
       method: Joi.string().trim().required()
     }
