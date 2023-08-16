@@ -113,7 +113,253 @@ Array [
 ]
 `;
 
+exports[`licence-summary > route licence summary rows creates licence summary name rows for 1 day licence 2`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-birth-date",
+          },
+          "href": "/buy/date-of-birth",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_dob",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_dob",
+    },
+    "value": Object {
+      "html": "1st January 1946",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_1d",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/start-kind",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
 exports[`licence-summary > route licence summary rows creates licence summary name rows for 1 year new licence 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-birth-date",
+          },
+          "href": "/buy/date-of-birth",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_dob",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_dob",
+    },
+    "value": Object {
+      "html": "1st January 1946",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/start-kind",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_ni_num",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_ni_num",
+    },
+    "value": Object {
+      "html": "AB 12 34 56 A",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
+exports[`licence-summary > route licence summary rows creates licence summary name rows for 1 year new licence 2`] = `
 Array [
   Object {
     "actions": Object {
@@ -359,7 +605,253 @@ Array [
 ]
 `;
 
+exports[`licence-summary > route licence summary rows creates licence summary name rows for 1 year renewal 2`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/renew/renewal-start-date",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_ni_num",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_ni_num",
+    },
+    "value": Object {
+      "html": "AB 12 34 56 A",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
 exports[`licence-summary > route licence summary rows creates licence summary name rows for 1 year senior renewal 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-birth-date",
+          },
+          "href": "/buy/date-of-birth",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_dob",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_dob",
+    },
+    "value": Object {
+      "html": "1st January 1946",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/start-kind",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_disability_concession",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_disability_concession",
+    },
+    "value": Object {
+      "html": "<span>licence_summary_none</span>",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
+exports[`licence-summary > route licence summary rows creates licence summary name rows for 1 year senior renewal 2`] = `
 Array [
   Object {
     "actions": Object {
@@ -605,7 +1097,233 @@ Array [
 ]
 `;
 
+exports[`licence-summary > route licence summary rows creates licence summary name rows for 8 day licence 2`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-birth-date",
+          },
+          "href": "/buy/date-of-birth",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_dob",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_dob",
+    },
+    "value": Object {
+      "html": "1st January 1946",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_8d",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/start-kind",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
 exports[`licence-summary > route licence summary rows creates licence summary name rows for Another date permission 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/renew/renewal-start-date",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "11:45am on 21st October 1805",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_ni_num",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_ni_num",
+    },
+    "value": Object {
+      "html": "AB 12 34 56 A",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
+exports[`licence-summary > route licence summary rows creates licence summary name rows for Another date permission 2`] = `
 Array [
   Object {
     "actions": Object {
@@ -831,6 +1549,119 @@ Array [
 ]
 `;
 
+exports[`licence-summary > route licence summary rows creates licence summary name rows for Blue badge concession 2`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/renew/renewal-start-date",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_blue_badge_num",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_blue_badge_num",
+    },
+    "value": Object {
+      "html": "AB1 CDE 0 1234F5678",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
 exports[`licence-summary > route licence summary rows creates licence summary name rows for Continuing permission 1`] = `
 Array [
   Object {
@@ -944,7 +1775,253 @@ Array [
 ]
 `;
 
+exports[`licence-summary > route licence summary rows creates licence summary name rows for Continuing permission 2`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/renew/renewal-start-date",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "11:45am on 21st October 1805</br><span class=\\"govuk-caption-m\\">licence_summary_immediately_after_expire</span>",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_ni_num",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_ni_num",
+    },
+    "value": Object {
+      "html": "AB 12 34 56 A",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
 exports[`licence-summary > route licence summary rows creates licence summary name rows for Junior licence 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-name",
+          },
+          "href": "/buy/name",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_name",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_name",
+    },
+    "value": Object {
+      "html": "Brenin Pysgotwr",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-birth-date",
+          },
+          "href": "/buy/date-of-birth",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_dob",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_dob",
+    },
+    "value": Object {
+      "html": "1st January 1946",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-type",
+          },
+          "href": "/buy/licence-type",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_type",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_type",
+    },
+    "value": Object {
+      "html": "Special Canal Licence, Shopping Trollies and Old Wellies",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-length",
+          },
+          "href": "/buy/licence-length",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_length",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_length",
+    },
+    "value": Object {
+      "html": "licence_type_12m",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-to-start",
+          },
+          "href": "/buy/start-kind",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_start_date",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_start_date",
+    },
+    "value": Object {
+      "html": "30licence_summary_minutes_after_payment",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-benefit-check",
+          },
+          "href": "/buy/disability-concession",
+          "text": "contact_summary_change",
+          "visuallyHiddenText": "licence_summary_disability_concession",
+        },
+      ],
+    },
+    "key": Object {
+      "text": "licence_summary_disability_concession",
+    },
+    "value": Object {
+      "html": "<span>licence_summary_none</span>",
+    },
+  },
+  Object {
+    "key": Object {
+      "text": "damage",
+    },
+    "value": Object {
+      "html": "#6",
+    },
+  },
+]
+`;
+
+exports[`licence-summary > route licence summary rows creates licence summary name rows for Junior licence 2`] = `
 Array [
   Object {
     "actions": Object {

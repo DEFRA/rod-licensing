@@ -7,7 +7,15 @@ import {
   MOCK_1DAY_FULL_PERMIT_ENTITY,
   MOCK_CONCESSION
 } from '../../__mocks__/test-data.js'
-import { JUNIOR_MAX_AGE, NEW_SENIOR_MIN_AGE, isSenior } from '@defra-fish/business-rules-lib'
+import { JUNIOR_MAX_AGE, SENIOR_MIN_AGE } from '@defra-fish/business-rules-lib'
+
+jest.mock('@defra-fish/business-rules-lib', () => {
+  const brl = jest.requireActual('@defra-fish/business-rules-lib')
+  return {
+    ...brl,
+    isSenior: jest.fn(brl.isSenior)
+  }
+})
 
 jest.mock('@defra-fish/business-rules-lib', () => {
   const brl = jest.requireActual('@defra-fish/business-rules-lib')
@@ -42,7 +50,7 @@ jest.mock('../reference-data.service.js', () => ({
 
 const getSamplePermission = ({
   permitId = MOCK_1DAY_FULL_PERMIT_ENTITY.id,
-  birthDate = moment().subtract(NEW_SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
+  birthDate = moment().subtract(SENIOR_MIN_AGE, 'years').format('YYYY-MM-DD')
 } = {}) => ({
   permitId,
   issueDate: moment().toISOString(),
@@ -90,12 +98,6 @@ describe('permissions service', () => {
       const block1 = moment().add(1, 'hour').startOf('hour').add(1, 'day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-2WC1SFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
-    })
-
-    it('passes permission start date to isSenior', async () => {
-      const samplePermission = getSamplePermission()
-      await generatePermissionNumber(samplePermission, 'Web Sales')
-      expect(isSenior).toHaveBeenCalledWith(expect.any(Number), samplePermission.startDate)
     })
   })
 

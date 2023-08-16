@@ -23,7 +23,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -89,7 +89,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as SMS and Newsletter as Yes 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -108,72 +108,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-details),
-    },
-    "value": Object {
-      "text": "contact-summary-license-non-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as SMS and Newsletter as silence 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -219,7 +154,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as e-mail and Newsletter as Yes 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Email Me and Newsletter as Yes 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -238,7 +173,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -284,7 +219,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as e-mail and Newsletter as silence 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Please not contact moi and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -303,7 +238,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -349,7 +284,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as silence and Newsletter as Yes 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Please not contact moi and Newsletter as Yes 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -368,7 +303,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -414,7 +349,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as silence and Newsletter as silence 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Text Me and Newsletter as Please not contact moi 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -433,7 +368,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -479,7 +414,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as SMS and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 1 or 8 day should display the Licence as Text Me and Newsletter as Yes 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -498,47 +433,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -555,10 +450,10 @@ Array [
       ],
     },
     "key": Object {
-      "text": Symbol(contact-summary-row-contact),
+      "text": Symbol(contact-summary-row-licence-details),
     },
     "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
+      "text": "contact-summary-license-non-physical",
     },
   },
   Object {
@@ -584,7 +479,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as SMS and Newsletter as Yes without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -603,1232 +498,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as SMS and Newsletter as silence for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as SMS and Newsletter as silence without postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as e-mail and Newsletter as Yes for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as e-mail and Newsletter as Yes without postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as e-mail and Newsletter as silence for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as SMS, Licence Confirmation as e-mail and Newsletter as silence without postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-text-sngl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as SMS and Newsletter as Yes for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as SMS and Newsletter as Yes without postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as SMS and Newsletter as silence for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as SMS and Newsletter as silence without postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as e-mail and Newsletter as Yes for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as e-mail and Newsletter as Yes without postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as e-mail and Newsletter as silence for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -1914,7 +584,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as e-mail, Licence Confirmation as e-mail and Newsletter as silence without postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -1933,7 +603,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -1999,7 +669,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as silence, Licence Confirmation as SMS and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2018,7 +688,577 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Email Me and Newsletter as Yes without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Email Me, Licence Confirmation as Text Me and Newsletter as Yes without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as By pigeon and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -2078,112 +1318,7 @@ Array [
       "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as silence, Licence Confirmation as SMS and Newsletter as silence for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
       "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-license-default",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-text-plrl01234567890",
     },
   },
   Object {
@@ -2209,7 +1344,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as silence, Licence Confirmation as e-mail and Newsletter as Yes for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as By pigeon and Newsletter as Yes for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2228,217 +1363,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-license-default",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "aye",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as silence, Licence Confirmation as e-mail and Newsletter as silence for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-fulfilment-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence),
-    },
-    "value": Object {
-      "text": "contact-summary-license-physical",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-confirmation-option",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-licence-conf),
-    },
-    "value": Object {
-      "text": "contact-summary-license-default",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-contact",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-contact),
-    },
-    "value": Object {
-      "text": "contact-summary-emailbrenin@example.com",
-    },
-  },
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-newsletter",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-newsletter),
-    },
-    "value": Object {
-      "text": "negative, Ghost Rider",
-    },
-  },
-]
-`;
-
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as silence, Licence Confirmation as undefined and Newsletter as Yes for you with postal fulfilment 1`] = `
-Array [
-  Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-address",
-          },
-          "href": Symbol(addLanguageCodeToUri),
-          "text": "contact-summary-change",
-          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
-        },
-      ],
-    },
-    "key": Object {
-      "text": Symbol(contact-summary-row-address),
-    },
-    "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -2524,7 +1449,7 @@ Array [
 ]
 `;
 
-exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as silence, Licence Confirmation as undefined and Newsletter as silence for you with postal fulfilment 1`] = `
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
 Array [
   Object {
     "actions": Object {
@@ -2543,7 +1468,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {
@@ -2603,7 +1528,7 @@ Array [
       "text": Symbol(contact-summary-row-contact),
     },
     "value": Object {
-      "text": "contact-summary-license-physical",
+      "text": "contact-summary-emailbrenin@example.com",
     },
   },
   Object {
@@ -2624,6 +1549,1081 @@ Array [
     },
     "value": Object {
       "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-license-default",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-license-default",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Please not contact moi, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-license-default",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Email Me and Newsletter as Yes without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-emailbrenin@example.com",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Please not contact moi without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "negative, Ghost Rider",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Yes for you with postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-fulfilment-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-fulfilment),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-license-physical",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence-conf),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
+    },
+  },
+]
+`;
+
+exports[`contact-summary > route getLicenseeDetailsSummaryRows when purchasing a 12 month (physical licence) should display the Licence as Text Me, Licence Confirmation as Text Me and Newsletter as Yes without postal fulfilment 1`] = `
+Array [
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-address",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-address),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-address),
+    },
+    "value": Object {
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-licence-confirmation-option",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-licence-confirmation),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-licence),
+    },
+    "value": Object {
+      "text": "contact-summary-text-sngl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-contact",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-contact),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-contact),
+    },
+    "value": Object {
+      "text": "contact-summary-text-plrl01234567890",
+    },
+  },
+  Object {
+    "actions": Object {
+      "items": Array [
+        Object {
+          "attributes": Object {
+            "id": "change-newsletter",
+          },
+          "href": Symbol(addLanguageCodeToUri),
+          "text": "contact-summary-change",
+          "visuallyHiddenText": Symbol(contact-summary-hidden-newsletter),
+        },
+      ],
+    },
+    "key": Object {
+      "text": Symbol(contact-summary-row-newsletter),
+    },
+    "value": Object {
+      "text": "aye",
     },
   },
 ]
@@ -2648,7 +2648,7 @@ Array [
       "text": Symbol(contact-summary-row-address),
     },
     "value": Object {
-      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, UNITED KINGDOM",
+      "text": "14 Howecroft Court, Eastmead Lane, Bristol, BS9 1HJ, GB",
     },
   },
   Object {

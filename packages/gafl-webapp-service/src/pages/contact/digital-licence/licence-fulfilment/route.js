@@ -4,6 +4,8 @@ import pageRoute from '../../../../routes/page-route.js'
 import { CONTACT, LICENCE_FULFILMENT } from '../../../../uri.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
+import { youOrOther } from '../../../../processors/message-helper.js'
+
 import GetDataRedirect from '../../../../handlers/get-data-redirect.js'
 
 export const getData = async request => {
@@ -14,7 +16,7 @@ export const getData = async request => {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
-  return { isLicenceForYou: permission.isLicenceForYou }
+  return { youOrOther: youOrOther(permission) }
 }
 
 const validator = Joi.object({

@@ -9,9 +9,8 @@ import HapiGapi from '@defra/hapi-gapi'
 import Cookie from '@hapi/cookie'
 import HapiI18n from 'hapi-i18n'
 import { useSessionCookie } from './session-cache/session-manager.js'
-import { UTM } from './constants.js'
 import { getCsrfTokenCookieName } from './server.js'
-import { checkAnalytics, getAnalyticsSessionId } from '../src/handlers/analytics-handler.js'
+import { trackAnalyticsAccepted, getAnalyticsSessionId, pageOmitted } from '../src/handlers/analytics-handler.js'
 import Dirname from '../dirname.cjs'
 import path from 'path'
 
@@ -22,14 +21,19 @@ const debug = db('webapp:plugin')
 const scriptHash = "'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU='"
 
 const trackAnalytics = async request => {
-  const canTrack = await checkAnalytics(request)
+  const pageOmit = await pageOmitted(request)
+  const canTrack = await trackAnalyticsAccepted(request, pageOmit)
   const optDebug = process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING?.toLowerCase() === 'true'
   if (optDebug) {
     const sessionId = await getAnalyticsSessionId(request)
     if (canTrack === true) {
       debug(`Session is being tracked for: ${sessionId}`)
     } else {
-      debug(`Session is not being tracked for: ${sessionId}`)
+      if (pageOmit === true) {
+        debug(`Session is not tracking current page for: ${sessionId}`)
+      } else {
+        debug(`Session is not being tracked for: ${sessionId}`)
+      }
     }
   }
   return canTrack
@@ -73,14 +77,14 @@ const initialiseCrumbPlugin = () => ({
 const initialiseHapiGapiPlugin = () => {
   const hapiGapiPropertySettings = []
   if (process.env.ANALYTICS_PRIMARY_PROPERTY) {
-    hapiGapiPropertySettings.push({ id: process.env.ANALYTICS_PRIMARY_PROPERTY, hitTypes: ['pageview', 'event', 'ecommerce'] })
+    console.log('hit')
+    hapiGapiPropertySettings.push({
+      id: process.env.ANALYTICS_PRIMARY_PROPERTY,
+      key: process.env.ANALYTICS_PROPERTY_API,
+      hitTypes: ['page_view']
+    })
   } else {
     console.warn("ANALYTICS_PRIMARY_PROPERTY not set, so Google Analytics won't track this")
-  }
-  if (process.env.ANALYTICS_XGOV_PROPERTY) {
-    hapiGapiPropertySettings.push({ id: process.env.ANALYTICS_XGOV_PROPERTY, hitTypes: ['pageview'] })
-  } else {
-    console.warn("ANALYTICS_XGOV_PROPERTY not set, so Google Analytics won't track this")
   }
 
   return {
@@ -95,22 +99,6 @@ const initialiseHapiGapiPlugin = () => {
           sessionId = gaClientId ?? (await request.cache().getId())
         }
         return sessionId
-      },
-      attributionProducer: async request => {
-        if (useSessionCookie(request)) {
-          const { attribution } = await request.cache().helpers.status.get()
-
-          if (attribution) {
-            return {
-              campaign: attribution[UTM.CAMPAIGN],
-              content: attribution[UTM.CONTENT],
-              medium: attribution[UTM.MEDIUM],
-              source: attribution[UTM.SOURCE],
-              term: attribution[UTM.TERM]
-            }
-          }
-        }
-        return {}
       }
     }
   }

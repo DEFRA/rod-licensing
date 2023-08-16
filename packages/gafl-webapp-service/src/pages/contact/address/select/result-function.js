@@ -5,6 +5,7 @@ export default async request => {
   const status = await request.cache().helpers.status.getCurrentPermission()
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
+  console.log(status)
   if (status.fromContactDetailsSeen === CHANGE_CONTACT_DETAILS_SEEN.SEEN) {
     return CommonResults.AMEND
   } else if (status.fromSummary === CONTACT_SUMMARY_SEEN) {

@@ -37,6 +37,14 @@
                 + '<a href="https://www.gov.uk/call-charges" class="govuk_link" rel="noreferrer noopener" target="_blank">' + mssgs.server_error_environment_agency_link + '</a>',
                 classes: "no-print"
             }) }}
+            {{ govukButton({
+                attributes: { id: "try-again" },
+                preventDoubleClick: true,
+                name: "try-again",
+                text: mssgs.enter_payment_details,
+                href: uri.agreed,
+                classes: "govuk-!-margin-top-5"
+            }) }}
           {% elseif postPaymentError %}
               <p class="govuk-body-m">{{ mssgs.server_error_unable_to_retrieve_pay_details }}</p>
               <p class="govuk-body-m">{{ mssgs.server_error_if_seeing_page }}</p>
@@ -57,9 +65,11 @@
               <p class="govuk-body-m">{{ mssgs.server_error_logged }}<a class="govuk-link" href="{{ _uri.feedback }}" rel="noreferrer noopener" target="_blank">{{ mssgs.server_error_feedback_link_text }}</a>{{ mssgs.feedback_link_suffix_alt }}</p>
               <h2 class="govuk-heading-m">{{ mssgs.server_error_what_now }}</h2>
           {% endif %}
+          {% if not prePaymentError %}
+            <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a></p>
+          {% endif %}
 
         {% endcall %}
-        <p class="govuk-body-m"><a class="govuk-link" href="{{ uri.new }}">{{ mssgs.buy_another_licence }}</a></p>
      {% endblock %}
      </div>
 </div>

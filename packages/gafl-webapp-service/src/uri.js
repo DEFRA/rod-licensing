@@ -39,7 +39,6 @@ export const PAYMENT_FAILED = { uri: '/buy/payment-failed', page: 'payment-faile
 export const TERMS_AND_CONDITIONS = { uri: '/buy/conditions', page: 'terms-and-conditions' }
 export const ORDER_COMPLETE = { uri: '/buy/order-complete', page: 'order-complete' }
 export const LICENCE_DETAILS = { uri: '/buy/licence-details', page: 'licence-details' }
-export const ATTRIBUTION = { uri: '/buy/attribution' }
 
 export const OIDC_SIGNIN = { uri: '/oidc/signin' }
 export const OIDC_ROLE_REQUIRED = { uri: '/oidc/role-required', page: 'role-required' }

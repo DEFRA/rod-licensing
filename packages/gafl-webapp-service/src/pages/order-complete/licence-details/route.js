@@ -7,8 +7,16 @@ import { nextPage } from '../../../routes/next-page.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
 import * as concessionHelper from '../../../processors/concession-helper.js'
-import moment from 'moment-timezone'
-import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
+
+const getAgeConcessionText = (permission, catalog) => {
+  if (concessionHelper.hasSenior(permission)) {
+    return catalog.age_senior_concession
+  }
+  if (concessionHelper.hasJunior(permission)) {
+    return catalog.age_junior_concession
+  }
+  return ''
+}
 
 export const getData = async request => {
   const mssgs = request.i18n.getCatalog()
@@ -44,19 +52,6 @@ export const getData = async request => {
   return {
     licences
   }
-}
-
-const getAgeConcessionText = (permission, catalog) => {
-  if (concessionHelper.hasSenior(permission)) {
-    if (moment(permission.startDate).isSameOrAfter(SENIOR_AGE_CHANGE_DATE)) {
-      return catalog.age_senior_concession_new
-    }
-    return catalog.age_senior_concession
-  }
-  if (concessionHelper.hasJunior(permission)) {
-    return catalog.age_junior_concession
-  }
-  return false
 }
 
 const licenceLengthText = (permission, mssgs) => {

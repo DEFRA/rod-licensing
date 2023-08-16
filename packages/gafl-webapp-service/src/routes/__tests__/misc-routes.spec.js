@@ -53,7 +53,7 @@ afterAll(d => stop(d))
 describe('The miscellaneous route handlers', () => {
   it('redirect to the main controller when / is requested', async () => {
     const data = await injectWithCookies('GET', '/')
-    console.log(data.headers)
+    console.log(data.headers.location)
     expect(data.statusCode).toBe(302)
     expect(data.headers.location).toBe(addLanguageCodeToUri(mockRequest, CONTROLLER.uri))
   })

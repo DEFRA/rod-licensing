@@ -1,6 +1,194 @@
 
 
 
+## v1.35.0-rc.9 (2023-07-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1755](https://github.com/DEFRA/rod-licensing/pull/1755) Update over 66 content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.7 (2023-07-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1752](https://github.com/DEFRA/rod-licensing/pull/1752) Update English language version of accessibility statement ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.35.0-rc.6 (2023-07-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1741](https://github.com/DEFRA/rod-licensing/pull/1741) Over 66 content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.35.0-rc.3 (2023-06-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1738](https://github.com/DEFRA/rod-licensing/pull/1738) Fix double count of page views from analytics banner ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.35.0-rc.1 (2023-06-08)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1713](https://github.com/DEFRA/rod-licensing/pull/1713) Update dynamics-lib to handle postal order ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.35.0-rc.0 (2023-06-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1725](https://github.com/DEFRA/rod-licensing/pull/1725) Remove inset text about concession age ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+
+
+## v1.33.0-rc.21 (2023-05-17)
+
+#### :rocket: Enhancement
+* `sales-api-service`
+  * [#1708](https://github.com/DEFRA/rod-licensing/pull/1708) Short term licence confirmation ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.33.0-rc.20 (2023-05-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1714](https://github.com/DEFRA/rod-licensing/pull/1714) Remove hyperlink gov pay fail ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.33.0-rc.19 (2023-05-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1700](https://github.com/DEFRA/rod-licensing/pull/1700) Remove obsolete analytics attribution data ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.33.0-rc.18 (2023-05-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1707](https://github.com/DEFRA/rod-licensing/pull/1707) Licence details byelaws content ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1702](https://github.com/DEFRA/rod-licensing/pull/1702) Remove post office reference error page add button ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.33.0-rc.16 (2023-05-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1703](https://github.com/DEFRA/rod-licensing/pull/1703) Remove a from opens in a new tab ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.33.0-rc.15 (2023-04-24)
+
+#### :rocket: Enhancement
+* [#1699](https://github.com/DEFRA/rod-licensing/pull/1699) Update to envvar for analytics ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.33.0-rc.14 (2023-04-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1695](https://github.com/DEFRA/rod-licensing/pull/1695) Update GA secret property env var name ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+
+## v1.33.0-rc.11 (2023-04-20)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1688](https://github.com/DEFRA/rod-licensing/pull/1688) Update Hapi-Gapi to v2 ([@MickStein](https://github.com/MickStein))
+* `dynamics-lib`, `sales-api-service`
+  * [#1652](https://github.com/DEFRA/rod-licensing/pull/1652) Add new field for short-term licence confirmation preferences ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+## v1.33.0-rc.10 (2023-04-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1686](https://github.com/DEFRA/rod-licensing/pull/1686) Fix typo in paperless message ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.33.0-rc.9 (2023-04-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1673](https://github.com/DEFRA/rod-licensing/pull/1673) Clarify content on licence fulfilment page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.33.0-rc.7 (2023-03-31)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1672](https://github.com/DEFRA/rod-licensing/pull/1672) Remove redundant text from user journey ([@irisfaraway](https://github.com/irisfaraway))
+  * [#1671](https://github.com/DEFRA/rod-licensing/pull/1671) Remove text from address lookup page ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.33.0-rc.6 (2023-03-30)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1669](https://github.com/DEFRA/rod-licensing/pull/1669) Welsh language refund policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.33.0-rc.5 (2023-03-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1665](https://github.com/DEFRA/rod-licensing/pull/1665) Fishing byelaws link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
 ## v1.33.0-rc.2 (2023-03-21)
 
 #### :rocket: Enhancement

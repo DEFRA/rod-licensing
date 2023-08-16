@@ -190,7 +190,6 @@ const init = async () => {
   if (process.env.CHANNEL === 'telesales') {
     await initialiseOIDC(server)
   }
-
   server.route(routes)
   await server.start()
 

@@ -162,14 +162,7 @@ describe('The concession helper', () => {
       const licensee = getLicensee({ age })
       const permission = getSamplePermission({ licensee })
       f.ageConcessionHelper(permission)
-      expect(isSenior).toHaveBeenCalledWith(age, expect.any(String))
-    })
-
-    it.each(['2020-06-06', '2022-12-15', '2020-02-29'])('passes permission start date of %s to isSenior function', licenceStartDate => {
-      const licensee = getLicensee({ age: 66, referenceDate: licenceStartDate })
-      const permission = getSamplePermission({ licenceStartDate, licensee })
-      f.ageConcessionHelper(permission)
-      expect(isSenior).toHaveBeenCalledWith(expect.any(Number), licenceStartDate)
+      expect(isSenior).toHaveBeenCalledWith(age)
     })
     ;[junior, senior].forEach(concession => {
       it(`if is normal licence, removes ${concession.type} concession`, () => {

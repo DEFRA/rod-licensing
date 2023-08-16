@@ -3,7 +3,6 @@
  */
 export const ADDRESS_LOOKUP_SERVICE = { lang: 'EN', dataset: 'DPA' }
 export const ADDRESS_LOOKUP_TIMEOUT_MS_DEFAULT = 10000
-export const ATTRIBUTION_REDIRECT_DEFAULT = '/'
 export const SESSION_TTL_MS_DEFAULT = 3 * 60 * 60 * 1000
 export const PORT_DEFAULT = 3000
 export const REDIS_PORT_DEFAULT = 6379
@@ -19,7 +18,9 @@ export const AEN_INVITATION_ID = 'aen_invitation'
 export const ANALYTICS = {
   selected: 'selected',
   acceptTracking: 'accepted-tracking',
-  seenMessage: 'seen-message'
+  seenMessage: 'seen-message',
+  omitPageFromAnalytics: 'skip-page',
+  pageSkipped: 'page-skipped'
 }
 
 export const COMPLETION_STATUS = {
@@ -36,14 +37,6 @@ export const COMPLETION_STATUS = {
 export const GOVPAYFAIL = {
   prePaymentRetry: { step: 'pre-payment' },
   postPaymentRetry: { step: 'post-payment' }
-}
-
-export const UTM = {
-  CAMPAIGN: 'utm_campaign',
-  MEDIUM: 'utm_medium',
-  SOURCE: 'utm_source',
-  TERM: 'utm_term',
-  CONTENT: 'utm_content'
 }
 
 export const QUERYSTRING_LICENCE_KEY = 'reference'

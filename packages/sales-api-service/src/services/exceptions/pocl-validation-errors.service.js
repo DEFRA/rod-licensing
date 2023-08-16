@@ -64,7 +64,8 @@ const mapRecordPayload = async (record, transactionFile = null) => {
     preferredMethodOfReminder: await getGlobalOptionSetValue(
       PoclValidationError.definition.mappings.preferredMethodOfReminder.ref,
       licensee.preferredMethodOfReminder
-    )
+    ),
+    country: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.country.ref, licensee.country)
   }
 }
 

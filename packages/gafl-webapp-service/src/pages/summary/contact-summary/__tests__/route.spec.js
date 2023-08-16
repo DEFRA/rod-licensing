@@ -16,12 +16,6 @@ import pageRoute from '../../../../routes/page-route.js'
 import { CONTACT_SUMMARY_SEEN } from '../../../../constants.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 
-jest.mock('../../../../processors/refdata-helper.js', () => ({
-  countries: {
-    nameFromCode: () => 'United Kingdom'
-  }
-}))
-
 jest.mock('../../../../handlers/multibuy-for-you-handler.js', () => ({
   isMultibuyForYou: jest.fn()
 }))
@@ -33,10 +27,16 @@ jest.mock('../../../../processors/uri-helper.js', () => ({
 
 jest.mock('../../../../processors/mapping-constants', () => ({
   HOW_CONTACTED: {
-    email: 'e-mail',
-    text: 'SMS',
-    letter: 'snail mail',
-    none: 'silence'
+    email: 'Email Me',
+    none: 'Please not contact moi',
+    text: 'Text Me',
+    post: 'By pigeon'
+  }
+}))
+
+jest.mock('../../../../processors/refdata-helper.js', () => ({
+  countries: {
+    nameFromCode: async () => 'GB'
   }
 }))
 
