@@ -14,6 +14,7 @@ const POCL_VALIDATION_ERROR_STATUS_OPTIONSET = 'defra_poclvalidationerrorstatus'
 export const getPoclValidationErrors = async () => {
   const status = await getGlobalOptionSetValue(POCL_VALIDATION_ERROR_STATUS_OPTIONSET, 'Ready for Processing')
   const results = await executeQuery(findPoclValidationErrors(status))
+  debug('getPoclValidationErrors', JSON.stringify(results, undefined, '\t'))
   return results.map(result => result.entity)
 }
 
