@@ -84,7 +84,7 @@ describe('pocl-validation-errors', () => {
 
   describe('processes successfully fixed validation errors', () => {
     beforeAll(() => {
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([getPoclValidationError()])
+      salesApi.getPoclValidationErrorsForProcessing.mockImplementation(() => [getPoclValidationError()])
     })
 
     it('creates transaction in the Sales Api', async () => {
