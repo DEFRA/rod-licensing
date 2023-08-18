@@ -152,6 +152,15 @@ describe('pocl-validation-errors', () => {
       expect(finaliseTransaction.payment.channelId).toBe('N/A')
     })
 
+    it("omits transaction file from payload if one isn't provided", async () => {
+      const error = getPoclValidationError()
+      delete error.transactionFile
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([error])
+      await processPoclValidationErrors()
+      const finaliseTransaction = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransaction.transactionFile).toBeUndefined()
+    })
+
     it('finalises the transaction in the Sales Api', async () => {
       await processPoclValidationErrors()
       const [record] = salesApi.finaliseTransaction.mock.calls
