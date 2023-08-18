@@ -143,6 +143,15 @@ describe('pocl-validation-errors', () => {
       expect(finaliseTransaction.payment.source).toBe(paymentSourceUV)
     })
 
+    it('populates the channelId with N/A if not provided', async () => {
+      const error = getPoclValidationError()
+      delete error.channelId
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([error])
+      await processPoclValidationErrors()
+      const finaliseTransaction = salesApi.finaliseTransaction.mock.calls[0][1]
+      expect(finaliseTransaction.payment.channelId).toBe('N/A')
+    })
+
     it('finalises the transaction in the Sales Api', async () => {
       await processPoclValidationErrors()
       const [record] = salesApi.finaliseTransaction.mock.calls
