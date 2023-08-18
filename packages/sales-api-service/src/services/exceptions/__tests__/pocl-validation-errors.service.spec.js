@@ -70,7 +70,7 @@ const getValidationError = payload => ({
   timestamp: payload.finaliseTransactionPayload.payment.timestamp,
   amount: payload.finaliseTransactionPayload.payment.amount,
   channelId: payload.finaliseTransactionPayload.payment.channelId,
-  PaymentSource: payload.finaliseTransactionPayload.payment.newPaymentSource,
+  paymentSource: payload.finaliseTransactionPayload.payment.newPaymentSource,
   paymentSourceUV: payload.finaliseTransactionPayload.payment.source,
   methodOfPayment: payload.finaliseTransactionPayload.payment.method,
   status: 'Ready for Processing',

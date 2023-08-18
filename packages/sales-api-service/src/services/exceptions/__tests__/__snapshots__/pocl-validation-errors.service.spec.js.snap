@@ -78,7 +78,6 @@ Array [
 
 exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is not provided updates the validation record 1`] = `
 Object {
-  "PaymentSource": undefined,
   "amount": 30,
   "birthDate": "1989-07-01",
   "channelId": "948594",
@@ -147,7 +146,6 @@ Object {
 
 exports[`POCL validation error service updatePoclValidationError when validation error record exists and status is processed updates the validation record 1`] = `
 Object {
-  "PaymentSource": undefined,
   "amount": 30,
   "birthDate": "1989-07-01",
   "channelId": "948594",
