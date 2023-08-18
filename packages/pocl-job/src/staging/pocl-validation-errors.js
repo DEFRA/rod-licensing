@@ -30,8 +30,8 @@ const mapRecords = records =>
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
-          issueDate: formatDateToShortenedISO(record.transactionDate, 'issueDate'),
-          startDate: formatDateToShortenedISO(record.startDate || record.startDateUV, 'startDate'),
+          issueDate: formatDateToShortenedISO(record.transactionDate),
+          startDate: formatDateToShortenedISO(record.startDate || record.startDateUV),
           permitId: record.permitId.replace(/(^\{|\}$)/g, '').toLowerCase(),
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
@@ -40,7 +40,7 @@ const mapRecords = records =>
     finaliseTransactionPayload: {
       ...(record.transactionFile ? { transactionFile: record.transactionFile } : {}),
       payment: {
-        timestamp: formatDateToShortenedISO(record.transactionDate, 'payment timestamp'),
+        timestamp: formatDateToShortenedISO(record.transactionDate),
         amount: record.amount,
         source: record.paymentSource || record.paymentSourceUV,
         channelId: record.channelId || 'N/A',
@@ -76,7 +76,7 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
   return undefined
 }
 
-const formatDateToShortenedISO = (date, field) => {
+const formatDateToShortenedISO = date => {
   const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
 
   if (date.match(manuallyEnteredDateFormat)) {
@@ -126,9 +126,7 @@ const finaliseTransaction = async rec => {
   return salesApi.finaliseTransaction(rec.result.response.id, finaliseTransactionPayload)
 }
 
-const isFulfilled = result => {
-  return (result?.status === 'fulfilled' || result?.status?.id === 'FINALISED') === true
-}
+const isFulfilled = result => (result?.status === 'fulfilled' || result?.status?.id === 'FINALISED') === true
 
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records

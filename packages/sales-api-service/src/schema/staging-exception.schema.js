@@ -6,6 +6,8 @@ import { concessionProofSchema } from './concession-proof.schema.js'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
 
+const DATE_STRING_DESCRIPTION = 'An ISO8601 compatible date string defining when the permission commences'
+
 const dateSchema = Joi.string().isoDate().required().example(new Date().toISOString())
 
 const TRANSACTION_DATE = dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed')
@@ -74,8 +76,8 @@ export const poclValidationErrorItemSchema = Joi.object({
   preferredMethodOfReminder: optionSetOption,
   postalFulfilment: Joi.boolean().required(),
   concessions: concessionProofSchema.optional(),
-  startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
-  newStartDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+  startDate: dateSchema.description(DATE_STRING_DESCRIPTION),
+  newStartDate: dateSchema.description(DATE_STRING_DESCRIPTION),
   serialNumber: Joi.string().trim().required(),
   transactionFile: Joi.string().trim().required(),
   permitId: Joi.string().guid().required(),
@@ -107,7 +109,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
       Joi.object({
         licensee: Joi.object(),
         issueDate: TRANSACTION_DATE,
-        startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+        startDate: dateSchema.description(DATE_STRING_DESCRIPTION),
         permitId: Joi.string().guid().required(),
         concessions: Joi.array()
           .items(
