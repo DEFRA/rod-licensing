@@ -45,10 +45,10 @@ const mapRecordPayload = async (record, transactionFile = null) => {
   const { source: paymentSource } = record.finaliseTransactionPayload.payment
   const country = await getGlobalOptionSetValue(PoclValidationError.definition.mappings.country.ref, licensee.country)
   if (!country) {
-    licensee.countryUV = licensee.country
+    licensee.countryUnvalidated = licensee.country
   }
   if (Number.isNaN(Date.parse(otherPermissionData.startDate))) {
-    otherPermissionData.startDateUV = otherPermissionData.startDate
+    otherPermissionData.startDateUnvalidated = otherPermissionData.startDate
   }
 
   return {

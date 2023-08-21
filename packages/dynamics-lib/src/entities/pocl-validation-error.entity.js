@@ -15,7 +15,7 @@ export class PoclValidationError extends BaseEntity {
       firstName: { field: 'defra_firstname', type: 'string' },
       lastName: { field: 'defra_name', type: 'string' },
       birthDate: { field: 'defra_birthdate', type: 'string' },
-      countryUV: { field: 'defra_country', type: 'string' },
+      countryUnvalidated: { field: 'defra_country', type: 'string' },
       country: { field: 'defra_countrylist', type: 'optionset', ref: 'defra_country' },
       postcode: { field: 'defra_postcode', type: 'string' },
       town: { field: 'defra_town', type: 'string' },
@@ -34,13 +34,13 @@ export class PoclValidationError extends BaseEntity {
       },
       postalFulfilment: { field: 'defra_postalfulfilment', type: 'boolean' },
       concessions: { field: 'defra_concessions', type: 'string' },
-      startDateUV: { field: 'defra_startdate', type: 'string' },
+      startDateUnvalidated: { field: 'defra_startdate', type: 'string' },
       startDate: { field: 'defra_newstartdate', type: 'string' },
       serialNumber: { field: 'defra_serialnumber', type: 'string' },
       permitId: { field: 'defra_permitid', type: 'string' },
       transactionDate: { field: 'defra_transactiondate', type: 'string' },
       amount: { field: 'defra_amount', type: 'decimal' },
-      paymentSourceUV: { field: 'defra_paymentsource', type: 'string' },
+      paymentSourceUnvalidated: { field: 'defra_paymentsource', type: 'string' },
       paymentSource: { field: 'defra_newpaymentsource', type: 'optionset', ref: 'defra_financialtransactionsource' },
       channelId: { field: 'defra_channelid', type: 'string' },
       methodOfPayment: { field: 'defra_methodofpayment', type: 'optionset', ref: 'defra_paymenttype' },
@@ -100,12 +100,12 @@ export class PoclValidationError extends BaseEntity {
    * The country in the licensee address associated with this pocl record
    * @type {string}
    */
-  get countryUV () {
-    return super._getState('countryUV')
+  get countryUnvalidated () {
+    return super._getState('countryUnvalidated')
   }
 
-  set countryUV (countryUV) {
-    super._setState('countryUV', countryUV)
+  set countryUnvalidated (countryUnvalidated) {
+    super._setState('countryUnvalidated', countryUnvalidated)
   }
 
   get country () {
@@ -276,12 +276,12 @@ export class PoclValidationError extends BaseEntity {
    * The licence start date associated with this pocl record
    * @type {string}
    */
-  get startDateUV () {
-    return super._getState('startDateUV')
+  get startDateUnvalidated () {
+    return super._getState('startDateUnvalidated')
   }
 
-  set startDateUV (startDateUV) {
-    super._setState('startDateUV', startDateUV)
+  set startDateUnvalidated (startDateUnvalidated) {
+    super._setState('startDateUnvalidated', startDateUnvalidated)
   }
 
   /**
@@ -360,12 +360,12 @@ export class PoclValidationError extends BaseEntity {
    * The new payment source associated with this pocl record
    * @type {string}
    */
-  get paymentSourceUV () {
-    return super._getState('paymentSourceUV')
+  get paymentSourceUnvalidated () {
+    return super._getState('paymentSourceUnvalidated')
   }
 
-  set paymentSourceUV (paymentSourceUV) {
-    super._setState('paymentSourceUV', paymentSourceUV)
+  set paymentSourceUnvalidated (paymentSourceUnvalidated) {
+    super._setState('paymentSourceUnvalidated', paymentSourceUnvalidated)
   }
 
   /**

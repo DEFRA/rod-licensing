@@ -101,12 +101,12 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.permissions[0].startDate).toBe(startDate)
     })
 
-    it("uses startDateUV if startDate isn't provided", async () => {
-      const startDateUV = '2023-07-15'
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ startDateUV, startDate: undefined })])
+    it("uses startDateUnvalidated if startDate isn't provided", async () => {
+      const startDateUnvalidated = '2023-07-15'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ startDateUnvalidated, startDate: undefined })])
       await processPoclValidationErrors()
       const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
-      expect(createTransactionPayload.permissions[0].startDate).toBe(startDateUV)
+      expect(createTransactionPayload.permissions[0].startDate).toBe(startDateUnvalidated)
     })
 
     it('uses country if this is provided', async () => {
@@ -117,12 +117,12 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.permissions[0].licensee.country).toBe(country)
     })
 
-    it("uses countryUV if country isn't provided", async () => {
-      const countryUV = 'GB-ENG'
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ countryUV, country: undefined })])
+    it("uses countryUnvalidated if country isn't provided", async () => {
+      const countryUnvalidated = 'GB-ENG'
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ countryUnvalidated, country: undefined })])
       await processPoclValidationErrors()
       const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
-      expect(createTransactionPayload.permissions[0].licensee.country).toBe(countryUV)
+      expect(createTransactionPayload.permissions[0].licensee.country).toBe(countryUnvalidated)
     })
 
     it('uses paymentSource if this is provided', async () => {
@@ -133,14 +133,14 @@ describe('pocl-validation-errors', () => {
       expect(finaliseTransaction.payment.source).toBe(paymentSource)
     })
 
-    it("uses paymentSourceUV if paymentSource isn't provided", async () => {
-      const paymentSourceUV = 'Fire Sales'
+    it("uses paymentSourceUnvalidated if paymentSource isn't provided", async () => {
+      const paymentSourceUnvalidated = 'Fire Sales'
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([
-        getPoclValidationError({ paymentSourceUV, paymentSource: undefined })
+        getPoclValidationError({ paymentSourceUnvalidated, paymentSource: undefined })
       ])
       await processPoclValidationErrors()
       const finaliseTransaction = salesApi.finaliseTransaction.mock.calls[0][1]
-      expect(finaliseTransaction.payment.source).toBe(paymentSourceUV)
+      expect(finaliseTransaction.payment.source).toBe(paymentSourceUnvalidated)
     })
 
     it('populates the channelId with N/A if not provided', async () => {

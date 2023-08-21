@@ -67,7 +67,7 @@ describe('pocl staging exception entity', () => {
         locality: 'Stoke Bishop',
         town: 'Bristol',
         postcode: 'BS9 1HJ',
-        countryUV: 'GB-ENG',
+        countryUnvalidated: 'GB-ENG',
         country: expect.objectContaining({ id: 910400195, label: 'England', description: 'GB-ENG' }),
         birthDate: '1989-07-01',
         email: 'daniel-ricc@example.couk',
@@ -81,13 +81,13 @@ describe('pocl staging exception entity', () => {
         preferredMethodOfReminder: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
         postalFulfilment: true,
         concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
-        startDateUV: '2021-06-15',
+        startDateUnvalidated: '2021-06-15',
         startDate: '2021-06-15',
         serialNumber: '14345-48457J',
         permitId: 'test-permit-id',
         transactionDate: '2020-01-01T14:00:00Z',
         amount: 30,
-        paymentSourceUV: 'Post Office Sales',
+        paymentSourceUnvalidated: 'Post Office Sales',
         paymentSource: {
           description: 'Worldpay',
           id: 910400003,
@@ -115,7 +115,7 @@ describe('pocl staging exception entity', () => {
     validationError.locality = 'Stoke Bishop'
     validationError.town = 'Bristol'
     validationError.postcode = 'BS9 1HJ'
-    validationError.countryUV = 'GB-ENG'
+    validationError.countryUnvalidated = 'GB-ENG'
     validationError.country = optionSetData.defra_country.options['910400195']
     validationError.birthDate = '1989-07-01'
     validationError.email = 'daniel-ricc@example.couk'
@@ -125,13 +125,13 @@ describe('pocl staging exception entity', () => {
     validationError.preferredMethodOfReminder = optionSetData.defra_preferredcontactmethod.options['910400002']
     validationError.postalFulfilment = true
     validationError.concessions = '[{"type":"Blue Badge","referenceNumber":123456789}]'
-    validationError.startDateUV = '2021-06-15'
+    validationError.startDateUnvalidated = '2021-06-15'
     validationError.startDate = '2021-06-15'
     validationError.serialNumber = '14345-48457J'
     validationError.permitId = 'test-permit-id'
     validationError.transactionDate = '2020-01-01T14:00:00Z'
     validationError.amount = 30
-    validationError.paymentSourceUV = 'Post Office Sales'
+    validationError.paymentSourceUnvalidated = 'Post Office Sales'
     validationError.paymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
     validationError.channelId = '948594'
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']

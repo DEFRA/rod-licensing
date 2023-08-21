@@ -64,14 +64,14 @@ const getValidationError = payload => ({
   dataSource: payload.createTransactionPayload.serialNumber.dataSource,
   transactionDate: payload.createTransactionPayload.permissions[0].issueDate,
   permitId: payload.createTransactionPayload.permissions[0].permitId,
-  startDateUV: payload.createTransactionPayload.permissions[0].startDate,
+  startDateUnvalidated: payload.createTransactionPayload.permissions[0].startDate,
   startDate: payload.createTransactionPayload.permissions[0].newStartDate,
   concessions: JSON.stringify(payload.createTransactionPayload.permissions[0].concessions),
   timestamp: payload.finaliseTransactionPayload.payment.timestamp,
   amount: payload.finaliseTransactionPayload.payment.amount,
   channelId: payload.finaliseTransactionPayload.payment.channelId,
   paymentSource: payload.finaliseTransactionPayload.payment.newPaymentSource,
-  paymentSourceUV: payload.finaliseTransactionPayload.payment.source,
+  paymentSourceUnvalidated: payload.finaliseTransactionPayload.payment.source,
   methodOfPayment: payload.finaliseTransactionPayload.payment.method,
   status: 'Ready for Processing',
   errorMessage: payload.errorMessage
@@ -145,22 +145,22 @@ describe('POCL validation error service', () => {
         expect(findById).toBeCalledWith(PoclValidationError, 'pocl-validation-error-id')
       })
 
-      it('maps a country not in optionset to countryUV', async () => {
+      it('maps a country not in optionset to countryUnvalidated', async () => {
         const payload = getPayload()
         payload.createTransactionPayload.permissions[0].licensee.country = 'WAK'
 
         await updatePoclValidationError('abc-123-def-456', payload)
         const [[[poclValidationError]]] = persist.mock.calls
-        expect(poclValidationError.countryUV).toBe('WAK')
+        expect(poclValidationError.countryUnvalidated).toBe('WAK')
       })
 
-      it('maps an invalid date to startDateUV', async () => {
+      it('maps an invalid date to startDateUnvalidated', async () => {
         const payload = getPayload()
         payload.createTransactionPayload.permissions[0].startDate = '15/6/2021'
 
         await updatePoclValidationError('abc-123-def-456', payload)
         const [[[poclValidationError]]] = persist.mock.calls
-        expect(poclValidationError.startDateUV).toBe('15/6/2021')
+        expect(poclValidationError.startDateUnvalidated).toBe('15/6/2021')
       })
 
       describe('and status is not provided', () => {

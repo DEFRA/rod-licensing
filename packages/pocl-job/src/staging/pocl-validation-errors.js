@@ -24,14 +24,14 @@ const mapRecords = records =>
             locality: record.locality,
             town: record.town,
             postcode: record.postcode,
-            country: record.country || record.countryUV,
+            country: record.country || record.countryUnvalidated,
             preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
             preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
           issueDate: formatDateToShortenedISO(record.transactionDate),
-          startDate: formatDateToShortenedISO(record.startDate || record.startDateUV),
+          startDate: formatDateToShortenedISO(record.startDate || record.startDateUnvalidated),
           permitId: record.permitId.replace(/(^\{|\}$)/g, '').toLowerCase(),
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
@@ -42,7 +42,7 @@ const mapRecords = records =>
       payment: {
         timestamp: formatDateToShortenedISO(record.transactionDate),
         amount: record.amount,
-        source: record.paymentSource || record.paymentSourceUV,
+        source: record.paymentSource || record.paymentSourceUnvalidated,
         channelId: record.channelId || 'N/A',
         method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
       }
