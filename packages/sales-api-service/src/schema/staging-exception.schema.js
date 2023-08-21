@@ -6,6 +6,8 @@ import { concessionProofSchema } from './concession-proof.schema.js'
 import { buildJoiOptionSetValidator, createAlternateKeyValidator } from './validators/validators.js'
 import { PoclFile, PoclStagingException } from '@defra-fish/dynamics-lib'
 
+const DATE_STRING_DESCRIPTION = 'An ISO8601 compatible date string defining when the permission commences'
+
 const dateSchema = Joi.string().isoDate().required().example(new Date().toISOString())
 
 const TRANSACTION_DATE = dateSchema.description('An ISO8601 compatible date string defining when the transaction was completed')
@@ -74,16 +76,18 @@ export const poclValidationErrorItemSchema = Joi.object({
   preferredMethodOfReminder: optionSetOption,
   postalFulfilment: Joi.boolean().required(),
   concessions: concessionProofSchema.optional(),
-  startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+  startDate: dateSchema.description(DATE_STRING_DESCRIPTION),
+  newStartDate: dateSchema.description(DATE_STRING_DESCRIPTION),
   serialNumber: Joi.string().trim().required(),
   transactionFile: Joi.string().trim().required(),
   permitId: Joi.string().guid().required(),
   amount: Joi.number().required(),
   transactionDate: TRANSACTION_DATE,
   paymentSource: Joi.string().trim().required(),
+  newPaymentSource: buildJoiOptionSetValidator('defra_financialtransactionsource', 'Direct Debit'),
   channelId: Joi.string().trim().required().description('Channel specific identifier'),
   methodOfPayment: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
-  dataSource: buildJoiOptionSetValidator('defra_datasource', 'Post Office Sales'),
+  dataSource: buildJoiOptionSetValidator('defra_datasource', 'DDE File'),
   status: buildJoiOptionSetValidator('defra_status', 'Ready for Processing'),
   stateCode: Joi.number().required()
 }).label('pocl-validation-error-item')
@@ -105,7 +109,7 @@ export const updatePoclValidationErrorPayload = Joi.object({
       Joi.object({
         licensee: Joi.object(),
         issueDate: TRANSACTION_DATE,
-        startDate: dateSchema.description('An ISO8601 compatible date string defining when the permission commences'),
+        startDate: dateSchema.description(DATE_STRING_DESCRIPTION),
         permitId: Joi.string().guid().required(),
         concessions: Joi.array()
           .items(
@@ -122,12 +126,12 @@ export const updatePoclValidationErrorPayload = Joi.object({
     )
   },
   finaliseTransactionPayload: {
-    transactionFile: Joi.string().required(),
+    transactionFile: Joi.string().optional(),
     payment: {
       timestamp: TRANSACTION_DATE,
       amount: Joi.number().required(),
       source: Joi.string().trim().required(),
-      channelId: Joi.string().trim().required().description('Channel specific identifier'),
+      channelId: Joi.string().trim().optional().description('Channel specific identifier'),
       method: Joi.string().trim().required()
     }
   },

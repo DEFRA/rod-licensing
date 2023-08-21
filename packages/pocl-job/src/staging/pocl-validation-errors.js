@@ -1,4 +1,6 @@
 import { salesApi } from '@defra-fish/connectors-lib'
+import { POSTAL_ORDER_DATASOURCE, POSTAL_ORDER_PAYMENTSOURCE, POSTAL_ORDER_PAYMENTMETHOD } from './constants.js'
+import moment from 'moment'
 import db from 'debug'
 const debug = db('pocl:validation-errors')
 
@@ -6,8 +8,8 @@ const mapRecords = records =>
   records.map(record => ({
     poclValidationErrorId: record.id,
     createTransactionPayload: {
-      dataSource: record.dataSource.label,
-      serialNumber: record.serialNumber,
+      dataSource: backfillDataSource(record),
+      serialNumber: backfillSerialNumber(record),
       permissions: [
         {
           licensee: {
@@ -22,30 +24,66 @@ const mapRecords = records =>
             locality: record.locality,
             town: record.town,
             postcode: record.postcode,
-            country: record.country,
+            country: record.country || record.countryUnvalidated,
             preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
             preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
-          issueDate: record.transactionDate,
-          startDate: record.startDate,
-          permitId: record.permitId,
+          issueDate: formatDateToShortenedISO(record.transactionDate),
+          startDate: formatDateToShortenedISO(record.startDate || record.startDateUnvalidated),
+          permitId: record.permitId.replace(/(^\{|\}$)/g, '').toLowerCase(),
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
       ]
     },
     finaliseTransactionPayload: {
-      transactionFile: record.transactionFile,
+      ...(record.transactionFile ? { transactionFile: record.transactionFile } : {}),
       payment: {
-        timestamp: record.transactionDate,
+        timestamp: formatDateToShortenedISO(record.transactionDate),
         amount: record.amount,
-        source: record.paymentSource,
-        channelId: record.channelId,
-        method: record.methodOfPayment.label
+        source: record.paymentSource || record.paymentSourceUnvalidated,
+        channelId: record.channelId || 'N/A',
+        method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
       }
     }
   }))
+
+const backfillDataSource = record => {
+  if (record.dataSource) {
+    return record.dataSource.label
+  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    return POSTAL_ORDER_DATASOURCE
+  }
+  return undefined
+}
+
+const backfillSerialNumber = record => {
+  if (record.serialNumber) {
+    return record.serialNumber
+  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    return POSTAL_ORDER_DATASOURCE
+  }
+  return undefined
+}
+
+const backfillPaymentMethod = (method, newPaymentSource) => {
+  if (method) {
+    return method.label
+  } else if (newPaymentSource && newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    return POSTAL_ORDER_PAYMENTMETHOD
+  }
+  return undefined
+}
+
+const formatDateToShortenedISO = date => {
+  const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
+
+  if (date.match(manuallyEnteredDateFormat)) {
+    return moment(date, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
+  }
+  return date
+}
 
 /**
  * Calls Sales Api to update Dynamics record
@@ -53,7 +91,7 @@ const mapRecords = records =>
  */
 const processFailed = async failed => {
   for (const { record, result } of failed) {
-    debug('Failed when reprocessing record: %o', record)
+    debug('Failed when reprocessing record: %s', JSON.stringify(record))
     await salesApi.updatePoclValidationError(record.poclValidationErrorId, { ...record, errorMessage: result.message })
   }
 }
@@ -78,26 +116,36 @@ const createTransactions = async records => {
   return { succeeded, failed }
 }
 
+const finaliseTransaction = async rec => {
+  const payment = rec.record.finaliseTransactionPayload.payment
+  const finaliseTransactionPayload = {
+    payment: { method: backfillPaymentMethod(payment.method, payment.newPaymentSource) },
+    ...rec.record.finaliseTransactionPayload
+  }
+  debug('finalising transaction: %o', finaliseTransactionPayload)
+  return salesApi.finaliseTransaction(rec.result.response.id, finaliseTransactionPayload)
+}
+
+const isFulfilled = result => (result?.status === 'fulfilled' || result?.status?.id === 'FINALISED') === true
+
 const finaliseTransactions = async records => {
   const { succeeded: created, failed } = records
-  const finalisationResults = await Promise.allSettled(
-    created.map(rec => salesApi.finaliseTransaction(rec.result.response.id, rec.record.finaliseTransactionPayload))
-  )
+  const finalisationResults = await Promise.allSettled(created.map(rec => finaliseTransaction(rec)))
 
   const succeeded = []
   created.forEach(({ record }, idx) => {
     const result = finalisationResults[idx]
-    if (result.status === 'fulfilled') {
+    if (isFulfilled(result)) {
       succeeded.push({ record, result: result.value })
-    } else if (result.reason.status === 410) {
+    } else if (result?.reason?.status === 410) {
       /*
         HTTP-410 errors indicate that the record has already been finalised.  This can occur if the process is terminated while finalising records
         (between the API call and the database update.) As the transaction has already been finalised, treat these as successful.  The data for the
         previously finalised record is returned under the data key of the error structure returned by the Sales API
        */
-      succeeded.push({ record, result: result.reason.body.data })
+      succeeded.push({ record, result: result?.reason?.body?.data })
     } else {
-      failed.push({ record, result: result.reason })
+      failed.push({ record, result: result?.reason })
     }
   })
 
