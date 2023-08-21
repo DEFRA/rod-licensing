@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.14 (2023-08-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#1740](https://github.com/DEFRA/rod-licensing/pull/1740) Update POCL job to accept new postal order fields ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.35.0-rc.13 (2023-08-16)
 
 #### :rocket: Enhancement
