@@ -235,8 +235,8 @@ describe('pocl-validation-errors', () => {
     })
   })
 
-  describe('when an existing POCL validation error has no datasource', () => {
-    it('fills it with the correct data for postal orders', async () => {
+  describe('Create transaction payload datasource', () => {
+    it("is set to 'Postal Order Sales' when payment source is 'Postal Order'", async () => {
       const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: { label: 'Postal Order' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
@@ -245,7 +245,7 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.dataSource).toBe('Postal Order Sales')
     })
 
-    it('leaves the datatype blank if payment source is not postal order', async () => {
+    it("is undefined when payment source is not 'Postal Order'", async () => {
       const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: { label: 'Magic beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
@@ -254,7 +254,7 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.dataSource).toBeUndefined()
     })
 
-    it('leaves the datatype blank if payment source is not set', async () => {
+    it('is undefined when payment source is null', async () => {
       const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
@@ -264,8 +264,8 @@ describe('pocl-validation-errors', () => {
     })
   })
 
-  describe('when an existing POCL validation error has no serial number', () => {
-    it('fills it with the correct data for postal orders', async () => {
+  describe('Create transaction payload serial number', () => {
+    it("is set to 'Postal Order Sales' when newPaymentSource is 'Postal Order'", async () => {
       const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: { label: 'Postal Order' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
 
@@ -275,7 +275,7 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.serialNumber).toBe('Postal Order Sales')
     })
 
-    it('leaves the datatype blank if payment source is not postal order', async () => {
+    it("is undefined if payment source is not 'Postal Order'", async () => {
       const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: { label: 'Magic Beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
 
@@ -285,7 +285,7 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.serialNumber).toBeUndefined()
     })
 
-    it('leaves the datatype blank if payment source is not set', async () => {
+    it('is undefined if payment source is not set', async () => {
       const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
@@ -296,8 +296,8 @@ describe('pocl-validation-errors', () => {
     })
   })
 
-  describe('when an existing POCL validation error has no method of payment', () => {
-    it('fills it with the correct data for postal orders', async () => {
+  describe('Finalise transaction payload payment method', () => {
+    it("is 'Other' if payment source is 'Postal Order'", async () => {
       const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: { label: 'Postal Order' } })
       poclValidationError.methodOfPayment = null
       poclValidationError.newPaymentSource = { label: 'Postal Order' }
@@ -309,7 +309,7 @@ describe('pocl-validation-errors', () => {
       expect(finaliseTransactionPayload.payment.method).toBe('Other')
     })
 
-    it('leaves the payment method blank if payment source is not postal order', async () => {
+    it("is undefined if payment source is not 'Postal Order'", async () => {
       const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: { label: 'Magic Beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
@@ -319,7 +319,7 @@ describe('pocl-validation-errors', () => {
       expect(finaliseTransactionPayload.payment.method).toBeUndefined()
     })
 
-    it('leaves the payment method blank if payment source is not set', async () => {
+    it('is undefined if payment source is not set', async () => {
       const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
@@ -342,19 +342,6 @@ describe('pocl-validation-errors', () => {
       const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
       const expectedDate = '2023-01-01T00:00:00Z'
       expect(createTransactionPayload.permissions[0].issueDate).toBe(expectedDate)
-    })
-
-    it('converts the startDate to ISO format without milliseconds', async () => {
-      const poclValidationError = getPoclValidationError()
-      poclValidationError.startDate = '01/01/2023'
-
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
-      salesApi.createTransactions.mockResolvedValue([{ statusCode: 201, response: { id: 'test-response-id' } }])
-      await processPoclValidationErrors()
-
-      const validationError = salesApi.createTransactions.mock.calls[0][0][0]
-      const expectedDate = '2023-01-01T00:00:00Z'
-      expect(validationError.permissions[0].startDate).toBe(expectedDate)
     })
 
     it('converts the startDate to ISO format without milliseconds', async () => {
