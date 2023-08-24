@@ -30,8 +30,11 @@ const mapRecords = records =>
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
             postalFulfilment: record.postalFulfilment
           },
-          issueDate: formatDateToShortenedISO(record.transactionDate),
-          startDate: formatDateToShortenedISO(record.startDate || record.startDateUnvalidated),
+          issueDate: formatDateToShortenedISO(record.transactionDate, 'issue date'),
+          startDate: formatDateToShortenedISO(
+            record.startDate || record.startDateUnvalidated,
+            `start date ${record.startDate} start date uv ${record.startDateUnvalidated}`
+          ),
           permitId: record.permitId.replace(/(^\{|\}$)/g, '').toLowerCase(),
           ...(record.concessions && { concessions: JSON.parse(record.concessions) })
         }
@@ -40,7 +43,7 @@ const mapRecords = records =>
     finaliseTransactionPayload: {
       ...(record.transactionFile ? { transactionFile: record.transactionFile } : {}),
       payment: {
-        timestamp: formatDateToShortenedISO(record.transactionDate),
+        timestamp: formatDateToShortenedISO(record.transactionDate, 'payment timestamp'),
         amount: record.amount,
         source: record.paymentSource || record.paymentSourceUnvalidated,
         channelId: record.channelId || 'N/A',
@@ -76,11 +79,17 @@ const backfillPaymentMethod = (method, newPaymentSource) => {
   return undefined
 }
 
-const formatDateToShortenedISO = date => {
+const formatDateToShortenedISO = (date, tag) => {
+  debug(`formatting date ${tag}`, date)
   const manuallyEnteredDateFormat = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}/
 
   if (date.match(manuallyEnteredDateFormat)) {
-    return moment(date, 'DD/MM/YYYY').toDate().toISOString().split('.')[0] + 'Z'
+    return (
+      moment(date, 'DD/MM/YYYY')
+        .toDate()
+        .toISOString()
+        .split('.')[0] + 'Z'
+    )
   }
   return date
 }
