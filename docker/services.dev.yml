@@ -133,10 +133,9 @@ services:
       - ./env/.recurring_payments_job.secrets.env
     deploy:
       mode: replicated
-      replicas: 0
+      replicas: 1
       restart_policy:
-        condition: any
-        delay: 24h
+        condition: on-failure
 
 #######################################################
 # Network configuration

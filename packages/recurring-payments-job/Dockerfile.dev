@@ -2,5 +2,6 @@
 # Used for local development debugging
 ####################################################################################################################################
 FROM rod_licensing/base
+WORKDIR /app/packages/recurring-payments-job
 # Use node directly rather than pm2 for scheduled tasks
-ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/recurring-payments-job.js", "execute" ]
+ENTRYPOINT [ "node", "--unhandled-rejections=strict", "src/recurring-payments-job.js" ]
