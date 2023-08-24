@@ -171,6 +171,7 @@ export const processPoclValidationErrors = async () => {
     debug('No POCL validation errors to process')
     return undefined
   }
+  debug('validation errors %s', JSON.stringify(validationErrors, undefined, '\t'))
   const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
 }
