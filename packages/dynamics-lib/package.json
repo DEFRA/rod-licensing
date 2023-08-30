@@ -4,7 +4,7 @@
   "description": "Framework to support integration with dynamics",
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=18.17"
   },
   "keywords": [
     "rod",
