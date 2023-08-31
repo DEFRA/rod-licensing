@@ -61,21 +61,6 @@
         <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_incident_title }}</h2>
         <p class="govuk-body">{{ mssgs.licence_conditions_incident }}</p>
 
-                {% if data.paymentRequired %}
-                    {{ govukWarningText({
-                        text: mssgs.terms_conds_warning,
-                        iconFallbackText: "Warning"
-                    }) }}
-                {% endif %}
-
-                {{ govukButton({
-                    attributes: { id: 'continue' },
-                    preventDoubleClick: true,
-                    name: "continue",
-                    text: mssgs.terms_conds_pay_button_1 if data.paymentRequired else mssgs.terms_conds_pay_button_2,
-                    classes: "govuk-!-margin-top-5"
-                }) }}
-
         {% if data.paymentRequired %}
             {{ govukWarningText({
                 text: mssgs.terms_conds_warning,
@@ -91,7 +76,9 @@
             classes: "govuk-!-margin-top-5"
         }) }}
 
-        <div class="govuk-body-m"><a class="govuk-link" href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.terms_conds_pay_on_gov_uk }}</a></div>
+        {% if data.paymentRequired %}
+            <span class="govuk-caption-m">{{ mssgs.terms_conds_pay_on_gov_uk }}</span>
+        {% endif %}
 
         {{ csrf() }}
     </form> 
