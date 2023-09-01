@@ -59,11 +59,15 @@ const backfillDataSource = record => {
 }
 
 const backfillSerialNumber = record => {
+  debug('backfilling data source for %o', record)
   if (record.serialNumber) {
+    debug('using serial number')
     return record.serialNumber
   } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    debug('using postal order datasource')
     return POSTAL_ORDER_DATASOURCE
   }
+  debug('setting to undefined')
   return undefined
 }
 
@@ -104,6 +108,7 @@ const processSucceeded = async succeeded => {
 }
 
 const createTransactions = async records => {
+  debug('creating transactions: %s', JSON.stringify(records))
   const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionPayload))
 
   const succeeded = []
@@ -162,6 +167,7 @@ export const processPoclValidationErrors = async () => {
     debug('No POCL validation errors to process')
     return undefined
   }
+  debug('validation errors %s', JSON.stringify(validationErrors, undefined, '\t'))
   const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
 }
