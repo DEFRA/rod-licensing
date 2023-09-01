@@ -31,12 +31,12 @@ const getPoclValidationError = overrides => ({
   postalFulfilment: true,
   concessions: '[{"type":"Blue Badge","referenceNumber":"123456789"}]',
   startDate: '2021-06-15',
-  newStartDate: '2021-06-15',
+  startDateUnvalidated: '2021-06-15',
   permitId: 'test-permit-id',
   transactionDate: '2020-01-01T14:00:00Z',
   amount: 30,
-  paymentSource: 'Post Office Sales',
-  newPaymentSource: { label: 'Post Office Sales' },
+  paymentSource: { label: 'Post Office Sales' },
+  paymentSourceUnvalidated: 'Post Office Sales',
   channelId: '948594',
   methodOfPayment: { label: 'Cash' },
   status: { label: 'Ready for Processing' },
@@ -103,7 +103,9 @@ describe('pocl-validation-errors', () => {
 
     it("uses startDateUnvalidated if startDate isn't provided", async () => {
       const startDateUnvalidated = '2023-07-15'
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ startDateUnvalidated, startDate: undefined })])
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([
+        getPoclValidationError({ startDateUnvalidated, startDate: undefined })
+      ])
       await processPoclValidationErrors()
       const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
       expect(createTransactionPayload.permissions[0].startDate).toBe(startDateUnvalidated)
@@ -119,7 +121,9 @@ describe('pocl-validation-errors', () => {
 
     it("uses countryUnvalidated if country isn't provided", async () => {
       const countryUnvalidated = 'GB-ENG'
-      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ countryUnvalidated, country: undefined })])
+      salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([
+        getPoclValidationError({ countryUnvalidated, country: undefined })
+      ])
       await processPoclValidationErrors()
       const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
       expect(createTransactionPayload.permissions[0].licensee.country).toBe(countryUnvalidated)
@@ -237,7 +241,7 @@ describe('pocl-validation-errors', () => {
 
   describe('Create transaction payload datasource', () => {
     it("is set to 'Postal Order Sales' when payment source is 'Postal Order'", async () => {
-      const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: { label: 'Postal Order' } })
+      const poclValidationError = getPoclValidationError({ dataSource: null, paymentSource: { label: 'Postal Order' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
 
@@ -246,7 +250,7 @@ describe('pocl-validation-errors', () => {
     })
 
     it("is undefined when payment source is not 'Postal Order'", async () => {
-      const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: { label: 'Magic beans' } })
+      const poclValidationError = getPoclValidationError({ dataSource: null, paymentSource: { label: 'Magic beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
 
@@ -255,7 +259,7 @@ describe('pocl-validation-errors', () => {
     })
 
     it('is undefined when payment source is null', async () => {
-      const poclValidationError = getPoclValidationError({ dataSource: null, newPaymentSource: null })
+      const poclValidationError = getPoclValidationError({ dataSource: null, paymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
       await processPoclValidationErrors()
 
@@ -265,8 +269,8 @@ describe('pocl-validation-errors', () => {
   })
 
   describe('Create transaction payload serial number', () => {
-    it("is set to 'Postal Order Sales' when newPaymentSource is 'Postal Order'", async () => {
-      const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: { label: 'Postal Order' } })
+    it("is set to 'Postal Order Sales' when paymentSource is 'Postal Order'", async () => {
+      const poclValidationError = getPoclValidationError({ serialNumber: null, paymentSource: { label: 'Postal Order' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
 
       await processPoclValidationErrors()
@@ -276,7 +280,7 @@ describe('pocl-validation-errors', () => {
     })
 
     it("is undefined if payment source is not 'Postal Order'", async () => {
-      const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: { label: 'Magic Beans' } })
+      const poclValidationError = getPoclValidationError({ serialNumber: null, paymentSource: { label: 'Magic Beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([poclValidationError])
 
       await processPoclValidationErrors()
@@ -286,7 +290,7 @@ describe('pocl-validation-errors', () => {
     })
 
     it('is undefined if payment source is not set', async () => {
-      const poclValidationError = getPoclValidationError({ serialNumber: null, newPaymentSource: null })
+      const poclValidationError = getPoclValidationError({ serialNumber: null, paymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
       await processPoclValidationErrors()
@@ -298,9 +302,9 @@ describe('pocl-validation-errors', () => {
 
   describe('Finalise transaction payload payment method', () => {
     it("is 'Other' if payment source is 'Postal Order'", async () => {
-      const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: { label: 'Postal Order' } })
+      const poclValidationError = getPoclValidationError({ methodOfPayment: null, paymentSource: { label: 'Postal Order' } })
       poclValidationError.methodOfPayment = null
-      poclValidationError.newPaymentSource = { label: 'Postal Order' }
+      poclValidationError.paymentSource = { label: 'Postal Order' }
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
       await processPoclValidationErrors()
@@ -310,7 +314,7 @@ describe('pocl-validation-errors', () => {
     })
 
     it("is undefined if payment source is not 'Postal Order'", async () => {
-      const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: { label: 'Magic Beans' } })
+      const poclValidationError = getPoclValidationError({ methodOfPayment: null, paymentSource: { label: 'Magic Beans' } })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
       await processPoclValidationErrors()
@@ -320,7 +324,7 @@ describe('pocl-validation-errors', () => {
     })
 
     it('is undefined if payment source is not set', async () => {
-      const poclValidationError = getPoclValidationError({ methodOfPayment: null, newPaymentSource: null })
+      const poclValidationError = getPoclValidationError({ methodOfPayment: null, paymentSource: null })
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValue([poclValidationError])
 
       await processPoclValidationErrors()

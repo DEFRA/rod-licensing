@@ -44,7 +44,7 @@ const mapRecords = records =>
         amount: record.amount,
         source: record.paymentSource || record.paymentSourceUnvalidated,
         channelId: record.channelId || 'N/A',
-        method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
+        method: backfillPaymentMethod(record.methodOfPayment, record.paymentSource)
       }
     }
   }))
@@ -52,25 +52,29 @@ const mapRecords = records =>
 const backfillDataSource = record => {
   if (record.dataSource) {
     return record.dataSource.label
-  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+  } else if (record.paymentSource && record.paymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
   }
   return undefined
 }
 
 const backfillSerialNumber = record => {
+  debug('backfilling data source for %o', record)
   if (record.serialNumber) {
+    debug('using serial number')
     return record.serialNumber
-  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+  } else if (record.paymentSource && record.paymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+    debug('using postal order datasource')
     return POSTAL_ORDER_DATASOURCE
   }
+  debug('setting to undefined')
   return undefined
 }
 
-const backfillPaymentMethod = (method, newPaymentSource) => {
+const backfillPaymentMethod = (method, paymentSource) => {
   if (method) {
     return method.label
-  } else if (newPaymentSource && newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+  } else if (paymentSource && paymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_PAYMENTMETHOD
   }
   return undefined
@@ -104,6 +108,7 @@ const processSucceeded = async succeeded => {
 }
 
 const createTransactions = async records => {
+  debug('creating transactions: %s', JSON.stringify(records))
   const results = await salesApi.createTransactions(records.map(rec => rec.createTransactionPayload))
 
   const succeeded = []
@@ -119,7 +124,7 @@ const createTransactions = async records => {
 const finaliseTransaction = async rec => {
   const payment = rec.record.finaliseTransactionPayload.payment
   const finaliseTransactionPayload = {
-    payment: { method: backfillPaymentMethod(payment.method, payment.newPaymentSource) },
+    payment: { method: backfillPaymentMethod(payment.method, payment.paymentSource) },
     ...rec.record.finaliseTransactionPayload
   }
   debug('finalising transaction: %o', finaliseTransactionPayload)
@@ -162,6 +167,7 @@ export const processPoclValidationErrors = async () => {
     debug('No POCL validation errors to process')
     return undefined
   }
+  debug('validation errors %s', JSON.stringify(validationErrors, undefined, '\t'))
   const createResults = await createTransactions(mapRecords(validationErrors))
   return finaliseTransactions(createResults)
 }
