@@ -14,7 +14,7 @@ Object {
       "issueDate": "2020-01-01T14:00:00Z",
       "licensee": Object {
         "birthDate": "1989-07-01",
-        "country": "GB",
+        "country": "GB-ENG",
         "email": "daniel-ricc@example.couk",
         "firstName": "Daniel",
         "lastName": "Ricciardo",
@@ -55,7 +55,7 @@ Array [
           "issueDate": "2020-01-01T14:00:00Z",
           "licensee": Object {
             "birthDate": "1989-07-01",
-            "country": "GB",
+            "country": "GB-ENG",
             "email": "daniel-ricc@example.couk",
             "firstName": "Daniel",
             "lastName": "Ricciardo",
@@ -123,7 +123,7 @@ Object {
       "issueDate": "2020-01-01T14:00:00Z",
       "licensee": Object {
         "birthDate": "1989-07-01",
-        "country": "GB",
+        "country": "GB-ENG",
         "email": "daniel-ricc@example.couk",
         "firstName": "Daniel",
         "lastName": "Ricciardo",
@@ -164,7 +164,7 @@ Array [
           "issueDate": "2020-01-01T14:00:00Z",
           "licensee": Object {
             "birthDate": "1989-07-01",
-            "country": "GB",
+            "country": "GB-ENG",
             "email": "daniel-ricc@example.couk",
             "firstName": "Daniel",
             "lastName": "Ricciardo",
@@ -216,7 +216,7 @@ Object {
       "issueDate": "2020-01-01T14:00:00Z",
       "licensee": Object {
         "birthDate": "1989-07-01",
-        "country": "GB",
+        "country": "GB-ENG",
         "email": "daniel-ricc@example.co.uk",
         "firstName": "Daniel",
         "lastName": "Ricciardo",
@@ -273,7 +273,7 @@ Array [
           "issueDate": "2020-01-01T14:00:00Z",
           "licensee": Object {
             "birthDate": "1989-07-01",
-            "country": "GB",
+            "country": "GB-ENG",
             "email": "daniel-ricc@example.co.uk",
             "firstName": "Daniel",
             "lastName": "Ricciardo",
@@ -328,7 +328,7 @@ Array [
           "issueDate": "2020-01-01T14:00:00Z",
           "licensee": Object {
             "birthDate": "1989-07-01",
-            "country": "GB",
+            "country": "GB-ENG",
             "email": "daniel-ricc@example.co.uk",
             "firstName": "Daniel",
             "lastName": "Ricciardo",
