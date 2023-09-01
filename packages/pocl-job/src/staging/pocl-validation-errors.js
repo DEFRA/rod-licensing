@@ -24,7 +24,7 @@ const mapRecords = records =>
             locality: record.locality,
             town: record.town,
             postcode: record.postcode,
-            country: record.country || record.countryUnvalidated,
+            country: getCountryValue(record),
             preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
             preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
@@ -42,7 +42,7 @@ const mapRecords = records =>
       payment: {
         timestamp: formatDateToShortenedISO(record.transactionDate),
         amount: record.amount,
-        source: backfillSource(record),
+        source: getSourceValue(record),
         channelId: record.channelId || 'N/A',
         method: backfillPaymentMethod(record.methodOfPayment, record.paymentSource)
       }
@@ -80,7 +80,14 @@ const backfillPaymentMethod = (method, paymentSource) => {
   return undefined
 }
 
-const backfillSource = record => {
+const getCountryValue = record => {
+  if (record.country && record.country.label) {
+    return record.country.label
+  }
+  return record.countryUnvalidated
+}
+
+const getSourceValue = record => {
   if (record.paymentSource && record.paymentSource.label) {
     return record.paymentSource.label
   }

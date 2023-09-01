@@ -21,7 +21,7 @@ const getPoclValidationError = overrides => ({
   street: 'Eastmead Lane',
   town: 'Bristol',
   postcode: 'BS9 1HJ',
-  country: 'GB',
+  country: { label: 'GB-ENG' },
   birthDate: '1989-07-01',
   email: 'daniel-ricc@example.co.uk',
   mobilePhone: '07722 123456',
@@ -112,15 +112,15 @@ describe('pocl-validation-errors', () => {
     })
 
     it('uses country if this is provided', async () => {
-      const country = 'GB-ENG'
+      const country = { label: 'GB-ENG' }
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ country })])
       await processPoclValidationErrors()
       const [[[createTransactionPayload]]] = salesApi.createTransactions.mock.calls
-      expect(createTransactionPayload.permissions[0].licensee.country).toBe(country)
+      expect(createTransactionPayload.permissions[0].licensee.country).toBe(country.label)
     })
 
     it("uses countryUnvalidated if country isn't provided", async () => {
-      const countryUnvalidated = 'GB-ENG'
+      const countryUnvalidated = 'England'
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([
         getPoclValidationError({ countryUnvalidated, country: undefined })
       ])
