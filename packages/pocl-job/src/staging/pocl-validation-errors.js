@@ -42,7 +42,7 @@ const mapRecords = records =>
       payment: {
         timestamp: formatDateToShortenedISO(record.transactionDate),
         amount: record.amount,
-        source: record.paymentSource || record.paymentSourceUnvalidated,
+        source: backfillSource(record),
         channelId: record.channelId || 'N/A',
         method: backfillPaymentMethod(record.methodOfPayment, record.paymentSource)
       }
@@ -78,6 +78,13 @@ const backfillPaymentMethod = (method, paymentSource) => {
     return POSTAL_ORDER_PAYMENTMETHOD
   }
   return undefined
+}
+
+const backfillSource = record => {
+  if (record.paymentSource && record.paymentSource.label) {
+    return record.paymentSource.label
+  }
+  return record.paymentSourceUnvalidated
 }
 
 const formatDateToShortenedISO = date => {

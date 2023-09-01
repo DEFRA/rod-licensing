@@ -129,12 +129,12 @@ describe('pocl-validation-errors', () => {
       expect(createTransactionPayload.permissions[0].licensee.country).toBe(countryUnvalidated)
     })
 
-    it('uses paymentSource if this is provided', async () => {
-      const paymentSource = 'Post Office Sales'
+    it('uses paymentSource label if this is provided', async () => {
+      const paymentSource = { label: 'Post Office Sales' }
       salesApi.getPoclValidationErrorsForProcessing.mockResolvedValueOnce([getPoclValidationError({ paymentSource })])
       await processPoclValidationErrors()
       const finaliseTransaction = salesApi.finaliseTransaction.mock.calls[0][1]
-      expect(finaliseTransaction.payment.source).toBe(paymentSource)
+      expect(finaliseTransaction.payment.source).toBe(paymentSource.label)
     })
 
     it("uses paymentSourceUnvalidated if paymentSource isn't provided", async () => {
