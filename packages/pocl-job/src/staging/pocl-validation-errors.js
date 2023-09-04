@@ -24,7 +24,7 @@ const mapRecords = records =>
             locality: record.locality,
             town: record.town,
             postcode: record.postcode,
-            country: record.country || record.countryUnvalidated,
+            country: getCountryValue(record),
             preferredMethodOfConfirmation: record.preferredMethodOfConfirmation.label,
             preferredMethodOfNewsletter: record.preferredMethodOfNewsletter.label,
             preferredMethodOfReminder: record.preferredMethodOfReminder.label,
@@ -42,9 +42,9 @@ const mapRecords = records =>
       payment: {
         timestamp: formatDateToShortenedISO(record.transactionDate),
         amount: record.amount,
-        source: record.paymentSource || record.paymentSourceUnvalidated,
+        source: getSourceValue(record),
         channelId: record.channelId || 'N/A',
-        method: backfillPaymentMethod(record.methodOfPayment, record.newPaymentSource)
+        method: backfillPaymentMethod(record.methodOfPayment, record.paymentSource)
       }
     }
   }))
@@ -52,7 +52,7 @@ const mapRecords = records =>
 const backfillDataSource = record => {
   if (record.dataSource) {
     return record.dataSource.label
-  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+  } else if (record.paymentSource && record.paymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
   }
   return undefined
@@ -61,19 +61,33 @@ const backfillDataSource = record => {
 const backfillSerialNumber = record => {
   if (record.serialNumber) {
     return record.serialNumber
-  } else if (record.newPaymentSource && record.newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+  } else if (record.paymentSource && record.paymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_DATASOURCE
   }
   return undefined
 }
 
-const backfillPaymentMethod = (method, newPaymentSource) => {
+const backfillPaymentMethod = (method, paymentSource) => {
   if (method) {
     return method.label
-  } else if (newPaymentSource && newPaymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
+  } else if (paymentSource && paymentSource.label === POSTAL_ORDER_PAYMENTSOURCE) {
     return POSTAL_ORDER_PAYMENTMETHOD
   }
   return undefined
+}
+
+const getCountryValue = record => {
+  if (record.country && record.country.label) {
+    return record.country.label
+  }
+  return record.countryUnvalidated
+}
+
+const getSourceValue = record => {
+  if (record.paymentSource && record.paymentSource.label) {
+    return record.paymentSource.label
+  }
+  return record.paymentSourceUnvalidated
 }
 
 const formatDateToShortenedISO = date => {
@@ -119,7 +133,7 @@ const createTransactions = async records => {
 const finaliseTransaction = async rec => {
   const payment = rec.record.finaliseTransactionPayload.payment
   const finaliseTransactionPayload = {
-    payment: { method: backfillPaymentMethod(payment.method, payment.newPaymentSource) },
+    payment: { method: backfillPaymentMethod(payment.method, payment.paymentSource) },
     ...rec.record.finaliseTransactionPayload
   }
   debug('finalising transaction: %o', finaliseTransactionPayload)
