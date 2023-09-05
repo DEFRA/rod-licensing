@@ -377,5 +377,26 @@ describe('validators', () => {
       ).resolves.toEqual(undefined)
       expect(spy).toHaveBeenCalledWith(PermitConcession)
     })
+
+    it('returns a validation function which does not throw an error for Postal Order Sales even if the permit requires a concession and none is supplied', async () => {
+      const spy = jest.spyOn(referenceData, 'getReferenceDataForEntity').mockImplementation(async () => [
+        {
+          permitId: 'test-1',
+          concessionId: 'test-1'
+        }
+      ])
+      const validationFunction = createPermitConcessionValidator()
+      await expect(
+        validationFunction({
+          dataSource: 'Postal Order Sales',
+          permissions: [
+            {
+              permitId: 'test-1'
+            }
+          ]
+        })
+      ).resolves.toEqual(undefined)
+      expect(spy).toHaveBeenCalledWith(PermitConcession)
+    })
   })
 })
