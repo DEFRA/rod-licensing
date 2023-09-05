@@ -1,4 +1,13 @@
 
+## v1.35.0-rc.17 (2023-09-05)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1789](https://github.com/DEFRA/rod-licensing/pull/1789) Stop Sales API requiring concession proof for PO entries ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.35.0-rc.16 (2023-09-04)
 
 #### :rocket: Enhancement
