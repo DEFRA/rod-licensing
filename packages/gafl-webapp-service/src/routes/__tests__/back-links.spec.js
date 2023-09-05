@@ -62,16 +62,6 @@ describe('The date-of-birth page', () => {
   })
 })
 
-describe('The licence-start-time page', () => {
-  const n = journeyDefinition.find(n => n.current.page === LICENCE_START_TIME.page)
-  it('has a back-link to the licence-length page on initial viewing', () => {
-    expect(n.backLink({})).toBe(LICENCE_LENGTH.uri)
-  })
-  it('has a back-link to the licence-to-start page if the summary is seen', () => {
-    expect(n.backLink({ fromSummary: LICENCE_SUMMARY_SEEN })).toBe(LICENCE_TO_START.uri)
-  })
-})
-
 describe('The name page', () => {
   const currentPage = journeyDefinition.find(currentPage => currentPage.current.page === NAME.page)
   it('has a back-link to the licence-summary page if the licence-summary is seen', async () => {

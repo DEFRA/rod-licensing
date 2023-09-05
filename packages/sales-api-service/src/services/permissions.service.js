@@ -88,8 +88,6 @@ const getAgeCategory = (birthDate, issueDate) => {
   const issue = moment(issueDate)
   const diff = issue.diff(dob, 'years', true)
 
-  console.log(diff)
-
   if (isJunior(diff)) {
     return 'J'
   } else if (isSenior(diff)) {

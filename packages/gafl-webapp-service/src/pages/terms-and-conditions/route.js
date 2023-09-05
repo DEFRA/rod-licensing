@@ -26,9 +26,7 @@ export const getData = async request => {
 
   return {
     paymentRequired: priceCalculation(licences),
-    troutAndCoarse2Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], '2'),
-    troutAndCoarse3Rods: checkLicenceType(transaction, LICENCE_TYPE['trout-and-coarse'], '3'),
-    salmonAndSeaTrout: checkLicenceType(transaction, LICENCE_TYPE['salmon-and-sea-trout'], '1')
+    isSalmonAndSeaTrout: checkLicenceType(transaction, LICENCE_TYPE['salmon-and-sea-trout'], '1')
   }
 }
 

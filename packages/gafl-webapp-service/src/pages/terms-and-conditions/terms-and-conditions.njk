@@ -41,25 +41,32 @@
                 isPageHeading: true
             }
         }) }}
-        
-        {{ accordion(mssgs, data.troutAndCoarse2Rods, data.troutAndCoarse3Rods, data.salmonAndSeaTrout)}}
 
-            <div class="govuk-!-margin-bottom-9">
-                <p class="govuk-body">{{ mssgs.terms_conds_body }}</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.terms_conds_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_4_1 }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_4_link }}</a>{{ mssgs.terms_conds_bulletpoint_4_2 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_5 }}</li>
-                    {% if data.isSalmonAndSeaTrout %}
-                        <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
-                    {% endif %}
-                </ul>
-            </div>
+        <div class="govuk-!-margin-bottom-9">
+            <p class="govuk-body">{{ mssgs.terms_conds_body }}</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>{{ mssgs.terms_conds_bulletpoint_1 }}</li>
+                <li>{{ mssgs.terms_conds_bulletpoint_2 }}</li>
+                <li>{{ mssgs.terms_conds_bulletpoint_3 }}</li>
+                <li>{{ mssgs.terms_conds_bulletpoint_4_1 }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_4_link }}</a>{{ mssgs.terms_conds_bulletpoint_4_2 }}</li>
+                <li>{{ mssgs.terms_conds_bulletpoint_5 }}</li>
+                {% if data.isSalmonAndSeaTrout %}
+                    <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
+                {% endif %}
+            </ul>
+        </div>
 
-        <h2 class="govuk-heading-m">{{ mssgs.licence_conditions_incident_title }}</h2>
-        <p class="govuk-body">{{ mssgs.licence_conditions_incident }}</p>
+        {{ govukCheckboxes({
+            idPrefix: "agree",
+             name: "agree",
+             errorMessage: { text: mssgs.terms_conds_error_must_agree } if error,
+             items: [
+             {
+                 value: "yes",
+                 text: mssgs.terms_conds_item_agree
+             }
+            ]
+        }) }}
 
         {% if data.paymentRequired %}
             {{ govukWarningText({

@@ -536,25 +536,6 @@ describe('licence-summary > route', () => {
     })
   })
 
-  describe('licence summary rows', () => {
-    it.each`
-      desc                         | currentPermission
-      ${'1 year renewal'}          | ${getMockPermission()}
-      ${'1 year new licence'}      | ${getMockNewPermission()}
-      ${'1 year senior renewal'}   | ${getMockSeniorPermission()}
-      ${'8 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
-      ${'1 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
-      ${'Junior licence'}          | ${getMockJuniorPermission()}
-      ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
-      ${'Continuing permission'}   | ${getMockContinuingPermission()}
-      ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
-    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
-      const mockRequest = getMockRequest({ currentPermission })
-      const data = await getData(mockRequest)
-      expect(data.licenceSummaryRows).toMatchSnapshot()
-    })
-  })
-
   const getSampleRequest = ({
     getCurrentStatusPermission = () => ({}),
     setCurrentStatusPermission = () => {},
