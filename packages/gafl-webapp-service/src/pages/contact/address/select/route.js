@@ -1,4 +1,4 @@
-import { ADDRESS_SELECT, ADDRESS_LOOKUP, ADDRESS_ENTRY } from '../../../../uri.js'
+import { ADDRESS_SELECT, ADDRESS_ENTRY } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { nextPage } from '../../../../routes/next-page.js'
@@ -12,7 +12,6 @@ export const getData = async request => {
     isLicenceForYou,
     addresses,
     searchTerms,
-    lookupPage: addLanguageCodeToUri(request, ADDRESS_LOOKUP.uri),
     entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri)
   }
 }
