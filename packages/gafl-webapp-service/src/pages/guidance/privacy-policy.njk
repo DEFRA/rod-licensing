@@ -3,15 +3,17 @@
 
 {% block pageTitle %}{{ mssgs.privacy_title }}{% endblock %}
 
+{% block beforeContent %}
+      {{ govukBackLink({
+        text: mssgs.back,
+        href: uri.back,
+        classes: "govuk-!-margin-bottom-7"
+      }) }}
+{% endblock %}
+
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-
-        {{ govukBackLink({
-          text: mssgs.back,
-          href: uri.back,
-          classes: "govuk-!-margin-bottom-7"
-        }) }}
 
         <h1 class="govuk-heading-l">{{ mssgs.privacy_heading }}</h1>
 
