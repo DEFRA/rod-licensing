@@ -3,7 +3,9 @@ export const addLanguageCodeToUri = (request, uri) => {
 
   // Remove any existing lang parameters
   const cleanPath = path.replace(/[?|&]lang=[a-z]{2}/, '')
+  // Remove any fragments from the path
+  const defraggedPath = cleanPath.split('#')[0]
 
-  const languageSpecifier = /.*\?.*/.test(cleanPath) ? '&lang=cy' : '?lang=cy'
-  return `${cleanPath}${/\?.*lang=cy.*$/.test(request.url.search) ? languageSpecifier : ''}`
+  const languageSpecifier = /.*\?.*/.test(defraggedPath) ? '&lang=cy' : '?lang=cy'
+  return `${defraggedPath}${/\?.*lang=cy.*$/.test(request.url.search) ? languageSpecifier : ''}`
 }
