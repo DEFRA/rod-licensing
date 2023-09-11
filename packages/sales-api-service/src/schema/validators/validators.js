@@ -131,7 +131,8 @@ const validatePermissionConcession = async (permission, transaction) => {
     concessionsRequiredForPermit.length &&
     !hasConcessionProofs &&
     transaction.dataSource !== 'Post Office Sales' &&
-    transaction.dataSource !== 'DDE File'
+    transaction.dataSource !== 'DDE File' &&
+    transaction.dataSource !== 'Postal Order Sales'
   ) {
     throw new Error(`The permit '${permission.permitId}' requires proof of concession however none were supplied`)
   } else if (!concessionsRequiredForPermit.length && hasConcessionProofs) {

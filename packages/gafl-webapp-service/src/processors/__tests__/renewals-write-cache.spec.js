@@ -57,6 +57,11 @@ describe('renewals-write-cache', () => {
             label: 'Text',
             description: 'Text'
           },
+          shortTermPreferredMethodOfConfirmation: {
+            id: 910400002,
+            label: 'Text',
+            description: 'Text'
+          },
           street: 'Blackthorn Mews',
           town: 'Chippenham'
         },
@@ -201,6 +206,12 @@ describe('renewals-write-cache', () => {
           })
         })
       )
+    })
+
+    it.each(['country', 'shortTermPreferredMethodOfConfirmation'])('should not assign %s to the licensee', async prop => {
+      await setUpCacheFromAuthenticationResult(mockRequest, authenticationResult)
+      const [[{ licensee }]] = mockTransactionCacheSet.mock.calls
+      expect(licensee[prop]).toBeUndefined()
     })
 
     it('should have an empty array if no concessions are present', async () => {
