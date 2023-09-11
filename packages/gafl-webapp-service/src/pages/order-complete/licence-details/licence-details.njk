@@ -27,17 +27,14 @@
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }) if data.disabled }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: data.ageConcessionText } }) if data.ageConcession }}
 
-{% block beforeContent %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: uri.back,
-        classes: "govuk-!-margin-bottom-7 no-print"
-      }) }}
-{% endblock %}
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        {{ govukBackLink({
+              text: mssgs.back,
+              href: backRef,
+              classes: "govuk-!-margin-bottom-7 no-print"
+        }) }}
         <section class="no-print">
             <h1 class="govuk-heading-xl">{{ title }}</h1>
         </section>

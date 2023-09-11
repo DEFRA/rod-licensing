@@ -3,17 +3,14 @@
 
 {% block pageTitle %}{{ mssgs.access_statement_title }}{% endblock %}
 
-{% block beforeContent %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: uri.back,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-{% endblock %}
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        {{ govukBackLink({
+          text: mssgs.back,
+          href: uri.back,
+          classes: "govuk-!-margin-bottom-7"
+        }) }}
 
         <h1 class="govuk-heading-l">{{ mssgs.access_statement_heading }}</h1>
         <p class="govuk-body">{{ mssgs.access_statement_body_1 }}<a href="/" class="govuk-link" target="_blank">{{ mssgs.access_statement_body_link }}</a>{{ mssgs.access_statement_body_2 }}</p>
