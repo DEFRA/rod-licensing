@@ -3,9 +3,6 @@ import { CONTACT_SUMMARY_SEEN, CommonResults, ShowDigitalLicencePages, CHANGE_CO
 import { isPhysical } from '../../../../../processors/licence-type-display.js'
 
 jest.mock('../../../../../processors/licence-type-display.js')
-// jest.mock('../../../../../processors/licence-type-display.js', () => ({
-//   isPhysical: jest.fn(() => true)
-// }))
 
 describe('result-function', () => {
   const getMockRequest = statusPermission => ({
