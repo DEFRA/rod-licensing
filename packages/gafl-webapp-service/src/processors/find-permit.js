@@ -1,5 +1,7 @@
 import filterPermits from './filter-permits.js'
 import crypto from 'crypto'
+import db from 'debug'
+const debug = db('webapp:find-permit')
 
 export const findPermit = async (permission, request) => {
   /*
@@ -15,6 +17,14 @@ export const findPermit = async (permission, request) => {
   const addHashAndPermit = async () => {
     const permit = await filterPermits(permission)
     permission.permit = permit
+    if (permit) {
+      if (!permit.newCostStartDate || !permit.newCost) {
+        debug('permit missing new cost details', permission)
+      }
+    } else {
+      debug("permit wasn't retrieved", permission)
+    }
+
     const hash = crypto.createHash('sha256')
     hash.update(JSON.stringify(hashOperand))
     permission.hash = hash.digest('hex')
@@ -28,6 +38,8 @@ export const findPermit = async (permission, request) => {
     hash.update(JSON.stringify(hashOperand))
     if (hash.digest('hex') !== permission.hash) {
       await addHashAndPermit()
+    } else {
+      debug("permit data present and doesn't need updating")
     }
   }
 }

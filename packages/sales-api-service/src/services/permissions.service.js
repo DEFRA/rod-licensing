@@ -43,7 +43,7 @@ export const generatePermissionNumber = async (
 
   const durationInDays = moment.duration(`P${permit.durationMagnitude}${permit.durationDesignator.description}`).asDays()
   const duration = String(durationInDays).charAt(0)
-  const age = getAgeCategory(birthDate, issueDate, startDate)
+  const age = getAgeCategory(birthDate, issueDate)
   const initials = (firstName.charAt(0) + lastName.charAt(0)).toUpperCase()
   const block2 = permit.numberOfRods + channel + type + duration + age + initials
 
@@ -83,14 +83,14 @@ export const calculateEndDate = async ({ permitId, startDate }) => (await calcul
  * @param startDate The start date of the permission
  * @returns {string} The appropriate category code (single digit string)
  */
-const getAgeCategory = (birthDate, issueDate, startDate) => {
+const getAgeCategory = (birthDate, issueDate) => {
   const dob = moment(birthDate)
   const issue = moment(issueDate)
   const diff = issue.diff(dob, 'years', true)
 
   if (isJunior(diff)) {
     return 'J'
-  } else if (isSenior(diff, startDate)) {
+  } else if (isSenior(diff)) {
     return 'S'
   }
   return 'F'

@@ -6,10 +6,10 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
     Array [
       "view",
       Object {
-        "acceptedTracking": "accepted-tracking",
+        "acceptedTracking": false,
         "altLang": Array [],
-        "analyticsMessageDisplayed": "seen-message",
-        "analyticsSelected": "selected",
+        "analyticsMessageDisplayed": false,
+        "analyticsSelected": false,
         "backRef": null,
         "displayAnalytics": false,
         "mssgs": undefined,
@@ -34,10 +34,10 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
     Array [
       "view",
       Object {
-        "acceptedTracking": "accepted-tracking",
+        "acceptedTracking": false,
         "altLang": Array [],
-        "analyticsMessageDisplayed": "seen-message",
-        "analyticsSelected": "selected",
+        "analyticsMessageDisplayed": false,
+        "analyticsSelected": false,
         "backRef": null,
         "displayAnalytics": true,
         "mssgs": undefined,

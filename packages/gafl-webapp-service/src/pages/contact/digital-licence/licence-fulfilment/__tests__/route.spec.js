@@ -1,9 +1,12 @@
 import { getData } from '../route'
 import { CONTACT } from '../../../../../uri'
 import { isPhysical } from '../../../../../processors/licence-type-display.js'
+import { youOrOther } from '../../../../../processors/message-helper.js'
+
 jest.mock('../../../../../processors/licence-type-display.js', () => ({
   isPhysical: jest.fn(() => true)
 }))
+jest.mock('../../../../../processors/message-helper.js')
 
 describe('licence-fulfilment > route', () => {
   const getMockRequest = (permission = {}) => ({
@@ -25,16 +28,18 @@ describe('licence-fulfilment > route', () => {
       await expect(func).rejects.toThrowRedirectTo(CONTACT.uri)
     })
 
-    it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      const permission = { licenceLength: '12M', isLicenceForYou: true }
-      const result = await getData(getMockRequest(permission))
-      expect(result.isLicenceForYou).toBeTruthy()
+    it('should call youOrOther with the permission', async () => {
+      const permission = Symbol('permission')
+      await getData(getMockRequest(permission))
+      expect(youOrOther).toHaveBeenCalledWith(permission)
     })
 
-    it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
-      const permission = { licenceLength: '12M', isLicenceForYou: false }
-      const result = await getData(getMockRequest(permission))
-      expect(result.isLicenceForYou).toBeFalsy()
+    it('should use the value returned by youOrOther', async () => {
+      const returnedValue = Symbol('value')
+      youOrOther.mockReturnValueOnce(returnedValue)
+
+      const result = await getData(getMockRequest())
+      expect(result.youOrOther).toEqual(returnedValue)
     })
   })
 })

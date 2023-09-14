@@ -23,6 +23,8 @@ import { nextPage } from '../../../routes/next-page.js'
 import { isMultibuyForYou } from '../../../handlers/multibuy-for-you-handler.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { displayPermissionPrice } from '../../../processors/price-display.js'
+import db from 'debug'
+const debug = db('webapp:licence-summary')
 
 class RowGenerator {
   constructor (request, permission) {
@@ -202,7 +204,9 @@ export const getData = async request => {
 
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
+  debug('retrieving permit info')
   await findPermit(permission, request)
+  debug('retrieved permit', JSON.stringify(permission))
 
   return {
     licenceSummaryRows: getLicenceSummaryRows(request, permission),

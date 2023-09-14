@@ -109,14 +109,11 @@
             value: "none",
             text: mssgs.licence_confirm_method_how_body_item,
             checked: payload['licence-confirmation-method'] === 'none'
-        }), itemsArray) 
+        }), itemsArray)
     %}
 {% else %}
     {% set title = mssgs.licence_confirm_method_where_title_you if data.isLicenceForYou else mssgs.licence_confirm_method_where_title_other %}
     {% set bodyText = mssgs.licence_confirm_method_where_body_text %}
-    {% if data.isLicenceForYou %}
-        {% set hintText = mssgs.licence_confirm_method_where_body_hint_you %}
-    {% endif %}   
 {% endif %}
 
 {% block pageContent %}
@@ -124,10 +121,6 @@
     {{ govukRadios({
         idPrefix: "licence-confirmation-method",
         name: "licence-confirmation-method",
-        hint: {
-          text: hintText,
-          classes: 'govuk-inset-text' if hintText
-        },
         errorMessage: { text: errorMsg } if error['licence-confirmation-method'],
         items: itemsArray
     }) }}

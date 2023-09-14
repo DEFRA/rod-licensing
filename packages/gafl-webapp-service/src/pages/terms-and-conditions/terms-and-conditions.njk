@@ -80,8 +80,10 @@
             classes: "govuk-!-margin-top-5"
         }) }}
 
-        <div class="govuk-body-m"><a class="govuk-link" href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.terms_conds_pay_on_gov_uk }}</a></div>
-
+        {% if data.paymentRequired %}
+            <div class="govuk-body-m"><a class="govuk-link" href="https://www.gov.uk/fishing-licences/buy-a-fishing-licence">{{ mssgs.terms_conds_pay_on_gov_uk }}</a></div>
+        {% endif %}
+        
         {{ csrf() }}
     </form> 
 {% endblock %}

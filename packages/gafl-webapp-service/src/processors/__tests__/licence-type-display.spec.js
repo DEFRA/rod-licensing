@@ -1,7 +1,5 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, getErrorPage } from '../licence-type-display.js'
-import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
-import moment from 'moment-timezone'
 import { NAME, DATE_OF_BIRTH, LICENCE_TO_START, LICENCE_TYPE, LICENCE_LENGTH } from '../../uri.js'
 
 jest.mock('../../uri.js', () => ({
@@ -13,9 +11,8 @@ jest.mock('../../uri.js', () => ({
 }))
 
 const getCatalog = () => ({
-  over_65: 'over_65',
-  over_66: 'over_66',
-  age_junior: 'Junior',
+  over_66: ' (age_66_over)',
+  age_junior: 'Junior, ',
   licence_type_radio_salmon: 'Salmon and sea trout',
   licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
   licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
@@ -49,21 +46,10 @@ describe('licenceTypeDisplay', () => {
   })
 
   it('returns senior if person is senior', () => {
-    const permission = getPermission({ licenceStartDate: moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD') })
+    const permission = getPermission()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
-    expect(result).toEqual('over_65, Salmon and sea trout')
-  })
-
-  it.each([
-    ['on', SENIOR_AGE_CHANGE_DATE],
-    ['after', moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD')]
-  ])('shows over 66 message for permissions starting %s SENIOR_AGE_CHANGE_DATE', (_d, licenceStartDate) => {
-    const permission = getPermission({ licenceStartDate })
-    const catalog = getCatalog()
-    hasSenior.mockImplementationOnce(() => true)
-    const result = licenceTypeDisplay(permission, catalog)
-    expect(result).toEqual(`${catalog.over_66}, ${permission.licenceType}`)
+    expect(result).toEqual('Salmon and sea trout (age_66_over)')
   })
 
   it.each([
@@ -102,10 +88,10 @@ describe('licenceTypeAndLengthDisplay', () => {
   })
 
   it('returns senior if licence length is senior', () => {
-    const permission = getPermission({ licenceStartDate: moment(SENIOR_AGE_CHANGE_DATE).add(-1, 'day').format('YYYY-MM-DD') })
+    const permission = getPermission()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('over_65, Salmon and sea trout, 12 months')
+    expect(result).toEqual('Salmon and sea trout (age_66_over), 12 months')
   })
 })
 

@@ -26,7 +26,7 @@ const getPayload = () => ({
           street: 'Eastmead Lane',
           town: 'Bristol',
           postcode: 'BS9 1HJ',
-          country: 'GB',
+          country: 'GB-ENG',
           birthDate: '1989-07-01',
           email: 'daniel-ricc@example.com',
           mobilePhone: '07722 123456',

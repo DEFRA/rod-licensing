@@ -1,32 +1,59 @@
 import { ANALYTICS } from '../../constants.js'
 import { CacheError } from '../../session-cache/cache-manager.js'
-import { checkAnalytics, getAnalyticsSessionId } from '../analytics-handler.js'
+import { trackAnalyticsAccepted, getAnalyticsSessionId, pageOmitted } from '../analytics-handler.js'
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
-    acceptTracking: 'accepted-tracking'
+    selected: 'chosen-one',
+    acceptTracking: 'you-may-watch-me',
+    seenMessage: 'seen-it',
+    pageSkipped: 'ignored-page'
   }
 }))
 
-describe('checkAnalytics', () => {
+describe('trackAnalyticsAccepted', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it.each`
+    desc                                                                                                   | analytics                                                                       | page     | trackingResult
+    ${'of accept tracking as true, page should not be skipped then return trackAnalyticsAccepted as true'} | ${{ [ANALYTICS.acceptTracking]: true }}                                         | ${false} | ${true}
+    ${'of accept tracking as true, page should be skipped then return trackAnalyticsAccepted as false'}    | ${{ [ANALYTICS.acceptTracking]: true, [ANALYTICS.pageAnalyticsOmitted]: true }} | ${true}  | ${false}
+    ${'but accept tracking is false so return trackAnalyticsAccepted as false'}                            | ${{ [ANALYTICS.acceptTracking]: false }}                                        | ${false} | ${false}
+  `('when analytics has a value $desc', async ({ analytics, page, trackingResult }) => {
+    const result = await trackAnalyticsAccepted(generateRequestMock(analytics), page)
+
+    expect(result).toBe(trackingResult)
+  })
+
+  it('empty session cache returns false', async () => {
+    const result = await trackAnalyticsAccepted(
+      generateRequestMock(() => {
+        throw new CacheError()
+      })
+    )
+    expect(result).toEqual(false)
+  })
+})
+
+describe('pageOmitted', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it.each([
     [true, true],
-    [false, false],
-    [undefined, false]
-  ])('returns value of [ANALYTICS.acceptTracking]', async (acceptTracking, trackingResult) => {
-    const analytics = () => ({
-      [ANALYTICS.acceptTracking]: acceptTracking
-    })
-    const result = await checkAnalytics(generateRequestMock(analytics))
-    expect(result).toEqual(trackingResult)
+    [false, false]
+  ])('when analytics omitPageFromAnalytics property is %s, pageAnalyticsOmitted returns %s', async (skipPage, expected) => {
+    const analytics = { [ANALYTICS.omitPageFromAnalytics]: skipPage }
+    const result = await pageOmitted(generateRequestMock(analytics))
+
+    expect(result).toBe(expected)
   })
 
   it('empty session cache returns false', async () => {
-    const result = await checkAnalytics(
+    const result = await pageOmitted(
       generateRequestMock(() => {
         throw new CacheError()
       })
@@ -63,13 +90,12 @@ describe('getAnalyticsSessionId', () => {
   })
 })
 
-const generateRequestMock = (analytics = () => {}, getId = () => {}) => ({
+const generateRequestMock = (analytics, getId = () => {}) => ({
   cache: jest.fn(() => ({
     getId: jest.fn(getId),
     helpers: {
       analytics: {
-        get: jest.fn(analytics),
-        set: jest.fn()
+        get: jest.fn(() => analytics)
       }
     }
   }))

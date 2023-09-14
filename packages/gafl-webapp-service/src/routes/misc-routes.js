@@ -11,10 +11,8 @@ import {
   RENEWAL_PUBLIC,
   IDENTIFY,
   OS_TERMS,
-  ATTRIBUTION,
   SET_CURRENT_PERMISSION,
   CHANGE_LICENCE_OPTIONS,
-  RENEWAL_LICENCE,
   PROCESS_ANALYTICS_PREFERENCES,
   NEW_PRICES
 } from '../uri.js'
@@ -26,8 +24,6 @@ import newSessionHandler from '../handlers/new-session-handler.js'
 import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
-import attribution from '../handlers/attribution-handler.js'
-import urlHandler from '../handlers/renewals-friendly-url-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import analytics from '../handlers/analytics-handler.js'
 
@@ -131,21 +127,11 @@ export default [
   },
   {
     method: 'GET',
-    path: ATTRIBUTION.uri,
-    handler: attribution
-  },
-  {
-    method: 'GET',
     path: SET_CURRENT_PERMISSION.uri,
     handler: async (request, h) => {
       await request.cache().helpers.status.set({ currentPermissionIdx: parseInt(request.query.permissionIndex) })
       return h.redirect(CHANGE_LICENCE_OPTIONS.uri)
     }
-  },
-  {
-    method: 'GET',
-    path: RENEWAL_LICENCE.uri,
-    handler: urlHandler
   },
   {
     method: 'POST',

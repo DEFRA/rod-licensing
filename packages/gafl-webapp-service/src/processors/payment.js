@@ -34,7 +34,7 @@ export const preparePayment = (request, transaction) => {
     language: /\?.*lang=cy.*$/.test(url.search) ? 'cy' : 'en'
   }
 
-  if (transaction.permissions.length === 1) {
+  if (transaction.permissions.length === 1 && transaction.permissions[0].isLicenceForYou) {
     result.email = transaction.permissions[0].licensee.email
     result.prefilled_cardholder_details = {
       cardholder_name: `${transaction.permissions[0].licensee.firstName} ${transaction.permissions[0].licensee.lastName}`,

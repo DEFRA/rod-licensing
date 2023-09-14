@@ -5,8 +5,6 @@ import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processo
 import * as dtDisplay from '../../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay } from '../../../../processors/licence-type-display.js'
 import * as concessionHelper from '../../../../processors/concession-helper.js'
-import { SENIOR_AGE_CHANGE_DATE } from '@defra-fish/business-rules-lib'
-import moment from 'moment-timezone'
 
 jest.mock('../../../../processors/concession-helper.js')
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -54,10 +52,10 @@ describe('The licence details page', () => {
     })
 
     it('calls licenceTypeDisplay with permission and i18n catalog', async () => {
-      const i18nCatalog = Symbol('mock catalog')
+      const i18nCatalog = getSampleCatalog()
       const permission = getSamplePermission()
 
-      const sampleRequest = createMockRequest({ permission, i18nCatalog })
+      const sampleRequest = createMockRequest(getSampleTransaction([permission]))
 
       await getData(sampleRequest)
 
@@ -86,9 +84,7 @@ describe('The licence details page', () => {
 
     it('calls concessionHelper.hasDisabled with current permission', async () => {
       const permission = getSamplePermission()
-      const mockTransaction = { ...getSampleTransaction(), permissions: [permission] }
-      const request = createMockRequest({ transaction: mockTransaction })
-      await getData(request)
+      await getData(createMockRequest({ permission }))
 
       expect(concessionHelper.hasDisabled).toHaveBeenCalledWith(permission)
     })
@@ -104,8 +100,7 @@ describe('The licence details page', () => {
 
     it.each(['displayStartTime', 'displayEndTime'])('calls %s with request and permission', async method => {
       const permission = getSamplePermission()
-      const mockTransaction = { ...getSampleTransaction(), permissions: [permission] }
-      const request = createMockRequest({ transaction: mockTransaction })
+      const request = createMockRequest({ permission })
       await getData(request)
       expect(dtDisplay[method]).toHaveBeenCalledWith(request, permission)
     })
@@ -127,21 +122,6 @@ describe('The licence details page', () => {
       concessionHelper[method].mockReturnValueOnce(true)
       const ageConcession = Symbol('age concession')
       const mockRequest = createMockRequest({ i18nCatalog: { ...getSampleCatalog(), [catKey]: ageConcession } })
-      const result = await getData(mockRequest)
-      expect(result.licences[0].ageConcession).toEqual(ageConcession)
-    })
-
-    it.each([
-      ['on', SENIOR_AGE_CHANGE_DATE, Symbol('Over 66')],
-      ['after', moment(SENIOR_AGE_CHANGE_DATE).add(1, 'day').format('YYYY-MM-DD'), Symbol('Over 66')]
-    ])('displays age_senior_concession_new for senior concessions starting %s SENIOR_AGE_CHANGE_DATE', async (_d, startDate) => {
-      concessionHelper.hasSenior.mockReturnValueOnce(true)
-      dtDisplay.displayStartTime.mockReturnValueOnce(startDate)
-      const ageConcession = 'New Senior Age Concession Text'
-      const i18nCatalog = { ...getSampleCatalog(), age_senior_concession_new: ageConcession }
-      const permission = { ...getSamplePermission(), startDate: startDate }
-      const mockTransaction = { ...getSampleTransaction(), permissions: [permission] }
-      const mockRequest = createMockRequest({ transaction: mockTransaction, i18nCatalog })
       const result = await getData(mockRequest)
       expect(result.licences[0].ageConcession).toEqual(ageConcession)
     })

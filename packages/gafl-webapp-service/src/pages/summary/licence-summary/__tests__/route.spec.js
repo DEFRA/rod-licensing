@@ -442,30 +442,49 @@ describe('licence-summary > route', () => {
       })
       await expect(() => getData(mockRequest)).rejects.toThrowRedirectTo(uri)
     })
+  })
 
-    it('uses displayPermissionPrice for permissionPrice', async () => {
-      const displayPrice = Symbol('display price')
-      displayPermissionPrice.mockReturnValueOnce(displayPrice)
-      const data = await getData(getMockRequest())
-      expect(data.licenceSummaryRows.pop().value.html).toBe(displayPrice)
-    })
+  it('uses displayPermissionPrice for permissionPrice', async () => {
+    const displayPrice = Symbol('display price')
+    displayPermissionPrice.mockReturnValueOnce(displayPrice)
+    const data = await getData(getMockRequest())
+    expect(data.licenceSummaryRows.pop().value.html).toBe(displayPrice)
+  })
 
-    it('passes permission and labels to displayPermissionPrice', async () => {
-      const currentPermission = getMockNewPermission()
-      currentPermission.licenceStartDate = Symbol('licence start date')
-      currentPermission.permit = Symbol('permit')
+  it('passes permission and labels to displayPermissionPrice', async () => {
+    const currentPermission = getMockNewPermission()
+    currentPermission.licenceStartDate = Symbol('licence start date')
+    currentPermission.permit = Symbol('permit')
+    const mockRequest = getMockRequest({ currentPermission })
+    const catalog = mockRequest.i18n.getCatalog()
+
+    await getData(mockRequest)
+
+    expect(displayPermissionPrice).toHaveBeenCalledWith(
+      expect.objectContaining({
+        startDate: currentPermission.licenceStartDate,
+        permit: currentPermission.permit
+      }),
+      catalog
+    )
+  })
+
+  describe('licence summary rows', () => {
+    it.each`
+      desc                         | currentPermission
+      ${'1 year renewal'}          | ${getMockPermission()}
+      ${'1 year new licence'}      | ${getMockNewPermission()}
+      ${'1 year senior renewal'}   | ${getMockSeniorPermission()}
+      ${'8 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
+      ${'1 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
+      ${'Junior licence'}          | ${getMockJuniorPermission()}
+      ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
+      ${'Continuing permission'}   | ${getMockContinuingPermission()}
+      ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
+    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
-      const catalog = mockRequest.i18n.getCatalog()
-
-      await getData(mockRequest)
-
-      expect(displayPermissionPrice).toHaveBeenCalledWith(
-        expect.objectContaining({
-          startDate: currentPermission.licenceStartDate,
-          permit: currentPermission.permit
-        }),
-        catalog
-      )
+      const data = await getData(mockRequest)
+      expect(data.licenceSummaryRows).toMatchSnapshot()
     })
   })
 
@@ -514,25 +533,6 @@ describe('licence-summary > route', () => {
       )
 
       expect(setCurrentTransactionPermission).toHaveBeenCalledWith(newPermission)
-    })
-  })
-
-  describe('licence summary rows', () => {
-    it.each`
-      desc                         | currentPermission
-      ${'1 year renewal'}          | ${getMockPermission()}
-      ${'1 year new licence'}      | ${getMockNewPermission()}
-      ${'1 year senior renewal'}   | ${getMockSeniorPermission()}
-      ${'8 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
-      ${'1 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
-      ${'Junior licence'}          | ${getMockJuniorPermission()}
-      ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
-      ${'Continuing permission'}   | ${getMockContinuingPermission()}
-      ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
-    `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
-      const mockRequest = getMockRequest({ currentPermission })
-      const data = await getData(mockRequest)
-      expect(data.licenceSummaryRows).toMatchSnapshot()
     })
   })
 

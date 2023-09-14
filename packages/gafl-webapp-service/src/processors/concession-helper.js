@@ -96,7 +96,7 @@ export const ageConcessionHelper = permission => {
       permission.licensee.preferredMethodOfConfirmation = HOW_CONTACTED.none
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
-  } else if (isSenior(ageAtLicenceStartDate, permission.licenceStartDate)) {
+  } else if (isSenior(ageAtLicenceStartDate)) {
     addSenior(permission)
   } else {
     removeJunior(permission)

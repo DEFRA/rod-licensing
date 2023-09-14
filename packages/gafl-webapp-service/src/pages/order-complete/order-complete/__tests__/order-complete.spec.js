@@ -68,7 +68,6 @@ const getDigitalPermission = () => ({
     postalFulfilment: false
   }
 })
-
 jest.mock('@defra-fish/connectors-lib')
 
 describe('The order completion handler', () => {

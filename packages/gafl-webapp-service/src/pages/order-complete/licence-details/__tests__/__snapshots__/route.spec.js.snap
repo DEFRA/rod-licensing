@@ -24,7 +24,7 @@ exports[`The licence details page .getData returns age concession as Neither 1`]
 Object {
   "licences": Array [
     Object {
-      "ageConcession": false,
+      "ageConcession": "",
       "disabled": undefined,
       "end": undefined,
       "index": 0,
@@ -64,7 +64,7 @@ exports[`The licence details page .getData returns licence length as Salmon and 
 Object {
   "licences": Array [
     Object {
-      "ageConcession": false,
+      "ageConcession": "",
       "disabled": undefined,
       "end": undefined,
       "index": 0,
@@ -84,7 +84,7 @@ exports[`The licence details page .getData returns licence length as Salmon and 
 Object {
   "licences": Array [
     Object {
-      "ageConcession": false,
+      "ageConcession": "",
       "disabled": undefined,
       "end": undefined,
       "index": 0,
@@ -104,7 +104,7 @@ exports[`The licence details page .getData returns licence length as Salmon and 
 Object {
   "licences": Array [
     Object {
-      "ageConcession": false,
+      "ageConcession": "",
       "disabled": undefined,
       "end": undefined,
       "index": 0,
