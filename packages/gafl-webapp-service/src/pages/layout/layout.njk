@@ -9,6 +9,10 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "footer/macro.njk" import govukFooter %}
 
+{% if (SHOW_WELSH_CONTENT) and (_uri.queryParams.lang == 'cy') %}
+    {% set htmlLang = "cy" %}
+{% endif %}
+
 {% macro csrf() %}
     <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
 {% endmacro %}
@@ -86,7 +90,7 @@
                             <div class="govuk-width-container">
                                 <div class="govuk-cookie-banner__content">
                                     <p class="govuk-body">
-                                        {{ mssgs.analytics_banner_rejection }}  
+                                        {{ mssgs.analytics_banner_rejection }}
                                     </p>
                                 </div>
                                 <div class="govuk-button-group">
@@ -142,9 +146,9 @@
             <div class="govuk-width-container govuk-!-display-none-print govuk-!-margin-top-2">
                 <p class="govuk-body-s right-align govuk-!-margin-0">
                     {% if _uri.queryParams.lang == 'cy' %}
-                        <a class="govuk-link govuk-!-margin-2" href="?lang=en">English</a> | <span class="govuk-body-s govuk-!-margin-2">Cymraeg</a>
+                        <a class="govuk-link govuk-!-margin-2" href="?lang=en" hreflang="en" lang="en">English</a> | <span class="govuk-body-s govuk-!-margin-2">Cymraeg</a>
                     {% else %}
-                        <span class="govuk-body-s govuk-!-margin-2">English</span> | <a class="govuk-link govuk-!-margin-2" href="?lang=cy">Cymraeg</a>
+                        <span class="govuk-body-s govuk-!-margin-2">English</span> | <a class="govuk-link govuk-!-margin-2" href="?lang=cy" hreflang="cy" lang="cy">Cymraeg</a>
                     {% endif%}
                 </p>
             </div>
