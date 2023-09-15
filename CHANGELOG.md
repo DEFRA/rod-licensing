@@ -1,4 +1,16 @@
 
+## v1.36.0-rc.0 (2023-09-15)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#1782](https://github.com/DEFRA/rod-licensing/pull/1782) Upgrade to v 18 of node ([@ScottDormand96](https://github.com/ScottDormand96))
+* `gafl-webapp-service`
+  * [#1788](https://github.com/DEFRA/rod-licensing/pull/1788) Accessibility - back link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.35.0-rc.17 (2023-09-05)
 
 #### :bug: Bug Fix
