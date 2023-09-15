@@ -10,7 +10,7 @@ export const getPermitsJoinPermitConcessions = async () => {
   }))
 }
 
-const filterPermits = async permission => {
+export default async permission => {
   const licenseeConcessions = permission.concessions || []
   const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 
@@ -34,5 +34,3 @@ const filterPermits = async permission => {
 
   return byNumberOfRods[0]
 }
-
-export default filterPermits
