@@ -11,6 +11,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "analyticsMessageDisplayed": false,
         "analyticsSelected": false,
         "backRef": null,
+        "currentPath": "/we/are/here",
         "displayAnalytics": false,
         "mssgs": undefined,
         "uri": Object {
@@ -39,6 +40,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "analyticsMessageDisplayed": false,
         "analyticsSelected": false,
         "backRef": null,
+        "currentPath": "/buy/we/are/here",
         "displayAnalytics": true,
         "mssgs": undefined,
         "uri": Object {

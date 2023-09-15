@@ -113,6 +113,22 @@ describe('The page handler function', () => {
     )
   })
 
+  it('pageData.currentPath is set to the request path', async () => {
+    const path = '/this/is/the/path/i/want'
+    const { get } = pageHandler(null, 'view', '/next/page')
+    const request = getMockRequest({ path })
+    const toolkit = getMockToolkit()
+
+    await get(request, toolkit)
+
+    expect(toolkit.view).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        currentPath: path
+      })
+    )
+  })
+
   it('GetDataRedirect being thrown will redirectWithLanguageCode to the target', async () => {
     journeyDefinition.push({ current: { page: 'view' }, backLink: '/previous/page' })
     const url = Symbol('/go/somewhere/else')

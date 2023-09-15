@@ -21,7 +21,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
-        <form method="post" novalidate>
+        <form action="{{ currentPath }}" method="post" novalidate>
 
           {% block notificationContent %}{% endblock %}
 
@@ -36,7 +36,7 @@
                 {% block pageContent %}{% endblock %}
 
             {% endcall %}
-            
+
             {{ govukButton({
                 attributes: { id: 'continue' },
                 preventDoubleClick: true,
@@ -50,4 +50,3 @@
     {% block pricingSummary %}{% endblock %}
 </div>
 {% endblock %}
-

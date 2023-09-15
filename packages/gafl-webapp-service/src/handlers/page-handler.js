@@ -122,6 +122,7 @@ export default (path, view, completion, getData) => ({
     pageData.mssgs = request.i18n.getCatalog()
     pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
+    pageData.currentPath = request.path
     pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: addLanguageCodeToUri(request, PROCESS_ANALYTICS_PREFERENCES.uri) }
 
     const analytics = await request.cache().helpers.analytics.get()

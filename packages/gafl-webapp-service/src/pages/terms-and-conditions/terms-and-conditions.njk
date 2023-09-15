@@ -34,7 +34,7 @@
 
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
 
-        <form method="post">
+        <form action="{{ currentPath }}" method="post">
 
             {% call govukFieldset({
               legend: {

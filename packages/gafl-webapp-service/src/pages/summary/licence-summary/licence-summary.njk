@@ -43,7 +43,7 @@
             {{ notificationBanner(data.uri.newPrices, mssgs) }}
           {% endif%}
         {% endblock %}
-        <form method="post">
+        <form action="{{ currentPath }}" method="post">
             {{ licenseDetailsSummary | trim | safe }}
 
             {{ govukButton({
