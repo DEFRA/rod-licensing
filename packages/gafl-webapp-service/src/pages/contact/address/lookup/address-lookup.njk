@@ -22,16 +22,19 @@
     }
 %}
 
+{% block beforeContent %}
+  {% if backRef %}
+      {{ govukBackLink({
+        text: mssgs.back,
+        href: backRef,
+        classes: "govuk-!-margin-bottom-7"
+      }) }}
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {% if backRef %}
-            {{ govukBackLink({
-              text: mssgs.back,
-              href: backRef,
-              classes: "govuk-!-margin-bottom-7"
-            }) }}
-        {% endif %}
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post">
 
