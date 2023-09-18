@@ -1,0 +1,22 @@
+{
+  "name": "@defra-fish/recurring-payments-job",
+  "version": "1.35.0-rc.10",
+  "description": "Rod Licensing Recurring Payments Job",
+  "type": "module",
+  "engines": {
+    "node": ">=14"
+  },
+  "keywords": [
+    "rod",
+    "licensing",
+    "recurring",
+    "payments",
+    "job"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/recurring-payments-job.js",
+  "dependencies": {
+    "commander": "^7.2.0"
+  }
+}
