@@ -14,7 +14,7 @@ describe('The name page', () => {
   it('Redirects back to itself on posting an empty name', async () => {
     const response = await injectWithCookies('POST', NAME.uri, { 'first-name': '', 'last-name': '' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Redirects back to itself on posting a too long first name', async () => {
@@ -23,7 +23,7 @@ describe('The name page', () => {
       'last-name': 'OK'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Redirects back to itself on posting a too long last name', async () => {
@@ -32,7 +32,7 @@ describe('The name page', () => {
       'first-name': 'OK'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Redirects back to itself on posting a too short first name', async () => {
@@ -41,7 +41,7 @@ describe('The name page', () => {
       'last-name': 'OK'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Redirects back to itself on posting a too short last name', async () => {
@@ -50,7 +50,7 @@ describe('The name page', () => {
       'first-name': 'OK'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Redirects back to itself on posting a first name with invalid characters', async () => {
@@ -59,7 +59,7 @@ describe('The name page', () => {
       'first-name': '%%%%'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Redirects back to itself on posting a last name with invalid characters', async () => {
@@ -68,7 +68,7 @@ describe('The name page', () => {
       'first-name': 'OK'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NAME.uri)
+    expect(response.headers.location).toBe(`${NAME.uri}#`)
   })
 
   it('Check character substitutions are made on a successful submission', async () => {
@@ -77,7 +77,7 @@ describe('The name page', () => {
       'first-name': 'GRAHAM    MICHAEL'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(`${DATE_OF_BIRTH.uri}#`)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
 
     expect(JSON.parse(payload).permissions[0].licensee).toEqual({ firstName: 'Graham Michael', lastName: 'Willis' })

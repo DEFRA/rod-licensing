@@ -105,7 +105,7 @@ describe('The agreed handler', () => {
     it('loads the order complete page on return from the GOV.UK Payment pages', async () => {
       await injectWithCookies('GET', AGREED.uri)
       const response = await injectWithCookies('GET', AGREED.uri)
-      expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+      expect(response.headers.location).toBe(`${ORDER_COMPLETE.uri}#`)
     })
 
     it('updates the journal entry with the complete status', async () => {
@@ -190,7 +190,7 @@ describe('The agreed handler', () => {
 
     it('redirects to the order complete page', async () => {
       const response = await injectWithCookies('GET', AGREED.uri)
-      expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+      expect(response.headers.location).toBe(`${ORDER_COMPLETE.uri}#`)
     })
 
     it('updates the cache', async () => {
@@ -263,7 +263,7 @@ describe('The agreed handler', () => {
     it('loads the order complete page', async () => {
       await injectWithCookies('GET', TEST_STATUS.uri)
       const response = await injectWithCookies('GET', AGREED.uri)
-      expect(response.headers.location).toBe(ORDER_COMPLETE.uri)
+      expect(response.headers.location).toBe(`${ORDER_COMPLETE.uri}#`)
     })
 
     const getMockRequest = (overrides = {}) => ({

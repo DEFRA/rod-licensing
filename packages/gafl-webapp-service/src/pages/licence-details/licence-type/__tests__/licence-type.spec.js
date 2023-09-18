@@ -37,13 +37,13 @@ describe('The licence type page', () => {
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+    expect(response.headers.location).toBe(`${LICENCE_TYPE.uri}#`)
   })
 
   it('redirects back to itself on posting an invalid response', async () => {
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'hunting-licence' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+    expect(response.headers.location).toBe(`${LICENCE_TYPE.uri}#`)
   })
 
   it.each([
@@ -63,7 +63,7 @@ describe('The licence type page', () => {
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(response.headers.location).toBe(`${LICENCE_SUMMARY.uri}#`)
   })
 
   it('on success redirects directly to the length page for a disabled concession', async () => {
@@ -76,7 +76,7 @@ describe('The licence type page', () => {
     })
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+    expect(response.headers.location).toBe(`${LICENCE_LENGTH.uri}#`)
   })
 
   it('on success redirects directly to the summary page for a 3 rod licence', async () => {
@@ -85,7 +85,7 @@ describe('The licence type page', () => {
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse3Rod })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(response.headers.location).toBe(`${LICENCE_SUMMARY.uri}#`)
   })
 
   it('on success redirects to the length page for an adult', async () => {
@@ -94,6 +94,6 @@ describe('The licence type page', () => {
     await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.salmonAndSeaTrout })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+    expect(response.headers.location).toBe(`${LICENCE_LENGTH.uri}#`)
   })
 })
