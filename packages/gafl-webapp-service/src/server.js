@@ -194,6 +194,7 @@ const init = async () => {
   await server.start()
 
   console.log('Server running on %s', server.info.uri)
+  console.log('Node version running: %s', process.version)
 }
 
 const shutdownBehavior = () => {
