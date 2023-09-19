@@ -40,7 +40,7 @@ describe('licence-details > update-transaction', () => {
 
     it('should find the permit with the available data', async () => {
       const permission = { licenceLength: '1D' }
-      const request = getMockRequest({ permission})
+      const request = getMockRequest({ permission })
       await updateTransaction(request)
 
       expect(findPermit).toHaveBeenCalledWith(permission)
@@ -50,7 +50,7 @@ describe('licence-details > update-transaction', () => {
       const transactionSet = jest.fn()
       const permit = Symbol('permit')
       findPermit.mockReturnValueOnce(permit)
-      await updateTransaction(getMockRequest({transactionSet}))
+      await updateTransaction(getMockRequest({ transactionSet }))
       expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ permit }))
     })
 
@@ -59,7 +59,7 @@ describe('licence-details > update-transaction', () => {
       const hash = Symbol('hash')
       console.log('hashPermission', hashPermission)
       hashPermission.mockReturnValueOnce(hash)
-      await updateTransaction(getMockRequest({transactionSet}))
+      await updateTransaction(getMockRequest({ transactionSet }))
       expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ hash }))
     })
 
@@ -67,7 +67,7 @@ describe('licence-details > update-transaction', () => {
       const hash = Symbol('hash')
       const permission = { property: 'value', permit: Symbol('permit'), hash }
       hashPermission.mockReturnValueOnce(hash)
-      await updateTransaction(getMockRequest({permission}))
+      await updateTransaction(getMockRequest({ permission }))
       expect(findPermit).not.toHaveBeenCalled()
     })
 
@@ -86,9 +86,7 @@ describe('licence-details > update-transaction', () => {
         const request = getMockRequest({ transactionSet })
         await updateTransaction(request)
 
-        expect(transactionSet).toHaveBeenCalledWith(
-          expect.objectContaining({ licenceStartTime: null })
-        )
+        expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ licenceStartTime: null }))
       })
 
       it('should set licenceToStart to after-payment when the length is 12M and the start date matches the current day', async () => {
@@ -97,9 +95,7 @@ describe('licence-details > update-transaction', () => {
         const request = getMockRequest({ permission, transactionSet })
         await updateTransaction(request)
 
-        expect(transactionSet).toHaveBeenCalledWith(
-          expect.objectContaining({ licenceToStart: 'after-payment' })
-        )
+        expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ licenceToStart: 'after-payment' }))
       })
 
       it('should not modify licenceToStart when the length is 12M and the start date is a later day', async () => {
@@ -109,9 +105,7 @@ describe('licence-details > update-transaction', () => {
         const request = getMockRequest({ permission, transactionSet })
         await updateTransaction(request)
 
-        expect(transactionSet).toHaveBeenCalledWith(
-          expect.objectContaining({ licenceToStart })
-        )
+        expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ licenceToStart }))
       })
 
       it('should not modify licenceStartTime when the length is not 12M', async () => {
@@ -121,9 +115,7 @@ describe('licence-details > update-transaction', () => {
         const request = getMockRequest({ permission, transactionSet })
         await updateTransaction(request)
 
-        expect(transactionSet).toHaveBeenCalledWith(
-          expect.objectContaining({ licenceStartTime })
-        )
+        expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ licenceStartTime }))
       })
     })
 
@@ -213,9 +205,7 @@ describe('licence-details > update-transaction', () => {
         const request = getMockRequest({ permission, transactionSet })
         await updateTransaction(request)
 
-        expect(transactionSet).toHaveBeenCalledWith(
-          expect.objectContaining({ numberOfRods: '2' })
-        )
+        expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ numberOfRods: '2' }))
       })
     })
   })

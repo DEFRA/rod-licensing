@@ -90,7 +90,7 @@ export default async request => {
   permission.licenceLength = payload['licence-length']
 
   const hash = hashPermission(permission)
-  if (permission.hash != hash) {
+  if (permission.hash !== hash) {
     permission.hash = hash
     permission.permit = await findPermit(permission)
   }
