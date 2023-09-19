@@ -1,4 +1,12 @@
 
+## v1.36.0-rc.2 (2023-09-19)
+
+#### :rocket: Enhancement
+* [#1800](https://github.com/DEFRA/rod-licensing/pull/1800) Fix Docker for Node v18.17 ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.36.0-rc.1 (2023-09-15)
 
 #### :rocket: Enhancement
