@@ -1,7 +1,7 @@
 ########################################################################################
 # Create an image suitable to act as the base image for all fish services
 ########################################################################################
-FROM node:14.13-alpine
+FROM node:18.17-alpine
 
 ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 ENV PATH=$PATH:/home/node/.npm-global/bin

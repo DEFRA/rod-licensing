@@ -128,9 +128,11 @@ docker swarm leave --force && docker swarm init
 
 Volumes are stored in docker/volumes. If you find that the data in any of the containers are corrupted. Do a `docker system prune -a` then delete the data in the folders. E.g. if dynamodb doesn't allow you perform updates, run the prune command then delete the data folder in docker/volumes/localstack, leaving the README.md. Then rebuild and run the project.
 
-#### M1 Macbooks
+#### Docker authentication
 
-A recent upgrade to Docker Desktop caused the builds to stop working. Now, to successfully execute `npm run docker:build` or `npm run docker:build-dev`, it's necessary to set the `DOCKER_BUILDKIT` env var to `0`, then do a `docker login` with DEFRA creds. To avoid problems in the future, this should be set in `.zprofile`, `.bash_profile`, or whatever profile file is used for your shell execution environment. Docker login will have to be done in advance of any build.
+A recent upgrade to Docker Desktop caused the builds to stop working. Now, to successfully execute `npm run docker:build` or `npm run docker:build-dev`, it's necessary to set the `DOCKER_BUILDKIT` env var to `0`, then do a `docker login` with DEFRA creds. To avoid problems in the future, this should be set in `.zprofile`, `.bash_profile`, or whatever profile file is used for your shell execution environment.
+
+`docker login` will have to be done in advance of any build. It is recommended to [create an access token](https://hub.docker.com/settings/security) for CLI access.
 
 #### Production mode
 
