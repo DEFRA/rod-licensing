@@ -25,23 +25,6 @@ describe('hash permission', () => {
     expect(digest).toHaveBeenCalledWith('hex')
   })
 
-  /*
-{
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   licensee: {
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |     firstName: 'Brenin',
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |     lastName: 'Pysgotwr',
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |     birthDate: '1987-10-12'
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   },
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   isLicenceForYou: true,
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   licenceToStart: 'after-payment',
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   licenceStartDate: '2023-09-18',
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   licenceType: 'Trout and coarse',
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   numberOfRods: '2',
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  |   licenceLength: '12M'
-rls_gafl_webapp.1.axfsl54oxdci@docker-desktop    | gafl-webapp-service-0  | }
-
-*/
-
   it.each([
     { isLicenceForYou: true, licenceToStart: 'after-payment', licenceStartDate: '2023-09-18' },
     { licenceType: 'Trout and coarse', numberOfRods: '2', licenceLength: '12M' },
