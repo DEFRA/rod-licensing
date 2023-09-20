@@ -235,7 +235,7 @@ describe('licence-summary > route', () => {
     ])('calls findPermit with permission where permission is a $desc permission', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
       await getData(mockRequest)
-      expect(findPermit).toHaveBeenCalledWith(currentPermission, mockRequest)
+      expect(findPermit).toHaveBeenCalledWith(currentPermission)
     })
 
     it('attaches the permit to the permission', async () => {

@@ -192,7 +192,7 @@ export const getData = async request => {
   debug('retrieving permit info')
   const hash = hashPermission(permission)
   if (permission.hash !== hash) {
-    permission.permit = await findPermit(permission, request)
+    permission.permit = await findPermit(permission)
     permission.hash = hash
     await request.cache().helpers.transaction.setCurrentPermission(permission)
   }
