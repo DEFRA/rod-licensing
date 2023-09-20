@@ -3,7 +3,7 @@
  */
 import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { LICENCE_TYPE } from '../uri.js'
-import { getPermitsJoinPermitConcessions } from './filter-permits.js'
+import { getPermitsJoinPermitConcessions } from './find-permit.js'
 import * as concessionHelper from '../processors/concession-helper.js'
 import * as constants from './mapping-constants.js'
 import moment from 'moment'
