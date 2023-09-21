@@ -9,7 +9,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "footer/macro.njk" import govukFooter %}
 
-{% if (SHOW_WELSH_CONTENT) and (_uri.queryParams.lang == 'cy') %}
+{% if pageLanguageSetToWelsh %}
     {% set htmlLang = "cy" %}
 {% endif %}
 
