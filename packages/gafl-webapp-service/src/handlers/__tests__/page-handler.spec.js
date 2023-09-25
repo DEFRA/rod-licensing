@@ -241,6 +241,55 @@ describe('The page handler function', () => {
       expect(set).toBeCalledWith(result)
     })
   })
+
+  describe('pageLanguageSetToWelsh', () => {
+    it('returns false when SHOW_WELSH_CONTENT is not true', async () => {
+      process.env.SHOW_WELSH_CONTENT = false
+      const { get } = pageHandler('', 'view', '/next/page')
+      const toolkit = getMockToolkit()
+
+      await get(getMockRequest(), toolkit)
+
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          pageLanguageSetToWelsh: false
+        })
+      )
+    })
+
+    it('returns false when SHOW_WELSH_CONTENT is true but the lang is not set to cy', async () => {
+      process.env.SHOW_WELSH_CONTENT = true
+      const { get } = pageHandler('', 'view', '/next/page')
+      const toolkit = getMockToolkit()
+
+      await get(getMockRequest(), toolkit)
+
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          pageLanguageSetToWelsh: false
+        })
+      )
+    })
+
+    it('returns true when SHOW_WELSH_CONTENT is true and the lang is set to cy', async () => {
+      process.env.SHOW_WELSH_CONTENT = true
+      const { get } = pageHandler('', 'view', '/next/page')
+      const query = { lang: 'cy' }
+      const request = getMockRequest({ query })
+      const toolkit = getMockToolkit()
+
+      await get(request, toolkit)
+
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          pageLanguageSetToWelsh: true
+        })
+      )
+    })
+  })
 })
 
 const getAnalytics = overides => ({
@@ -249,7 +298,7 @@ const getAnalytics = overides => ({
   ...overides
 })
 
-const getMockRequest = ({ setCurrentPermission = () => {}, path = '/buy/we/are/here', analytics, set = () => {} } = {}) => ({
+const getMockRequest = ({ setCurrentPermission = () => {}, path = '/buy/we/are/here', query = {}, analytics, set = () => {} } = {}) => ({
   cache: () => ({
     helpers: {
       page: {
@@ -275,6 +324,7 @@ const getMockRequest = ({ setCurrentPermission = () => {}, path = '/buy/we/are/h
     getLocale: () => ''
   },
   path,
+  query,
   url: {
     search: ''
   }

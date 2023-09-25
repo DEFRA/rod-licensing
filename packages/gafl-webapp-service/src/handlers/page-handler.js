@@ -40,6 +40,11 @@ const omitPageFromAnalytics = async request => {
   }
 }
 
+const pageLanguageSetToWelsh = request => {
+  const showWelshContent = process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true'
+  return showWelshContent && request.query.lang === 'cy'
+}
+
 /**
  * Flattens the error structure from joi for use in the templates
  * @param e
@@ -123,6 +128,7 @@ export default (path, view, completion, getData) => ({
     pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
     pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: addLanguageCodeToUri(request, PROCESS_ANALYTICS_PREFERENCES.uri) }
+    pageData.pageLanguageSetToWelsh = pageLanguageSetToWelsh(request)
 
     const analytics = await request.cache().helpers.analytics.get()
     pageData.analyticsMessageDisplayed = analytics ? analytics[ANALYTICS.seenMessage] : false
