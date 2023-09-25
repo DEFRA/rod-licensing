@@ -516,10 +516,10 @@ describe('The pricing summary calculator', () => {
       ${getJuniorPermission()}                                                             | ${'Length'} | ${'length pricing data for a 12 month'}
       ${getJuniorPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${'type pricing data with a disabled concession'}
       ${getJuniorPermission({ disabledConcession: true })}                                 | ${'Length'} | ${'length pricing data with a disabled concession'}
-      ${getJuniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'type pricing data when a permission starts after the new price changover'}
-      ${getJuniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data for a 12 month when a permission starts after the new price changover'}
-      ${getJuniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'type pricing data with a disabled concession when a permission starts after the new price changover'}
-      ${getJuniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data with a disabled concession when a permission starts after the new price changover'}
+      ${getJuniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'type pricing data when a permission starts after the new price changeover'}
+      ${getJuniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data for a 12 month when a permission starts after the new price changeover'}
+      ${getJuniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'type pricing data with a disabled concession when a permission starts after the new price changeover'}
+      ${getJuniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data with a disabled concession when a permission starts after the new price changeover'}
     `('returns the correct $description', async ({ permission, key }) => {
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()
@@ -533,10 +533,10 @@ describe('The pricing summary calculator', () => {
       ${getAdultPermission()}                                                             | ${'Length'} | ${'length pricing data'}
       ${getAdultPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${'type pricing data with a disabled concession'}
       ${getAdultPermission({ disabledConcession: true })}                                 | ${'Length'} | ${'length pricing data for a disabled concession'}
-      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'pricing data when a permission starts after the new price changover'}
-      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data when a permission starts after the new price changover'}
-      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'pricing data for a disabled concession when a permission starts after the new price changover'}
-      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data for a disabled concession when a permission starts after the new price changover'}
+      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'pricing data when a permission starts after the new price changeover'}
+      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data when a permission starts after the new price changeover'}
+      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'pricing data for a disabled concession when a permission starts after the new price changeover'}
+      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data for a disabled concession when a permission starts after the new price changeover'}
     `('returns the correct $description', async ({ permission, key }) => {
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()
@@ -550,10 +550,10 @@ describe('The pricing summary calculator', () => {
       ${getSeniorPermission()}                                                             | ${'Length'} | ${'length pricing data'}
       ${getSeniorPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${'type pricing data with a disabled concession'}
       ${getSeniorPermission({ disabledConcession: true })}                                 | ${'Length'} | ${'length pricing data for a disabled concession'}
-      ${getSeniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'type pricing data when a permission starts after the new price changover'}
-      ${getSeniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data when a permission starts after the new price changover'}
-      ${getSeniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'type pricing data with a disabled concession when a permission starts after the new price changover'}
-      ${getSeniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data for a disabled concession when a permission starts after the new price changover'}
+      ${getSeniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'type pricing data when a permission starts after the new price changeover'}
+      ${getSeniorPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data when a permission starts after the new price changeover'}
+      ${getSeniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'type pricing data with a disabled concession when a permission starts after the new price changeover'}
+      ${getSeniorPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data for a disabled concession when a permission starts after the new price changeover'}
     `('returns the correct $description', async ({ permission, key }) => {
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()

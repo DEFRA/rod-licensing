@@ -11,7 +11,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for a junior licence returns the correct length pricing data for a 12 month when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for a junior licence returns the correct length pricing data for a 12 month when a permission starts after the new price changeover 1`] = `
 Object {
   "12M": Object {
     "total": Object {
@@ -33,7 +33,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for a junior licence returns the correct length pricing data with a disabled concession when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for a junior licence returns the correct length pricing data with a disabled concession when a permission starts after the new price changeover 1`] = `
 Object {
   "12M": Object {
     "total": Object {
@@ -70,7 +70,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for a junior licence returns the correct type pricing data when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for a junior licence returns the correct type pricing data when a permission starts after the new price changeover 1`] = `
 Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
@@ -122,7 +122,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for a junior licence returns the correct type pricing data with a disabled concession when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for a junior licence returns the correct type pricing data with a disabled concession when a permission starts after the new price changeover 1`] = `
 Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
@@ -194,7 +194,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an adult licence returns the correct length pricing data for a disabled concession when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an adult licence returns the correct length pricing data for a disabled concession when a permission starts after the new price changeover 1`] = `
 Object {
   "12M": Object {
     "total": Object {
@@ -217,7 +217,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an adult licence returns the correct length pricing data when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an adult licence returns the correct length pricing data when a permission starts after the new price changeover 1`] = `
 Object {
   "12M": Object {
     "total": Object {
@@ -240,7 +240,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an adult licence returns the correct pricing data for a disabled concession when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an adult licence returns the correct pricing data for a disabled concession when a permission starts after the new price changeover 1`] = `
 Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
@@ -259,11 +259,11 @@ Object {
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
-      "cost": "22",
+      "cost": "22.99",
     },
     "1D": Object {
       "concessions": false,
-      "cost": "8.60",
+      "cost": "8",
     },
     "8D": Object {
       "concessions": false,
@@ -280,7 +280,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an adult licence returns the correct pricing data when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an adult licence returns the correct pricing data when a permission starts after the new price changeover 1`] = `
 Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
@@ -446,7 +446,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an senior licence returns the correct length pricing data for a disabled concession when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an senior licence returns the correct length pricing data for a disabled concession when a permission starts after the new price changeover 1`] = `
 Object {
   "12M": Object {
     "total": Object {
@@ -469,7 +469,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an senior licence returns the correct length pricing data when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an senior licence returns the correct length pricing data when a permission starts after the new price changeover 1`] = `
 Object {
   "12M": Object {
     "total": Object {
@@ -532,7 +532,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an senior licence returns the correct type pricing data when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an senior licence returns the correct type pricing data when a permission starts after the new price changeover 1`] = `
 Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {
@@ -612,7 +612,7 @@ Object {
 }
 `;
 
-exports[`The pricing summary calculator for an senior licence returns the correct type pricing data with a disabled concession when a permission starts after the new price changover 1`] = `
+exports[`The pricing summary calculator for an senior licence returns the correct type pricing data with a disabled concession when a permission starts after the new price changeover 1`] = `
 Object {
   "salmon-and-sea-trout": Object {
     "12M": Object {

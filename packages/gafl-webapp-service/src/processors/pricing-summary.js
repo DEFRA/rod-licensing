@@ -27,7 +27,6 @@ const byType = type => {
   }
 }
 
-const byTypeAndLength = (type, lenStr) => arr => byType(type)(arr) && byLength(lenStr)(arr)
 const byConcessions = concessions => p =>
   p.concessions.every(c => concessions.find(pc => c.name === pc)) && concessions.length === p.concessions.length
 const getPermitCost = (permission, permit) =>
@@ -66,6 +65,48 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
 
 const formatCost = cost => (Number.isInteger(cost) ? String(cost) : cost.toFixed(2))
 
+const getLicenceCategory = permit => {
+  if (permit.concessions.some(c => c.name.toLowerCase() === 'junior')) {
+    return 'junior'
+  } else if (permit.concessions.length > 0) {
+    return 'concession'
+  }
+  return 'full'
+}
+
+const getByTypeArray = (permission, permits) => {
+  const licenceType = {
+    concession: { byType: {} },
+    full: { byType: {} },
+    junior: { byType: {} }
+  }
+  for (const permit of permits) {
+    const category = getLicenceCategory(permit)
+    const typeKey = `${permit.permitSubtype.label.toLowerCase().replaceAll(' ', '-')}${
+      permit.permitSubtype.description === 'C' ? `-${permit.numberOfRods}-rod` : ''
+    }`
+    const durationCode = `${permit.durationMagnitude}${permit.durationDesignator.description}`
+    if (!licenceType[category].byType?.[typeKey]?.[durationCode]) {
+      if (!licenceType[category].byType[typeKey]) {
+        licenceType[category].byType[typeKey] = {}
+      }
+      licenceType[category].byType[typeKey][durationCode] = {
+        cost: formatCost(getPermitCost(permission, permit)),
+        concessions: permit.concessions.length > 0 && durationCode === '12M'
+      }
+    }
+  }
+  for (const category of Object.keys(licenceType)) {
+    for (const type of Object.keys(licenceType[category].byType)) {
+      if (Object.keys(licenceType[category].byType[type]).length === 1) {
+        licenceType[category].byType[type].msg = NO_SHORT
+      }
+    }
+  }
+
+  return licenceType
+}
+
 /**
  * Fetch the pricing detail - this is modified by the users concessions
  * @param page
@@ -89,35 +130,13 @@ export const pricingDetail = async (page, permission) => {
   }
 
   if (page === LICENCE_TYPE.page) {
-    const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions.filter(byConcessions(userConcessions))
-    const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions.filter(
-      byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : [])
-    )
-
-    return {
-      byType: Object.values(licenseTypes)
-        .map(licenceType => {
-          const filtered = ['12M', '8D', '1D']
-            .map(len =>
-              resultTransformer(
-                permitsJoinPermitConcessionsFilteredByUserConcessions.find(byTypeAndLength(licenceType, len)),
-                permitsJoinPermitConcessionsFilteredWithoutConcessions.find(byTypeAndLength(licenceType, len)),
-                len,
-                permission
-              )
-            )
-            .filter(e => e.avail)
-            .reduce(
-              (a, c) => ({
-                ...a,
-                [c.len]: { cost: formatCost(c.cost), concessions: c.concessions }
-              }),
-              {}
-            )
-          return { [licenceType]: Object.assign(filtered, Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {}) }
-        })
-        .reduce((a, c) => Object.assign(c, a))
+    const byTypeArray = getByTypeArray(permission, permitsJoinPermitConcessions)
+    if (permission.concessions.some(c => c.type.toLowerCase() === 'junior')) {
+      return byTypeArray.junior
+    } else if (permission.concessions.length > 0) {
+      return byTypeArray.concession
     }
+    return byTypeArray.full
   } else {
     // Licence length page
     const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions
