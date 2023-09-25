@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.3 (2023-09-25)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1798](https://github.com/DEFRA/rod-licensing/pull/1798) Specify language in HTML tags ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.36.0-rc.2 (2023-09-19)
 
 #### :rocket: Enhancement
