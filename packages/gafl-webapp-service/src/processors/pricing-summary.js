@@ -1,7 +1,6 @@
 /**
  * Functionality for the pricing boxes on the right hand side of the type and lengths pages
  */
-import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { LICENCE_TYPE } from '../uri.js'
 import { getPermitsJoinPermitConcessions } from './filter-permits.js'
 import * as concessionHelper from '../processors/concession-helper.js'
@@ -16,16 +15,6 @@ const NO_SHORT = 'no-short'
  * @returns {(function(*): boolean)|(function(*): boolean)|(function(*): boolean)}
  */
 const byLength = lenStr => arr => `${arr.durationMagnitude}${arr.durationDesignator.description}` === lenStr
-
-const byType = type => {
-  if (type === licenseTypes.troutAndCoarse2Rod) {
-    return arr => arr.permitSubtype.label === constants.LICENCE_TYPE['trout-and-coarse'] && arr.numberOfRods === 2
-  } else if (type === licenseTypes.troutAndCoarse3Rod) {
-    return arr => arr.permitSubtype.label === constants.LICENCE_TYPE['trout-and-coarse'] && arr.numberOfRods === 3
-  } else {
-    return arr => arr.permitSubtype.label === constants.LICENCE_TYPE['salmon-and-sea-trout'] && arr.numberOfRods === 1
-  }
-}
 
 const byConcessions = concessions => p =>
   p.concessions.every(c => concessions.find(pc => c.name === pc)) && concessions.length === p.concessions.length
