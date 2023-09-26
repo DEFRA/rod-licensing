@@ -1,20 +1,9 @@
 {% extends "layout.njk" %}
 {% from "fieldset/macro.njk" import govukFieldset %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = data.title %}
 
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
-
-{% block beforeContent %}
-  {% if backRef %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: backRef,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-  {% endif %}
-{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">

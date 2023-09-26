@@ -1,5 +1,4 @@
 {% extends "standard-form.njk" %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% if data.licensee.preferredMethodOfConfirmation == 'Email' %} 
   {% set contactType = mssgs.email_address %}
@@ -12,16 +11,6 @@
 {% set title = mssgs.check_conf_contact_title_1 + contactType + mssgs.check_conf_contact_title_2 %}
 
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
-
-{% block beforeContent %}
-  {% if backRef %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: backRef,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-  {% endif %}
-{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">

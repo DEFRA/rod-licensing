@@ -1,16 +1,7 @@
 {% extends "layout.njk" %}
-{% from "back-link/macro.njk" import govukBackLink %}
 {% from "table/macro.njk" import govukTable %}
 
 {% block pageTitle %}{{ mssgs.cookies_title }}{% endblock %}
-
-{% block beforeContent %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: uri.back,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

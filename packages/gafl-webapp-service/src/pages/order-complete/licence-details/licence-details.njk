@@ -4,7 +4,6 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "inset-text/macro.njk" import govukInsetText %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = mssgs.licence_details_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -26,14 +25,6 @@
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.ends }, value: { text: data.endTimeString } }) }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.licence_summary_disability_concession }, value: { text: mssgs.yes } }) if data.disabled }}
 {{ licenseDetailsSummaryRows.push({ key: { text: mssgs.age_concession }, value: { text: data.ageConcessionText } }) if data.ageConcession }}
-
-{% block beforeContent %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: uri.back,
-        classes: "govuk-!-margin-bottom-7 no-print"
-      }) }}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

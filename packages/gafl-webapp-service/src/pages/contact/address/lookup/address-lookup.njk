@@ -4,7 +4,6 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "input/macro.njk" import govukInput %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = mssgs.address_lookup_title_you if data.isLicenceForYou else mssgs.address_lookup_title_other %}
 
@@ -21,16 +20,6 @@
         }
     }
 %}
-
-{% block beforeContent %}
-  {% if backRef %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: backRef,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-  {% endif %}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

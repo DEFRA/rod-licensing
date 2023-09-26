@@ -1,15 +1,6 @@
 {% extends "layout.njk" %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% block pageTitle %}{{ mssgs.refund_title }}{% endblock %}
-
-{% block beforeContent %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: uri.back,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

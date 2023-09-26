@@ -8,6 +8,7 @@
 {% from "header/macro.njk" import govukHeader %}
 {% from "button/macro.njk" import govukButton %}
 {% from "footer/macro.njk" import govukFooter %}
+{% from "back-link/macro.njk" import govukBackLink %}
 
 {% macro csrf() %}
     <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
@@ -150,6 +151,19 @@
             </div>
         {% endif%}
     {% endif %}
+    {% if backRef %}
+      {{ govukBackLink({
+        text: mssgs.back,
+        href: backRef,
+        classes: "govuk-!-margin-bottom-7"
+      }) }}
+    {% elseif uri.back %}
+      {{ govukBackLink({
+        text: mssgs.back,
+        href: uri.back,
+        classes: "govuk-!-margin-bottom-7"
+      }) }}
+   {% endif %}
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}
