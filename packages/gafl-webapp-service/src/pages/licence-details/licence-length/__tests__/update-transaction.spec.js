@@ -63,6 +63,12 @@ describe('licence-details > update-transaction', () => {
       expect(transactionSet).toHaveBeenCalledWith(expect.objectContaining({ hash }))
     })
 
+    it('passes the permission to be hashed', async () => {
+      const permission = {}
+      await updateTransaction(getMockRequest({ permission }))
+      expect(hashPermission).toHaveBeenCalledWith(permission)
+    })
+
     it('only retrieves the permit if the hash has changed', async () => {
       const hash = Symbol('hash')
       const permission = { property: 'value', permit: Symbol('permit'), hash }

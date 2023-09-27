@@ -261,6 +261,12 @@ describe('licence-summary > route', () => {
       expect(licenceTypeDisplay).toHaveBeenCalledWith(expect.objectContaining({ hash }), expect.any(Object))
     })
 
+    it('passes the permission to the hash function', async () => {
+      const currentPermission = getMockPermission()
+      await getData(getMockRequest({ currentPermission }))
+      expect(hashPermission).toHaveBeenCalledWith(currentPermission)
+    })
+
     it('only retrieves the permit if the hash has changed', async () => {
       const hash = Symbol('hash')
       const currentPermission = { ...getMockPermission(), hash }
