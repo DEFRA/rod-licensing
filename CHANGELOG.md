@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.5 (2023-09-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1799](https://github.com/DEFRA/rod-licensing/pull/1799) Stop redirect from always preserving skip link fragment ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.36.0-rc.4 (2023-09-28)
 
 #### :rocket: Enhancement
