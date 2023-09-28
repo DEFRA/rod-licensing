@@ -4,7 +4,6 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "button/macro.njk" import govukButton %}
-{% from "back-link/macro.njk" import govukBackLink %}
 {% from "notification-banner.njk" import notificationBanner %}
 
 {% set title = mssgs.licence_summary_title %}
@@ -24,16 +23,6 @@
     }) }}
     {% endcall %}
 {% endset -%}
-
-{% block beforeContent %}
-  {% if backRef %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: backRef,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-  {% endif %}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

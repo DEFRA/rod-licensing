@@ -3,22 +3,11 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "radios/macro.njk" import govukRadios %}
-{% from "back-link/macro.njk" import govukBackLink %}
 {% from "error-summary.njk" import errorSummary %}
 
 {% set title = mssgs.no_licence_req_title %}
 
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
-
-{% block beforeContent %}
-  {% if backRef %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: backRef,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-  {% endif %}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

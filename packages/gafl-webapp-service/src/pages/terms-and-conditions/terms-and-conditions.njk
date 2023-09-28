@@ -4,7 +4,6 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 {% from "error-summary.njk" import errorSummary %}
-{% from "back-link/macro.njk" import govukBackLink %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = mssgs.terms_conds_title %}
@@ -17,16 +16,6 @@
         }
     }
 %}
-
-{% block beforeContent %}
-  {% if backRef %}
-      {{ govukBackLink({
-        text: mssgs.back,
-        href: backRef,
-        classes: "govuk-!-margin-bottom-7"
-      }) }}
-  {% endif %}
-{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
