@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.4 (2023-09-28)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1802](https://github.com/DEFRA/rod-licensing/pull/1802) skip link back button ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.36.0-rc.3 (2023-09-25)
 
 #### :bug: Bug Fix
