@@ -93,7 +93,7 @@ describe('The agreed handler', () => {
     const data3 = await injectWithCookies('GET', AGREED.uri)
     expect(data3.statusCode).toBe(302)
 
-    expect(data3.headers.location).toBe(ORDER_COMPLETE.uri)
+    expect(data3.headers.location).toBe(`${ORDER_COMPLETE.uri}#`)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).toBe(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
@@ -106,6 +106,6 @@ describe('The agreed handler', () => {
 
     const data4 = await injectWithCookies('GET', AGREED.uri)
     expect(data4.statusCode).toBe(302)
-    expect(data4.headers.location).toBe(ORDER_COMPLETE.uri)
+    expect(data4.headers.location).toBe(`${ORDER_COMPLETE.uri}#`)
   })
 })

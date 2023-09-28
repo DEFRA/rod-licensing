@@ -60,14 +60,14 @@ describe('The contact summary page', () => {
     it('redirects to the address lookup page if the address entry or address select page has not been visited', async () => {
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
+      expect(response.headers.location).toBe(`${ADDRESS_LOOKUP.uri}#`)
     })
 
     it('redirects to the contact page if it has not been visited', async () => {
       await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
     })
   })
 
@@ -93,14 +93,14 @@ describe('The contact summary page', () => {
     it('when navigating to the contact summary, it redirects to the licence fulfilment page, if it has not been visited', async () => {
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+      expect(response.headers.location).toBe(`${LICENCE_FULFILMENT.uri}#`)
     })
 
     it('when navigating to the contact summary, it redirects to the licence confirmation method page, if it has not been visited', async () => {
       await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       const response = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+      expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
     })
 
     it('when navigating to the contact summary, it displays the contact summary page, if the licence fulfilment and confirmation method page have been visited', async () => {

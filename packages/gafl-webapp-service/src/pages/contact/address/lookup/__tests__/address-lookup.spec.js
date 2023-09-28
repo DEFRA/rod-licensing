@@ -23,31 +23,31 @@ describe('The address lookup page', () => {
   it('redirects back to itself on posting an empty payload', async () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_LOOKUP.uri}#`)
   })
 
   it('redirects back to itself on posting an empty premises', async () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '', postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_LOOKUP.uri}#`)
   })
 
   it('redirects back to itself on posting an empty postcode', async () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '5', postcode: '' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_LOOKUP.uri}#`)
   })
 
   it('redirects back to itself on posting a bad postcode', async () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: '5', postcode: 'foo' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_LOOKUP.uri}#`)
   })
 
   it('redirects back to itself on posting a too long premises', async () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'a'.repeat(101), postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_LOOKUP.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_LOOKUP.uri}#`)
   })
 
   it('on finding list of multiple found addresses redirects to the select page', async () => {
@@ -58,7 +58,7 @@ describe('The address lookup page', () => {
 
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_SELECT.uri}#`)
   })
 
   it('on finding list of a single found address redirects to the select page', async () => {
@@ -70,7 +70,7 @@ describe('The address lookup page', () => {
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
 
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_SELECT.uri}#`)
   })
 
   it("redirects to the entry page where there is no result - and displays the 'not-found' insert text ", async () => {
@@ -81,7 +81,7 @@ describe('The address lookup page', () => {
 
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
 
     const response2 = await injectWithCookies('GET', ADDRESS_ENTRY.uri)
     expect(response2.payload).toContain('We could not find an address')
@@ -95,7 +95,7 @@ describe('The address lookup page', () => {
 
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
   })
 
   it('redirects to the entry page where there is no lookup set up', async () => {
@@ -103,6 +103,6 @@ describe('The address lookup page', () => {
     delete process.env.ADDRESS_LOOKUP_KEY
     const response = await injectWithCookies('POST', ADDRESS_LOOKUP.uri, { premises: 'Howecroft Court', postcode: 'BS9 1HJ' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_ENTRY.uri)
+    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
   })
 })

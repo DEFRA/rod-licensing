@@ -12,7 +12,7 @@ describe('The miscellaneous route handlers', () => {
   it('redirect to the main controller when / is requested', async () => {
     const data = await injectWithCookies('GET', '/')
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTROLLER.uri)
+    expect(data.headers.location).toBe(`${CONTROLLER.uri}#`)
   })
 
   it('return the refund policy page when requested', async () => {
@@ -38,6 +38,6 @@ describe('The miscellaneous route handlers', () => {
   it('The easy renewals shortcut route redirects correctly', async () => {
     const data = await injectWithCookies('GET', RENEWAL_PUBLIC.uri.replace('{referenceNumber}', 'AAAAAA'))
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(IDENTIFY.uri.replace('{referenceNumber}', 'AAAAAA'))
+    expect(data.headers.location).toBe(`${IDENTIFY.uri.replace('{referenceNumber}', 'AAAAAA')}#`)
   })
 })

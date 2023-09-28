@@ -16,7 +16,7 @@ afterAll(d => stop(d))
 describe('The date of birth page', () => {
   it('redirects back to LICENCE_FOR if not been on already', async () => {
     const response = await injectWithCookies('GET', DATE_OF_BIRTH.uri)
-    expect(response.headers.location).toBe(LICENCE_FOR.uri)
+    expect(response.headers.location).toBe(`${LICENCE_FOR.uri}#`)
   })
 
   it('return success on requesting the page', async () => {
@@ -28,7 +28,7 @@ describe('The date of birth page', () => {
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', DATE_OF_BIRTH.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(`${DATE_OF_BIRTH.uri}#`)
   })
 
   it('redirects back to itself on posting an invalid date', async () => {
@@ -38,19 +38,19 @@ describe('The date of birth page', () => {
       'date-of-birth-year': '1970'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+    expect(response.headers.location).toBe(`${DATE_OF_BIRTH.uri}#`)
   })
 
   it('redirects to the disability-concession page on posting a date of birth for an adult licence', async () => {
     const response = await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(SENIOR_TODAY))
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toBe(`${DISABILITY_CONCESSION.uri}#`)
   })
 
   it('redirects to the disability-concession page on posting a date of birth for an adult licence', async () => {
     const response = await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toBe(`${DISABILITY_CONCESSION.uri}#`)
   })
 
   it(`redirects to the disability-concession page if a junior on ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format(
@@ -58,7 +58,7 @@ describe('The date of birth page', () => {
   )} - i.e. born ${JUNIOR_AT_ADVANCE_PURCHASE_MAX.format('YYYY-MM-DD')}`, async () => {
     const response = await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(JUNIOR_AT_ADVANCE_PURCHASE_MAX))
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toBe(`${DISABILITY_CONCESSION.uri}#`)
   })
 
   it(`redirects to the no-licence-required page if a minor on ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format(
@@ -66,6 +66,6 @@ describe('The date of birth page', () => {
   )} - i.e. born ${MINOR_AT_ADVANCE_PURCHASE_MAX.format('YYYY-MM-DD')}`, async () => {
     const response = await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(MINOR_AT_ADVANCE_PURCHASE_MAX))
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(NO_LICENCE_REQUIRED.uri)
+    expect(response.headers.location).toBe(`${NO_LICENCE_REQUIRED.uri}#`)
   })
 })
