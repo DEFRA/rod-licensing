@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.6 (2023-09-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1795](https://github.com/DEFRA/rod-licensing/pull/1795) Refactor findPermit function ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.36.0-rc.5 (2023-09-28)
 
 #### :bug: Bug Fix
