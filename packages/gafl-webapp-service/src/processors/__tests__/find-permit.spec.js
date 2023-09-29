@@ -1,132 +1,94 @@
-import { findPermit } from '../find-permit.js'
-import filterPermits from '../filter-permits.js'
-import crypto from 'crypto'
-import db from 'debug'
+import findPermit from '../find-permit'
 
-jest.mock('../filter-permits.js')
-jest.mock('debug', () => jest.fn(() => jest.fn()))
-const debugMock = db.mock.results[0].value
-
-const getMockHashImplementation = (overrides = {}) =>
-  jest.fn(() => ({
-    update: () => {},
-    digest: () => 'abc123',
-    ...overrides
-  }))
-
-jest.mock('crypto', () => ({
-  createHash: getMockHashImplementation()
+jest.mock('@defra-fish/connectors-lib', () => ({
+  salesApi: {
+    permits: {
+      getAll: async () => [
+        {
+          id: 'prm-111',
+          numberOfRods: 1,
+          durationMagnitude: '8',
+          durationDesignator: { description: 'M' },
+          permitSubtype: { label: 'type-1' }
+        },
+        {
+          id: 'prm-222',
+          numberOfRods: 1,
+          durationMagnitude: '17',
+          durationDesignator: { description: 'Seconds' },
+          permitSubtype: { label: 'type-2' }
+        },
+        {
+          id: 'prm-333',
+          numberOfRods: 1,
+          durationMagnitude: '17',
+          durationDesignator: { description: 'Seconds' },
+          permitSubtype: { label: 'type-3' }
+        },
+        {
+          id: 'prm-444',
+          numberOfRods: 1,
+          durationMagnitude: '10',
+          durationDesignator: { description: 'Hours' },
+          permitSubtype: { label: 'type-3' }
+        },
+        {
+          id: 'prm-555',
+          numberOfRods: 3,
+          durationMagnitude: '10',
+          durationDesignator: { description: 'Hours' },
+          permitSubtype: { label: 'type-3' }
+        }
+      ]
+    },
+    permitConcessions: {
+      getAll: async () => [{ permitId: 'prm-111', concessionId: 'con-111' }]
+    },
+    concessions: {
+      getAll: async () => [
+        { id: 'con-111', name: 'concession-type-1' },
+        { id: 'con-222', name: 'concession-type-2' }
+      ]
+    }
+  }
 }))
 
 describe('findPermit', () => {
-  beforeEach(jest.clearAllMocks)
-
-  describe('debug', () => {
-    it('logs permit missing', async () => {
-      await findPermit(getMockPermission(), getMockRequest())
-      expect(debugMock).toHaveBeenCalledWith("permit wasn't retrieved", expect.any(Object))
-    })
-
-    it.each([
-      ['newCostStartDate', { newCost: 1 }],
-      ['newCost', { newCostStartDate: '2023-04-01' }],
-      ['newCost and newCostStartDate', {}]
-    ])('logs permit missing %s', async (_d, p) => {
-      filterPermits.mockReturnValueOnce(p)
-      await findPermit(getMockPermission(), getMockRequest())
-      expect(debugMock).toHaveBeenCalledWith('permit missing new cost details', expect.any(Object))
-    })
-
-    it("doesn't log if newCost and newCostStartDate are defined", async () => {
-      filterPermits.mockReturnValueOnce({ newCost: 1, newCostStartDate: '2023-04-01' })
-      await findPermit(getMockPermission(), getMockRequest())
-      expect(debugMock).not.toHaveBeenCalledWith('permit missing new cost details', expect.any(Object))
-    })
-
-    it('logs permit data present and up to date', async () => {
-      const mockPermission = getMockPermission()
-      mockPermission.hash = 'abc123'
-      await findPermit(mockPermission, getMockRequest())
-      expect(debugMock).toHaveBeenCalledWith("permit data present and doesn't need updating")
-    })
+  const getSamplePermission = overrides => ({
+    licenceLength: '10Hours',
+    licenceType: 'type-3',
+    numberOfRods: '1',
+    ...overrides
+  })
+  const getSamplePermissionWithConcession = () => ({
+    concessions: [{ type: 'concession-type-1' }],
+    licenceLength: '8M',
+    licenceType: 'type-1',
+    numberOfRods: '1'
   })
 
-  describe('when the permission has no hash', () => {
-    it('generates a new hash', async () => {
-      await findPermit(getMockPermission(), getMockRequest())
-
-      expect(crypto.createHash).toHaveBeenCalledWith('sha256')
-    })
-
-    it('updates the permission with the right permit', async () => {
-      const filteredPermit = Symbol('permit')
-      filterPermits.mockReturnValueOnce(filteredPermit)
-
-      const permission = getMockPermission()
-      const request = getMockRequest()
-      await findPermit(permission, request)
-
-      expect(request.cache.mock.results[0].value.helpers.transaction.setCurrentPermission).toHaveBeenCalledWith(
-        expect.objectContaining({ permit: filteredPermit })
-      )
-    })
-  })
-
-  describe('when the permission already has a hash', () => {
-    it('generates a new hash', async () => {
-      const oldHash = crypto.createHash()
-
-      const permission = getMockPermission({ hash: oldHash })
-      await findPermit(permission, getMockRequest())
-
-      expect(crypto.createHash).toHaveBeenCalledWith('sha256')
-    })
-
-    describe('when the new hash does not match the existing hash', () => {
-      it('updates the permission with the permit and new hash', async () => {
-        const filteredPermit = Symbol('permit')
-        filterPermits.mockReturnValueOnce(filteredPermit)
-        const newHash = Symbol('new hash')
-        crypto.createHash.mockImplementation(getMockHashImplementation({ digest: () => newHash }))
-
-        const permission = getMockPermission({ hash: Symbol('old hash') })
-        const request = getMockRequest()
-        await findPermit(permission, request)
-
-        const expectedData = { permit: filteredPermit, hash: newHash }
-        expect(request.cache.mock.results[0].value.helpers.transaction.setCurrentPermission).toHaveBeenCalledWith(
-          expect.objectContaining(expectedData)
-        )
-      })
-    })
-
-    describe('when the new hash matches the existing hash', () => {
-      it('does not update the permission', async () => {
-        const sameHash = Symbol('same hash')
-        crypto.createHash.mockImplementationOnce(getMockHashImplementation({ digest: () => sameHash }))
-
-        const permission = getMockPermission({ hash: sameHash })
-        const request = getMockRequest()
-        await findPermit(permission, request)
-
-        expect(request.cache).not.toHaveBeenCalled()
-      })
-    })
-  })
-
-  const getMockPermission = (overrides = {}) => ({
-    hash: null,
-    permit: jest.fn(),
+  const createExpectedPermit = ({
+    numberOfRods = 1,
+    durationMagnitude = '10',
+    durationDescription = 'Hours',
+    permitSubtypeLabel = 'type-3',
+    ...overrides
+  } = {}) => ({
+    numberOfRods,
+    durationMagnitude,
+    durationDesignator: { description: durationDescription },
+    permitSubtype: { label: permitSubtypeLabel },
     ...overrides
   })
 
-  const getMockRequest = () => ({
-    cache: jest.fn(() => ({
-      helpers: {
-        transaction: {
-          setCurrentPermission: jest.fn()
-        }
-      }
-    }))
+  it.each`
+    description         | expectedPermit                                                                                                                    | permission
+    ${'concessions'}    | ${createExpectedPermit({ id: 'prm-111', durationMagnitude: '8', durationDescription: 'M', permitSubtypeLabel: 'type-1' })}        | ${getSamplePermissionWithConcession()}
+    ${'licence type'}   | ${createExpectedPermit({ id: 'prm-222', durationMagnitude: '17', durationDescription: 'Seconds', permitSubtypeLabel: 'type-2' })} | ${getSamplePermission({ licenceLength: '17Seconds', licenceType: 'type-2' })}
+    ${'licence length'} | ${createExpectedPermit({ id: 'prm-444' })}                                                                                        | ${getSamplePermission()}
+    ${'number of rods'} | ${createExpectedPermit({ id: 'prm-555', numberOfRods: 3 })}                                                                       | ${getSamplePermission({ numberOfRods: '3' })}
+  `('matches a permission to a permit on $description', async ({ expectedPermit, permission }) => {
+    const permit = await findPermit(permission)
+    expect(permit).toStrictEqual(expect.objectContaining(expectedPermit))
   })
 })
