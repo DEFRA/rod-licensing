@@ -24,6 +24,7 @@ import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import analytics from '../handlers/analytics-handler.js'
+import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
 
 const simpleView = view => ({
   method: 'GET',
@@ -31,9 +32,11 @@ const simpleView = view => ({
   handler: async (request, h) => {
     const mssgs = request.i18n.getCatalog()
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+    const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
     return h.view(view.page, {
       mssgs,
       altLang,
+      pageLanguageSetToWelsh,
       uri: {
         back: addLanguageCodeToUri(request, CONTROLLER.uri)
       }
@@ -92,10 +95,12 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
       return h.view(COOKIES.page, {
         altLang,
         mssgs: request.i18n.getCatalog(),
+        pageLanguageSetToWelsh,
         cookie: {
           csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
           sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,
@@ -113,9 +118,11 @@ export default [
     path: NEW_PRICES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
       return h.view(NEW_PRICES.page, {
         altLang,
+        pageLanguageSetToWelsh,
         mssgs: request.i18n.getCatalog(),
         uri: {
           back: addLanguageCodeToUri(request, CONTROLLER.uri)

@@ -13,7 +13,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "backRef": null,
         "displayAnalytics": false,
         "mssgs": undefined,
-        "pageLanguageSetToWelsh": false,
+        "pageLanguageSetToWelsh": undefined,
         "uri": Object {
           "analyticsFormAction": "/buy/process-analytics-preferences",
         },
@@ -42,7 +42,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "backRef": null,
         "displayAnalytics": true,
         "mssgs": undefined,
-        "pageLanguageSetToWelsh": false,
+        "pageLanguageSetToWelsh": undefined,
         "uri": Object {
           "analyticsFormAction": "/buy/process-analytics-preferences",
         },
