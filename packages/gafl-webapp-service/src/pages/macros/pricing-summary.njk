@@ -4,24 +4,32 @@
     <div id="pricing-{{ selector }}" role="status" class="payment-summary initially-hidden">
         <h2 class="govuk-heading-m">{{ mssgs.no_licence_req_body }}</h2>
         <p class="govuk-body-s">{{ subHeader }}</p>
+        <dl>
+            {% for k, v in load %}
+                {% if content[k].desc %}
+                    <div class="govuk-body pricing-summary-element-cost">
+                        <dt>
+                            <span>{{content[k].desc}}</span>
+                        </dt>
+                        <dd>
+                            {% if v.cost === "0" %}
+                                <strong>{{ mssgs.free }}</strong>
+                            {% else %}
+                                <strong>{{ mssgs.pound }}{{ v.cost }}</strong>
+                            {% endif %}
+                            {% if v.concessions %}
+                                <div class="govuk-body-s pricing-summary-element-concession">
+                                {{ mssgs.concession_applied }}
+                                </div>
+                            {% endif %}
+                        </dd>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </dl>
         {% for k, v in load %}
-            {% if content[k].desc %}
-                <div class="govuk-body" id="pricing-summary-element-cost">
-                    <span/>{{content[k].desc}}</span>
-                    {% if v.cost === "0" %}
-                        <strong/>{{ mssgs.free }}</strong>
-                    {% else %}
-                        <strong/>{{ mssgs.pound }}{{ v.cost }}</strong>
-                    {% endif %}
-                    {% if v.concessions %}
-                        <div class="govuk-body-s" id="pricing-summary-element-concession">
-                        {{ mssgs.concession_applied }}
-                        </div>
-                    {% endif %}
-                </div>
-            {% endif %}
             {% if k === 'msg' %}
-                <div class="govuk-body-s" id="pricing-summary-element-cost">
+                <div class="govuk-body-s pricing-summary-element-cost">
                     {{content[v]}}
                 </div>
             {% endif %}
