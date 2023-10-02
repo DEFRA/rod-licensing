@@ -56,7 +56,7 @@ describe('The manual address entry page', () => {
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting address with no premises', async () => {
@@ -64,7 +64,7 @@ describe('The manual address entry page', () => {
     delete addr.premises
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting too long premises', async () => {
@@ -72,7 +72,7 @@ describe('The manual address entry page', () => {
     addr.premises = 'A'.repeat(101)
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting too long street', async () => {
@@ -80,7 +80,7 @@ describe('The manual address entry page', () => {
     addr.street = 'A'.repeat(101)
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting too long locality', async () => {
@@ -88,7 +88,7 @@ describe('The manual address entry page', () => {
     addr.locality = 'A'.repeat(101)
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting address with no town', async () => {
@@ -96,7 +96,7 @@ describe('The manual address entry page', () => {
     delete addr.town
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting too long town', async () => {
@@ -104,7 +104,7 @@ describe('The manual address entry page', () => {
     addr.town = 'A'.repeat(101)
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting with missing country code', async () => {
@@ -112,7 +112,7 @@ describe('The manual address entry page', () => {
     delete addr['country-code']
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   it('redirects back to itself on posting invalid UK postcode', async () => {
@@ -120,7 +120,7 @@ describe('The manual address entry page', () => {
     addr.postcode = 'foo'
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${ADDRESS_ENTRY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_ENTRY.uri)
   })
 
   describe('on successful valid UK address submission', () => {
@@ -128,7 +128,7 @@ describe('The manual address entry page', () => {
       const addr = Object.assign({}, goodAddress)
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
 
       const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
       expect(JSON.parse(payload).permissions[0].licensee).toEqual({
@@ -147,7 +147,7 @@ describe('The manual address entry page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to the contact page if it is 8 day adult licence', async () => {
@@ -156,7 +156,7 @@ describe('The manual address entry page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to the licence fulfilment page if it is a 12 month adult licence', async () => {
@@ -166,7 +166,7 @@ describe('The manual address entry page', () => {
       isPhysical.mockReturnValueOnce(true)
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_FULFILMENT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_FULFILMENT.uri)
     })
 
     it('redirects to the contact page if it is a 12 month junior licence on posting a valid UK address', async () => {
@@ -175,7 +175,7 @@ describe('The manual address entry page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
   })
 
@@ -185,7 +185,7 @@ describe('The manual address entry page', () => {
     addr.postcode = 'not checked'
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, addr)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
 
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).permissions[0].licensee).toMatchObject({
@@ -213,6 +213,6 @@ describe('The manual address entry page', () => {
     await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     const response = await injectWithCookies('POST', ADDRESS_ENTRY.uri, goodAddress)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${CONTACT_SUMMARY.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
   })
 })

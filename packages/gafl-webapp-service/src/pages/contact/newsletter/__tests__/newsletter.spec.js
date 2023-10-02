@@ -30,13 +30,13 @@ describe('The newsletter page', () => {
   it('redirects to itself posting an empty response', async () => {
     const response = await injectWithCookies('POST', NEWSLETTER.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${NEWSLETTER.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(NEWSLETTER.uri)
   })
 
   it('redirects to itself posting an invalid email response', async () => {
     const response = await injectWithCookies('POST', NEWSLETTER.uri, { newsletter: 'yes', email: 'foo', 'email-entry': 'yes' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${NEWSLETTER.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(NEWSLETTER.uri)
   })
 
   describe('if the user has set the preferred method of contact to email ', () => {
@@ -72,7 +72,7 @@ describe('The newsletter page', () => {
         'email-entry': 'no'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT_SUMMARY.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
 
     it('if posting yes it sets the newsletter contact method to email and preserves the contact methods and email', async () => {
@@ -118,7 +118,7 @@ describe('The newsletter page', () => {
         'email-entry': 'no'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT_SUMMARY.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
   })
 
@@ -154,7 +154,7 @@ describe('The newsletter page', () => {
         'email-entry': 'yes'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT_SUMMARY.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
 
     it('if posting yes it sets the newsletter contact method to email and sets the email address', async () => {
@@ -183,7 +183,7 @@ describe('The newsletter page', () => {
         email: 'example@email.com'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT_SUMMARY.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
 
     it('if having previously posting yes and subsequently posting no, it sets the email', async () => {
