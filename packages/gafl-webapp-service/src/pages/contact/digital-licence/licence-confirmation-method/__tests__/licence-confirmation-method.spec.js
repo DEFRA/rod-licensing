@@ -55,13 +55,13 @@ describe('The licence confirmation method page', () => {
     it('redirects to itself on an empty response', async () => {
       const response = await injectWithCookies('POST', LICENCE_CONFIRMATION_METHOD.uri, {})
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
     })
 
     it('redirects to itself on an invalid contact method', async () => {
       const response = await injectWithCookies('POST', LICENCE_CONFIRMATION_METHOD.uri, { 'licence-confirmation-method': 'skype' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
     })
 
     it('redirects to itself on an empty email', async () => {
@@ -70,7 +70,7 @@ describe('The licence confirmation method page', () => {
         email: ''
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
     })
 
     it('redirects to itself on an invalid email', async () => {
@@ -79,13 +79,13 @@ describe('The licence confirmation method page', () => {
         email: 'foo'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
     })
 
     it('redirects to itself on an empty mobile number', async () => {
       const response = await injectWithCookies('POST', LICENCE_CONFIRMATION_METHOD.uri, { 'licence-confirmation-method': 'text', text: '' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
     })
 
     it.each(['+44(0)7513438168', '923246734', 'email@com', '01179835413', '+457513 438 167'])(
@@ -96,7 +96,7 @@ describe('The licence confirmation method page', () => {
           text: mobileNumber
         })
         expect(response.statusCode).toBe(302)
-        expect(response.headers.location).toBe(`${LICENCE_CONFIRMATION_METHOD.uri}#`)
+        expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
       }
     )
 
@@ -140,7 +140,7 @@ describe('The licence confirmation method page', () => {
     it('redirects to the contact page', async () => {
       const response = await injectWithCookies('GET', LICENCE_CONFIRMATION_METHOD.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
   })
 
@@ -163,7 +163,7 @@ describe('The licence confirmation method page', () => {
         email: 'example@email.com'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${CONTACT.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
   })
 })

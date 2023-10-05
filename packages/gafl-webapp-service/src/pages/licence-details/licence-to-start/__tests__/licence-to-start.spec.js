@@ -39,7 +39,7 @@ describe("The 'when would you like you licence to start?' page", () => {
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${LICENCE_TO_START.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 
   it('redirects back to itself on posting an invalid date', async () => {
@@ -50,7 +50,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       'licence-start-date-day': '35'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${LICENCE_TO_START.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 
   it('redirects back to itself on posting a start date in the past', async () => {
@@ -59,7 +59,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       ...startDateHelper(moment().add(-1, 'days'))
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${LICENCE_TO_START.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 
   it(`redirects back to itself on posting a start date ahead of the maximum forward purchase date: ${DATE_AT_ADVANCED_PURCHASE_MAX_DAYS.format(
@@ -70,7 +70,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       ...startDateHelper(moment().add(ADVANCED_PURCHASE_MAX_DAYS + 1, 'days'))
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${LICENCE_TO_START.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 
   describe(`for a user who is born on the ${juniorIn16Days.format('YYYY-MM-DD')}`, () => {
@@ -86,7 +86,7 @@ describe("The 'when would you like you licence to start?' page", () => {
         ...startDateHelper(moment().add(16, 'day'))
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${LICENCE_TYPE.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_TYPE.uri)
     })
 
     it(`redirects to the no licence required page when posting a licence start date of ${moment()
@@ -97,7 +97,7 @@ describe("The 'when would you like you licence to start?' page", () => {
         ...startDateHelper(moment().add(15, 'day'))
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(`${NO_LICENCE_REQUIRED.uri}#`)
+      expect(response.headers.location).toHaveValidPathFor(NO_LICENCE_REQUIRED.uri)
     })
   })
 
@@ -109,7 +109,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       'licence-to-start': licenceToStart.AFTER_PAYMENT
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${NO_LICENCE_REQUIRED.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(NO_LICENCE_REQUIRED.uri)
   })
 
   it(`for a user who is born on the ${JUNIOR_TODAY.format(
@@ -120,7 +120,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       'licence-to-start': licenceToStart.AFTER_PAYMENT
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${LICENCE_TYPE.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TYPE.uri)
   })
 
   it('redirects to the start-time page if it already known that this is a 1 or 8 day licence', async () => {
@@ -131,7 +131,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       ...startDateHelper(moment().add(16, 'day'))
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(`${LICENCE_START_TIME.uri}#`)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_START_TIME.uri)
   })
 
   it('changing from a 12 month to a one day licence removes the start time', async () => {
@@ -183,7 +183,7 @@ describe("The 'when would you like you licence to start?' page", () => {
           ...startDateHelper(moment().add(48, 'day'))
         })
         expect(response.statusCode).toBe(302)
-        expect(response.headers.location).toBe(`${LICENCE_START_TIME.uri}#`)
+        expect(response.headers.location).toHaveValidPathFor(LICENCE_START_TIME.uri)
         jest.restoreAllMocks()
       } catch (e) {
         console.error(e)
