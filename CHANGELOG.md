@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.7 (2023-10-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1805](https://github.com/DEFRA/rod-licensing/pull/1805) Add custom matcher for paths with possible empty fragment ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.36.0-rc.6 (2023-09-29)
 
 #### :rocket: Enhancement
