@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.10 (2023-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1806](https://github.com/DEFRA/rod-licensing/pull/1806) Remove erroneous fieldset and fix aria description ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.36.0-rc.9 (2023-10-05)
 
 #### :bug: Bug Fix
