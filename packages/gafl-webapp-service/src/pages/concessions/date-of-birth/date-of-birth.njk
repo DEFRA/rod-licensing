@@ -3,6 +3,7 @@
 {% from "date-input/macro.njk" import govukDateInput %}
 {% from "inset-text/macro.njk" import govukInsetText %}
 {% set title = mssgs.dob_title_you if data.isLicenceForYou else mssgs.dob_title_other %}
+{% set describedByTag = "date-of-birth-hint" %}
 
 {%
     set errorMap = {
@@ -40,11 +41,9 @@
 %}
 
 {% block pageContent %}
-    <fieldset class="govuk-fieldset" role="group" aria-describedby="passport-issued-hint">
-      <div id="passport-issued-hint" class="govuk-hint">
-        {{ mssgs.dob_entry_hint }}
-      </div>
-    </fieldset>
+    <div id="{{ describedByTag }}" class="govuk-hint">
+      {{ mssgs.dob_entry_hint }}
+    </div>
 
     <div class="govuk-warning-text">
       <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
