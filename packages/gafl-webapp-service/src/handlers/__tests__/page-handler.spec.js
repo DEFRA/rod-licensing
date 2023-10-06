@@ -140,6 +140,7 @@ describe('The page handler function', () => {
 
   it('sets the value of pageData with displayAnalytics true', async () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    welshEnabledAndApplied.mockReturnValueOnce(false)
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest(), toolkit)
@@ -148,6 +149,7 @@ describe('The page handler function', () => {
 
   it('sets the value of pageData with displayAnalytics false', async () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    welshEnabledAndApplied.mockReturnValueOnce(false)
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest({ path: '/we/are/here' }), toolkit)
