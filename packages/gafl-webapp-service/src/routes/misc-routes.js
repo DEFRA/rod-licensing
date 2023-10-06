@@ -99,8 +99,8 @@ export default [
 
       return h.view(COOKIES.page, {
         altLang,
-        mssgs: request.i18n.getCatalog(),
         pageLanguageSetToWelsh,
+        mssgs: request.i18n.getCatalog(),
         cookie: {
           csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
           sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,
