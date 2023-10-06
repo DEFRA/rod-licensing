@@ -1,4 +1,13 @@
 
+## v1.36.0-rc.11 (2023-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1804](https://github.com/DEFRA/rod-licensing/pull/1804) Apply correct html lang to static pages also ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.36.0-rc.10 (2023-10-06)
 
 #### :bug: Bug Fix
