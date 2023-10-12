@@ -14,6 +14,7 @@ import {
 import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
+import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
 
 const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
 const pagesJourneyBeginning = [LICENCE_FOR.uri, IDENTIFY.uri]
@@ -123,6 +124,7 @@ export default (path, view, completion, getData) => ({
     pageData.altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     pageData.backRef = await getBackReference(request, view)
     pageData.uri = { ...(pageData.uri || {}), analyticsFormAction: addLanguageCodeToUri(request, PROCESS_ANALYTICS_PREFERENCES.uri) }
+    pageData.pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
     const analytics = await request.cache().helpers.analytics.get()
     pageData.analyticsMessageDisplayed = analytics ? analytics[ANALYTICS.seenMessage] : false

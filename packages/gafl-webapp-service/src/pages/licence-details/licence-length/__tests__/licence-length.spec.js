@@ -17,13 +17,13 @@ describe('The licence length page', () => {
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_LENGTH.uri)
   })
 
   it('redirects back to itself on posting an invalid response', async () => {
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8M' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_LENGTH.uri)
   })
 
   it.each([
@@ -39,7 +39,7 @@ describe('The licence length page', () => {
   it('redirects into the licence summary page for licence length of 12 months', async () => {
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_SUMMARY.uri)
   })
 
   it.each([
@@ -48,7 +48,7 @@ describe('The licence length page', () => {
   ])('redirects into the time to start page for licence length %s', async (desc, lenCode) => {
     const response = await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': lenCode })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_START_TIME.uri)
   })
 
   it("where contact is 'none' setting a 12 month licence changes it to 'post'", async () => {

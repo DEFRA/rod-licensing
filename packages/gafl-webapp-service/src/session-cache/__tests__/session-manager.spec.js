@@ -70,14 +70,14 @@ describe('The user', () => {
   it('clearing the session cookie automatically creates a new cookie and cache', async () => {
     const response = await injectWithoutSessionCookie('GET', LICENCE_TYPE.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTROLLER.uri)
+    expect(response.headers.location).toHaveValidPathFor(CONTROLLER.uri)
   })
 
   it('Clearing the session cookie will redirect to the start of the journey on a post valid response', async () => {
     await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
     const response = await injectWithCookies('GET', CONTROLLER.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_FOR.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_FOR.uri)
   })
 
   /*
@@ -89,7 +89,7 @@ describe('The user', () => {
     await injectWithoutSessionCookie('POST', LICENCE_TYPE.uri, {})
     const response = await injectWithCookies('GET', CONTROLLER.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_FOR.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_FOR.uri)
   })
 
   /*
@@ -103,7 +103,7 @@ describe('The user', () => {
   ])('redirects to the controller on attempting to access %s', async (desc, page) => {
     const response = await injectWithoutSessionCookie('GET', page.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTROLLER.uri)
+    expect(response.headers.location).toHaveValidPathFor(CONTROLLER.uri)
   })
 
   it(`returns 200 when attempting to access ${IDENTIFY.uri}`, async () => {
@@ -114,7 +114,7 @@ describe('The user', () => {
   it('redirects to /buy/renew/identify when attempting to access /renew/ABC123', async () => {
     const response = await injectWithoutSessionCookie('GET', '/renew/ABC123')
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(IDENTIFY.uri)
+    expect(response.headers.location).toHaveValidPathFor(IDENTIFY.uri)
   })
 })
 

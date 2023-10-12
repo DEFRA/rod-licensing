@@ -120,10 +120,10 @@
                 value: "none",
                 text: mssgs.important_info_contact_post,
                 checked: payload['how-contacted'] === 'post'
-            }), itemsArray) 
+            }), itemsArray)
         %}
     {% endif %}
-{% else %}    
+{% else %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "none",
@@ -132,7 +132,7 @@
             conditional: {
                 html: noneMessageHtml
             }
-        }), itemsArray) 
+        }), itemsArray)
     %}
 {% endif %}
 
@@ -154,13 +154,6 @@
       idPrefix: "how-contacted",
       name: "how-contacted",
       errorMessage: { text: errorMsg } if error['how-contacted'],
-      fieldset: {
-        legend: {
-          text: selectText,
-          isPageHeading: false,
-          classes: "govuk-body-m"
-        }
-      },
       items: itemsArray
     }) }}
 

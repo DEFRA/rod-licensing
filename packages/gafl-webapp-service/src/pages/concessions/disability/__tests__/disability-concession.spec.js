@@ -19,7 +19,7 @@ describe('The disability concession page', () => {
   it('redirects back to itself on posting an empty payload', async () => {
     const response = await injectWithCookies('POST', DISABILITY_CONCESSION.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
   })
 
   it('redirects back to itself on posting PIP with an invalid NI number', async () => {
@@ -28,7 +28,7 @@ describe('The disability concession page', () => {
       'ni-number': 'not-valid'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
   })
 
   it('redirects back to itself on posting blue badge with an empty blue number', async () => {
@@ -37,7 +37,7 @@ describe('The disability concession page', () => {
       'blue-badge-number': ''
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(DISABILITY_CONCESSION.uri)
+    expect(response.headers.location).toHaveValidPathFor(DISABILITY_CONCESSION.uri)
   })
 
   it('on setting a correct ni number it redirects to the licence-to-start page', async () => {
@@ -46,7 +46,7 @@ describe('The disability concession page', () => {
       'ni-number': 'NH 34 67 44 A'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 
   it('on setting a correct ni number adds a disabled concession to the cache', async () => {
@@ -68,7 +68,7 @@ describe('The disability concession page', () => {
       'blue-badge-number': '1234'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 
   it('on setting a correct blue badge number adds a disabled concession to the cache', async () => {
@@ -114,6 +114,6 @@ describe('The disability concession page', () => {
       'disability-concession': disabilityConcessionTypes.no
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_TO_START.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
   })
 })

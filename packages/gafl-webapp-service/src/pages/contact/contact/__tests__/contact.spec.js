@@ -49,14 +49,14 @@ describe('The contact preferences page', () => {
     it('redirects to the date-of-birth page if no date of birth has been set', async () => {
       const response = await injectWithCookies('GET', CONTACT.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+      expect(response.headers.location).toHaveValidPathFor(DATE_OF_BIRTH.uri)
     })
 
     it('redirects to the licence to start page if no licence start date has been set has been set', async () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       const response = await injectWithCookies('GET', CONTACT.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_TO_START.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
     })
 
     it('redirects to the licence length page if no length has been set', async () => {
@@ -64,7 +64,7 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       const response = await injectWithCookies('GET', CONTACT.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_LENGTH.uri)
     })
   })
 
@@ -86,31 +86,31 @@ describe('The contact preferences page', () => {
     it('redirects to itself on an empty response', async () => {
       const response = await injectWithCookies('POST', CONTACT.uri, {})
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to itself on an invalid contact method', async () => {
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'skype' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to itself on an empty email', async () => {
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: '' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to itself on an invalid email', async () => {
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'foo' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to itself on an empty mobile number', async () => {
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it.each(['+44(0)7513438168', '923246734', 'email@com', '01179835413', '+457513 438 167'])(
@@ -118,7 +118,7 @@ describe('The contact preferences page', () => {
       async mobileNumber => {
         const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: mobileNumber })
         expect(response.statusCode).toBe(302)
-        expect(response.headers.location).toBe(CONTACT.uri)
+        expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
       }
     )
 
@@ -163,28 +163,28 @@ describe('The contact preferences page', () => {
       await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(NEWSLETTER.uri)
+      expect(response.headers.location).toHaveValidPathFor(NEWSLETTER.uri)
     })
 
     it('controller redirects to the contact-summary page if an email is given and licence is for someone else', async () => {
       await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'someone-else' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'email', email: 'example@email.com' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
 
     it('controller redirects to the newsletter page if a text number is given and licence is for you', async () => {
       await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'you' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(NEWSLETTER.uri)
+      expect(response.headers.location).toHaveValidPathFor(NEWSLETTER.uri)
     })
 
     it('controller redirects to the contact-summary page if an text number is given and licence is for someone else', async () => {
       await injectWithCookies('POST', LICENCE_FOR.uri, { 'licence-for': 'someone-else' })
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'text', text: '07513 438167' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
   })
 
@@ -246,7 +246,7 @@ describe('The contact preferences page', () => {
     it('controller redirects to the summary page', async () => {
       const response = await injectWithCookies('POST', CONTACT.uri, { 'how-contacted': 'none' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
   })
 })

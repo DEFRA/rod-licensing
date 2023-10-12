@@ -22,6 +22,28 @@ function toThrowRedirectTo (error, uri) {
     pass: false
   }
 }
+
+function toHaveValidPathFor (location, expectedPath) {
+  const regex = new RegExp('^' + expectedPath + '#?$')
+  if (location.match(regex)) {
+    return {
+      message: () =>
+        `expected ${this.utils.printReceived(location)} to have the path be formatted as ${this.utils.printReceived(
+          expectedPath
+        )} or ${this.utils.printReceived(expectedPath + '#')}`,
+      pass: true
+    }
+  }
+  return {
+    message: () =>
+      `expected ${this.utils.printReceived(location)} to have the path be formatted as ${this.utils.printReceived(
+        expectedPath
+      )} or ${this.utils.printReceived(expectedPath + '#')}`,
+    pass: false
+  }
+}
+
 expect.extend({
-  toThrowRedirectTo
+  toThrowRedirectTo,
+  toHaveValidPathFor
 })
