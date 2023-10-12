@@ -38,8 +38,8 @@ export async function processQueue ({ id }) {
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
 
-  const { recurringPayment, payer } = await processRecurringPayment(transactionRecord)
-  recurringPayment && entities.push(recurringPayment, payer)
+  const { recurringPayment, contact } = await processRecurringPayment(transactionRecord)
+  recurringPayment && entities.push(recurringPayment, contact)
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
@@ -145,22 +145,30 @@ const mapToPermission = async (
 /**
  * Process a recurring payment instruction
  * @param transactionRecord
- * @returns {Promise<{recurringPayment: null, payer: null}>}
+ * @returns {Promise<{recurringPayment: null, contact: null}>}
  */
 const processRecurringPayment = async transactionRecord => {
   let recurringPayment = null
-  let payer = null
+  let contact = null
+  let permission = null
   if (transactionRecord.payment.recurring) {
     const inceptionMoment = moment(transactionRecord.payment.timestamp, true).utc()
     recurringPayment = new RecurringPayment()
-    recurringPayment.referenceNumber = transactionRecord.payment.recurring.referenceNumber
-    recurringPayment.mandate = transactionRecord.payment.recurring.mandate
-    recurringPayment.inceptionDay = inceptionMoment.date()
-    recurringPayment.inceptionMonth = inceptionMoment.month()
-    payer = await resolveContactPayload(transactionRecord.payment.recurring.payer)
-    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.payer, payer)
+    recurringPayment.name = transactionRecord.payment.recurring.name
+    recurringPayment.nextDueDate = transactionRecord.payment.recurring.nextDueDate
+    recurringPayment.cancelledDate = transactionRecord.payment.recurring.cancelledDate
+    recurringPayment.cancelledReason = transactionRecord.payment.recurring.cancelledReason
+    recurringPayment.endDate = transactionRecord.payment.recurring.endDate
+    recurringPayment.createdOn = inceptionMoment.toDate()
+    recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
+    recurringPayment.publicId = transactionRecord.payment.recurring.publicId
+    recurringPayment.status = transactionRecord.payment.recurring.status
+    contact = await resolveContactPayload(transactionRecord.payment.recurring.contact)
+    permission = transactionRecord.permissions[0]
+    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
+    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
   }
-  return { recurringPayment, payer }
+  return { recurringPayment, contact }
 }
 
 /**

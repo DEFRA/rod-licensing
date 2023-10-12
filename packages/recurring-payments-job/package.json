@@ -16,6 +16,21 @@
   "author": "DEFRA",
   "license": "SEE LICENSE IN LICENSE",
   "main": "src/recurring-payments-job.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
+    "directory": "packages/recurring-payments-job"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "commander": "^7.2.0"
   }

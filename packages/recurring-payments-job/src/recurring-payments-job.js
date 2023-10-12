@@ -1,11 +1,9 @@
 'use strict'
-import rpJob from 'commander'
-import { execute } from './recurring-payments-processor.js'
+import { Command } from 'commander'
+import { processRecurringPayments } from './recurring-payments-processor.js'
 
-rpJob.command('execute').description('Initial setup of RP job').action(execute)
+const rpJob = new Command()
 
-// Configure help for unrecognised commands
-rpJob.command('*').action(() => rpJob.help())
-rpJob.parse()
-rpJob.args.length || rpJob.outputHelp()
+rpJob.action(processRecurringPayments())
+
 export default rpJob

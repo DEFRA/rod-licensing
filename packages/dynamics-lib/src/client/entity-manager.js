@@ -130,6 +130,7 @@ export function retrieveGlobalOptionSets () {
  * @returns {Promise<T>} the record matching the given id or null if not found
  */
 export async function findById (entityType, key) {
+  console.log('findById')
   try {
     const record = await dynamicsClient.retrieveRequest({ key: key, ...entityType.definition.toRetrieveRequest(null) })
     const optionSetData = await retrieveGlobalOptionSets().cached()

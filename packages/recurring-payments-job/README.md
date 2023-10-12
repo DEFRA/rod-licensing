@@ -8,6 +8,11 @@ When the RP job runs, all RP entries with an nextDueDate of the current date, a 
 
 # Environment variables
 
+| name                                | description                                                                               | required | default | valid                                                                   | notes |
+| ----------------------------------- | ----------------------------------------------------------------------------------------- | :------: | ------- | ----------------------------------------------------------------------- | ----- |
+| NODE_ENV                            | Node environment                                                                          | no    |         | development, test, production                                           |       |
+| RUN_RECURRING_PAYMENTS              | Determine whether to run recurring payments job or not                                    |   yes   |         |   
+
 ### See also:
 
 -

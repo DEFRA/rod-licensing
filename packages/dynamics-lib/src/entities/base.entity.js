@@ -112,6 +112,7 @@ export class BaseEntity {
    */
   _setInteger (property, value) {
     const valueToSet = Number(value)
+    console.log('value: ', valueToSet)
     if (Number.isNaN(valueToSet) || valueToSet - Math.floor(valueToSet) !== 0) {
       throw new Error('Value is not an integer')
     }

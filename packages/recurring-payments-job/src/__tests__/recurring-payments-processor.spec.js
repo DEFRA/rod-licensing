@@ -1,0 +1,59 @@
+import { getRecurringPayments } from '../../../sales-api-service/src/services/recurring-payments.service.js'
+import { processRecurringPayments } from '../recurring-payments-processor.js'
+
+jest.mock('../../../sales-api-service/src/services/recurring-payments.service.js')
+
+describe('recurring-payments-processor', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('console log displays "Recurring Payments job"', async () => {
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job')
+    consoleLogSpy.mockRestore()
+  })
+
+  it('console log displays "Recurring Payments job disabled" when env is false', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'false'
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job disabled')
+    consoleLogSpy.mockRestore()
+  })
+
+  it('console log displays "Recurring Payments job enabled" when env is true', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
+    consoleLogSpy.mockRestore()
+  })
+
+  it('get recurring payments is called when env is true', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+
+    await processRecurringPayments()
+
+    expect(getRecurringPayments).toHaveBeenCalled()
+  })
+
+  it('console log displays "Recurring Payments found: " when env is false', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    const rpSymbol = Symbol('rp')
+    getRecurringPayments.mockReturnValueOnce(rpSymbol)
+
+    await processRecurringPayments()
+
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', rpSymbol)
+    consoleLogSpy.mockRestore()
+  })
+})
