@@ -10,7 +10,8 @@ export class RecurringPayment extends BaseEntity {
   /** @type {EntityDefinition} */
   static _definition = new EntityDefinition(() => ({
     localName: 'recurringPayment',
-    dynamicsCollection: 'defra_recurringpayment',
+    dynamicsCollection: 'defra_recurringpayments',
+    defaultFilter: 'statecode eq 0 and defra_cancelleddate eq null',
     mappings: {
       id: { field: 'defra_recurringpaymentid', type: 'string' },
       name: { field: 'defra_name', type: 'string' },
@@ -18,14 +19,14 @@ export class RecurringPayment extends BaseEntity {
       nextDueDate: { field: 'defra_nextduedate', type: 'datetime' },
       cancelledDate: { field: 'defra_cancelleddate', type: 'datetime' },
       cancelledReason: { field: 'defra_cancelledreason', type: 'optionset', ref: 'defra_cancelledreason' },
-      endDate: { field: 'defra_endDate', type: 'datetime' },
-      createdOn: { field: 'defra_createdOn', type: 'datetime' },
+      endDate: { field: 'defra_enddate', type: 'datetime' },
       agreementId: { field: 'defra_agreementid', type: 'string' },
+      activePermission: { field: '_defra_activepermission_value', type: 'string' },
       publicId: { field: 'defra_publicid', type: 'string' }
     },
     relationships: {
       contact: { property: 'defra_contact', entity: Contact, parent: true },
-      activePermission: { property: 'defra_activepermission', entity: Permission, parent: true }
+      activePermission: { property: '_defra_permission', entity: Permission, parent: true }
     }
   }))
 
@@ -98,18 +99,6 @@ export class RecurringPayment extends BaseEntity {
   }
 
   /**
-   * The date the recurring payment was setup
-   * @type {datetime}
-   */
-  get createdOn () {
-    return super._getState('createdOn')
-  }
-
-  set createdOn (createdOn) {
-    super._setState('createdOn', createdOn)
-  }
-
-  /**
    * The agreement identification number
    * @type {string}
    */
@@ -134,8 +123,8 @@ export class RecurringPayment extends BaseEntity {
   }
 
   /**
-   * The state code of the pocl validation error record
-   * @type {LocalOptionSetDefinition}
+   * The state code
+   * @type {decimal}
    */
   get status () {
     return super._getState('status')
@@ -143,5 +132,29 @@ export class RecurringPayment extends BaseEntity {
 
   set status (status) {
     super._setState('status', status)
+  }
+
+  /**
+   * The ID of the associated contact
+   * @type {string}
+   */
+  get contactId () {
+    return super._getState('contactId')
+  }
+
+  set contactId (contactId) {
+    super._setState('contactId', contactId)
+  }
+
+  /**
+   * The ID of the associated active permission
+   * @type {string}
+   */
+  get activePermission () {
+    return super._getState('activePermission')
+  }
+
+  set activePermission (activePermission) {
+    super._setState('activePermission', activePermission)
   }
 }

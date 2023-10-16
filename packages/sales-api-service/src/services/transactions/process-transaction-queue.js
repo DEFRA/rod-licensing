@@ -16,7 +16,6 @@ import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDa
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
-import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
@@ -152,14 +151,12 @@ const processRecurringPayment = async transactionRecord => {
   let contact = null
   let permission = null
   if (transactionRecord.payment.recurring) {
-    const inceptionMoment = moment(transactionRecord.payment.timestamp, true).utc()
     recurringPayment = new RecurringPayment()
     recurringPayment.name = transactionRecord.payment.recurring.name
     recurringPayment.nextDueDate = transactionRecord.payment.recurring.nextDueDate
     recurringPayment.cancelledDate = transactionRecord.payment.recurring.cancelledDate
     recurringPayment.cancelledReason = transactionRecord.payment.recurring.cancelledReason
     recurringPayment.endDate = transactionRecord.payment.recurring.endDate
-    recurringPayment.createdOn = inceptionMoment.toDate()
     recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
     recurringPayment.publicId = transactionRecord.payment.recurring.publicId
     recurringPayment.status = transactionRecord.payment.recurring.status

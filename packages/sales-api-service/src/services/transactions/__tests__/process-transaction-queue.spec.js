@@ -134,11 +134,10 @@ describe('transaction service', () => {
               name: 'Test name',
               nextDueDate: '2020/01/11',
               endDate: '2022/01/16',
-              createdOn: '2019/01/01',
               agreementId: '123446jjng',
               publicId: 'sdf-123',
               status: 1,
-              permission: mockRecord.permissions[0],
+              activePermission: mockRecord.permissions[0],
               contact: Object.assign(mockContactPayload(), { firstName: 'Esther' })
             }
             return mockRecord
