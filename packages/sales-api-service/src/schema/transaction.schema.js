@@ -118,16 +118,7 @@ const finaliseTransactionRequestSchemaContent = {
         .description('Optional field for when recurring payment cancelled')
         .example(new Date().toISOString()),
       cancelledReason: buildJoiOptionSetValidator('defra_cancelledreason', 'User Cancelled'),
-      endDate: Joi.string()
-        .isoDate()
-        .required()
-        .description('End of recurring payment')
-        .example(new Date().toISOString()),
-      createdOn: Joi.string()
-        .isoDate()
-        .required()
-        .description('Date recurring payment created')
-        .example(new Date().toISOString()),
+      endDate: Joi.string().isoDate().required().description('End of recurring payment').example(new Date().toISOString()),
       agreementId: Joi.string().required().description('Agreement identification number, Gov.UK Pay field').example(uuidv4()),
       publicId: Joi.string().required().description('SHA-256 hash of id').example(uuidv4()),
       status: Joi.number().valid(0, 1).required().description('Status field: 1 for active, 0 for not active'),
