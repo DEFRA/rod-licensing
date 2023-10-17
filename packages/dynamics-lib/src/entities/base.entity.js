@@ -112,7 +112,6 @@ export class BaseEntity {
    */
   _setInteger (property, value) {
     const valueToSet = Number(value)
-    console.log('value: ', valueToSet)
     if (Number.isNaN(valueToSet) || valueToSet - Math.floor(valueToSet) !== 0) {
       throw new Error('Value is not an integer')
     }
@@ -143,7 +142,6 @@ export class BaseEntity {
    */
   _setBoolean (property, value) {
     if (value !== false && value !== true) {
-      console.log(value)
       throw new Error('Value is not an boolean')
     }
     this._localState[property] = value
