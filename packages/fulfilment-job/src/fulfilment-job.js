@@ -2,10 +2,9 @@
 import fulfilmentJob from 'commander'
 import { processFulfilment } from './fulfilment-processor.js'
 
-fulfilmentJob
-  .command('execute')
-  .description('Run fulfilment processor')
-  .action(processFulfilment)
+console.log(`Running ${process.version} of node`)
+
+fulfilmentJob.command('execute').description('Run fulfilment processor').action(processFulfilment)
 
 // Configure help for unrecognised commands
 fulfilmentJob.command('*').action(() => fulfilmentJob.help())
