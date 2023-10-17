@@ -24,6 +24,9 @@
 <meta http-equiv="Cache-Control" content="no-store" />
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
+{% if gtmContainerId %}
+    <!-- GTM snippet goes here with container ID {{ gtmContainerId }} -->
+{% endif %}
 {% endblock %}
 
 {% block header %}
