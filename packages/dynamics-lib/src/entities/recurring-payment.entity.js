@@ -11,7 +11,7 @@ export class RecurringPayment extends BaseEntity {
   static _definition = new EntityDefinition(() => ({
     localName: 'recurringPayment',
     dynamicsCollection: 'defra_recurringpayments',
-    defaultFilter: 'statecode eq 0 and defra_cancelleddate eq null',
+    defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_recurringpaymentid', type: 'string' },
       name: { field: 'defra_name', type: 'string' },
@@ -22,6 +22,7 @@ export class RecurringPayment extends BaseEntity {
       endDate: { field: 'defra_enddate', type: 'datetime' },
       agreementId: { field: 'defra_agreementid', type: 'string' },
       activePermission: { field: '_defra_activepermission_value', type: 'string' },
+      contactId: { field: '_defra_contact_value', type: 'string' },
       publicId: { field: 'defra_publicid', type: 'string' }
     },
     relationships: {

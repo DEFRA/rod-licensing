@@ -1,7 +1,5 @@
-import { getRecurringPayments } from '../../../sales-api-service/src/services/recurring-payments.service.js'
+import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
-
-jest.mock('../../../sales-api-service/src/services/recurring-payments.service.js')
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
@@ -42,14 +40,14 @@ describe('recurring-payments-processor', () => {
 
     await processRecurringPayments()
 
-    expect(getRecurringPayments).toHaveBeenCalled()
+    expect(salesApi.dueRecurringPayments()).toHaveBeenCalled()
   })
 
   it('console log displays "Recurring Payments found: " when env is false', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
     const rpSymbol = Symbol('rp')
-    getRecurringPayments.mockReturnValueOnce(rpSymbol)
+    salesApi.dueRecurringPayments().mockReturnValueOnce(rpSymbol)
 
     await processRecurringPayments()
 

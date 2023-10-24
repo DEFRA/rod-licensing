@@ -1,54 +1,29 @@
-import { findByExample, findById, Permission, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { Contact, findByDateRange, findByExample, findById, permissionForLicensee, RecurringPayment } from '@defra-fish/dynamics-lib'
 
-export const getRecurringPayments = async () => {
-  const currentDate = new Date()
-  const dueDates = []
-  for (let i = 0; i <= 10; i += 2) {
-    const date = new Date(currentDate)
-    date.setDate(currentDate.getDate() - i)
-    dueDates.push(date)
-  }
+export const getRecurringPayments = async (date) => {
+  // create rp thats active with no cancelled date
+  const recurringPayment = new RecurringPayment()
+  recurringPayment.cancelledDate = null
 
-  const recurringPayments = []
-  for (const dueDate of dueDates) {
-    const activeRecurringPayments = await findByExample(new RecurringPayment())
-    const dueRecurringPayments = await findRecurringPaymentsInDateRange(activeRecurringPayments, dueDate)
+  // grab all rp matching no cancelled date and status active
+  const activeRecurringPayments = await findByExample(recurringPayment)
 
-    if (dueRecurringPayments.length !== 0) {
-      recurringPayments.push(dueRecurringPayments)
-    }
-  }
+  // grab all rp matching above + within date range of current date -2,-4,-6,-8,-10
+  const dueRecurringPayments = await findByDateRange(activeRecurringPayments, date)
+  // assign permission and contact to rp
+  const dueRecurringPaymentsWithPermissionAndContact = await retrieveActivePermissionAndContact(dueRecurringPayments)
 
-  return recurringPayments
+  return dueRecurringPaymentsWithPermissionAndContact
 }
 
-export const retrieveActivePermission = async recurringPayments => {
-  const recurringPaymentsWithPermission = []
+export const retrieveActivePermissionAndContact = async recurringPayments => {
+  let recurringPaymentsWithPermission = []
   for (const recurringPayment of recurringPayments) {
-    const permission = await findById(Permission, recurringPayment.activePermission)
+    const contact = await findById(Contact, recurringPayment.contactId)
+    recurringPayment.contact = contact
+    const permission = permissionForLicensee(recurringPayment.activePermission, recurringPayment.contact.birthDate, recurringPayment.contact.postcode)
     recurringPayment.activePermission = permission
-    recurringPaymentsWithPermission.push(recurringPayment)
+    recurringPaymentsWithPermission = recurringPaymentsWithPermission.concat(recurringPayment)
   }
   return recurringPaymentsWithPermission
-}
-
-export const findRecurringPaymentsInDateRange = async (recurringPayments, dueDate) => {
-  try {
-    const recurringPaymentsInDateRange = recurringPayments.filter(payment => {
-      const paymentDueDate = new Date(payment.nextDueDate)
-
-      return (
-        paymentDueDate.getUTCFullYear() === dueDate.getUTCFullYear() &&
-        paymentDueDate.getUTCMonth() === dueDate.getUTCMonth() &&
-        paymentDueDate.getUTCDate() === dueDate.getUTCDate()
-      )
-    })
-
-    const recurringPaymentsWithPermission = await retrieveActivePermission(recurringPaymentsInDateRange)
-
-    return recurringPaymentsWithPermission
-  } catch (error) {
-    console.error('Error finding recurring payments:', error)
-    throw error
-  }
 }
