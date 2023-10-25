@@ -34,6 +34,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: true,
     cost: 6,
+    newCost: 7,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42289'
   },
   {
@@ -71,6 +73,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: true,
     cost: 6,
+    newCost: 7,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42290'
   },
   {
@@ -108,6 +112,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 12,
+    newCost: 13,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42361'
   },
   {
@@ -145,6 +151,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 12,
+    newCost: 13,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42363'
   },
   {
@@ -182,6 +190,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: true,
     cost: 12,
+    newCost: 13,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42305'
   },
   {
@@ -219,6 +229,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: true,
     cost: 12,
+    newCost: 13,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42307'
   },
   {
@@ -256,6 +268,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 27,
+    newCost: 28,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42365'
   },
   {
@@ -293,6 +307,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 27,
+    newCost: 28,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42370'
   },
   {
@@ -330,6 +346,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: false,
     cost: 0,
+    newCost: 0,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: null
   },
   {
@@ -367,6 +385,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 30,
+    newCost: 31,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42309'
   },
   {
@@ -404,6 +424,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 20,
+    newCost: 21,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42335'
   },
   {
@@ -441,6 +463,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: false,
     cost: 0,
+    newCost: 0,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: null
   },
   {
@@ -478,6 +502,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 20,
+    newCost: 21,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42337'
   },
   {
@@ -515,6 +541,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 20,
+    newCost: 21,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42339'
   },
   {
@@ -552,6 +580,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: false,
     cost: 0,
+    newCost: 0,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: null
   },
   {
@@ -589,6 +619,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 45,
+    newCost: 46,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42341'
   },
   {
@@ -626,6 +658,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 30,
+    newCost: 31,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42343'
   },
   {
@@ -663,6 +697,8 @@ export default [
     isForFulfilment: false,
     isCounterSales: false,
     cost: 0,
+    newCost: 0,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: null
   },
   {
@@ -700,6 +736,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 30,
+    newCost: 31,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42345'
   },
   {
@@ -737,6 +775,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 30,
+    newCost: 31,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42347'
   },
   {
@@ -774,6 +814,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: false,
     cost: 0,
+    newCost: 0,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: null
   },
   {
@@ -811,6 +853,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 82,
+    newCost: 83,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42372'
   },
   {
@@ -848,6 +892,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 54,
+    newCost: 55,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42374'
   },
   {
@@ -885,6 +931,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: false,
     cost: 0,
+    newCost: 0,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: null
   },
   {
@@ -922,6 +970,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 54,
+    newCost: 55,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42376'
   },
   {
@@ -959,6 +1009,8 @@ export default [
     isForFulfilment: true,
     isCounterSales: true,
     cost: 54,
+    newCost: 55,
+    newCostStartDate: '2023-04-01T00:00:00.000Z',
     itemId: '42378'
   }
 ]

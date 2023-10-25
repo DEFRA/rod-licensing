@@ -1,12 +1,14 @@
 import pageHandler from '../page-handler.js'
 import journeyDefinition from '../../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+import { welshEnabledAndApplied } from '../../processors/page-language-helper.js'
 import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
 import { AGREED, IDENTIFY, LICENCE_DETAILS, LICENCE_FOR, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
 
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
+jest.mock('../../processors/page-language-helper.js')
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -138,6 +140,7 @@ describe('The page handler function', () => {
 
   it('sets the value of pageData with displayAnalytics true', async () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    welshEnabledAndApplied.mockReturnValueOnce(false)
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest(), toolkit)
@@ -146,6 +149,7 @@ describe('The page handler function', () => {
 
   it('sets the value of pageData with displayAnalytics false', async () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
+    welshEnabledAndApplied.mockReturnValueOnce(false)
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest({ path: '/we/are/here' }), toolkit)
@@ -239,6 +243,24 @@ describe('The page handler function', () => {
       const mockRequest = getMockRequest({ analytics, set })
       await get(mockRequest, toolkit)
       expect(set).toBeCalledWith(result)
+    })
+  })
+
+  describe('pageLanguageSetToWelsh', () => {
+    it('returns the value of welshEnabledAndApplied', async () => {
+      const expectedValue = Symbol('expected')
+      welshEnabledAndApplied.mockReturnValueOnce(expectedValue)
+      const { get } = pageHandler('', 'view', '/next/page')
+      const toolkit = getMockToolkit()
+
+      await get(getMockRequest(), toolkit)
+
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          pageLanguageSetToWelsh: expectedValue
+        })
+      )
     })
   })
 })

@@ -42,6 +42,15 @@ const mapRecordPayload = async (record, transactionFile = null) => {
     permissions: [permission]
   } = record.createTransactionPayload
   const { licensee, issueDate: transactionDate, concessions, ...otherPermissionData } = permission
+  const { source: paymentSource } = record.finaliseTransactionPayload.payment
+  const country = await getGlobalOptionSetValue(PoclValidationError.definition.mappings.country.ref, licensee.country)
+  if (!country) {
+    licensee.countryUnvalidated = licensee.country
+  }
+  if (Number.isNaN(Date.parse(otherPermissionData.startDate))) {
+    otherPermissionData.startDateUnvalidated = otherPermissionData.startDate
+  }
+
   return {
     serialNumber,
     transactionDate,
@@ -65,6 +74,7 @@ const mapRecordPayload = async (record, transactionFile = null) => {
       PoclValidationError.definition.mappings.preferredMethodOfReminder.ref,
       licensee.preferredMethodOfReminder
     ),
+    paymentSource: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.paymentSource.ref, paymentSource),
     country: await getGlobalOptionSetValue(PoclValidationError.definition.mappings.country.ref, licensee.country)
   }
 }

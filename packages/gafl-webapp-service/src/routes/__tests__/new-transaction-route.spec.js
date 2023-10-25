@@ -16,6 +16,6 @@ describe('The new transaction route clears the cache and invokes the controller 
     })
     expect(spy).toBeCalled()
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe('/buy')
+    expect(data.headers.location).toHaveValidPathFor('/buy')
   })
 })

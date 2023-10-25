@@ -1,6 +1,412 @@
 
 
 
+## v1.36.0-rc.11 (2023-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1804](https://github.com/DEFRA/rod-licensing/pull/1804) Apply correct html lang to static pages also ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.10 (2023-10-06)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1806](https://github.com/DEFRA/rod-licensing/pull/1806) Remove erroneous fieldset and fix aria description ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.9 (2023-10-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1808](https://github.com/DEFRA/rod-licensing/pull/1808) Fix markup on pricing summary box ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.8 (2023-10-05)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1807](https://github.com/DEFRA/rod-licensing/pull/1807) Remove unnecessary fieldset ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.7 (2023-10-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1805](https://github.com/DEFRA/rod-licensing/pull/1805) Add custom matcher for paths with possible empty fragment ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.6 (2023-09-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1795](https://github.com/DEFRA/rod-licensing/pull/1795) Refactor findPermit function ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.36.0-rc.5 (2023-09-28)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1799](https://github.com/DEFRA/rod-licensing/pull/1799) Stop redirect from always preserving skip link fragment ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.4 (2023-09-28)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1802](https://github.com/DEFRA/rod-licensing/pull/1802) skip link back button ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.36.0-rc.3 (2023-09-25)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1798](https://github.com/DEFRA/rod-licensing/pull/1798) Specify language in HTML tags ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.2 (2023-09-19)
+
+#### :rocket: Enhancement
+* [#1800](https://github.com/DEFRA/rod-licensing/pull/1800) Fix Docker for Node v18.17 ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.1 (2023-09-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1794](https://github.com/DEFRA/rod-licensing/pull/1794) Accessibility - back link ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.36.0-rc.0 (2023-09-15)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#1782](https://github.com/DEFRA/rod-licensing/pull/1782) Upgrade to v 18 of node ([@ScottDormand96](https://github.com/ScottDormand96))
+* `gafl-webapp-service`
+  * [#1788](https://github.com/DEFRA/rod-licensing/pull/1788) Accessibility - back link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.35.0-rc.17 (2023-09-05)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1789](https://github.com/DEFRA/rod-licensing/pull/1789) Stop Sales API requiring concession proof for PO entries ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.16 (2023-09-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1783](https://github.com/DEFRA/rod-licensing/pull/1783) Accessibility link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.15 (2023-09-04)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#1784](https://github.com/DEFRA/rod-licensing/pull/1784) Fix issues with processing postal order records ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.14 (2023-08-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#1740](https://github.com/DEFRA/rod-licensing/pull/1740) Update POCL job to accept new postal order fields ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.13 (2023-08-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1765](https://github.com/DEFRA/rod-licensing/pull/1765) Licence details print screen content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.12 (2023-08-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1766](https://github.com/DEFRA/rod-licensing/pull/1766) Stop easy renewals from copying shortTermPreferredMethodOfConfirmation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.9 (2023-07-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1755](https://github.com/DEFRA/rod-licensing/pull/1755) Update over 66 content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.7 (2023-07-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1752](https://github.com/DEFRA/rod-licensing/pull/1752) Update English language version of accessibility statement ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.6 (2023-07-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1741](https://github.com/DEFRA/rod-licensing/pull/1741) Over 66 content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.3 (2023-06-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1738](https://github.com/DEFRA/rod-licensing/pull/1738) Fix double count of page views from analytics banner ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.35.0-rc.1 (2023-06-08)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1713](https://github.com/DEFRA/rod-licensing/pull/1713) Update dynamics-lib to handle postal order ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.35.0-rc.0 (2023-06-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1725](https://github.com/DEFRA/rod-licensing/pull/1725) Remove inset text about concession age ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+Must provide GITHUB_AUTH
+
+## v1.35.0-rc.17 (2023-09-05)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1789](https://github.com/DEFRA/rod-licensing/pull/1789) Stop Sales API requiring concession proof for PO entries ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.16 (2023-09-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1783](https://github.com/DEFRA/rod-licensing/pull/1783) Accessibility link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.15 (2023-09-04)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#1784](https://github.com/DEFRA/rod-licensing/pull/1784) Fix issues with processing postal order records ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.14 (2023-08-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#1740](https://github.com/DEFRA/rod-licensing/pull/1740) Update POCL job to accept new postal order fields ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.13 (2023-08-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1765](https://github.com/DEFRA/rod-licensing/pull/1765) Licence details print screen content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.12 (2023-08-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1766](https://github.com/DEFRA/rod-licensing/pull/1766) Stop easy renewals from copying shortTermPreferredMethodOfConfirmation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.9 (2023-07-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1755](https://github.com/DEFRA/rod-licensing/pull/1755) Update over 66 content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.7 (2023-07-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1752](https://github.com/DEFRA/rod-licensing/pull/1752) Update English language version of accessibility statement ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.35.0-rc.6 (2023-07-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1741](https://github.com/DEFRA/rod-licensing/pull/1741) Over 66 content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.35.0-rc.3 (2023-06-29)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1738](https://github.com/DEFRA/rod-licensing/pull/1738) Fix double count of page views from analytics banner ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.35.0-rc.1 (2023-06-08)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#1713](https://github.com/DEFRA/rod-licensing/pull/1713) Update dynamics-lib to handle postal order ([@MickStein](https://github.com/MickStein))
+
+#### Committers: 1
+- Michael Steinacher ([@MickStein](https://github.com/MickStein))
+
+
+## v1.35.0-rc.0 (2023-06-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1725](https://github.com/DEFRA/rod-licensing/pull/1725) Remove inset text about concession age ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+Must provide GITHUB_AUTH
+
+## v1.35.0-rc.17 (2023-09-05)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1789](https://github.com/DEFRA/rod-licensing/pull/1789) Stop Sales API requiring concession proof for PO entries ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.35.0-rc.16 (2023-09-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1783](https://github.com/DEFRA/rod-licensing/pull/1783) Accessibility link ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.35.0-rc.15 (2023-09-04)
+
+#### :bug: Bug Fix
+* `pocl-job`
+  * [#1784](https://github.com/DEFRA/rod-licensing/pull/1784) Fix issues with processing postal order records ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.35.0-rc.14 (2023-08-21)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `pocl-job`, `sales-api-service`
+  * [#1740](https://github.com/DEFRA/rod-licensing/pull/1740) Update POCL job to accept new postal order fields ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.35.0-rc.13 (2023-08-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1765](https://github.com/DEFRA/rod-licensing/pull/1765) Licence details print screen content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.35.0-rc.12 (2023-08-09)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1766](https://github.com/DEFRA/rod-licensing/pull/1766) Stop easy renewals from copying shortTermPreferredMethodOfConfirmation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+
 ## v1.35.0-rc.9 (2023-07-18)
 
 #### :rocket: Enhancement

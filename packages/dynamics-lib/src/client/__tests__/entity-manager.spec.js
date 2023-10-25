@@ -103,7 +103,7 @@ describe('entity manager', () => {
     })
 
     it('throws an error on implementation failure', async () => {
-      await expect(persist([null])).rejects.toThrow("Cannot read property 'isNew' of null")
+      await expect(persist([null])).rejects.toThrow("Cannot read properties of null (reading 'isNew')")
     })
   })
 

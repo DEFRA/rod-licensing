@@ -7,9 +7,8 @@ describe('pocl staging exception entity', () => {
     optionSetData = await retrieveGlobalOptionSets().cached()
   })
   describe('maps from dynamics', () => {
-    let exception
-    beforeEach(() => {
-      exception = PoclValidationError.fromResponse(
+    const getPOCLValidationError = () =>
+      PoclValidationError.fromResponse(
         {
           '@odata.etag': 'W/"56351087"',
           defra_poclvalidationerrorid: '91f15d18-0aa4-ea11-a812-000d3a64905b',
@@ -21,6 +20,7 @@ describe('pocl staging exception entity', () => {
           defra_locality: 'Stoke Bishop',
           defra_town: 'Bristol',
           defra_postcode: 'BS9 1HJ',
+          defra_country: 'GB-ENG',
           defra_countrylist: 910400195,
           defra_birthdate: '1989-07-01',
           defra_emailaddress: 'daniel-ricc@example.couk',
@@ -48,14 +48,13 @@ describe('pocl staging exception entity', () => {
         },
         optionSetData
       )
-    })
 
     it('returns a PoclValidationError instance', () => {
-      expect(exception).toBeInstanceOf(PoclValidationError)
+      expect(getPOCLValidationError()).toBeInstanceOf(PoclValidationError)
     })
 
     it('has the expected data', () => {
-      expect(exception).toMatchSnapshot()
+      expect(getPOCLValidationError()).toMatchSnapshot()
     })
 
     it('has the expected fields', () => {
@@ -68,6 +67,7 @@ describe('pocl staging exception entity', () => {
         locality: 'Stoke Bishop',
         town: 'Bristol',
         postcode: 'BS9 1HJ',
+        countryUnvalidated: 'GB-ENG',
         country: expect.objectContaining({ id: 910400195, label: 'England', description: 'GB-ENG' }),
         birthDate: '1989-07-01',
         email: 'daniel-ricc@example.couk',
@@ -81,14 +81,14 @@ describe('pocl staging exception entity', () => {
         preferredMethodOfReminder: expect.objectContaining({ id: 910400002, label: 'Text', description: 'Text' }),
         postalFulfilment: true,
         concessions: '[{"type":"Blue Badge","referenceNumber":123456789}]',
+        startDateUnvalidated: '2021-06-15',
         startDate: '2021-06-15',
-        newStartDate: '2021-06-15',
         serialNumber: '14345-48457J',
         permitId: 'test-permit-id',
         transactionDate: '2020-01-01T14:00:00Z',
         amount: 30,
-        paymentSource: 'Post Office Sales',
-        newPaymentSource: {
+        paymentSourceUnvalidated: 'Post Office Sales',
+        paymentSource: {
           description: 'Worldpay',
           id: 910400003,
           label: 'Worldpay'
@@ -101,8 +101,7 @@ describe('pocl staging exception entity', () => {
         stateCode: 1,
         errorMessage: '"permissions[0].licensee.email" must be a valid email'
       }
-
-      expect(exception).toMatchObject(expect.objectContaining({ etag: 'W/"56351087"', ...expectedFields }))
+      expect(getPOCLValidationError()).toMatchObject(expect.objectContaining({ etag: 'W/"56351087"', ...expectedFields }))
     })
   })
 
@@ -116,6 +115,7 @@ describe('pocl staging exception entity', () => {
     validationError.locality = 'Stoke Bishop'
     validationError.town = 'Bristol'
     validationError.postcode = 'BS9 1HJ'
+    validationError.countryUnvalidated = 'GB-ENG'
     validationError.country = optionSetData.defra_country.options['910400195']
     validationError.birthDate = '1989-07-01'
     validationError.email = 'daniel-ricc@example.couk'
@@ -125,14 +125,14 @@ describe('pocl staging exception entity', () => {
     validationError.preferredMethodOfReminder = optionSetData.defra_preferredcontactmethod.options['910400002']
     validationError.postalFulfilment = true
     validationError.concessions = '[{"type":"Blue Badge","referenceNumber":123456789}]'
+    validationError.startDateUnvalidated = '2021-06-15'
     validationError.startDate = '2021-06-15'
-    validationError.newStartDate = '2021-06-15'
     validationError.serialNumber = '14345-48457J'
     validationError.permitId = 'test-permit-id'
     validationError.transactionDate = '2020-01-01T14:00:00Z'
     validationError.amount = 30
-    validationError.paymentSource = 'Post Office Sales'
-    validationError.newPaymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
+    validationError.paymentSourceUnvalidated = 'Post Office Sales'
+    validationError.paymentSource = optionSetData.defra_financialtransactionsource.options['910400003']
     validationError.channelId = '948594'
     validationError.methodOfPayment = optionSetData.defra_paymenttype.options['910400001']
     validationError.status = optionSetData.defra_poclvalidationerrorstatus.options['910400000']

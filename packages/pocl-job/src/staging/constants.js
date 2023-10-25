@@ -4,6 +4,9 @@ export const MAX_FINALISE_TRANSACTION_BATCH_SIZE = 10
 export const POST_OFFICE_DATASOURCE = 'Post Office Sales'
 export const DIRECT_DEBIT_DATASOURCE = 'DDE File'
 export const DIRECT_DEBIT_PAYMENTSOURCE = 'Direct Debit'
+export const POSTAL_ORDER_DATASOURCE = 'Postal Order Sales'
+export const POSTAL_ORDER_PAYMENTSOURCE = 'Postal Order'
+export const POSTAL_ORDER_PAYMENTMETHOD = 'Other'
 
 export const FILE_STAGE = {
   Pending: 'Received and Pending',

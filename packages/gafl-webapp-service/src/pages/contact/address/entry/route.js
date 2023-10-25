@@ -1,4 +1,4 @@
-import { ADDRESS_ENTRY, ADDRESS_LOOKUP } from '../../../../uri.js'
+import { ADDRESS_ENTRY } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
@@ -30,8 +30,7 @@ export const getData = async request => {
   return {
     isLicenceForYou,
     searchTerms: !addresses?.length && searchTerms ? searchTerms : null,
-    countries: await getCountryDropDownOptions(),
-    lookupPage: ADDRESS_LOOKUP.uri
+    countries: await getCountryDropDownOptions()
   }
 }
 

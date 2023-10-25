@@ -12,7 +12,7 @@ describe('The session cache removal', () => {
     await injectWithCookies('GET', '/buy/clear-cache')
     const response = await injectWithCookies('GET', LICENCE_TYPE.uri)
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTROLLER.uri)
+    expect(response.headers.location).toHaveValidPathFor(CONTROLLER.uri)
   })
 
   /*
@@ -24,6 +24,6 @@ describe('The session cache removal', () => {
     await injectWithCookies('GET', '/buy/clear-cache')
     const response = await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': 'hunting-licence' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(CONTROLLER.uri)
+    expect(response.headers.location).toHaveValidPathFor(CONTROLLER.uri)
   })
 })

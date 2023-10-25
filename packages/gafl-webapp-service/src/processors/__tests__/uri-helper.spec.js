@@ -1,4 +1,4 @@
-import { addLanguageCodeToUri } from '../uri-helper.js'
+import { addEmptyFragmentToUri, addLanguageCodeToUri } from '../uri-helper.js'
 
 describe('URI Helpers: addLanguageCodeToURI', () => {
   it.each([
@@ -62,5 +62,18 @@ describe('URI Helpers: addLanguageCodeToURI', () => {
       const result = addLanguageCodeToUri(mockRequest, suppliedPath)
       expect(result).toEqual(expectedPath)
     })
+  })
+})
+
+describe('URI Helpers: addEmptyFragmentToUri', () => {
+  it.each([
+    ['http://my-url.com/path', 'http://my-url.com/path#'],
+    ['http://my-url.com/path?lang=cy', 'http://my-url.com/path?lang=cy#'],
+    ['http://my-url.com/path#main-content', 'http://my-url.com/path#'],
+    ['http://my-url.com/path?lang=cy#main-content', 'http://my-url.com/path?lang=cy#'],
+    ['http://my-url.com/path?lang=cy&foo=bar#main-content', 'http://my-url.com/path?lang=cy&foo=bar#']
+  ])('appends an empty fragment to the end of the path', async (suppliedPath, expectedPath) => {
+    const result = addEmptyFragmentToUri(suppliedPath)
+    expect(result).toEqual(expectedPath)
   })
 })

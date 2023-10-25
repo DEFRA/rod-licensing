@@ -20,12 +20,7 @@ import db from 'debug'
 const debug = db('sales:routes')
 
 const stagingIdSchema = Joi.object({
-  id: Joi.string()
-    .trim()
-    .guid()
-    .min(1)
-    .required()
-    .description('the staging identifier')
+  id: Joi.string().trim().guid().min(1).required().description('the staging identifier')
 }).label('finalise-transaction-request-parameters')
 
 export default [

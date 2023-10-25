@@ -1,6 +1,6 @@
 import { pricingDetail } from '../pricing-summary.js'
 
-jest.mock('../filter-permits.js', () => ({
+jest.mock('../find-permit.js', () => ({
   getPermitsJoinPermitConcessions: () => [
     {
       id: '9d1b34a0-0c66-e611-80dc-c4346bad0190',

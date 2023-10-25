@@ -175,7 +175,7 @@ describe('The agreed handler', () => {
     salesApi.updatePaymentJournal = jest.fn()
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(PAYMENT_FAILED.uri)
+    expect(data2.headers.location).toHaveValidPathFor(PAYMENT_FAILED.uri)
 
     // Ensure that the journal status has been updated correctly
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
@@ -198,7 +198,7 @@ describe('The agreed handler', () => {
     await injectWithCookies('GET', PAYMENT_FAILED.uri)
     const data4 = await injectWithCookies('POST', PAYMENT_FAILED.uri, {})
     expect(data4.statusCode).toBe(302)
-    expect(data4.headers.location).toBe(AGREED.uri)
+    expect(data4.headers.location).toHaveValidPathFor(AGREED.uri)
 
     // Test that the status has been updated correctly
     const { payload: status2 } = await injectWithCookies('GET', TEST_STATUS.uri)
@@ -277,7 +277,7 @@ describe('The agreed handler', () => {
     salesApi.updatePaymentJournal = jest.fn()
     const data2 = await injectWithCookies('GET', AGREED.uri)
     expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(PAYMENT_CANCELLED.uri)
+    expect(data2.headers.location).toHaveValidPathFor(PAYMENT_CANCELLED.uri)
 
     // Ensure the the jounal status is set to cancelled
     expect(salesApi.updatePaymentJournal).toHaveBeenCalledWith(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id, {
@@ -301,7 +301,7 @@ describe('The agreed handler', () => {
     await injectWithCookies('GET', PAYMENT_CANCELLED.uri)
     const data3 = await injectWithCookies('POST', PAYMENT_CANCELLED.uri, {})
     expect(data3.statusCode).toBe(302)
-    expect(data3.headers.location).toBe(AGREED.uri)
+    expect(data3.headers.location).toHaveValidPathFor(AGREED.uri)
 
     // Test that the status has been updated correctly
     const { payload: status2 } = await injectWithCookies('GET', TEST_STATUS.uri)

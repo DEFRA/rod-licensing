@@ -25,7 +25,7 @@ import { errorHandler } from './handlers/error-handler.js'
 import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
-import { addLanguageCodeToUri } from './processors/uri-helper.js'
+import { addEmptyFragmentToUri, addLanguageCodeToUri } from './processors/uri-helper.js'
 airbrake.initialise()
 let server
 
@@ -183,8 +183,9 @@ const init = async () => {
 
   server.decorate('toolkit', 'redirectWithLanguageCode', function (redirect) {
     const uriWithLanguage = addLanguageCodeToUri(this.request, redirect)
+    const uriWithLanguageAndEmptyFragment = addEmptyFragmentToUri(uriWithLanguage)
 
-    return this.redirect(uriWithLanguage)
+    return this.redirect(uriWithLanguageAndEmptyFragment)
   })
 
   if (process.env.CHANNEL === 'telesales') {
