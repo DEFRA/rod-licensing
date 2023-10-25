@@ -1,6 +1,6 @@
 import { Contact, findByDateRange, findByExample, findById, permissionForLicensee, RecurringPayment } from '@defra-fish/dynamics-lib'
 
-export const getRecurringPayments = async (date) => {
+export const getRecurringPayments = async date => {
   // create rp thats active with no cancelled date
   const recurringPayment = new RecurringPayment()
   recurringPayment.cancelledDate = null
@@ -21,7 +21,11 @@ export const retrieveActivePermissionAndContact = async recurringPayments => {
   for (const recurringPayment of recurringPayments) {
     const contact = await findById(Contact, recurringPayment.contactId)
     recurringPayment.contact = contact
-    const permission = permissionForLicensee(recurringPayment.activePermission, recurringPayment.contact.birthDate, recurringPayment.contact.postcode)
+    const permission = permissionForLicensee(
+      recurringPayment.activePermission,
+      recurringPayment.contact.birthDate,
+      recurringPayment.contact.postcode
+    )
     recurringPayment.activePermission = permission
     recurringPaymentsWithPermission = recurringPaymentsWithPermission.concat(recurringPayment)
   }
