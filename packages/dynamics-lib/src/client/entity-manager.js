@@ -165,6 +165,7 @@ export async function findByAlternateKey (entityType, alternateKey) {
  * @returns {Promise<Array<T>>} an array of matching records
  */
 export async function findByExample (entity) {
+  console.log('findByExample')
   try {
     const filter = [
       ...(entity.constructor.definition.defaultFilter ? [entity.constructor.definition.defaultFilter] : []),
@@ -179,7 +180,9 @@ export async function findByExample (entity) {
         return acc
       }, [])
     ].join(' and ')
+    console.log('example hit 1')
     const results = await dynamicsClient.retrieveMultipleRequest(entity.constructor.definition.toRetrieveRequest(filter))
+    console.log('example hit 2')
     const optionSetData = await retrieveGlobalOptionSets().cached()
     return results.value.map(result => entity.constructor.fromResponse(result, optionSetData))
   } catch (e) {

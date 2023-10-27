@@ -11,6 +11,7 @@ import { escapeODataStringValue } from '../client/util.js'
  * @returns {PredefinedQuery}
  */
 export const permissionForLicensee = (permissionReferenceNumber, licenseeBirthDate, licenseePostcode) => {
+  console.log('permission queries permissionForLicensee ')
   const { licensee, permit, concessionProofs } = Permission.definition.relationships
   let filter = `endswith(${Permission.definition.mappings.referenceNumber.field}, '${escapeODataStringValue(permissionReferenceNumber)}')`
   filter += ` and ${licensee.property}/${licensee.entity.definition.mappings.postcode.field} eq '${escapeODataStringValue(

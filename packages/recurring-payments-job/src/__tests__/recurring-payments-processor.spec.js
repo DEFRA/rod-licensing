@@ -1,6 +1,8 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
+jest.mock('@defra-fish/connectors-lib')
+
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -29,7 +31,7 @@ describe('recurring-payments-processor', () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
 
-    await processRecurringPayments()
+    await processRecurringPayments(new Date())
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
     consoleLogSpy.mockRestore()
@@ -37,19 +39,20 @@ describe('recurring-payments-processor', () => {
 
   it('get recurring payments is called when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
+    const date = Symbol('date')
 
-    await processRecurringPayments()
+    await processRecurringPayments(date)
 
-    expect(salesApi.dueRecurringPayments()).toHaveBeenCalled()
+    expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
 
-  it('console log displays "Recurring Payments found: " when env is false', async () => {
+  it('console log displays "Recurring Payments found: " when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
     const rpSymbol = Symbol('rp')
-    salesApi.dueRecurringPayments().mockReturnValueOnce(rpSymbol)
+    salesApi.getDueRecurringPayments.mockReturnValueOnce(rpSymbol)
 
-    await processRecurringPayments()
+    await processRecurringPayments(new Date())
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', rpSymbol)
     consoleLogSpy.mockRestore()

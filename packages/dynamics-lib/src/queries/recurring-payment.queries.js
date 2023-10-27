@@ -1,4 +1,5 @@
 export async function findByDateRange (recurringPayments, date) {
+  console.log('recurring payments queries findByDateRange')
   let dueRecurringPayments = []
   const dueDates = []
   for (let i = 0; i <= 10; i += 2) {

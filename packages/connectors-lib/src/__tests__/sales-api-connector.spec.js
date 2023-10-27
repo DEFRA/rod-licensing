@@ -607,4 +607,29 @@ describe('sales-api-connector', () => {
       expect(salesApi.isSystemError(statusCode)).toEqual(expected)
     })
   })
+
+  describe('getDueRecurringPayments', () => {
+    it('retrieves due recurring payments using .getDueRecurringPayments()', async () => {
+      const date = '17-10-2023'
+      const expectedResponse = {
+        recurringPayments: [
+          { id: 1, nextDueDate: '17-10-2023 ' },
+          { id: 2, nextDueDate: '17-10-2023 ' }
+        ]
+      }
+
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+
+      await expect(salesApi.getDueRecurringPayments(date)).resolves.toEqual(expectedResponse)
+
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0:4000/dueRecurringPayments/17-10-2023',
+        {
+          method: 'get',
+          headers: expect.any(Object),
+          timeout: 20000
+        }
+      )
+    })
+  })
 })
