@@ -2,7 +2,7 @@ import { getRecurringPayments } from '../../services/recurring-payments.service.
 export default [
   {
     method: 'GET',
-    path: '/test',
+    path: '/dueRecurringPayments/{date}',
     handler: async (request, h) => {
       const { date } = request.params
       const result = await getRecurringPayments(date)
