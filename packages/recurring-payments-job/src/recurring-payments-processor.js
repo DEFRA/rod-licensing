@@ -1,12 +1,11 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 
-export async function processRecurringPayments () {
-  console.log('Recurring Payments job')
+export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
     console.log('Recurring Payments job enabled')
-    const date = '17-10-2023'
+    const date = new Date()
     const response = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found: ', response.data)
+    console.log('Recurring Payments found: ', response)
   } else {
     console.log('Recurring Payments job disabled')
   }
