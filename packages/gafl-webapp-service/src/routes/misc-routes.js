@@ -26,16 +26,20 @@ import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import analytics from '../handlers/analytics-handler.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
 
+const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || false
+
 const simpleView = view => ({
   method: 'GET',
   path: view.uri,
   handler: async (request, h) => {
     const mssgs = request.i18n.getCatalog()
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+    const gtmContainerId = gtmContainerIdOrNull()
     const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
     return h.view(view.page, {
       mssgs,
       altLang,
+      gtmContainerId,
       pageLanguageSetToWelsh,
       uri: {
         back: addLanguageCodeToUri(request, CONTROLLER.uri)
@@ -95,10 +99,12 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const gtmContainerId = gtmContainerIdOrNull()
       const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
       return h.view(COOKIES.page, {
         altLang,
+        gtmContainerId,
         pageLanguageSetToWelsh,
         mssgs: request.i18n.getCatalog(),
         cookie: {
@@ -118,10 +124,12 @@ export default [
     path: NEW_PRICES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const gtmContainerId = gtmContainerIdOrNull()
       const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
       return h.view(NEW_PRICES.page, {
         altLang,
+        gtmContainerId,
         pageLanguageSetToWelsh,
         mssgs: request.i18n.getCatalog(),
         uri: {
