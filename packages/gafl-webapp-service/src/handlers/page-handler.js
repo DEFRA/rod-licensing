@@ -130,7 +130,7 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsMessageDisplayed = analytics ? analytics[ANALYTICS.seenMessage] : false
     pageData.analyticsSelected = analytics ? analytics[ANALYTICS.selected] : false
     pageData.acceptedTracking = analytics ? analytics[ANALYTICS.acceptTracking] : false
-    pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || null
+    pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || false
 
     pageData.displayAnalytics = displayAnalytics(request)
 

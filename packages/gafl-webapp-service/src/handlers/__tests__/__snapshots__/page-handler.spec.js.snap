@@ -12,7 +12,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "analyticsSelected": false,
         "backRef": null,
         "displayAnalytics": false,
-        "gtmContainerId": null,
+        "gtmContainerId": false,
         "mssgs": undefined,
         "pageLanguageSetToWelsh": false,
         "uri": Object {
@@ -42,7 +42,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "analyticsSelected": false,
         "backRef": null,
         "displayAnalytics": true,
-        "gtmContainerId": null,
+        "gtmContainerId": false,
         "mssgs": undefined,
         "pageLanguageSetToWelsh": false,
         "uri": Object {

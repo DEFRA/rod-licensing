@@ -205,7 +205,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.NEW_PRICES.page, {
       altLang: ['that-locale'],
-      gtmContainerId: null,
+      gtmContainerId: false,
       mssgs: catalog,
       uri: {
         back: mockUri

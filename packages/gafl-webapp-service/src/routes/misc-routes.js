@@ -26,7 +26,7 @@ import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import analytics from '../handlers/analytics-handler.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
 
-const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || null
+const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || false
 
 const simpleView = view => ({
   method: 'GET',
