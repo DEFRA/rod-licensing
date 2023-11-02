@@ -9,7 +9,7 @@ export const getRecurringPayments = async date => {
   // grab all rp matching above + within date range of current date -2,-4,-6,-8,-10
   const dueRecurringPayments = await findByDateRange(activeRecurringPayments, date)
   // assign permission and contact to rp
-  return await retrieveActivePermissionAndContact(dueRecurringPayments)
+  return retrieveActivePermissionAndContact(dueRecurringPayments)
 }
 
 export const retrieveActivePermissionAndContact = async recurringPayments => {
