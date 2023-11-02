@@ -6,13 +6,10 @@ export const getRecurringPayments = async date => {
   recurringPayment.cancelledDate = null
   // grab all rp matching no cancelled date and status active
   const activeRecurringPayments = await findByExample(recurringPayment)
-  console.log('findByExample result: ', activeRecurringPayments)
   // grab all rp matching above + within date range of current date -2,-4,-6,-8,-10
   const dueRecurringPayments = await findByDateRange(activeRecurringPayments, date)
-  console.log('findByDateRange result: ', dueRecurringPayments)
   // assign permission and contact to rp
   const dueRecurringPaymentsWithPermissionAndContact = await retrieveActivePermissionAndContact(dueRecurringPayments)
-  console.log('retrieveActivePermissionAndContact result: ', dueRecurringPaymentsWithPermissionAndContact)
   return dueRecurringPaymentsWithPermissionAndContact
 }
 
