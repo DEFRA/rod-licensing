@@ -1,4 +1,13 @@
 
+## v1.37.0-rc.1 (2023-11-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1811](https://github.com/DEFRA/rod-licensing/pull/1811) Insert Google Tag Manager snippet in template ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 ## v1.36.0-rc.11 (2023-10-06)
