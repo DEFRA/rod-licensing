@@ -8,11 +8,11 @@ import {
   Transaction,
   TransactionCurrency,
   TransactionJournal,
-  RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, getPermissionCost, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
+import { processRecurringPayment } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
@@ -36,9 +36,6 @@ export async function processQueue ({ id }) {
 
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
-
-  const { recurringPayment, contact } = await processRecurringPayment(transactionRecord)
-  recurringPayment && entities.push(recurringPayment, contact)
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
@@ -72,6 +69,9 @@ export async function processQueue ({ id }) {
       permit
     })
 
+    const { recurringPayment } = await processRecurringPayment(transactionRecord, contact)
+    recurringPayment && entities.push(recurringPayment)
+
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
     permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
@@ -79,6 +79,9 @@ export async function processQueue ({ id }) {
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
 
     entities.push(contact, permission)
+
+    console.log(recurringPayment)
+    console.log(permit.isRecurringPaymentSupported)
 
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       const paymentInstruction = new RecurringPaymentInstruction()
@@ -96,6 +99,8 @@ export async function processQueue ({ id }) {
       entities.push(await createFulfilmentRequest(permission))
     }
   }
+
+  console.log('entities: ', entities)
 
   transaction.total = totalTransactionValue
   chargeJournal.total = -totalTransactionValue
@@ -139,33 +144,6 @@ const mapToPermission = async (
     )
   }
   return permission
-}
-
-/**
- * Process a recurring payment instruction
- * @param transactionRecord
- * @returns {Promise<{recurringPayment: null, contact: null}>}
- */
-const processRecurringPayment = async transactionRecord => {
-  let recurringPayment = null
-  let contact = null
-  let permission = null
-  if (transactionRecord.payment.recurring) {
-    recurringPayment = new RecurringPayment()
-    recurringPayment.name = transactionRecord.payment.recurring.name
-    recurringPayment.nextDueDate = transactionRecord.payment.recurring.nextDueDate
-    recurringPayment.cancelledDate = transactionRecord.payment.recurring.cancelledDate
-    recurringPayment.cancelledReason = transactionRecord.payment.recurring.cancelledReason
-    recurringPayment.endDate = transactionRecord.payment.recurring.endDate
-    recurringPayment.agreementId = transactionRecord.payment.recurring.agreementId
-    recurringPayment.publicId = transactionRecord.payment.recurring.publicId
-    recurringPayment.status = transactionRecord.payment.recurring.status
-    contact = await resolveContactPayload(transactionRecord.payment.recurring.contact)
-    permission = transactionRecord.permissions[0]
-    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.activePermission, permission)
-    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, contact)
-  }
-  return { recurringPayment, contact }
 }
 
 /**

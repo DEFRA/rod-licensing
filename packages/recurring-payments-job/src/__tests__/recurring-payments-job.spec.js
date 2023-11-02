@@ -1,4 +1,4 @@
-import rpJob from '../recurring-payments-job.js'
+import recurringPaymentsJob from '../recurring-payments-job.js'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
 jest.mock('../recurring-payments-processor.js', () => ({
@@ -21,7 +21,7 @@ describe('recurring-payments-job', () => {
   })
 
   it('should set up rpJob command with action to process recurring payments', () => {
-    rpJob.action()
+    recurringPaymentsJob.action()
     expect(processRecurringPayments).toHaveBeenCalled()
   })
 })

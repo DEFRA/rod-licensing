@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getRecurringPayments retrieveActivePermissionAndContact processRecurringPayment should return a valid recurringPayment when transactionRecord.payment.recurring is present 1`] = `
+Object {
+  "agreementId": "435678",
+  "cancelledDate": null,
+  "cancelledReason": null,
+  "endDate": 30,
+  "name": "Test Name",
+  "nextDueDate": "2023-11-02",
+  "publicId": "1234456",
+  "status": 0,
+}
+`;

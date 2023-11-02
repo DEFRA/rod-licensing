@@ -2,8 +2,8 @@
 import { Command } from 'commander'
 import { processRecurringPayments } from './recurring-payments-processor.js'
 
-const rpJob = new Command()
+const recurringPaymentsJob = new Command()
 
-rpJob.action(processRecurringPayments())
+recurringPaymentsJob.action(processRecurringPayments())
 
-export default rpJob
+export default recurringPaymentsJob

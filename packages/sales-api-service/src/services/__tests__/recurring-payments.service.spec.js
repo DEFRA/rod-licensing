@@ -1,5 +1,5 @@
 import { Contact, RecurringPayment } from '@defra-fish/dynamics-lib'
-import { getRecurringPayments, retrieveActivePermissionAndContact } from '../recurring-payments.service.js'
+import { getRecurringPayments, retrieveActivePermissionAndContact, processRecurringPayment } from '../recurring-payments.service.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -146,6 +146,37 @@ describe('getRecurringPayments', () => {
       await retrieveActivePermissionAndContact(mockRecurringPayments)
 
       expect(dynamicsLib.permissionForLicensee).toHaveBeenCalledWith(activePermission, birthDate, postcode)
+    })
+
+    describe('processRecurringPayment', () => {
+      it('should return null when transactionRecord.payment.recurring is not present', async () => {
+        const transactionRecord = {
+          payment: null
+        }
+        const result = await processRecurringPayment(transactionRecord, getMockContact())
+        expect(result.recurringPayment).toBeNull()
+      })
+
+      it.only('should return a valid recurringPayment when transactionRecord.payment.recurring is present', async () => {
+        const transactionRecord = {
+          payment: {
+            recurring: {
+              name: 'Test Name',
+              nextDueDate: new Date().toISOString().split('T')[0],
+              cancelledDate: null,
+              cancelledReason: null,
+              endDate: (new Date().toISOString().split('T')[0] = 30),
+              agreementId: '435678',
+              publicId: '1234456',
+              status: 0
+            }
+          },
+          permissions: [getMockPermission()]
+        }
+        const contact = getMockContact()
+        const result = await processRecurringPayment(transactionRecord, contact)
+        expect(result.recurringPayment).toMatchSnapshot()
+      })
     })
   })
 })
