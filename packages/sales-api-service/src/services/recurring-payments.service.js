@@ -38,7 +38,7 @@ export const retrieveActivePermissionAndContact = async recurringPayments => {
 export const processRecurringPayment = async (transactionRecord, contact) => {
   let recurringPayment = null
   let permission = null
-  if (transactionRecord.payment.recurring) {
+  if (transactionRecord.payment?.recurring) {
     recurringPayment = new RecurringPayment()
     recurringPayment.name = transactionRecord.payment.recurring.name
     recurringPayment.nextDueDate = transactionRecord.payment.recurring.nextDueDate

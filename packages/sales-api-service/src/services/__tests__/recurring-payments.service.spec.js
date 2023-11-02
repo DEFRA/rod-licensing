@@ -150,14 +150,12 @@ describe('getRecurringPayments', () => {
 
     describe('processRecurringPayment', () => {
       it('should return null when transactionRecord.payment.recurring is not present', async () => {
-        const transactionRecord = {
-          payment: null
-        }
+        const transactionRecord = { payment: null }
         const result = await processRecurringPayment(transactionRecord, getMockContact())
         expect(result.recurringPayment).toBeNull()
       })
 
-      it.only('should return a valid recurringPayment when transactionRecord.payment.recurring is present', async () => {
+      it('should return a valid recurringPayment when transactionRecord.payment.recurring is present', async () => {
         const transactionRecord = {
           payment: {
             recurring: {
