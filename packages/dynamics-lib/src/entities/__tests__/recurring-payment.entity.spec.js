@@ -9,6 +9,7 @@ describe('recurring payment entity', () => {
   it('maps from dynamics', async () => {
     const recurringPayment = RecurringPayment.fromResponse(
       {
+        '@odata.etag': 'W/"11528905"',
         defra_recurringpaymentid: 'b5b24adf-2e83-ea11-a811-000d3a649213',
         defra_name: '18569ba8-094e-4e8c-9911-bfedd5ccc17a',
         defra_nextduedate: '2019-12-14T00:00:00Z',
@@ -39,6 +40,7 @@ describe('recurring payment entity', () => {
     }
 
     expect(recurringPayment).toBeInstanceOf(RecurringPayment)
+    expect(recurringPayment).toMatchObject(expect.objectContaining({ etag: 'W/"11528905"', ...expectedFields }))
     expect(recurringPayment.toJSON()).toMatchObject(expect.objectContaining(expectedFields))
     expect(JSON.parse(recurringPayment.toString())).toMatchObject(expect.objectContaining(expectedFields))
   })
