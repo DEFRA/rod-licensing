@@ -622,14 +622,11 @@ describe('sales-api-connector', () => {
 
       await expect(salesApi.getDueRecurringPayments(date)).resolves.toEqual(expectedResponse)
 
-      expect(fetch).toHaveBeenCalledWith(
-        'http://0.0.0.0:4000/dueRecurringPayments/17-10-2023',
-        {
-          method: 'get',
-          headers: expect.any(Object),
-          timeout: 20000
-        }
-      )
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/dueRecurringPayments/17-10-2023', {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      })
     })
   })
 })

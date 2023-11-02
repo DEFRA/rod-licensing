@@ -284,4 +284,4 @@ export const isSystemError = statusCode => Math.floor(statusCode / 100) === 5
  * @returns {Promise<*>}
  * @throws on a non-2xx response
  */
-export const getDueRecurringPayments = async (date) => exec2xxOrThrow(call(new URL(`/dueRecurringPayments/${date}`, urlBase), 'get'))
+export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL(`/dueRecurringPayments/${date}`, urlBase), 'get'))
