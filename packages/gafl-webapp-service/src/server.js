@@ -109,6 +109,14 @@ const addDefaultHeaders = (request, h) => {
   return h.continue
 }
 
+const logGtmConfig = gtmContainerId => {
+  if (gtmContainerId) {
+    console.log(`gtmContainerId is set to ${gtmContainerId}`)
+  } else {
+    console.log('gtmContainerId is not set')
+  }
+}
+
 const init = async () => {
   await server.register(getPlugins())
   const viewPaths = [...new Set(find.fileSync(/\.njk$/, path.join(Dirname, './src/pages')).map(f => path.dirname(f)))]
@@ -193,6 +201,8 @@ const init = async () => {
   }
   server.route(routes)
   await server.start()
+
+  logGtmConfig(process.env.GTM_CONTAINER_ID)
 
   console.log('Server running on %s', server.info.uri)
 }
