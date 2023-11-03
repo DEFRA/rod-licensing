@@ -5,9 +5,9 @@ Object {
   "agreementId": "435678",
   "cancelledDate": null,
   "cancelledReason": null,
-  "endDate": 30,
+  "endDate": 2023-11-12T00:00:00.000Z,
   "name": "Test Name",
-  "nextDueDate": "2023-11-02",
+  "nextDueDate": 2023-11-02T00:00:00.000Z,
   "publicId": "1234456",
   "status": 0,
 }

@@ -160,10 +160,10 @@ describe('getRecurringPayments', () => {
           payment: {
             recurring: {
               name: 'Test Name',
-              nextDueDate: new Date().toISOString().split('T')[0],
+              nextDueDate: new Date('2023-11-02'),
               cancelledDate: null,
               cancelledReason: null,
-              endDate: (new Date().toISOString().split('T')[0] = 30),
+              endDate: new Date('2023-11-12'),
               agreementId: '435678',
               publicId: '1234456',
               status: 0

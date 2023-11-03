@@ -4,7 +4,7 @@
   "description": "Rod Licensing Recurring Payments Job",
   "type": "module",
   "engines": {
-    "node": ">=14"
+    "node": ">=18.17"
   },
   "keywords": [
     "rod",
@@ -30,6 +30,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "start": "node src/recurring-payments-job.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
     "@defra-fish/connectors-lib": "1.37.0-rc.0",
