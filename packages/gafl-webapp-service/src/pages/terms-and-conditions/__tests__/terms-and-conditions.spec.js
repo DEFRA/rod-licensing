@@ -48,7 +48,7 @@ describe('The terms and conditions page', () => {
   it('redirects to the licence summary if the licence summary has not been completed', async () => {
     const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(data.headers.location).toHaveValidPathFor(LICENCE_SUMMARY.uri)
   })
 
   it('redirects to the contact summary page if the contact page has not been visited', async () => {
@@ -60,13 +60,13 @@ describe('The terms and conditions page', () => {
     await injectWithCookies('POST', LICENCE_SUMMARY.uri)
     const data = await injectWithCookies('GET', TERMS_AND_CONDITIONS.uri)
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(CONTACT_SUMMARY.uri)
+    expect(data.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
   })
 
   it('redirects back to itself on invalid response', async () => {
     const data = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'no way' })
     expect(data.statusCode).toBe(302)
-    expect(data.headers.location).toBe(TERMS_AND_CONDITIONS.uri)
+    expect(data.headers.location).toHaveValidPathFor(TERMS_AND_CONDITIONS.uri)
   })
 
   it('responds with the terms and conditions page if all data is provided', async () => {
@@ -91,10 +91,10 @@ describe('The terms and conditions page', () => {
     await injectWithCookies('GET', NEW_TRANSACTION.uri)
     const data1 = await injectWithCookies('POST', TERMS_AND_CONDITIONS.uri, { agree: 'yes' })
     expect(data1.statusCode).toBe(302)
-    expect(data1.headers.location).toBe(AGREED.uri)
+    expect(data1.headers.location).toHaveValidPathFor(AGREED.uri)
     await injectWithCookies('GET', AGREED.uri) // generates dirty great error
     const data2 = await injectWithCookies('GET', CONTACT_SUMMARY.uri)
     expect(data2.statusCode).toBe(302)
-    expect(data2.headers.location).toBe(AGREED.uri)
+    expect(data2.headers.location).toHaveValidPathFor(AGREED.uri)
   })
 })

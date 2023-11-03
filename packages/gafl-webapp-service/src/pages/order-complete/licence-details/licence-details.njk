@@ -4,7 +4,6 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "inset-text/macro.njk" import govukInsetText %}
 {% from "summary-list/macro.njk" import govukSummaryList %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% set title = mssgs.licence_details_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -30,11 +29,6 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {{ govukBackLink({
-              text: mssgs.back,
-              href: backRef,
-              classes: "govuk-!-margin-bottom-7 no-print"
-        }) }}
         <section class="no-print">
             <h1 class="govuk-heading-xl">{{ title }}</h1>
         </section>

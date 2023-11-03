@@ -27,14 +27,14 @@ describe('The licence start time page', () => {
   it('redirects back to itself on posting no response', async () => {
     const response = await injectWithCookies('POST', LICENCE_START_TIME.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_START_TIME.uri)
   })
   it('redirects back to itself on an invalid time', async () => {
     const response = await injectWithCookies('POST', LICENCE_START_TIME.uri, {
       'licence-start-time': '25'
     })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_START_TIME.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_START_TIME.uri)
   })
   it.each([
     ['Start of the day', '0'],
@@ -97,6 +97,6 @@ describe('The licence start time page', () => {
     await injectWithCookies('GET', LICENCE_SUMMARY.uri)
     const response = await injectWithCookies('POST', LICENCE_START_TIME.uri, { 'licence-start-time': '12' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(LICENCE_SUMMARY.uri)
+    expect(response.headers.location).toHaveValidPathFor(LICENCE_SUMMARY.uri)
   })
 })

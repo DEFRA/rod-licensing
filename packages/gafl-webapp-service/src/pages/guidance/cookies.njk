@@ -1,5 +1,4 @@
 {% extends "layout.njk" %}
-{% from "back-link/macro.njk" import govukBackLink %}
 {% from "table/macro.njk" import govukTable %}
 
 {% block pageTitle %}{{ mssgs.cookies_title }}{% endblock %}
@@ -7,11 +6,6 @@
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        {{ govukBackLink({
-          text: mssgs.back,
-          href: uri.back,
-          classes: "govuk-!-margin-bottom-7"
-        }) }}
 
         <h1 class="govuk-heading-l">{{ mssgs.cookies_heading }}</h1>
         <p class="govuk-body">{{ mssgs.cookies_body_small_files }}</p>

@@ -41,13 +41,13 @@ describe('The address select page', () => {
   it('redirects back to itself on posting an empty payload', async () => {
     const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, {})
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_SELECT.uri)
   })
 
   it('redirects back to itself on posting an no address', async () => {
     const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '' })
     expect(response.statusCode).toBe(302)
-    expect(response.headers.location).toBe(ADDRESS_SELECT.uri)
+    expect(response.headers.location).toHaveValidPathFor(ADDRESS_SELECT.uri)
   })
 
   describe('on successful submission', () => {
@@ -82,7 +82,7 @@ describe('The address select page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '1D' })
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to the contact page if licence length is 8 day', async () => {
@@ -90,7 +90,7 @@ describe('The address select page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to the contact page if licence length is is 12 months and junior', async () => {
@@ -98,7 +98,7 @@ describe('The address select page', () => {
       await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
 
     it('redirects to the licence fulfilment page if licence length is 12 months and not junior', async () => {
@@ -107,7 +107,7 @@ describe('The address select page', () => {
       isPhysical.mockReturnValueOnce(true)
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_FULFILMENT.uri)
     })
 
     it('redirects to the summary page if the summary page is seen', async () => {
@@ -115,7 +115,7 @@ describe('The address select page', () => {
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       const response = await injectWithCookies('POST', ADDRESS_SELECT.uri, { address: '5' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT_SUMMARY.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT_SUMMARY.uri)
     })
 
     it('The contact information has been set in the transaction', async () => {

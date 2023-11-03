@@ -8,6 +8,11 @@
 {% from "header/macro.njk" import govukHeader %}
 {% from "button/macro.njk" import govukButton %}
 {% from "footer/macro.njk" import govukFooter %}
+{% from "back-link/macro.njk" import govukBackLink %}
+
+{% if pageLanguageSetToWelsh %}
+    {% set htmlLang = "cy" %}
+{% endif %}
 
 {% macro csrf() %}
     <div><input type="hidden" name="{{CSRF_TOKEN_NAME}}" value="{{CSRF_TOKEN_VALUE}}"></div>
@@ -37,7 +42,7 @@
                                     {{ mssgs.analytics_banner_preamble_1 }}
                                     </p>
                                     <p class="govuk-body">
-                                    {{ mssgs.analytics_banner_preamble_2 }} <a class="govuk-link" href="/guidance/cookies">{{ mssgs.cookie_banner_link }}</a>
+                                    {{ mssgs.analytics_banner_preamble_2 }} <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.cookie_banner_link }}</a>
                                     </p>
                                 </div>
                                 <div class="govuk-button-group">
@@ -86,7 +91,7 @@
                             <div class="govuk-width-container">
                                 <div class="govuk-cookie-banner__content">
                                     <p class="govuk-body">
-                                        {{ mssgs.analytics_banner_rejection }}  
+                                        {{ mssgs.analytics_banner_rejection }}
                                     </p>
                                 </div>
                                 <div class="govuk-button-group">
@@ -142,14 +147,27 @@
             <div class="govuk-width-container govuk-!-display-none-print govuk-!-margin-top-2">
                 <p class="govuk-body-s right-align govuk-!-margin-0">
                     {% if _uri.queryParams.lang == 'cy' %}
-                        <a class="govuk-link govuk-!-margin-2" href="?lang=en">English</a> | <span class="govuk-body-s govuk-!-margin-2">Cymraeg</a>
+                        <a class="govuk-link govuk-!-margin-2" href="?lang=en" hreflang="en" lang="en">English</a> | <span class="govuk-body-s govuk-!-margin-2">Cymraeg</a>
                     {% else %}
-                        <span class="govuk-body-s govuk-!-margin-2">English</span> | <a class="govuk-link govuk-!-margin-2" href="?lang=cy">Cymraeg</a>
+                        <span class="govuk-body-s govuk-!-margin-2">English</span> | <a class="govuk-link govuk-!-margin-2" href="?lang=cy" hreflang="cy" lang="cy">Cymraeg</a>
                     {% endif%}
                 </p>
             </div>
         {% endif%}
     {% endif %}
+    {% if backRef %}
+      {{ govukBackLink({
+        text: mssgs.back,
+        href: backRef,
+        classes: "govuk-!-margin-bottom-7"
+      }) }}
+    {% elseif uri.back %}
+      {{ govukBackLink({
+        text: mssgs.back,
+        href: uri.back,
+        classes: "govuk-!-margin-bottom-7"
+      }) }}
+   {% endif %}
 {% endblock %}
 
 {% block bodyStart %}{% endblock %}

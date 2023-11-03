@@ -42,7 +42,7 @@ describe('The licence summary page', () => {
       await injectWithCookies('POST', NAME.uri, { 'last-name': 'Graham', 'first-name': 'Willis' })
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(DATE_OF_BIRTH.uri)
+      expect(response.headers.location).toHaveValidPathFor(DATE_OF_BIRTH.uri)
     })
 
     it('redirects to the licence to start page if no licence start date has been set', async () => {
@@ -50,7 +50,7 @@ describe('The licence summary page', () => {
       await injectWithCookies('POST', DATE_OF_BIRTH.uri, dobHelper(ADULT_TODAY))
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_TO_START.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
     })
 
     it('redirects to the licence type page if no licence type has been set', async () => {
@@ -59,7 +59,7 @@ describe('The licence summary page', () => {
       await injectWithCookies('POST', LICENCE_TO_START.uri, { 'licence-to-start': licenceToStart.AFTER_PAYMENT })
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_TYPE.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_TYPE.uri)
     })
 
     it('redirects to the licence length page if no length has been set', async () => {
@@ -69,7 +69,7 @@ describe('The licence summary page', () => {
       await injectWithCookies('POST', LICENCE_TYPE.uri, { 'licence-type': licenseTypes.troutAndCoarse2Rod })
       const response = await injectWithCookies('GET', LICENCE_SUMMARY.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_LENGTH.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_LENGTH.uri)
     })
   })
 

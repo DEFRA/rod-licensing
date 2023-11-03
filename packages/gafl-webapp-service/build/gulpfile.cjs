@@ -7,7 +7,7 @@
  *
  */
 const gulp = require('gulp')
-const sass = require('gulp-sass')
+const sass = require('gulp-sass')(require('sass'))
 const sourcemaps = require('gulp-sourcemaps')
 const del = require('del')
 const minify = require('gulp-minify')
@@ -36,17 +36,16 @@ const clean = () => {
 }
 
 const copyAssets = () => {
-  return gulp.src([paths.govUkAssets, paths.otherAssets])
-    .pipe(gulp.dest(paths.public))
+  return gulp.src([paths.govUkAssets, paths.otherAssets]).pipe(gulp.dest(paths.public))
 }
 
 const copyRobots = () => {
-  return gulp.src(`${paths.assets}robots.txt`)
-    .pipe(gulp.dest(paths.public))
+  return gulp.src(`${paths.assets}robots.txt`).pipe(gulp.dest(paths.public))
 }
 
 const copyJs = () => {
-  return gulp.src([`${paths.govUk}all.js`, `${paths.flatpickr}flatpickr.js`])
+  return gulp
+    .src([`${paths.govUk}all.js`, `${paths.flatpickr}flatpickr.js`])
     .pipe(concat('all.js'))
     .pipe(minify({ noSource: true }))
     .pipe(gulp.dest(`${paths.public}javascript`))
@@ -54,21 +53,18 @@ const copyJs = () => {
 
 // Build the sass
 const buildSass = () => {
-  return gulp.src(`${paths.assets}sass/*.scss`)
+  return gulp
+    .src(`${paths.assets}sass/*.scss`)
     .pipe(sourcemaps.init())
-    .pipe(sass({
-      outputStyle: 'compressed',
-      includePaths: path.join('..', 'node_modules')
-    }).on('error', sass.logError))
+    .pipe(
+      sass({
+        outputStyle: 'compressed',
+        includePaths: path.join('..', 'node_modules')
+      }).on('error', sass.logError)
+    )
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(`${paths.public}stylesheets/`))
 }
 
 // The default Gulp task builds the resources
-gulp.task('default', gulp.series(
-  clean,
-  copyAssets,
-  copyJs,
-  copyRobots,
-  buildSass
-))
+gulp.task('default', gulp.series(clean, copyAssets, copyJs, copyRobots, buildSass))

@@ -3,26 +3,19 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary.njk" import errorSummary %}
-{% from "back-link/macro.njk" import govukBackLink %}
 
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        {% if backRef %}
-            {{ govukBackLink({
-              text: mssgs.back,
-              href: backRef,
-              classes: "govuk-!-margin-bottom-7"
-            }) }}
-        {% endif %}
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" novalidate>
 
           {% block notificationContent %}{% endblock %}
 
             {% call govukFieldset({
+              describedBy: describedByTag,
               legend: {
                 text: title,
                 classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
@@ -33,7 +26,7 @@
                 {% block pageContent %}{% endblock %}
 
             {% endcall %}
-            
+
             {{ govukButton({
                 attributes: { id: 'continue' },
                 preventDoubleClick: true,
@@ -47,4 +40,3 @@
     {% block pricingSummary %}{% endblock %}
 </div>
 {% endblock %}
-

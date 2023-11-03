@@ -58,7 +58,7 @@ describe('The licence fulfilment page', () => {
         'licence-option': 'none'
       })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_FULFILMENT.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_FULFILMENT.uri)
     })
 
     it('post response digital sets postalFulfilment - no, in the cache', async () => {
@@ -91,7 +91,7 @@ describe('The licence fulfilment page', () => {
     it('redirects to the contact page', async () => {
       const response = await injectWithCookies('GET', LICENCE_FULFILMENT.uri)
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(CONTACT.uri)
+      expect(response.headers.location).toHaveValidPathFor(CONTACT.uri)
     })
   })
 
@@ -111,7 +111,7 @@ describe('The licence fulfilment page', () => {
       await injectWithCookies('GET', CONTACT_SUMMARY.uri)
       const response = await injectWithCookies('POST', LICENCE_FULFILMENT.uri, { 'licence-option': 'digital' })
       expect(response.statusCode).toBe(302)
-      expect(response.headers.location).toBe(LICENCE_CONFIRMATION_METHOD.uri)
+      expect(response.headers.location).toHaveValidPathFor(LICENCE_CONFIRMATION_METHOD.uri)
     })
   })
 })

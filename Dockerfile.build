@@ -8,7 +8,7 @@ USER root
 ENV NPM_CONFIG_PREFIX ""
 
 # Install build-specific dependencies
-RUN apk --no-cache -U -v add make gcc g++ python curl git \
+RUN apk --no-cache -U -v add make gcc g++ python3 curl git \
     && mkdir -p /app
 
 # Set npm configuration for builds

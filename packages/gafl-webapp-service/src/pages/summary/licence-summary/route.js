@@ -1,7 +1,8 @@
 import moment from 'moment-timezone'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { findPermit } from '../../../processors/find-permit.js'
+import findPermit from '../../../processors/find-permit.js'
+import hashPermission from '../../../processors/hash-permission.js'
 import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import {
@@ -189,7 +190,12 @@ export const getData = async request => {
   status.fromSummary = getFromSummary(status.fromSummary, permission.isRenewal)
   await request.cache().helpers.status.setCurrentPermission(status)
   debug('retrieving permit info')
-  await findPermit(permission, request)
+  const hash = hashPermission(permission)
+  if (permission.hash !== hash) {
+    permission.permit = await findPermit(permission)
+    permission.hash = hash
+    await request.cache().helpers.transaction.setCurrentPermission(permission)
+  }
   debug('retrieved permit', JSON.stringify(permission))
 
   return {

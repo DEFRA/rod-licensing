@@ -2,6 +2,7 @@ import uri from '../../uri.js'
 import miscRoutes from '../misc-routes.js'
 import constants from '../../constants.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
+import { welshEnabledAndApplied } from '../../processors/page-language-helper.js'
 
 jest.mock('../../uri.js', () => ({
   ...jest.requireActual('../../uri.js'),
@@ -20,6 +21,7 @@ jest.mock('../../constants.js', () => ({
 }))
 
 jest.mock('../../processors/uri-helper.js')
+jest.mock('../../processors/page-language-helper.js')
 
 describe('guidance page handlers', () => {
   const cookiesPageHandler = miscRoutes.find(r => r.path === uri.COOKIES.uri).handler
@@ -215,7 +217,8 @@ describe('guidance page handlers', () => {
     { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
     { pageHandler: privacyPolicyPageHandler, handlerName: 'Privacy policy' },
     { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
-    { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' }
+    { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' },
+    { pageHandler: newPricesPageHandler, handlerName: 'New Prices Page Handler' }
   ])('language code tests for $handlerName page', ({ pageHandler }) => {
     it('uses addLanguageCodeToUri to get back url', async () => {
       const toolkit = getMockToolkit()
@@ -240,6 +243,22 @@ describe('guidance page handlers', () => {
           uri: expect.objectContaining({
             back: backUrl
           })
+        })
+      )
+    })
+
+    it('returns the value of welshEnabledAndApplied for pageLanguageSetToWelsh', async () => {
+      const toolkit = getMockToolkit()
+      const request = getMockRequest()
+      const expectedValue = Symbol('expected')
+      welshEnabledAndApplied.mockReturnValueOnce(expectedValue)
+
+      await pageHandler(request, toolkit)
+
+      expect(toolkit.view).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          pageLanguageSetToWelsh: expectedValue
         })
       )
     })
