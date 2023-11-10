@@ -13,6 +13,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "backRef": null,
         "displayAnalytics": false,
         "gtmContainerId": false,
+        "gtmNonce": "abcdefghijklmnop",
         "mssgs": undefined,
         "pageLanguageSetToWelsh": false,
         "uri": Object {
@@ -43,6 +44,7 @@ exports[`The page handler function sets the value of pageData with displayAnalyt
         "backRef": null,
         "displayAnalytics": true,
         "gtmContainerId": false,
+        "gtmNonce": "abcdefghijklmnop",
         "mssgs": undefined,
         "pageLanguageSetToWelsh": false,
         "uri": Object {
