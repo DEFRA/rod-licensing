@@ -27,7 +27,7 @@ export class RecurringPayment extends BaseEntity {
     },
     relationships: {
       contact: { property: 'defra_contact', entity: Contact, parent: true },
-      activePermission: { property: '_defra_permission', entity: Permission, parent: true }
+      activePermission: { property: 'defra_permission', entity: Permission, parent: true }
     }
   }))
 

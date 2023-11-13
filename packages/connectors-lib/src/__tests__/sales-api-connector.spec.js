@@ -621,6 +621,20 @@ describe('sales-api-connector', () => {
       fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
 
       await expect(salesApi.getDueRecurringPayments(date)).resolves.toEqual(expectedResponse)
+    })
+
+    it('.getDueRecurringPayments() calls fetch with correct parameters', async () => {
+      const date = '17-10-2023'
+      const expectedResponse = {
+        recurringPayments: [
+          { id: 1, nextDueDate: '17-10-2023 ' },
+          { id: 2, nextDueDate: '17-10-2023 ' }
+        ]
+      }
+
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+
+      await salesApi.getDueRecurringPayments(date)
 
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/dueRecurringPayments/17-10-2023', {
         method: 'get',

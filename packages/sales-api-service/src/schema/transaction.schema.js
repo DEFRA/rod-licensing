@@ -110,7 +110,7 @@ const finaliseTransactionRequestSchemaContent = {
       nextDueDate: Joi.string()
         .isoDate()
         .required()
-        .description('Ten days before the end date of last purchased permission')
+        .description('The date of payment for a renewed permission')
         .example(new Date().toISOString()),
       cancelledDate: Joi.string()
         .isoDate()
@@ -121,7 +121,6 @@ const finaliseTransactionRequestSchemaContent = {
       endDate: Joi.string().isoDate().required().description('End of recurring payment').example(new Date().toISOString()),
       agreementId: Joi.string().required().description('Agreement identification number, Gov.UK Pay field').example(uuidv4()),
       publicId: Joi.string().required().description('SHA-256 hash of id').example(uuidv4()),
-      status: Joi.number().valid(1).required().description('Status field: 1 for active, 0 for not active'),
       contact: contactRequestSchema,
       activePermission: finalisePermissionResponseSchema
     })

@@ -80,9 +80,6 @@ export async function processQueue ({ id }) {
 
     entities.push(contact, permission)
 
-    console.log(recurringPayment)
-    console.log(permit.isRecurringPaymentSupported)
-
     if (recurringPayment && permit.isRecurringPaymentSupported) {
       const paymentInstruction = new RecurringPaymentInstruction()
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
@@ -99,8 +96,6 @@ export async function processQueue ({ id }) {
       entities.push(await createFulfilmentRequest(permission))
     }
   }
-
-  console.log('entities: ', entities)
 
   transaction.total = totalTransactionValue
   chargeJournal.total = -totalTransactionValue

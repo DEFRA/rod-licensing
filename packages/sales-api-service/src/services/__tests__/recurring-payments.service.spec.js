@@ -1,23 +1,42 @@
-import { Contact, RecurringPayment } from '@defra-fish/dynamics-lib'
-import { getRecurringPayments, retrieveActivePermissionAndContact, processRecurringPayment } from '../recurring-payments.service.js'
+import { Contact, findDueRecurringPayments, Permission } from '@defra-fish/dynamics-lib'
+import { getRecurringPayments, processRecurringPayment } from '../recurring-payments.service.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
-  findByExample: jest.fn(),
+  executeQuery: jest.fn(),
   findById: jest.fn(),
-  findByDateRange: jest.fn(),
-  permissionForLicensee: jest.fn()
+  findDueRecurringPayments: jest.fn()
 }))
+
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
-const getMockRecurringPayment = () => {
-  const recurringPayment = new RecurringPayment()
-  recurringPayment.nextDueDate = new Date().toISOString().split('T')[0]
-  recurringPayment.contactId = Math.random().toString(36)
-  recurringPayment.activePermission = Math.random().toString(36)
+const getMockRecurringPayment = () => ({
+  entity: {
+    name: 'Test Name',
+    nextDueDate: '2019-12-14T00:00:00Z',
+    cancelledDate: null,
+    cancelledReason: null,
+    endDate: '2019-12-15T00:00:00Z',
+    agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
+    publicId: '649-213',
+    status: 1,
+    contactId: Math.random().toString(36),
+    activePermission: Math.random().toString(36)
+  }
+})
 
-  return recurringPayment
-}
+const getMockRPContactPermission = (contact, permission) => ({
+  name: 'Test Name',
+  nextDueDate: '2019-12-14T00:00:00Z',
+  cancelledDate: null,
+  cancelledReason: null,
+  endDate: '2019-12-15T00:00:00Z',
+  agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
+  publicId: '649-213',
+  status: 1,
+  contactId: contact,
+  activePermission: permission
+})
 
 const getMockContact = () => ({
   firstName: 'Fester',
@@ -37,144 +56,99 @@ const getMockContact = () => ({
   postalFulfilment: true
 })
 
-const getMockPermission = referenceNumber =>
-  JSON.stringify({
-    referenceNumber: referenceNumber,
-    licenceLength: '12M',
-    isLicenceForYou: true,
-    licensee: {
-      firstName: 'Fester',
-      lastName: 'Tester',
-      premises: '14 Howecroft Court',
-      street: 'Eastmead Lane',
-      town: 'Bristol',
-      postcode: 'BS9 1HJ',
-      email: 'fester@tester.com',
-      mobilePhone: '01234567890',
-      birthDate: '1996-01-01',
-      postalFulfilment: true
-    }
-  })
+const getMockPermission = () => ({
+  referenceNumber: '12345678',
+  licenceLength: '12M',
+  isLicenceForYou: true,
+  licensee: {
+    firstName: 'Fester',
+    lastName: 'Tester',
+    premises: '14 Howecroft Court',
+    street: 'Eastmead Lane',
+    town: 'Bristol',
+    postcode: 'BS9 1HJ',
+    email: 'fester@tester.com',
+    mobilePhone: '01234567890',
+    birthDate: '1996-01-01',
+    postalFulfilment: true
+  }
+})
 
-describe('getRecurringPayments', () => {
-  it('should return an array of recurring payments', async () => {
-    const mockRecurringPayments = [getMockRecurringPayment()]
-    dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-    dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-    dynamicsLib.findById.mockResolvedValue(getMockContact())
-
-    const result = await getRecurringPayments(new Date())
-
-    expect(result).toEqual(mockRecurringPayments)
-  })
-
-  it('findByExample is called with new RecurringPayment', async () => {
-    const mockRecurringPayments = [getMockRecurringPayment()]
-    dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-    dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-    dynamicsLib.findById.mockResolvedValue(getMockContact())
-
-    await getRecurringPayments(new Date())
-
-    expect(dynamicsLib.findByExample).toHaveBeenCalledWith(expect.any(RecurringPayment))
-  })
-
-  it('findByDateRange is called with array of recurring payments and a date', async () => {
-    const mockRecurringPayments = [getMockRecurringPayment()]
-    const mockDate = new Date()
-    dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-    dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-    dynamicsLib.findById.mockResolvedValue(getMockContact())
-
-    await getRecurringPayments(mockDate)
-
-    expect(dynamicsLib.findByDateRange).toHaveBeenCalledWith(mockRecurringPayments, mockDate)
-  })
-
-  describe('retrieveActivePermissionAndContact', () => {
-    it('should assign contact to recurring payment', async () => {
+describe('recurring payments service', () => {
+  beforeEach(jest.clearAllMocks)
+  describe('getRecurringPayments', () => {
+    it('should equal result of findDueRecurringPayments', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
       const mockContact = getMockContact()
-      const mockPermission = getMockPermission(mockRecurringPayments[0].activePermission)
-      dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findById.mockResolvedValue(mockContact)
-      dynamicsLib.permissionForLicensee.mockReturnValue(mockPermission)
+      const mockPermission = getMockPermission()
 
-      const result = await retrieveActivePermissionAndContact(mockRecurringPayments)
+      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+      dynamicsLib.findById.mockResolvedValueOnce(mockContact)
+      dynamicsLib.findById.mockResolvedValueOnce(mockPermission)
 
-      expect(result[0].contact).toEqual(mockContact)
+      const result = await getRecurringPayments(new Date())
+      const expected = getMockRPContactPermission(mockContact, mockPermission)
+
+      expect(result).toEqual([expected])
     })
 
-    it('should assign permission to recurring payment', async () => {
+    it('findById is called with Contact and contactId', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
-      const mockContact = getMockContact()
-      const mockPermission = getMockPermission(mockRecurringPayments[0].activePermission)
-      dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findById.mockResolvedValue(mockContact)
-      dynamicsLib.permissionForLicensee.mockReturnValue(mockPermission)
+      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+      const contactId = mockRecurringPayments[0].entity.contactId
 
-      const result = await retrieveActivePermissionAndContact(mockRecurringPayments)
-      const parsedPermission = JSON.parse(mockPermission)
+      await getRecurringPayments(new Date())
 
-      expect(result[0].activePermission).toEqual(JSON.stringify(parsedPermission))
+      expect(dynamicsLib.findById).toHaveBeenNthCalledWith(1, Contact, contactId)
     })
 
-    it('call findById with a contact and an id', async () => {
+    it('findById is called with Permission and activePermission', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
-      const contactId = mockRecurringPayments[0].contactId
-      dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findById.mockResolvedValue(getMockContact())
+      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+      const activePermission = mockRecurringPayments[0].entity.activePermission
 
-      await retrieveActivePermissionAndContact(mockRecurringPayments)
+      await getRecurringPayments(new Date())
 
-      expect(dynamicsLib.findById).toHaveBeenCalledWith(Contact, contactId)
+      expect(dynamicsLib.findById).toHaveBeenNthCalledWith(2, Permission, activePermission)
     })
 
-    it('call permissionForLicensee with an activePermission, date and postcode', async () => {
+    it('executeQuery is called with findDueRecurringPayments with a date', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
-      const mockContact = getMockContact()
-      const activePermission = mockRecurringPayments[0].activePermission
-      const birthDate = mockContact.birthDate
-      const postcode = mockContact.postcode
-      dynamicsLib.findByExample.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findByDateRange.mockResolvedValue(mockRecurringPayments)
-      dynamicsLib.findById.mockResolvedValue(mockContact)
+      const mockDate = new Date()
+      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
 
-      await retrieveActivePermissionAndContact(mockRecurringPayments)
+      await getRecurringPayments(mockDate)
 
-      expect(dynamicsLib.permissionForLicensee).toHaveBeenCalledWith(activePermission, birthDate, postcode)
+      expect(dynamicsLib.executeQuery).toHaveBeenCalledWith(findDueRecurringPayments(mockDate))
+    })
+  })
+
+  describe('processRecurringPayment', () => {
+    it('should return null when transactionRecord.payment.recurring is not present', async () => {
+      const transactionRecord = { payment: null }
+      const result = await processRecurringPayment(transactionRecord, getMockContact())
+      expect(result.recurringPayment).toBeNull()
     })
 
-    describe('processRecurringPayment', () => {
-      it('should return null when transactionRecord.payment.recurring is not present', async () => {
-        const transactionRecord = { payment: null }
-        const result = await processRecurringPayment(transactionRecord, getMockContact())
-        expect(result.recurringPayment).toBeNull()
-      })
-
-      it('should return a valid recurringPayment when transactionRecord.payment.recurring is present', async () => {
-        const transactionRecord = {
-          payment: {
-            recurring: {
-              name: 'Test Name',
-              nextDueDate: new Date('2023-11-02'),
-              cancelledDate: null,
-              cancelledReason: null,
-              endDate: new Date('2023-11-12'),
-              agreementId: '435678',
-              publicId: '1234456',
-              status: 0
-            }
-          },
-          permissions: [getMockPermission()]
-        }
-        const contact = getMockContact()
-        const result = await processRecurringPayment(transactionRecord, contact)
-        expect(result.recurringPayment).toMatchSnapshot()
-      })
+    it('should return a valid recurringPayment when transactionRecord.payment.recurring is present', async () => {
+      const transactionRecord = {
+        payment: {
+          recurring: {
+            name: 'Test Name',
+            nextDueDate: new Date('2023-11-02'),
+            cancelledDate: null,
+            cancelledReason: null,
+            endDate: new Date('2023-11-12'),
+            agreementId: '435678',
+            publicId: '1234456',
+            status: 0
+          }
+        },
+        permissions: [getMockPermission()]
+      }
+      const contact = getMockContact()
+      const result = await processRecurringPayment(transactionRecord, contact)
+      expect(result.recurringPayment).toMatchSnapshot()
     })
   })
 })
