@@ -1,4 +1,12 @@
 
+## v1.37.0-rc.2 (2023-11-09)
+
+#### :rocket: Enhancement
+* [#1815](https://github.com/DEFRA/rod-licensing/pull/1815) Update critical dependencies ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.37.0-rc.1 (2023-11-02)
 
 #### :rocket: Enhancement
