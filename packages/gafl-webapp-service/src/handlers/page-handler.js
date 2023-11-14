@@ -15,7 +15,6 @@ import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
-import crypto from 'crypto'
 
 const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
 const pagesJourneyBeginning = [LICENCE_FOR.uri, IDENTIFY.uri]
@@ -132,7 +131,6 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsSelected = analytics ? analytics[ANALYTICS.selected] : false
     pageData.acceptedTracking = analytics ? analytics[ANALYTICS.acceptTracking] : false
     pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || false
-    pageData.gtmNonce = crypto.randomBytes(16).toString('base64')
 
     pageData.displayAnalytics = displayAnalytics(request)
 

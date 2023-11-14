@@ -5,7 +5,6 @@ import { welshEnabledAndApplied } from '../../processors/page-language-helper.js
 import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
 import { AGREED, IDENTIFY, LICENCE_DETAILS, LICENCE_FOR, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
-import crypto from 'crypto'
 
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
@@ -33,16 +32,9 @@ jest.mock('../../uri.js', () => ({
   IDENTIFY: { uri: '/buy/renew/identify' }
 }))
 
-jest.mock('crypto', () => ({
-  randomBytes: jest.fn()
-}))
-
 describe('The page handler function', () => {
   beforeEach(() => {
     jest.resetAllMocks()
-    crypto.randomBytes.mockReturnValue({
-      toString: () => 'abcdefghijklmnop'
-    })
     journeyDefinition.length = 0
   })
 
@@ -181,38 +173,6 @@ describe('The page handler function', () => {
     )
 
     delete process.env.GTM_CONTAINER_ID
-  })
-
-  it('generates a gtmNonce value in the page handler', async () => {
-    const nonceVal = 'abc-123-def-45678'
-    crypto.randomBytes.mockReturnValueOnce({
-      toString: () => nonceVal
-    })
-    const { get } = pageHandler('', 'view', '/next/page')
-    const toolkit = getMockToolkit()
-
-    await get(getMockRequest(), toolkit)
-
-    expect(toolkit.view).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        gtmNonce: nonceVal
-      })
-    )
-  })
-
-  it('generates sixteen character nonce', async () => {
-    const { get } = pageHandler('', 'view', '/next/page')
-    await get(getMockRequest(), getMockToolkit())
-    expect(crypto.randomBytes).toHaveBeenCalledWith(16)
-  })
-
-  it('nonce is base64 string', async () => {
-    const toString = jest.fn(() => 'abc123')
-    crypto.randomBytes.mockReturnValueOnce({ toString })
-    const { get } = pageHandler('', 'view', '/next/page')
-    await get(getMockRequest(), getMockToolkit())
-    expect(toString).toHaveBeenCalledWith('base64')
   })
 
   it.each([
