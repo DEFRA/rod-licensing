@@ -11,6 +11,7 @@ import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
   // We need to have set the licence length, dob and start date here to determining the contact
   // messaging
@@ -27,7 +28,13 @@ export const getData = async request => {
   }
 
   return {
-    isLicenceForYou: permission.isLicenceForYou,
+    title: permission.isLicenceForYou ? mssgs.important_info_contact_title_you : mssgs.important_info_contact_title_other,
+    emailText: permission.licensee.email ? mssgs.important_info_contact_item_email + ' ' + permission.licensee.email : mssgs.important_info_contact_item_email,
+    mobileText: permission.licensee.mobilePhone ? mssgs.important_info_contact_item_txt_value + permission.licensee.mobilePhone : mssgs.important_info_contact_item_txt,
+    postHint: permission.isLicenceForYou ? mssgs.important_info_contact_post_hint_you : mssgs.important_info_contact_post_hint_other,
+    content: permission.isLicenceForYou
+      ? (permission.licenceType === 'Salmon and sea trout' ? mssgs.important_info_contact_post_salmon_you : mssgs.important_info_contact_post_not_salmon_you)
+      : (permission.licenceType === 'Salmon and sea trout' ? mssgs.important_info_contact_post_salmon_other : mssgs.important_info_contact_post_not_salmon_other),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     isJunior: hasJunior(permission),

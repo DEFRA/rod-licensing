@@ -3,7 +3,7 @@
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
 
-{% set title = mssgs.important_info_contact_title_you if data.isLicenceForYou else mssgs.important_info_contact_title_other %}
+{% set title = data.title %}
 {% set errorMsg = mssgs.important_info_contact_error_choose %}
 {% set emailError = mssgs.important_info_contact_error_email %}
 {% set mobileError = mssgs.important_info_contact_error_mobile %}
@@ -97,7 +97,7 @@
     {% set itemsArray = (itemsArray.push(
         {
             value: "email",
-            text: mssgs.important_info_contact_item_email ~ data.licensee.email,
+            text: data.emailText,
             checked: payload['how-contacted'] === 'email'
         }), itemsArray)
     %}
@@ -105,7 +105,7 @@
     {% set itemsArray = (itemsArray.push(
         {
             value: "email",
-            text: mssgs.important_info_contact_item_email,
+            text: data.emailText,
             checked: payload['how-contacted'] === 'email',
             conditional: {
                 html: emailHtml
@@ -118,7 +118,7 @@
     {% set itemsArray = (itemsArray.push(
         {
             value: "text",
-            text: mssgs.important_info_contact_item_txt_value ~ data.licensee.mobilePhone,
+            text: data.mobileText,
             checked: payload['how-contacted'] === 'text'
         }), itemsArray)
     %}
@@ -126,7 +126,7 @@
     {% set itemsArray = (itemsArray.push(
         {
             value: "text",
-            text: mssgs.important_info_contact_item_txt,
+            text: data.mobileText,
             checked: payload['how-contacted'] === 'text',
             conditional: {
                 html: textMessageHtml
@@ -137,29 +137,16 @@
 
 {% if data.isPhysical %}
     {% if data.licensee.postalFulfilment %}
-        {% if data.isLicenceForYou %}
-            {% set itemsArray = (itemsArray.push(
-                {
-                    value: "none",
-                    text: mssgs.important_info_contact_post,
-                    checked: payload['how-contacted'] === 'post',
-                    hint: {
-                        text: mssgs.important_info_contact_post_hint_you
-                    }
-                }), itemsArray)
-            %}
-        {% else %}
-            {% set itemsArray = (itemsArray.push(
-                {
-                    value: "none",
-                    text: mssgs.important_info_contact_post,
-                    checked: payload['how-contacted'] === 'post',
-                    hint: {
-                        text: mssgs.important_info_contact_post_hint_other
-                    }
-                }), itemsArray)
-            %}
-        {% endif %}
+        {% set itemsArray = (itemsArray.push(
+            {
+                value: "none",
+                text: mssgs.important_info_contact_post,
+                checked: payload['how-contacted'] === 'post',
+                hint: {
+                    text: data.postHint
+                }
+            }), itemsArray)
+        %}
     {% endif %}
 {% else %}
     {% set itemsArray = (itemsArray.push(
@@ -176,19 +163,7 @@
 
 {% block pageContent %}
     {% if data.isPhysical %}
-        {% if data.isLicenceForYou %}
-            {% if data.licensee.isSalmon %}
-                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_salmon_you }}</p>
-            {% else %}
-                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_not_salmon_you }}</p>
-            {% endif %}
-        {% else %}
-            {% if data.licensee.isSalmon %}
-                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_salmon_other }}</p>
-            {% else %}
-                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_not_salmon_other }}</p>
-            {% endif %}
-        {% endif %}
+        <p class="govuk-body-m">{{ data.content }}</p>
     {% else %}
         {% if data.isJunior %}
             <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_jr }}</p>
