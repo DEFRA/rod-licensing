@@ -52,7 +52,6 @@
     <div id="email-ro" class="govuk-body-m initially-hidden">
         {{ mssgs.important_info_contact_input_email }}</br>
         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.email }}
-            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
         </span>
     </div>
 {% endset -%}
@@ -81,7 +80,6 @@
      <div id="text-ro" class="govuk-body-m initially-hidden">
          {{ mssgs.important_info_contact_input_mobile_note }}</br>
          <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
-             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
          </span>
      </div>
 {% endset -%}
@@ -94,34 +92,74 @@
     <p class="govuk-body-m">{{ mssgs.important_info_contact_none_msg }}</p>
 {% endset -%}
 
-{% set itemsArray = [
-    {
-        value: "email",
-        text: mssgs.important_info_contact_item_email,
-        checked: payload['how-contacted'] === 'email',
-        conditional: {
-            html: emailHtml
-        }
-    },
-    {
-        value: "text",
-        text: mssgs.important_info_contact_item_txt,
-        checked: payload['how-contacted'] === 'text',
-        conditional: {
-            html: textMessageHtml
-        }
-    }
-] %}
+{% set itemsArray = [] %}
+{% if data.licensee.email %}
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "email",
+            text: mssgs.important_info_contact_item_email ~ data.licensee.email,
+            checked: payload['how-contacted'] === 'email'
+        }), itemsArray)
+    %}
+{% else %}
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "email",
+            text: mssgs.important_info_contact_item_email,
+            checked: payload['how-contacted'] === 'email',
+            conditional: {
+                html: emailHtml
+            }
+        }), itemsArray)
+    %}
+{% endif %}
+
+{% if data.licensee.mobilePhone %}
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "text",
+            text: mssgs.important_info_contact_item_txt_value ~ data.licensee.mobilePhone,
+            checked: payload['how-contacted'] === 'text'
+        }), itemsArray)
+    %}
+{% else %}
+    {% set itemsArray = (itemsArray.push(
+        {
+            value: "text",
+            text: mssgs.important_info_contact_item_txt,
+            checked: payload['how-contacted'] === 'text',
+            conditional: {
+                html: textMessageHtml
+            }
+        }), itemsArray)
+    %}
+{% endif %}
 
 {% if data.isPhysical %}
     {% if data.licensee.postalFulfilment %}
-        {% set itemsArray = (itemsArray.push(
-            {
-                value: "none",
-                text: mssgs.important_info_contact_post,
-                checked: payload['how-contacted'] === 'post'
-            }), itemsArray)
-        %}
+        {% if data.isLicenceForYou %}
+            {% set itemsArray = (itemsArray.push(
+                {
+                    value: "none",
+                    text: mssgs.important_info_contact_post,
+                    checked: payload['how-contacted'] === 'post',
+                    hint: {
+                        text: mssgs.important_info_contact_post_hint_you
+                    }
+                }), itemsArray)
+            %}
+        {% else %}
+            {% set itemsArray = (itemsArray.push(
+                {
+                    value: "none",
+                    text: mssgs.important_info_contact_post,
+                    checked: payload['how-contacted'] === 'post',
+                    hint: {
+                        text: mssgs.important_info_contact_post_hint_other
+                    }
+                }), itemsArray)
+            %}
+        {% endif %}
     {% endif %}
 {% else %}
     {% set itemsArray = (itemsArray.push(
@@ -138,8 +176,19 @@
 
 {% block pageContent %}
     {% if data.isPhysical %}
-        <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm }}</p>
-        <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm2 }}</p>
+        {% if data.isLicenceForYou %}
+            {% if data.licensee.isSalmon %}
+                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_salmon_you }}</p>
+            {% else %}
+                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_not_salmon_you }}</p>
+            {% endif %}
+        {% else %}
+            {% if data.licensee.isSalmon %}
+                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_salmon_other }}</p>
+            {% else %}
+                <p class="govuk-body-m">{{ mssgs.important_info_contact_post_not_salmon_other }}</p>
+            {% endif %}
+        {% endif %}
     {% else %}
         {% if data.isJunior %}
             <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_jr }}</p>
