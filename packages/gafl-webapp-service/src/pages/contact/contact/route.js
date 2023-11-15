@@ -27,14 +27,36 @@ export const getData = async request => {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
+  let title
+  let postHint
+  let content
+  if (permission.isLicenceForYou) {
+    title = mssgs.important_info_contact_title_you
+    postHint = mssgs.important_info_contact_post_hint_you
+    if (permission.licenceType === 'Salmon and sea trout') {
+      content = mssgs.important_info_contact_post_salmon_you
+    } else {
+      content = mssgs.important_info_contact_post_not_salmon_you
+    }
+  } else {
+    title = mssgs.important_info_contact_title_other
+    postHint = mssgs.important_info_contact_post_hint_other
+    if (permission.licenceType === 'Salmon and sea trout') {
+      content = mssgs.important_info_contact_post_salmon_other
+    } else {
+      content = mssgs.important_info_contact_post_not_salmon_other
+    }
+  }
+
+  const emailValue = mssgs.important_info_contact_item_email + ' ' + permission.licensee.email
+  const mobileValue = mssgs.important_info_contact_item_txt_value + permission.licensee.mobilePhone
+
   return {
-    title: permission.isLicenceForYou ? mssgs.important_info_contact_title_you : mssgs.important_info_contact_title_other,
-    emailText: permission.licensee.email ? mssgs.important_info_contact_item_email + ' ' + permission.licensee.email : mssgs.important_info_contact_item_email,
-    mobileText: permission.licensee.mobilePhone ? mssgs.important_info_contact_item_txt_value + permission.licensee.mobilePhone : mssgs.important_info_contact_item_txt,
-    postHint: permission.isLicenceForYou ? mssgs.important_info_contact_post_hint_you : mssgs.important_info_contact_post_hint_other,
-    content: permission.isLicenceForYou
-      ? (permission.licenceType === 'Salmon and sea trout' ? mssgs.important_info_contact_post_salmon_you : mssgs.important_info_contact_post_not_salmon_you)
-      : (permission.licenceType === 'Salmon and sea trout' ? mssgs.important_info_contact_post_salmon_other : mssgs.important_info_contact_post_not_salmon_other),
+    title,
+    postHint,
+    content,
+    emailText: permission.licensee.email ? emailValue : mssgs.important_info_contact_item_email,
+    mobileText: permission.licensee.mobilePhone ? mobileValue : mssgs.important_info_contact_item_txt,
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     isJunior: hasJunior(permission),
