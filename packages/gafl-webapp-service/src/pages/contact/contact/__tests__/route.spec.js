@@ -46,6 +46,7 @@ describe('name > route', () => {
     important_info_contact_title_you: 'You title',
     important_info_contact_title_other: 'Other title',
     important_info_contact_item_email: 'Email',
+    important_info_contact_item_email_value: 'Email ',
     important_info_contact_item_txt_value: 'Text to ',
     important_info_contact_item_txt: 'Text',
     important_info_contact_post_hint_you: 'Post hint you',

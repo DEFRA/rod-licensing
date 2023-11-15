@@ -48,7 +48,7 @@ export const getData = async request => {
     }
   }
 
-  const emailValue = mssgs.important_info_contact_item_email + ' ' + permission.licensee.email
+  const emailValue = mssgs.important_info_contact_item_email_value + permission.licensee.email
   const mobileValue = mssgs.important_info_contact_item_txt_value + permission.licensee.mobilePhone
 
   return {
