@@ -3,6 +3,7 @@ import { Contact, executeQuery, findById, findDueRecurringPayments, Permission, 
 export const getRecurringPayments = async date => {
   const recurringPayments = []
   const dueRecurringPayments = await executeQuery(findDueRecurringPayments(date))
+  // REMOVE
   for (const rp of dueRecurringPayments) {
     rp.entity.contactId = await findById(Contact, rp.entity.contactId)
     rp.entity.activePermission = await findById(Permission, rp.entity.activePermission)

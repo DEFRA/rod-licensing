@@ -8,6 +8,7 @@ import { PredefinedQuery } from './predefined-query.js'
  * @returns {PredefinedQuery}
  */
 export const findDueRecurringPayments = date => {
+  // const { contact, permission } = RecurringPayment.definition.relationships
   let filter = ''
   const dueDates = []
   for (let i = 0; i <= 10; i += 2) {
@@ -33,5 +34,6 @@ export const findDueRecurringPayments = date => {
   return new PredefinedQuery({
     root: RecurringPayment,
     filter: filter
+    // expand: [contact, permission]
   })
 }
