@@ -16,7 +16,10 @@ export const getData = async request => {
     throw new GetDataRedirect(CONTACT.uri)
   }
 
-  return { youOrOther: youOrOther(permission) }
+  return {
+    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true',
+    youOrOther: youOrOther(permission)
+  }
 }
 
 const validator = Joi.object({

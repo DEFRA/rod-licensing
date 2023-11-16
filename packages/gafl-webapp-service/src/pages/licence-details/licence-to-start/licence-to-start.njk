@@ -2,7 +2,6 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 {% from "date-input/macro.njk" import govukDateInput %}
-{% from "notification-banner.njk" import notificationBanner %}
 {% set title = mssgs.licence_start_title_you if data.isLicenceForYou else mssgs.licence_start_title_other %}
 
 {%
@@ -58,12 +57,6 @@
       }
     }) }}
 {% endset -%}
-
-{% block notificationContent %}
-    {% if data.SHOW_NOTIFICATION_BANNER %}
-        {{ notificationBanner(data.uri.newPrices, mssgs) }}
-    {% endif %}
-{% endblock %}
 
 {% block pageContent %}
 

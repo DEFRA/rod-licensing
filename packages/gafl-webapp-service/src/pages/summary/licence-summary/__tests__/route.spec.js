@@ -1,6 +1,6 @@
 import { getData } from '../route'
 import { LICENCE_SUMMARY_SEEN } from '../../../../constants.js'
-import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION, NEW_PRICES } from '../../../../uri.js'
+import { DATE_OF_BIRTH, LICENCE_LENGTH, LICENCE_TO_START, LICENCE_TYPE, NAME, NEW_TRANSACTION } from '../../../../uri.js'
 import findPermit from '../../../../processors/find-permit.js'
 import hashPermission from '../../../../processors/hash-permission.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
@@ -302,10 +302,10 @@ describe('licence-summary > route', () => {
       expect(transactionCacheSet).not.toHaveBeenCalled()
     })
 
-    it.each([[NEW_TRANSACTION.uri], [NEW_PRICES.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
+    it('addLanguageCodeToUri is called with request and NEW_TRANSACTION.uri', async uri => {
       const mockRequest = getMockRequest()
       await getData(mockRequest)
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
     })
 
     it('licenceTypeDisplay is called with the permission and i18n label catalog', async () => {
@@ -321,18 +321,6 @@ describe('licence-summary > route', () => {
       await getData(mockRequest)
 
       expect(licenceTypeDisplay).toHaveBeenCalledWith(mockPermission, catalog)
-    })
-
-    it.each([
-      ['true', true],
-      ['false', false],
-      [undefined, false]
-    ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
-      process.env.SHOW_NOTIFICATION_BANNER = notification
-      const mockRequest = getMockRequest()
-      const data = await getData(mockRequest)
-
-      expect(data.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
     })
   })
 
