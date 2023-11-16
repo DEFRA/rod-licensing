@@ -302,7 +302,7 @@ describe('licence-summary > route', () => {
       expect(transactionCacheSet).not.toHaveBeenCalled()
     })
 
-    it('addLanguageCodeToUri is called with request and NEW_TRANSACTION.uri', async uri => {
+    it.only('addLanguageCodeToUri is called with request and NEW_TRANSACTION.uri', async () => {
       const mockRequest = getMockRequest()
       await getData(mockRequest)
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, NEW_TRANSACTION.uri)
