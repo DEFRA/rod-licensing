@@ -17,7 +17,7 @@ export const getData = async request => {
   }
 
   return {
-    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true',
+    showNotificationBanner: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true',
     youOrOther: youOrOther(permission)
   }
 }

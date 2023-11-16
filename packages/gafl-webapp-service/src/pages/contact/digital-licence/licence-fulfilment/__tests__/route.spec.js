@@ -43,15 +43,15 @@ describe('licence-fulfilment > route', () => {
     })
 
     it.each([
-      ['true', true],
-      ['false', false],
-      [undefined, false]
-    ])('SHOW_NOTIFICATION_BANNER is set to value of process.env.SHOW_NOTIFICATION_BANNER', async (notification, expectedResult) => {
+      [true, 'true'],
+      [false, 'false'],
+      [false, undefined]
+    ])('showNotificationBanner is %s when process.env.SHOW_NOTIFICATION_BANNER is %s', async (expectedResult, notification) => {
       process.env.SHOW_NOTIFICATION_BANNER = notification
       const mockRequest = getMockRequest()
       const result = await getData(mockRequest)
 
-      expect(result.SHOW_NOTIFICATION_BANNER).toEqual(expectedResult)
+      expect(result.showNotificationBanner).toEqual(expectedResult)
     })
   })
 })
