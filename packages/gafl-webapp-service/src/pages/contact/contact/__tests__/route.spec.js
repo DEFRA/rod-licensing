@@ -69,7 +69,7 @@ describe('name > route', () => {
     it.each([
       ['test@email.com', 'Email test@email.com'],
       [null, 'Email']
-    ])('emailText has correct value depedning on if permission has an email', async (email, expected) => {
+    ])('emailText has correct value depending on if permission has an email', async (email, expected) => {
       const result = await getData(getMockRequest({ email }))
       expect(result.emailText).toBe(expected)
     })
@@ -77,7 +77,7 @@ describe('name > route', () => {
     it.each([
       ['07123456789', 'Text to 07123456789'],
       [null, 'Text']
-    ])('mobileText has correct value depedning on if permission has a phone number', async (mobilePhone, expected) => {
+    ])('mobileText has correct value depending on if permission has a phone number', async (mobilePhone, expected) => {
       const result = await getData(getMockRequest({ mobilePhone }))
       expect(result.mobileText).toBe(expected)
     })

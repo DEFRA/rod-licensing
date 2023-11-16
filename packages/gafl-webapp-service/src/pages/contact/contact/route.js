@@ -27,42 +27,33 @@ export const getData = async request => {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
-  let title
-  let postHint
-  let content
-  if (permission.isLicenceForYou) {
-    title = mssgs.important_info_contact_title_you
-    postHint = mssgs.important_info_contact_post_hint_you
-    if (permission.licenceType === 'Salmon and sea trout') {
-      content = mssgs.important_info_contact_post_salmon_you
-    } else {
-      content = mssgs.important_info_contact_post_not_salmon_you
-    }
-  } else {
-    title = mssgs.important_info_contact_title_other
-    postHint = mssgs.important_info_contact_post_hint_other
-    if (permission.licenceType === 'Salmon and sea trout') {
-      content = mssgs.important_info_contact_post_salmon_other
-    } else {
-      content = mssgs.important_info_contact_post_not_salmon_other
-    }
-  }
-
-  const emailValue = mssgs.important_info_contact_item_email_value + permission.licensee.email
-  const mobileValue = mssgs.important_info_contact_item_txt_value + permission.licensee.mobilePhone
-
   return {
-    title,
-    postHint,
-    content,
-    emailText: permission.licensee.email ? emailValue : mssgs.important_info_contact_item_email,
-    mobileText: permission.licensee.mobilePhone ? mobileValue : mssgs.important_info_contact_item_txt,
+    title: getTitle(permission, mssgs),
+    postHint: getPostHint(permission, mssgs),
+    content: getContent(permission, mssgs),
+    emailText: getEmailText(permission, mssgs),
+    mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     isJunior: hasJunior(permission),
     howContacted: HOW_CONTACTED
   }
 }
+
+const getTitle = (permission, messages) => permission.isLicenceForYou ? messages.important_info_contact_title_you : messages.important_info_contact_title_other
+
+const getPostHint = (permission, messages) => permission.isLicenceForYou ? messages.important_info_contact_post_hint_you : messages.important_info_contact_post_hint_other
+
+const getContent = (permission, messages) => {
+  if (permission.licenceType === 'Salmon and sea trout') {
+    return permission.isLicenceForYou ? messages.important_info_contact_post_salmon_you : messages.important_info_contact_post_salmon_other
+  }
+  return permission.isLicenceForYou ? messages.important_info_contact_post_not_salmon_you : messages.important_info_contact_post_not_salmon_other
+}
+
+const getMobileText = (permission, messages) => permission.licensee.mobilePhone ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}` : messages.important_info_contact_item_txt
+
+const getEmailText = (permission, messages) => permission.licensee.email ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}` : messages.important_info_contact_item_email
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),
