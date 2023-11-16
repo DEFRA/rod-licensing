@@ -95,10 +95,13 @@ describe('name > route', () => {
       [true, 'Trout and coarse', 'Not salmon you'],
       [false, 'Salmon and sea trout', 'Salmon other'],
       [false, 'Trout and coarse', 'Not salmon other']
-    ])('content has correct value depending on isLicenceForYou is %s and licenceType is %s', async (isLicenceForYou, licenceType, expected) => {
-      const result = await getData(getMockRequest({ isLicenceForYou, licenceType }))
-      expect(result.content).toBe(expected)
-    })
+    ])(
+      'content has correct value depending on isLicenceForYou is %s and licenceType is %s',
+      async (isLicenceForYou, licenceType, expected) => {
+        const result = await getData(getMockRequest({ isLicenceForYou, licenceType }))
+        expect(result.content).toBe(expected)
+      }
+    )
 
     it.each([
       [true, true],
