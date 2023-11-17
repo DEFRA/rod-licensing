@@ -58,7 +58,7 @@ jest.mock('../../contacts.service.js', () => ({
 }))
 
 jest.mock('../../recurring-payments.service.js', () => ({
-  ...jest.requireActual('../../recurring-payments.service.js')
+  processRecurringPayment: () => ({})
 }))
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
