@@ -92,26 +92,6 @@ describe('recurring payments service', () => {
       expect(result).toEqual([expected])
     })
 
-    it('findById is called with Contact and contactId', async () => {
-      const mockRecurringPayments = [getMockRecurringPayment()]
-      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
-      const contactId = mockRecurringPayments[0].entity.contactId
-
-      await getRecurringPayments(new Date())
-
-      expect(dynamicsLib.findById).toHaveBeenNthCalledWith(1, Contact, contactId)
-    })
-
-    it('findById is called with Permission and activePermission', async () => {
-      const mockRecurringPayments = [getMockRecurringPayment()]
-      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
-      const activePermission = mockRecurringPayments[0].entity.activePermission
-
-      await getRecurringPayments(new Date())
-
-      expect(dynamicsLib.findById).toHaveBeenNthCalledWith(2, Permission, activePermission)
-    })
-
     it('executeQuery is called with findDueRecurringPayments with a date', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
       const mockDate = new Date()

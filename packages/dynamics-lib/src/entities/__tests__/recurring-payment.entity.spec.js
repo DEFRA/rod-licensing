@@ -95,8 +95,8 @@ describe('recurring payment entity', () => {
           statecode: 1,
           _defra_activepermission_value: 'a5b24adf-2e83-ea11-a811-000d3a649213',
           _defra_contact_value: 'b3d33cln-2e83-ea11-a811-000d3a649213',
-          'defra_contact@odata.bind': `$${contact.uniqueContentId}`,
-          'defra_permission@odata.bind': `$${permission.uniqueContentId}`
+          'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
+          'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
         })
       )
     })
@@ -145,8 +145,8 @@ describe('recurring payment entity', () => {
           statecode: 1,
           _defra_activepermission_value: 'a5b24adf-2e83-ea11-a811-000d3a649213',
           _defra_contact_value: 'b3d33cln-2e83-ea11-a811-000d3a649213',
-          'defra_contact@odata.bind': `$${contact.uniqueContentId}`,
-          'defra_permission@odata.bind': `$${permission.uniqueContentId}`
+          'defra_Contact@odata.bind': `$${contact.uniqueContentId}`,
+          'defra_ActivePermission@odata.bind': `$${permission.uniqueContentId}`
         })
       )
     })
