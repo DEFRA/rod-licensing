@@ -1,4 +1,4 @@
-import { Contact, findDueRecurringPayments, Permission } from '@defra-fish/dynamics-lib'
+import { findDueRecurringPayments } from '@defra-fish/dynamics-lib'
 import { getRecurringPayments, processRecurringPayment } from '../recurring-payments.service.js'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
@@ -11,17 +11,21 @@ jest.mock('@defra-fish/dynamics-lib', () => ({
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
 
 const getMockRecurringPayment = () => ({
-  entity: {
-    name: 'Test Name',
-    nextDueDate: '2019-12-14T00:00:00Z',
-    cancelledDate: null,
-    cancelledReason: null,
-    endDate: '2019-12-15T00:00:00Z',
-    agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
-    publicId: '649-213',
-    status: 1,
-    contactId: Math.random().toString(36),
-    activePermission: Math.random().toString(36)
+  name: 'Test Name',
+  nextDueDate: '2019-12-14T00:00:00Z',
+  cancelledDate: null,
+  cancelledReason: null,
+  endDate: '2019-12-15T00:00:00Z',
+  agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
+  publicId: '649-213',
+  status: 1,
+  expanded: {
+    contact: {
+      entity: getMockContact()
+    },
+    activePermission: {
+      entity: getMockPermission()
+    }
   }
 })
 
@@ -34,8 +38,10 @@ const getMockRPContactPermission = (contact, permission) => ({
   agreementId: 'c9267c6e-573d-488b-99ab-ea18431fc472',
   publicId: '649-213',
   status: 1,
-  contactId: contact,
-  activePermission: permission
+  expanded: {
+    contact,
+    activePermission: permission
+  }
 })
 
 const getMockContact = () => ({
@@ -77,14 +83,12 @@ const getMockPermission = () => ({
 describe('recurring payments service', () => {
   beforeEach(jest.clearAllMocks)
   describe('getRecurringPayments', () => {
-    it('should equal result of findDueRecurringPayments', async () => {
+    it('should equal result of findDueRecurringPayments query', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
-      const mockContact = getMockContact()
-      const mockPermission = getMockPermission()
+      const mockContact = mockRecurringPayments[0].expanded.contact
+      const mockPermission = mockRecurringPayments[0].expanded.activePermission
 
       dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
-      dynamicsLib.findById.mockResolvedValueOnce(mockContact)
-      dynamicsLib.findById.mockResolvedValueOnce(mockPermission)
 
       const result = await getRecurringPayments(new Date())
       const expected = getMockRPContactPermission(mockContact, mockPermission)
