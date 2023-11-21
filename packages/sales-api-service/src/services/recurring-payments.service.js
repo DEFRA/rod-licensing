@@ -1,4 +1,4 @@
-import { Contact, executeQuery, findById, findDueRecurringPayments, Permission, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
 
 export const getRecurringPayments = async date => {
   return executeQuery(findDueRecurringPayments(date))
