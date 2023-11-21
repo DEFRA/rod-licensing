@@ -33,8 +33,11 @@ describe('update transaction', () => {
   })
 
   it('debug should be called setting the status to agreed', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'false'
-    await updateTransaction(getSampleRequest({}))
+    process.env.SHOW_RECURRING_PAYMENTS = 'true'
+    const permission = {
+      licenceLength: '8D'
+    }
+    await updateTransaction(getSampleRequest({ permission }))
 
     expect(debug).toHaveBeenCalledWith('Setting status to agreed')
   })
@@ -47,15 +50,5 @@ describe('update transaction', () => {
     await updateTransaction(getSampleRequest({ permission }))
 
     expect(debug).toHaveBeenCalledWith(('Recurring payment valid option'))
-  })
-
-  it('debug should not be called when SHOW_RECURRING_PAYMENTS is true but licenceLength is not 12M', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'true'
-    const permission = {
-      licenceLength: '8D'
-    }
-    await updateTransaction(getSampleRequest({ permission }))
-
-    expect(debug).not.toHaveBeenCalledWith()
   })
 })
