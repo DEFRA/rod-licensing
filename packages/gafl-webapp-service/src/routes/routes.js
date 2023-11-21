@@ -37,6 +37,8 @@ import telesalesRoutes from './telesales-routes.js'
 import errorRoutes from './error-routes.js'
 import errorTestRoutes from './error-test-routes.js'
 
+import choosePayment from '../pages/recurring-payments/choose-payment/route.js'
+
 const routes = [
   ...staticAssets,
   ...miscRoutes,
@@ -66,7 +68,8 @@ const routes = [
   ...licenceDetails,
   ...identify,
   ...invalidLink,
-  ...renewalStartDate
+  ...renewalStartDate,
+  ...choosePayment
 ]
 
 if (process.env.CHANNEL === 'telesales') {
