@@ -57,10 +57,6 @@ jest.mock('../../contacts.service.js', () => ({
   resolveContactPayload: async () => MOCK_EXISTING_CONTACT_ENTITY
 }))
 
-jest.mock('../../recurring-payments.service.js', () => ({
-  processRecurringPayment: () => ({})
-}))
-
 jest.mock('@defra-fish/business-rules-lib', () => ({
   POCL_DATA_SOURCE: 'POCL_DATA_SOURCE',
   DDE_DATA_SOURCE: 'DDE_DATA_SOURCE',
@@ -164,6 +160,7 @@ describe('transaction service', () => {
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
         expect(persist).toBeCalledWith(entityExpectations, undefined)
+
         expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.get).toBeCalledWith(
           expect.objectContaining({
             TableName: TRANSACTION_STAGING_TABLE.TableName,
