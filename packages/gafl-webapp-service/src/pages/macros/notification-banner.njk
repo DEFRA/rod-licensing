@@ -1,12 +1,12 @@
 {% from "notification-banner/macro.njk" import govukNotificationBanner %}
 
-{% macro notificationBanner(newPricesUri, mssgs) %}
+{% macro notificationBanner(mssgs) %}
     {% set bannerHtml %}
         <h3 class="govuk-notification-banner__heading">
-            {{ mssgs.price_increase_notification_heading }}
+            {{ mssgs.notification_heading }}
         </h3>
         <p class="govuk-body">
-            {{ mssgs.price_increase_notification_text }} <a class="govuk-notification-banner__link" target="_blank" href="{{ newPricesUri }}">{{ mssgs.price_increase_notification_link_text }}</a>
+            {{ mssgs.notification_text }}
         </p>
     {% endset %}
 

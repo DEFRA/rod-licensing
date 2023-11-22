@@ -1,4 +1,16 @@
 
+## v1.37.0-rc.6 (2023-11-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1825](https://github.com/DEFRA/rod-licensing/pull/1825) Add necessary domains for GA4 to Content Policy ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+
 ## v1.37.0-rc.2 (2023-11-09)
 
 #### :rocket: Enhancement

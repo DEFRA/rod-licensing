@@ -3,11 +3,10 @@ import moment from 'moment-timezone'
 
 import JoiDate from '@hapi/joi-date'
 import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { LICENCE_TO_START, NEW_PRICES } from '../../../uri.js'
+import { LICENCE_TO_START } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { dateFormats } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
-import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 const JoiX = Joi.extend(JoiDate)
 
@@ -43,11 +42,7 @@ export const getData = async request => {
     minStartDate: moment().tz(SERVICE_LOCAL_TIME).format(fmt),
     maxStartDate: moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').format(fmt),
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
-    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES,
-    SHOW_NOTIFICATION_BANNER: process.env.SHOW_NOTIFICATION_BANNER?.toLowerCase() === 'true',
-    uri: {
-      newPrices: addLanguageCodeToUri(request, NEW_PRICES.uri)
-    }
+    startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
   }
 }
 
