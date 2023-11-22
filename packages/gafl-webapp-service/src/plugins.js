@@ -57,6 +57,7 @@ const initialiseBlankiePlugin = () => ({
      */
     fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
     scriptSrc: ['self', 'unsafe-inline', scriptHash, 'www.googletagmanager.com'],
+    connectSrc: ['self', '*.google-analytics.com'],
     generateNonces: true,
     frameAncestors: 'none'
   }
