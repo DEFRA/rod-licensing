@@ -1,4 +1,13 @@
 
+## v1.37.0-rc.7 (2023-11-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1826](https://github.com/DEFRA/rod-licensing/pull/1826) Remove phone from content in text message option ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.37.0-rc.6 (2023-11-22)
 
 #### :bug: Bug Fix
