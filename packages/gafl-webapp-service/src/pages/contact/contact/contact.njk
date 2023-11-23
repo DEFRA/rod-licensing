@@ -187,29 +187,16 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if (('{{ data.licensee.email }}') && !'{{ error.email }}' ) {
-            document.getElementById("email-ro").style.display = "block"
-            document.getElementById("email-rw").style.display = "none"
-        } else {
+        if ((!'{{ data.licensee.email }}') && !'{{ error.email }}' ) {
             document.getElementById("email-ro").style.display = "none"
             document.getElementById("email-rw").style.display = "block"
         }
-        document.getElementById("change-email").addEventListener("click", function () {
-            document.getElementById("email-ro").style.display = "none"
-            document.getElementById("email-rw").style.display = "block"
-        })
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if (('{{ data.licensee.mobilePhone }}') && !'{{ error.text }}' ) {
-            document.getElementById("text-ro").style.display = "block"
-            document.getElementById("text-rw").style.display = "none"
-        } else {
+        if ((!'{{ data.licensee.mobilePhone }}') && !'{{ error.text }}' ) {
             document.getElementById("text-ro").style.display = "none"
             document.getElementById("text-rw").style.display = "block"
         }
-        document.getElementById("change-text").addEventListener("click", function () {
-            document.getElementById("text-ro").style.display = "none"
-            document.getElementById("text-rw").style.display = "block"
-        })
     })()</script>
 {% endblock %}
+
