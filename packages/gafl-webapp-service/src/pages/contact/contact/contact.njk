@@ -93,7 +93,7 @@
 {% endset -%}
 
 {% set itemsArray = [] %}
-{% if data.licensee.email %}
+{% if data.licensee.preferredMethodOfConfirmation === 'Email' %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "email",
@@ -114,7 +114,7 @@
     %}
 {% endif %}
 
-{% if data.licensee.mobilePhone %}
+{% if data.licensee.preferredMethodOfConfirmation === 'Text' %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "text",
@@ -187,13 +187,13 @@
     <script src="/public/javascript/all-min.js"></script>
     <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
     <script nonce={{nonce}}>(function () {
-        if ((!'{{ data.licensee.email }}') && !'{{ error.email }}' ) {
+        if (!'{{ data.licensee.preferredMethodOfConfirmation }}' === 'Email' && !'{{ error.email }}') {
             document.getElementById("email-ro").style.display = "none"
             document.getElementById("email-rw").style.display = "block"
         }
     })()</script>
     <script nonce={{nonce}}>(function () {
-        if ((!'{{ data.licensee.mobilePhone }}') && !'{{ error.text }}' ) {
+        if (!'{{ data.licensee.preferredMethodOfConfirmation }}' === 'Text' && !'{{ error.text }}') {
             document.getElementById("text-ro").style.display = "none"
             document.getElementById("text-rw").style.display = "block"
         }

@@ -1,5 +1,4 @@
 import { CONTACT, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
-import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from 'joi'
@@ -35,8 +34,7 @@ export const getData = async request => {
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    isJunior: hasJunior(permission),
-    howContacted: HOW_CONTACTED
+    isJunior: hasJunior(permission)
   }
 }
 
@@ -58,12 +56,12 @@ const getContent = (permission, messages) => {
 }
 
 const getMobileText = (permission, messages) =>
-  permission.licensee.mobilePhone
+  permission.licensee.preferredMethodOfConfirmation === 'Text'
     ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}`
     : messages.important_info_contact_item_txt
 
 const getEmailText = (permission, messages) =>
-  permission.licensee.email
+  permission.licensee.preferredMethodOfConfirmation === 'Email'
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 
