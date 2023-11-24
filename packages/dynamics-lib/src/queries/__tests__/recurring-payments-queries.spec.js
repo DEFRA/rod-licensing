@@ -1,5 +1,4 @@
 import { findDueRecurringPayments } from '../recurring-payment.queries.js'
-import { RecurringPayment } from '../../entities/recurring-payment.entity.js'
 
 describe('Recurring Payment Queries', () => {
   describe('findDueRecurringPayments', () => {
@@ -8,44 +7,24 @@ describe('Recurring Payment Queries', () => {
 
       const query = findDueRecurringPayments(date)
 
-      const expectedFilterParts = []
-      for (let i = 0; i <= 10; i += 2) {
-        const dueDate = new Date(date)
-        dueDate.setDate(dueDate.getDate() - i)
-
-        const startOfDay = new Date(dueDate)
-        startOfDay.setHours(0, 0, 0)
-
-        const endOfDay = new Date(dueDate)
-        endOfDay.setHours(23, 59, 59)
-
-        expectedFilterParts.push(
-          `${RecurringPayment.definition.mappings.cancelledDate.field} eq null and ${RecurringPayment.definition.defaultFilter} and ${
-            RecurringPayment.definition.mappings.nextDueDate.field
-          } ge ${startOfDay.toISOString()} and ${RecurringPayment.definition.mappings.nextDueDate.field} le ${endOfDay.toISOString()}`
-        )
-      }
-
-      const expectedFilter = expectedFilterParts.join(' or ')
-
-      const expectedSelect = [
-        'defra_recurringpaymentid',
-        'defra_name',
-        'statecode',
-        'defra_nextduedate',
-        'defra_cancelleddate',
-        'defra_cancelledreason',
-        'defra_enddate',
-        'defra_agreementid',
-        '_defra_activepermission_value',
-        '_defra_contact_value',
-        'defra_publicid'
-      ]
-
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
-        filter: expectedFilter,
-        select: expectedSelect
+        filter:
+          "Microsoft.Dynamics.CRM.On(PropertyName='defra_nextduedate', PropertyValue='Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)')",
+        select: [
+          'defra_recurringpaymentid',
+          'defra_name',
+          'statecode',
+          'defra_nextduedate',
+          'defra_cancelleddate',
+          'defra_cancelledreason',
+          'defra_enddate',
+          'defra_agreementid',
+          '_defra_activepermission_value',
+          '_defra_contact_value',
+          'defra_publicid'
+        ],
+        expand: [{ property: 'defra_Contact' }, { property: 'defra_ActivePermission' }]
       })
     })
   })
