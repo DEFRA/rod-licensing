@@ -7,7 +7,7 @@
         <dl>
             {% for k, v in load %}
                 {% if content[k].desc %}
-                    <div class="govuk-body pricing-summary-element-cost">
+                    <div class="govuk-body pricing-summary-element-cost {{content[k].desc}}">
                         <dt>
                             <span>{{content[k].desc}}</span>
                         </dt>
