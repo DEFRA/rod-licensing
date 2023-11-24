@@ -1,7 +1,9 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
-jest.mock('@defra-fish/connectors-lib')
+jest.mock('@defra-fish/connectors-lib', () => ({
+  salesApi: { getDueRecurringPayments: jest.fn() }
+}))
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
