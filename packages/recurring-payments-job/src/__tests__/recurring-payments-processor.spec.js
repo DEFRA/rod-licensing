@@ -1,7 +1,10 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
-jest.mock('@defra-fish/connectors-lib')
+// jest.mock('@defra-fish/connectors-lib')
+jest.mock('@defra-fish/connectors-lib', () => ({
+  salesApi: { getDueRecurringPayments: jest.fn() }
+}))
 
 describe('recurring-payments-processor', () => {
   beforeEach(() => {
@@ -46,10 +49,5 @@ describe('recurring-payments-processor', () => {
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', rpSymbol)
     consoleLogSpy.mockRestore()
-  })
-
-  it('finds the sky is blue', async () => {
-    const skyColour = 'blue'
-    expect(skyColour).toBe('blue')
   })
 })
