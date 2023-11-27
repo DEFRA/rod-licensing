@@ -33,10 +33,11 @@ describe('recurring-payments-processor', () => {
 
   it('get recurring payments is called when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
+    const date = new Date().toISOString().split('T')[0]
 
-    await processRecurringPayments(new Date())
+    await processRecurringPayments()
 
-    expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(expect.any(Date))
+    expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
 
   it('console log displays "Recurring Payments found: " when env is true', async () => {
