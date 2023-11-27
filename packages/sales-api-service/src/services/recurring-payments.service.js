@@ -1,8 +1,6 @@
 import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
 
-export const getRecurringPayments = async date => {
-  return executeQuery(findDueRecurringPayments(date))
-}
+export const getRecurringPayments = async date => executeQuery(findDueRecurringPayments(date))
 
 /**
  * Process a recurring payment instruction
