@@ -88,6 +88,24 @@ describe('name > route', () => {
     })
 
     it.each([
+      [false, 'Text'],
+      [true, 'Email']
+    ])('emailConfirmation is %s when preferredMethodOfConfirmation is %s', async (expected, method) => {
+      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: method, email: 'test@email.com' }
+      const result = await getData(getMockRequest({ licensee }))
+      expect(result.emailConfirmation).toBe(expected)
+    })
+
+    it.each([
+      [false, 'Email'],
+      [true, 'Text']
+    ])('mobileConfirmation is %s when preferredMethodOfConfirmation is %s', async (expected, method) => {
+      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: method, email: 'test@email.com' }
+      const result = await getData(getMockRequest({ licensee }))
+      expect(result.mobileConfirmation).toBe(expected)
+    })
+
+    it.each([
       [true, 'Post hint you'],
       [false, 'Post hint other']
     ])('postHint wording depending on whether isLicenceForYou is %s', async (isLicenceForYou, expected) => {
