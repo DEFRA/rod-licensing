@@ -32,6 +32,17 @@ describe('update transaction', () => {
     )
   })
 
+  it('should not set status to agreed when a recurring payment and 12 month licence', async () => {
+    const statusSet = jest.fn()
+    process.env.SHOW_RECURRING_PAYMENTS = 'true'
+    const permission = {
+      licenceLength: '12M'
+    }
+    await updateTransaction(getSampleRequest({ statusSet, permission }))
+
+    expect(statusSet).not.toHaveBeenCalled()
+  })
+
   it('debug should be called setting the status to agreed', async () => {
     process.env.SHOW_RECURRING_PAYMENTS = 'true'
     const permission = {

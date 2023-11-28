@@ -7,7 +7,8 @@ export default async request => {
 
   if (process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && permission.licenceLength === '12M') {
     debug('Recurring payment valid option')
+  } else {
+    debug('Setting status to agreed')
+    await request.cache().helpers.status.set({ [COMPLETION_STATUS.agreed]: true })
   }
-  debug('Setting status to agreed')
-  await request.cache().helpers.status.set({ [COMPLETION_STATUS.agreed]: true })
 }
