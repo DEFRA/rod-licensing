@@ -47,7 +47,7 @@ describe('recurring payment entity', () => {
     return RecurringPayment.fromResponse(response, optionSetData)
   }
 
-  describe('cancelled data', () => {
+  describe('mappings with cancelled rp', () => {
     it('is a recurring payment', () => {
       const recurringPayment = getRecurringPayment()
       expect(recurringPayment).toBeInstanceOf(RecurringPayment)
@@ -102,7 +102,7 @@ describe('recurring payment entity', () => {
     })
   })
 
-  describe('no cancelled data', () => {
+  describe('mappings without cancelled rp', () => {
     it('is a recurring payment', () => {
       const recurringPayment = getRecurringPayment({ defra_cancelleddate: null, defra_cancelledreason: null })
       expect(recurringPayment).toBeInstanceOf(RecurringPayment)

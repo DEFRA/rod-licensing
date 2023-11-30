@@ -24,7 +24,7 @@ describe('recurring-payments-processor', () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
 
-    await processRecurringPayments(new Date())
+    await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
     consoleLogSpy.mockRestore()
@@ -32,10 +32,11 @@ describe('recurring-payments-processor', () => {
 
   it('get recurring payments is called when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
+    const date = new Date().toISOString().split('T')[0]
 
-    await processRecurringPayments(new Date())
+    await processRecurringPayments()
 
-    expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(expect.any(Date))
+    expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
 
   it('console log displays "Recurring Payments found: " when env is true', async () => {
@@ -44,7 +45,7 @@ describe('recurring-payments-processor', () => {
     const rpSymbol = Symbol('rp')
     salesApi.getDueRecurringPayments.mockReturnValueOnce(rpSymbol)
 
-    await processRecurringPayments(new Date())
+    await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', rpSymbol)
     consoleLogSpy.mockRestore()
