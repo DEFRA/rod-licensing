@@ -6,8 +6,6 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CONTACT.page)
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
-  console.log(permission)
-
   permission.licensee = {
     preferredMethodOfNewsletter: HOW_CONTACTED.none,
     ...permission.licensee,
@@ -18,7 +16,6 @@ export default async request => {
 }
 
 const getPhysicalReminders = (licensee, payload) => {
-  console.log('HIT')
   switch (payload['how-contacted']) {
     case 'email':
       return {
