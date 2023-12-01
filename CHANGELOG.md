@@ -1,4 +1,17 @@
 
+
+
+## v1.37.0-rc.8 (2023-11-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1827](https://github.com/DEFRA/rod-licensing/pull/1827) Welsh - encourage users digital reminder ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1830](https://github.com/DEFRA/rod-licensing/pull/1830) Banner for end licence details in welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1832](https://github.com/DEFRA/rod-licensing/pull/1832) Accessibility - where send licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.37.0-rc.7 (2023-11-23)
 
 #### :rocket: Enhancement
