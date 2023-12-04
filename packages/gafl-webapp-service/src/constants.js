@@ -47,7 +47,8 @@ export const CommonResults = {
   SUMMARY: 'summary',
   OK: 'ok',
   NO: 'no',
-  YES: 'yes'
+  YES: 'yes',
+  RECURRING: 'recurring'
 }
 
 export const ShowDigitalLicencePages = {

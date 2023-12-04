@@ -1,0 +1,37 @@
+{% extends "standard-form.njk" %}
+
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = mssgs.choose_payment_title %}
+
+{% set errorMsg = mssgs.choose_payment_error %}
+
+{% set errorMap = {
+        'recurring-payment': {
+            'any.required': { ref: '#selector-payment', text: errorMsg }
+        }
+    }
+%}
+
+{% block pageContent %}
+    {{ govukRadios({
+        idPrefix: "recurring-payment",
+        name: "recurring-payment",
+        hint: { text: mssgs.choose_payment_hint },
+        items: [
+            {
+                "id": "selector-yes",
+                value: "yes",
+                text: mssgs.choose_payment_yes,
+                checked: payload['recurring-payment'] === 'yes'
+            },
+            {
+                "id": "selector-no",
+                value: "no",
+                text: mssgs.choose_payment_no,
+                checked: payload['recurring-payment'] === 'no'
+            }
+        ],
+        errorMessage: { text: errorMsg } if error['recurring-payment']
+    }) }}
+{% endblock %}

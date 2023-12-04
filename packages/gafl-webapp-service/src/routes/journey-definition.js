@@ -26,7 +26,8 @@ import {
   LICENCE_DETAILS,
   IDENTIFY,
   RENEWAL_INACTIVE,
-  RENEWAL_START_DATE
+  RENEWAL_START_DATE,
+  CHOOSE_PAYMENT
 } from '../uri.js'
 
 import { CommonResults, CONTACT_SUMMARY_SEEN, ShowDigitalLicencePages } from '../constants.js'
@@ -335,9 +336,22 @@ export default [
     next: {
       [CommonResults.OK]: {
         page: AGREED
+      },
+      [CommonResults.RECURRING]: {
+        page: CHOOSE_PAYMENT
       }
     },
     backLink: CONTACT_SUMMARY.uri
+  },
+
+  {
+    current: CHOOSE_PAYMENT,
+    next: {
+      [CommonResults.OK]: {
+        page: AGREED
+      }
+    },
+    backLink: TERMS_AND_CONDITIONS.uri
   },
 
   {
