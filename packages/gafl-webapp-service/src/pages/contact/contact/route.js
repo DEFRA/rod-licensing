@@ -1,5 +1,4 @@
 import { CONTACT, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
-import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from 'joi'
@@ -8,6 +7,7 @@ import { isPhysical } from '../../../processors/licence-type-display.js'
 import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
@@ -31,12 +31,13 @@ export const getData = async request => {
     title: getTitle(permission, mssgs),
     postHint: getPostHint(permission, mssgs),
     content: getContent(permission, mssgs),
+    emailConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email,
     emailText: getEmailText(permission, mssgs),
+    mobileConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text,
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    isJunior: hasJunior(permission),
-    howContacted: HOW_CONTACTED
+    isJunior: hasJunior(permission)
   }
 }
 
@@ -58,12 +59,12 @@ const getContent = (permission, messages) => {
 }
 
 const getMobileText = (permission, messages) =>
-  permission.licensee.mobilePhone
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
     ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}`
     : messages.important_info_contact_item_txt
 
 const getEmailText = (permission, messages) =>
-  permission.licensee.email
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 

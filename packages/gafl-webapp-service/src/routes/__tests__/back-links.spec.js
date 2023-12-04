@@ -15,7 +15,9 @@ import {
   LICENCE_FULFILMENT,
   LICENCE_CONFIRMATION_METHOD,
   CONTACT,
-  NEWSLETTER
+  NEWSLETTER,
+  CHOOSE_PAYMENT,
+  TERMS_AND_CONDITIONS
 } from '../../uri.js'
 import { LICENCE_SUMMARY_SEEN, CONTACT_SUMMARY_SEEN } from '../../constants.js'
 import { isPhysical } from '../../processors/licence-type-display.js'
@@ -181,5 +183,12 @@ describe('The newsletter page', () => {
   })
   it('has a back-link to the contact-summary page if the contact-summary is seen', () => {
     expect(n.backLink({ fromSummary: CONTACT_SUMMARY_SEEN })).toBe(CONTACT_SUMMARY.uri)
+  })
+})
+
+describe('The choose payment page', () => {
+  const n = journeyDefinition.find(n => n.current.page === CHOOSE_PAYMENT.page)
+  it('has a back-link to the terms and conditions page', () => {
+    expect(n.backLink).toBe(TERMS_AND_CONDITIONS.uri)
   })
 })

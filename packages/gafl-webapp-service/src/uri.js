@@ -58,6 +58,8 @@ export const CLIENT_ERROR = { uri: '/buy/client-error', page: 'client-error' }
 export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 export const ERROR_TESTING = { uri: '/buy/throw-error' }
 
+export const CHOOSE_PAYMENT = { uri: '/buy/choose-payment', page: 'choose-payment' }
+
 /**
  * These are informational static pages
  */

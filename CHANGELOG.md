@@ -1,5 +1,19 @@
 
 
+## v1.37.0-rc.11 (2023-12-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1834](https://github.com/DEFRA/rod-licensing/pull/1834) Accessibility focus order ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1828](https://github.com/DEFRA/rod-licensing/pull/1828) console error contact page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 
 ## v1.37.0-rc.8 (2023-11-27)
 

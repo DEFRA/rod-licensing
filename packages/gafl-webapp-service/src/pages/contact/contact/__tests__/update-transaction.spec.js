@@ -49,7 +49,9 @@ describe('contact > update-transaction', () => {
         { email, mobilePhone },
         ['someone@example.com', mobilePhone],
         [{ email }]
-      ]
+      ],
+      ['text', 'Text', 'set mobilePhone based off licensee when payload undefined', { mobilePhone }, [], [{ mobilePhone }]],
+      ['email', 'Email', 'set email based off licensee when payload undefined', { email }, [], [{ email }]]
     ])(
       'when how-contacted is %s, should set preferredMethodOfReminder to "%s" and %s',
       async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
@@ -96,7 +98,9 @@ describe('contact > update-transaction', () => {
         { email, mobilePhone },
         [null, mobilePhone],
         [{ preferredMethodOfNewsletter: 'Email', email }]
-      ]
+      ],
+      ['text', 'Text', 'set mobilePhone based off licensee when payload undefined', { mobilePhone }, [], [{ mobilePhone }]],
+      ['email', 'Email', 'set email based off licensee when payload undefined', { email }, [], [{ email }]]
     ])(
       'when how-contacted is %s, should set preferredMethodOfReminder and preferredMethodOfConfirmation to "%s" and %s',
       async (howContacted, preferredMethod, _desc, expectedLicencee = {}, pagePermissionArgs = [], transactionPermissionArgs = []) => {
