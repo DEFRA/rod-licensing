@@ -1,4 +1,13 @@
 
+## v1.37.0-rc.15 (2023-12-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1837](https://github.com/DEFRA/rod-licensing/pull/1837) Payment options screen error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.37.0-rc.14 (2023-12-04)
 
 #### :rocket: Enhancement
