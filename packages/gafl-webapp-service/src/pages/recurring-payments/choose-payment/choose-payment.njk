@@ -2,13 +2,14 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 
-{% set title = mssgs.choose_payment_title %}
+{% set title = mssgs.choose_payment_heading %}
+{% block pageTitle %}{{ mssgs.choose_payment_title }}{% endblock %}
 
 {% set errorMsg = mssgs.choose_payment_error %}
 
 {% set errorMap = {
         'recurring-payment': {
-            'any.required': { ref: '#selector-payment', text: errorMsg }
+            'any.required': { ref: '#selector-yes', text: errorMsg }
         }
     }
 %}
