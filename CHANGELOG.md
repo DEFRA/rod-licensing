@@ -1,4 +1,45 @@
 
+## v1.37.0-rc.15 (2023-12-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1837](https://github.com/DEFRA/rod-licensing/pull/1837) Payment options screen error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.37.0-rc.14 (2023-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1833](https://github.com/DEFRA/rod-licensing/pull/1833) Banner title welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.37.0-rc.13 (2023-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1824](https://github.com/DEFRA/rod-licensing/pull/1824) Recurring payments payment options ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.37.0-rc.11 (2023-12-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1834](https://github.com/DEFRA/rod-licensing/pull/1834) Accessibility focus order ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1828](https://github.com/DEFRA/rod-licensing/pull/1828) console error contact page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.37.0-rc.8 (2023-11-27)
