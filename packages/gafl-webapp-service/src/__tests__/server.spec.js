@@ -150,6 +150,28 @@ describe('The server', () => {
       expect(request.response.source.context._uri[element]).toEqual(expect.stringMatching(regexMatch))
     })
 
+    describe('logGtmConfig', () => {
+      it('should log the gtmContainerId value if it is set', async () => {
+        const expectedId = 'GTM-ABC1234'
+        process.env.GTM_CONTAINER_ID = expectedId
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+        createServer(catboxOptions)
+        await init()
+        expect(consoleLogSpy).toHaveBeenCalledWith(`gtmContainerId is set to ${expectedId}`)
+        await server.stop()
+        delete process.env.GTM_CONTAINER_ID
+      })
+
+      it('should log that gtmContainerId is not set if it is not set', async () => {
+        delete process.env.GTM_CONTAINER_ID
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+        createServer(catboxOptions)
+        await init()
+        expect(consoleLogSpy).toHaveBeenCalledWith('gtmContainerId is not set')
+        await server.stop()
+      })
+    })
+
     const getSampleRequest = (overrides = {}) => ({
       auth: {},
       method: 'get',

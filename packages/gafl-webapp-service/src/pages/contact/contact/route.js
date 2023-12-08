@@ -1,5 +1,4 @@
 import { CONTACT, LICENCE_LENGTH, DATE_OF_BIRTH, LICENCE_TO_START } from '../../../uri.js'
-import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 import pageRoute from '../../../routes/page-route.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from 'joi'
@@ -8,9 +7,11 @@ import { isPhysical } from '../../../processors/licence-type-display.js'
 import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
+import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const mssgs = request.i18n.getCatalog()
 
   // We need to have set the licence length, dob and start date here to determining the contact
   // messaging
@@ -27,13 +28,45 @@ export const getData = async request => {
   }
 
   return {
-    isLicenceForYou: permission.isLicenceForYou,
+    title: getTitle(permission, mssgs),
+    postHint: getPostHint(permission, mssgs),
+    content: getContent(permission, mssgs),
+    emailConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email,
+    emailText: getEmailText(permission, mssgs),
+    mobileConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text,
+    mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    isJunior: hasJunior(permission),
-    howContacted: HOW_CONTACTED
+    isJunior: hasJunior(permission)
   }
 }
+
+const getTitle = (permission, messages) =>
+  permission.isLicenceForYou
+    ? messages.important_info_contact_title_you
+    : messages.important_info_contact_title_other
+
+const getPostHint = (permission, messages) =>
+  permission.isLicenceForYou
+    ? messages.important_info_contact_post_hint_you
+    : messages.important_info_contact_post_hint_other
+
+const getContent = (permission, messages) => {
+  if (permission.licenceType === 'Salmon and sea trout') {
+    return permission.isLicenceForYou ? messages.important_info_contact_post_salmon_you : messages.important_info_contact_post_salmon_other
+  }
+  return permission.isLicenceForYou ? messages.important_info_contact_post_not_salmon_you : messages.important_info_contact_post_not_salmon_other
+}
+
+const getMobileText = (permission, messages) =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
+    ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}`
+    : messages.important_info_contact_item_txt
+
+const getEmailText = (permission, messages) =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email
+    ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
+    : messages.important_info_contact_item_email
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),

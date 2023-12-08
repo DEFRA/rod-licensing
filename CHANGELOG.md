@@ -1,4 +1,97 @@
 
+## v1.37.0-rc.15 (2023-12-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1837](https://github.com/DEFRA/rod-licensing/pull/1837) Payment options screen error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.37.0-rc.14 (2023-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1833](https://github.com/DEFRA/rod-licensing/pull/1833) Banner title welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.37.0-rc.13 (2023-12-04)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1824](https://github.com/DEFRA/rod-licensing/pull/1824) Recurring payments payment options ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.37.0-rc.11 (2023-12-01)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1834](https://github.com/DEFRA/rod-licensing/pull/1834) Accessibility focus order ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1828](https://github.com/DEFRA/rod-licensing/pull/1828) console error contact page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.37.0-rc.8 (2023-11-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1827](https://github.com/DEFRA/rod-licensing/pull/1827) Welsh - encourage users digital reminder ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1830](https://github.com/DEFRA/rod-licensing/pull/1830) Banner for end licence details in welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1832](https://github.com/DEFRA/rod-licensing/pull/1832) Accessibility - where send licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.37.0-rc.7 (2023-11-23)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1826](https://github.com/DEFRA/rod-licensing/pull/1826) Remove phone from content in text message option ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.37.0-rc.6 (2023-11-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1825](https://github.com/DEFRA/rod-licensing/pull/1825) Add necessary domains for GA4 to Content Policy ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+
+## v1.37.0-rc.2 (2023-11-09)
+
+#### :rocket: Enhancement
+* [#1815](https://github.com/DEFRA/rod-licensing/pull/1815) Update critical dependencies ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.37.0-rc.1 (2023-11-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1811](https://github.com/DEFRA/rod-licensing/pull/1811) Insert Google Tag Manager snippet in template ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
 
 ## v1.36.0-rc.11 (2023-10-06)
 
