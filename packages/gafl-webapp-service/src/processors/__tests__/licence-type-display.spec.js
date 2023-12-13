@@ -7,8 +7,8 @@ const getCatalog = () => ({
   licence_type_radio_salmon: 'Salmon and sea trout',
   licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
   licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods',
-  recurring_payment_set_up_bulletpoint_1_troat_2_rod: ' trout and coarse (2 rod)',
-  recurring_payment_set_up_bulletpoint_1_troat_3_rod: ' trout and coarse (3 rod)',
+  recurring_payment_set_up_bulletpoint_1_trout_2_rod: ' trout and coarse (2 rod)',
+  recurring_payment_set_up_bulletpoint_1_trout_3_rod: ' trout and coarse (3 rod)',
   recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout'
 })
 
