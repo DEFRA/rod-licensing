@@ -5,6 +5,7 @@ import { nextPage } from '../../../routes/next-page.js'
 import { recurringLicenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { recurringPayReminderDisplay } from '../../../processors/recurring-pay-reminder-display.js'
+import { displayPermissionPrice } from '../../../processors/price-display.js'
 
 export const validator = Joi.object({
   agree: Joi.string().valid('yes').required()
@@ -14,7 +15,7 @@ export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   return {
-    cost: permission.permit.cost,
+    cost: displayPermissionPrice(permission, request.i18n.getCatalog()),
     type: recurringLicenceTypeDisplay(permission, request.i18n.getCatalog()),
     reminder: recurringPayReminderDisplay(permission, request.i18n.getCatalog()),
     uri: {

@@ -74,5 +74,5 @@ export default {
   [PAYMENT_CANCELLED.page]: paymentCancelled,
   [RENEWAL_INACTIVE.page]: renewalInactive,
   [CHOOSE_PAYMENT.page]: choosePayment,
-  [SET_UP_PAYMENT]: setupRecurring
+  [SET_UP_PAYMENT.page]: setupRecurring
 }

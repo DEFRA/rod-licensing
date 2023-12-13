@@ -5,13 +5,15 @@ import { recurringLicenceTypeDisplay } from '../../../../processors/licence-type
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { CHOOSE_PAYMENT, SET_UP_PAYMENT, TERMS_AND_CONDITIONS } from '../../../../uri.js'
 import { recurringPayReminderDisplay } from '../../../../processors/recurring-pay-reminder-display.js'
+import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
 jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/uri-helper.js')
 jest.mock('../../../../processors/recurring-pay-reminder-display.js')
+jest.mock('../../../../processors/price-display.js')
 
-const getSampleRequest = (permission = getMockPermission(), catalog = {}) => ({
+const getSampleRequest = (permission = {}, catalog = {}) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -22,10 +24,6 @@ const getSampleRequest = (permission = getMockPermission(), catalog = {}) => ({
   i18n: {
     getCatalog: () => catalog
   }
-})
-
-const getMockPermission = (cost) => ({
-  permit: { cost }
 })
 
 describe('route', () => {
@@ -48,13 +46,23 @@ describe('route', () => {
   })
 
   describe('getData', () => {
-    it.each([[14], [6], [7]
-    ])('cost equals permission.permit.cost', async (cost) => {
-      const request = getSampleRequest(getMockPermission(cost))
+    it('cost equals return of displayPermissionPrice', async () => {
+      const returnValue = Symbol('return value')
+      displayPermissionPrice.mockReturnValueOnce(returnValue)
 
-      const result = await getData(request)
+      const result = await getData(getSampleRequest())
 
-      expect(result.cost).toBe(cost)
+      expect(result.cost).toEqual(returnValue)
+    })
+
+    it('displayPermissionPrice is called with permission and getCatalog', async () => {
+      const catalog = Symbol('mock catalog')
+      const permission = Symbol('mock permission')
+      const request = getSampleRequest(permission, catalog)
+
+      await getData(request)
+
+      expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
     })
 
     it('type equals return of recurringLicenceTypeDisplay', async () => {
@@ -68,7 +76,7 @@ describe('route', () => {
 
     it('recurringLicenceTypeDisplay is called with permission and getCatalog', async () => {
       const catalog = Symbol('mock catalog')
-      const permission = getMockPermission()
+      const permission = Symbol('mock permission')
       const request = getSampleRequest(permission, catalog)
 
       await getData(request)
@@ -87,7 +95,7 @@ describe('route', () => {
 
     it('recurringPayReminderDisplay is called with permission and getCatalog', async () => {
       const catalog = Symbol('mock catalog')
-      const permission = getMockPermission()
+      const permission = Symbol('mock permission')
       const request = getSampleRequest(permission, catalog)
 
       await getData(request)

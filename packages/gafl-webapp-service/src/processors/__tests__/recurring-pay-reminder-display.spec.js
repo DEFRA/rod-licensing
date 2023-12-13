@@ -7,7 +7,9 @@ const getCatalog = () => ({
 })
 
 const getPermission = (reminder) => ({
-  preferredMethodOfReminder: reminder
+  licensee: {
+    preferredMethodOfReminder: reminder
+  }
 })
 
 describe('recurringPayReminderDisplay', () => {
