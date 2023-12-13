@@ -121,8 +121,8 @@ describe('preparePayment', () => {
     })
 
     it('when there are multiple permissions', () => {
-      const additionalPermission = [{ licensee: { firstName: 'Test' } }]
-      const transaction = createTransaction({ additionalPermission })
+      const additionalPermissions = [{ licensee: { firstName: 'Test' } }]
+      const transaction = createTransaction({ additionalPermissions })
       const result = preparePayment(createRequest(), transaction)
       expect(result.description).toBe('Multiple permits')
     })
