@@ -37,3 +37,14 @@ export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
 }
 
 export const isPhysical = permission => permission?.permit?.isForFulfilment
+
+export const recurringLicenceTypeDisplay = (permission, mssgs) => {
+  if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
+    if (permission.numberOfRods === '2') {
+      return mssgs.recurring_payment_set_up_bulletpoint_1_troat_2_rod
+    } else {
+      return mssgs.recurring_payment_set_up_bulletpoint_1_troat_3_rod
+    }
+  }
+  return mssgs.recurring_payment_set_up_bulletpoint_1_salmon
+}

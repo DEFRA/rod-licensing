@@ -1,12 +1,15 @@
 import { hasJunior, hasSenior } from '../concession-helper.js'
-import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical } from '../licence-type-display.js'
+import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringLicenceTypeDisplay } from '../licence-type-display.js'
 
 const getCatalog = () => ({
   over_66: ' (over_66)',
   age_junior: 'Junior, ',
   licence_type_radio_salmon: 'Salmon and sea trout',
   licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
-  licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+  licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods',
+  recurring_payment_set_up_bulletpoint_1_troat_2_rod: ' trout and coarse (2 rod)',
+  recurring_payment_set_up_bulletpoint_1_troat_3_rod: ' trout and coarse (3 rod)',
+  recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout'
 })
 
 jest.mock('../concession-helper', () => ({
@@ -105,5 +108,17 @@ describe('isPhysical', () => {
     const permission = getPermission()
     const result = isPhysical(permission)
     expect(result).toEqual(undefined)
+  })
+})
+
+describe('recurringLicenceTypeDisplay', () => {
+  it.each([
+    ['Salmon and sea trout', null, ' salmon and sea trout'],
+    ['Trout and coarse', '2', ' trout and coarse (2 rod)'],
+    ['Trout and coarse', '3', ' trout and coarse (3 rod)']
+  ])('returns correct licence type', (licenceType, numberOfRods, expected) => {
+    const permission = getPermission({ licenceType, numberOfRods })
+    const result = recurringLicenceTypeDisplay(permission, getCatalog())
+    expect(result).toEqual(expected)
   })
 })

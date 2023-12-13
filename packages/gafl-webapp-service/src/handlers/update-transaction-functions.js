@@ -27,6 +27,7 @@ import termsAndConditions from '../pages/terms-and-conditions/update-transaction
 import renewalInactive from '../pages/renewals/renewal-inactive/update-transaction.js'
 
 import choosePayment from '../pages/recurring-payments/choose-payment/update-transaction.js'
+import setupRecurring from '../pages/recurring-payments/set-up-payment/update-transaction.js'
 
 import {
   DATE_OF_BIRTH,
@@ -48,7 +49,8 @@ import {
   PAYMENT_CANCELLED,
   PAYMENT_FAILED,
   RENEWAL_INACTIVE,
-  CHOOSE_PAYMENT
+  CHOOSE_PAYMENT,
+  SET_UP_PAYMENT
 } from '../uri.js'
 
 export default {
@@ -71,5 +73,6 @@ export default {
   [PAYMENT_FAILED.page]: paymentFailed,
   [PAYMENT_CANCELLED.page]: paymentCancelled,
   [RENEWAL_INACTIVE.page]: renewalInactive,
-  [CHOOSE_PAYMENT.page]: choosePayment
+  [CHOOSE_PAYMENT.page]: choosePayment,
+  [SET_UP_PAYMENT]: setupRecurring
 }

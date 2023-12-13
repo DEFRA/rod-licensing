@@ -1,0 +1,74 @@
+{% extends "standard-form.njk" %}
+
+{% from "button/macro.njk" import govukButton %}
+{% from "checkboxes/macro.njk" import govukCheckboxes %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "radios/macro.njk" import govukRadios %}
+
+{% set title = mssgs.recurring_payment_set_up_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% set errorMsg = mssgs.recurring_payment_set_up_error %}
+
+{% set errorMap = {
+        'agree': {
+            'any.required': { ref: '#agree', text: errorMsg }
+        }
+    }
+%}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+
+        <form method="post">
+
+            {% call govukFieldset({
+              legend: {
+                text: title,
+                classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                isPageHeading: true
+              }
+            }) %}
+
+            <div class="govuk-!-margin-bottom-9">
+                <p class="govuk-body">{{ mssgs.recurring_payment_set_up_body }}</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>{{ mssgs.recurring_payment_set_up_bulletpoint_1_1 }}{{ data.cost }}{{ mssgs.recurring_payment_set_up_bulletpoint_1_2 }} {{ data.type }} {{ mssgs.recurring_payment_set_up_bulletpoint_1_3 }}</li>
+                    <li>{{ mssgs.recurring_payment_set_up_bulletpoint_2 }}</li>
+                    <li>{{ mssgs.recurring_payment_set_up_bulletpoint_3 }}</li>
+                    <li>{{ data.reminder }}</li>
+                    <li>{{ mssgs.recurring_payment_set_up_bulletpoint_5 }}<a class="govuk-link" href="{{ data.uri.terms }}" rel="noreferrer noopener" target="_blank">{{ mssgs.recurring_payment_set_up_bulletpoint_5_link }}</a></li>
+                </ul>
+            </div>
+
+                {{ govukCheckboxes({
+                  idPrefix: "agree",
+                  name: "agree",
+                  errorMessage: { text: mssgs.recurring_payment_set_up_error } if error,
+                  items: [
+                    {
+                      value: "yes",
+                      text: mssgs.recurring_payment_set_up
+                    }
+                  ]
+                }) }}
+
+                {{ govukButton({
+                    attributes: { id: 'continue' },
+                    preventDoubleClick: true,
+                    name: "continue",
+                    text: mssgs.recurring_payment_set_up_button,
+                    classes: "govuk-!-margin-top-5"
+                }) }}
+            
+            <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.single }}">{{ mssgs.recurring_payment_set_up_back }}</a></p>
+
+            {% endcall %}
+            {{ csrf() }}
+        </form>
+    </div>
+</div>
+{% endblock %}
