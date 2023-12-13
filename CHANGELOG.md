@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.1 (2023-12-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1836](https://github.com/DEFRA/rod-licensing/pull/1836) Welsh - Payment Options ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.38.0-rc.0 (2023-12-13)
 
 #### :rocket: Enhancement
