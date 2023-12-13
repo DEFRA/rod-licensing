@@ -7,7 +7,6 @@ export default async request => {
   const { payload } = await request.cache().helpers.page.getCurrentPermission(CHOOSE_PAYMENT.page)
 
   if (payload['recurring-payment'] === 'no') {
-    console.log('hit')
     debug('Setting status to agreed')
     await request.cache().helpers.status.set({ [COMPLETION_STATUS.agreed]: true })
   }
