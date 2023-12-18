@@ -6,9 +6,9 @@ div.hidden-area {
   color: govuk-colour('white');
 }
 
-.contact-info {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+.contact-scroll {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 @media print {
