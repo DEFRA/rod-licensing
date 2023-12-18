@@ -13,7 +13,7 @@ jest.mock('../../../../processors/uri-helper.js')
 jest.mock('../../../../processors/recurring-pay-reminder-display.js')
 jest.mock('../../../../processors/price-display.js')
 
-const getSampleRequest = (permission = {}, catalog = {}) => ({
+const getSampleRequest = (permission = {}, catalog = getCatalog()) => ({
   cache: () => ({
     helpers: {
       transaction: {
@@ -24,6 +24,10 @@ const getSampleRequest = (permission = {}, catalog = {}) => ({
   i18n: {
     getCatalog: () => catalog
   }
+})
+
+const getCatalog = () => ({
+  recurring_payment_set_up_error: 'recurring payment error'
 })
 
 describe('route', () => {
@@ -46,79 +50,32 @@ describe('route', () => {
   })
 
   describe('getData', () => {
-    it('cost equals return of displayPermissionPrice', async () => {
-      const returnValue = Symbol('return value')
-      displayPermissionPrice.mockReturnValueOnce(returnValue)
+    it('returns expected values', async () => {
+      const cost = Symbol('cost value')
+      const type = Symbol('type value')
+      const reminder = Symbol('reminder value')
+      const uri = Symbol('uri value')
+
+      displayPermissionPrice.mockReturnValueOnce(cost)
+      recurringLicenceTypeDisplay.mockReturnValueOnce(type)
+      recurringPayReminderDisplay.mockReturnValueOnce(reminder)
+      addLanguageCodeToUri.mockReturnValue(uri)
 
       const result = await getData(getSampleRequest())
 
-      expect(result.cost).toEqual(returnValue)
+      expect(result).toMatchSnapshot()
     })
 
-    it('displayPermissionPrice is called with permission and getCatalog', async () => {
-      const catalog = Symbol('mock catalog')
-      const permission = Symbol('mock permission')
+    it.each([
+      [displayPermissionPrice, Symbol('mock catalog'), Symbol('mock permission')],
+      [recurringLicenceTypeDisplay, Symbol('mock catalog'), Symbol('mock permission')],
+      [recurringPayReminderDisplay, Symbol('mock catalog'), Symbol('mock permission')]
+    ])('%s is called with permission and getCatalog', async (func, catalog, permission) => {
       const request = getSampleRequest(permission, catalog)
 
       await getData(request)
 
-      expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog)
-    })
-
-    it('type equals return of recurringLicenceTypeDisplay', async () => {
-      const returnValue = Symbol('return value')
-      recurringLicenceTypeDisplay.mockReturnValueOnce(returnValue)
-
-      const result = await getData(getSampleRequest())
-
-      expect(result.type).toEqual(returnValue)
-    })
-
-    it('recurringLicenceTypeDisplay is called with permission and getCatalog', async () => {
-      const catalog = Symbol('mock catalog')
-      const permission = Symbol('mock permission')
-      const request = getSampleRequest(permission, catalog)
-
-      await getData(request)
-
-      expect(recurringLicenceTypeDisplay).toHaveBeenCalledWith(permission, catalog)
-    })
-
-    it('reminder equals return of recurringPayReminderDisplay', async () => {
-      const returnValue = Symbol('return value')
-      recurringPayReminderDisplay.mockReturnValueOnce(returnValue)
-
-      const result = await getData(getSampleRequest())
-
-      expect(result.reminder).toEqual(returnValue)
-    })
-
-    it('recurringPayReminderDisplay is called with permission and getCatalog', async () => {
-      const catalog = Symbol('mock catalog')
-      const permission = Symbol('mock permission')
-      const request = getSampleRequest(permission, catalog)
-
-      await getData(request)
-
-      expect(recurringPayReminderDisplay).toHaveBeenCalledWith(permission, catalog)
-    })
-
-    it('single equals return of addLanguageCodeToUri with choose payment', async () => {
-      const returnValue = Symbol('return value')
-      addLanguageCodeToUri.mockReturnValue(returnValue)
-
-      const result = await getData(getSampleRequest())
-
-      expect(result.uri.single).toEqual(returnValue)
-    })
-
-    it('terms equals return of addLanguageCodeToUri with terms and conditions', async () => {
-      const returnValue = Symbol('return value')
-      addLanguageCodeToUri.mockReturnValue(returnValue)
-
-      const result = await getData(getSampleRequest())
-
-      expect(result.uri.single).toEqual(returnValue)
+      expect(func).toHaveBeenCalledWith(permission, catalog)
     })
 
     it.each([[CHOOSE_PAYMENT.uri], [TERMS_AND_CONDITIONS.uri]

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`route getData returns expected values 1`] = `
+Object {
+  "cost": Symbol(cost value),
+  "errorMap": Object {
+    "agree": Object {
+      "any.required": Object {
+        "ref": "#agree",
+        "text": "recurring payment error",
+      },
+    },
+  },
+  "reminder": Symbol(reminder value),
+  "type": Symbol(type value),
+  "uri": Object {
+    "single": Symbol(uri value),
+    "terms": Symbol(uri value),
+  },
+}
+`;

@@ -13,8 +13,14 @@ export const validator = Joi.object({
 
 export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
+  const errorMsg = request.i18n.getCatalog().recurring_payment_set_up_error
 
   return {
+    errorMap: {
+      agree: {
+        'any.required': { ref: '#agree', text: errorMsg }
+      }
+    },
     cost: displayPermissionPrice(permission, request.i18n.getCatalog()),
     type: recurringLicenceTypeDisplay(permission, request.i18n.getCatalog()),
     reminder: recurringPayReminderDisplay(permission, request.i18n.getCatalog()),

@@ -8,20 +8,11 @@
 {% set title = mssgs.recurring_payment_set_up_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
-{% set errorMsg = mssgs.recurring_payment_set_up_error %}
-
-{% set errorMap = {
-        'agree': {
-            'any.required': { ref: '#agree', text: errorMsg }
-        }
-    }
-%}
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+        {{ errorSummary(error, data.errorMap, mssgs.there_is_a_problem) }}
 
         <form method="post">
 

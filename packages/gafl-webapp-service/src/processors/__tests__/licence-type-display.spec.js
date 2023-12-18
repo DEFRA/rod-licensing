@@ -116,7 +116,7 @@ describe('recurringLicenceTypeDisplay', () => {
     ['Salmon and sea trout', null, ' salmon and sea trout'],
     ['Trout and coarse', '2', ' trout and coarse (2 rod)'],
     ['Trout and coarse', '3', ' trout and coarse (3 rod)']
-  ])('returns correct licence type', (licenceType, numberOfRods, expected) => {
+  ])('when licence type is %s and number of rods is: %s. recurringLicenceTypeDisplay will return "%s"', (licenceType, numberOfRods, expected) => {
     const permission = getPermission({ licenceType, numberOfRods })
     const result = recurringLicenceTypeDisplay(permission, getCatalog())
     expect(result).toEqual(expected)

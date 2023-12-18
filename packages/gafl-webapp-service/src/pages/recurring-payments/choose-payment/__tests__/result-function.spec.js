@@ -27,7 +27,7 @@ describe('choose payment > result function', () => {
     expect(result).toBe(CommonResults.OK)
   })
 
-  it.only('returns common result as recurring when payment is recurring payment', async () => {
+  it('returns common result as recurring when payment is recurring payment', async () => {
     const mockRequest = getMockRequest({ payload: { 'recurring-payment': 'yes' } })
 
     const result = await resultFunction(mockRequest)

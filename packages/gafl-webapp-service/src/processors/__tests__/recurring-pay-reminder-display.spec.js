@@ -17,7 +17,7 @@ describe('recurringPayReminderDisplay', () => {
     ['Email', 'we will send you an email showing the cost before the next payment is taken'],
     ['Letter', 'we will send you a letter showing the cost before the next payment is taken'],
     ['Text', 'we will send you a text showing the cost before the next payment is taken']
-  ])('returns correct wording for reminder', (reminder, expected) => {
+  ])('when reminder is %s, recurringPayReminderDisplay will return "%s"', (reminder, expected) => {
     const permission = getPermission(reminder)
     const result = recurringPayReminderDisplay(permission, getCatalog())
     expect(result).toEqual(expected)
