@@ -29,7 +29,6 @@ describe('project', () => {
         version: '1.0.0'
       }
       jest.mock(`${realPath.join(__dirname, '../..')}/package.json`, () => mockModule)
-      console.log('Path', Path)
       Path.join.mockReturnValueOnce(null).mockReturnValueOnce(`${realPath.join(__dirname, '../..')}/package.json`)
       const { packageJson } = require('../project.cjs')
       expect(packageJson).toBe(mockModule)
