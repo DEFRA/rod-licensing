@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.2 (2023-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1842](https://github.com/DEFRA/rod-licensing/pull/1842) Update text referring to physical licences ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.38.0-rc.1 (2023-12-13)
 
 #### :rocket: Enhancement
