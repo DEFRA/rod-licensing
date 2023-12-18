@@ -81,6 +81,8 @@ const clearErrorsFromOtherPages = async (request, view) => {
   await Promise.all(pagesWithError.map(async p => request.cache().helpers.page.setCurrentPermission(p, {})))
 }
 
+const retrieveKeyOrFalse = (obj, key) => obj ? obj[key] : false
+
 /**
  * @param path - the path attached to the handler
  * @param view - the name of the view template
@@ -127,9 +129,9 @@ export default (path, view, completion, getData) => ({
     pageData.pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
     const analytics = await request.cache().helpers.analytics.get()
-    pageData.analyticsMessageDisplayed = analytics ? analytics[ANALYTICS.seenMessage] : false
-    pageData.analyticsSelected = analytics ? analytics[ANALYTICS.selected] : false
-    pageData.acceptedTracking = analytics ? analytics[ANALYTICS.acceptTracking] : false
+    pageData.analyticsMessageDisplayed = retrieveKeyOrFalse(analytics, 'seenMessage')
+    pageData.analyticsSelected = retrieveKeyOrFalse(analytics, ANALYTICS.selected)
+    pageData.acceptedTracking = retrieveKeyOrFalse(analytics, ANALYTICS.acceptTracking)
     pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || false
 
     pageData.displayAnalytics = displayAnalytics(request)
