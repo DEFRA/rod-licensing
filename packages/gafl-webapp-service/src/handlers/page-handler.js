@@ -81,7 +81,7 @@ const clearErrorsFromOtherPages = async (request, view) => {
   await Promise.all(pagesWithError.map(async p => request.cache().helpers.page.setCurrentPermission(p, {})))
 }
 
-const retrieveKeyOrFalse = (obj, key) => obj ? obj[key] : false
+const retrieveKeyOrFalse = (obj, key) => (obj ? obj[key] : false)
 
 /**
  * @param path - the path attached to the handler
