@@ -45,9 +45,7 @@ export async function storeS3Metadata (md5, fileSize, filename, s3Key, receiptMo
     status: DYNAMICS_IMPORT_STAGE.Pending,
     dataSource: POST_OFFICE_DATASOURCE,
     fileSize: fileSize,
-    salesDate: moment(receiptMoment)
-      .subtract(1, 'days')
-      .toISOString(),
+    salesDate: moment(receiptMoment).subtract(1, 'days').toISOString(),
     receiptTimestamp: receiptMoment.toISOString(),
     notes: 'Retrieved from the remote server and awaiting processing'
   })
