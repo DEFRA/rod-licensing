@@ -39,7 +39,7 @@ export async function ftpToS3 () {
 
 export async function storeS3Metadata (md5, fileSize, filename, s3Key, receiptMoment) {
   console.log(`Storing metadata for ${s3Key}`)
-  await updateFileStagingTable({ filename, md5, fileSize, stage: FILE_STAGE.Pending, s3Key })
+  await updateFileStagingTable({ filename, md5, fileSize, s3Key, stage: FILE_STAGE.Pending })
 
   await salesApi.upsertTransactionFile(filename, {
     status: DYNAMICS_IMPORT_STAGE.Pending,
