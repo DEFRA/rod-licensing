@@ -129,7 +129,7 @@ export default (path, view, completion, getData) => ({
     pageData.pageLanguageSetToWelsh = welshEnabledAndApplied(request)
 
     const analytics = await request.cache().helpers.analytics.get()
-    pageData.analyticsMessageDisplayed = retrieveKeyOrFalse(analytics, 'seenMessage')
+    pageData.analyticsMessageDisplayed = retrieveKeyOrFalse(analytics, ANALYTICS.seenMessage)
     pageData.analyticsSelected = retrieveKeyOrFalse(analytics, ANALYTICS.selected)
     pageData.acceptedTracking = retrieveKeyOrFalse(analytics, ANALYTICS.acceptTracking)
     pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || false
