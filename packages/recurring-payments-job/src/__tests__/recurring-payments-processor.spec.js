@@ -17,7 +17,6 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job disabled')
-    consoleLogSpy.mockRestore()
   })
 
   it('console log displays "Recurring Payments job enabled" when env is true', async () => {
@@ -27,7 +26,6 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments job enabled')
-    consoleLogSpy.mockRestore()
   })
 
   it('get recurring payments is called when env is true', async () => {
@@ -48,6 +46,5 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', rpSymbol)
-    consoleLogSpy.mockRestore()
   })
 })
