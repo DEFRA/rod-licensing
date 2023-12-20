@@ -4,8 +4,8 @@ import constants from '../../../../../constants.js'
 jest.mock('../../../../../constants', () => ({
   CONTACT_SUMMARY_SEEN: 'contact-summary-seen',
   CommonResults: {
-    SUMMARY: 'Summary-common-result',
-    OK: 'Summary-common-result'
+    SUMMARY: 'summary-common-result',
+    OK: 'ok-common-result'
   }
 }))
 
