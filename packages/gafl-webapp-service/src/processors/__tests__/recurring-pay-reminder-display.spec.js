@@ -6,7 +6,7 @@ const getCatalog = () => ({
   recurring_payment_set_up_bulletpoint_4_text: 'we will send you a text showing the cost before the next payment is taken'
 })
 
-const getPermission = (reminder) => ({
+const getPermission = reminder => ({
   licensee: {
     preferredMethodOfReminder: reminder
   }

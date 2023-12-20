@@ -66,22 +66,20 @@ describe('route', () => {
       expect(result).toMatchSnapshot()
     })
 
-    it.each([
-      [displayPermissionPrice],
-      [recurringLicenceTypeDisplay],
-      [recurringPayReminderDisplay]
-    ])('%s is called with permission and getCatalog', async (func) => {
-      const permission = Symbol('mock permission')
-      const catalog = Symbol('mock catalog')
-      const request = getSampleRequest(permission, catalog)
+    it.each([[displayPermissionPrice], [recurringLicenceTypeDisplay], [recurringPayReminderDisplay]])(
+      '%s is called with permission and getCatalog',
+      async func => {
+        const permission = Symbol('mock permission')
+        const catalog = Symbol('mock catalog')
+        const request = getSampleRequest(permission, catalog)
 
-      await getData(request)
+        await getData(request)
 
-      expect(func).toHaveBeenCalledWith(permission, catalog)
-    })
+        expect(func).toHaveBeenCalledWith(permission, catalog)
+      }
+    )
 
-    it.each([[CHOOSE_PAYMENT.uri], [TERMS_AND_CONDITIONS.uri]
-    ])('addLanguageCodeToUri is called with permission and %s', async uri => {
+    it.each([[CHOOSE_PAYMENT.uri], [TERMS_AND_CONDITIONS.uri]])('addLanguageCodeToUri is called with permission and %s', async uri => {
       const request = getSampleRequest()
 
       await getData(request)
