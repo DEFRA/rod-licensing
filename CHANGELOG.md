@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.3 (2023-12-20)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  * [#1843](https://github.com/DEFRA/rod-licensing/pull/1843) Fix code smells ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.38.0-rc.2 (2023-12-18)
 
 #### :rocket: Enhancement
