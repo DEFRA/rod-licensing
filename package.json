@@ -99,6 +99,9 @@
     "projects": [
       "<rootDir>/packages/*"
     ],
+    "setupFilesAfterEnv": [
+      "./packages/gafl-webapp-service/gafl-jest-matchers.js"
+    ],
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "silent": true
