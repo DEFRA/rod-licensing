@@ -67,10 +67,12 @@ describe('route', () => {
     })
 
     it.each([
-      [displayPermissionPrice, Symbol('mock catalog'), Symbol('mock permission')],
-      [recurringLicenceTypeDisplay, Symbol('mock catalog'), Symbol('mock permission')],
-      [recurringPayReminderDisplay, Symbol('mock catalog'), Symbol('mock permission')]
-    ])('%s is called with permission and getCatalog', async (func, catalog, permission) => {
+      [displayPermissionPrice],
+      [recurringLicenceTypeDisplay],
+      [recurringPayReminderDisplay]
+    ])('%s is called with permission and getCatalog', async (func) => {
+      const permission = Symbol('mock permission')
+      const catalog = Symbol('mock catalog')
       const request = getSampleRequest(permission, catalog)
 
       await getData(request)
@@ -79,7 +81,7 @@ describe('route', () => {
     })
 
     it.each([[CHOOSE_PAYMENT.uri], [TERMS_AND_CONDITIONS.uri]
-    ])('addLanguageCodeToUri is called with permission and %s', async (uri) => {
+    ])('addLanguageCodeToUri is called with permission and %s', async uri => {
       const request = getSampleRequest()
 
       await getData(request)
