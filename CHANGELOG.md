@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.5 (2023-12-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1844](https://github.com/DEFRA/rod-licensing/pull/1844) Recurring payment agreement ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.38.0-rc.4 (2023-12-21)
 
 #### :rocket: Enhancement
