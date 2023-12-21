@@ -1,4 +1,4 @@
-import { recurringPayReminderDisplay } from '../recurring-pay-reminder-display.js'
+import { recurringPayReminderDisplay, validForRecurringPayment } from '../recurring-pay-helper.js'
 
 const getCatalog = () => ({
   recurring_payment_set_up_bulletpoint_5_email: 'we will send you an email showing the cost before the next payment is taken',
@@ -6,10 +6,12 @@ const getCatalog = () => ({
   recurring_payment_set_up_bulletpoint_5_text: 'we will send you a text message showing the cost before the next payment is taken'
 })
 
-const getPermission = reminder => ({
+const getPermission = ({ reminder, licenceFor, length }) => ({
   licensee: {
     preferredMethodOfReminder: reminder
-  }
+  },
+  isLicenceForYou: licenceFor,
+  licenceLength: length
 })
 
 describe('recurringPayReminderDisplay', () => {
@@ -18,8 +20,22 @@ describe('recurringPayReminderDisplay', () => {
     ['Letter', 'we will send you a letter showing the cost before the next payment is taken'],
     ['Text', 'we will send you a text message showing the cost before the next payment is taken']
   ])('when reminder is %s, recurringPayReminderDisplay will return "%s"', (reminder, expected) => {
-    const permission = getPermission(reminder)
+    const permission = getPermission({ reminder })
     const result = recurringPayReminderDisplay(permission, getCatalog())
+    expect(result).toEqual(expected)
+  })
+})
+
+describe('validForRecurringPayment', () => {
+  it.each([
+    [true, '12M', true, true],
+    [false, '8D', true, true],
+    [false, '12M', false, true],
+    [false, '12M', true, false]
+  ])('should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s', (expected, length, licenceFor, recurring) => {
+    process.env.SHOW_RECURRING_PAYMENTS = recurring
+    const permission = getPermission({ licenceFor, length })
+    const result = validForRecurringPayment(permission)
     expect(result).toEqual(expected)
   })
 })

@@ -4,13 +4,13 @@ import pageRoute from '../../../../routes/page-route.js'
 import { recurringLicenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { CHOOSE_PAYMENT, SET_UP_PAYMENT, TERMS_AND_CONDITIONS } from '../../../../uri.js'
-import { recurringPayReminderDisplay } from '../../../../processors/recurring-pay-reminder-display.js'
+import { recurringPayReminderDisplay } from '../../../../processors/recurring-pay-helper.js'
 import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
 jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/uri-helper.js')
-jest.mock('../../../../processors/recurring-pay-reminder-display.js')
+jest.mock('../../../../processors/recurring-pay-helper.js')
 jest.mock('../../../../processors/price-display.js')
 
 const getSampleRequest = (permission = {}, catalog = getCatalog()) => ({

@@ -4,7 +4,7 @@ import Joi from 'joi'
 import { nextPage } from '../../../routes/next-page.js'
 import { recurringLicenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-import { recurringPayReminderDisplay } from '../../../processors/recurring-pay-reminder-display.js'
+import { recurringPayReminderDisplay } from '../../../processors/recurring-pay-helper.js'
 import { displayPermissionPrice } from '../../../processors/price-display.js'
 
 export const validator = Joi.object({
