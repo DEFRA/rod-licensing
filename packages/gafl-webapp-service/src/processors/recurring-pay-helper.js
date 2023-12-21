@@ -9,7 +9,7 @@ export const recurringPayReminderDisplay = (permission, mssgs) => {
   return mssgs.recurring_payment_set_up_bulletpoint_5_text
 }
 
-export const validForRecurringPayment = (permission) =>
+export const validForRecurringPayment = permission =>
   process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
   permission.licenceLength === '12M' &&
   permission.isLicenceForYou
