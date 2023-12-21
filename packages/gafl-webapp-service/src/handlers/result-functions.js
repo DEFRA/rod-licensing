@@ -17,7 +17,8 @@ import {
   CONTACT,
   LICENCE_SUMMARY,
   NAME,
-  TERMS_AND_CONDITIONS
+  TERMS_AND_CONDITIONS,
+  CHOOSE_PAYMENT
 } from '../uri.js'
 
 import dateOfBirth from '../pages/concessions/date-of-birth/result-function.js'
@@ -36,6 +37,7 @@ import addressSelect from '../pages/contact/address/select/result-function.js'
 import addressEntry from '../pages/contact/address/entry/result-function.js'
 import licenceSummary from '../pages/summary/licence-summary/result-function.js'
 import termsAndConditions from '../pages/terms-and-conditions/result-function.js'
+import choosePayment from '../pages/recurring-payments/choose-payment/result-function.js'
 
 /**
  * The result function determines the navigation in the route definition
@@ -56,5 +58,6 @@ export default {
   [LICENCE_CONFIRMATION_METHOD.page]: licenceConfirmationMethod,
   [NAME.page]: name,
   [LICENCE_SUMMARY.page]: licenceSummary,
-  [TERMS_AND_CONDITIONS.page]: termsAndConditions
+  [TERMS_AND_CONDITIONS.page]: termsAndConditions,
+  [CHOOSE_PAYMENT.page]: choosePayment
 }
