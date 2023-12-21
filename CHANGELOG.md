@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.6 (2023-12-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1841](https://github.com/DEFRA/rod-licensing/pull/1841) Permit cost increase ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.38.0-rc.5 (2023-12-21)
 
 #### :rocket: Enhancement
