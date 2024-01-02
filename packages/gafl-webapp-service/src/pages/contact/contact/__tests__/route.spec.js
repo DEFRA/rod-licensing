@@ -65,7 +65,7 @@ describe('name > route', () => {
       [false, '8D', 'Where send other'],
       [true, '1D', 'Where send you'],
       [false, '1D', 'Where send other']
-    ])('title return method is %s if isLicenceForYou is same and is ', async (isLicenceForYou, licenceLength, expected) => {
+    ])('title return method is %s if isLicenceForYou is same and licenceLength is %s', async (isLicenceForYou, licenceLength, expected) => {
       const licensee = { birthDate: 'birthDate' }
       const result = await getData(getMockRequest({ isLicenceForYou, licensee, licenceLength }))
       expect(result.title).toBe(expected)
