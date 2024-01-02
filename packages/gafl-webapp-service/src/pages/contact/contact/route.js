@@ -39,8 +39,8 @@ export const getData = async request => {
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    isJunior,
-    errorMessage: getErrorText(permission, mssgs, isJunior)
+    errorMessage: getErrorText(permission, mssgs, isJunior),
+    isJunior
   }
 }
 
