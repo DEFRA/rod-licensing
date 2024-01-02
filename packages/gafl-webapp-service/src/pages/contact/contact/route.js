@@ -52,17 +52,19 @@ const getTitle = (permission, messages) => {
 }
 
 const getPostHint = (permission, messages) =>
-  permission.isLicenceForYou
-    ? messages.important_info_contact_post_hint_you
-    : messages.important_info_contact_post_hint_other
+  permission.isLicenceForYou ? messages.important_info_contact_post_hint_you : messages.important_info_contact_post_hint_other
 
 const getContent = (permission, messages) => {
   const isSalmonLicense = permission.licenceType === 'Salmon and sea trout'
   if (permission.licenceLength === '12M') {
     if (isSalmonLicense) {
-      return permission.isLicenceForYou ? messages.important_info_contact_post_salmon_you : messages.important_info_contact_post_salmon_other
+      return permission.isLicenceForYou
+        ? messages.important_info_contact_post_salmon_you
+        : messages.important_info_contact_post_salmon_other
     }
-    return permission.isLicenceForYou ? messages.important_info_contact_post_not_salmon_you : messages.important_info_contact_post_not_salmon_other
+    return permission.isLicenceForYou
+      ? messages.important_info_contact_post_not_salmon_you
+      : messages.important_info_contact_post_not_salmon_other
   }
   return isSalmonLicense ? messages.important_info_contact_content_salmon : messages.important_info_contact_content_not_salmon
 }
