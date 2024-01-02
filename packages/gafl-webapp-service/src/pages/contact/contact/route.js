@@ -27,8 +27,6 @@ export const getData = async request => {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
-  const isJunior = hasJunior(permission)
-
   return {
     title: getTitle(permission, mssgs),
     postHint: getPostHint(permission, mssgs),
@@ -39,8 +37,8 @@ export const getData = async request => {
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    errorMessage: getErrorText(permission, mssgs, isJunior),
-    isJunior
+    isJunior: hasJunior(permission),
+    errorMessage: getErrorText(permission, mssgs)
   }
 }
 
@@ -79,12 +77,8 @@ const getEmailText = (permission, messages) =>
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 
-const getErrorText = (permission, messages, junior) => {
-  if (permission.licenceLength !== '12M' && junior !== true) {
-    return messages.important_info_contact_error_choose_short
-  }
-  return messages.important_info_contact_error_choose
-}
+const getErrorText = (permission, messages) =>
+  permission.licenceLength !== '12M' ? messages.important_info_contact_error_choose_short : messages.important_info_contact_error_choose
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),

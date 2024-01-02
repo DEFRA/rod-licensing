@@ -163,15 +163,11 @@ describe('name > route', () => {
     })
 
     it.each([
-      ['8D', false, 'Short term adult error message'],
-      ['1D', false, 'Short term adult error message'],
-      ['8D', true, 'Error message'],
-      ['1D', true, 'Error message'],
-      ['12M', true, 'Error message'],
-      ['12M', false, 'Error message']
-    ])('error message has correct value depending on licenceLength is %s and isJunior is %s', async (licenceLength, physical, expected) => {
+      ['8D', 'Short term adult error message'],
+      ['1D', 'Short term adult error message'],
+      ['12M', 'Error message']
+    ])('error message has correct value depending on licenceLength is %s', async (licenceLength, expected) => {
       const licensee = { birthDate: 'birthDate' }
-      hasJunior.mockReturnValueOnce(physical)
       const result = await getData(getMockRequest({ licenceLength, licensee }))
       expect(result.errorMessage).toBe(expected)
     })
