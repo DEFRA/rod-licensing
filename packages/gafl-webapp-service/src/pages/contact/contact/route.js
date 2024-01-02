@@ -27,6 +27,8 @@ export const getData = async request => {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
+  const isJunior = hasJunior(permission)
+
   return {
     title: getTitle(permission, mssgs),
     postHint: getPostHint(permission, mssgs),
@@ -37,14 +39,17 @@ export const getData = async request => {
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    isJunior: hasJunior(permission)
+    isJunior,
+    errorMessage: getErrorText(permission, mssgs, isJunior)
   }
 }
 
-const getTitle = (permission, messages) =>
-  permission.isLicenceForYou
-    ? messages.important_info_contact_title_you
-    : messages.important_info_contact_title_other
+const getTitle = (permission, messages) => {
+  if (permission.licenceLength === '12M') {
+    return permission.isLicenceForYou ? messages.important_info_contact_title_you : messages.important_info_contact_title_other
+  }
+  return permission.isLicenceForYou ? messages.licence_confirm_method_where_title_you : messages.licence_confirm_method_where_title_other
+}
 
 const getPostHint = (permission, messages) =>
   permission.isLicenceForYou
@@ -52,10 +57,14 @@ const getPostHint = (permission, messages) =>
     : messages.important_info_contact_post_hint_other
 
 const getContent = (permission, messages) => {
-  if (permission.licenceType === 'Salmon and sea trout') {
-    return permission.isLicenceForYou ? messages.important_info_contact_post_salmon_you : messages.important_info_contact_post_salmon_other
+  const isSalmonLicense = permission.licenceType === 'Salmon and sea trout'
+  if (permission.licenceLength === '12M') {
+    if (isSalmonLicense) {
+      return permission.isLicenceForYou ? messages.important_info_contact_post_salmon_you : messages.important_info_contact_post_salmon_other
+    }
+    return permission.isLicenceForYou ? messages.important_info_contact_post_not_salmon_you : messages.important_info_contact_post_not_salmon_other
   }
-  return permission.isLicenceForYou ? messages.important_info_contact_post_not_salmon_you : messages.important_info_contact_post_not_salmon_other
+  return isSalmonLicense ? messages.important_info_contact_content_salmon : messages.important_info_contact_content_not_salmon
 }
 
 const getMobileText = (permission, messages) =>
@@ -67,6 +76,13 @@ const getEmailText = (permission, messages) =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
+
+const getErrorText = (permission, messages, junior) => {
+  if (permission.licenceLength !== '12M' && junior !== true) {
+    return messages.important_info_contact_error_choose_short
+  }
+  return messages.important_info_contact_error_choose
+}
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),

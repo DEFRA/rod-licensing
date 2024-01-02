@@ -4,7 +4,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 
 {% set title = data.title %}
-{% set errorMsg = mssgs.important_info_contact_error_choose %}
+{% set errorMsg = data.errorMessage %}
 {% set emailError = mssgs.important_info_contact_error_email %}
 {% set mobileError = mssgs.important_info_contact_error_mobile %}
 
@@ -149,29 +149,26 @@
         %}
     {% endif %}
 {% else %}
-    {% set itemsArray = (itemsArray.push(
-        {
-            value: "none",
-            text: mssgs.important_info_contact_note_tip,
-            checked: payload['how-contacted'] === 'none',
-            conditional: {
-                html: noneMessageHtml
-            }
-        }), itemsArray)
-    %}
+    {% if data.isJunior %}
+        {% set itemsArray = (itemsArray.push(
+            {
+                value: "none",
+                text: mssgs.important_info_contact_note_tip,
+                checked: payload['how-contacted'] === 'none',
+                conditional: {
+                    html: noneMessageHtml
+                }
+            }), itemsArray)
+        %}
+    {% endif %}
 {% endif %}
 
 {% block pageContent %}
-    {% if data.isPhysical %}
-        <p class="govuk-body-m">{{ data.content }}</p>
+    {% if data.isJunior %}
+        <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_jr }}</p>
+        <p class="govuk-body-m">{{ mssgs.important_info_contact_licence_needed }}</p>
     {% else %}
-        {% if data.isJunior %}
-            <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_jr }}</p>
-            <p class="govuk-body-m">{{ mssgs.important_info_contact_licence_needed }}</p>
-        {% else %}
-            <p class="govuk-body-m">{{ mssgs.important_info_contact_post_confirm_8d }}</p>
-            <p class="govuk-body-m">{{ mssgs.important_info_contact_licence_needed }}</p>
-        {% endif %}
+        <p class="govuk-body-m">{{ data.content }}</p>
     {% endif %}
 
     {{ govukRadios({
