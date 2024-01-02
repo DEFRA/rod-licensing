@@ -4,7 +4,6 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
-import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
@@ -37,7 +36,6 @@ export const getData = async request => {
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    isJunior: hasJunior(permission),
     errorMessage: getErrorText(permission, mssgs)
   }
 }

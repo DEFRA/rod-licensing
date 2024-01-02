@@ -2,7 +2,6 @@ import { getData, validator } from '../route'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
-import { hasJunior } from '../../../../processors/concession-helper.js'
 
 jest.mock('../../../../routes/next-page.js', () => ({
   nextPage: jest.fn()
@@ -16,7 +15,6 @@ jest.mock('../../../../uri.js', () => ({
   }
 }))
 jest.mock('../../../../processors/licence-type-display.js')
-jest.mock('../../../../processors/concession-helper.js')
 
 describe('name > route', () => {
   const getMockRequest = ({ isLicenceForYou, licenceType, licensee, licenceLength = 'length' }) => ({
@@ -150,16 +148,6 @@ describe('name > route', () => {
       isPhysical.mockReturnValueOnce(physical)
       const result = await getData(getMockRequest({ licensee }))
       expect(result.isPhysical).toBe(expected)
-    })
-
-    it.each([
-      [true, true],
-      [false, false]
-    ])('isJunior matches return method of hasJunior', async (physical, expected) => {
-      const licensee = { birthDate: 'birthDate' }
-      hasJunior.mockReturnValueOnce(physical)
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.isJunior).toBe(expected)
     })
 
     it.each([
