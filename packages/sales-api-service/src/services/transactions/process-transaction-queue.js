@@ -8,15 +8,14 @@ import {
   Transaction,
   TransactionCurrency,
   TransactionJournal,
-  RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, getPermissionCost, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
+import { processRecurringPayment } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
-import moment from 'moment'
 import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 const { docClient } = AWS()
@@ -37,9 +36,6 @@ export async function processQueue ({ id }) {
 
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
-
-  const { recurringPayment, payer } = await processRecurringPayment(transactionRecord)
-  recurringPayment && entities.push(recurringPayment, payer)
 
   let totalTransactionValue = 0.0
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
@@ -72,6 +68,9 @@ export async function processQueue ({ id }) {
       startDate,
       permit
     })
+
+    const { recurringPayment } = await processRecurringPayment(transactionRecord, contact)
+    recurringPayment && entities.push(recurringPayment)
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
@@ -140,27 +139,6 @@ const mapToPermission = async (
     )
   }
   return permission
-}
-
-/**
- * Process a recurring payment instruction
- * @param transactionRecord
- * @returns {Promise<{recurringPayment: null, payer: null}>}
- */
-const processRecurringPayment = async transactionRecord => {
-  let recurringPayment = null
-  let payer = null
-  if (transactionRecord.payment.recurring) {
-    const inceptionMoment = moment(transactionRecord.payment.timestamp, true).utc()
-    recurringPayment = new RecurringPayment()
-    recurringPayment.referenceNumber = transactionRecord.payment.recurring.referenceNumber
-    recurringPayment.mandate = transactionRecord.payment.recurring.mandate
-    recurringPayment.inceptionDay = inceptionMoment.date()
-    recurringPayment.inceptionMonth = inceptionMoment.month()
-    payer = await resolveContactPayload(transactionRecord.payment.recurring.payer)
-    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.payer, payer)
-  }
-  return { recurringPayment, payer }
 }
 
 /**
