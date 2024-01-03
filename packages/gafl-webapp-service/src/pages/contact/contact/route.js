@@ -4,6 +4,7 @@ import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
+import { hasJunior } from '../../../processors/concession-helper.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { mobilePhoneValidator } from '../../../processors/contact-validator.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
@@ -26,33 +27,37 @@ export const getData = async request => {
     throw new GetDataRedirect(LICENCE_LENGTH.uri)
   }
 
+  const junior = hasJunior(permission)
+
   return {
-    title: getTitle(permission, mssgs),
+    title: getTitle(permission, mssgs, junior),
     postHint: getPostHint(permission, mssgs),
-    content: getContent(permission, mssgs),
+    content: getContent(permission, mssgs, junior),
     emailConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email,
     emailText: getEmailText(permission, mssgs),
     mobileConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text,
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    errorMessage: getErrorText(permission, mssgs)
+    errorMessage: getErrorText(permission, mssgs, junior)
   }
 }
 
-const getTitle = (permission, messages) => {
-  if (permission.licenceLength === '12M') {
+const getTitle = (permission, messages, junior) => {
+  if (permission.licenceLength === '12M' && !junior) {
+    console.log('title 1')
     return permission.isLicenceForYou ? messages.important_info_contact_title_you : messages.important_info_contact_title_other
   }
+  console.log('title 2')
   return permission.isLicenceForYou ? messages.licence_confirm_method_where_title_you : messages.licence_confirm_method_where_title_other
 }
 
 const getPostHint = (permission, messages) =>
   permission.isLicenceForYou ? messages.important_info_contact_post_hint_you : messages.important_info_contact_post_hint_other
 
-const getContent = (permission, messages) => {
+const getContent = (permission, messages, junior) => {
   const isSalmonLicense = permission.licenceType === 'Salmon and sea trout'
-  if (permission.licenceLength === '12M') {
+  if (permission.licenceLength === '12M' && !junior) {
     if (isSalmonLicense) {
       return permission.isLicenceForYou
         ? messages.important_info_contact_post_salmon_you
@@ -75,8 +80,8 @@ const getEmailText = (permission, messages) =>
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 
-const getErrorText = (permission, messages) =>
-  permission.licenceLength !== '12M' ? messages.important_info_contact_error_choose_short : messages.important_info_contact_error_choose
+const getErrorText = (permission, messages, junior) =>
+  permission.licenceLength === '12M' && !junior ? messages.important_info_contact_error_choose : messages.important_info_contact_error_choose_short
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),

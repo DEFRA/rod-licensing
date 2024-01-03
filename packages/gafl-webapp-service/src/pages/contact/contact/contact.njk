@@ -88,10 +88,6 @@
     <p class="govuk-body-m">{{ mssgs.important_info_contact_post_msg }}</p>
 {% endset -%}
 
-{% set noneMessageHtml %}
-    <p class="govuk-body-m">{{ mssgs.important_info_contact_none_msg }}</p>
-{% endset -%}
-
 {% set itemsArray = [] %}
 {% if data.emailConfirmation %}
     {% set itemsArray = (itemsArray.push(
