@@ -69,12 +69,15 @@ describe('name > route', () => {
       [false, '8D', false, 'Where send other'],
       [true, '1D', false, 'Where send you'],
       [false, '1D', false, 'Where send other']
-    ])('title return method is %s if isLicenceForYou is same, licenceLength is %s and junior is %s', async (isLicenceForYou, licenceLength, junior, expected) => {
-      const licensee = { birthDate: 'birthDate' }
-      hasJunior.mockReturnValueOnce(junior)
-      const result = await getData(getMockRequest({ isLicenceForYou, licensee, licenceLength }))
-      expect(result.title).toBe(expected)
-    })
+    ])(
+      'title return method is %s if isLicenceForYou is same, licenceLength is %s and junior is %s',
+      async (isLicenceForYou, licenceLength, junior, expected) => {
+        const licensee = { birthDate: 'birthDate' }
+        hasJunior.mockReturnValueOnce(junior)
+        const result = await getData(getMockRequest({ isLicenceForYou, licensee, licenceLength }))
+        expect(result.title).toBe(expected)
+      }
+    )
 
     it('mobileText includes value of mobile phone when preferredMethodOfConfirmation is text', async () => {
       const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Text' }

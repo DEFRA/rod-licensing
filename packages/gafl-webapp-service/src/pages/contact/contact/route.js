@@ -45,10 +45,8 @@ export const getData = async request => {
 
 const getTitle = (permission, messages, junior) => {
   if (permission.licenceLength === '12M' && !junior) {
-    console.log('title 1')
     return permission.isLicenceForYou ? messages.important_info_contact_title_you : messages.important_info_contact_title_other
   }
-  console.log('title 2')
   return permission.isLicenceForYou ? messages.licence_confirm_method_where_title_you : messages.licence_confirm_method_where_title_other
 }
 
@@ -81,7 +79,9 @@ const getEmailText = (permission, messages) =>
     : messages.important_info_contact_item_email
 
 const getErrorText = (permission, messages, junior) =>
-  permission.licenceLength === '12M' && !junior ? messages.important_info_contact_error_choose : messages.important_info_contact_error_choose_short
+  permission.licenceLength === '12M' && !junior
+    ? messages.important_info_contact_error_choose
+    : messages.important_info_contact_error_choose_short
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),
