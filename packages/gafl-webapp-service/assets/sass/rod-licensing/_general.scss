@@ -7,8 +7,14 @@ div.hidden-area {
 }
 
 .contact-scroll {
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.govuk-label {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: block;
 }
 
 @media print {
