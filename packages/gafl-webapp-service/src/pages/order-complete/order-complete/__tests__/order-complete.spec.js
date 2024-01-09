@@ -17,17 +17,30 @@ jest.mock('../../../../constants.js', () => ({
     finalised: 'no going back now',
     completed: 'all done'
   },
-  FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com')
+  FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com'),
+  HOW_CONTACTED: {
+    none: 'nada',
+    email: 'e-mail',
+    text: 'phone',
+    letter: 'letter'
+  }
 }))
 jest.mock('../../../../processors/price-display.js')
 jest.mock('@defra-fish/business-rules-lib')
 
-const getSamplePermission = ({ referenceNumber = 'AAA111', licenceType = LICENCE_TYPE['trout-and-coarse'] } = {}) => ({
+const getSamplePermission = ({
+  referenceNumber = 'AAA111',
+  licenceType = LICENCE_TYPE['trout-and-coarse'],
+  isLicenceForYou = true,
+  postalFulfilment = false,
+  preferredMethodOfConfirmation = 'phone'
+} = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
   licensee: {
-    postalFulfilment: 'test',
-    preferredMethodOfConfirmation: 'test'
+    postalFulfilment,
+    preferredMethodOfConfirmation
   },
+  isLicenceForYou,
   licenceType,
   referenceNumber
 })
@@ -38,12 +51,34 @@ const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = t
   [COMPLETION_STATUS.finalised]: finalised
 })
 
+const getMessages = () => ({
+  order_complete_title_application: 'application title',
+  order_complete_title_payment: 'payment title ',
+  order_complete_licence_details_self_title: 'title self licence details',
+  order_complete_licence_details_bobo_title: 'title bobo licence details',
+  order_complete_licence_details_self_paragraph: 'paragraph self licence details',
+  order_complete_licence_details_bobo_paragraph: 'paragraph bobo licence details',
+  order_complete_licence_details_self_digital_confirmation_paragraph: 'fishing self digital confirmation licence details',
+  order_complete_licence_details_bobo_digital_confirmation_paragraph: 'fishing bobo digital confirmation licence details',
+  order_complete_licence_details_self_digital_paragraph: 'fishing self digital licence details',
+  order_complete_licence_details_bobo_digital_paragraph: 'fishing bobo digital licence details',
+  order_complete_when_fishing_self_link: 'fishing self link',
+  order_complete_when_fishing_bobo_link: 'fishing bobo link',
+  order_complete_when_fishing_self_paragraph_2: 'fishing self paragraph two when fishing',
+  order_complete_when_fishing_bobo_paragraph_2: 'fishing bobo paragraph two when fishing',
+  order_complete_when_fishing_self_paragraph: 'fishing self paragraph one when fishing',
+  order_complete_when_fishing_bobo_paragraph: 'fishing bobo paragraph one when fishing',
+  order_complete_when_fishing_self_digital_confirmation_paragraph: 'fishing self digital confirmation when fishing',
+  order_complete_when_fishing_bobo_digital_confirmation_paragraph: 'fishing bobo digital confirmation when fishing',
+  order_complete_when_fishing_self_digital_paragraph: 'fishing self digital when fishing',
+  order_complete_when_fishing_bobo_digital_paragraph: 'fishing bobo digital when fishing'
+})
+
 const getSampleRequest = ({
   completionStatus = getSampleCompletionStatus(),
   permission = getSamplePermission(),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
-  catalog = 'messages',
   payment = { created_date: undefined }
 } = {}) => ({
   cache: () => ({
@@ -65,10 +100,70 @@ const getSampleRequest = ({
     search: ''
   },
   i18n: {
-    getCatalog: () => catalog
+    getCatalog: () => getMessages()
   }
 })
 jest.mock('@defra-fish/connectors-lib')
+
+const postalYouNoneDigitalConf = {
+  title: 'payment title 1',
+  licenceTitle: 'title self licence details',
+  licenceDetailsDigitalParagraph: undefined,
+  licenceDetailsParagraphTwo: 'paragraph self licence details',
+  whenFishingParagraphOne: undefined,
+  whenFishingParagraphOneLink: 'fishing self link',
+  whenFishingParagraphTwo: 'fishing self paragraph two when fishing'
+}
+
+const postalElseNoneDigitalConf = {
+  title: 'payment title 1',
+  licenceTitle: 'title bobo licence details',
+  licenceDetailsDigitalParagraph: undefined,
+  licenceDetailsParagraphTwo: 'paragraph bobo licence details',
+  whenFishingParagraphOne: undefined,
+  whenFishingParagraphOneLink: 'fishing bobo link',
+  whenFishingParagraphTwo: 'fishing bobo paragraph two when fishing'
+}
+
+const postalYouDigitalConf = {
+  title: 'payment title 1',
+  licenceTitle: 'title self licence details',
+  licenceDetailsDigitalParagraph: 'fishing self digital licence details',
+  licenceDetailsParagraphTwo: 'paragraph self licence details',
+  whenFishingParagraphOne: 'fishing self digital when fishing',
+  whenFishingParagraphOneLink: 'fishing self link',
+  whenFishingParagraphTwo: 'fishing self paragraph two when fishing'
+}
+
+const postalElseDigitalConf = {
+  title: 'payment title 1',
+  licenceTitle: 'title bobo licence details',
+  licenceDetailsDigitalParagraph: 'fishing bobo digital licence details',
+  licenceDetailsParagraphTwo: 'paragraph bobo licence details',
+  whenFishingParagraphOne: 'fishing bobo digital when fishing',
+  whenFishingParagraphOneLink: 'fishing bobo link',
+  whenFishingParagraphTwo: 'fishing bobo paragraph two when fishing'
+}
+
+const youDigital = {
+  title: 'payment title 1',
+  licenceTitle: 'title self licence details',
+  licenceDetailsDigitalParagraph: 'fishing self digital licence details',
+  licenceDetailsParagraphTwo: 'paragraph self licence details',
+  whenFishingParagraphOne: 'fishing self digital when fishing',
+  whenFishingParagraphOneLink: 'fishing self link',
+  whenFishingParagraphTwo: 'fishing self paragraph two when fishing'
+}
+
+const elseDigital = {
+  title: 'payment title 1',
+  licenceTitle: 'title bobo licence details',
+  licenceDetailsDigitalParagraph: 'fishing bobo digital licence details',
+  licenceDetailsParagraphTwo: 'paragraph bobo licence details',
+  whenFishingParagraphOne: 'fishing bobo digital when fishing',
+  whenFishingParagraphOneLink: 'fishing bobo link',
+  whenFishingParagraphTwo: 'fishing bobo paragraph two when fishing'
+}
 
 describe('The order completion handler', () => {
   beforeAll(() => {
@@ -103,6 +198,90 @@ describe('The order completion handler', () => {
     )
   })
 
+  it.each`
+    desc                                                                | licenceFor | postal   | method      | expected
+    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${false} | ${'Letter'} | ${postalYouNoneDigitalConf}
+    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${false} | ${'Letter'} | ${postalElseNoneDigitalConf}
+    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${false} | ${'Text'}   | ${postalYouDigitalConf}
+    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${false} | ${'Text'}   | ${postalElseDigitalConf}
+    ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${youDigital}
+    ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${elseDigital}
+  `('$desc', async ({ desc, licenceFor, postal, method, expected }) => {
+    const permission = getSamplePermission({ isLicenceForYou: licenceFor, postalFulfilment: postal, preferredMethodOfConfirmation: method })
+    const { content } = await getData(getSampleRequest({ permission }))
+    expect(content).toEqual(expected)
+  })
+
+  it('passes request and permission to displayStartTime', async () => {
+    const permission = getSamplePermission(LICENCE_TYPE['salmon-and-sea-trout'])
+    const request = getSampleRequest({ permission })
+    await getData(request)
+    expect(displayStartTime).toHaveBeenCalledWith(request, permission)
+  })
+
+  it('uses displayStartTime to generate startTimeStringTitle', async () => {
+    const startTime = Symbol('one minute to midnight')
+    displayStartTime.mockReturnValueOnce(startTime)
+    const { startTimeStringTitle } = await getData(getSampleRequest())
+    expect(startTimeStringTitle).toBe(startTime)
+  })
+
+  it.each`
+    permission                                                                    | expectedValue
+    ${getSamplePermission()}                                                      | ${false}
+    ${getSamplePermission({ licenceType: LICENCE_TYPE['salmon-and-sea-trout'] })} | ${true}
+  `('identifies salmon licence of type $permission.licenceType', async ({ permission, expectedValue }) => {
+    const request = getSampleRequest({ permission })
+    const { isSalmonLicence } = await getData(request)
+    expect(isSalmonLicence).toBe(expectedValue)
+  })
+
+  it.each(['ABC123', 'ZXY099'])('passes permission reference %s', async referenceNumber => {
+    const permission = getSamplePermission({ referenceNumber })
+    const { permissionReference } = await getData(getSampleRequest({ permission }))
+    expect(permissionReference).toBe(referenceNumber)
+  })
+
+  it.each`
+    method      | postal   | expected
+    ${'Email'}  | ${false} | ${false}
+    ${'Text'}   | ${false} | ${false}
+    ${'Letter'} | ${false} | ${false}
+    ${'None'}   | ${false} | ${false}
+    ${'Email'}  | ${true}  | ${true}
+    ${'Text'}   | ${true}  | ${true}
+  `(
+    'when preferredMethodOfConfirmation is $method, postalFulfilment is $postal, digitalLicence equals $expected ',
+    async ({ method, postal, expected }) => {
+      const permission = getSamplePermission({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
+      const { digitalConfirmation } = await getData(getSampleRequest({ permission }))
+      expect(digitalConfirmation).toBe(expected)
+    }
+  )
+
+  it.each`
+    method      | postal   | expected
+    ${'Email'}  | ${false} | ${true}
+    ${'Text'}   | ${false} | ${true}
+    ${'Letter'} | ${false} | ${false}
+    ${'None'}   | ${false} | ${false}
+    ${'Email'}  | ${true}  | ${false}
+    ${'Text'}   | ${true}  | ${false}
+  `(
+    'when preferredMethodOfConfirmation is $method, postalFulfilment is $postal, digitalLicence equals $expected ',
+    async ({ method, postal, expected }) => {
+      const permission = getSamplePermission({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
+      const { digitalLicence } = await getData(getSampleRequest({ permission }))
+      expect(digitalLicence).toBe(expected)
+    }
+  )
+
+  it.each([true, false])('postalLicence equals %s when same value as postalFulfilment', async postal => {
+    const permission = getSamplePermission({ postalFulfilment: postal })
+    const { postalLicence } = await getData(getSampleRequest({ permission }))
+    expect(postalLicence).toBe(postal)
+  })
+
   it.each([[LICENCE_DETAILS.uri], [NEW_TRANSACTION.uri]])('addLanguageCodeToUri is called with request and %s', async uri => {
     const request = getSampleRequest()
     await getData(request)
@@ -134,65 +313,16 @@ describe('The order completion handler', () => {
     expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
-  it('uses value returned by displayPermissionPrice for permissionCost', async () => {
-    const expectedCost = Symbol('expected cost')
-    displayPermissionPrice.mockReturnValueOnce(expectedCost)
-
-    const { permissionCost } = await getData(getSampleRequest())
-
-    expect(permissionCost).toBe(expectedCost)
-  })
-
   it.each`
     desc                                            | payment
     ${'permission, created_date and label catalog'} | ${{ created_date: Symbol('created date') }}
     ${'permission and label catalog'}               | ${undefined}
   `('passes $desc to displayPermissionPrice function', async ({ desc, payment }) => {
     const permission = getSamplePermission()
-    const catalog = Symbol('catalog')
+    const catalog = getMessages()
     const result = payment?.created_date
-    await getData(getSampleRequest({ permission, catalog, payment }))
+    await getData(getSampleRequest({ permission, payment }))
     expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog, result)
-  })
-
-  it('uses displayStartTime to generate startTimeStringTitle', async () => {
-    const startTime = Symbol('one minute to midnight')
-    displayStartTime.mockReturnValueOnce(startTime)
-    const { startTimeStringTitle } = await getData(getSampleRequest())
-    expect(startTimeStringTitle).toBe(startTime)
-  })
-
-  it('passes request and permission to displayStartTime', async () => {
-    const permission = getSamplePermission(LICENCE_TYPE['salmon-and-sea-trout'])
-    const request = getSampleRequest({ permission })
-    await getData(request)
-    expect(displayStartTime).toHaveBeenCalledWith(request, permission)
-  })
-
-  it.each`
-    permission                                                                    | expectedValue
-    ${getSamplePermission()}                                                      | ${false}
-    ${getSamplePermission({ licenceType: LICENCE_TYPE['salmon-and-sea-trout'] })} | ${true}
-  `('identifies salmon licence of type $permission.licenceType', async ({ permission, expectedValue }) => {
-    const request = getSampleRequest({ permission })
-    const { isSalmonLicence } = await getData(request)
-    expect(isSalmonLicence).toBe(expectedValue)
-  })
-
-  it.each(['ABC123', 'ZXY099'])('passes permission reference %s', async referenceNumber => {
-    const permission = getSamplePermission({ referenceNumber })
-    const { permissionReference } = await getData(getSampleRequest(permission))
-    expect(permissionReference).toBe(permissionReference)
-  })
-
-  it.each([
-    [0, true],
-    [10, false]
-  ])('passes permission reference %s', async (cost, isFree) => {
-    const permission = getSamplePermission()
-    getPermissionCost.mockReturnValueOnce(cost)
-    const { permissionIsFree } = await getData(getSampleRequest({ permission }))
-    expect(permissionIsFree).toBe(isFree)
   })
 
   it.each`
