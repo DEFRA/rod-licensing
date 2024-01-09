@@ -200,10 +200,10 @@ describe('The order completion handler', () => {
 
   it.each`
     desc                                                                | licenceFor | postal   | method      | expected
-    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true} | ${'Letter'} | ${postalYouNoneDigitalConf}
-    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true} | ${'Letter'} | ${postalElseNoneDigitalConf}
-    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true} | ${'Text'}   | ${postalYouDigitalConf}
-    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true} | ${'Text'}   | ${postalElseDigitalConf}
+    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${postalYouNoneDigitalConf}
+    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${postalElseNoneDigitalConf}
+    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${postalYouDigitalConf}
+    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${postalElseDigitalConf}
     ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${youDigital}
     ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${elseDigital}
   `('$desc', async ({ desc, licenceFor, postal, method, expected }) => {
