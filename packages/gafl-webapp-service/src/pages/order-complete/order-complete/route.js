@@ -107,20 +107,16 @@ const getEnforcementContent = (permission, mssgs) => {
   const isForYou = permission.isLicenceForYou
   const hasPostalFulfillment = permission.licensee.postalFulfilment
 
-  switch (true) {
-    case isForYou && hasPostalFulfillment && !isDigitalConfirmation:
-      return mssgs.order_complete_when_fishing_self_paragraph
-    case !isForYou && hasPostalFulfillment && !isDigitalConfirmation:
-      return mssgs.order_complete_when_fishing_bobo_paragraph
-    case isForYou && hasPostalFulfillment && isDigitalConfirmation:
-      return mssgs.order_complete_when_fishing_self_digital_confirmation_paragraph
-    case !isForYou && hasPostalFulfillment && isDigitalConfirmation:
-      return mssgs.order_complete_when_fishing_bobo_digital_confirmation_paragraph
-    case isForYou && !hasPostalFulfillment && isDigitalConfirmation:
-      return mssgs.order_complete_when_fishing_self_digital_paragraph
-    default:
-      return mssgs.order_complete_when_fishing_bobo_digital_paragraph
+  const conditions = {
+    true_true_false: mssgs.order_complete_when_fishing_self_paragraph,
+    false_true_false: mssgs.order_complete_when_fishing_bobo_paragraph,
+    true_true_true: mssgs.order_complete_when_fishing_self_digital_confirmation_paragraph,
+    false_true_true: mssgs.order_complete_when_fishing_bobo_digital_confirmation_paragraph,
+    true_false_true: mssgs.order_complete_when_fishing_self_digital_paragraph,
+    false_false_true: mssgs.order_complete_when_fishing_bobo_digital_paragraph
   }
+
+  return conditions[`${isForYou}_${hasPostalFulfillment}_${isDigitalConfirmation}`]
 }
 
 export default pageRoute(ORDER_COMPLETE.page, ORDER_COMPLETE.uri, null, nextPage, getData)
