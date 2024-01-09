@@ -101,22 +101,23 @@ const getLicenceDetailsDigitalContent = (permission, mssgs) => {
 }
 
 const getEnforcementContent = (permission, mssgs) => {
-  if (!digitalConfirmation(permission)) {
-    if (permission.isLicenceForYou && permission.licensee.postalFulfilment) {
+  const isDigitalConfirmation = digitalConfirmation(permission)
+  const isForYou = permission.isLicenceForYou
+  const hasPostalFulfillment = permission.licensee.postalFulfilment
+
+  switch (true) {
+    case isForYou && hasPostalFulfillment && !isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_self_paragraph
-    } else if (!permission.isLicenceForYou && permission.licensee.postalFulfilment) {
+    case !isForYou && hasPostalFulfillment && !isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_bobo_paragraph
-    }
-  } else {
-    if (permission.isLicenceForYou && permission.licensee.postalFulfilment) {
+    case isForYou && hasPostalFulfillment && isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_self_digital_confirmation_paragraph
-    } else if (!permission.isLicenceForYou && permission.licensee.postalFulfilment) {
+    case !isForYou && hasPostalFulfillment && isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_bobo_digital_confirmation_paragraph
-    } else if (permission.isLicenceForYou && !permission.licensee.postalFulfilment) {
+    case isForYou && !hasPostalFulfillment && isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_self_digital_paragraph
-    } else if (!permission.isLicenceForYou && !permission.licensee.postalFulfilment) {
+    case !isForYou && !hasPostalFulfillment && isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_bobo_digital_paragraph
-    }
   }
 }
 
