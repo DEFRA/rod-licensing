@@ -98,6 +98,8 @@ const getLicenceDetailsDigitalContent = (permission, mssgs) => {
       return mssgs.order_complete_licence_details_bobo_digital_paragraph
     }
   }
+
+  return undefined
 }
 
 const getEnforcementContent = (permission, mssgs) => {
@@ -116,7 +118,7 @@ const getEnforcementContent = (permission, mssgs) => {
       return mssgs.order_complete_when_fishing_bobo_digital_confirmation_paragraph
     case isForYou && !hasPostalFulfillment && isDigitalConfirmation:
       return mssgs.order_complete_when_fishing_self_digital_paragraph
-    case !isForYou && !hasPostalFulfillment && isDigitalConfirmation:
+    default:
       return mssgs.order_complete_when_fishing_bobo_digital_paragraph
   }
 }
