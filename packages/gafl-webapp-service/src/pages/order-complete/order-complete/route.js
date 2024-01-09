@@ -51,39 +51,36 @@ export const getData = async request => {
   }
 }
 
-const digitalConfirmation = permission => {
-  if (
-    permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
-    permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
-  ) {
-    return true
-  }
-
-  return false
-}
+const digitalConfirmation = permission =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
 
 const getOrderCompleteContent = (permission, mssgs, transaction) => {
   const permissionCost = displayPermissionPrice(permission, mssgs, transaction.payment?.created_date)
   const permissionIsFree = getPermissionCost(permission, transaction.payment?.created_date) === 0
-  const content = {}
+  return {
+    title: permissionIsFree ? mssgs.order_complete_title_application : mssgs.order_complete_title_payment + permissionCost,
 
-  content.title = permissionIsFree ? mssgs.order_complete_title_application : mssgs.order_complete_title_payment + permissionCost
-  content.licenceTitle = permission.isLicenceForYou
-    ? mssgs.order_complete_licence_details_self_title
-    : mssgs.order_complete_licence_details_bobo_title
-  content.licenceDetailsDigitalParagraph = getLicenceDetailsDigitalContent(permission, mssgs)
-  content.licenceDetailsParagraphTwo = permission.isLicenceForYou
-    ? mssgs.order_complete_licence_details_self_paragraph
-    : mssgs.order_complete_licence_details_bobo_paragraph
-  content.whenFishingParagraphOne = getEnforcementContent(permission, mssgs)
-  content.whenFishingParagraphOneLink = permission.isLicenceForYou
-    ? mssgs.order_complete_when_fishing_self_link
-    : mssgs.order_complete_when_fishing_bobo_link
-  content.whenFishingParagraphTwo = permission.isLicenceForYou
-    ? mssgs.order_complete_when_fishing_self_paragraph_2
-    : mssgs.order_complete_when_fishing_bobo_paragraph_2
+    licenceTitle: permission.isLicenceForYou
+      ? mssgs.order_complete_licence_details_self_title
+      : mssgs.order_complete_licence_details_bobo_title,
 
-  return content
+    licenceDetailsDigitalParagraph: getLicenceDetailsDigitalContent(permission, mssgs),
+
+    licenceDetailsParagraphTwo: permission.isLicenceForYou
+      ? mssgs.order_complete_licence_details_self_paragraph
+      : mssgs.order_complete_licence_details_bobo_paragraph,
+
+    whenFishingParagraphOne: getEnforcementContent(permission, mssgs),
+
+    whenFishingParagraphOneLink: permission.isLicenceForYou
+      ? mssgs.order_complete_when_fishing_self_link
+      : mssgs.order_complete_when_fishing_bobo_link,
+
+    whenFishingParagraphTwo: permission.isLicenceForYou
+      ? mssgs.order_complete_when_fishing_self_paragraph_2
+      : mssgs.order_complete_when_fishing_bobo_paragraph_2
+  }
 }
 
 const getLicenceDetailsDigitalContent = (permission, mssgs) => {
