@@ -212,6 +212,13 @@ describe('The order completion handler', () => {
     expect(content).toEqual(expected)
   })
 
+  it('title dispalys as application when permission is free', async () => {
+    getPermissionCost.mockReturnValueOnce(0)
+    const permission = getSamplePermission({ isLicenceForYou: true, postalFulfilment: false, preferredMethodOfConfirmation: 'Text' })
+    const { content } = await getData(getSampleRequest({ permission }))
+    expect(content.title).toEqual('application title')
+  })
+
   it('passes request and permission to displayStartTime', async () => {
     const permission = getSamplePermission(LICENCE_TYPE['salmon-and-sea-trout'])
     const request = getSampleRequest({ permission })
