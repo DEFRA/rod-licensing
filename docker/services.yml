@@ -108,17 +108,3 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-
-  ##############################################################################################################
-  # rod_licensing recurring_payments_job
-  ##############################################################################################################
-  recurring_payments_job:
-    image: rod_licensing/recurring_payments_job:${TAG:-latest}
-    env_file:
-      - ./env/.recurring_payments_job.env
-      - ./env/.recurring_payments_job.secrets.env
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: on-failure
