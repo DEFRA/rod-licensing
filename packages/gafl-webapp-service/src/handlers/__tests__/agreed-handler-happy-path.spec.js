@@ -163,14 +163,14 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
     })
 
-    // it('returns a 200 status code when getting the order complete page', async () => {
-    //   await injectWithCookies('GET', AGREED.uri)
-    //   await injectWithCookies('GET', AGREED.uri)
-    //   await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    //   await injectWithCookies('GET', TEST_STATUS.uri)
-    //   const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    //   expect(response.statusCode).toBe(200)
-    // })
+    it('returns a 200 status code when getting the order complete page', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', AGREED.uri)
+      await injectWithCookies('GET', TEST_TRANSACTION.uri)
+      await injectWithCookies('GET', TEST_STATUS.uri)
+      const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+      expect(response.statusCode).toBe(200)
+    })
   })
 
   describe.each([
@@ -234,11 +234,11 @@ describe('The agreed handler', () => {
       expect(JSON.parse(status)[COMPLETION_STATUS.finalised]).toBeTruthy()
     })
 
-    // it('returns a 200 status code when getting the order complete page', async () => {
-    //   await injectWithCookies('GET', AGREED.uri)
-    //   const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
-    //   expect(response.statusCode).toBe(200)
-    // })
+    it('returns a 200 status code when getting the order complete page', async () => {
+      await injectWithCookies('GET', AGREED.uri)
+      const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
+      expect(response.statusCode).toBe(200)
+    })
   })
 
   describe('finalised transactions', () => {
