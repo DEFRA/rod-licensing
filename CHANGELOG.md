@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.10 (2024-01-10)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#1852](https://github.com/DEFRA/rod-licensing/pull/1852) Remove rp job ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.38.0-rc.8 (2024-01-10)
 
