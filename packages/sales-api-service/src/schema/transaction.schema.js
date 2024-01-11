@@ -106,23 +106,9 @@ const finaliseTransactionRequestSchemaContent = {
     channelId: Joi.string().trim().optional().description('Channel specific identifier'),
     method: buildJoiOptionSetValidator('defra_paymenttype', 'Debit card'),
     recurring: Joi.object({
-      name: Joi.string().required().description('The default name associated with the recurring payment').example(uuidv4()),
-      nextDueDate: Joi.string()
-        .isoDate()
-        .required()
-        .description('The date of payment for a renewed permission')
-        .example(new Date().toISOString()),
-      cancelledDate: Joi.string()
-        .isoDate()
-        .optional()
-        .description('Optional field for when recurring payment cancelled')
-        .example(new Date().toISOString()),
-      cancelledReason: buildJoiOptionSetValidator('defra_cancelledreason', 'User Cancelled'),
-      endDate: Joi.string().isoDate().required().description('End of recurring payment').example(new Date().toISOString()),
-      agreementId: Joi.string().required().description('Agreement identification number, Gov.UK Pay field').example(uuidv4()),
-      publicId: Joi.string().required().description('SHA-256 hash of id').example(uuidv4()),
-      contact: contactRequestSchema,
-      activePermission: finalisePermissionResponseSchema
+      payer: contactRequestSchema,
+      referenceNumber: Joi.string().required().description('The reference number associated with the recurring payment').example(uuidv4()),
+      mandate: Joi.string().required().description('The mandate identifier associated with the recurring payment').example(uuidv4())
     })
       .label('finalise-transaction-recurring-payment-details')
       .description('Used to establish a recurring payment (e.g. via Direct Debit)')

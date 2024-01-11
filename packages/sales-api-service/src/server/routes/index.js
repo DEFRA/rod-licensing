@@ -6,7 +6,6 @@ import PaymentJournals from './payment-journals.js'
 import StagingExceptions from './staging-exceptions.js'
 import Authenticate from './authenticate.js'
 import Users from './system-users.js'
-import RecurringPayment from './recurring-payments.js'
 
 import Static from './static.js'
 
@@ -19,6 +18,5 @@ export default [
   ...PaymentJournals,
   ...StagingExceptions,
   ...Authenticate,
-  ...Users,
-  ...RecurringPayment
+  ...Users
 ]

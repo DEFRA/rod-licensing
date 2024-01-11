@@ -276,12 +276,3 @@ export const authenticate = async (referenceNumber, birthDate, postcode) =>
  * @returns {boolean} true if the status code represents a system error, false otherwise
  */
 export const isSystemError = statusCode => Math.floor(statusCode / 100) === 5
-
-/**
- * Grab due recurring payments
- *
- * @param date the current date
- * @returns {Promise<*>}
- * @throws on a non-2xx response
- */
-export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL(`/dueRecurringPayments/${date}`, urlBase), 'get'))

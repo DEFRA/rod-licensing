@@ -1,4 +1,33 @@
 
+## v1.38.0-rc.11 (2024-01-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1845](https://github.com/DEFRA/rod-licensing/pull/1845) Recurring Payment not for BOBO ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.10 (2024-01-10)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#1852](https://github.com/DEFRA/rod-licensing/pull/1852) Remove rp job ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.38.0-rc.8 (2024-01-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1846](https://github.com/DEFRA/rod-licensing/pull/1846) How recieve licence update (1/8 day) ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1848](https://github.com/DEFRA/rod-licensing/pull/1848) Content reflow ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.38.0-rc.7 (2024-01-03)
 
 #### :rocket: Enhancement

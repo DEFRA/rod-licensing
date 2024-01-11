@@ -19,13 +19,13 @@ jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/concession-helper.js')
 
 describe('name > route', () => {
-  const getMockRequest = ({ isLicenceForYou, licenceType, licensee }) => ({
+  const getMockRequest = ({ isLicenceForYou, licenceType, licensee, licenceLength = 'length' }) => ({
     cache: () => ({
       helpers: {
         transaction: {
           getCurrentPermission: () => ({
             licensee,
-            licenceLength: 'licenceLength',
+            licenceLength,
             licenceStartDate: 'licenceStartDate',
             isLicenceForYou,
             licenceType
@@ -50,18 +50,34 @@ describe('name > route', () => {
     important_info_contact_post_salmon_you: 'Salmon you',
     important_info_contact_post_not_salmon_you: 'Not salmon you',
     important_info_contact_post_salmon_other: 'Salmon other',
-    important_info_contact_post_not_salmon_other: 'Not salmon other'
+    important_info_contact_post_not_salmon_other: 'Not salmon other',
+    important_info_contact_error_choose_short: 'Short term adult error message',
+    important_info_contact_error_choose: 'Error message',
+    important_info_contact_content_salmon: 'Salmon content',
+    important_info_contact_content_not_salmon: 'Not salmon content',
+    licence_confirm_method_where_title_you: 'Where send you',
+    licence_confirm_method_where_title_other: 'Where send other'
   })
 
   describe('getData', () => {
     it.each([
-      [true, 'You title'],
-      [false, 'Other title']
-    ])('title return method is %s if isLicenceForYou is same', async (isLicenceForYou, expected) => {
-      const licensee = { birthDate: 'birthDate' }
-      const result = await getData(getMockRequest({ isLicenceForYou, licensee }))
-      expect(result.title).toBe(expected)
-    })
+      [true, '12M', false, 'You title'],
+      [false, '12M', false, 'Other title'],
+      [true, '12M', true, 'Where send you'],
+      [false, '12M', true, 'Where send other'],
+      [true, '8D', false, 'Where send you'],
+      [false, '8D', false, 'Where send other'],
+      [true, '1D', false, 'Where send you'],
+      [false, '1D', false, 'Where send other']
+    ])(
+      'title return method is %s if isLicenceForYou is same, licenceLength is %s and junior is %s',
+      async (isLicenceForYou, licenceLength, junior, expected) => {
+        const licensee = { birthDate: 'birthDate' }
+        hasJunior.mockReturnValueOnce(junior)
+        const result = await getData(getMockRequest({ isLicenceForYou, licensee, licenceLength }))
+        expect(result.title).toBe(expected)
+      }
+    )
 
     it('mobileText includes value of mobile phone when preferredMethodOfConfirmation is text', async () => {
       const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Text' }
@@ -115,15 +131,24 @@ describe('name > route', () => {
     })
 
     it.each([
-      [true, 'Salmon and sea trout', 'Salmon you'],
-      [true, 'Trout and coarse', 'Not salmon you'],
-      [false, 'Salmon and sea trout', 'Salmon other'],
-      [false, 'Trout and coarse', 'Not salmon other']
+      [true, 'Salmon and sea trout', '12M', false, 'Salmon you'],
+      [true, 'Trout and coarse', '12M', false, 'Not salmon you'],
+      [false, 'Salmon and sea trout', '12M', false, 'Salmon other'],
+      [false, 'Trout and coarse', '12M', false, 'Not salmon other'],
+      [true, 'Salmon and sea trout', '8D', false, 'Salmon content'],
+      [true, 'Trout and coarse', '8D', false, 'Not salmon content'],
+      [false, 'Salmon and sea trout', '1D', false, 'Salmon content'],
+      [false, 'Trout and coarse', '1D', false, 'Not salmon content'],
+      [true, 'Salmon and sea trout', '12M', true, 'Salmon content'],
+      [true, 'Trout and coarse', '12M', true, 'Not salmon content'],
+      [false, 'Salmon and sea trout', '12M', true, 'Salmon content'],
+      [false, 'Trout and coarse', '12M', true, 'Not salmon content']
     ])(
-      'content has correct value depending on isLicenceForYou is %s and licenceType is %s',
-      async (isLicenceForYou, licenceType, expected) => {
+      'content has correct value depending on isLicenceForYou is %s, licenceType is %s, licenceLength is %s and junior is %s',
+      async (isLicenceForYou, licenceType, licenceLength, junior, expected) => {
         const licensee = { birthDate: 'birthDate' }
-        const result = await getData(getMockRequest({ isLicenceForYou, licenceType, licensee }))
+        hasJunior.mockReturnValueOnce(junior)
+        const result = await getData(getMockRequest({ isLicenceForYou, licenceType, licensee, licenceLength }))
         expect(result.content).toBe(expected)
       }
     )
@@ -139,13 +164,15 @@ describe('name > route', () => {
     })
 
     it.each([
-      [true, true],
-      [false, false]
-    ])('isJunior matches return method of hasJunior', async (physical, expected) => {
+      ['8D', false, 'Short term adult error message'],
+      ['1D', false, 'Short term adult error message'],
+      ['12M', false, 'Error message'],
+      ['12M', true, 'Short term adult error message']
+    ])('error message has correct value depending on licenceLength is %s and junior is %s', async (licenceLength, junior, expected) => {
       const licensee = { birthDate: 'birthDate' }
-      hasJunior.mockReturnValueOnce(physical)
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.isJunior).toBe(expected)
+      hasJunior.mockReturnValueOnce(junior)
+      const result = await getData(getMockRequest({ licenceLength, licensee }))
+      expect(result.errorMessage).toBe(expected)
     })
   })
 

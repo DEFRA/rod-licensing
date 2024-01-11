@@ -181,7 +181,7 @@ describe('transaction service', () => {
             type: 'Gov Pay',
             method: 'Debit card',
             recurring: {
-              contact: {
+              payer: {
                 firstName: 'Fester',
                 lastName: 'Tester',
                 birthDate: '2000-01-01',
