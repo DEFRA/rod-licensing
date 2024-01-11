@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.12 (2024-01-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1847](https://github.com/DEFRA/rod-licensing/pull/1847) Fix typos in Welsh translation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.38.0-rc.11 (2024-01-10)
 
 #### :rocket: Enhancement
