@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.13 (2024-01-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1856](https://github.com/DEFRA/rod-licensing/pull/1856) Update English language text about receiving licence ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.38.0-rc.12 (2024-01-11)
 
 #### :bug: Bug Fix
