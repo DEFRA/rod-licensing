@@ -1,4 +1,13 @@
 
+## v1.38.0-rc.14 (2024-01-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1855](https://github.com/DEFRA/rod-licensing/pull/1855) Confirmation method reflow content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.38.0-rc.13 (2024-01-12)
 
 #### :bug: Bug Fix
