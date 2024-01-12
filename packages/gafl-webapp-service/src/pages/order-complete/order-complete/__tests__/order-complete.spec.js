@@ -105,66 +105,6 @@ const getSampleRequest = ({
 })
 jest.mock('@defra-fish/connectors-lib')
 
-const postalYouNoneDigitalConf = {
-  title: 'payment title 1',
-  licenceTitle: 'title self licence details',
-  licenceDetailsDigitalParagraph: undefined,
-  licenceDetailsParagraphTwo: 'paragraph self licence details',
-  whenFishingParagraphOne: 'fishing self non postal non digital when fishing',
-  whenFishingParagraphOneLink: 'fishing self link',
-  whenFishingParagraphTwo: 'fishing self non postal non digital when fishing two'
-}
-
-const postalElseNoneDigitalConf = {
-  title: 'payment title 1',
-  licenceTitle: 'title bobo licence details',
-  licenceDetailsDigitalParagraph: undefined,
-  licenceDetailsParagraphTwo: 'paragraph bobo licence details',
-  whenFishingParagraphOne: 'fishing bobo non postal non digital when fishing',
-  whenFishingParagraphOneLink: 'fishing bobo link',
-  whenFishingParagraphTwo: 'fishing bobo non postal non digital when fishing two'
-}
-
-const postalYouDigitalConf = {
-  title: 'payment title 1',
-  licenceTitle: 'title self licence details',
-  licenceDetailsDigitalParagraph: 'fishing self digital confirmation licence details',
-  licenceDetailsParagraphTwo: 'paragraph self licence details',
-  whenFishingParagraphOne: 'fishing self postal digital when fishing',
-  whenFishingParagraphOneLink: 'fishing self link',
-  whenFishingParagraphTwo: 'fishing self non postal non digital when fishing two'
-}
-
-const postalElseDigitalConf = {
-  title: 'payment title 1',
-  licenceTitle: 'title bobo licence details',
-  licenceDetailsDigitalParagraph: 'fishing bobo digital confirmation licence details',
-  licenceDetailsParagraphTwo: 'paragraph bobo licence details',
-  whenFishingParagraphOne: 'fishing bobo postal digital when fishing',
-  whenFishingParagraphOneLink: 'fishing bobo link',
-  whenFishingParagraphTwo: 'fishing bobo non postal non digital when fishing two'
-}
-
-const youDigital = {
-  title: 'payment title 1',
-  licenceTitle: 'title self licence details',
-  licenceDetailsDigitalParagraph: 'fishing self digital licence details',
-  licenceDetailsParagraphTwo: 'paragraph self licence details',
-  whenFishingParagraphOne: 'fishing self non postal digital when fishing',
-  whenFishingParagraphOneLink: 'fishing self link',
-  whenFishingParagraphTwo: 'fishing self non postal non digital when fishing two'
-}
-
-const elseDigital = {
-  title: 'payment title 1',
-  licenceTitle: 'title bobo licence details',
-  licenceDetailsDigitalParagraph: 'fishing bobo digital licence details',
-  licenceDetailsParagraphTwo: 'paragraph bobo licence details',
-  whenFishingParagraphOne: 'fishing bobo non postal digital when fishing',
-  whenFishingParagraphOneLink: 'fishing bobo link',
-  whenFishingParagraphTwo: 'fishing bobo non postal non digital when fishing two'
-}
-
 describe('The order completion handler', () => {
   beforeAll(() => {
     displayPermissionPrice.mockReturnValue('1')
@@ -199,14 +139,14 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    desc                                                                | licenceFor | postal   | method      | expected
-      ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${postalYouNoneDigitalConf}
-      ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${postalElseNoneDigitalConf}
-      ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${postalYouDigitalConf}
-      ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${postalElseDigitalConf}
-      ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${youDigital}
-      ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${elseDigital}
-    `('$desc', async ({ desc, licenceFor, postal, method, expected }) => {
+    desc                                                                | licenceFor | postal   | method
+    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'}
+    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'}
+    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}
+    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}
+    ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}
+    ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}
+  `('$desc', async ({ desc, licenceFor, postal, method }) => {
     const permission = getSamplePermission({ isLicenceForYou: licenceFor, postalFulfilment: postal, preferredMethodOfConfirmation: method })
     const { content } = await getData(getSampleRequest({ permission }))
     expect(content).toMatchSnapshot()
