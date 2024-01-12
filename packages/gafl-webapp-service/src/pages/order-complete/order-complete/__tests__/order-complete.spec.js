@@ -64,14 +64,14 @@ const getMessages = () => ({
   order_complete_licence_details_bobo_digital_paragraph: 'fishing bobo digital licence details',
   order_complete_when_fishing_self_link: 'fishing self link',
   order_complete_when_fishing_bobo_link: 'fishing bobo link',
-  order_complete_when_fishing_self_paragraph_2: 'fishing self paragraph two when fishing',
-  order_complete_when_fishing_bobo_paragraph_2: 'fishing bobo paragraph two when fishing',
-  order_complete_when_fishing_self_paragraph: 'fishing self paragraph one when fishing',
-  order_complete_when_fishing_bobo_paragraph: 'fishing bobo paragraph one when fishing',
-  order_complete_when_fishing_self_digital_confirmation_paragraph: 'fishing self digital confirmation when fishing',
-  order_complete_when_fishing_bobo_digital_confirmation_paragraph: 'fishing bobo digital confirmation when fishing',
-  order_complete_when_fishing_self_digital_paragraph: 'fishing self digital when fishing',
-  order_complete_when_fishing_bobo_digital_paragraph: 'fishing bobo digital when fishing'
+  order_complete_when_fishing_self_postal_non_digital_2: 'fishing self non postal non digital when fishing two',
+  order_complete_when_fishing_bobo_postal_non_digital_2: 'fishing bobo non postal non digital when fishing two',
+  order_complete_when_fishing_self_postal_non_digital: 'fishing self non postal non digital when fishing',
+  order_complete_when_fishing_bobo_postal_non_digital: 'fishing bobo non postal non digital when fishing',
+  order_complete_when_fishing_self_postal_digital: 'fishing self postal digital when fishing',
+  order_complete_when_fishing_bobo_postal_digital: 'fishing bobo postal digital when fishing',
+  order_complete_when_fishing_self_non_postal_digital: 'fishing self non postal digital when fishing',
+  order_complete_when_fishing_bobo_non_postal_digital: 'fishing bobo non postal digital when fishing'
 })
 
 const getSampleRequest = ({
@@ -110,9 +110,9 @@ const postalYouNoneDigitalConf = {
   licenceTitle: 'title self licence details',
   licenceDetailsDigitalParagraph: undefined,
   licenceDetailsParagraphTwo: 'paragraph self licence details',
-  whenFishingParagraphOne: 'fishing self paragraph one when fishing',
+  whenFishingParagraphOne: 'fishing self non postal non digital when fishing',
   whenFishingParagraphOneLink: 'fishing self link',
-  whenFishingParagraphTwo: 'fishing self paragraph two when fishing'
+  whenFishingParagraphTwo: 'fishing self non postal non digital when fishing two'
 }
 
 const postalElseNoneDigitalConf = {
@@ -120,9 +120,9 @@ const postalElseNoneDigitalConf = {
   licenceTitle: 'title bobo licence details',
   licenceDetailsDigitalParagraph: undefined,
   licenceDetailsParagraphTwo: 'paragraph bobo licence details',
-  whenFishingParagraphOne: 'fishing bobo paragraph one when fishing',
+  whenFishingParagraphOne: 'fishing bobo non postal non digital when fishing',
   whenFishingParagraphOneLink: 'fishing bobo link',
-  whenFishingParagraphTwo: 'fishing bobo paragraph two when fishing'
+  whenFishingParagraphTwo: 'fishing bobo non postal non digital when fishing two'
 }
 
 const postalYouDigitalConf = {
@@ -130,9 +130,9 @@ const postalYouDigitalConf = {
   licenceTitle: 'title self licence details',
   licenceDetailsDigitalParagraph: 'fishing self digital confirmation licence details',
   licenceDetailsParagraphTwo: 'paragraph self licence details',
-  whenFishingParagraphOne: 'fishing self digital confirmation when fishing',
+  whenFishingParagraphOne: 'fishing self postal digital when fishing',
   whenFishingParagraphOneLink: 'fishing self link',
-  whenFishingParagraphTwo: 'fishing self paragraph two when fishing'
+  whenFishingParagraphTwo: 'fishing self non postal non digital when fishing two'
 }
 
 const postalElseDigitalConf = {
@@ -140,9 +140,9 @@ const postalElseDigitalConf = {
   licenceTitle: 'title bobo licence details',
   licenceDetailsDigitalParagraph: 'fishing bobo digital confirmation licence details',
   licenceDetailsParagraphTwo: 'paragraph bobo licence details',
-  whenFishingParagraphOne: 'fishing bobo digital confirmation when fishing',
+  whenFishingParagraphOne: 'fishing bobo postal digital when fishing',
   whenFishingParagraphOneLink: 'fishing bobo link',
-  whenFishingParagraphTwo: 'fishing bobo paragraph two when fishing'
+  whenFishingParagraphTwo: 'fishing bobo non postal non digital when fishing two'
 }
 
 const youDigital = {
@@ -150,9 +150,9 @@ const youDigital = {
   licenceTitle: 'title self licence details',
   licenceDetailsDigitalParagraph: 'fishing self digital licence details',
   licenceDetailsParagraphTwo: 'paragraph self licence details',
-  whenFishingParagraphOne: 'fishing self digital when fishing',
+  whenFishingParagraphOne: 'fishing self non postal digital when fishing',
   whenFishingParagraphOneLink: 'fishing self link',
-  whenFishingParagraphTwo: 'fishing self paragraph two when fishing'
+  whenFishingParagraphTwo: 'fishing self non postal non digital when fishing two'
 }
 
 const elseDigital = {
@@ -160,9 +160,9 @@ const elseDigital = {
   licenceTitle: 'title bobo licence details',
   licenceDetailsDigitalParagraph: 'fishing bobo digital licence details',
   licenceDetailsParagraphTwo: 'paragraph bobo licence details',
-  whenFishingParagraphOne: 'fishing bobo digital when fishing',
+  whenFishingParagraphOne: 'fishing bobo non postal digital when fishing',
   whenFishingParagraphOneLink: 'fishing bobo link',
-  whenFishingParagraphTwo: 'fishing bobo paragraph two when fishing'
+  whenFishingParagraphTwo: 'fishing bobo non postal non digital when fishing two'
 }
 
 describe('The order completion handler', () => {
@@ -200,19 +200,19 @@ describe('The order completion handler', () => {
 
   it.each`
     desc                                                                | licenceFor | postal   | method      | expected
-    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${postalYouNoneDigitalConf}
-    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${postalElseNoneDigitalConf}
-    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${postalYouDigitalConf}
-    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${postalElseDigitalConf}
-    ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${youDigital}
-    ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${elseDigital}
-  `('$desc', async ({ desc, licenceFor, postal, method, expected }) => {
+      ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${postalYouNoneDigitalConf}
+      ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${postalElseNoneDigitalConf}
+      ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${postalYouDigitalConf}
+      ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${postalElseDigitalConf}
+      ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${youDigital}
+      ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${elseDigital}
+    `('$desc', async ({ desc, licenceFor, postal, method, expected }) => {
     const permission = getSamplePermission({ isLicenceForYou: licenceFor, postalFulfilment: postal, preferredMethodOfConfirmation: method })
     const { content } = await getData(getSampleRequest({ permission }))
-    expect(content).toEqual(expected)
+    expect(content).toMatchSnapshot()
   })
 
-  it('title dispalys as application when permission is free', async () => {
+  it('title displays as application when permission is free', async () => {
     getPermissionCost.mockReturnValueOnce(0)
     const permission = getSamplePermission({ isLicenceForYou: true, postalFulfilment: false, preferredMethodOfConfirmation: 'Text' })
     const { content } = await getData(getSampleRequest({ permission }))
