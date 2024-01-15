@@ -1,4 +1,4 @@
-import { START_AFTER_PAYMENT_MINUTES } from '../constants'
+import { START_AFTER_PAYMENT_MINUTES } from '../constants.js'
 
 const getPermissionStartDate = () => {
   const startDate = new Date()
