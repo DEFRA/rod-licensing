@@ -1,4 +1,132 @@
 
+## v1.38.0-rc.14 (2024-01-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1855](https://github.com/DEFRA/rod-licensing/pull/1855) Confirmation method reflow content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.13 (2024-01-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1856](https://github.com/DEFRA/rod-licensing/pull/1856) Update English language text about receiving licence ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.38.0-rc.12 (2024-01-11)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1847](https://github.com/DEFRA/rod-licensing/pull/1847) Fix typos in Welsh translation ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.38.0-rc.11 (2024-01-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1845](https://github.com/DEFRA/rod-licensing/pull/1845) Recurring Payment not for BOBO ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.10 (2024-01-10)
+
+#### :bug: Bug Fix
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#1852](https://github.com/DEFRA/rod-licensing/pull/1852) Remove rp job ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.38.0-rc.8 (2024-01-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1846](https://github.com/DEFRA/rod-licensing/pull/1846) How recieve licence update (1/8 day) ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1848](https://github.com/DEFRA/rod-licensing/pull/1848) Content reflow ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.7 (2024-01-03)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `dynamics-lib`, `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#1816](https://github.com/DEFRA/rod-licensing/pull/1816) Recurring payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.6 (2023-12-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1841](https://github.com/DEFRA/rod-licensing/pull/1841) Permit cost increase ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.38.0-rc.5 (2023-12-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1844](https://github.com/DEFRA/rod-licensing/pull/1844) Recurring payment agreement ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.4 (2023-12-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1839](https://github.com/DEFRA/rod-licensing/pull/1839) Recurring payment agreement page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.3 (2023-12-20)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `gafl-webapp-service`, `pocl-job`, `sales-api-service`
+  * [#1843](https://github.com/DEFRA/rod-licensing/pull/1843) Fix code smells ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.38.0-rc.2 (2023-12-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1842](https://github.com/DEFRA/rod-licensing/pull/1842) Update text referring to physical licences ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.38.0-rc.1 (2023-12-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1836](https://github.com/DEFRA/rod-licensing/pull/1836) Welsh - Payment Options ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.0 (2023-12-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1835](https://github.com/DEFRA/rod-licensing/pull/1835) Accessibility - reflow of content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.37.0-rc.15 (2023-12-05)
 

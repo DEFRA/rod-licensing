@@ -6,6 +6,17 @@ div.hidden-area {
   color: govuk-colour('white');
 }
 
+.contact-scroll {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.govuk-label {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: block;
+}
+
 @media print {
   @page {
     // size: A4, this affects the margin in the printer settings

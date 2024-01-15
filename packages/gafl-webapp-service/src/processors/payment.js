@@ -23,7 +23,7 @@ export const preparePayment = (request, transaction) => {
 
   const result = {
     return_url: url.href,
-    amount: transaction.cost * 100,
+    amount: Math.round(transaction.cost * 100),
     reference: transaction.id,
     description:
       transaction.permissions.length === 1

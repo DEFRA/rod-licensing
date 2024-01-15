@@ -1,8 +1,9 @@
 import { CommonResults } from '../../constants.js'
+import { validForRecurringPayment } from '../../processors/recurring-pay-helper.js'
 
 export default async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  if (process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' && permission.licenceLength === '12M') {
+  if (validForRecurringPayment(permission)) {
     return CommonResults.RECURRING
   }
 

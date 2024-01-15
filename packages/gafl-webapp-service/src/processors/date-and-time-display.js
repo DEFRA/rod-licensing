@@ -3,9 +3,9 @@ import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 export const dateDisplayFormat = 'D MMMM YYYY'
 export const cacheDateFormat = 'YYYY-MM-DD'
 
-export const advancePurchaseDateMoment = permission => {
-  return moment.tz(permission.licenceStartDate, cacheDateFormat, SERVICE_LOCAL_TIME).add(permission.licenceStartTime ?? 0, 'hours')
-}
+export const advancePurchaseDateMoment = permission =>
+  moment.tz(permission.licenceStartDate, cacheDateFormat, SERVICE_LOCAL_TIME).add(permission.licenceStartTime ?? 0, 'hours')
+
 /**
  * Function to convert licence start and end times to standard strings for display in the service
  * @param permission

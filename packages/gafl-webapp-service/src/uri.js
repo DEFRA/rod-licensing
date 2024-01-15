@@ -59,6 +59,7 @@ export const SERVER_ERROR = { uri: '/buy/server-error', page: 'server-error' }
 export const ERROR_TESTING = { uri: '/buy/throw-error' }
 
 export const CHOOSE_PAYMENT = { uri: '/buy/choose-payment', page: 'choose-payment' }
+export const SET_UP_PAYMENT = { uri: '/buy/set-up-recurring-card-payment', page: 'set-up-payment' }
 
 /**
  * These are informational static pages

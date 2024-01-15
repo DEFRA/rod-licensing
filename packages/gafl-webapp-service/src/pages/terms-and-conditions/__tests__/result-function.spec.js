@@ -1,5 +1,8 @@
 import resultFunction from '../result-function.js'
 import { CommonResults } from '../../../constants.js'
+import { validForRecurringPayment } from '../../../processors/recurring-pay-helper.js'
+
+jest.mock('../../../processors/recurring-pay-helper.js')
 
 jest.mock('../../../constants', () => ({
   CommonResults: {
@@ -19,36 +22,24 @@ const getMockRequest = permission => ({
 })
 
 describe('Result function', () => {
-  it('should return RECURRING when SHOW_RECURRING_PAYMENTS is true and licenceLength is 12M', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'true'
-    const permission = {
-      licenceLength: '12M'
-    }
+  it('validForRecurringPayment is called with a permission', async () => {
+    const permission = Symbol('permission')
     const mockRequest = getMockRequest(permission)
 
-    const result = await resultFunction(mockRequest)
-    expect(result).toBe(CommonResults.RECURRING)
+    await resultFunction(mockRequest)
+
+    expect(validForRecurringPayment).toHaveBeenCalledWith(permission)
   })
 
-  it('should return OK when SHOW_RECURRING_PAYMENTS is false', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'false'
-    const permission = {
-      licenceLength: '12M'
-    }
-    const mockRequest = getMockRequest(permission)
+  it.each([
+    [CommonResults.OK, false],
+    [CommonResults.RECURRING, true]
+  ])('should return %s if validForRecurringPayment is %s', async (common, valid) => {
+    validForRecurringPayment.mockReturnValueOnce(valid)
+    const mockRequest = getMockRequest('permission')
 
     const result = await resultFunction(mockRequest)
-    expect(result).toBe(CommonResults.OK)
-  })
 
-  it('should return OK when licenceLength is not 12M', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'true'
-    const permission = {
-      licenceLength: '8D'
-    }
-    const mockRequest = getMockRequest(permission)
-
-    const result = await resultFunction(mockRequest)
-    expect(result).toBe(CommonResults.OK)
+    expect(result).toBe(common)
   })
 })

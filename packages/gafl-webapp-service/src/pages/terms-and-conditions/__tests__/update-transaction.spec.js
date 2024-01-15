@@ -1,6 +1,9 @@
 import updateTransaction from '../update-transaction'
 import { COMPLETION_STATUS } from '../../../constants.js'
+import { validForRecurringPayment } from '../../../processors/recurring-pay-helper.js'
 import db from 'debug'
+
+jest.mock('../../../processors/recurring-pay-helper.js')
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
 const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:set-agreed')]
@@ -32,33 +35,40 @@ describe('update transaction', () => {
     )
   })
 
-  it('should not set status to agreed when a recurring payment and 12 month licence', async () => {
+  it('validForRecurringPayment is called with a permission', async () => {
+    const permission = Symbol('permission')
+
+    await updateTransaction(getSampleRequest({ permission }))
+
+    expect(validForRecurringPayment).toHaveBeenCalledWith(permission)
+  })
+
+  it('should set status to agreed when validForRecurringPayment is false', async () => {
     const statusSet = jest.fn()
-    process.env.SHOW_RECURRING_PAYMENTS = 'true'
-    const permission = {
-      licenceLength: '12M'
-    }
-    await updateTransaction(getSampleRequest({ statusSet, permission }))
+    validForRecurringPayment.mockReturnValueOnce(false)
+    await updateTransaction(getSampleRequest({ statusSet }))
+
+    expect(statusSet).toHaveBeenCalled()
+  })
+
+  it('should not set status to agreed when validForRecurringPayment is true', async () => {
+    const statusSet = jest.fn()
+    validForRecurringPayment.mockReturnValueOnce(true)
+    await updateTransaction(getSampleRequest({ statusSet }))
 
     expect(statusSet).not.toHaveBeenCalled()
   })
 
-  it('debug should be called setting the status to agreed', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'true'
-    const permission = {
-      licenceLength: '8D'
-    }
-    await updateTransaction(getSampleRequest({ permission }))
+  it('debug should be called setting the status to agreed when when validForRecurringPayment is false', async () => {
+    validForRecurringPayment.mockReturnValueOnce(false)
+    await updateTransaction(getSampleRequest({}))
 
     expect(debug).toHaveBeenCalledWith('Setting status to agreed')
   })
 
-  it('debug should be called saying "Recurring payment valid option" when SHOW_RECURRING_PAYMENTS is true and licence length is 12M', async () => {
-    process.env.SHOW_RECURRING_PAYMENTS = 'true'
-    const permission = {
-      licenceLength: '12M'
-    }
-    await updateTransaction(getSampleRequest({ permission }))
+  it('debug should be called saying "Recurring payment valid option" when validForRecurringPayment is true', async () => {
+    validForRecurringPayment.mockReturnValueOnce(true)
+    await updateTransaction(getSampleRequest({ }))
 
     expect(debug).toHaveBeenCalledWith(('Recurring payment valid option'))
   })
