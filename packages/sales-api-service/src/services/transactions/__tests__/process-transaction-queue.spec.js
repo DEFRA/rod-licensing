@@ -187,6 +187,8 @@ describe('transaction service', () => {
       mockRecord.permissions[0].isLicenceForYou = true
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       await processQueue({ id: mockRecord.id })
+
+      // assert
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
       expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
@@ -245,7 +247,7 @@ describe('transaction service', () => {
       }
     })
 
-    describe.each([20, 38.46, 287])('uses provisional transaction for final transaction value - £%d', cost => {
+    describe.each([20, 38.46, 287])('the provisional transaction amount of £%d is used for final transaction amount', cost => {
       const setup = async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.payment.amount = cost
