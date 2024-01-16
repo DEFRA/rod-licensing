@@ -12,7 +12,8 @@ import {
   IDENTIFY,
   OS_TERMS,
   PROCESS_ANALYTICS_PREFERENCES,
-  NEW_PRICES
+  NEW_PRICES,
+  RECURRING_TERMS_CONDITIONS
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -134,6 +135,26 @@ export default [
         mssgs: request.i18n.getCatalog(),
         uri: {
           back: addLanguageCodeToUri(request, CONTROLLER.uri)
+        }
+      })
+    }
+  },
+  {
+    method: 'GET',
+    path: RECURRING_TERMS_CONDITIONS.uri,
+    handler: async (request, h) => {
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const gtmContainerId = gtmContainerIdOrNull()
+      const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
+
+      return h.view(RECURRING_TERMS_CONDITIONS.page, {
+        altLang,
+        gtmContainerId,
+        pageLanguageSetToWelsh,
+        mssgs: request.i18n.getCatalog(),
+        uri: {
+          privacy: addLanguageCodeToUri(request, PRIVACY_POLICY.uri),
+          refund: addLanguageCodeToUri(request, REFUND_POLICY.uri)
         }
       })
     }

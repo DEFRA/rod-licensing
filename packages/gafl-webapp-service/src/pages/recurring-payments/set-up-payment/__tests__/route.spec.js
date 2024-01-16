@@ -3,7 +3,7 @@ import { nextPage } from '../../../../routes/next-page.js'
 import pageRoute from '../../../../routes/page-route.js'
 import { recurringLicenceTypeDisplay } from '../../../../processors/licence-type-display.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { CHOOSE_PAYMENT, SET_UP_PAYMENT, TERMS_AND_CONDITIONS } from '../../../../uri.js'
+import { CHOOSE_PAYMENT, SET_UP_PAYMENT, RECURRING_TERMS_CONDITIONS } from '../../../../uri.js'
 import { recurringPayReminderDisplay } from '../../../../processors/recurring-pay-helper.js'
 import { displayPermissionPrice } from '../../../../processors/price-display.js'
 
@@ -79,7 +79,7 @@ describe('route', () => {
       }
     )
 
-    it.each([[CHOOSE_PAYMENT.uri], [TERMS_AND_CONDITIONS.uri]])('addLanguageCodeToUri is called with permission and %s', async uri => {
+    it.each([[CHOOSE_PAYMENT.uri], [RECURRING_TERMS_CONDITIONS.uri]])('addLanguageCodeToUri is called with permission and %s', async uri => {
       const request = getSampleRequest()
 
       await getData(request)

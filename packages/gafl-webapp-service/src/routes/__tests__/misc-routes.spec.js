@@ -1,5 +1,5 @@
 import { start, stop, injectWithCookies, initialize } from '../../__mocks__/test-utils-system.js'
-import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, RENEWAL_PUBLIC, IDENTIFY, CONTROLLER } from '../../uri.js'
+import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, RENEWAL_PUBLIC, IDENTIFY, CONTROLLER, NEW_PRICES, RECURRING_TERMS_CONDITIONS } from '../../uri.js'
 
 // Start application before running the test case
 beforeAll(() => new Promise(resolve => start(resolve)))
@@ -32,6 +32,16 @@ describe('The miscellaneous route handlers', () => {
 
   it('return the cookie page when requested', async () => {
     const data = await injectWithCookies('GET', COOKIES.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('return the new prices page when requested', async () => {
+    const data = await injectWithCookies('GET', NEW_PRICES.uri)
+    expect(data.statusCode).toBe(200)
+  })
+
+  it('return the recurring payment terms and conditions page when requested', async () => {
+    const data = await injectWithCookies('GET', RECURRING_TERMS_CONDITIONS.uri)
     expect(data.statusCode).toBe(200)
   })
 
