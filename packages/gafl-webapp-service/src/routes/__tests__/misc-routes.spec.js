@@ -1,5 +1,15 @@
 import { start, stop, injectWithCookies, initialize } from '../../__mocks__/test-utils-system.js'
-import { REFUND_POLICY, ACCESSIBILITY_STATEMENT, COOKIES, PRIVACY_POLICY, RENEWAL_PUBLIC, IDENTIFY, CONTROLLER, NEW_PRICES, RECURRING_TERMS_CONDITIONS } from '../../uri.js'
+import {
+  REFUND_POLICY,
+  ACCESSIBILITY_STATEMENT,
+  COOKIES,
+  PRIVACY_POLICY,
+  RENEWAL_PUBLIC,
+  IDENTIFY,
+  CONTROLLER,
+  NEW_PRICES,
+  RECURRING_TERMS_CONDITIONS
+} from '../../uri.js'
 
 // Start application before running the test case
 beforeAll(() => new Promise(resolve => start(resolve)))

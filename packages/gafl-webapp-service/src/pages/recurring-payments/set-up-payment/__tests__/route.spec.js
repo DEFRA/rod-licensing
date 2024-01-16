@@ -79,12 +79,15 @@ describe('route', () => {
       }
     )
 
-    it.each([[CHOOSE_PAYMENT.uri], [RECURRING_TERMS_CONDITIONS.uri]])('addLanguageCodeToUri is called with permission and %s', async uri => {
-      const request = getSampleRequest()
+    it.each([[CHOOSE_PAYMENT.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
+      'addLanguageCodeToUri is called with permission and %s',
+      async uri => {
+        const request = getSampleRequest()
 
-      await getData(request)
+        await getData(request)
 
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
-    })
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, uri)
+      }
+    )
   })
 })
