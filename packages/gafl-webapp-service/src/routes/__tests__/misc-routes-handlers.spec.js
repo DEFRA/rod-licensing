@@ -1,4 +1,4 @@
-import uri from '../../uri.js'
+import uri, { CONTROLLER, RECURRING_TERMS_CONDITIONS } from '../../uri.js'
 import miscRoutes from '../misc-routes.js'
 import constants from '../../constants.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
@@ -238,6 +238,26 @@ describe('guidance page handlers', () => {
   })
 
   describe.each([
+    { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
+    { pageHandler: privacyPolicyPageHandler, handlerName: 'Privacy policy' },
+    { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
+    { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' }
+  ])('simple view tests for $handlerName page', ({ pageHandler }) => {
+    it.each([
+      [CONTROLLER.uri, '/buy/setup-recurring-payment'],
+      [RECURRING_TERMS_CONDITIONS.uri, '/guidance/recurring-payment-terms-conditions'],
+      [CONTROLLER.uri, '/buy/licence-for']
+    ])('addLanguageCodeToUri is called with %s when referrer is %s', async (expected, referer) => {
+      const toolkit = getMockToolkit()
+      const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
+
+      await pageHandler(request, toolkit)
+
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expected)
+    })
+  })
+
+  describe.each([
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' },
     { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
     { pageHandler: privacyPolicyPageHandler, handlerName: 'Privacy policy' },
@@ -307,7 +327,7 @@ describe('guidance page handlers', () => {
     })
   })
 
-  const getMockRequest = (i18nValues, search = '') => {
+  const getMockRequest = (i18nValues, referer) => {
     const { catalog, locales, locale } = {
       catalog: {},
       locales: [],
@@ -321,7 +341,10 @@ describe('guidance page handlers', () => {
         getLocale: () => locale
       },
       url: {
-        search
+        search: ''
+      },
+      headers: {
+        referer
       }
     }
   }
