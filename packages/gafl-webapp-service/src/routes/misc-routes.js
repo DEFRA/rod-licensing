@@ -37,7 +37,7 @@ const simpleView = view => ({
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     const gtmContainerId = gtmContainerIdOrNull()
     const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
-    const backUri = request?.headers?.referer?.endsWith('/guidance/recurring-payment-terms-conditions')
+    const backUri = request?.headers?.referer?.endsWith(RECURRING_TERMS_CONDITIONS.uri)
       ? addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
       : addLanguageCodeToUri(request, CONTROLLER.uri)
 

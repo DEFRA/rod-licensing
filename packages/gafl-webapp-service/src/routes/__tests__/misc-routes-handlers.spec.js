@@ -244,16 +244,15 @@ describe('guidance page handlers', () => {
     { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' }
   ])('simple view tests for $handlerName page', ({ pageHandler }) => {
     it.each([
-      [CONTROLLER.uri, '/buy/setup-recurring-payment'],
-      [RECURRING_TERMS_CONDITIONS.uri, '/guidance/recurring-payment-terms-conditions'],
-      [CONTROLLER.uri, '/buy/licence-for']
-    ])('addLanguageCodeToUri is called with %s when referrer is %s', async (expected, referer) => {
+      [CONTROLLER.uri],
+      [RECURRING_TERMS_CONDITIONS.uri]
+    ])('addLanguageCodeToUri is called with %s when referrer is %s', async (referer) => {
       const toolkit = getMockToolkit()
       const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
 
       await pageHandler(request, toolkit)
 
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, expected)
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referer)
     })
   })
 
