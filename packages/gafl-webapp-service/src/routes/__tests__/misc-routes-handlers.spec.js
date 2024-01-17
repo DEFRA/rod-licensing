@@ -243,17 +243,17 @@ describe('guidance page handlers', () => {
     { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
     { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' }
   ])('simple view tests for $handlerName page', ({ pageHandler }) => {
-    it.each([
-      [CONTROLLER.uri],
-      [RECURRING_TERMS_CONDITIONS.uri]
-    ])('addLanguageCodeToUri is called with %s when referrer is %s', async (referer) => {
-      const toolkit = getMockToolkit()
-      const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
+    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
+      'addLanguageCodeToUri is called with %s when referrer is %s',
+      async referer => {
+        const toolkit = getMockToolkit()
+        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
 
-      await pageHandler(request, toolkit)
+        await pageHandler(request, toolkit)
 
-      expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referer)
-    })
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referer)
+      }
+    )
   })
 
   describe.each([
