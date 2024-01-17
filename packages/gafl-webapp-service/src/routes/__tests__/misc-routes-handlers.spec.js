@@ -241,8 +241,8 @@ describe('guidance page handlers', () => {
     { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
     { pageHandler: privacyPolicyPageHandler, handlerName: 'Privacy policy' },
     { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
-    { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' }
-  ])('simple view tests for $handlerName page', ({ pageHandler }) => {
+    { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
+  ])('back button tests for $handlerName page', ({ pageHandler }) => {
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
       'addLanguageCodeToUri is called with %s when referrer is %s',
       async referer => {
