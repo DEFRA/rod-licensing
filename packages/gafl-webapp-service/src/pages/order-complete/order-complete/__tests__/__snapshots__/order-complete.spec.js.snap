@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The order completion handler Digital licence for someone else 1`] = `
+Object {
+  "licenceDetailsDigitalParagraph": "fishing bobo digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph bobo licence details",
+  "licenceTitle": "title bobo licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing bobo non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing bobo link",
+  "whenFishingParagraphTwo": "fishing bobo non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Digital licence for you 1`] = `
+Object {
+  "licenceDetailsDigitalParagraph": "fishing self digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Postal licence for someone else with digital confirmation 1`] = `
+Object {
+  "licenceDetailsDigitalParagraph": "fishing bobo digital confirmation licence details",
+  "licenceDetailsParagraphTwo": "paragraph bobo licence details",
+  "licenceTitle": "title bobo licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing bobo postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing bobo link",
+  "whenFishingParagraphTwo": "fishing bobo non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Postal licence for someone else with none digital confirmation 1`] = `
+Object {
+  "licenceDetailsDigitalParagraph": undefined,
+  "licenceDetailsParagraphTwo": "paragraph bobo licence details",
+  "licenceTitle": "title bobo licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing bobo non postal non digital when fishing",
+  "whenFishingParagraphOneLink": "fishing bobo link",
+  "whenFishingParagraphTwo": "fishing bobo non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Postal licence for you with digital confirmation 1`] = `
+Object {
+  "licenceDetailsDigitalParagraph": "fishing self digital confirmation licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Postal licence for you with none digital confirmation 1`] = `
+Object {
+  "licenceDetailsDigitalParagraph": undefined,
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal non digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
