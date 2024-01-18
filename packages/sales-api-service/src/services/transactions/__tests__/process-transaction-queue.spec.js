@@ -187,8 +187,6 @@ describe('transaction service', () => {
       mockRecord.permissions[0].isLicenceForYou = true
       AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
       await processQueue({ id: mockRecord.id })
-
-      // assert
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
       expect(persistMockFirstAgument[0][4]).toMatchObject({ isLicenceForYou: { id: 1, label: 'Yes', description: 'Yes' } })
