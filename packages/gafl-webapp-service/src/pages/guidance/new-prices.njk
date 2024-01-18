@@ -5,50 +5,53 @@
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+    <div class="govuk-grid-column-two-thirds">
 
         <h1 class="govuk-heading-l">{{ mssgs.new_prices_heading }}</h1>
         <p class="govuk-body">{{ mssgs.new_prices_explanation }}</p>
 
-        <p class="govuk-body">{{ mssgs.new_prices_concession }}</p>
-
-        <h2 class="govuk-heading-m">{{ mssgs.new_prices_2_rod_table_heading }}</h2>
+        <!-- <h2 class="govuk-heading-m">{{ mssgs.new_prices_2_rod_table_heading }}</h2> -->
 
         {{ govukTable({
+          caption: mssgs.new_prices_2_rod_table_heading,
+          captionClasses: 'govuk-table__caption--m',
+          classes: 'govuk-!-margin-top-7',
           firstCellIsHeader: true,
-          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2 }, { text: mssgs.new_prices_column_3 }, { text: mssgs.new_prices_column_4 }, { text: mssgs.new_prices_column_5 } ],
+          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2, format: 'numeric' }, { text: mssgs.new_prices_column_3, format: 'numeric' }, { text: mssgs.new_prices_column_4, format: 'numeric' } ],
           rows: [
-            [ { text: mssgs.new_prices_row_1_day }, { text: '£6' }, { text: '£6.60' }, { text: '£7.10' }, { text: '£7.30' } ],
-            [ { text: mssgs.new_prices_row_8_day }, { text: '£12' }, { text: '£13.20' }, { text: '£14.30' }, { text: '£14.70' } ],
-            [ { text: mssgs.new_prices_row_12_month }, { text: '£30' }, { text: '£33' }, { text: '£35.80' }, { text: '£36.80' } ],
-            [ { text: mssgs.new_prices_row_concession }, { text: '£20' }, { text: '£22' }, { text: '£23.80' }, { text: '£24.50' } ],
-            [ { text: mssgs.new_prices_row_junior }, { text: mssgs.free }, { text: mssgs.free }, { text: mssgs.free }, { text: mssgs.free } ]
+            [ { text: mssgs.new_prices_row_1_day }, { text: '£6.60', format: 'numeric' }, { text: '£7.10', format: 'numeric' }, { text: '£7.30', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_8_day }, { text: '£13.20', format: 'numeric' }, { text: '£14.30', format: 'numeric' }, { text: '£14.70', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_12_month }, { text: '£33', format: 'numeric' }, { text: '£35.80', format: 'numeric' }, { text: '£36.80', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_concession }, { text: '£22', format: 'numeric' }, { text: '£23.80', format: 'numeric' }, { text: '£24.50', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_junior }, { text: mssgs.free, format: 'numeric' }, { text: mssgs.free, format: 'numeric' }, { text: mssgs.free, format: 'numeric' } ]
           ]
         }) }}
 
-        <h2 class="govuk-heading-m">{{ mssgs.new_prices_3_rod_table_heading }}</h2>
-
         {{ govukTable({
+          caption: mssgs.new_prices_3_rod_table_heading,
+          captionClasses: 'govuk-table__caption--m',
+          classes: 'govuk-!-margin-top-7',
           firstCellIsHeader: true,
-          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2 }, { text: mssgs.new_prices_column_3 }, { text: mssgs.new_prices_column_4 }, { text: mssgs.new_prices_column_5 } ],
+          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2, format: 'numeric' }, { text: mssgs.new_prices_column_3, format: 'numeric' }, { text: mssgs.new_prices_column_4, format: 'numeric' } ],
           rows: [
-            [ { text: mssgs.new_prices_row_12_month }, { text: '£45' }, { text: '£49.50' }, { text: '£53.70' }, { text: '£55.30' } ],
-            [ { text: mssgs.new_prices_row_concession }, { text: '£30' }, { text: '£33' }, { text: '£35.80' }, { text: '£36.80' } ],
-            [ { text: mssgs.new_prices_row_junior }, { text: mssgs.free }, { text: mssgs.free }, { text: mssgs.free }, { text: mssgs.free } ]
+            [ { text: mssgs.new_prices_row_12_month }, { text: '£49.50', format: 'numeric' }, { text: '£53.70', format: 'numeric' }, { text: '£55.30', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_concession }, { text: '£33', format: 'numeric' }, { text: '£35.80', format: 'numeric' }, { text: '£36.80', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_junior }, { text: mssgs.free, format: 'numeric' }, { text: mssgs.free, format: 'numeric' }, { text: mssgs.free, format: 'numeric' } ]
           ]
         }) }}
 
-        <h2 class="govuk-heading-m">{{ mssgs.new_prices_salmon_table_heading }}</h2>
-
         {{ govukTable({
+          caption: mssgs.new_prices_salmon_table_heading,
+          captionClasses: 'govuk-table__caption--m',
+          classes: 'govuk-!-margin-top-7',
           firstCellIsHeader: true,
-          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2 }, { text: mssgs.new_prices_column_3 }, { text: mssgs.new_prices_column_4 }, { text: mssgs.new_prices_column_5 } ],
+          head: [ { text: mssgs.new_prices_column_1 }, { text: mssgs.new_prices_column_2, format: 'numeric' }, { text: mssgs.new_prices_column_3, format: 'numeric' }, { text: mssgs.new_prices_column_4, format: 'numeric' } ],
           rows: [
-            [ { text: mssgs.new_prices_row_1_day }, { text: '£12' }, { text: '£12.60' }, { text: '£13.20' }, { text: '£13.50' } ],
-            [ { text: mssgs.new_prices_row_8_day }, { text: '£27' }, { text: '£28.30' }, { text: '£29.70' }, { text: '£30.50' } ],
-            [ { text: mssgs.new_prices_row_12_month }, { text: '£82' }, { text: '£86.10' }, { text: '£90.40' }, { text: '£93.10' } ],
-            [ { text: mssgs.new_prices_row_concession }, { text: '£54' }, { text: '£57.40' }, { text: '£60.20' }, { text: '£62' } ],
-            [ { text: mssgs.new_prices_row_junior }, { text: mssgs.free }, { text: mssgs.free }, { text: mssgs.free }, { text: mssgs.free } ]
+            [ { text: mssgs.new_prices_row_1_day }, { text: '£12.60', format: 'numeric' }, { text: '£13.20', format: 'numeric' }, { text: '£13.50', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_8_day }, { text: '£28.30', format: 'numeric' }, { text: '£29.70', format: 'numeric' }, { text: '£30.50', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_12_month }, { text: '£86.10', format: 'numeric' }, { text: '£90.40', format: 'numeric' }, { text: '£93.10', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_concession }, { text: '£57.40', format: 'numeric' }, { text: '£60.20', format: 'numeric' }, { text: '£62', format: 'numeric' } ],
+            [ { text: mssgs.new_prices_row_junior }, { text: mssgs.free, format: 'numeric' }, { text: mssgs.free, format: 'numeric' }, { text: mssgs.free, format: 'numeric' } ]
           ]
         }) }}
    </div>
