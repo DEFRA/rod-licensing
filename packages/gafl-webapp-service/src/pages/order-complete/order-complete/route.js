@@ -1,5 +1,5 @@
 import pageRoute from '../../../routes/page-route.js'
-
+import { validForRecurringPayment } from '../../../processors/recurring-pay-helper.js'
 import Boom from '@hapi/boom'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../constants.js'
 import { ORDER_COMPLETE, NEW_TRANSACTION, LICENCE_DETAILS } from '../../../uri.js'
@@ -43,6 +43,7 @@ export const getData = async request => {
     digitalConfirmation: digital && permission.licensee.postalFulfilment,
     digitalLicence: digital && !permission.licensee.postalFulfilment,
     postalLicence: permission.licensee.postalFulfilment,
+    recurringPayment: isRecurringPayment(status, permission),
     uri: {
       feedback: process.env.FEEDBACK_URI || FEEDBACK_URI_DEFAULT,
       licenceDetails: addLanguageCodeToUri(request, LICENCE_DETAILS.uri),
@@ -51,9 +52,21 @@ export const getData = async request => {
   }
 }
 
+const isRecurringPayment = (status, permission) => {
+  console.log(status.permissions['set-up-payment'])
+  if (validForRecurringPayment(permission) && status.permissions['set-up-payment']) {
+    return true
+  }
+  return false
+}
+
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
+
+const digitalReminder = permission =>
+  permission.licensee.preferredMethodOfReminder === HOW_CONTACTED.email ||
+  permission.licensee.preferredMethodOfReminder === HOW_CONTACTED.text
 
 const getOrderCompleteContent = (permission, mssgs, transaction) => {
   const permissionCost = displayPermissionPrice(permission, mssgs, transaction.payment?.created_date)
@@ -79,7 +92,15 @@ const getOrderCompleteContent = (permission, mssgs, transaction) => {
 
     whenFishingParagraphTwo: permission.isLicenceForYou
       ? mssgs.order_complete_when_fishing_self_postal_non_digital_2
-      : mssgs.order_complete_when_fishing_bobo_postal_non_digital_2
+      : mssgs.order_complete_when_fishing_bobo_postal_non_digital_2,
+
+    futurePaymentsParagraphOne: digitalReminder(permission)
+      ? mssgs.order_complete_future_payments_digital_paragraph_1
+      : mssgs.order_complete_future_payments_postal_paragraph_1,
+
+    futurePaymentsParagraphTwo: digitalReminder(permission)
+      ? mssgs.order_complete_future_payments_digital_paragraph_2
+      : mssgs.order_complete_future_payments_postal_paragraph_2
   }
 }
 

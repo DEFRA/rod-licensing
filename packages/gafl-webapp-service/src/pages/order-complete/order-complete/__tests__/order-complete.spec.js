@@ -6,7 +6,9 @@ import { displayStartTime } from '../../../../processors/date-and-time-display.j
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import { displayPermissionPrice } from '../../../../processors/price-display.js'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { validForRecurringPayment } from '../../../../processors/recurring-pay-helper.js'
 
+jest.mock('../../../../processors/recurring-pay-helper.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
 jest.mock('../../../../constants.js', () => ({
@@ -33,22 +35,27 @@ const getSamplePermission = ({
   licenceType = LICENCE_TYPE['trout-and-coarse'],
   isLicenceForYou = true,
   postalFulfilment = false,
-  preferredMethodOfConfirmation = 'phone'
+  preferredMethodOfConfirmation = 'phone',
+  preferredMethodOfReminder = 'phone'
 } = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
   licensee: {
     postalFulfilment,
-    preferredMethodOfConfirmation
+    preferredMethodOfConfirmation,
+    preferredMethodOfReminder
   },
   isLicenceForYou,
   licenceType,
   referenceNumber
 })
 
-const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true } = {}) => ({
+const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true, setUpPayment = true } = {}) => ({
   [COMPLETION_STATUS.agreed]: agreed,
   [COMPLETION_STATUS.posted]: posted,
-  [COMPLETION_STATUS.finalised]: finalised
+  [COMPLETION_STATUS.finalised]: finalised,
+  permissions: {
+    'set-up-payment': setUpPayment
+  }
 })
 
 const getMessages = () => ({
@@ -71,7 +78,11 @@ const getMessages = () => ({
   order_complete_when_fishing_self_postal_digital: 'fishing self postal digital when fishing',
   order_complete_when_fishing_bobo_postal_digital: 'fishing bobo postal digital when fishing',
   order_complete_when_fishing_self_non_postal_digital: 'fishing self non postal digital when fishing',
-  order_complete_when_fishing_bobo_non_postal_digital: 'fishing bobo non postal digital when fishing'
+  order_complete_when_fishing_bobo_non_postal_digital: 'fishing bobo non postal digital when fishing',
+  order_complete_future_payments_digital_paragraph_1: 'future payments digital one',
+  order_complete_future_payments_digital_paragraph_2: 'future payments digital two',
+  order_complete_future_payments_postal_paragraph_1: 'future payments postal one',
+  order_complete_future_payments_postal_paragraph_2: 'future payments postal two'
 })
 
 const getSampleRequest = ({
@@ -139,15 +150,17 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    desc                                                                | licenceFor | postal   | method
-    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'}
-    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'}
-    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}
-    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}
-    ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}
-    ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}
-  `('$desc', async ({ desc, licenceFor, postal, method }) => {
-    const permission = getSamplePermission({ isLicenceForYou: licenceFor, postalFulfilment: postal, preferredMethodOfConfirmation: method })
+    desc                                                                | licenceFor | postal   | method      | reminder
+    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${'Text'}
+    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${'Text'}
+    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${'Text'}
+    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${'Text'}
+    ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}
+    ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${'Text'}
+    ${'Recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'Text'}   | ${'Letter'}
+    ${'Recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}
+  `('$desc', async ({ desc, licenceFor, postal, method, reminder }) => {
+    const permission = getSamplePermission({ isLicenceForYou: licenceFor, postalFulfilment: postal, preferredMethodOfConfirmation: method, preferredMethodOfReminder: reminder })
     const { content } = await getData(getSampleRequest({ permission }))
     expect(content).toMatchSnapshot()
   })
@@ -164,6 +177,27 @@ describe('The order completion handler', () => {
     const request = getSampleRequest({ permission })
     await getData(request)
     expect(displayStartTime).toHaveBeenCalledWith(request, permission)
+  })
+
+  it('validForRecurringPayment is called with a permission', async () => {
+    const permission = getSamplePermission()
+
+    await getData(getSampleRequest({ permission }))
+
+    expect(validForRecurringPayment).toHaveBeenCalledWith(permission)
+  })
+
+  it.each`
+    agreement | valid    | expected 
+    ${true}   | ${true}  | ${true}
+    ${true}   | ${false} | ${false}
+    ${false}  | ${false} | ${false}
+    ${false}  | ${true}  | ${false}
+  `('recurringPayment returns $expected when status for setup of recurring payment agreement is $agreement and valid for recurring payment is $valid', async ({ agreement, valid, expected }) => {
+    validForRecurringPayment.mockReturnValueOnce(valid)
+    const completionStatus = getSampleCompletionStatus({ setUpPayment: agreement })
+    const { recurringPayment } = await getData(getSampleRequest({ completionStatus }))
+    expect(recurringPayment).toBe(expected)
   })
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {

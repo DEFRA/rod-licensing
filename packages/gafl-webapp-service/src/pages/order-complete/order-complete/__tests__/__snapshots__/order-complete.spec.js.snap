@@ -2,6 +2,8 @@
 
 exports[`The order completion handler Digital licence for someone else 1`] = `
 Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
   "licenceDetailsDigitalParagraph": "fishing bobo digital licence details",
   "licenceDetailsParagraphTwo": "paragraph bobo licence details",
   "licenceTitle": "title bobo licence details",
@@ -14,6 +16,8 @@ Object {
 
 exports[`The order completion handler Digital licence for you 1`] = `
 Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
   "licenceDetailsDigitalParagraph": "fishing self digital licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -26,6 +30,8 @@ Object {
 
 exports[`The order completion handler Postal licence for someone else with digital confirmation 1`] = `
 Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
   "licenceDetailsDigitalParagraph": "fishing bobo digital confirmation licence details",
   "licenceDetailsParagraphTwo": "paragraph bobo licence details",
   "licenceTitle": "title bobo licence details",
@@ -38,6 +44,8 @@ Object {
 
 exports[`The order completion handler Postal licence for someone else with none digital confirmation 1`] = `
 Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
   "licenceDetailsDigitalParagraph": undefined,
   "licenceDetailsParagraphTwo": "paragraph bobo licence details",
   "licenceTitle": "title bobo licence details",
@@ -50,6 +58,8 @@ Object {
 
 exports[`The order completion handler Postal licence for you with digital confirmation 1`] = `
 Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
   "licenceDetailsDigitalParagraph": "fishing self digital confirmation licence details",
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
@@ -62,11 +72,41 @@ Object {
 
 exports[`The order completion handler Postal licence for you with none digital confirmation 1`] = `
 Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
   "licenceDetailsDigitalParagraph": undefined,
   "licenceDetailsParagraphTwo": "paragraph self licence details",
   "licenceTitle": "title self licence details",
   "title": "payment title 1",
   "whenFishingParagraphOne": "fishing self non postal non digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Recurring payment with digital reminder 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing self digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler Recurring payment with postal reminder 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments postal one",
+  "futurePaymentsParagraphTwo": "future payments postal two",
+  "licenceDetailsDigitalParagraph": "fishing self digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
   "whenFishingParagraphOneLink": "fishing self link",
   "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
 }
