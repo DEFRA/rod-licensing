@@ -160,7 +160,12 @@ describe('The order completion handler', () => {
     ${'Recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'Text'}   | ${'Letter'}
     ${'Recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}
   `('$desc', async ({ desc, licenceFor, postal, method, reminder }) => {
-    const permission = getSamplePermission({ isLicenceForYou: licenceFor, postalFulfilment: postal, preferredMethodOfConfirmation: method, preferredMethodOfReminder: reminder })
+    const permission = getSamplePermission({
+      isLicenceForYou: licenceFor,
+      postalFulfilment: postal,
+      preferredMethodOfConfirmation: method,
+      preferredMethodOfReminder: reminder
+    })
     const { content } = await getData(getSampleRequest({ permission }))
     expect(content).toMatchSnapshot()
   })
@@ -188,17 +193,20 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    agreement | valid    | expected 
+    agreement | valid    | expected
     ${true}   | ${true}  | ${true}
     ${true}   | ${false} | ${false}
     ${false}  | ${false} | ${false}
     ${false}  | ${true}  | ${false}
-  `('recurringPayment returns $expected when status for setup of recurring payment agreement is $agreement and valid for recurring payment is $valid', async ({ agreement, valid, expected }) => {
-    validForRecurringPayment.mockReturnValueOnce(valid)
-    const completionStatus = getSampleCompletionStatus({ setUpPayment: agreement })
-    const { recurringPayment } = await getData(getSampleRequest({ completionStatus }))
-    expect(recurringPayment).toBe(expected)
-  })
+  `(
+    'recurringPayment returns $expected when status for setup of recurring payment agreement is $agreement and valid for recurring payment is $valid',
+    async ({ agreement, valid, expected }) => {
+      validForRecurringPayment.mockReturnValueOnce(valid)
+      const completionStatus = getSampleCompletionStatus({ setUpPayment: agreement })
+      const { recurringPayment } = await getData(getSampleRequest({ completionStatus }))
+      expect(recurringPayment).toBe(expected)
+    }
+  )
 
   it('uses displayStartTime to generate startTimeStringTitle', async () => {
     const startTime = Symbol('one minute to midnight')
