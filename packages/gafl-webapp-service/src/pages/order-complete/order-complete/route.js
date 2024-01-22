@@ -52,13 +52,8 @@ export const getData = async request => {
   }
 }
 
-const isRecurringPayment = (status, permission) => {
-  console.log(status.permissions['set-up-payment'])
-  if (validForRecurringPayment(permission) && status.permissions['set-up-payment']) {
-    return true
-  }
-  return false
-}
+const isRecurringPayment = (status, permission) =>
+  validForRecurringPayment(permission) && status.permissions['set-up-payment']
 
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
