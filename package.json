@@ -41,7 +41,7 @@
     "@ksmithut/prettier-standard": "^0.0.10",
     "@types/hapi__hapi": "^20.0.10",
     "@types/jest": "^27.4.0",
-    "babel-jest": "^27.5.1",
+    "babel-jest": "^29.7.0",
     "clone-deep": "^4.0.1",
     "dynamics-web-api": "^1.7.3",
     "eslint": "^7.32.0",
