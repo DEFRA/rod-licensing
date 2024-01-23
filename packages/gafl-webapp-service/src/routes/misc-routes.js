@@ -38,9 +38,7 @@ const simpleView = view => ({
     const gtmContainerId = gtmContainerIdOrNull()
     const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
     const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
-    const backUri = request?.headers?.referer?.endsWith(recurringUri)
-      ? recurringUri
-      : addLanguageCodeToUri(request, CONTROLLER.uri)
+    const backUri = request?.headers?.referer?.endsWith(recurringUri) ? recurringUri : addLanguageCodeToUri(request, CONTROLLER.uri)
 
     return h.view(view.page, {
       mssgs,
@@ -108,9 +106,7 @@ export default [
       const gtmContainerId = gtmContainerIdOrNull()
       const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
       const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
-      const backUri = request?.headers?.referer?.endsWith(recurringUri)
-        ? recurringUri
-        : addLanguageCodeToUri(request, CONTROLLER.uri)
+      const backUri = request?.headers?.referer?.endsWith(recurringUri) ? recurringUri : addLanguageCodeToUri(request, CONTROLLER.uri)
 
       return h.view(COOKIES.page, {
         altLang,
