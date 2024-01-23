@@ -24,8 +24,7 @@ import {
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
-import { POCL_DATA_SOURCE, DDE_DATA_SOURCE, getPermissionCost } from '@defra-fish/business-rules-lib'
-import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
+import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -61,8 +60,7 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   POCL_DATA_SOURCE: 'POCL_DATA_SOURCE',
   DDE_DATA_SOURCE: 'DDE_DATA_SOURCE',
   POCL_TRANSACTION_SOURCES: ['POCL_DATA_SOURCE', 'DDE_DATA_SOURCE'],
-  START_AFTER_PAYMENT_MINUTES: 30,
-  getPermissionCost: jest.fn(() => 1)
+  START_AFTER_PAYMENT_MINUTES: 30
 }))
 
 describe('transaction service', () => {
@@ -247,10 +245,10 @@ describe('transaction service', () => {
       }
     })
 
-    describe.each([20, 38.46, 287])('uses getPermissionCost (%d) value ', cost => {
+    describe.each([20, 38.46, 287])('the provisional transaction amount of £%d is used for final transaction amount', cost => {
       const setup = async () => {
-        getPermissionCost.mockReturnValueOnce(cost)
         const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.payment.amount = cost
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         const {
@@ -276,22 +274,6 @@ describe('transaction service', () => {
         expect(paymentJournal.total).toBe(cost)
       })
     })
-  })
-
-  it('passes start date and permit to getPermissionCost', async () => {
-    const mockRecord = mockFinalisedTransactionRecord()
-    const {
-      permissions: [permission]
-    } = mockRecord
-    getReferenceDataForEntityAndId.mockReturnValueOnce(MOCK_12MONTH_SENIOR_PERMIT)
-    AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-    await processQueue({ id: mockRecord.id })
-    expect(getPermissionCost).toHaveBeenCalledWith(
-      expect.objectContaining({
-        startDate: permission.startDate,
-        permit: MOCK_12MONTH_SENIOR_PERMIT
-      })
-    )
   })
 
   describe('.getTransactionJournalRefNumber', () => {

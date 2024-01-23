@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/gafl-webapp-service",
-  "version": "1.38.0-rc.12",
+  "version": "1.39.0-rc.2",
   "description": "The websales frontend for the GAFL service",
   "type": "module",
   "engines": {
@@ -36,12 +36,12 @@
     "prepare": "gulp --gulpfile build/gulpfile.cjs"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "1.38.0-rc.12",
-    "@defra-fish/connectors-lib": "1.38.0-rc.12",
+    "@defra-fish/business-rules-lib": "1.39.0-rc.2",
+    "@defra-fish/connectors-lib": "1.39.0-rc.2",
     "@defra/hapi-gapi": "^2.0.0",
     "@hapi/boom": "^9.1.2",
     "@hapi/catbox-redis": "^6.0.2",
-    "@hapi/cookie": "^11.0.2",
+    "@hapi/cookie": "^12.0.1",
     "@hapi/crumb": "^8.0.1",
     "@hapi/hapi": "^20.2.1",
     "@hapi/inert": "^6.0.5",
@@ -60,8 +60,8 @@
     "moment-timezone": "^0.5.34",
     "node-fetch": "^2.6.7",
     "nunjucks": "^3.2.3",
-    "openid-client": "^4.9.1",
-    "pdfmake": "^0.1.72",
+    "openid-client": "^5.6.4",
+    "pdfmake": "^0.2.9",
     "semver": "^7.3.5",
     "uuid": "^8.3.2"
   },

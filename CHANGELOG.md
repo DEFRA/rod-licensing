@@ -1,4 +1,46 @@
 
+
+## v1.39.0-rc.1 (2024-01-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1861](https://github.com/DEFRA/rod-licensing/pull/1861) Update price increase page ([@jaucourt](https://github.com/jaucourt))
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `sales-api-service`
+  * [#1853](https://github.com/DEFRA/rod-licensing/pull/1853) Fix wrong price in CRM ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.39.0-rc.0 (2024-01-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1849](https://github.com/DEFRA/rod-licensing/pull/1849) Confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.38.0-rc.14 (2024-01-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1855](https://github.com/DEFRA/rod-licensing/pull/1855) Confirmation method reflow content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.38.0-rc.13 (2024-01-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1856](https://github.com/DEFRA/rod-licensing/pull/1856) Update English language text about receiving licence ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.38.0-rc.12 (2024-01-11)
 
 #### :bug: Bug Fix
