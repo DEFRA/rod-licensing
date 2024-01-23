@@ -243,6 +243,7 @@ describe('guidance page handlers', () => {
     { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
   ])('back button tests for $handlerName page', ({ pageHandler }) => {
+    beforeEach(jest.resetAllMocks)
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
       'addLanguageCodeToUri is called with %s when referrer is %s',
       async referer => {
@@ -264,6 +265,7 @@ describe('guidance page handlers', () => {
     { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' },
     { pageHandler: newPricesPageHandler, handlerName: 'New Prices Page Handler' }
   ])('language code tests for $handlerName page', ({ pageHandler }) => {
+    beforeEach(jest.resetAllMocks)
     it('uses addLanguageCodeToUri to get back url', async () => {
       const toolkit = getMockToolkit()
       const request = getMockRequest()
@@ -277,7 +279,7 @@ describe('guidance page handlers', () => {
       const toolkit = getMockToolkit()
       const request = getMockRequest()
       const backUrl = Symbol('backUrl')
-      addLanguageCodeToUri.mockReturnValueOnce(backUrl)
+      addLanguageCodeToUri.mockReturnValue(backUrl)
 
       await pageHandler(request, toolkit)
 

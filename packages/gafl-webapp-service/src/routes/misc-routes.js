@@ -37,8 +37,9 @@ const simpleView = view => ({
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     const gtmContainerId = gtmContainerIdOrNull()
     const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
-    const backUri = request?.headers?.referer?.endsWith(RECURRING_TERMS_CONDITIONS.uri)
-      ? addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+    const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+    const backUri = request?.headers?.referer?.endsWith(recurringUri)
+      ? recurringUri
       : addLanguageCodeToUri(request, CONTROLLER.uri)
 
     return h.view(view.page, {
@@ -106,8 +107,9 @@ export default [
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
       const gtmContainerId = gtmContainerIdOrNull()
       const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
-      const backUri = request?.headers?.referer?.endsWith(RECURRING_TERMS_CONDITIONS.uri)
-        ? addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+      const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+      const backUri = request?.headers?.referer?.endsWith(recurringUri)
+        ? recurringUri
         : addLanguageCodeToUri(request, CONTROLLER.uri)
 
       return h.view(COOKIES.page, {
