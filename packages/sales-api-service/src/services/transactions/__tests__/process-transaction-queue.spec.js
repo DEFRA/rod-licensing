@@ -7,10 +7,10 @@ import {
   FulfilmentRequest,
   Permission,
   PoclFile,
-  RecurringPayment,
   RecurringPaymentInstruction,
   Transaction,
-  TransactionJournal
+  TransactionJournal,
+  RecurringPayment
 } from '@defra-fish/dynamics-lib'
 import {
   mockFinalisedTransactionRecord,
@@ -127,12 +127,17 @@ describe('transaction service', () => {
           'licences with a recurring payment',
           () => {
             const mockRecord = mockFinalisedTransactionRecord()
-            mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             mockRecord.payment.recurring = {
-              referenceNumber: 'Test Reference Number',
-              mandate: 'Test Mandate',
+              name: 'Test name',
+              nextDueDate: new Date('2020/01/11'),
+              endDate: new Date('2022/01/16'),
+              agreementId: '123446jjng',
+              publicId: 'sdf-123',
+              status: 1,
+              activePermission: mockRecord.permissions[0],
               contact: Object.assign(mockContactPayload(), { firstName: 'Esther' })
             }
+            mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
             return mockRecord
           },
           [
@@ -140,7 +145,6 @@ describe('transaction service', () => {
             expect.any(TransactionJournal),
             expect.any(TransactionJournal),
             expect.any(RecurringPayment),
-            expect.any(Contact),
             expect.any(Contact),
             expect.any(Permission),
             expect.any(RecurringPaymentInstruction),
