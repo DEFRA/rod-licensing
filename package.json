@@ -35,15 +35,15 @@
     "pre-push": "prettier-standard --check --lint --since develop"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.2",
+    "@babel/core": "^7.23.7",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@ksmithut/prettier-standard": "^0.0.10",
     "@types/hapi__hapi": "^20.0.10",
     "@types/jest": "^27.4.0",
-    "babel-jest": "^27.5.1",
+    "babel-jest": "^29.7.0",
     "clone-deep": "^4.0.1",
-    "dynamics-web-api": "^1.7.3",
+    "dynamics-web-api": "^2.1.2",
     "eslint": "^7.32.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
@@ -51,7 +51,7 @@
     "lerna": "^4.0.0",
     "lerna-changelog": "^2.2.0",
     "lerna-update-wizard": "^1.1.1",
-    "lint-staged": "^11.2.6",
+    "lint-staged": "^15.2.0",
     "simple-oauth2": "^4.3.0",
     "standard": "^16.0.4"
   },

@@ -37,12 +37,12 @@
   "dependencies": {
     "@defra-fish/connectors-lib": "1.39.0-rc.2",
     "@defra-fish/dynamics-lib": "1.39.0-rc.2",
-    "commander": "^7.2.0",
+    "commander": "^11.1.0",
     "debug": "^4.3.3",
     "merge2": "^1.4.1",
     "moment": "^2.29.1",
     "openpgp": "^5.0.0-1",
     "pluralize": "^8.0.0",
-    "ssh2-sftp-client": "^6.0.1"
+    "ssh2-sftp-client": "^10.0.0"
   }
 }
