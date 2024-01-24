@@ -1,4 +1,33 @@
 
+## v1.39.0-rc.7 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1880](https://github.com/DEFRA/rod-licensing/pull/1880) Update dependencies ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.39.0-rc.6 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1860](https://github.com/DEFRA/rod-licensing/pull/1860) Welsh - confirmation page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.39.0-rc.4 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1862](https://github.com/DEFRA/rod-licensing/pull/1862) Recurring payment confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1854](https://github.com/DEFRA/rod-licensing/pull/1854) Recurring payment terms and conditions page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.39.0-rc.1 (2024-01-18)
