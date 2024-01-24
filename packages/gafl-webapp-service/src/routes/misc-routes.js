@@ -12,7 +12,8 @@ import {
   IDENTIFY,
   OS_TERMS,
   PROCESS_ANALYTICS_PREFERENCES,
-  NEW_PRICES
+  NEW_PRICES,
+  RECURRING_TERMS_CONDITIONS
 } from '../uri.js'
 
 import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
@@ -36,13 +37,17 @@ const simpleView = view => ({
     const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
     const gtmContainerId = gtmContainerIdOrNull()
     const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
+    const backUri = request?.headers?.referer?.endsWith(RECURRING_TERMS_CONDITIONS.uri)
+      ? addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+      : addLanguageCodeToUri(request, CONTROLLER.uri)
+
     return h.view(view.page, {
       mssgs,
       altLang,
       gtmContainerId,
       pageLanguageSetToWelsh,
       uri: {
-        back: addLanguageCodeToUri(request, CONTROLLER.uri)
+        back: backUri
       }
     })
   }
@@ -101,6 +106,9 @@ export default [
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
       const gtmContainerId = gtmContainerIdOrNull()
       const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
+      const backUri = request?.headers?.referer?.endsWith(RECURRING_TERMS_CONDITIONS.uri)
+        ? addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+        : addLanguageCodeToUri(request, CONTROLLER.uri)
 
       return h.view(COOKIES.page, {
         altLang,
@@ -114,7 +122,7 @@ export default [
           albcors: ALBCORS_COOKIE_NAME
         },
         uri: {
-          back: addLanguageCodeToUri(request, CONTROLLER.uri)
+          back: backUri
         }
       })
     }
@@ -134,6 +142,26 @@ export default [
         mssgs: request.i18n.getCatalog(),
         uri: {
           back: addLanguageCodeToUri(request, CONTROLLER.uri)
+        }
+      })
+    }
+  },
+  {
+    method: 'GET',
+    path: RECURRING_TERMS_CONDITIONS.uri,
+    handler: async (request, h) => {
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const gtmContainerId = gtmContainerIdOrNull()
+      const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
+
+      return h.view(RECURRING_TERMS_CONDITIONS.page, {
+        altLang,
+        gtmContainerId,
+        pageLanguageSetToWelsh,
+        mssgs: request.i18n.getCatalog(),
+        uri: {
+          privacy: addLanguageCodeToUri(request, PRIVACY_POLICY.uri),
+          refund: addLanguageCodeToUri(request, REFUND_POLICY.uri)
         }
       })
     }
