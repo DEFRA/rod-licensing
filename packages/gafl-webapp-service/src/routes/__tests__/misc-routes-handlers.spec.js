@@ -256,22 +256,25 @@ describe('guidance page handlers', () => {
       }
     )
 
-    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])('back button should be set too %s when referrer is %s', async referrer => {
-      const toolkit = getMockToolkit()
-      const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
-      addLanguageCodeToUri.mockImplementation((_request, uri) => uri)
+    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
+      'back button should be set too %s when referrer is %s',
+      async referrer => {
+        const toolkit = getMockToolkit()
+        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
+        addLanguageCodeToUri.mockImplementation((_request, uri) => uri)
 
-      await pageHandler(request, toolkit)
+        await pageHandler(request, toolkit)
 
-      expect(toolkit.view).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          uri: expect.objectContaining({
-            back: referrer
+        expect(toolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            uri: expect.objectContaining({
+              back: referrer
+            })
           })
-        })
-      )
-    })
+        )
+      }
+    )
   })
 
   describe.each([
