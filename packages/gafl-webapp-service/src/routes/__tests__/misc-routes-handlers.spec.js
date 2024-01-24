@@ -244,14 +244,14 @@ describe('guidance page handlers', () => {
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
   ])('back button tests for $handlerName page', ({ pageHandler }) => {
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
-      'addLanguageCodeToUri is called with %s when referer is %s',
-      async referer => {
+      'addLanguageCodeToUri is called with %s when referrer is %s',
+      async referrer => {
         const toolkit = getMockToolkit()
-        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
+        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
 
         await pageHandler(request, toolkit)
 
-        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referer)
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referrer)
       }
     )
   })
