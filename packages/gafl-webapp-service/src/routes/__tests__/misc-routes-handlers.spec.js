@@ -246,19 +246,19 @@ describe('guidance page handlers', () => {
     beforeEach(jest.resetAllMocks)
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
       'addLanguageCodeToUri is called with %s when referrer is %s',
-      async referer => {
+      async referrer => {
         const toolkit = getMockToolkit()
-        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
+        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
 
         await pageHandler(request, toolkit)
 
-        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referer)
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referrer)
       }
     )
 
-    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])('back button should be set too %s when referrer is %s', async referer => {
+    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])('back button should be set too %s when referrer is %s', async referrer => {
       const toolkit = getMockToolkit()
-      const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
+      const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
       addLanguageCodeToUri.mockImplementation((_request, uri) => uri)
 
       await pageHandler(request, toolkit)
@@ -267,7 +267,7 @@ describe('guidance page handlers', () => {
         expect.any(String),
         expect.objectContaining({
           uri: expect.objectContaining({
-            back: referer
+            back: referrer
           })
         })
       )
