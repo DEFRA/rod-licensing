@@ -1,4 +1,29 @@
 
+## v1.39.0-rc.4 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1862](https://github.com/DEFRA/rod-licensing/pull/1862) Recurring payment confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1854](https://github.com/DEFRA/rod-licensing/pull/1854) Recurring payment terms and conditions page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.39.0-rc.1 (2024-01-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1861](https://github.com/DEFRA/rod-licensing/pull/1861) Update price increase page ([@jaucourt](https://github.com/jaucourt))
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `sales-api-service`
+  * [#1853](https://github.com/DEFRA/rod-licensing/pull/1853) Fix wrong price in CRM ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.39.0-rc.0 (2024-01-17)
 
 #### :rocket: Enhancement
