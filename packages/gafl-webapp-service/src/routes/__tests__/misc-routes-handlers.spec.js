@@ -244,7 +244,7 @@ describe('guidance page handlers', () => {
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
   ])('back button tests for $handlerName page', ({ pageHandler }) => {
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
-      'addLanguageCodeToUri is called with %s when referrer is %s',
+      'addLanguageCodeToUri is called with %s when referer is %s',
       async referer => {
         const toolkit = getMockToolkit()
         const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referer)
