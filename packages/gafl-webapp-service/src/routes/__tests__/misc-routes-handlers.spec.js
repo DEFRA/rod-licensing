@@ -1,4 +1,4 @@
-import uri from '../../uri.js'
+import uri, { CONTROLLER, RECURRING_TERMS_CONDITIONS } from '../../uri.js'
 import miscRoutes from '../misc-routes.js'
 import constants from '../../constants.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
@@ -30,6 +30,7 @@ describe('guidance page handlers', () => {
   const refundPolicyPageHandler = miscRoutes.find(r => r.path === uri.REFUND_POLICY.uri).handler
   const osTermsPageHandler = miscRoutes.find(r => r.path === uri.OS_TERMS.uri).handler
   const newPricesPageHandler = miscRoutes.find(r => r.path === uri.NEW_PRICES.uri).handler
+  const rpTermsConditionsHandler = miscRoutes.find(r => r.path === uri.RECURRING_TERMS_CONDITIONS.uri).handler
 
   describe('cookies page handler', () => {
     const processEnv = process.env
@@ -213,6 +214,48 @@ describe('guidance page handlers', () => {
     })
   })
 
+  it('recurring payment terms and conditions page handler provides expected data for recurring payments terms and conditions page', async () => {
+    const catalog = Symbol('catalog')
+    const mockUri = Symbol('terms')
+    const welshEnabled = Symbol('enabled')
+    addLanguageCodeToUri.mockReturnValue(mockUri)
+    welshEnabledAndApplied.mockReturnValueOnce(welshEnabled)
+    const mockRequest = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog })
+    const mockToolkit = getMockToolkit()
+
+    await rpTermsConditionsHandler(mockRequest, mockToolkit)
+
+    expect(mockToolkit.view).toHaveBeenCalledWith(uri.RECURRING_TERMS_CONDITIONS.page, {
+      altLang: ['that-locale'],
+      gtmContainerId: false,
+      pageLanguageSetToWelsh: welshEnabled,
+      mssgs: catalog,
+      uri: {
+        privacy: mockUri,
+        refund: mockUri
+      }
+    })
+  })
+
+  describe.each([
+    { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
+    { pageHandler: privacyPolicyPageHandler, handlerName: 'Privacy policy' },
+    { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
+    { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
+  ])('back button tests for $handlerName page', ({ pageHandler }) => {
+    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
+      'addLanguageCodeToUri is called with %s when referrer is %s',
+      async referrer => {
+        const toolkit = getMockToolkit()
+        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
+
+        await pageHandler(request, toolkit)
+
+        expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referrer)
+      }
+    )
+  })
+
   describe.each([
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' },
     { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
@@ -283,7 +326,7 @@ describe('guidance page handlers', () => {
     })
   })
 
-  const getMockRequest = (i18nValues, search = '') => {
+  const getMockRequest = (i18nValues, referer) => {
     const { catalog, locales, locale } = {
       catalog: {},
       locales: [],
@@ -297,7 +340,10 @@ describe('guidance page handlers', () => {
         getLocale: () => locale
       },
       url: {
-        search
+        search: ''
+      },
+      headers: {
+        referer
       }
     }
   }
