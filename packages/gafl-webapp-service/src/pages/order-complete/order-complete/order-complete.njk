@@ -27,6 +27,11 @@
                 <p class="govuk-body">{{ data.content.licenceDetailsParagraphTwo }}</p>
             {% endif %}
 
+            {% if (data.recurringPayment) %}
+                <h2 class="govuk-heading-m">{{ mssgs.order_complete_future_payments_title }}</h2>
+                <p class="govuk-body">{{ data.content.futurePaymentsParagraphOne }}<a class="govuk-link"  href="">{{ mssgs.order_complete_future_payments_link }}</a>{{ data.content.futurePaymentsParagraphTwo }}</p>
+            {% endif %}
+
             <h2 class="govuk-heading-m">{{ mssgs.order_complete_when_fishing_title }}</h2>
             {% if data.postalLicence %}
                 <p class="govuk-body">{{ data.content.whenFishingParagraphOne }}<a class="govuk-link" href="{{ data.uri.licenceDetails }}">{{ data.content.whenFishingParagraphOneLink }}</a>{{ mssgs.period }}</p>
@@ -35,14 +40,14 @@
             {% endif %}
             <p class="govuk-body">{{ data.content.whenFishingParagraphTwo }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/guidance/national-rod-fishing-byelaws-for-england-freshwater-fishing-with-a-rod-and-line">{{ mssgs.order_complete_when_fishing_link_2 }}</a>{{ mssgs.period }}</p>
             {% if data.isSalmonLicence %}
-                <p class="govuk-body">{{ order_complete_when_fishing_salmon_paragraph_1 }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.order_complete_when_fishing_salmon_link }}</a>{{ mssgs.order_complete_when_fishing_salmon_paragraph_2 }}</p>
+                <p class="govuk-body">{{ mssgs.order_complete_when_fishing_salmon_paragraph_1 }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.order_complete_when_fishing_salmon_link }}</a>{{ mssgs.order_complete_when_fishing_salmon_paragraph_2 }}</p>
             {% endif %}
 
             <h2 class="govuk-heading-m">{{ mssgs.order_complete_buy_another_licence_title }}</h2>
             <p class="govuk-body">{{ mssgs.order_complete_buy_another_licence_paragraph_1 }}<a class="govuk-link" href="{{ data.uri.new }}">{{ mssgs.order_complete_buy_another_licence_link }}</a>{{ mssgs.order_complete_buy_another_licence_paragraph_2 }}</p>
 
             <h2 class="govuk-heading-m">{{ mssgs.order_complete_before_leave_page_title }}</h2>
-            <p class="govuk-body">{{ order_complete_before_leave_page_paragraph }}</p>
+            <p class="govuk-body">{{ mssgs.order_complete_before_leave_page_paragraph }}</p>
             <ul class="govuk-list govuk-list--bullet">
                 <li><a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.feedback }}">{{ mssgs.order_complete_before_leave_page_bulletpoint_1_link }}</a>{{ mssgs.order_complete_before_leave_page_bulletpoint_1 }}</li>
                 <li><a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/publications/fisheries-annual-report-2021-to-2022/fisheries-annual-report-2021-to-2022">{{ mssgs.order_complete_before_leave_page_bulletpoint_2_link }}</a>{{ mssgs.order_complete_before_leave_page_bulletpoint_2 }}</li>
