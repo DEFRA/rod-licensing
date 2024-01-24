@@ -7,8 +7,7 @@ import { displayStartTime } from '../../../processors/date-and-time-display.js'
 import * as mappings from '../../../processors/mapping-constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
-import { displayPermissionPrice } from '../../../processors/price-display.js'
-import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { displayPrice } from '../../../processors/price-display.js'
 import { HOW_CONTACTED } from '../../../processors/mapping-constants.js'
 
 export const getData = async request => {
@@ -63,10 +62,11 @@ const digitalReminder = permission =>
   permission.licensee.preferredMethodOfReminder === HOW_CONTACTED.text
 
 const getOrderCompleteContent = (permission, mssgs, transaction) => {
-  const permissionCost = displayPermissionPrice(permission, mssgs, transaction.payment?.created_date)
-  const permissionIsFree = getPermissionCost(permission, transaction.payment?.created_date) === 0
+  const permissionCost = displayPrice(transaction.cost, mssgs)
+  const permissionIsFree = transaction.cost === 0
+
   return {
-    title: permissionIsFree ? mssgs.order_complete_title_application : mssgs.order_complete_title_payment + permissionCost,
+    title: permissionIsFree ? mssgs.order_complete_title_application : `${mssgs.order_complete_title_payment}${permissionCost}`,
 
     licenceTitle: permission.isLicenceForYou
       ? mssgs.order_complete_licence_details_self_title

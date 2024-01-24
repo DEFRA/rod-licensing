@@ -4,8 +4,7 @@ import { getData } from '../route.js'
 import { COMPLETION_STATUS, FEEDBACK_URI_DEFAULT } from '../../../../constants.js'
 import { displayStartTime } from '../../../../processors/date-and-time-display.js'
 import { LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
-import { displayPermissionPrice } from '../../../../processors/price-display.js'
-import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { displayPrice } from '../../../../processors/price-display.js'
 import { validForRecurringPayment } from '../../../../processors/recurring-pay-helper.js'
 
 jest.mock('../../../../processors/recurring-pay-helper.js')
@@ -90,7 +89,9 @@ const getSampleRequest = ({
   permission = getSamplePermission(),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
-  payment = { created_date: undefined }
+  payment = { created_date: undefined },
+  transactionCost = 1,
+  messages = getMessages()
 } = {}) => ({
   cache: () => ({
     helpers: {
@@ -101,7 +102,8 @@ const getSampleRequest = ({
       },
       transaction: {
         get: async () => ({
-          payment
+          payment,
+          cost: transactionCost
         }),
         getCurrentPermission: () => permission
       }
@@ -111,14 +113,14 @@ const getSampleRequest = ({
     search: ''
   },
   i18n: {
-    getCatalog: () => getMessages()
+    getCatalog: () => messages
   }
 })
 jest.mock('@defra-fish/connectors-lib')
 
 describe('The order completion handler', () => {
   beforeAll(() => {
-    displayPermissionPrice.mockReturnValue('1')
+    displayPrice.mockReturnValue('1')
   })
   beforeEach(jest.clearAllMocks)
 
@@ -171,9 +173,8 @@ describe('The order completion handler', () => {
   })
 
   it('title displays as application when permission is free', async () => {
-    getPermissionCost.mockReturnValueOnce(0)
     const permission = getSamplePermission({ isLicenceForYou: true, postalFulfilment: false, preferredMethodOfConfirmation: 'Text' })
-    const { content } = await getData(getSampleRequest({ permission }))
+    const { content } = await getData(getSampleRequest({ permission, transactionCost: 0 }))
     expect(content.title).toEqual('application title')
   })
 
@@ -302,26 +303,9 @@ describe('The order completion handler', () => {
     expect(feedback).toBe(FEEDBACK_URI_DEFAULT)
   })
 
-  it.each`
-    desc                                            | payment
-    ${'permission, created_date and label catalog'} | ${{ created_date: Symbol('created date') }}
-    ${'permission and label catalog'}               | ${undefined}
-  `('passes $desc to displayPermissionPrice function', async ({ desc, payment }) => {
-    const permission = getSamplePermission()
-    const catalog = getMessages()
-    const result = payment?.created_date
-    await getData(getSampleRequest({ permission, payment }))
-    expect(displayPermissionPrice).toHaveBeenCalledWith(permission, catalog, result)
-  })
-
-  it.each`
-    desc                             | payment
-    ${'permission and created_date'} | ${{ created_date: Symbol('created date') }}
-    ${'permission'}                  | ${undefined}
-  `('passes $desc to getPermissionCost function', async ({ desc, payment }) => {
-    const permission = getSamplePermission()
-    const result = payment?.created_date
-    await getData(getSampleRequest({ permission, payment }))
-    expect(getPermissionCost).toHaveBeenCalledWith(permission, result)
+  it.each([9.99, 8.71])('passes %d to displayPrice function', async transactionCost => {
+    const messages = getMessages()
+    await getData(getSampleRequest({ transactionCost, messages }))
+    expect(displayPrice).toHaveBeenCalledWith(transactionCost, messages)
   })
 })
