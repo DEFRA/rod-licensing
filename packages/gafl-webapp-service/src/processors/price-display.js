@@ -9,6 +9,4 @@ export const displayPrice = (price, labels) => {
   return `${labels.pound}${price.toFixed(2)}`
 }
 
-export const displayPermissionPrice = (permission, labels, createdDate) => {
-  return displayPrice(getPermissionCost(permission, createdDate), labels)
-}
+export const displayPermissionPrice = (permission, labels, createdDate) => displayPrice(getPermissionCost(permission, createdDate), labels)
