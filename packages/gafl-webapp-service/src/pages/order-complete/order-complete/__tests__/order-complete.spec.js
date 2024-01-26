@@ -89,7 +89,6 @@ const getSampleRequest = ({
   permission = getSamplePermission(),
   statusSet = () => {},
   statusSetCurrentPermission = () => {},
-  payment = { created_date: undefined },
   transactionCost = 1,
   messages = getMessages()
 } = {}) => ({
@@ -102,7 +101,6 @@ const getSampleRequest = ({
       },
       transaction: {
         get: async () => ({
-          payment,
           cost: transactionCost
         }),
         getCurrentPermission: () => permission
