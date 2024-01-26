@@ -1,4 +1,13 @@
 
+## v1.39.0-rc.8 (2024-01-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1881](https://github.com/DEFRA/rod-licensing/pull/1881) Price on order confirmation page incorrect ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.39.0-rc.7 (2024-01-24)
 
 #### :rocket: Enhancement
