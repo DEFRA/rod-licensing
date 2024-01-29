@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.7",
-    "@babel/eslint-parser": "^7.17.0",
+    "@babel/eslint-parser": "^7.23.9",
     "@babel/preset-env": "^7.16.11",
     "@ksmithut/prettier-standard": "^0.0.10",
     "@types/hapi__hapi": "^20.0.10",
