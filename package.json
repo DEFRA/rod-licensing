@@ -44,7 +44,7 @@
     "babel-jest": "^29.7.0",
     "clone-deep": "^4.0.1",
     "dynamics-web-api": "^2.1.2",
-    "eslint": "^7.32.0",
+    "eslint": "^8.56.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
