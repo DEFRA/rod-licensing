@@ -50,7 +50,7 @@
     "@hapi/vision": "^7.0.3",
     "blankie": "^5.0.0",
     "debug": "^4.3.3",
-    "disinfect": "^1.1.0",
+    "disinfect": "^2.0.0",
     "find": "^0.3.0",
     "flatpickr": "^4.6.9",
     "govuk-frontend": "^4.0.1",
