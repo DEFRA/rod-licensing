@@ -30,7 +30,7 @@ beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
 
 jest.mock('node-fetch')
-const fetch = require('node-fetch')
+const fetch = require('node-fetch').default
 
 describe('The address select page', () => {
   it('returns success on requesting', async () => {
