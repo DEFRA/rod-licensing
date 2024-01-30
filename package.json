@@ -96,9 +96,6 @@
         "statements": 90
       }
     },
-    "projects": [
-      "<rootDir>/packages/*"
-    ],
     "setupFilesAfterEnv": [
       "./packages/gafl-webapp-service/gafl-jest-matchers.js"
     ],
