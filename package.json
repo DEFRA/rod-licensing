@@ -53,7 +53,7 @@
     "lerna-update-wizard": "^1.1.1",
     "lint-staged": "^15.2.0",
     "simple-oauth2": "^4.3.0",
-    "standard": "^16.0.4"
+    "standard": "^17.1.0"
   },
   "eslintConfig": {
     "extends": "standard",
