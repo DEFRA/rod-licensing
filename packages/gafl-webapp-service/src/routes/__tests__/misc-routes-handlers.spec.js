@@ -257,7 +257,7 @@ describe('guidance page handlers', () => {
     )
 
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
-      'back button should be set too %s when referrer is %s',
+      'back button should be set to %s when referrer is same value',
       async referrer => {
         const toolkit = getMockToolkit()
         const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
