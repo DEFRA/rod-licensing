@@ -2,7 +2,7 @@ import { getData, validator } from '../route'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
-import { hasJunior } from '../../../../processors/concession-helper.js'
+import { hasJunior } from '@defra-fish/business-rules-lib'
 
 jest.mock('../../../../routes/next-page.js', () => ({
   nextPage: jest.fn()
@@ -16,7 +16,7 @@ jest.mock('../../../../uri.js', () => ({
   }
 }))
 jest.mock('../../../../processors/licence-type-display.js')
-jest.mock('../../../../processors/concession-helper.js')
+jest.mock('@defra-fish/business-rules-lib')
 
 describe('name > route', () => {
   const getMockRequest = ({ isLicenceForYou, licenceType, licensee, licenceLength = 'length' }) => ({

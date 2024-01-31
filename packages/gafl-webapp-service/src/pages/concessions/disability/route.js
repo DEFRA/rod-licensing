@@ -1,8 +1,7 @@
 import { DISABILITY_CONCESSION } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import Joi from 'joi'
-import { validation } from '@defra-fish/business-rules-lib'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { hasJunior, hasSenior, validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'
 import { disabilityConcessionTypes } from './update-transaction.js'
 
@@ -26,8 +25,8 @@ export const getData = async request => {
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
 
   return {
-    hasJunior: concessionHelper.hasJunior(permission),
-    hasSenior: concessionHelper.hasSenior(permission),
+    hasJunior: hasJunior(permission),
+    hasSenior: hasSenior(permission),
     isLicenceForYou: permission.isLicenceForYou,
     ...disabilityConcessionTypes
   }

@@ -4,7 +4,7 @@ import { COMPLETION_STATUS } from '../../../../constants.js'
 import { CONCESSION, CONCESSION_PROOF, LICENCE_TYPE } from '../../../../processors/mapping-constants.js'
 import * as dtDisplay from '../../../../processors/date-and-time-display.js'
 import { licenceTypeDisplay } from '../../../../processors/licence-type-display.js'
-import * as concessionHelper from '../../../../processors/concession-helper.js'
+import * as concessionHelper from '@defra-fish/business-rules-lib'
 
 beforeEach(jest.clearAllMocks)
 jest.mock('../../../../processors/date-and-time-display.js')
@@ -22,7 +22,7 @@ jest.mock('../../../../constants.js', () => ({
     YES: 'yes'
   }
 }))
-jest.mock('../../../../processors/concession-helper.js')
+jest.mock('@defra-fish/business-rules-lib')
 
 describe('The licence details page', () => {
   describe('.getData', () => {

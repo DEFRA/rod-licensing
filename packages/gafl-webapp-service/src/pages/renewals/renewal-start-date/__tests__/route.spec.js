@@ -1,7 +1,7 @@
 import pageRoute from '../../../../routes/page-route.js'
 import { LICENCE_SUMMARY } from '../../../../uri.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
-import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
+import { ageConcessionHelper } from '@defra-fish/business-rules-lib'
 import { displayExpiryDate } from '../../../../processors/date-and-time-display.js'
 import route from '../route.js'
 
@@ -20,7 +20,7 @@ jest.mock('../../../../processors/date-and-time-display.js', () => ({
   displayExpiryDate: jest.fn(() => mockDisplayExpiryDate)
 }))
 
-jest.mock('../../../../processors/concession-helper.js', () => ({
+jest.mock('@defra-fish/business-rules-lib', () => ({
   ageConcessionHelper: jest.fn()
 }))
 

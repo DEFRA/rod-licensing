@@ -1,9 +1,8 @@
 import * as mappings from '../../../processors/mapping-constants.js'
 import { LICENCE_LENGTH, LICENCE_FULFILMENT } from '../../../uri.js'
-import * as concessionHelper from '../../../processors/concession-helper.js'
 import moment from 'moment-timezone'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { hasDisabled, removeDisabled, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../processors/licence-type-display.js'
 import { licenceToStart } from '../licence-to-start/update-transaction.js'
 import findPermit from '../../../processors/find-permit.js'
@@ -57,12 +56,12 @@ const checkLicenceToStart = permission => {
  * if the concession is set back
  */
 const checkDisabledConcessions = permission => {
-  if (permission.licenceLength !== '12M' && concessionHelper.hasDisabled(permission)) {
+  if (permission.licenceLength !== '12M' && hasDisabled(permission)) {
     permission.previouslyDisabled = permission.concessions.find(c => c.type === mappings.CONCESSION.DISABLED)
-    concessionHelper.removeDisabled(permission)
+    removeDisabled(permission)
   }
 
-  if (permission.licenceLength === '12M' && !concessionHelper.hasDisabled(permission) && permission.previouslyDisabled) {
+  if (permission.licenceLength === '12M' && !hasDisabled(permission) && permission.previouslyDisabled) {
     permission.concessions.push(permission.previouslyDisabled)
     permission.previouslyDisabled = null
   }

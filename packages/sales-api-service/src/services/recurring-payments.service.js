@@ -1,6 +1,8 @@
 import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
 
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
+// checkk right licence
+// business rules lib
 
 /**
  * Process a recurring payment instruction

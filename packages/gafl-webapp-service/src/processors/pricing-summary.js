@@ -4,7 +4,7 @@
 import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { LICENCE_TYPE } from '../uri.js'
 import { getPermitsJoinPermitConcessions } from './find-permit.js'
-import * as concessionHelper from '../processors/concession-helper.js'
+import { hasDisabled, hasSenior, hasJunior } from '@defra-fish/business-rules-lib'
 import * as constants from './mapping-constants.js'
 import moment from 'moment'
 const NO_SHORT = 'no-short'
@@ -47,7 +47,7 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
     return {
       len,
       cost: getPermitCost(permission, permitWithConcessions),
-      concessions: permitWithoutConcessions.cost > permitWithConcessions.cost || concessionHelper.hasJunior(permission),
+      concessions: permitWithoutConcessions.cost > permitWithConcessions.cost || hasJunior(permission),
       avail: true
     }
   }
@@ -76,22 +76,22 @@ export const pricingDetail = async (page, permission) => {
   const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 
   const userConcessions = []
-  if (concessionHelper.hasJunior(permission)) {
+  if (hasJunior(permission)) {
     userConcessions.push(constants.CONCESSION.JUNIOR)
   }
 
-  if (concessionHelper.hasSenior(permission)) {
+  if (hasSenior(permission)) {
     userConcessions.push(constants.CONCESSION.SENIOR)
   }
 
-  if (concessionHelper.hasDisabled(permission)) {
+  if (hasDisabled(permission)) {
     userConcessions.push(constants.CONCESSION.DISABLED)
   }
 
   if (page === LICENCE_TYPE.page) {
     const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions.filter(byConcessions(userConcessions))
     const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions.filter(
-      byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : [])
+      byConcessions(hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : [])
     )
 
     return {
@@ -128,7 +128,7 @@ export const pricingDetail = async (page, permission) => {
     const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions
       .filter(p => p.permitSubtype.label === permission.licenceType)
       .filter(r => String(r.numberOfRods) === permission.numberOfRods)
-      .filter(byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : []))
+      .filter(byConcessions(hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : []))
 
     return {
       byLength: ['12M', '8D', '1D']

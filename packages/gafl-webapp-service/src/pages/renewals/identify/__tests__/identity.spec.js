@@ -15,10 +15,9 @@ import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../
 
 import { dobHelper, ADULT_TODAY } from '../../../../__mocks__/test-utils-business-rules.js'
 import { salesApi } from '@defra-fish/connectors-lib'
-import { RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'
+import { hasSenior, RENEW_AFTER_DAYS, RENEW_BEFORE_DAYS } from '@defra-fish/business-rules-lib'
 import { authenticationResult } from '../__mocks__/data/authentication-result.js'
 import * as constants from '../../../../processors/mapping-constants.js'
-import { hasSenior } from '../../../../processors/concession-helper.js'
 import mockDefraCountries from '../../../../__mocks__/data/defra-country.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import pageRoute from '../../../../routes/page-route.js'

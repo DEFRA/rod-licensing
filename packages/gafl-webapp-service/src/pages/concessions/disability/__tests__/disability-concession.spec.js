@@ -1,7 +1,7 @@
 import { start, stop, initialize, injectWithCookies, mockSalesApi } from '../../../../__mocks__/test-utils-system.js'
 import { DISABILITY_CONCESSION, LICENCE_TO_START, TEST_TRANSACTION, LICENCE_LENGTH } from '../../../../uri.js'
 import { disabilityConcessionTypes } from '../update-transaction.js'
-import * as concessionHelper from '../../../../processors/concession-helper.js'
+import { hasDisabled } from '@defra-fish/business-rules-lib'
 import { CONCESSION_PROOF } from '../../../../processors/mapping-constants.js'
 
 mockSalesApi()
@@ -55,7 +55,7 @@ describe('The disability concession page', () => {
       'ni-number': 'NH 34 67 44 A'
     })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
+    expect(hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
     expect(JSON.parse(payload).permissions[0].concessions[0].proof).toEqual({
       type: CONCESSION_PROOF.NI,
       referenceNumber: 'NH 34 67 44 A'
@@ -77,7 +77,7 @@ describe('The disability concession page', () => {
       'blue-badge-number': '1234'
     })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
+    expect(hasDisabled(JSON.parse(payload).permissions[0])).toBeTruthy()
     expect(JSON.parse(payload).permissions[0].concessions[0].proof).toEqual({
       type: CONCESSION_PROOF.blueBadge,
       referenceNumber: '1234'
@@ -91,10 +91,10 @@ describe('The disability concession page', () => {
     })
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '8D' })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).not.toBeTruthy()
+    expect(hasDisabled(JSON.parse(payload).permissions[0])).not.toBeTruthy()
     await injectWithCookies('POST', LICENCE_LENGTH.uri, { 'licence-length': '12M' })
     const { payload: payload2 } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(concessionHelper.hasDisabled(JSON.parse(payload2).permissions[0])).toBeTruthy()
+    expect(hasDisabled(JSON.parse(payload2).permissions[0])).toBeTruthy()
     expect(JSON.parse(payload2).permissions[0].concessions[0].proof).toEqual({
       type: CONCESSION_PROOF.blueBadge,
       referenceNumber: '1234'
@@ -106,7 +106,7 @@ describe('The disability concession page', () => {
       'disability-concession': disabilityConcessionTypes.no
     })
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
-    expect(concessionHelper.hasDisabled(JSON.parse(payload).permissions[0])).not.toBeTruthy()
+    expect(hasDisabled(JSON.parse(payload).permissions[0])).not.toBeTruthy()
   })
 
   it("on setting 'no' it causes a redirect to the licence-to-start page", async () => {

@@ -1,4 +1,4 @@
-import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { ADVANCED_PURCHASE_MAX_DAYS, ageConcessionHelper, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { dateFormats } from '../../../constants.js'
 import { RENEWAL_START_DATE, LICENCE_SUMMARY } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
@@ -8,7 +8,6 @@ import moment from 'moment-timezone'
 import { displayExpiryDate, cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { licenceToStart } from '../../licence-details/licence-to-start/update-transaction.js'
-import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 
 const JoiX = Joi.extend(JoiDate)
 

@@ -2,7 +2,7 @@ import { LICENCE_TYPE, FRESHWATER_FISING_RULES, LOCAL_BYELAWS } from '../../../u
 import pageRoute from '../../../routes/page-route.js'
 import { pricingDetail } from '../../../processors/pricing-summary.js'
 import Joi from 'joi'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { hasJunior } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'
 
 export const licenseTypes = {
@@ -26,7 +26,7 @@ export const getData = async request => {
     permission,
     pricing,
     isLicenceForYou: permission.isLicenceForYou,
-    hasJunior: concessionHelper.hasJunior(permission),
+    hasJunior: hasJunior(permission),
     uri: {
       freshWaterFishingRules: FRESHWATER_FISING_RULES.uri,
       localByelaws: LOCAL_BYELAWS.uri

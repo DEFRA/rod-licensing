@@ -1,7 +1,6 @@
 import moment from 'moment-timezone'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { ageConcessionHelper, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import { LICENCE_START_TIME, LICENCE_TO_START } from '../../../uri.js'
-import { ageConcessionHelper } from '../../../processors/concession-helper.js'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { onLengthChange } from '../licence-length/update-transaction.js'
 

@@ -63,3 +63,7 @@ export const START_AFTER_PAYMENT_MINUTES = 30
  * Timezone of the service
  */
 export const SERVICE_LOCAL_TIME = 'Europe/London'
+
+export const HOW_CONTACTED = { email: 'Email', text: 'Text', letter: 'Letter', none: 'Prefer not to be contacted' }
+export const CONCESSION = { SENIOR: 'Senior', JUNIOR: 'Junior', DISABLED: 'Disabled' }
+export const CONCESSION_PROOF = { none: 'No Proof', blueBadge: 'Blue Badge', NI: 'National Insurance Number' }

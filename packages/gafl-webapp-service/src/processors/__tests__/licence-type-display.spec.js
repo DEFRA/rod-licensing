@@ -1,4 +1,4 @@
-import { hasJunior, hasSenior } from '../concession-helper.js'
+import { hasJunior, hasSenior } from '@defra-fish/business-rules-lib'
 import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringLicenceTypeDisplay } from '../licence-type-display.js'
 
 const getCatalog = () => ({
@@ -12,7 +12,7 @@ const getCatalog = () => ({
   recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout'
 })
 
-jest.mock('../concession-helper', () => ({
+jest.mock('@defra-fish/business-rules-lib', () => ({
   hasJunior: jest.fn(),
   hasSenior: jest.fn()
 }))
