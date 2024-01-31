@@ -20,9 +20,7 @@ export default async request => {
 
   if (payload['licence-to-start'] === 'after-payment') {
     permission.licenceToStart = licenceToStart.AFTER_PAYMENT
-    permission.licenceStartDate = moment()
-      .tz(SERVICE_LOCAL_TIME)
-      .format(cacheDateFormat)
+    permission.licenceStartDate = moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat)
     delete permission.licenceStartTime
   } else {
     permission.licenceToStart = licenceToStart.ANOTHER_DATE
