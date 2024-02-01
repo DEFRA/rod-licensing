@@ -21,6 +21,7 @@ jest.mock('../../../../processors/date-and-time-display.js', () => ({
 }))
 
 jest.mock('@defra-fish/business-rules-lib', () => ({
+  ...jest.requireActual('@defra-fish/business-rules-lib'),
   ageConcessionHelper: jest.fn()
 }))
 
