@@ -1,5 +1,5 @@
 import { ADVANCED_PURCHASE_MAX_DAYS, CONCESSION, CONCESSION_PROOF, HOW_CONTACTED, SERVICE_LOCAL_TIME } from '../constants.js'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 /** The maximum age at which an angler is considered to be a minor (free licence) */
 export const MINOR_MAX_AGE = 12
