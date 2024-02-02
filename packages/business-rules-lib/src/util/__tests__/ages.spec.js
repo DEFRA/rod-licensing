@@ -244,7 +244,6 @@ describe('The concession helper', () => {
       ages.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
-
     ;[junior, senior].forEach(concession => {
       it(`if is normal licence, removes ${concession.type} concession`, () => {
         const licensee = getLicensee({ age: 35 })
