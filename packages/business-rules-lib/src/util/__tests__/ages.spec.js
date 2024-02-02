@@ -231,18 +231,17 @@ describe('The concession helper', () => {
     //   expect(permission).toMatchSnapshot()
     // })
 
-    it('if the licensee is a minor and how contacted is not letter it doesnt update the confirmation', () => {
-      const licensee = getLicensee({ age: 8, contact: HOW_CONTACTED.email })
+    it.each([[HOW_CONTACTED.email, 'preferredMethodOfConfirmation', HOW_CONTACTED.email],
+      [HOW_CONTACTED.email, 'preferredMethodOfReminder', HOW_CONTACTED.email],
+      [HOW_CONTACTED.text, 'preferredMethodOfConfirmation', HOW_CONTACTED.text],
+      [HOW_CONTACTED.text, 'preferredMethodOfReminder', HOW_CONTACTED.text],
+      [HOW_CONTACTED.letter, 'preferredMethodOfConfirmation', HOW_CONTACTED.none],
+      [HOW_CONTACTED.letter, 'preferredMethodOfReminder', HOW_CONTACTED.none]
+    ])('licensee is a junior and prefferedMethodOfConfirmation is %s then %s should equal %s', (confirmMethod, method, expected) => {
+      const licensee = getLicensee({ age: 13, contact: confirmMethod })
       const permission = getSamplePermission({ licensee })
       ages.ageConcessionHelper(permission)
-      expect(permission.licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.email)
-    })
-
-    it('if the licensee is a minor and how contacted is not letter it doesnt update the reminder', () => {
-      const licensee = getLicensee({ age: 8, contact: HOW_CONTACTED.email })
-      const permission = getSamplePermission({ licensee })
-      ages.ageConcessionHelper(permission)
-      expect(permission.licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.email)
+      expect(permission.licensee[method]).toBe(expected)
     })
 
     it('if the licensee is a minor, sets noLicenceRequired flag to true', () => {
