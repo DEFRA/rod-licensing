@@ -231,7 +231,8 @@ describe('The concession helper', () => {
     //   expect(permission).toMatchSnapshot()
     // })
 
-    it.each([[HOW_CONTACTED.email, 'preferredMethodOfConfirmation', HOW_CONTACTED.email],
+    it.each([
+      [HOW_CONTACTED.email, 'preferredMethodOfConfirmation', HOW_CONTACTED.email],
       [HOW_CONTACTED.email, 'preferredMethodOfReminder', HOW_CONTACTED.email],
       [HOW_CONTACTED.text, 'preferredMethodOfConfirmation', HOW_CONTACTED.text],
       [HOW_CONTACTED.text, 'preferredMethodOfReminder', HOW_CONTACTED.text],
