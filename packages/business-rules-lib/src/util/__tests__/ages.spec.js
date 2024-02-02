@@ -36,10 +36,11 @@ const disabledNi = {
 
 const LICENCE_START_DATE = '2020-06-06'
 
-const getLicensee = ({ age, referenceDate = LICENCE_START_DATE } = {}) => ({
+const getLicensee = ({ age, referenceDate = LICENCE_START_DATE, contact = HOW_CONTACTED.letter } = {}) => ({
   firstName: 'Johnny',
   lastName: 'Test',
-  preferredMethodOfConfirmation: HOW_CONTACTED.letter,
+  preferredMethodOfConfirmation: contact,
+  preferredMethodOfReminder: contact,
   birthDate: moment(referenceDate).subtract(age, 'years').format('YYYY-MM-DD')
 })
 
@@ -216,12 +217,32 @@ describe('The concession helper', () => {
 
     const getSamplePermission = ({
       licenceStartDate = LICENCE_START_DATE,
-      licensee = getLicensee(67, licenceStartDate),
+      licensee = getLicensee(67, licenceStartDate, HOW_CONTACTED.letter),
       concessions = []
     } = {}) => ({
       licenceStartDate,
       licensee,
       concessions: []
+    })
+
+    // it('if the permission it sets it based on SERVICE_LOCAL_TIME plus ADVANCED_PURCHASE_MAX_DAYS compared too licensee dob', () => {
+    //   const permission = getSamplePermission({ licenceStartDate: null })
+    //   ages.ageConcessionHelper(permission)
+    //   expect(permission).toMatchSnapshot()
+    // })
+
+    it('if the licensee is a minor and how contacted is not letter it doesnt update the confirmation', () => {
+      const licensee = getLicensee({ age: 8, contact: HOW_CONTACTED.email })
+      const permission = getSamplePermission({ licensee })
+      ages.ageConcessionHelper(permission)
+      expect(permission.licensee.preferredMethodOfConfirmation).toBe(HOW_CONTACTED.email)
+    })
+
+    it('if the licensee is a minor and how contacted is not letter it doesnt update the reminder', () => {
+      const licensee = getLicensee({ age: 8, contact: HOW_CONTACTED.email })
+      const permission = getSamplePermission({ licensee })
+      ages.ageConcessionHelper(permission)
+      expect(permission.licensee.preferredMethodOfReminder).toBe(HOW_CONTACTED.email)
     })
 
     it('if the licensee is a minor, sets noLicenceRequired flag to true', () => {

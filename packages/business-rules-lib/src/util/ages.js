@@ -9,9 +9,6 @@ export const JUNIOR_MAX_AGE = 16
 export const SENIOR_MIN_AGE = 66
 
 export const addDisabled = (permission, concessionProof, referenceNumber) => {
-  console.log('permission: ', permission)
-  console.log('concessionProof: ', concessionProof)
-  console.log('referenceNumber: ', referenceNumber)
   removeDisabled(permission)
   if (!permission.concessions) {
     permission.concessions = []
@@ -127,7 +124,6 @@ export const ageConcessionHelper = permission => {
       permission.licensee.preferredMethodOfReminder = HOW_CONTACTED.none
     }
   } else if (isSenior(ageAtLicenceStartDate)) {
-    console.log('is senior called')
     addSenior(permission)
   } else {
     removeJunior(permission)

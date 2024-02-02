@@ -9,6 +9,7 @@ Object {
     "firstName": "Johnny",
     "lastName": "Test",
     "preferredMethodOfConfirmation": "Letter",
+    "preferredMethodOfReminder": "Letter",
   },
 }
 `;
@@ -22,6 +23,7 @@ Object {
     "firstName": "Johnny",
     "lastName": "Test",
     "preferredMethodOfConfirmation": "Letter",
+    "preferredMethodOfReminder": "Letter",
   },
 }
 `;
@@ -58,6 +60,7 @@ Object {
     "lastName": "Test",
     "noLicenceRequired": true,
     "preferredMethodOfConfirmation": "Letter",
+    "preferredMethodOfReminder": "Letter",
   },
 }
 `;
@@ -78,6 +81,7 @@ Object {
     "firstName": "Johnny",
     "lastName": "Test",
     "preferredMethodOfConfirmation": "Letter",
+    "preferredMethodOfReminder": "Letter",
   },
 }
 `;
