@@ -260,7 +260,7 @@ describe('The concession helper', () => {
     })
 
     it('if the licensee is a senior, adds senior concession', () => {
-      const licensee = getLicensee({ age: 67 })
+      const licensee = getLicensee({ licenceStartDate: null, age: 67 })
       const permission = getSamplePermission({ licensee })
       ages.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
