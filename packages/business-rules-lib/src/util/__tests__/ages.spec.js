@@ -259,6 +259,13 @@ describe('The concession helper', () => {
       ages.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
     })
+
+    it('calculates age when licenceStartDate is explicitly set to null', () => {
+      const licensee = getLicensee({ age: 67 })
+      const permission = getSamplePermission({ licensee, licenceStartDate: null })
+      ages.ageConcessionHelper(permission)
+      expect(permission).toMatchSnapshot()
+    })
     ;[junior, senior].forEach(concession => {
       it(`if is normal licence, removes ${concession.type} concession`, () => {
         const licensee = getLicensee({ age: 35 })

@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`The concession helper ageConcessionHelper calculates age when licenceStartDate is explicitly set to null 1`] = `
+Object {
+  "concessions": Array [
+    Object {
+      "proof": Object {
+        "type": "No Proof",
+      },
+      "type": "Senior",
+    },
+  ],
+  "licenceStartDate": null,
+  "licensee": Object {
+    "birthDate": "1953-06-06",
+    "firstName": "Johnny",
+    "lastName": "Test",
+    "preferredMethodOfConfirmation": "Letter",
+    "preferredMethodOfReminder": "Letter",
+  },
+}
+`;
+
 exports[`The concession helper ageConcessionHelper if is normal licence, removes Junior concession 1`] = `
 Object {
   "concessions": Array [],
