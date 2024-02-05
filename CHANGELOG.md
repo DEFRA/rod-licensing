@@ -1,4 +1,13 @@
 
+## v1.39.0-rc.9 (2024-02-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1897](https://github.com/DEFRA/rod-licensing/pull/1897) Confirmation page content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.39.0-rc.8 (2024-01-26)
 
 #### :bug: Bug Fix
