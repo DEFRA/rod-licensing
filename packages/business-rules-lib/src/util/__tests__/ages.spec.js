@@ -225,12 +225,6 @@ describe('The concession helper', () => {
       concessions: []
     })
 
-    // it('if the permission it sets it based on SERVICE_LOCAL_TIME plus ADVANCED_PURCHASE_MAX_DAYS compared too licensee dob', () => {
-    //   const permission = getSamplePermission({ licenceStartDate: null })
-    //   ages.ageConcessionHelper(permission)
-    //   expect(permission).toMatchSnapshot()
-    // })
-
     it.each([
       [HOW_CONTACTED.email, 'preferredMethodOfConfirmation', HOW_CONTACTED.email],
       [HOW_CONTACTED.email, 'preferredMethodOfReminder', HOW_CONTACTED.email],
@@ -260,7 +254,7 @@ describe('The concession helper', () => {
     })
 
     it('if the licensee is a senior, adds senior concession', () => {
-      const licensee = getLicensee({ licenceStartDate: null, age: 67 })
+      const licensee = getLicensee({ age: 67 })
       const permission = getSamplePermission({ licensee })
       ages.ageConcessionHelper(permission)
       expect(permission).toMatchSnapshot()
