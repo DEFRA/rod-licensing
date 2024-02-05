@@ -54,6 +54,8 @@ export const prepareApiTransactionPayload = async request => {
             }
           }
         ]
+      } else {
+        // no concession added
       }
 
       return permission
