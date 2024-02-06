@@ -20,6 +20,16 @@ import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 const debug = db('webapp:agreed-handler')
 
+const oneThingOrAnother = parm => {
+  if (parm === 'one thing') {
+    return 1
+  } else if (parm === 'another') {
+    return 2
+  } else {
+    return undefined
+  }
+}
+
 /**
  * Send (post) transaction to sales API
  * @param request
@@ -28,6 +38,8 @@ const debug = db('webapp:agreed-handler')
  * @returns {Promise<*>}
  */
 const sendToSalesApi = async (request, transaction, status) => {
+  const oneThing = oneThingOrAnother()
+  console.log(oneThing)
   const apiTransactionPayload = await prepareApiTransactionPayload(request)
   let response
   try {
