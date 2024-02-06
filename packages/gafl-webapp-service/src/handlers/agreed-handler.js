@@ -25,9 +25,8 @@ const oneThingOrAnother = parm => {
     return 1
   } else if (parm === 'another') {
     return 2
-  } else {
-    return undefined
   }
+  return undefined
 }
 
 /**
