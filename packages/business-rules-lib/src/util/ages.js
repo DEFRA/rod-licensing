@@ -104,14 +104,16 @@ export const removeSenior = permission => {
   }
 }
 
-export const ageConcessionHelper = permission => {
-  delete permission.licensee.noLicenceRequired
-  console.log(permission.licenceStartDate)
+export const ageConcessionHelper = (permission, recurring, contact) => {
+  if (recurring) {
+    permission.licensee = contact
+  } else {
+    delete permission.licensee.noLicenceRequired
+  }
   const ageAtLicenceStartDate = permission.licenceStartDate
     ? moment(permission.licenceStartDate).diff(moment(permission.licensee.birthDate), 'years')
     : moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(permission.licensee.birthDate), 'years')
 
-  console.log(ageAtLicenceStartDate)
   if (isMinor(ageAtLicenceStartDate)) {
     // Just flag as being under 13 for the router
     clear(permission)

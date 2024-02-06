@@ -1,5 +1,10 @@
 import { findDueRecurringPayments } from '@defra-fish/dynamics-lib'
 import { getRecurringPayments, processRecurringPayment } from '../recurring-payments.service.js'
+import { ageConcessionHelper } from '@defra-fish/business-rules-lib'
+
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  ageConcessionHelper: jest.fn()
+}))
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
@@ -39,8 +44,12 @@ const getMockRPContactPermission = (contact, permission) => ({
   publicId: '649-213',
   status: 1,
   expanded: {
-    contact,
-    activePermission: permission
+    contact: {
+      entity: contact
+    },
+    activePermission: {
+      entity: permission
+    }
   }
 })
 
@@ -85,10 +94,11 @@ describe('recurring payments service', () => {
   describe('getRecurringPayments', () => {
     it('should equal result of findDueRecurringPayments query', async () => {
       const mockRecurringPayments = [getMockRecurringPayment()]
-      const mockContact = mockRecurringPayments[0].expanded.contact
-      const mockPermission = mockRecurringPayments[0].expanded.activePermission
+      const mockContact = mockRecurringPayments[0].expanded.contact.entity
+      const mockPermission = mockRecurringPayments[0].expanded.activePermission.entity
 
       dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+      ageConcessionHelper.mockReturnValueOnce(mockPermission)
 
       const result = await getRecurringPayments(new Date())
       const expected = getMockRPContactPermission(mockContact, mockPermission)
@@ -104,6 +114,30 @@ describe('recurring payments service', () => {
       await getRecurringPayments(mockDate)
 
       expect(dynamicsLib.executeQuery).toHaveBeenCalledWith(findDueRecurringPayments(mockDate))
+    })
+
+    it('ageConcessionHelper is called with active permission, true and contact', async () => {
+      const mockRecurringPayments = [getMockRecurringPayment()]
+      const mockContact = mockRecurringPayments[0].expanded.contact.entity
+      const mockPermission = mockRecurringPayments[0].expanded.activePermission.entity
+
+      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+
+      await getRecurringPayments(new Date())
+
+      expect(ageConcessionHelper).toBeCalledWith(mockPermission, true, mockContact)
+    })
+
+    it('activePermission should be result of ageConcessionHelper', async () => {
+      const mockRecurringPayments = [getMockRecurringPayment()]
+      const mockPermission = Symbol('permission')
+
+      ageConcessionHelper.mockReturnValueOnce(mockPermission)
+      dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
+
+      const result = await getRecurringPayments(new Date())
+
+      expect(result[0].expanded.activePermission.entity).toEqual(mockPermission)
     })
   })
 

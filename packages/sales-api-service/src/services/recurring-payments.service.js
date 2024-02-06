@@ -1,8 +1,17 @@
 import { executeQuery, findDueRecurringPayments, RecurringPayment } from '@defra-fish/dynamics-lib'
+import { ageConcessionHelper } from '@defra-fish/business-rules-lib'
 
-export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
-// checkk right licence
-// business rules lib
+export const getRecurringPayments = async date => {
+  const recurringPayments = await executeQuery(findDueRecurringPayments(date))
+  recurringPayments.forEach(recurringPayment => {
+    recurringPayment.expanded.activePermission.entity = ageConcessionHelper(
+      recurringPayment.expanded.activePermission.entity,
+      true,
+      recurringPayment.expanded.contact.entity
+    )
+  })
+  return recurringPayments
+}
 
 /**
  * Process a recurring payment instruction

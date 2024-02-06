@@ -225,6 +225,22 @@ describe('The concession helper', () => {
       concessions: []
     })
 
+    it('sets permission licensee to contact if recurring is true', () => {
+      const contact = Symbol('contact')
+      const licensee = getLicensee({ age: 30 })
+      const permission = getSamplePermission({ licensee })
+      ages.ageConcessionHelper(permission, true, contact)
+      expect(permission.licensee).toBe(contact)
+    })
+
+    it('deletes permission licensee noLicenceRequired if recurring is false', () => {
+      const licensee = getLicensee({ age: 30 })
+      const permission = getSamplePermission({ licensee })
+      permission.licensee.noLicenceRequired = true
+      ages.ageConcessionHelper(permission, false)
+      expect(permission.licensee.noLicenceRequired).toBeUndefined()
+    })
+
     it.each([
       [HOW_CONTACTED.email, 'preferredMethodOfConfirmation', HOW_CONTACTED.email],
       [HOW_CONTACTED.email, 'preferredMethodOfReminder', HOW_CONTACTED.email],
