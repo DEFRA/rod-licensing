@@ -1,4 +1,13 @@
 
+## v1.39.0-rc.10 (2024-02-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1898](https://github.com/DEFRA/rod-licensing/pull/1898) Confirmation display recurring payment ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.39.0-rc.9 (2024-02-05)
 
 #### :rocket: Enhancement
