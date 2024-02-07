@@ -52,9 +52,11 @@ const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = t
   [COMPLETION_STATUS.agreed]: agreed,
   [COMPLETION_STATUS.posted]: posted,
   [COMPLETION_STATUS.finalised]: finalised,
-  permissions: {
-    'set-up-payment': setUpPayment
-  }
+  permissions: [
+    {
+      'set-up-payment': setUpPayment
+    }
+  ]
 })
 
 const getMessages = () => ({
