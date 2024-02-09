@@ -243,6 +243,7 @@ describe('guidance page handlers', () => {
     { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
   ])('back button tests for $handlerName page', ({ pageHandler }) => {
+    beforeEach(jest.resetAllMocks)
     it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
       'addLanguageCodeToUri is called with %s when referrer is %s',
       async referrer => {
@@ -252,6 +253,26 @@ describe('guidance page handlers', () => {
         await pageHandler(request, toolkit)
 
         expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, referrer)
+      }
+    )
+
+    it.each([[CONTROLLER.uri], [RECURRING_TERMS_CONDITIONS.uri]])(
+      'back button should be set to %s when referrer is same value',
+      async referrer => {
+        const toolkit = getMockToolkit()
+        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer)
+        addLanguageCodeToUri.mockImplementation((_request, uri) => uri)
+
+        await pageHandler(request, toolkit)
+
+        expect(toolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            uri: expect.objectContaining({
+              back: referrer
+            })
+          })
+        )
       }
     )
   })
@@ -264,6 +285,7 @@ describe('guidance page handlers', () => {
     { pageHandler: osTermsPageHandler, handlerName: 'OS Terms' },
     { pageHandler: newPricesPageHandler, handlerName: 'New Prices Page Handler' }
   ])('language code tests for $handlerName page', ({ pageHandler }) => {
+    beforeEach(jest.resetAllMocks)
     it('uses addLanguageCodeToUri to get back url', async () => {
       const toolkit = getMockToolkit()
       const request = getMockRequest()
@@ -277,7 +299,7 @@ describe('guidance page handlers', () => {
       const toolkit = getMockToolkit()
       const request = getMockRequest()
       const backUrl = Symbol('backUrl')
-      addLanguageCodeToUri.mockReturnValueOnce(backUrl)
+      addLanguageCodeToUri.mockReturnValue(backUrl)
 
       await pageHandler(request, toolkit)
 
