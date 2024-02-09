@@ -100,21 +100,16 @@ const getOrderCompleteContent = (permission, mssgs, transaction) => {
 
 const getLicenceDetailsDigitalContent = (permission, mssgs) => {
   if (digitalConfirmation(permission)) {
-    if (permission.isLicenceForYou) {
-      if (permission.licensee.postalFulfilment) {
-        return mssgs.order_complete_licence_details_self_digital_confirmation_paragraph
-      } else {
-        return mssgs.order_complete_licence_details_self_digital_paragraph
-      }
+    if (permission.isLicenceForYou && permission.licensee.postalFulfilment) {
+      return mssgs.order_complete_licence_details_self_digital_confirmation_paragraph
+    } else if (permission.isLicenceForYou) {
+      return mssgs.order_complete_licence_details_self_digital_paragraph
+    } else if (permission.licensee.postalFulfilment) {
+      return mssgs.order_complete_licence_details_bobo_digital_confirmation_paragraph
     } else {
-      if (permission.licensee.postalFulfilment) {
-        return mssgs.order_complete_licence_details_bobo_digital_confirmation_paragraph
-      } else {
-        return mssgs.order_complete_licence_details_bobo_digital_paragraph
-      }
+      return mssgs.order_complete_licence_details_bobo_digital_paragraph
     }
   }
-
   return undefined
 }
 
