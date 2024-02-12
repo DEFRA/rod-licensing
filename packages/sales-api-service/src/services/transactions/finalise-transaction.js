@@ -23,6 +23,8 @@ const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {
 export async function finaliseTransaction ({ id, ...payload }) {
   debug('Finalising transaction %s', id)
   const transactionRecord = await retrieveStagedTransaction(id)
+  console.log('payload', payload)
+  console.log('transactionRecord', transactionRecord)
 
   if (transactionRecord.status?.id === TRANSACTION_STATUS.FINALISED) {
     throw Boom.resourceGone('The transaction has already been finalised', transactionRecord)
