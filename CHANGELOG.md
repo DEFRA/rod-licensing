@@ -1,4 +1,13 @@
 
+## v1.39.0-rc.14 (2024-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1903](https://github.com/DEFRA/rod-licensing/pull/1903) Code smells on develop ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.39.0-rc.13 (2024-02-12)
 
 #### :bug: Bug Fix
