@@ -1,4 +1,13 @@
 
+## v1.39.0-rc.12 (2024-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1900](https://github.com/DEFRA/rod-licensing/pull/1900) RCP Terms and Conditions page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.39.0-rc.11 (2024-02-09)
 
 #### :rocket: Enhancement
