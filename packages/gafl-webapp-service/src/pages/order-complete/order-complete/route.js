@@ -51,6 +51,14 @@ export const getData = async request => {
   }
 }
 
+const postalFulfilment = permission => {
+  if (permission.licenceLength === '12M') {
+    return permission.licensee.postalFulfilment ? 'postal' : 'non_postal'
+  } else {
+    return 'non_postal'
+  }
+}
+
 const isRecurringPayment = (status, permission) => validForRecurringPayment(permission) && status.permissions[0]['set-up-payment']
 
 const digitalConfirmation = permission =>
@@ -120,7 +128,7 @@ const getLicenceDetailsDigitalContent = (permission, mssgs) => {
 
 const getEnforcementContent = (permission, mssgs) => {
   const selfOrBobo = permission.isLicenceForYou ? 'self' : 'bobo'
-  const postal = permission.licensee.postalFulfilment ? 'postal' : 'non_postal'
+  const postal = postalFulfilment(permission)
   const digital = digitalConfirmation(permission) ? 'digital' : 'non_digital'
 
   return mssgs[`order_complete_when_fishing_${selfOrBobo}_${postal}_${digital}`]
