@@ -164,16 +164,16 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    desc                                                                         | licenceFor | postal   | method       | reminder     | length
-    ${'12 month postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'letter'}  | ${'phone'}   | ${'12M'}
-    ${'12 month postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'letter'}  | ${'phone'}   | ${'12M'}
-    ${'12 month postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'phone'}   | ${'phone'}   | ${'12M'}
-    ${'12 month postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'phone'}   | ${'phone'}   | ${'12M'}
-    ${'12 month digital licence for you'}                                        | ${true}    | ${false} | ${'phone'}   | ${'phone'}   | ${'12M'}
-    ${'12 month digital licence for someone else'}                               | ${false}   | ${false} | ${'phone'}   | ${'phone'}   | ${'12M'}
-    ${'12 month recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'phone'}   | ${'letter'}  | ${'12M'}
-    ${'12 month recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'phone'}   | ${'phone'}   | ${'12M'}
-    ${'8 day licence sets as non_postal'}                                        | ${true}    | ${true}  | ${'phone'}   | ${'phone'}   | ${'8D'}
+    desc                                                                         | licenceFor | postal   | method      | reminder    | length
+    ${'12 month postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'letter'} | ${'phone'}  | ${'12M'}
+    ${'12 month postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'letter'} | ${'phone'}  | ${'12M'}
+    ${'12 month postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'phone'}  | ${'phone'}  | ${'12M'}
+    ${'12 month postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'phone'}  | ${'phone'}  | ${'12M'}
+    ${'12 month digital licence for you'}                                        | ${true}    | ${false} | ${'phone'}  | ${'phone'}  | ${'12M'}
+    ${'12 month digital licence for someone else'}                               | ${false}   | ${false} | ${'phone'}  | ${'phone'}  | ${'12M'}
+    ${'12 month recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'phone'}  | ${'letter'} | ${'12M'}
+    ${'12 month recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'phone'}  | ${'phone'}  | ${'12M'}
+    ${'8 day licence sets as non_postal'}                                        | ${true}    | ${true}  | ${'phone'}  | ${'phone'}  | ${'8D'}
   `('$desc', async ({ desc, licenceFor, postal, method, reminder, length }) => {
     const licensee = getSampleLicensee({
       postalFulfilment: postal,
@@ -273,7 +273,7 @@ describe('The order completion handler', () => {
     ${'Email'}  | ${'e-mail'} | ${false} | ${true}
     ${'Text'}   | ${'phone'}  | ${false} | ${true}
     ${'Letter'} | ${'letter'} | ${false} | ${false}
-    ${'None'}   | ${'nada'}   |${false}  | ${false}
+    ${'None'}   | ${'nada'}   | ${false} | ${false}
     ${'Email'}  | ${'e-mail'} | ${true}  | ${false}
     ${'Text'}   | ${'phone'}  | ${true}  | ${false}
   `(
