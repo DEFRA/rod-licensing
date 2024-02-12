@@ -29,23 +29,29 @@ jest.mock('../../../../constants.js', () => ({
 jest.mock('../../../../processors/price-display.js')
 jest.mock('@defra-fish/business-rules-lib')
 
-const getSamplePermission = ({
-  referenceNumber = 'AAA111',
-  licenceType = LICENCE_TYPE['trout-and-coarse'],
-  isLicenceForYou = true,
+const getSampleLicensee = ({
   postalFulfilment = false,
   preferredMethodOfConfirmation = 'phone',
   preferredMethodOfReminder = 'phone'
 } = {}) => ({
+  postalFulfilment,
+  preferredMethodOfConfirmation,
+  preferredMethodOfReminder
+})
+
+const getSamplePermission = ({
+  referenceNumber = 'AAA111',
+  licenceType = LICENCE_TYPE['trout-and-coarse'],
+  isLicenceForYou = true,
+  licenceLength = '12M',
+  licensee = getSampleLicensee({ postalFulfilment: false, preferredMethodOfConfirmation: 'phone', preferredMethodOfReminder: 'phone' })
+} = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
-  licensee: {
-    postalFulfilment,
-    preferredMethodOfConfirmation,
-    preferredMethodOfReminder
-  },
+  licensee,
   isLicenceForYou,
   licenceType,
-  referenceNumber
+  referenceNumber,
+  licenceLength
 })
 
 const getSampleCompletionStatus = ({ agreed = true, posted = true, finalised = true, setUpPayment = true } = {}) => ({
@@ -152,28 +158,34 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    desc                                                                | licenceFor | postal   | method      | reminder
-    ${'Postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${'Text'}
-    ${'Postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${'Text'}
-    ${'Postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${'Text'}
-    ${'Postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${'Text'}
-    ${'Digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}
-    ${'Digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${'Text'}
-    ${'Recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'Text'}   | ${'Letter'}
-    ${'Recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}
-  `('$desc', async ({ desc, licenceFor, postal, method, reminder }) => {
-    const permission = getSamplePermission({
-      isLicenceForYou: licenceFor,
+    desc                                                                         | licenceFor | postal   | method      | reminder    | length
+    ${'12 month postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${'Text'}   | ${'12M'}
+    ${'12 month postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${'Text'}   | ${'12M'}
+    ${'12 month postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${'Text'}   | ${'12M'}
+    ${'12 month postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${'Text'}   | ${'12M'}
+    ${'12 month digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}   | ${'12M'}
+    ${'12 month digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${'Text'}   | ${'12M'}
+    ${'12 month recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'Text'}   | ${'Letter'} | ${'12M'}
+    ${'12 month recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}   | ${'12M'}
+    ${'8 day licence sets as non_postal'}                                        | ${true}    | ${true}  | ${'Text'}   | ${'Text'}   | ${'8D'}
+  `('$desc', async ({ desc, licenceFor, postal, method, reminder, length }) => {
+    const licensee = getSampleLicensee({
       postalFulfilment: postal,
       preferredMethodOfConfirmation: method,
       preferredMethodOfReminder: reminder
+    })
+    const permission = getSamplePermission({
+      isLicenceForYou: licenceFor,
+      licensee: licensee,
+      licenceLength: length
     })
     const { content } = await getData(getSampleRequest({ permission }))
     expect(content).toMatchSnapshot()
   })
 
   it('title displays as application when permission is free', async () => {
-    const permission = getSamplePermission({ isLicenceForYou: true, postalFulfilment: false, preferredMethodOfConfirmation: 'Text' })
+    const licensee = getSampleLicensee({ postalFulfilment: false, preferredMethodOfConfirmation: 'Text' })
+    const permission = getSamplePermission({ isLicenceForYou: true, licensee })
     const { content } = await getData(getSampleRequest({ permission, transactionCost: 0 }))
     expect(content.title).toEqual('application title')
   })
@@ -243,7 +255,8 @@ describe('The order completion handler', () => {
   `(
     'when preferredMethodOfConfirmation is $method, postalFulfilment is $postal, digitalLicence equals $expected ',
     async ({ method, postal, expected }) => {
-      const permission = getSamplePermission({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
+      const licensee = getSampleLicensee({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
+      const permission = getSamplePermission({ licensee })
       const { digitalConfirmation } = await getData(getSampleRequest({ permission }))
       expect(digitalConfirmation).toBe(expected)
     }
@@ -260,14 +273,16 @@ describe('The order completion handler', () => {
   `(
     'when preferredMethodOfConfirmation is $method, postalFulfilment is $postal, digitalLicence equals $expected ',
     async ({ method, postal, expected }) => {
-      const permission = getSamplePermission({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
+      const licensee = getSampleLicensee({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
+      const permission = getSamplePermission({ licensee })
       const { digitalLicence } = await getData(getSampleRequest({ permission }))
       expect(digitalLicence).toBe(expected)
     }
   )
 
   it.each([true, false])('postalLicence equals %s when same value as postalFulfilment', async postal => {
-    const permission = getSamplePermission({ postalFulfilment: postal })
+    const licensee = getSampleLicensee({ postalFulfilment: postal })
+    const permission = getSamplePermission({ licensee })
     const { postalLicence } = await getData(getSampleRequest({ permission }))
     expect(postalLicence).toBe(postal)
   })
