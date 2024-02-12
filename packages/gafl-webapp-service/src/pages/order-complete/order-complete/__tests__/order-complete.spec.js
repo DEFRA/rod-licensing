@@ -10,6 +10,18 @@ import { validForRecurringPayment } from '../../../../processors/recurring-pay-h
 jest.mock('../../../../processors/recurring-pay-helper.js')
 jest.mock('../../../../processors/date-and-time-display.js')
 jest.mock('../../../../processors/uri-helper.js')
+jest.mock('../../../../processors/mapping-constants.js', () => ({
+  HOW_CONTACTED: {
+    none: 'nada',
+    email: 'e-mail',
+    text: 'phone',
+    letter: 'letter'
+  },
+  LICENCE_TYPE: {
+    'trout-and-coarse': 'Trout and coarse',
+    'salmon-and-sea-trout': 'Salmon and sea trout'
+  }
+}))
 jest.mock('../../../../constants.js', () => ({
   ...jest.requireActual('../../../../constants.js'),
   COMPLETION_STATUS: {
@@ -18,13 +30,7 @@ jest.mock('../../../../constants.js', () => ({
     finalised: 'no going back now',
     completed: 'all done'
   },
-  FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com'),
-  HOW_CONTACTED: {
-    none: 'nada',
-    email: 'e-mail',
-    text: 'phone',
-    letter: 'letter'
-  }
+  FEEDBACK_URI_DEFAULT: Symbol('http://pulling-no-punches.com')
 }))
 jest.mock('../../../../processors/price-display.js')
 jest.mock('@defra-fish/business-rules-lib')
@@ -44,7 +50,7 @@ const getSamplePermission = ({
   licenceType = LICENCE_TYPE['trout-and-coarse'],
   isLicenceForYou = true,
   licenceLength = '12M',
-  licensee = getSampleLicensee({ postalFulfilment: false, preferredMethodOfConfirmation: 'phone', preferredMethodOfReminder: 'phone' })
+  licensee = getSampleLicensee()
 } = {}) => ({
   startDate: '2019-12-14T00:00:00Z',
   licensee,
@@ -158,16 +164,16 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    desc                                                                         | licenceFor | postal   | method      | reminder    | length
-    ${'12 month postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'Letter'} | ${'Text'}   | ${'12M'}
-    ${'12 month postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'Letter'} | ${'Text'}   | ${'12M'}
-    ${'12 month postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'Text'}   | ${'Text'}   | ${'12M'}
-    ${'12 month postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'Text'}   | ${'Text'}   | ${'12M'}
-    ${'12 month digital licence for you'}                                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}   | ${'12M'}
-    ${'12 month digital licence for someone else'}                               | ${false}   | ${false} | ${'Text'}   | ${'Text'}   | ${'12M'}
-    ${'12 month recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'Text'}   | ${'Letter'} | ${'12M'}
-    ${'12 month recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'Text'}   | ${'Text'}   | ${'12M'}
-    ${'8 day licence sets as non_postal'}                                        | ${true}    | ${true}  | ${'Text'}   | ${'Text'}   | ${'8D'}
+    desc                                                                         | licenceFor | postal   | method       | reminder     | length
+    ${'12 month postal licence for you with none digital confirmation'}          | ${true}    | ${true}  | ${'letter'}  | ${'phone'}   | ${'12M'}
+    ${'12 month postal licence for someone else with none digital confirmation'} | ${false}   | ${true}  | ${'letter'}  | ${'phone'}   | ${'12M'}
+    ${'12 month postal licence for you with digital confirmation'}               | ${true}    | ${true}  | ${'phone'}   | ${'phone'}   | ${'12M'}
+    ${'12 month postal licence for someone else with digital confirmation'}      | ${false}   | ${true}  | ${'phone'}   | ${'phone'}   | ${'12M'}
+    ${'12 month digital licence for you'}                                        | ${true}    | ${false} | ${'phone'}   | ${'phone'}   | ${'12M'}
+    ${'12 month digital licence for someone else'}                               | ${false}   | ${false} | ${'phone'}   | ${'phone'}   | ${'12M'}
+    ${'12 month recurring payment with postal reminder'}                         | ${true}    | ${false} | ${'phone'}   | ${'letter'}  | ${'12M'}
+    ${'12 month recurring payment with digital reminder'}                        | ${true}    | ${false} | ${'phone'}   | ${'phone'}   | ${'12M'}
+    ${'8 day licence sets as non_postal'}                                        | ${true}    | ${true}  | ${'phone'}   | ${'phone'}   | ${'8D'}
   `('$desc', async ({ desc, licenceFor, postal, method, reminder, length }) => {
     const licensee = getSampleLicensee({
       postalFulfilment: postal,
@@ -184,7 +190,7 @@ describe('The order completion handler', () => {
   })
 
   it('title displays as application when permission is free', async () => {
-    const licensee = getSampleLicensee({ postalFulfilment: false, preferredMethodOfConfirmation: 'Text' })
+    const licensee = getSampleLicensee({ preferredMethodOfConfirmation: 'Text' })
     const permission = getSamplePermission({ isLicenceForYou: true, licensee })
     const { content } = await getData(getSampleRequest({ permission, transactionCost: 0 }))
     expect(content.title).toEqual('application title')
@@ -245,15 +251,15 @@ describe('The order completion handler', () => {
   })
 
   it.each`
-    method      | postal   | expected
-    ${'Email'}  | ${false} | ${false}
-    ${'Text'}   | ${false} | ${false}
-    ${'Letter'} | ${false} | ${false}
-    ${'None'}   | ${false} | ${false}
-    ${'Email'}  | ${true}  | ${true}
-    ${'Text'}   | ${true}  | ${true}
+    title       | method      | postal   | expected
+    ${'Email'}  | ${'e-mail'} | ${false} | ${false}
+    ${'Text'}   | ${'phone'}  | ${false} | ${false}
+    ${'Letter'} | ${'letter'} | ${false} | ${false}
+    ${'None'}   | ${'nada'}   | ${false} | ${false}
+    ${'Email'}  | ${'e-mail'} | ${true}  | ${true}
+    ${'Text'}   | ${'phone'}  | ${true}  | ${true}
   `(
-    'when preferredMethodOfConfirmation is $method, postalFulfilment is $postal, digitalLicence equals $expected ',
+    'when preferredMethodOfConfirmation is $title, postalFulfilment is $postal, digitalLicence equals $expected ',
     async ({ method, postal, expected }) => {
       const licensee = getSampleLicensee({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
       const permission = getSamplePermission({ licensee })
@@ -263,15 +269,15 @@ describe('The order completion handler', () => {
   )
 
   it.each`
-    method      | postal   | expected
-    ${'Email'}  | ${false} | ${true}
-    ${'Text'}   | ${false} | ${true}
-    ${'Letter'} | ${false} | ${false}
-    ${'None'}   | ${false} | ${false}
-    ${'Email'}  | ${true}  | ${false}
-    ${'Text'}   | ${true}  | ${false}
+    title       | method      | postal   | expected
+    ${'Email'}  | ${'e-mail'} | ${false} | ${true}
+    ${'Text'}   | ${'phone'}  | ${false} | ${true}
+    ${'Letter'} | ${'letter'} | ${false} | ${false}
+    ${'None'}   | ${'nada'}   |${false}  | ${false}
+    ${'Email'}  | ${'e-mail'} | ${true}  | ${false}
+    ${'Text'}   | ${'phone'}  | ${true}  | ${false}
   `(
-    'when preferredMethodOfConfirmation is $method, postalFulfilment is $postal, digitalLicence equals $expected ',
+    'when preferredMethodOfConfirmation is $title, postalFulfilment is $postal, digitalLicence equals $expected ',
     async ({ method, postal, expected }) => {
       const licensee = getSampleLicensee({ postalFulfilment: postal, preferredMethodOfConfirmation: method })
       const permission = getSamplePermission({ licensee })

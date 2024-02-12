@@ -127,6 +127,7 @@ const getLicenceDetailsDigitalContent = (permission, mssgs) => {
 }
 
 const getEnforcementContent = (permission, mssgs) => {
+  console.log(HOW_CONTACTED)
   const selfOrBobo = permission.isLicenceForYou ? 'self' : 'bobo'
   const postal = postalFulfilment(permission)
   const digital = digitalConfirmation(permission) ? 'digital' : 'non_digital'
