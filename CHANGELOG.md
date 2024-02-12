@@ -1,4 +1,120 @@
 
+## v1.39.0-rc.14 (2024-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1903](https://github.com/DEFRA/rod-licensing/pull/1903) Code smells on develop ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.13 (2024-02-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1901](https://github.com/DEFRA/rod-licensing/pull/1901) Acceptance tests ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.12 (2024-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1900](https://github.com/DEFRA/rod-licensing/pull/1900) RCP Terms and Conditions page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.11 (2024-02-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1878](https://github.com/DEFRA/rod-licensing/pull/1878) Recurring payment terms and conditions welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.10 (2024-02-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1898](https://github.com/DEFRA/rod-licensing/pull/1898) Confirmation display recurring payment ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.9 (2024-02-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1897](https://github.com/DEFRA/rod-licensing/pull/1897) Confirmation page content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.8 (2024-01-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1881](https://github.com/DEFRA/rod-licensing/pull/1881) Price on order confirmation page incorrect ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.39.0-rc.7 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1880](https://github.com/DEFRA/rod-licensing/pull/1880) Update dependencies ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.39.0-rc.6 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1860](https://github.com/DEFRA/rod-licensing/pull/1860) Welsh - confirmation page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.39.0-rc.4 (2024-01-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1862](https://github.com/DEFRA/rod-licensing/pull/1862) Recurring payment confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1854](https://github.com/DEFRA/rod-licensing/pull/1854) Recurring payment terms and conditions page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.39.0-rc.1 (2024-01-18)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1861](https://github.com/DEFRA/rod-licensing/pull/1861) Update price increase page ([@jaucourt](https://github.com/jaucourt))
+
+#### :bug: Bug Fix
+* `business-rules-lib`, `sales-api-service`
+  * [#1853](https://github.com/DEFRA/rod-licensing/pull/1853) Fix wrong price in CRM ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.39.0-rc.0 (2024-01-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1849](https://github.com/DEFRA/rod-licensing/pull/1849) Confirmation content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.38.0-rc.14 (2024-01-12)
 

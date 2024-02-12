@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The order completion handler 8 day licence sets as non_postal 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing self digital confirmation licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month digital licence for someone else 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing bobo digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph bobo licence details",
+  "licenceTitle": "title bobo licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing bobo non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing bobo link",
+  "whenFishingParagraphTwo": "fishing bobo non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month digital licence for you 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing self digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month postal licence for someone else with digital confirmation 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing bobo digital confirmation licence details",
+  "licenceDetailsParagraphTwo": "paragraph bobo licence details",
+  "licenceTitle": "title bobo licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing bobo postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing bobo link",
+  "whenFishingParagraphTwo": "fishing bobo non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month postal licence for someone else with none digital confirmation 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": undefined,
+  "licenceDetailsParagraphTwo": "paragraph bobo licence details",
+  "licenceTitle": "title bobo licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing bobo non postal non digital when fishing",
+  "whenFishingParagraphOneLink": "fishing bobo link",
+  "whenFishingParagraphTwo": "fishing bobo non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month postal licence for you with digital confirmation 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing self digital confirmation licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month postal licence for you with none digital confirmation 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": undefined,
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal non digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month recurring payment with digital reminder 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments digital one",
+  "futurePaymentsParagraphTwo": "future payments digital two",
+  "licenceDetailsDigitalParagraph": "fishing self digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;
+
+exports[`The order completion handler 12 month recurring payment with postal reminder 1`] = `
+Object {
+  "futurePaymentsParagraphOne": "future payments postal one",
+  "futurePaymentsParagraphTwo": "future payments postal two",
+  "licenceDetailsDigitalParagraph": "fishing self digital licence details",
+  "licenceDetailsParagraphTwo": "paragraph self licence details",
+  "licenceTitle": "title self licence details",
+  "title": "payment title 1",
+  "whenFishingParagraphOne": "fishing self non postal digital when fishing",
+  "whenFishingParagraphOneLink": "fishing self link",
+  "whenFishingParagraphTwo": "fishing self non postal non digital when fishing two",
+}
+`;

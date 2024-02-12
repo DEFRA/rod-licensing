@@ -1,4 +1,9 @@
 import { getPermissionCost } from '../permissions'
+import { START_AFTER_PAYMENT_MINUTES } from '../../constants'
+
+jest.mock('../../constants.js', () => ({
+  START_AFTER_PAYMENT_MINUTES: 34
+}))
 
 describe('permissions helper', () => {
   it.each`
@@ -20,7 +25,7 @@ describe('permissions helper', () => {
   it('returns new cost if no start date provided, no created date provided and current date / time is after new cost start date', () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2023-04-02T00:00:00.000Z'))
-    const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-01T00:00:00.000' } }
+    const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-01T00:00:00.000Z' } }
     const cost = getPermissionCost(permission)
     expect(cost).toBe(permission.permit.newCost)
   })
@@ -28,8 +33,19 @@ describe('permissions helper', () => {
   it('returns old cost if no start date provided, no created date provided and current date / time is before new cost start date', () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2023-03-31T00:00:00.000Z'))
-    const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-01T00:00:00.000' } }
+    const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-01T00:00:00.000Z' } }
     const cost = getPermissionCost(permission)
     expect(cost).toBe(permission.permit.cost)
   })
+
+  it.each([START_AFTER_PAYMENT_MINUTES, START_AFTER_PAYMENT_MINUTES - 2, START_AFTER_PAYMENT_MINUTES - 18, 1])(
+    'returns new cost if no start date provided, no created date provided and current date / time is %i minutes before new cost start date/time',
+    minutesBefore => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date(`2023-04-02T22:${60 - minutesBefore}:00.000Z`))
+      const permission = { permit: { cost: 10, newCost: 20, newCostStartDate: '2023-04-02T23:00:00.000Z' } }
+      const cost = getPermissionCost(permission)
+      expect(cost).toBe(permission.permit.newCost)
+    }
+  )
 })
