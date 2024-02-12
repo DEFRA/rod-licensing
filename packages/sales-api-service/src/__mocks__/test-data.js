@@ -26,8 +26,8 @@ const testExecutionTime = moment()
 export const MOCK_PERMISSION_NUMBER = '11100420-2WT1SFT-KPMW2C'
 export const MOCK_OBFUSCATED_DOB = '87200001013460'
 export const MOCK_START_DATE = testExecutionTime.toISOString()
-export const MOCK_END_DATE = testExecutionTime.add(1, 'year').toISOString()
 export const MOCK_ISSUE_DATE = testExecutionTime.toISOString()
+export const MOCK_END_DATE = testExecutionTime.add(1, 'year').toISOString()
 
 export const mockContactPayload = () => ({
   firstName: 'Fester',

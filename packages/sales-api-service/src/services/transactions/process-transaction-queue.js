@@ -11,7 +11,7 @@ import {
   RecurringPayment,
   RecurringPaymentInstruction
 } from '@defra-fish/dynamics-lib'
-import { DDE_DATA_SOURCE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
+import { DDE_DATA_SOURCE, FULFILMENT_SWITCHOVER_DATE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
@@ -88,7 +88,7 @@ export async function processQueue ({ id }) {
       entities.push(await createConcessionProof(concession, permission))
     }
 
-    if (permit.isForFulfilment && contact.postalFulfilment) {
+    if (shouldCreateFulfilmentRequest(permission, permit, contact)) {
       entities.push(await createFulfilmentRequest(permission))
     }
   }
@@ -108,6 +108,11 @@ export async function processQueue ({ id }) {
       ConditionExpression: 'attribute_not_exists(id)'
     })
     .promise()
+}
+
+const shouldCreateFulfilmentRequest = (permission, permit, contact) => {
+  const switchoverDate = new Date(process.env.FULFILMENT_SWITCHOVER_DATE || FULFILMENT_SWITCHOVER_DATE)
+  return permit.isForFulfilment && contact.postalFulfilment && moment(permission.issueDate).isBefore(switchoverDate)
 }
 
 const mapToPermission = async (

@@ -63,3 +63,8 @@ export const START_AFTER_PAYMENT_MINUTES = 30
  * Timezone of the service
  */
 export const SERVICE_LOCAL_TIME = 'Europe/London'
+
+/**
+ * Date for switching paper fulfilment provider
+ */
+export const FULFILMENT_SWITCHOVER_DATE = '2024-05-30T23:00:00.000Z'
