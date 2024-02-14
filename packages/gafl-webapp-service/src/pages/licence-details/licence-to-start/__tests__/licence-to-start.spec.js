@@ -89,7 +89,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       expect(response.headers.location).toHaveValidPathFor(LICENCE_TYPE.uri)
     })
 
-    it.only(`redirects to the no licence required page when posting a licence start date of ${moment()
+    it(`redirects to the no licence required page when posting a licence start date of ${moment()
       .add(15, 'day')
       .format('YYYY-MM-DD')}`, async () => {
       const response = await injectWithCookies('POST', LICENCE_TO_START.uri, {
