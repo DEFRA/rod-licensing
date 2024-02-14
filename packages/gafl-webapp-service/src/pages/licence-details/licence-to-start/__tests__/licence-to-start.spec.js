@@ -97,7 +97,6 @@ describe("The 'when would you like you licence to start?' page", () => {
         ...startDateHelper(moment().add(15, 'day'))
       })
       expect(response.statusCode).toBe(302)
-      console.log('response.headers.location', response.headers.location, NO_LICENCE_REQUIRED.uri)
       expect(response.headers.location).toHaveValidPathFor(NO_LICENCE_REQUIRED.uri)
     })
   })
