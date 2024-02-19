@@ -51,7 +51,15 @@ export const getData = async request => {
   }
 }
 
-const isRecurringPayment = (status, permission) => validForRecurringPayment(permission) && status.permissions['set-up-payment']
+const postalFulfilment = permission => {
+  if (permission.licenceLength === '12M') {
+    return permission.licensee.postalFulfilment ? 'postal' : 'non_postal'
+  } else {
+    return 'non_postal'
+  }
+}
+
+const isRecurringPayment = (status, permission) => validForRecurringPayment(permission) && status.permissions[0]['set-up-payment']
 
 const digitalConfirmation = permission =>
   permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email ||
@@ -100,18 +108,14 @@ const getOrderCompleteContent = (permission, mssgs, transaction) => {
 
 const getLicenceDetailsDigitalContent = (permission, mssgs) => {
   if (digitalConfirmation(permission)) {
-    if (permission.isLicenceForYou) {
-      if (permission.licensee.postalFulfilment) {
-        return mssgs.order_complete_licence_details_self_digital_confirmation_paragraph
-      } else {
-        return mssgs.order_complete_licence_details_self_digital_paragraph
-      }
+    if (permission.isLicenceForYou && permission.licensee.postalFulfilment) {
+      return mssgs.order_complete_licence_details_self_digital_confirmation_paragraph
+    } else if (permission.isLicenceForYou) {
+      return mssgs.order_complete_licence_details_self_digital_paragraph
+    } else if (permission.licensee.postalFulfilment) {
+      return mssgs.order_complete_licence_details_bobo_digital_confirmation_paragraph
     } else {
-      if (permission.licensee.postalFulfilment) {
-        return mssgs.order_complete_licence_details_bobo_digital_confirmation_paragraph
-      } else {
-        return mssgs.order_complete_licence_details_bobo_digital_paragraph
-      }
+      return mssgs.order_complete_licence_details_bobo_digital_paragraph
     }
   }
 
@@ -120,7 +124,7 @@ const getLicenceDetailsDigitalContent = (permission, mssgs) => {
 
 const getEnforcementContent = (permission, mssgs) => {
   const selfOrBobo = permission.isLicenceForYou ? 'self' : 'bobo'
-  const postal = permission.licensee.postalFulfilment ? 'postal' : 'non_postal'
+  const postal = postalFulfilment(permission)
   const digital = digitalConfirmation(permission) ? 'digital' : 'non_digital'
 
   return mssgs[`order_complete_when_fishing_${selfOrBobo}_${postal}_${digital}`]
