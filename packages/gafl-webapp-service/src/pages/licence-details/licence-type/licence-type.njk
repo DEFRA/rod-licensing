@@ -15,8 +15,8 @@
 
 {% set troutAndCoarse2Rod %}
     <p class="govuk-body-m">
-        {{ mssgs.licence_type_troute_two_rod }} 
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_rules }}</a>{{ mssgs.and }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.period }}   
+        {{ mssgs.licence_type_troute_two_rod }}
+        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.freshWaterFishingRules }}">{{ mssgs.licence_type_rules }}</a>{{ mssgs.and }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="{{ data.uri.localByelaws }}">{{ mssgs.licence_type_byelaws }}</a>{{ mssgs.period }}
      </p>
 {% endset -%}
 
@@ -35,7 +35,7 @@
       classes: "govuk-!-margin-top-6"
     }) }}
     <p class="govuk-body-m">
-        {{ mssgs.licence_type_salmon_acr_note_1 }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_2 }}</a> 
+        {{ mssgs.licence_type_salmon_acr_note_1 }}<a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/catch-return">{{ mssgs.licence_type_salmon_acr_note_2 }}</a>
         {{ mssgs.licence_type_salmon_acr_note_3 }}</p>
 {% endset -%}
 
@@ -87,7 +87,10 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
+    <script nonce="{{nonce}}" type="module">
+        import { initAll } from '/public/javascript/govuk-frontend-min.js'
+        initAll()
+    </script>
     {{ pricingSummaryScript(data.pricing.byType, nonce) }}
 {% endblock %}

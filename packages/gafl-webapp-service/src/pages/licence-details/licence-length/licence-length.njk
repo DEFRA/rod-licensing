@@ -62,7 +62,10 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script nonce={{nonce}}>window.GOVUKFrontend.initAll()</script>
+    <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
+    <script nonce="{{nonce}}" type="module">
+        import { initAll } from '/public/javascript/govuk-frontend-min.js'
+        initAll()
+    </script>
     {{ pricingSummaryScript(data.pricing.byLength, nonce) }}
 {% endblock %}

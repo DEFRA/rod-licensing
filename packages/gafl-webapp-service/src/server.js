@@ -140,8 +140,8 @@ const init = async () => {
 
     // This needs all absolute paths to work with jest and in normal operation
     path: [
-      path.join(Dirname, 'node_modules', 'govuk-frontend', 'govuk'),
-      path.join(Dirname, 'node_modules', 'govuk-frontend', 'govuk', 'components'),
+      path.join(Dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk'),
+      path.join(Dirname, 'node_modules', 'govuk-frontend', 'dist', 'govuk', 'components'),
       path.join(Dirname, 'src/pages/layout'),
       path.join(Dirname, 'src/pages/macros'),
       ...viewPaths
