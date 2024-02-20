@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { DATE_OF_BIRTH } from '../../../uri.js'
-import { ageConcessionHelper } from '../../../processors/concession-helper.js'
+import { ageConcessionHelper } from '@defra-fish/business-rules-lib'
 import { cacheDateFormat } from '../../../processors/date-and-time-display.js'
 import { onLengthChange } from '../../licence-details/licence-length/update-transaction.js'
 

@@ -6,13 +6,13 @@ import { COMPLETION_STATUS } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 import { licenceTypeDisplay } from '../../../processors/licence-type-display.js'
 import { displayStartTime, displayEndTime } from '../../../processors/date-and-time-display.js'
-import * as concessionHelper from '../../../processors/concession-helper.js'
+import { getAgeConcession, hasDisabled, hasSenior, hasJunior } from '@defra-fish/business-rules-lib'
 
 const getAgeConcessionText = (permission, catalog) => {
-  if (concessionHelper.hasSenior(permission)) {
+  if (hasSenior(permission)) {
     return catalog.age_senior_concession
   }
-  if (concessionHelper.hasJunior(permission)) {
+  if (hasJunior(permission)) {
     return catalog.age_junior_concession
   }
   return ''
@@ -43,8 +43,8 @@ export const getData = async request => {
     permission,
     startTimeString,
     endTimeString,
-    disabled: concessionHelper.hasDisabled(permission),
-    ageConcession: concessionHelper.getAgeConcession(permission),
+    disabled: hasDisabled(permission),
+    ageConcession: getAgeConcession(permission),
     ageConcessionText: getAgeConcessionText(permission, catalog),
     licenceTypeStr: licenceTypeDisplay(permission, catalog)
   }

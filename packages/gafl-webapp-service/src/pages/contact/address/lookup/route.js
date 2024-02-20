@@ -1,8 +1,7 @@
 import { ADDRESS_LOOKUP, ADDRESS_ENTRY, OS_TERMS } from '../../../../uri.js'
 import pageRoute from '../../../../routes/page-route.js'
 import Joi from 'joi'
-import { validation } from '@defra-fish/business-rules-lib'
-import * as concessionHelper from '../../../../processors/concession-helper.js'
+import { hasJunior, validation } from '@defra-fish/business-rules-lib'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
@@ -18,7 +17,7 @@ export const getData = async request => {
   return {
     isLicenceForYou: permission.isLicenceForYou,
     licenceLength: permission.licenceLength,
-    junior: concessionHelper.hasJunior(permission),
+    junior: hasJunior(permission),
     isPhysical: isPhysical(permission),
     uri: {
       entryPage: addLanguageCodeToUri(request, ADDRESS_ENTRY.uri),

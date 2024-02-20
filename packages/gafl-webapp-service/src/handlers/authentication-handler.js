@@ -59,7 +59,7 @@ export default async (request, h) => {
       } else if (daysDiff < -RENEW_AFTER_DAYS) {
         return linkInactive(RENEWAL_ERROR_REASON.EXPIRED)
       } else {
-        await setUpCacheFromAuthenticationResult(request, authenticationResult)
+        await setUpCacheFromAuthenticationResult(request, authenticationResult, false)
         await setUpPayloads(request)
         await request.cache().helpers.status.setCurrentPermission({ authentication: { authorized: true } })
         return h.redirectWithLanguageCode(CONTROLLER.uri)

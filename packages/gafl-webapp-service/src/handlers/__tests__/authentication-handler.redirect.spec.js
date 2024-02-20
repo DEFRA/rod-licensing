@@ -16,7 +16,6 @@ jest.mock('../../uri.js', () => ({
     uri: Symbol('renewal inactive uri')
   }
 }))
-jest.mock('../../processors/concession-helper.js')
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/renewals-write-cache.js', () => ({
   setUpCacheFromAuthenticationResult: async () => {},

@@ -1,13 +1,13 @@
 import updateTransaction from '../update-transaction'
 import { LICENCE_FULFILMENT } from '../../../../uri.js'
-import * as concessionHelper from '../../../../processors/concession-helper.js'
+import { hasDisabled, removeDisabled } from '@defra-fish/business-rules-lib'
 import findPermit from '../../../../processors/find-permit.js'
 import { isPhysical } from '../../../../processors/licence-type-display.js'
 import * as mappings from '../../../../processors/mapping-constants.js'
 import moment from 'moment-timezone'
 import hashPermission from '../../../../processors/hash-permission'
 
-jest.mock('../../../../processors/concession-helper.js')
+jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../../../processors/find-permit.js')
 jest.mock('../../../../processors/licence-type-display.js')
 jest.mock('../../../../processors/hash-permission.js', () => jest.fn(() => 'abcde12345'))
@@ -166,7 +166,7 @@ describe('licence-details > update-transaction', () => {
     describe('checkDisabledConcessions', () => {
       it('should store the concession to previouslyDisabled when the licenceLength is not 12M and the permission has a disabled concession', async () => {
         const transactionSet = jest.fn()
-        concessionHelper.hasDisabled.mockReturnValueOnce(true)
+        hasDisabled.mockReturnValueOnce(true)
         const concession = { type: mappings.CONCESSION.DISABLED }
         const permission = { licenceLength: '1D', concessions: [concession] }
         const request = getMockRequest({ permission, transactionSet })
@@ -180,18 +180,18 @@ describe('licence-details > update-transaction', () => {
       })
 
       it('should call removeDisabled when the licenceLength is not 12M and the permission has a disabled concession', async () => {
-        concessionHelper.hasDisabled.mockReturnValueOnce(true)
+        hasDisabled.mockReturnValueOnce(true)
         const concession = { type: mappings.CONCESSION.DISABLED }
         const permission = { licenceLength: '1D', concessions: [concession] }
         const request = getMockRequest({ permission })
         await updateTransaction(request)
 
-        expect(concessionHelper.removeDisabled).toHaveBeenCalledWith(permission)
+        expect(removeDisabled).toHaveBeenCalledWith(permission)
       })
 
       it('should re-add the disabled concession and clear previouslyDisabled when the licenceLength is 12M and the permission previously had a disabled concession', async () => {
         const transactionSet = jest.fn()
-        concessionHelper.hasDisabled.mockReturnValueOnce(false)
+        hasDisabled.mockReturnValueOnce(false)
         const previousConcession = Symbol('previousConcession')
         const permission = { licenceLength: '12M', concessions: [], previouslyDisabled: previousConcession }
         const request = getMockRequest({ permission, transactionSet })

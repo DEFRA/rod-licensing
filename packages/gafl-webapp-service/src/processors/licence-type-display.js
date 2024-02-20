@@ -1,11 +1,11 @@
-import * as concessionHelper from './concession-helper.js'
+import { hasSenior, hasJunior } from '@defra-fish/business-rules-lib'
 import * as mappings from './mapping-constants.js'
 
 export const licenceTypeDisplay = (permission, mssgs) => {
   const typesStrArr = []
 
   // Build the display string for the licence type
-  if (concessionHelper.hasJunior(permission)) {
+  if (hasJunior(permission)) {
     typesStrArr.push(mssgs.age_junior)
   }
   if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
@@ -18,7 +18,7 @@ export const licenceTypeDisplay = (permission, mssgs) => {
     }
   }
 
-  if (concessionHelper.hasSenior(permission)) {
+  if (hasSenior(permission)) {
     typesStrArr.push(mssgs.over_66)
   }
 

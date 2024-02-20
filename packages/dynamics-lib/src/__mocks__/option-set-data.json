@@ -6631,6 +6631,57 @@
       ]
     },
     {
+      "Name": "defra_cancelledreason",
+      "MetadataId": "c5bb4ec0-78b5-4413-9c95-b879793343c7",
+      "Options": [
+        {
+          "Value": 910400195,
+          "Color": "#0000ff",
+          "IsManaged": false,
+          "ExternalValue": null,
+          "ParentValues": [],
+          "MetadataId": null,
+          "HasChanged": null,
+          "Label": {
+            "LocalizedLabels": [
+              {
+                "Label": "User cancelled",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "cd2cfff1-d4e1-e711-810c-5065f38ada61",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "User cancelled",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "cd2cfff1-d4e1-e711-810c-5065f38ada61",
+              "HasChanged": null
+            }
+          },
+          "Description": {
+            "LocalizedLabels": [
+              {
+                "Label": "",
+                "LanguageCode": 1033,
+                "IsManaged": false,
+                "MetadataId": "de2cfff1-d4e1-e711-810c-5065f38ada61",
+                "HasChanged": null
+              }
+            ],
+            "UserLocalizedLabel": {
+              "Label": "",
+              "LanguageCode": 1033,
+              "IsManaged": false,
+              "MetadataId": "de2cfff1-d4e1-e711-810c-5065f38ada61",
+              "HasChanged": null
+            }
+          }
+        }
+      ]
+    },
+    {
       "Name": "defra_poclfilestatus",
       "MetadataId": "ed91518d-2948-4b5b-8cc2-cb9ce7cb751c",
       "Options": [

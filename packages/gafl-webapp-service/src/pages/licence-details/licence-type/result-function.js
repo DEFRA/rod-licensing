@@ -1,5 +1,5 @@
 import { CommonResults } from '../../../constants.js'
-import { hasJunior } from '../../../processors/concession-helper.js'
+import { hasJunior } from '@defra-fish/business-rules-lib'
 import * as constants from '../../../processors/mapping-constants.js'
 
 export const licenceTypeResults = {

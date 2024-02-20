@@ -1,9 +1,9 @@
 import { DATE_OF_BIRTH } from '../../../../uri.js'
 import updateTransaction from '../update-transaction.js'
-import { ageConcessionHelper } from '../../../../processors/concession-helper.js'
+import { ageConcessionHelper } from '@defra-fish/business-rules-lib'
 import { onLengthChange } from '../../../licence-details/licence-length/update-transaction.js'
 
-jest.mock('../../../../processors/concession-helper.js', () => ({
+jest.mock('@defra-fish/business-rules-lib', () => ({
   ageConcessionHelper: jest.fn()
 }))
 

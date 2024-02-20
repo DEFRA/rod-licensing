@@ -1,8 +1,7 @@
 import { advancePurchaseDateMoment } from './date-and-time-display.js'
 import moment from 'moment'
-import { TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
+import { hasDisabled, hasSenior, hasJunior, TRANSACTION_SOURCE, PAYMENT_TYPE } from '@defra-fish/business-rules-lib'
 import * as mappings from './mapping-constants.js'
-import * as concessionHelper from '../processors/concession-helper.js'
 import { countries } from './refdata-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
@@ -30,14 +29,14 @@ export const prepareApiTransactionPayload = async request => {
       }
 
       // Calculate the concession (proof entry) - disabled takes precedence
-      if (concessionHelper.hasDisabled(p)) {
+      if (hasDisabled(p)) {
         permission.concessions = [
           {
             id: concessions.find(c => c.name === mappings.CONCESSION.DISABLED).id,
             proof: p.concessions.find(c => c.type === mappings.CONCESSION.DISABLED).proof
           }
         ]
-      } else if (concessionHelper.hasSenior(p)) {
+      } else if (hasSenior(p)) {
         permission.concessions = [
           {
             id: concessions.find(c => c.name === mappings.CONCESSION.SENIOR).id,
@@ -46,7 +45,7 @@ export const prepareApiTransactionPayload = async request => {
             }
           }
         ]
-      } else if (concessionHelper.hasJunior(p)) {
+      } else if (hasJunior(p)) {
         permission.concessions = [
           {
             id: concessions.find(c => c.name === mappings.CONCESSION.JUNIOR).id,
