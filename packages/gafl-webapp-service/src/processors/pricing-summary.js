@@ -105,6 +105,8 @@ export const pricingDetail = async (page, permission) => {
       byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : [])
     )
 
+    const length = 3
+
     return {
       byType: Object.values(licenseTypes)
         .map(licenceType => {
@@ -128,7 +130,7 @@ export const pricingDetail = async (page, permission) => {
           return {
             [licenceType]: Object.assign(
               filtered,
-              Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {},
+              Object.keys(filtered).length < length ? { msg: NO_SHORT } : {},
               isDateTimeInRangeAndNotJunior(userConcessions) ? { msg: PAYMENT_EDGE_CASE } : {}
             )
           }
