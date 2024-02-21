@@ -51,27 +51,21 @@ Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -83,27 +77,21 @@ Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -115,27 +103,21 @@ Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -147,27 +129,21 @@ Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": true,
       "cost": "0",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -175,21 +151,21 @@ Object {
 exports[`The pricing summary calculator for an adult licence returns the correct length pricing data 1`] = `
 Object {
   "12M": Object {
-    "msg": "payment-edge-case",
+    "payment_msg": "payment-edge-case",
     "total": Object {
       "concessions": false,
       "cost": "30",
     },
   },
   "1D": Object {
-    "msg": "payment-edge-case",
+    "payment_msg": "payment-edge-case",
     "total": Object {
       "concessions": false,
       "cost": "6",
     },
   },
   "8D": Object {
-    "msg": "payment-edge-case",
+    "payment_msg": "payment-edge-case",
     "total": Object {
       "concessions": false,
       "cost": "12",
@@ -302,9 +278,7 @@ Object {
       "concessions": true,
       "cost": "32",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -344,9 +318,7 @@ Object {
       "concessions": false,
       "cost": "50.40",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -366,9 +338,7 @@ Object {
       "concessions": false,
       "cost": "27",
     },
-    "msgs": Array [
-      "payment-edge-case",
-    ],
+    "payment_msg": "payment-edge-case",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
@@ -383,19 +353,15 @@ Object {
       "concessions": false,
       "cost": "12",
     },
-    "msgs": Array [
-      "payment-edge-case",
-    ],
+    "payment_msg": "payment-edge-case",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
       "concessions": false,
       "cost": "45",
     },
-    "msgs": Array [
-      "no-short",
-      "payment-edge-case",
-    ],
+    "na_msg": "no-short",
+    "payment_msg": "payment-edge-case",
   },
 }
 `;
@@ -435,9 +401,7 @@ Object {
       "concessions": true,
       "cost": "30",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -569,9 +533,7 @@ Object {
       "concessions": true,
       "cost": "30",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -611,9 +573,7 @@ Object {
       "concessions": true,
       "cost": "30",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -653,9 +613,7 @@ Object {
       "concessions": true,
       "cost": "30",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;
@@ -695,9 +653,7 @@ Object {
       "concessions": true,
       "cost": "30",
     },
-    "msgs": Array [
-      "no-short",
-    ],
+    "na_msg": "no-short",
   },
 }
 `;

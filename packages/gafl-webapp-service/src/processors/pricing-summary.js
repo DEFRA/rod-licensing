@@ -109,6 +109,8 @@ export const pricingDetail = async (page, permission) => {
       byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : [])
     )
 
+    const length = 3
+
     return {
       byType: Object.values(licenseTypes)
         .map(licenceType => {
@@ -129,16 +131,12 @@ export const pricingDetail = async (page, permission) => {
               }),
               {}
             )
-          const length = 3
-          const msgs = []
-          if (Object.keys(filtered).length < length) {
-            msgs.push(NO_SHORT)
-          }
-          if (isDateTimeInRangeAndNotJunior(userConcessions)) {
-            msgs.push(PAYMENT_EDGE_CASE)
-          }
           return {
-            [licenceType]: Object.assign(filtered, msgs.length ? { msgs } : {})
+            [licenceType]: Object.assign(
+              filtered,
+              Object.keys(filtered).length < length ? { na_msg: NO_SHORT } : {},
+              isDateTimeInRangeAndNotJunior(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {}
+            )
           }
         })
         .reduce((a, c) => Object.assign(c, a))
@@ -171,7 +169,7 @@ export const pricingDetail = async (page, permission) => {
             ...a,
             [c.len]: {
               total: { cost: formatCost(c.cost), concessions: c.concessions },
-              ...(isDateTimeInRangeAndNotJunior(userConcessions) ? { msg: PAYMENT_EDGE_CASE } : {})
+              ...(isDateTimeInRangeAndNotJunior(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {})
             }
           }),
           {}
