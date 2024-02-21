@@ -8,6 +8,7 @@ import * as concessionHelper from '../processors/concession-helper.js'
 import * as constants from './mapping-constants.js'
 import moment from 'moment'
 const NO_SHORT = 'no-short'
+const PAYMENT_EDGE_CASE = 'payment-edge-case'
 
 /**
  * Filters for permitsJoinPermitConcessions
@@ -66,6 +67,16 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
 
 const formatCost = cost => (Number.isInteger(cost) ? String(cost) : cost.toFixed(2))
 
+export const isDateTimeInRangeAndNotJunior = (concessions, now = moment()) => {
+  if (concessions.includes('Junior')) {
+    return false
+  }
+  const startRange = moment('2024-03-30T23:59:00Z')
+  const endRange = moment('2024-04-01T00:01:00Z')
+
+  return now.isBetween(startRange, endRange, null, '[]')
+}
+
 /**
  * Fetch the pricing detail - this is modified by the users concessions
  * @param page
@@ -114,7 +125,13 @@ export const pricingDetail = async (page, permission) => {
               }),
               {}
             )
-          return { [licenceType]: Object.assign(filtered, Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {}) }
+          return {
+            [licenceType]: Object.assign(
+              filtered,
+              Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {},
+              isDateTimeInRangeAndNotJunior(userConcessions) ? { msg: PAYMENT_EDGE_CASE } : {}
+            )
+          }
         })
         .reduce((a, c) => Object.assign(c, a))
     }
@@ -144,7 +161,7 @@ export const pricingDetail = async (page, permission) => {
         .reduce(
           (a, c) => ({
             ...a,
-            [c.len]: { total: { cost: formatCost(c.cost), concessions: c.concessions } }
+            [c.len]: { total: { cost: formatCost(c.cost), concessions: c.concessions }, ...(isDateTimeInRangeAndNotJunior(userConcessions) ? { msg: PAYMENT_EDGE_CASE } : {}) }
           }),
           {}
         )

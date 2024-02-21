@@ -1,4 +1,5 @@
-import { pricingDetail } from '../pricing-summary.js'
+import { pricingDetail, isDateTimeInRangeAndNotJunior } from '../pricing-summary.js'
+import moment from 'moment'
 
 jest.mock('../find-permit.js', () => ({
   getPermitsJoinPermitConcessions: () => [
@@ -557,6 +558,31 @@ describe('The pricing summary calculator', () => {
     `('returns the correct $description', async ({ permission, key }) => {
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()
+    })
+  })
+
+  describe('isDateTimeInRange', () => {
+    it.each`
+      date                             | concessions     | expected | description                                                   
+      ${new Date('2024-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start range date adult'}
+      ${new Date('2024-04-01T07:00Z')} | ${[]}           | ${false} | ${'after end range date adult'}
+      ${new Date('2024-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before start range time adult'}
+      ${new Date('2024-04-01T00:04Z')} | ${[]}           | ${false} | ${'same date but after end range time adult'}
+      ${new Date('2024-03-30T23:59Z')} | ${[]}           | ${true}  | ${'same date and time of start range adult'}
+      ${new Date('2024-04-01T00:00Z')} | ${[]}           | ${true}  | ${'in middle of start and end range adult'}
+      ${new Date('2024-04-01T00:01Z')} | ${[]}           | ${true}  | ${'same date and time of end range adult'}
+      ${new Date('2024-03-30T23:59Z')} | ${['Junior']}   | ${false} | ${'same date and time of start range junior'}
+      ${new Date('2024-04-01T00:00Z')} | ${['Junior']}   | ${false} | ${'in middle of start and end range junior'}
+      ${new Date('2024-04-01T00:01Z')} | ${['Junior']}   | ${false} | ${'same date and time of end range junior'}
+      ${new Date('2024-03-30T23:59Z')} | ${['Senior']}   | ${true}  | ${'same date and time of start range senior'}
+      ${new Date('2024-04-01T00:00Z')} | ${['Senior']}   | ${true}  | ${'in middle of start and end range senior'}
+      ${new Date('2024-04-01T00:01Z')} | ${['Senior']}   | ${true}  | ${'same date and time of end range senior'}
+      ${new Date('2024-03-30T23:59Z')} | ${['Disabled']} | ${true}  | ${'same date and time of start range disabled'}
+      ${new Date('2024-04-01T00:00Z')} | ${['Disabled']} | ${true}  | ${'in middle of start and end range disabled'}
+      ${new Date('2024-04-01T00:01Z')} | ${['Disabled']} | ${true}  | ${'same date and time of end range disabled'}
+    `('returns $expected when current date and time is $description ', ({ date, concessions, expected }) => {
+      const result = isDateTimeInRangeAndNotJunior(concessions, moment(date))
+      expect(result).toBe(expected)
     })
   })
 })

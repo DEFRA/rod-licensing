@@ -414,6 +414,7 @@
   "licence_type_byelaws": "local fishing byelaws (opens in new tab)",
   "licence_type_error_choose": "Choose one of the fishing licence types",
   "licence_type_na": "Shorter lengths are not available for this licence type",
+  "licence_type_payment_edge_case": "You must complete payment before 11:30pm on 31 March 2024 to get the price shown",
   "licence_type_radio_salmon_hint": "Includes trout and coarse, up to 3 rods",
   "licence_type_radio_salmon": "Salmon and sea trout",
   "licence_type_radio_trout_three_rod": "Trout and coarse, up to 3 rods",
