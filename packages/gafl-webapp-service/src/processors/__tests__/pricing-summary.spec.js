@@ -529,16 +529,17 @@ describe('The pricing summary calculator', () => {
 
   describe('for an adult licence', () => {
     it.each`
-      permission                                                                          | key         | description
-      ${getAdultPermission()}                                                             | ${'Type'}   | ${'type pricing data'}
-      ${getAdultPermission()}                                                             | ${'Length'} | ${'length pricing data'}
-      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${'type pricing data with a disabled concession'}
-      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Length'} | ${'length pricing data for a disabled concession'}
-      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'pricing data when a permission starts after the new price changover'}
-      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data when a permission starts after the new price changover'}
-      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'pricing data for a disabled concession when a permission starts after the new price changover'}
-      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data for a disabled concession when a permission starts after the new price changover'}
-    `('returns the correct $description', async ({ permission, key }) => {
+      permission                                                                          | key         | dateTime                           | description
+      ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-03-30T23:59Z')} | ${'type pricing data'}
+      ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-03-30T23:59Z')} | ${'length pricing data'}
+      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${moment.utc('2024-04-01T00:25Z')} | ${'type pricing data with a disabled concession'}
+      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Length'} | ${moment.utc('2024-04-01T00:25Z')} | ${'length pricing data for a disabled concession'}
+      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${moment.utc('2024-04-01T00:25Z')} | ${'pricing data when a permission starts after the new price changover'}
+      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${moment.utc('2024-04-01T00:25Z')} | ${'length pricing data when a permission starts after the new price changover'}
+      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${moment.utc('2024-04-01T00:25Z')} | ${'pricing data for a disabled concession when a permission starts after the new price changover'}
+      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${moment.utc('2024-04-01T00:25Z')} | ${'length pricing data for a disabled concession when a permission starts after the new price changover'}
+    `('returns the correct $description', async ({ permission, key, dateTime }) => {
+      moment.now = () => dateTime
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()
     })
