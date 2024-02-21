@@ -1,4 +1,13 @@
 
+## v1.41.0 (2024-02-21)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1912](https://github.com/DEFRA/rod-licensing/pull/1912) SEMVER - PATCH: Release v1.40.1 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.40.0-rc.0 (2024-02-14)
 
