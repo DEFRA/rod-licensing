@@ -141,6 +141,18 @@ describe('permissions service', () => {
         expect(endDate).toEqual(expectedEndDate.toISOString())
       })
     })
+
+    it('returns correct end date on leap year', async () => {
+      // getReferenceDataForEntityAndId.mockReturnValueOnce({
+      //   durationMagnitude: 12,
+      //   durationDesignator: {
+      //     description: 'M'
+      //   }
+      // })
+      const startDate = moment('2024-02-29')
+      const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate })
+      expect(endDate).toBe('2025-02-28T23:59:59.999Z')
+    })
   })
 
   describe('sequence generator', () => {
