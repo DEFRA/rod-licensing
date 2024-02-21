@@ -563,7 +563,7 @@ describe('The pricing summary calculator', () => {
 
   describe('isDateTimeInRange', () => {
     it.each`
-      date                             | concessions     | expected | description                                                   
+      date                             | concessions     | expected | description
       ${new Date('2024-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start range date adult'}
       ${new Date('2024-04-01T07:00Z')} | ${[]}           | ${false} | ${'after end range date adult'}
       ${new Date('2024-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before start range time adult'}

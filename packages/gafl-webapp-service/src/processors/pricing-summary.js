@@ -161,7 +161,10 @@ export const pricingDetail = async (page, permission) => {
         .reduce(
           (a, c) => ({
             ...a,
-            [c.len]: { total: { cost: formatCost(c.cost), concessions: c.concessions }, ...(isDateTimeInRangeAndNotJunior(userConcessions) ? { msg: PAYMENT_EDGE_CASE } : {}) }
+            [c.len]: {
+              total: { cost: formatCost(c.cost), concessions: c.concessions },
+              ...(isDateTimeInRangeAndNotJunior(userConcessions) ? { msg: PAYMENT_EDGE_CASE } : {})
+            }
           }),
           {}
         )
