@@ -139,15 +139,9 @@ export const pricingDetail = async (page, permission) => {
     }
   } else {
     // Licence length page
-    const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions
-      .filter(p => p.permitSubtype.label === permission.licenceType)
-      .filter(r => String(r.numberOfRods) === permission.numberOfRods)
-      .filter(byConcessions(userConcessions))
+    const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions.filter(p => p.permitSubtype.label === permission.licenceType).filter(r => String(r.numberOfRods) === permission.numberOfRods).filter(byConcessions(userConcessions))
 
-    const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions
-      .filter(p => p.permitSubtype.label === permission.licenceType)
-      .filter(r => String(r.numberOfRods) === permission.numberOfRods)
-      .filter(byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : []))
+    const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions.filter(p => p.permitSubtype.label === permission.licenceType).filter(r => String(r.numberOfRods) === permission.numberOfRods).filter(byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : []))
 
     return {
       byLength: ['12M', '8D', '1D']
