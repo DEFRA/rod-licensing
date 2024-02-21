@@ -138,10 +138,7 @@ export const pricingDetail = async (page, permission) => {
             msgs.push(PAYMENT_EDGE_CASE)
           }
           return {
-            [licenceType]: Object.assign(
-              filtered,
-              msgs.length ? { msgs } : {}
-            )
+            [licenceType]: Object.assign(filtered, msgs.length ? { msgs } : {})
           }
         })
         .reduce((a, c) => Object.assign(c, a))
