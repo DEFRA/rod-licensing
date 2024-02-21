@@ -1,4 +1,80 @@
 
+## v1.41.0 (2024-02-21)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1912](https://github.com/DEFRA/rod-licensing/pull/1912) SEMVER - PATCH: Release v1.40.1 ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+
+
+## v1.40.0-rc.0 (2024-02-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1905](https://github.com/DEFRA/rod-licensing/pull/1905) Fix service for acceptance tests ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.39.0-rc.14 (2024-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1903](https://github.com/DEFRA/rod-licensing/pull/1903) Code smells on develop ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.13 (2024-02-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1901](https://github.com/DEFRA/rod-licensing/pull/1901) Acceptance tests ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.12 (2024-02-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1900](https://github.com/DEFRA/rod-licensing/pull/1900) RCP Terms and Conditions page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.11 (2024-02-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1878](https://github.com/DEFRA/rod-licensing/pull/1878) Recurring payment terms and conditions welsh ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.10 (2024-02-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1898](https://github.com/DEFRA/rod-licensing/pull/1898) Confirmation display recurring payment ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.39.0-rc.9 (2024-02-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1897](https://github.com/DEFRA/rod-licensing/pull/1897) Confirmation page content ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.39.0-rc.8 (2024-01-26)
 
 #### :bug: Bug Fix

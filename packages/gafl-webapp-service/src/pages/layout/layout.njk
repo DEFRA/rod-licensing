@@ -119,7 +119,8 @@
         serviceUrl: "/",
         classes: "no-print",
         containerClasses: "govuk-width-container",
-        serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)"
+        serviceName: mssgs.header_service_name if not TELESALES else "Get a rod fishing licence (TELESALES)",
+        useTudorCrown: true
     }) }}
 {% endblock %}
 
@@ -226,6 +227,9 @@
 {% endblock %}
 
 {% block bodyEnd %}
-    <script src="/public/javascript/all-min.js"></script>
-    <script nonce="{{nonce}}">window.GOVUKFrontend.initAll()</script>
+    <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
+    <script nonce="{{nonce}}" type="module">
+        import { initAll } from '/public/javascript/govuk-frontend-min.js'
+        initAll()
+    </script>
 {% endblock %}

@@ -17,7 +17,7 @@ const concat = require('gulp-concat')
 const paths = {
   assets: path.join('..', 'assets/'),
   public: path.join('..', 'public/'),
-  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'govuk/'),
+  govUk: path.join('..', 'node_modules', 'govuk-frontend', 'dist', 'govuk/'),
   flatpickr: path.join('..', 'node_modules/flatpickr/dist/')
 }
 
@@ -43,10 +43,17 @@ const copyRobots = () => {
   return gulp.src(`${paths.assets}robots.txt`).pipe(gulp.dest(paths.public))
 }
 
-const copyJs = () => {
+const copyFrontendJs = () => {
   return gulp
-    .src([`${paths.govUk}all.js`, `${paths.flatpickr}flatpickr.js`])
-    .pipe(concat('all.js'))
+    .src(`${paths.govUk}govuk-frontend.min.js`)
+    .pipe(concat('govuk-frontend.js'))
+    .pipe(minify({ noSource: true }))
+    .pipe(gulp.dest(`${paths.public}javascript`))
+}
+
+const copyFlatpickrJs = () => {
+  return gulp
+    .src(`${paths.flatpickr}flatpickr.js`)
     .pipe(minify({ noSource: true }))
     .pipe(gulp.dest(`${paths.public}javascript`))
 }
@@ -67,4 +74,4 @@ const buildSass = () => {
 }
 
 // The default Gulp task builds the resources
-gulp.task('default', gulp.series(clean, copyAssets, copyJs, copyRobots, buildSass))
+gulp.task('default', gulp.series(clean, copyAssets, copyFrontendJs, copyFlatpickrJs, copyRobots, buildSass))
