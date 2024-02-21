@@ -77,7 +77,7 @@ export const isDateTimeInRangeAndNotJunior = (concessions, now = moment()) => {
   return now.isBetween(startRange, endRange, null, '[]')
 }
 
-const applyConcessions = (permission) => {
+const applyConcessions = permission => {
   const userConcessions = []
   if (concessionHelper.hasJunior(permission)) {
     userConcessions.push(constants.CONCESSION.JUNIOR)
