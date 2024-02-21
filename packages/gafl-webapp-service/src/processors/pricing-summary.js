@@ -77,15 +77,7 @@ export const isDateTimeInRangeAndNotJunior = (concessions, now = moment()) => {
   return now.isBetween(startRange, endRange, null, '[]')
 }
 
-/**
- * Fetch the pricing detail - this is modified by the users concessions
- * @param page
- * @param request
- * @returns  {Promise<{byLength: {}}|{byType: {}}>}
- */
-export const pricingDetail = async (page, permission) => {
-  const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
-
+const applyConcessions = (permission) => {
   const userConcessions = []
   if (concessionHelper.hasJunior(permission)) {
     userConcessions.push(constants.CONCESSION.JUNIOR)
@@ -98,6 +90,18 @@ export const pricingDetail = async (page, permission) => {
   if (concessionHelper.hasDisabled(permission)) {
     userConcessions.push(constants.CONCESSION.DISABLED)
   }
+  return userConcessions
+}
+
+/**
+ * Fetch the pricing detail - this is modified by the users concessions
+ * @param page
+ * @param request
+ * @returns  {Promise<{byLength: {}}|{byType: {}}>}
+ */
+export const pricingDetail = async (page, permission) => {
+  const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
+  const userConcessions = applyConcessions(permission)
 
   if (page === LICENCE_TYPE.page) {
     const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions.filter(byConcessions(userConcessions))
@@ -139,9 +143,15 @@ export const pricingDetail = async (page, permission) => {
     }
   } else {
     // Licence length page
-    const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions.filter(p => p.permitSubtype.label === permission.licenceType).filter(r => String(r.numberOfRods) === permission.numberOfRods).filter(byConcessions(userConcessions))
+    const permitsJoinPermitConcessionsFilteredByUserConcessions = permitsJoinPermitConcessions
+      .filter(p => p.permitSubtype.label === permission.licenceType)
+      .filter(r => String(r.numberOfRods) === permission.numberOfRods)
+      .filter(byConcessions(userConcessions))
 
-    const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions.filter(p => p.permitSubtype.label === permission.licenceType).filter(r => String(r.numberOfRods) === permission.numberOfRods).filter(byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : []))
+    const permitsJoinPermitConcessionsFilteredWithoutConcessions = permitsJoinPermitConcessions
+      .filter(p => p.permitSubtype.label === permission.licenceType)
+      .filter(r => String(r.numberOfRods) === permission.numberOfRods)
+      .filter(byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : []))
 
     return {
       byLength: ['12M', '8D', '1D']
