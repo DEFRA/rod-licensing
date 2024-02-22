@@ -1,4 +1,13 @@
 
+## v1.42.0-rc.0 (2024-02-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1913](https://github.com/DEFRA/rod-licensing/pull/1913) Accessibility, bilingual toggle toggle ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.41.0 (2024-02-21)
 
 #### :bug: Bug Fix
