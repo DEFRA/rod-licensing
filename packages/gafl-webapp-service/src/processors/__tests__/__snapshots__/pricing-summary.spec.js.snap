@@ -151,21 +151,18 @@ Object {
 exports[`The pricing summary calculator for an adult licence returns the correct length pricing data 1`] = `
 Object {
   "12M": Object {
-    "payment_msg": "payment-edge-case",
     "total": Object {
       "concessions": false,
       "cost": "30",
     },
   },
   "1D": Object {
-    "payment_msg": "payment-edge-case",
     "total": Object {
       "concessions": false,
       "cost": "6",
     },
   },
   "8D": Object {
-    "payment_msg": "payment-edge-case",
     "total": Object {
       "concessions": false,
       "cost": "12",
@@ -338,7 +335,6 @@ Object {
       "concessions": false,
       "cost": "27",
     },
-    "payment_msg": "payment-edge-case",
   },
   "trout-and-coarse-2-rod": Object {
     "12M": Object {
@@ -353,7 +349,6 @@ Object {
       "concessions": false,
       "cost": "12",
     },
-    "payment_msg": "payment-edge-case",
   },
   "trout-and-coarse-3-rod": Object {
     "12M": Object {
@@ -361,7 +356,6 @@ Object {
       "cost": "45",
     },
     "msg": "no-short",
-    "payment_msg": "payment-edge-case",
   },
 }
 `;
@@ -652,6 +646,238 @@ Object {
     "12M": Object {
       "concessions": true,
       "cost": "30",
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for adult length after date 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": "30",
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": "6",
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for adult length before date 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": "30",
+    },
+  },
+  "1D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": "6",
+    },
+  },
+  "8D": Object {
+    "total": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for adult length in date 1`] = `
+Object {
+  "12M": Object {
+    "payment_msg": "payment-edge-case",
+    "total": Object {
+      "concessions": false,
+      "cost": "30",
+    },
+  },
+  "1D": Object {
+    "payment_msg": "payment-edge-case",
+    "total": Object {
+      "concessions": false,
+      "cost": "6",
+    },
+  },
+  "8D": Object {
+    "payment_msg": "payment-edge-case",
+    "total": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for adult type after date 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "82",
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": "27",
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "30",
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": "6",
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "45",
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for adult type before date 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "82",
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": "27",
+    },
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "30",
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": "6",
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "45",
+    },
+    "msg": "no-short",
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for adult type in date 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "82",
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": "27",
+    },
+    "payment_msg": "payment-edge-case",
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "30",
+    },
+    "1D": Object {
+      "concessions": false,
+      "cost": "6",
+    },
+    "8D": Object {
+      "concessions": false,
+      "cost": "12",
+    },
+    "payment_msg": "payment-edge-case",
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": false,
+      "cost": "45",
+    },
+    "msg": "no-short",
+    "payment_msg": "payment-edge-case",
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for junior lenght 1`] = `
+Object {
+  "12M": Object {
+    "total": Object {
+      "concessions": true,
+      "cost": "0",
+    },
+  },
+}
+`;
+
+exports[`The pricing summary calculator isDateTimeInRangeAndNotJunior returns the correct value for payment-msg for junior type 1`] = `
+Object {
+  "salmon-and-sea-trout": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": "0",
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-2-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": "0",
+    },
+    "msg": "no-short",
+  },
+  "trout-and-coarse-3-rod": Object {
+    "12M": Object {
+      "concessions": true,
+      "cost": "0",
     },
     "msg": "no-short",
   },

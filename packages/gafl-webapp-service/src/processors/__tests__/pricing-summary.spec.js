@@ -529,17 +529,16 @@ describe('The pricing summary calculator', () => {
 
   describe('for an adult licence', () => {
     it.each`
-      permission                                                                          | key         | dateTime                           | description
-      ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-03-30T23:59Z')} | ${'type pricing data'}
-      ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-03-30T23:59Z')} | ${'length pricing data'}
-      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${moment.utc('2024-04-01T00:25Z')} | ${'type pricing data with a disabled concession'}
-      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Length'} | ${moment.utc('2024-04-01T00:25Z')} | ${'length pricing data for a disabled concession'}
-      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${moment.utc('2024-04-01T00:25Z')} | ${'pricing data when a permission starts after the new price changover'}
-      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${moment.utc('2024-04-01T00:25Z')} | ${'length pricing data when a permission starts after the new price changover'}
-      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${moment.utc('2024-04-01T00:25Z')} | ${'pricing data for a disabled concession when a permission starts after the new price changover'}
-      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${moment.utc('2024-04-01T00:25Z')} | ${'length pricing data for a disabled concession when a permission starts after the new price changover'}
-    `('returns the correct $description', async ({ permission, key, dateTime }) => {
-      moment.now = () => dateTime
+      permission                                                                          | key         | description
+      ${getAdultPermission()}                                                             | ${'Type'}   | ${'type pricing data'}
+      ${getAdultPermission()}                                                             | ${'Length'} | ${'length pricing data'}
+      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Type'}   | ${'type pricing data with a disabled concession'}
+      ${getAdultPermission({ disabledConcession: true })}                                 | ${'Length'} | ${'length pricing data for a disabled concession'}
+      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Type'}   | ${'pricing data when a permission starts after the new price changover'}
+      ${getAdultPermission({ licenceStartDate: '2023-04-01' })}                           | ${'Length'} | ${'length pricing data when a permission starts after the new price changover'}
+      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Type'}   | ${'pricing data for a disabled concession when a permission starts after the new price changover'}
+      ${getAdultPermission({ disabledConcession: true, licenceStartDate: '2023-04-01' })} | ${'Length'} | ${'length pricing data for a disabled concession when a permission starts after the new price changover'}
+    `('returns the correct $description', async ({ permission, key }) => {
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()
     })
@@ -562,11 +561,27 @@ describe('The pricing summary calculator', () => {
     })
   })
 
-  describe('isDateTimeInRange', () => {
+  describe('isDateTimeInRangeAndNotJunior', () => {
+    it.each`
+    permission                                                                          | key         | currentDateTime                           | description
+    ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-03-25T23:59Z')} | ${'adult type before date'}
+    ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-04-02T00:01Z')} | ${'adult type after date'}
+    ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'adult type in date'}
+    ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-03-25T23:59Z')} | ${'adult length before date'}
+    ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-04-02T00:01Z')} | ${'adult length after date'}
+    ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'adult length in date'}
+    ${getJuniorPermission()}                                                            | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'junior type'}
+    ${getJuniorPermission()}                                                            | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'junior lenght'}
+  `('returns the correct value for payment-msg for $description', async ({ permission, key, currentDateTime }) => {
+      moment.now = () => currentDateTime
+      const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
+      expect(price[`by${key}`]).toMatchSnapshot()
+    })
+
     it.each`
       date                             | concessions     | expected | description
       ${new Date('2024-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start range date adult'}
-      ${new Date('2024-04-01T07:00Z')} | ${[]}           | ${false} | ${'after end range date adult'}
+      ${new Date('2024-04-04T01:00Z')} | ${[]}           | ${false} | ${'after end range date adult'}
       ${new Date('2024-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before start range time adult'}
       ${new Date('2024-04-01T00:04Z')} | ${[]}           | ${false} | ${'same date but after end range time adult'}
       ${new Date('2024-03-30T23:59Z')} | ${[]}           | ${true}  | ${'same date and time of start range adult'}
