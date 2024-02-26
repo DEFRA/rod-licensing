@@ -190,7 +190,8 @@ const init = async () => {
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
   server.decorate('toolkit', 'redirectWithLanguageCode', function (redirect) {
-    const uriWithLanguage = addLanguageCodeToUri(this.request, redirect)
+    const pathname = this.request.url.pathname
+    const uriWithLanguage = (pathname === NEW_PRICES.uri) ? addLanguageCodeToUri(this.request, pathname) : addLanguageCodeToUri(this.request, redirect)
     const uriWithLanguageAndEmptyFragment = addEmptyFragmentToUri(uriWithLanguage)
 
     return this.redirect(uriWithLanguageAndEmptyFragment)
