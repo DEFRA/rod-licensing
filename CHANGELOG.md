@@ -1,4 +1,13 @@
 
+## v1.42.0-rc.2 (2024-02-26)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1916](https://github.com/DEFRA/rod-licensing/pull/1916) Hiding and revealing content on licence type selection ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.42.0-rc.0 (2024-02-22)
 
