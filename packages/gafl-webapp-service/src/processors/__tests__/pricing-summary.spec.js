@@ -563,16 +563,16 @@ describe('The pricing summary calculator', () => {
 
   describe('isDateTimeInRangeAndNotJunior', () => {
     it.each`
-    permission                                                                          | key         | currentDateTime                           | description
-    ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-03-25T23:59Z')} | ${'adult type before date'}
-    ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-04-02T00:01Z')} | ${'adult type after date'}
-    ${getAdultPermission()}                                                             | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'adult type in date'}
-    ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-03-25T23:59Z')} | ${'adult length before date'}
-    ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-04-02T00:01Z')} | ${'adult length after date'}
-    ${getAdultPermission()}                                                             | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'adult length in date'}
-    ${getJuniorPermission()}                                                            | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'junior type'}
-    ${getJuniorPermission()}                                                            | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'junior lenght'}
-  `('returns the correct value for payment-msg for $description', async ({ permission, key, currentDateTime }) => {
+      permission               | key         | currentDateTime                    | description
+      ${getAdultPermission()}  | ${'Type'}   | ${moment.utc('2024-03-25T23:59Z')} | ${'adult type before date'}
+      ${getAdultPermission()}  | ${'Type'}   | ${moment.utc('2024-04-02T00:01Z')} | ${'adult type after date'}
+      ${getAdultPermission()}  | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'adult type in date'}
+      ${getAdultPermission()}  | ${'Length'} | ${moment.utc('2024-03-25T23:59Z')} | ${'adult length before date'}
+      ${getAdultPermission()}  | ${'Length'} | ${moment.utc('2024-04-02T00:01Z')} | ${'adult length after date'}
+      ${getAdultPermission()}  | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'adult length in date'}
+      ${getJuniorPermission()} | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'junior type'}
+      ${getJuniorPermission()} | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'junior lenght'}
+    `('returns the correct value for payment-msg for $description', async ({ permission, key, currentDateTime }) => {
       moment.now = () => currentDateTime
       const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
       expect(price[`by${key}`]).toMatchSnapshot()
