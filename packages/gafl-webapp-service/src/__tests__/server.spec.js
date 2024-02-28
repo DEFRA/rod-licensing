@@ -1,7 +1,12 @@
 import { createServer, init, server, layoutContextAmalgamation } from '../server.js'
 import CatboxMemory from '@hapi/catbox-memory'
 import uris from '../uri.js'
+import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 
+jest.mock('../processors/uri-helper.js', () => ({
+  addLanguageCodeToUri: jest.fn(),
+  addEmptyFragmentToUri: jest.fn()
+}))
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../uri.js', () => ({
   ...jest.requireActual('../uri.js'),
@@ -42,6 +47,34 @@ describe('The server', () => {
 
     await init()
     expect(serverDecorateSpy).toHaveBeenCalledWith('toolkit', 'redirectWithLanguageCode', expect.any(Function))
+    await server.stop()
+  })
+
+  it('addLanguageCodeToUri is called with request and new prices', async () => {
+    createServer(catboxOptions)
+    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(jest.fn())
+
+    await init()
+    const redirect = serverDecorateSpy.mock.calls[1][2]
+    const mockRequest = { url: { pathname: uris.NEW_PRICES.uri } }
+    const mockRedirect = jest.fn()
+    await redirect.call({ request: mockRequest, redirect: mockRedirect })
+
+    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uris.NEW_PRICES.uri)
+    await server.stop()
+  })
+
+  it('addLanguageCodeToUri is called with request but not new prices', async () => {
+    createServer(catboxOptions)
+    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(jest.fn())
+
+    await init()
+    const redirect = serverDecorateSpy.mock.calls[1][2]
+    const mockRequest = { url: { pathname: '/buy' } }
+    const mockRedirect = jest.fn()
+    await redirect.call({ request: mockRequest, redirect: mockRedirect })
+
+    expect(addLanguageCodeToUri.mock.calls.some(call => call[1] === uris.NEW_PRICES.uri)).toBeFalsy()
     await server.stop()
   })
 
