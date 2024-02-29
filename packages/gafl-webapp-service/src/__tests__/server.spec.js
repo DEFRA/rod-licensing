@@ -29,19 +29,18 @@ export const catboxOptions = {
   ]
 }
 
-afterEach(async () => {
-  await server.stop()
+afterEach(() => {
+  server.stop()
 })
 
 describe('The server', () => {
   it('starts', async () => {
     createServer(catboxOptions)
     expect(server.info.port).toBe(1234)
-    await server.stop()
+    server.stop()
 
     await init()
     expect(server.info.port).toBe(1234)
-    await server.stop()
   })
 
   it('decorates the toolkit with redirectWithLanguageCode', async () => {
@@ -51,12 +50,11 @@ describe('The server', () => {
 
     await init()
     expect(serverDecorateSpy).toHaveBeenCalledWith('toolkit', 'redirectWithLanguageCode', expect.any(Function))
-    await server.stop()
   })
 
   it('addLanguageCodeToUri is called with request but not new prices', async () => {
     createServer(catboxOptions)
-    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(jest.fn())
+    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
 
     await init()
     const redirect = serverDecorateSpy.mock.calls[1][2]
@@ -64,13 +62,12 @@ describe('The server', () => {
     const mockRedirect = jest.fn()
     await redirect.call({ request: mockRequest, redirect: mockRedirect })
 
-    expect(addLanguageCodeToUri.mock.calls.some(call => call[1] === uris.NEW_PRICES.uri)).toBeFalsy()
-    await server.stop()
+    expect(addLanguageCodeToUri).not.toHaveBeenCalledWith(expect.any(Object), uris.NEW_PRICES.uri)
   })
 
   it('addLanguageCodeToUri is called with request and new prices', async () => {
     createServer(catboxOptions)
-    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(jest.fn())
+    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
 
     await init()
     const redirect = serverDecorateSpy.mock.calls[1][2]
@@ -79,7 +76,6 @@ describe('The server', () => {
     await redirect.call({ request: mockRequest, redirect: mockRedirect })
 
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uris.NEW_PRICES.uri)
-    await server.stop()
   })
 
   it('configures session handling in redis by default', async () => {
@@ -205,7 +201,6 @@ describe('The server', () => {
         createServer(catboxOptions)
         await init()
         expect(consoleLogSpy).toHaveBeenCalledWith('gtmContainerId is not set')
-        await server.stop()
       })
     })
 
