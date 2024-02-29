@@ -1,4 +1,13 @@
 
+## v1.43.0-rc.1 (2024-02-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1920](https://github.com/DEFRA/rod-licensing/pull/1920) Improving usability to page title to meet WGAC 2.1 criteria ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.43.0-rc.0 (2024-02-29)
 
 #### :bug: Bug Fix
