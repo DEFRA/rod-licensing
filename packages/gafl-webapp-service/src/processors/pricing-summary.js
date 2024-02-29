@@ -9,6 +9,7 @@ import * as constants from './mapping-constants.js'
 import moment from 'moment'
 const NO_SHORT = 'no-short'
 const PAYMENT_EDGE_CASE = 'payment-edge-case'
+const LICENCE_TYPE_WHEN_INCLUDES_SHORT_DURATIONS = 3
 
 /**
  * Filters for permitsJoinPermitConcessions
@@ -130,11 +131,10 @@ export const pricingDetail = async (page, permission) => {
               }),
               {}
             )
-          const licenceTypeIsOnly12Months = Object.keys(filtered).length < 3
           return {
             [licenceType]: Object.assign(
               filtered,
-              licenceTypeIsOnly12Months ? { msg: NO_SHORT } : {},
+              Object.keys(filtered).length < LICENCE_TYPE_WHEN_INCLUDES_SHORT_DURATIONS ? { msg: NO_SHORT } : {},
               shouldDisplayPriceChangePaymentWarningMessage(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {}
             )
           }
