@@ -67,7 +67,8 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
 
 const formatCost = cost => (Number.isInteger(cost) ? String(cost) : cost.toFixed(2))
 
-export const isDateTimeInRangeAndNotJunior = (concessions, now = moment()) => {
+export const shouldDisplayPriceChangePaymentWarningMessage = (concessions) => {
+  const now = moment()
   if (concessions.includes('Junior')) {
     return false
   }
@@ -109,8 +110,6 @@ export const pricingDetail = async (page, permission) => {
       byConcessions(concessionHelper.hasJunior(permission) ? [constants.CONCESSION.JUNIOR] : [])
     )
 
-    const licenceLengthCount = 3
-
     return {
       byType: Object.values(licenseTypes)
         .map(licenceType => {
@@ -134,8 +133,8 @@ export const pricingDetail = async (page, permission) => {
           return {
             [licenceType]: Object.assign(
               filtered,
-              Object.keys(filtered).length < licenceLengthCount ? { msg: NO_SHORT } : {},
-              isDateTimeInRangeAndNotJunior(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {}
+              Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {},
+              shouldDisplayPriceChangePaymentWarningMessage(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {}
             )
           }
         })
@@ -169,7 +168,7 @@ export const pricingDetail = async (page, permission) => {
             ...a,
             [c.len]: {
               total: { cost: formatCost(c.cost), concessions: c.concessions },
-              ...(isDateTimeInRangeAndNotJunior(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {})
+              ...(shouldDisplayPriceChangePaymentWarningMessage(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {})
             }
           }),
           {}

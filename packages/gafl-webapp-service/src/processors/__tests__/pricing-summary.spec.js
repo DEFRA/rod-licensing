@@ -1,4 +1,4 @@
-import { pricingDetail, isDateTimeInRangeAndNotJunior } from '../pricing-summary.js'
+import { pricingDetail, shouldDisplayPriceChangePaymentWarningMessage } from '../pricing-summary.js'
 import moment from 'moment'
 
 jest.mock('../find-permit.js', () => ({
@@ -561,43 +561,70 @@ describe('The pricing summary calculator', () => {
     })
   })
 
-  describe('isDateTimeInRangeAndNotJunior', () => {
+  describe('shouldDisplayPriceChangePaymentWarningMessage', () => {
     it.each`
-      permission               | key         | currentDateTime                    | description
-      ${getAdultPermission()}  | ${'Type'}   | ${moment.utc('2024-03-25T23:59Z')} | ${'adult type before date'}
-      ${getAdultPermission()}  | ${'Type'}   | ${moment.utc('2024-04-02T00:01Z')} | ${'adult type after date'}
-      ${getAdultPermission()}  | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'adult type in date'}
-      ${getAdultPermission()}  | ${'Length'} | ${moment.utc('2024-03-25T23:59Z')} | ${'adult length before date'}
-      ${getAdultPermission()}  | ${'Length'} | ${moment.utc('2024-04-02T00:01Z')} | ${'adult length after date'}
-      ${getAdultPermission()}  | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'adult length in date'}
-      ${getJuniorPermission()} | ${'Type'}   | ${moment.utc('2024-04-01T00:01Z')} | ${'junior type'}
-      ${getJuniorPermission()} | ${'Length'} | ${moment.utc('2024-04-01T00:01Z')} | ${'junior lenght'}
-    `('returns the correct value for payment-msg for $description', async ({ permission, key, currentDateTime }) => {
+      permission               | currentDateTime                    | length   | expected               | licence                      | dateTime
+      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'12M'} | ${undefined}           | ${'12 month adult licence'}  | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'12M'} | ${undefined}           | ${'12 month adult licence'}  | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'12M'} | ${'payment-edge-case'} | ${'12 month adult licence'}  | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'12M'} | ${undefined}           | ${'12 month junior licence'} | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'8D'}  | ${undefined}           | ${'8 day adult licence'}     | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'8D'}  | ${undefined}           | ${'8 day adult licence'}     | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'8D'}  | ${'payment-edge-case'} | ${'8 day adult licence'}     | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'8D'}  | ${undefined}           | ${'8 day junior licence'}    | ${'within range'}
+      ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'1D'}  | ${undefined}           | ${'1 day adult licence'}     | ${'before start date'}
+      ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day adult licence'}     | ${'after end date'}
+      ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'1D'}  | ${'payment-edge-case'} | ${'1 day adult licence'}     | ${'within range'}
+      ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day junior licence'}    | ${'within range'}
+    `('returns the correct value for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message', async ({ permission, currentDateTime, expected }) => {
       moment.now = () => currentDateTime
-      const price = await pricingDetail(`licence-${key.toLowerCase()}`, permission)
-      expect(price[`by${key}`]).toMatchSnapshot()
+      const price = await pricingDetail('licence-length', permission)
+      const paymentMsg = price.byLength['12M'].payment_msg
+      expect(paymentMsg).toEqual(expected)
     })
 
     it.each`
-      date                             | concessions     | expected | description
-      ${new Date('2024-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start range date adult'}
-      ${new Date('2024-04-04T01:00Z')} | ${[]}           | ${false} | ${'after end range date adult'}
-      ${new Date('2024-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before start range time adult'}
-      ${new Date('2024-04-01T00:04Z')} | ${[]}           | ${false} | ${'same date but after end range time adult'}
-      ${new Date('2024-03-30T23:59Z')} | ${[]}           | ${true}  | ${'same date and time of start range adult'}
-      ${new Date('2024-04-01T00:00Z')} | ${[]}           | ${true}  | ${'in middle of start and end range adult'}
-      ${new Date('2024-04-01T00:01Z')} | ${[]}           | ${true}  | ${'same date and time of end range adult'}
-      ${new Date('2024-03-30T23:59Z')} | ${['Junior']}   | ${false} | ${'same date and time of start range junior'}
-      ${new Date('2024-04-01T00:00Z')} | ${['Junior']}   | ${false} | ${'in middle of start and end range junior'}
-      ${new Date('2024-04-01T00:01Z')} | ${['Junior']}   | ${false} | ${'same date and time of end range junior'}
-      ${new Date('2024-03-30T23:59Z')} | ${['Senior']}   | ${true}  | ${'same date and time of start range senior'}
-      ${new Date('2024-04-01T00:00Z')} | ${['Senior']}   | ${true}  | ${'in middle of start and end range senior'}
-      ${new Date('2024-04-01T00:01Z')} | ${['Senior']}   | ${true}  | ${'same date and time of end range senior'}
-      ${new Date('2024-03-30T23:59Z')} | ${['Disabled']} | ${true}  | ${'same date and time of start range disabled'}
-      ${new Date('2024-04-01T00:00Z')} | ${['Disabled']} | ${true}  | ${'in middle of start and end range disabled'}
-      ${new Date('2024-04-01T00:01Z')} | ${['Disabled']} | ${true}  | ${'same date and time of end range disabled'}
-    `('returns $expected when current date and time is $description ', ({ date, concessions, expected }) => {
-      const result = isDateTimeInRangeAndNotJunior(concessions, moment(date))
+    permission               | currentDateTime                    | type                        | expected               | licence                    | dateTime
+    ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'adult salmon licence'}  | ${'before start date'}
+    ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'adult salmon licence'}  | ${'after end date'}
+    ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'salmon-and-sea-trout'}   | ${'payment-edge-case'} | ${'adult salmon licence'}  | ${'within range'}
+    ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'salmon-and-sea-trout'}   | ${undefined}           | ${'junior salmon licence'} | ${'within range'}
+    ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'adult 2 rod licence'}   | ${'before start date'}
+    ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'adult 2 rod licence'}   | ${'after end date'}
+    ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${'payment-edge-case'} | ${'adult 2 rod licence'}   | ${'within range'}
+    ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-2-rod'} | ${undefined}           | ${'junior 2 rod licence'}  | ${'within range'}
+    ${getAdultPermission()}  | ${moment.utc('2024-03-25T23:59Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'adult 3 rod licence'}   | ${'before start date'}
+    ${getAdultPermission()}  | ${moment.utc('2024-04-02T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'adult 3 rod licence'}   | ${'after end date'}
+    ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${'payment-edge-case'} | ${'adult 3 rod licence'}   | ${'within range'}
+    ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'junior 3 rod licence'}  | ${'within range'}
+  `('returns the correct value for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message', async ({ permission, currentDateTime, type, expected }) => {
+      moment.now = () => currentDateTime
+      const price = await pricingDetail('licence-type', permission)
+      const paymentMsg = price.byType[type].payment_msg
+      expect(paymentMsg).toEqual(expected)
+    })
+
+    it.each`
+      date                             | concessions     | expected | dateTime                       | licence
+      ${new Date('2024-03-25T23:59Z')} | ${[]}           | ${false} | ${'before start date'}         | ${'an adult licence'}
+      ${new Date('2024-04-04T01:00Z')} | ${[]}           | ${false} | ${'after start date'}          | ${'an adult licence'}
+      ${new Date('2024-03-30T23:58Z')} | ${[]}           | ${false} | ${'same date but before time'} | ${'an adult licence'}
+      ${new Date('2024-04-01T00:04Z')} | ${[]}           | ${false} | ${'same date but after time'}  | ${'an adult licence'}
+      ${new Date('2024-03-30T23:59Z')} | ${[]}           | ${true}  | ${'start of range'}            | ${'an adult licence'}
+      ${new Date('2024-04-01T00:00Z')} | ${[]}           | ${true}  | ${'within range'}              | ${'an adult licence'}
+      ${new Date('2024-04-01T00:01Z')} | ${[]}           | ${true}  | ${'end of range'}              | ${'an adult licence'}
+      ${new Date('2024-03-30T23:59Z')} | ${['Junior']}   | ${false} | ${'start of range'}            | ${'a junior licence'}
+      ${new Date('2024-04-01T00:00Z')} | ${['Junior']}   | ${false} | ${'within range'}              | ${'a junior licence'}
+      ${new Date('2024-04-01T00:01Z')} | ${['Junior']}   | ${false} | ${'end of range'}              | ${'a junior licence'}
+      ${new Date('2024-03-30T23:59Z')} | ${['Senior']}   | ${true}  | ${'start of range'}            | ${'a senior licence'}
+      ${new Date('2024-04-01T00:00Z')} | ${['Senior']}   | ${true}  | ${'within range'}              | ${'a senior licence'}
+      ${new Date('2024-04-01T00:01Z')} | ${['Senior']}   | ${true}  | ${'end of range'}              | ${'a senior licence'}
+      ${new Date('2024-03-30T23:59Z')} | ${['Disabled']} | ${true}  | ${'start of range'}            | ${'a disabled licence'}
+      ${new Date('2024-04-01T00:00Z')} | ${['Disabled']} | ${true}  | ${'within range'}              | ${'a disabled licence'}
+      ${new Date('2024-04-01T00:01Z')} | ${['Disabled']} | ${true}  | ${'end of range'}              | ${'a disabled licence'}
+    `('returns $expected when is $licence, current date and time is $dateTime for displaying price change payment warning message', ({ date, concessions, expected }) => {
+      moment.now = () => moment(date)
+      const result = shouldDisplayPriceChangePaymentWarningMessage(concessions)
       expect(result).toBe(expected)
     })
   })
