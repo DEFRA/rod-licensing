@@ -67,7 +67,7 @@ const resultTransformer = (permitWithConcessions, permitWithoutConcessions, len,
 
 const formatCost = cost => (Number.isInteger(cost) ? String(cost) : cost.toFixed(2))
 
-export const shouldDisplayPriceChangePaymentWarningMessage = (concessions) => {
+export const shouldDisplayPriceChangePaymentWarningMessage = concessions => {
   const now = moment()
   if (concessions.includes('Junior')) {
     return false
