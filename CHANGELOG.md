@@ -1,4 +1,13 @@
 
+## v1.43.0-rc.0 (2024-02-29)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1919](https://github.com/DEFRA/rod-licensing/pull/1919) Current day is leap year start licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.42.0-rc.2 (2024-02-26)
 
