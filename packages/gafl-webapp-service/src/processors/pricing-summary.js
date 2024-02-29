@@ -130,10 +130,11 @@ export const pricingDetail = async (page, permission) => {
               }),
               {}
             )
+          const licenceTypeIsOnly12Months = Object.keys(filtered).length < 3
           return {
             [licenceType]: Object.assign(
               filtered,
-              Object.keys(filtered).length < 3 ? { msg: NO_SHORT } : {},
+              licenceTypeIsOnly12Months ? { msg: NO_SHORT } : {},
               shouldDisplayPriceChangePaymentWarningMessage(userConcessions) ? { payment_msg: PAYMENT_EDGE_CASE } : {}
             )
           }
