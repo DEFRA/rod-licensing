@@ -66,7 +66,7 @@ describe('permissions service', () => {
         }),
         'Telesales'
       )
-      const block1 = moment().add(1, 'year').subtract(1, 'day').endOf('day').format('HHDDMMYY')
+      const block1 = moment().subtract(1, 'day').add(1, 'year').endOf('day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
