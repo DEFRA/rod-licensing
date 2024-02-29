@@ -123,8 +123,6 @@ describe('The server', () => {
     })
   })
 
-  // set off test
-
   describe('layoutContextAmalgamation', () => {
     it('should add query parameters to the response', () => {
       const request = getSampleRequest()
