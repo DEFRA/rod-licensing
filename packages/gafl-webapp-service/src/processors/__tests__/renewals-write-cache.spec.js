@@ -117,12 +117,7 @@ describe('renewals-write-cache', () => {
     it('should set start and end dates, if renewal has not expired', async () => {
       const setTransactionCache = jest.fn()
       const endDate = moment().add(5, 'days')
-      const mockDateAuthResult = {
-        permission: {
-          ...getAuthenticationResult().permission,
-          endDate
-        }
-      }
+      const mockDateAuthResult = getAuthenticationResult({ endDate })
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockDateAuthResult)
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -138,12 +133,7 @@ describe('renewals-write-cache', () => {
     it('should set start and end dates, if renewal has expired', async () => {
       const setTransactionCache = jest.fn()
       const endDate = moment().subtract(5, 'days')
-      const mockDateAuthResult = {
-        permission: {
-          ...getAuthenticationResult().permission,
-          endDate
-        }
-      }
+      const mockDateAuthResult = getAuthenticationResult({ endDate })
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockDateAuthResult)
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -239,8 +229,9 @@ describe('renewals-write-cache', () => {
 
     it('should have an empty array if there no match for the provided concession', async () => {
       const setTransactionCache = jest.fn()
-      const mockConcessionAuthResult = getAuthenticationResult()
-      mockConcessionAuthResult.permission.concessions = [{ id: 'non-existent-concession' }]
+      const mockConcessionAuthResult = getAuthenticationResult({
+        concessions: [{ id: 'non-existent-concession' }]
+      })
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockConcessionAuthResult)
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -261,25 +252,22 @@ describe('renewals-write-cache', () => {
 
     it('should have an array of concessions if they are present', async () => {
       const setTransactionCache = jest.fn()
-      const mockConcessionAuthResult = {
-        permission: {
-          ...getAuthenticationResult().permission,
-          concessions: [
-            {
-              id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
-              proof: {
-                id: 'concession-proof-id',
-                referenceNumber: '1233',
-                type: {
-                  id: 910400000,
-                  label: 'Blue Badge',
-                  description: 'Blue Badge'
-                }
+      const mockConcessionAuthResult = getAuthenticationResult({
+        concessions: [
+          {
+            id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
+            proof: {
+              id: 'concession-proof-id',
+              referenceNumber: '1233',
+              type: {
+                id: 910400000,
+                label: 'Blue Badge',
+                description: 'Blue Badge'
               }
             }
-          ]
-        }
-      }
+          }
+        ]
+      })
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockConcessionAuthResult)
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -320,15 +308,8 @@ describe('renewals-write-cache', () => {
 
     it('should set showDigitalLicencePages to true on the status cache if postalFulfilment is undefined', async () => {
       const setStatusCache = jest.fn()
-      const authPostalFulfilmentFalse = {
-        permission: {
-          ...getAuthenticationResult().permission,
-          licensee: {
-            ...getAuthenticationResult().permission.licensee,
-            postalFulfilment: undefined
-          }
-        }
-      }
+      const authPostalFulfilmentFalse = getAuthenticationResult()
+      authPostalFulfilmentFalse.permission.licensee.postalFulfilment = undefined
       await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), authPostalFulfilmentFalse)
       expect(setStatusCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -339,16 +320,8 @@ describe('renewals-write-cache', () => {
 
     it('should set showDigitalLicencePages to false on the status cache if postalFulfilment is false', async () => {
       const setStatusCache = jest.fn()
-      const authenticationResult = getAuthenticationResult()
-      const authPostalFulfilmentFalse = {
-        permission: {
-          ...authenticationResult.permission,
-          licensee: {
-            ...authenticationResult.permission.licensee,
-            postalFulfilment: false
-          }
-        }
-      }
+      const authPostalFulfilmentFalse = getAuthenticationResult()
+      authPostalFulfilmentFalse.permission.licensee.postalFulfilment = false
       await setUpCacheFromAuthenticationResult(getMockRequest({ setStatusCache }), authPostalFulfilmentFalse)
       expect(setStatusCache).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -360,12 +333,7 @@ describe('renewals-write-cache', () => {
     it('should have isLicenceForYou set to true', async () => {
       const setTransactionCache = jest.fn()
       const isLicenceForYou = true
-      const mockPermissionAuthResult = {
-        permission: {
-          ...getAuthenticationResult().permission,
-          isLicenceForYou
-        }
-      }
+      const mockPermissionAuthResult = getAuthenticationResult({ isLicenceForYou })
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockPermissionAuthResult)
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
