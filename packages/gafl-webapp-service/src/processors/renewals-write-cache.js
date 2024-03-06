@@ -9,6 +9,14 @@ import { licenseTypes } from '../pages/licence-details/licence-type/route.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { cacheDateFormat } from './date-and-time-display.js'
 const debug = db('webapp:renewals-write-cache')
+
+const getLicenceStartDate = (renewedHasExpired, licenceEndDate) => {
+  if (renewedHasExpired) {
+    return moment().tz(SERVICE_LOCAL_TIME)
+  }
+  return moment(licenceEndDate).add(1, 'minute').seconds(0).tz(SERVICE_LOCAL_TIME)
+}
+
 /**
  * Module is used for easy renewals where the data is read from the CRM and written into the session
  * cache.
@@ -25,11 +33,12 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
 
+  const licenceStartDate = getLicenceStartDate(renewedHasExpired, endDateMoment)
   permission.licenceToStart = renewedHasExpired ? licenceToStart.AFTER_PAYMENT : licenceToStart.ANOTHER_DATE
   permission.licenceStartDate = renewedHasExpired
     ? moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat)
-    : endDateMoment.format(cacheDateFormat)
-  permission.licenceStartTime = renewedHasExpired ? 0 : endDateMoment.hours()
+    : licenceStartDate.format(cacheDateFormat)
+  permission.licenceStartTime = renewedHasExpired ? 0 : licenceStartDate.hours()
   permission.renewedEndDate = endDateMoment.toISOString()
   permission.renewedHasExpired = renewedHasExpired
   permission.licensee = Object.assign(
@@ -53,6 +62,7 @@ export const setUpCacheFromAuthenticationResult = async (request, authentication
 
   // Add in concession proofs
   const concessions = await salesApi.concessions.getAll()
+  console.log('concessions', concessions)
   permission.concessions = []
   authenticationResult.permission.concessions.forEach(concessionProof => {
     const concessionReference = concessions.find(c => c.id === concessionProof.id)
@@ -111,7 +121,6 @@ export const setUpPayloads = async request => {
         case constants.HOW_CONTACTED.text:
           return { 'how-contacted': 'text', text: l.mobilePhone }
         case constants.HOW_CONTACTED.letter:
-          return { 'how-contacted': 'none' }
         default:
           return { 'how-contacted': 'none' }
       }

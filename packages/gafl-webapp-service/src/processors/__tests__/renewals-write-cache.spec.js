@@ -32,7 +32,7 @@ describe('renewals-write-cache', () => {
   })
 
   describe('setUpCacheFromAuthenticationResult', () => {
-    const getAuthenticationResult = () => ({
+    const getAuthenticationResult = (overrides = {}) => ({
       permission: {
         referenceNumber: 'abc',
         licensee: {
@@ -76,7 +76,8 @@ describe('renewals-write-cache', () => {
           },
           numberOfRods: 1
         },
-        isLicenceForYou: true
+        isLicenceForYou: true,
+        ...overrides
       }
     })
 
@@ -236,6 +237,18 @@ describe('renewals-write-cache', () => {
       expect(licensee[prop]).toBeUndefined()
     })
 
+    it('should have an empty array if there no match for the provided concession', async () => {
+      const setTransactionCache = jest.fn()
+      const mockConcessionAuthResult = getAuthenticationResult()
+      mockConcessionAuthResult.permission.concessions = [{ id: 'non-existent-concession' }]
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockConcessionAuthResult)
+      expect(setTransactionCache).toHaveBeenCalledWith(
+        expect.objectContaining({
+          concessions: []
+        })
+      )
+    })
+
     it('should have an empty array if no concessions are present', async () => {
       const setTransactionCache = jest.fn()
       await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), getAuthenticationResult())
@@ -248,7 +261,7 @@ describe('renewals-write-cache', () => {
 
     it('should have an array of concessions if they are present', async () => {
       const setTransactionCache = jest.fn()
-      const mockConccessionAuthResult = {
+      const mockConcessionAuthResult = {
         permission: {
           ...getAuthenticationResult().permission,
           concessions: [
@@ -267,7 +280,7 @@ describe('renewals-write-cache', () => {
           ]
         }
       }
-      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockConccessionAuthResult)
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), mockConcessionAuthResult)
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
           concessions: [{ proof: { referenceNumber: '1233', type: 'Blue Badge' }, type: 'Disabled' }]
@@ -357,6 +370,25 @@ describe('renewals-write-cache', () => {
       expect(setTransactionCache).toHaveBeenCalledWith(
         expect.objectContaining({
           isLicenceForYou: true
+        })
+      )
+    })
+
+    it.each`
+      endDate                       | licenceStartDate | licenceStartTime | timeDesc
+      ${'2024-03-04T23:59:59.000Z'} | ${'2024-03-05'}  | ${0}             | ${'midnight'}
+      ${'2024-03-05T14:56:27.109Z'} | ${'2024-03-05'}  | ${14}            | ${'14:00'}
+      ${'2024-03-02T13:28:47.102Z'} | ${'2024-03-04'}  | ${0}             | ${'after payment'}
+    `('starts from $timeDesc on $licenceStartDate, if expiry is at $endDate', async ({ endDate, licenceStartDate, licenceStartTime }) => {
+      jest.useFakeTimers()
+      jest.setSystemTime(new Date('2024-03-04T14:37:28.743Z'))
+      const setTransactionCache = jest.fn()
+      const permission = getAuthenticationResult({ endDate })
+      await setUpCacheFromAuthenticationResult(getMockRequest({ setTransactionCache }), permission)
+      expect(setTransactionCache).toHaveBeenCalledWith(
+        expect.objectContaining({
+          licenceStartDate,
+          licenceStartTime
         })
       )
     })
