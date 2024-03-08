@@ -577,7 +577,7 @@ describe('The pricing summary calculator', () => {
       ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'1D'}  | ${'payment-edge-case'} | ${'1 day adult licence'}     | ${'within range'}
       ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'1D'}  | ${undefined}           | ${'1 day junior licence'}    | ${'within range'}
     `(
-      'returns the correct value for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message',
+      'returns $expected for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message',
       async ({ permission, currentDateTime, expected }) => {
         moment.now = () => currentDateTime
         const price = await pricingDetail('licence-length', permission)
@@ -601,7 +601,7 @@ describe('The pricing summary calculator', () => {
       ${getAdultPermission()}  | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${'payment-edge-case'} | ${'adult 3 rod licence'}   | ${'within range'}
       ${getJuniorPermission()} | ${moment.utc('2024-04-01T00:01Z')} | ${'trout-and-coarse-3-rod'} | ${undefined}           | ${'junior 3 rod licence'}  | ${'within range'}
     `(
-      'returns the correct value for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message',
+      'returns $expected for payment_msg for $licence when current date and time is $dateTime for displaying price change payment warning message',
       async ({ permission, currentDateTime, type, expected }) => {
         moment.now = () => currentDateTime
         const price = await pricingDetail('licence-type', permission)
@@ -628,13 +628,10 @@ describe('The pricing summary calculator', () => {
       ${new Date('2024-03-30T23:59Z')} | ${['Disabled']} | ${true}  | ${'start of range'}            | ${'a disabled licence'}
       ${new Date('2024-04-01T00:00Z')} | ${['Disabled']} | ${true}  | ${'within range'}              | ${'a disabled licence'}
       ${new Date('2024-04-01T00:01Z')} | ${['Disabled']} | ${true}  | ${'end of range'}              | ${'a disabled licence'}
-    `(
-      'returns $expected when is $licence, current date and time is $dateTime for displaying price change payment warning message',
-      ({ date, concessions, expected }) => {
-        moment.now = () => moment(date)
-        const result = shouldDisplayPriceChangePaymentWarningMessage(concessions)
-        expect(result).toBe(expected)
-      }
-    )
+    `('returns $expected when we have $licence and current date and time is $dateTime', ({ date, concessions, expected }) => {
+      moment.now = () => moment(date)
+      const result = shouldDisplayPriceChangePaymentWarningMessage(concessions)
+      expect(result).toBe(expected)
+    })
   })
 })
