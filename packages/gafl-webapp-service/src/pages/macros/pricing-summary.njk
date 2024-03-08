@@ -33,6 +33,11 @@
                     {{content[v]}}
                 </div>
             {% endif %}
+            {% if k === 'payment_msg' %}
+                <div class="govuk-body-s pricing-summary-element-cost">
+                    {{content[v]}}
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
     {% endfor %}
