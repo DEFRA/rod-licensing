@@ -8,7 +8,13 @@
 
 {% set title = mssgs.identify_title %}
 
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}
+  {% if error %}
+    {{ mssgs.server_error_title_prefix }}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+  {% else %}
+    {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+  {% endif %}
+{% endblock %}
 
 {%
     set errorMap = {

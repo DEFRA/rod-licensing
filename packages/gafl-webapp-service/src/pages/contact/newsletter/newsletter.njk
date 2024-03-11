@@ -5,6 +5,14 @@
 {% set title = mssgs.newsletter_title %}
 {% set emailError = mssgs.newsletter_error_set_email %}
 
+{% block pageTitle %}
+  {% if error %}
+    {{ mssgs.server_error_title_prefix }}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+  {% else %}
+    {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+  {% endif %}
+{% endblock %}
+
 {% set errorMap = {
        'newsletter' : {
             'any.required': { ref: '#newsletter', text: mssgs.newsletter_error_choose }

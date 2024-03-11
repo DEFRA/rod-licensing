@@ -8,6 +8,14 @@
 {% set emailError = mssgs.important_info_contact_error_email %}
 {% set mobileError = mssgs.important_info_contact_error_mobile %}
 
+{% block pageTitle %}
+  {% if error %}
+    {{ mssgs.server_error_title_prefix }}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+  {% else %}
+    {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+  {% endif %}
+{% endblock %}
+
 {% set errorMap = {
         'how-contacted': {
             'any.required': { ref: '#how-contacted', text: errorMsg }
@@ -24,8 +32,6 @@
         }
     }
 %}
-
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set emailHtml %}
     <div id="email-rw" class="govuk-body-m">

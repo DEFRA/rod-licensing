@@ -701,6 +701,7 @@
   "server_error_environment_agency_opening": "Monday to Friday, 8am to 6pm (except public holidays)",
   "server_error_environment_agency_telephone": "Telephone: 0344 800 5386",
   "server_error_title": "Error - GOV.UK",
+  "server_error_title_prefix": "Error - ",
   "server_error_try_again": "This could be due to high demand for the service. Please wait a few minutes before entering your payment details again.",
   "server_error_unable_to_process_payment": "Sorry, we were unable to process your payment",
   "server_error_unable_to_retrieve_pay_details": "We were unable to retrieve your payment details at this time because of an unexpected problem with the service. Please wait a few minutes and try again by pressing the 'Try again' button below.",
