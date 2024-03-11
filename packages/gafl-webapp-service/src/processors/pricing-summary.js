@@ -73,8 +73,8 @@ export const shouldDisplayPriceChangePaymentWarningMessage = concessions => {
   if (concessions.includes('Junior')) {
     return false
   }
-  const startRange = moment('2024-03-30T23:59:00Z')
-  const endRange = moment('2024-04-01T00:01:00Z')
+  const startRange = moment('2024-03-10T23:59:00Z')
+  const endRange = moment('2024-03-12T00:01:00Z')
 
   return now.isBetween(startRange, endRange, null, '[]')
 }
