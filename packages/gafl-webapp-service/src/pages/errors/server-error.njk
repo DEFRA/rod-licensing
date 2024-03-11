@@ -12,7 +12,7 @@
     {% set title = mssgs.server_error_occured %}
 {% endif %}
 
-{% block pageTitle %}{{ title }}{{ mssgs.server_error_title_suffix }}{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.server_error_title_suffix }}{% endblock %}
 
 {% block content %}
 

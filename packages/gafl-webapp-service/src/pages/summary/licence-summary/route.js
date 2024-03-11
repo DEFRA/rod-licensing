@@ -47,7 +47,7 @@ class RowGenerator {
           items: [
             {
               href,
-              visuallyHiddenText,
+              visuallyHiddenText: `\u{00a0} visuallyHiddenText`,
               text: this.labels.contact_summary_change,
               attributes: { id }
             }
