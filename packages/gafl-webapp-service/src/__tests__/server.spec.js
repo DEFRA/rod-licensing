@@ -59,7 +59,7 @@ describe('The server', () => {
     await init()
     const redirect = serverDecorateSpy.mock.calls[1][2]
     const mockRequest = { url: { pathname: '/buy' } }
-    const mockRedirect = jest.fn()
+    const mockRedirect = () => {}
     await redirect.call({ request: mockRequest, redirect: mockRedirect })
 
     expect(addLanguageCodeToUri).not.toHaveBeenCalledWith(expect.any(Object), uris.NEW_PRICES.uri)
@@ -72,7 +72,7 @@ describe('The server', () => {
     await init()
     const redirect = serverDecorateSpy.mock.calls[1][2]
     const mockRequest = { url: { pathname: uris.NEW_PRICES.uri } }
-    const mockRedirect = jest.fn()
+    const mockRedirect = () => {}
     await redirect.call({ request: mockRequest, redirect: mockRedirect })
 
     expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uris.NEW_PRICES.uri)
