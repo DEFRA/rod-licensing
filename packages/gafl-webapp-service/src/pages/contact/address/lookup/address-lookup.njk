@@ -7,7 +7,7 @@
 
 {% set title = mssgs.address_lookup_title_you if data.isLicenceForYou else mssgs.address_lookup_title_other %}
 
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set errorMap = {
         'premises': {
