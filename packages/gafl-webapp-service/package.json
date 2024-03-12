@@ -52,6 +52,7 @@
     "debug": "^4.3.3",
     "disinfect": "^1.1.0",
     "easy-soap-request": "^5.6.1",
+    "fast-xml-parser": "^4.3.5",
     "find": "^0.3.0",
     "flatpickr": "^4.6.9",
     "govuk-frontend": "^5.1.0",
