@@ -1,5 +1,47 @@
 
 
+## v1.43.0-rc.3 (2024-03-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1914](https://github.com/DEFRA/rod-licensing/pull/1914) Content to cover price change edge case ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1922](https://github.com/DEFRA/rod-licensing/pull/1922) Renewing a licence starts a day early ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 2
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.43.0-rc.2 (2024-02-29)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `sales-api-service`
+  * [#1904](https://github.com/DEFRA/rod-licensing/pull/1904) Check if the fulfilment switchover date has passed when processing transactions ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+## v1.43.0-rc.1 (2024-02-29)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1920](https://github.com/DEFRA/rod-licensing/pull/1920) Improving usability to page title to meet WGAC 2.1 criteria ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.43.0-rc.0 (2024-02-29)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#1919](https://github.com/DEFRA/rod-licensing/pull/1919) Current day is leap year start licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 ## v1.42.0-rc.2 (2024-02-26)
 
 #### :rocket: Enhancement

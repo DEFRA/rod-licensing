@@ -25,6 +25,7 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
+import moment from 'moment'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -102,8 +103,7 @@ describe('transaction service', () => {
             expect.any(TransactionJournal),
             expect.any(Contact),
             expect.any(Permission),
-            expect.any(ConcessionProof),
-            expect.any(FulfilmentRequest)
+            expect.any(ConcessionProof)
           ]
         ],
         [
@@ -119,8 +119,7 @@ describe('transaction service', () => {
             expect.any(TransactionJournal),
             expect.any(TransactionJournal),
             expect.any(Contact),
-            expect.any(Permission),
-            expect.any(FulfilmentRequest)
+            expect.any(Permission)
           ]
         ],
         [
@@ -144,8 +143,7 @@ describe('transaction service', () => {
             expect.any(Contact),
             expect.any(Permission),
             expect.any(RecurringPaymentInstruction),
-            expect.any(ConcessionProof),
-            expect.any(FulfilmentRequest)
+            expect.any(ConcessionProof)
           ]
         ]
       ])('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
@@ -178,6 +176,99 @@ describe('transaction service', () => {
             Item: expectedRecord,
             ConditionExpression: 'attribute_not_exists(id)'
           })
+        )
+      })
+    })
+
+    describe('when the fulfilment change date has not yet passed', () => {
+      beforeEach(() => {
+        process.env.FULFILMENT_SWITCHOVER_DATE = moment().add(1, 'day').toISOString()
+      })
+
+      afterEach(() => {
+        delete process.env.FULFILMENT_SWITCHOVER_DATE
+      })
+
+      it('includes a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        expect(persist).toBeCalledWith(
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(ConcessionProof),
+            expect.any(FulfilmentRequest)
+          ],
+          undefined
+        )
+      })
+
+      it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        expect(persist).toBeCalledWith(
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(ConcessionProof)
+          ],
+          undefined
+        )
+      })
+    })
+
+    describe('after the fulfilment change date has passed', () => {
+      beforeEach(() => {
+        process.env.FULFILMENT_SWITCHOVER_DATE = moment().subtract(1, 'day').toISOString()
+      })
+
+      afterEach(() => {
+        delete process.env.FULFILMENT_SWITCHOVER_DATE
+      })
+
+      it('does not include a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        expect(persist).toBeCalledWith(
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(ConcessionProof)
+          ],
+          undefined
+        )
+      })
+
+      it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
+        const mockRecord = mockFinalisedTransactionRecord()
+        mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        expect(persist).toBeCalledWith(
+          [
+            expect.any(Transaction),
+            expect.any(TransactionJournal),
+            expect.any(TransactionJournal),
+            expect.any(Contact),
+            expect.any(Permission),
+            expect.any(ConcessionProof)
+          ],
+          undefined
         )
       })
     })

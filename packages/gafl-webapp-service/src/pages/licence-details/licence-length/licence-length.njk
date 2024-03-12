@@ -55,7 +55,8 @@
 
 {% block pricingSummary %}
     {{ pricingSummary(data.pricing.byLength, {
-        'total': { desc: mssgs.total }
+        'total': { desc: mssgs.total },
+        'payment-edge-case': mssgs.licence_type_payment_edge_case
     }, data.licenceTypeStr,
     mssgs
     )}}
