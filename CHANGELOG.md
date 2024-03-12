@@ -1,4 +1,20 @@
 
+
+
+## v1.43.0-rc.3 (2024-03-08)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1914](https://github.com/DEFRA/rod-licensing/pull/1914) Content to cover price change edge case ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1922](https://github.com/DEFRA/rod-licensing/pull/1922) Renewing a licence starts a day early ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 2
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.43.0-rc.2 (2024-02-29)
 
 #### :rocket: Enhancement

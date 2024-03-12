@@ -416,6 +416,7 @@
   "licence_type_byelaws": "is-ddeddfau pysgota lleol (yn agor ar dudalen newydd)",
   "licence_type_error_choose": "Dewiswch un o’r mathau o drwyddedau pysgota",
   "licence_type_na": "Nid oes cyfnodau byrrach ar gael ar gyfer y math hwn o drwydded.",
+  "licence_type_payment_edge_case": "Mae’n rhaid i chi gwblhau eich taliad cyn 11:30pm ar 31 Mawrth 2024 i dalu’r pris a ddangosir",
   "licence_type_radio_salmon_hint": "Mae'n cynnwys brithyllod a physgod bras, hyd at 3 gwialen",
   "licence_type_radio_salmon": "Eogiaid a brithyllod y môr",
   "licence_type_radio_trout_three_rod": "Brithyllod a physgod bras, hyd at 3 gwialen",
