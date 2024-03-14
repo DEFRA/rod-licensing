@@ -1,4 +1,14 @@
 
+## v1.44.0-rc.0 (2024-03-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1926](https://github.com/DEFRA/rod-licensing/pull/1926) Warning message assistive text ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1915](https://github.com/DEFRA/rod-licensing/pull/1915) Cant access new prices page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.43.0-rc.3 (2024-03-08)
