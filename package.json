@@ -105,5 +105,8 @@
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "silent": true
+  },
+  "dependencies": {
+    "govuk-frontend": "5.2"
   }
 }
