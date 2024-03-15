@@ -10,7 +10,7 @@ describe('Recurring Payment Queries', () => {
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_recurringpayments',
         filter:
-           "Microsoft.Dynamics.CRM.On(PropertyName='defra_nextduedate', PropertyValue='Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)')",
+          "Microsoft.Dynamics.CRM.On(PropertyName='defra_nextduedate', PropertyValue='Wed Nov 08 2023 00:00:00 GMT+0000 (Greenwich Mean Time)')",
         select: [
           'defra_recurringpaymentid',
           'defra_name',
