@@ -1,7 +1,7 @@
 {% macro pricingSummary(selectors, content, subHeader, mssgs) %}
 <aside class="govuk-grid-column-one-third payment-summary-wrap">
     {% for selector, load in selectors %}
-    <div id="pricing-{{ selector }}" role="status" class="payment-summary initially-hidden">
+    <div id="pricing-{{ selector }}" role="status" aria-atomic="true" class="payment-summary initially-hidden">
         <h2 class="govuk-heading-m">{{ mssgs.no_licence_req_body }}</h2>
         <p class="govuk-body-s">{{ subHeader }}</p>
         <dl>
@@ -29,6 +29,11 @@
         </dl>
         {% for k, v in load %}
             {% if k === 'msg' %}
+                <div class="govuk-body-s pricing-summary-element-cost">
+                    {{content[v]}}
+                </div>
+            {% endif %}
+            {% if k === 'payment_msg' %}
                 <div class="govuk-body-s pricing-summary-element-cost">
                     {{content[v]}}
                 </div>

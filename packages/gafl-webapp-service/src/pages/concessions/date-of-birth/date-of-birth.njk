@@ -2,6 +2,8 @@
 
 {% from "date-input/macro.njk" import govukDateInput %}
 {% from "inset-text/macro.njk" import govukInsetText %}
+{% from "warning-text/macro.njk" import govukWarningText %}
+
 {% set title = mssgs.dob_title_you if data.isLicenceForYou else mssgs.dob_title_other %}
 {% set describedByTag = "date-of-birth-hint" %}
 
@@ -45,13 +47,10 @@
       {{ mssgs.dob_entry_hint }}
     </div>
 
-    <div class="govuk-warning-text">
-      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-      <strong class="govuk-warning-text__text">
-        <span class="govuk-warning-text__assistive">{{ mssgs.warning }}</span>
-        {{ mssgs.dob_privacy_link_prefix }} <a class="govuk-link" href="{{ _uri.privacy }}" rel="noreferrer noopener" target="_blank" >{{ mssgs.dob_privacy_link }}</a>.
-      </strong>
-    </div>
+    {{ govukWarningText({
+      html: mssgs.dob_privacy_link_prefix + '<a class="govuk-link" href="' + _uri.privacy + '" rel="noreferrer noopener" target="_blank">' + mssgs.dob_privacy_link + '</a>',
+      iconFallbackText: mssgs.warning
+    }) }}
 
     {{ govukDateInput({
       id: "date-of-birth",

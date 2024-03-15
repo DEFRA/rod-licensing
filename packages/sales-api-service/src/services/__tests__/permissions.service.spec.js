@@ -66,7 +66,7 @@ describe('permissions service', () => {
         }),
         'Telesales'
       )
-      const block1 = moment().add(1, 'year').subtract(1, 'day').endOf('day').format('HHDDMMYY')
+      const block1 = moment().subtract(1, 'day').add(1, 'year').endOf('day').format('HHDDMMYY')
       const expected = new RegExp(`^${block1}-1TS3FFT-[A-Z0-9]{5}[0-9]$`)
       expect(number).toMatch(expected)
     })
@@ -140,6 +140,12 @@ describe('permissions service', () => {
         const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate: startDate })
         expect(endDate).toEqual(expectedEndDate.toISOString())
       })
+    })
+
+    it('returns correct end date on leap year', async () => {
+      const startDate = moment('2024-02-29')
+      const endDate = await calculateEndDate({ permitId: 'e11b34a0-0c66-e611-80dc-c4346bad0190', startDate })
+      expect(endDate).toBe('2025-02-28T23:59:59.999Z')
     })
   })
 
