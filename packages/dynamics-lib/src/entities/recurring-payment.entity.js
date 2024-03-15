@@ -1,5 +1,6 @@
 import { BaseEntity, EntityDefinition } from './base.entity.js'
 import { Contact } from './contact.entity.js'
+import { Permission } from './permission.entity.js'
 
 /**
  * Recurring payment entity
@@ -10,16 +11,22 @@ export class RecurringPayment extends BaseEntity {
   static _definition = new EntityDefinition(() => ({
     localName: 'recurringPayment',
     dynamicsCollection: 'defra_recurringpayments',
-    defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_recurringpaymentid', type: 'string' },
-      referenceNumber: { field: 'defra_name', type: 'string' },
-      mandate: { field: 'defra_mandate', type: 'string' },
-      inceptionDay: { field: 'defra_inceptionday', type: 'integer' },
-      inceptionMonth: { field: 'defra_inceptionmonth', type: 'integer' }
+      name: { field: 'defra_name', type: 'string' },
+      status: { field: 'statecode', type: 'decimal' },
+      nextDueDate: { field: 'defra_nextduedate', type: 'datetime' },
+      cancelledDate: { field: 'defra_cancelleddate', type: 'datetime' },
+      cancelledReason: { field: 'defra_cancelledreason', type: 'optionset', ref: 'defra_cancelledreason' },
+      endDate: { field: 'defra_enddate', type: 'datetime' },
+      agreementId: { field: 'defra_agreementid', type: 'string' },
+      activePermission: { field: '_defra_activepermission_value', type: 'string' },
+      contactId: { field: '_defra_contact_value', type: 'string' },
+      publicId: { field: 'defra_publicid', type: 'string' }
     },
     relationships: {
-      payer: { property: 'defra_Contact', entity: Contact, parent: true }
+      contact: { property: 'defra_Contact', entity: Contact, parent: true },
+      activePermission: { property: 'defra_ActivePermission', entity: Permission, parent: true }
     }
   }))
 
@@ -32,52 +39,122 @@ export class RecurringPayment extends BaseEntity {
   }
 
   /**
-   * The reference number associated with the recurring payment
+   * The default name associated with the recurring payment
    * @type {string}
    */
-  get referenceNumber () {
-    return super._getState('referenceNumber')
+  get name () {
+    return super._getState('name')
   }
 
-  set referenceNumber (referenceNumber) {
-    super._setState('referenceNumber', referenceNumber)
+  set name (name) {
+    super._setState('name', name)
   }
 
   /**
-   * The mandate identifier associated with the recurring payment
+   * The date the recurring payment is due
+   * @type {datetime}
+   */
+  get nextDueDate () {
+    return super._getState('nextDueDate')
+  }
+
+  set nextDueDate (nextDueDate) {
+    super._setState('nextDueDate', nextDueDate)
+  }
+
+  /**
+   * The date the recurring payment was cancelled
+   * @type {datetime}
+   */
+  get cancelledDate () {
+    return super._getState('cancelledDate')
+  }
+
+  set cancelledDate (cancelledDate) {
+    super._setState('cancelledDate', cancelledDate)
+  }
+
+  /**
+   * The reason the recurring payment was cancelled
+   * @type {GlobalOptionSetDefinition}
+   */
+  get cancelledReason () {
+    return super._getState('cancelledReason')
+  }
+
+  set cancelledReason (cancelledReason) {
+    super._setState('cancelledReason', cancelledReason)
+  }
+
+  /**
+   * The end of the recurring payment
+   * @type {datetime}
+   */
+  get endDate () {
+    return super._getState('endDate')
+  }
+
+  set endDate (endDate) {
+    super._setState('endDate', endDate)
+  }
+
+  /**
+   * The agreement identification number
    * @type {string}
    */
-  get mandate () {
-    return super._getState('mandate')
+  get agreementId () {
+    return super._getState('agreementId')
   }
 
-  set mandate (mandate) {
-    super._setState('mandate', mandate)
-  }
-
-  /**
-   * The inception day associated with the recurring payment
-   * @type {integer}
-   */
-  get inceptionDay () {
-    return super._getState('inceptionDay')
-  }
-
-  set inceptionDay (inceptionDay) {
-    super._setState('inceptionDay', inceptionDay)
+  set agreementId (agreementId) {
+    super._setState('agreementId', agreementId)
   }
 
   /**
-   * The inception month associated with the recurring payment
-   * Note: Months are zero indexed, so January is month 0.
-   *
-   * @type {integer}
+   * Hash of the id
+   * @type {string}
    */
-  get inceptionMonth () {
-    return super._getState('inceptionMonth')
+  get publicId () {
+    return super._getState('publicId')
   }
 
-  set inceptionMonth (inceptionMonth) {
-    super._setState('inceptionMonth', inceptionMonth)
+  set publicId (publicId) {
+    super._setState('publicId', publicId)
+  }
+
+  /**
+   * The state code
+   * @type {decimal}
+   */
+  get status () {
+    return super._getState('status')
+  }
+
+  set status (status) {
+    super._setState('status', status)
+  }
+
+  /**
+   * The ID of the associated contact
+   * @type {string}
+   */
+  get contactId () {
+    return super._getState('contactId')
+  }
+
+  set contactId (contactId) {
+    super._setState('contactId', contactId)
+  }
+
+  /**
+   * The ID of the associated active permission
+   * @type {string}
+   */
+  get activePermission () {
+    return super._getState('activePermission')
+  }
+
+  set activePermission (activePermission) {
+    super._setState('activePermission', activePermission)
   }
 }
