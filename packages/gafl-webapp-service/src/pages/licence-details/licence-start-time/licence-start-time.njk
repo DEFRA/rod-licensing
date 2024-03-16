@@ -8,10 +8,9 @@
 
 {% block pageTitle %}
   {% if error %}
-    {{ mssgs.server_error_title_prefix }}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
-  {% else %}
-    {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+    {{ mssgs.server_error_title_prefix_hyphenated }}
   {% endif %}
+  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
 {% endblock %}
 
 {%

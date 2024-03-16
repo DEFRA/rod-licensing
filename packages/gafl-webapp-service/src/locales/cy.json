@@ -702,9 +702,8 @@
   "server_error_environment_agency_opening": "Dydd Llun i ddydd Gwener, 8am i 6pm (ac eithrio gwyliau cyhoeddus)",
   "server_error_environment_agency_telephone": "Ffôn: 0344 800 5386",
   "server_error_title": "Error - GOV.UK",
-
-  "server_error_title_prefix": "Gwall - ",
-
+  "server_error_title_prefix": "Gwall ",
+  "server_error_title_prefix_hyphenated": "Gwall - ",
   "server_error_try_again": "Gallai hyn fod oherwydd galw mawr am y gwasanaeth. Arhoswch ychydig funudau cyn rhoi eich manylion talu eto.",
   "server_error_unable_to_process_payment": "Mae’n ddrwg gennym, ni allwn brosesu eich taliad",
   "server_error_unable_to_retrieve_pay_details": "Nid oedd modd i ni ddod o hyd i’ch manylion talu’r tro hwn oherwydd problem annisgwyl gyda’r gwasanaeth. Arhoswch ychydig funudau a rhowch gynnig arall arni drwy glicio ar y botwm 'Cynnig arall' isod.",
