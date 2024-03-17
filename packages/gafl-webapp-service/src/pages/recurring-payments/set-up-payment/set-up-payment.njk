@@ -6,7 +6,13 @@
 {% from "radios/macro.njk" import govukRadios %}
 
 {% set title = mssgs.recurring_payment_set_up_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block pageTitle %}
+  {% if error %}
+    {{ mssgs.server_error_title_prefix_hyphenated }}
+  {% endif %}
+  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
