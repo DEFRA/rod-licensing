@@ -11,6 +11,14 @@ describe('call-recording-service', () => {
     process.env.TELESALES_ENDPOINT = 'endpoint'
     process.env.TELESALES_AUTH_USERNAME = 'username'
     process.env.TELESALES_AUTH_PASSWORD = 'password'
+
+    soapRequest.mockReturnValue({
+      response: {
+        headers: 'headers',
+        body: 'body',
+        statusCode: '200'
+      }
+    })
   })
   beforeEach(() => {
     jest.clearAllMocks()
@@ -33,6 +41,11 @@ describe('call-recording-service', () => {
       await pauseRecording('agent@example.com')
       expect(soapRequest.mock.calls[0][0].xml).toMatchSnapshot()
     })
+
+    it('logs the response code', async () => {
+      await pauseRecording('agent@example.com')
+      expect(debug).toHaveBeenCalledWith('Pause recording response code: %s', '200')
+    })
   })
 
   describe('resumeRecording', () => {
@@ -51,6 +64,11 @@ describe('call-recording-service', () => {
     it('sends a soap request with the correct xml', async () => {
       await resumeRecording('agent@example.com')
       expect(soapRequest.mock.calls[0][0].xml).toMatchSnapshot()
+    })
+
+    it('logs the response code', async () => {
+      await resumeRecording('agent@example.com')
+      expect(debug).toHaveBeenCalledWith('Resume recording response code: %s', '200')
     })
   })
 })
