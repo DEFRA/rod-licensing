@@ -1,6 +1,7 @@
 {% extends "layout.njk" %}
 
-{% block pageTitle %}{{ mssgs.refund_title }}{% endblock %}
+{% set title = mssgs.refund_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
