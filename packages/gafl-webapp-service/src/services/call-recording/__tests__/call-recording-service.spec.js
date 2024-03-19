@@ -51,6 +51,30 @@ describe('call-recording-service', () => {
       await pauseRecording('agent@example.com')
       expect(debug).toHaveBeenCalledWith('Pause recording response result: %s', 0)
     })
+
+    it('raises an error when the response code is not 200', async () => {
+      soapRequest.mockReturnValueOnce({
+        response: {
+          headers: 'headers',
+          body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>0</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
+          statusCode: '401'
+        }
+      })
+
+      await expect(pauseRecording('agent@example.com')).rejects.toThrow('Call request returned status code %s', '401')
+    })
+
+    it('raises an error when the result is not 0', async () => {
+      soapRequest.mockReturnValueOnce({
+        response: {
+          headers: 'headers',
+          body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>1</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
+          statusCode: '200'
+        }
+      })
+
+      await expect(pauseRecording('agent@example.com')).rejects.toThrow('Call request returned result code %s', 1)
+    })
   })
 
   describe('resumeRecording', () => {
@@ -79,6 +103,30 @@ describe('call-recording-service', () => {
     it('logs the result', async () => {
       await resumeRecording('agent@example.com')
       expect(debug).toHaveBeenCalledWith('Resume recording response result: %s', 0)
+    })
+
+    it('raises an error when the response code is not 200', async () => {
+      soapRequest.mockReturnValueOnce({
+        response: {
+          headers: 'headers',
+          body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>0</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
+          statusCode: '401'
+        }
+      })
+
+      await expect(resumeRecording('agent@example.com')).rejects.toThrow('Call request returned status code %s', '401')
+    })
+
+    it('raises an error when the result is not 0', async () => {
+      soapRequest.mockReturnValueOnce({
+        response: {
+          headers: 'headers',
+          body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>1</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
+          statusCode: '200'
+        }
+      })
+
+      await expect(resumeRecording('agent@example.com')).rejects.toThrow('Call request returned result code %s', 1)
     })
   })
 })

@@ -3,6 +3,8 @@ import { XMLBuilder, XMLParser } from 'fast-xml-parser'
 import db from 'debug'
 const debug = db('webapp:call-recording-service')
 
+class CallRecordingError extends Error {}
+
 export const pauseRecording = async agentEmail => {
   debug('Sending pause recording request to Storm for agentEmail: %s', agentEmail)
   const { statusCode, result } = await sendRequestToTelesales('pause', agentEmail)
@@ -76,9 +78,18 @@ const buildXml = async (action, agentEmail) => {
 
 const parseResponse = async response => {
   const { body, statusCode } = response
-  const parser = new XMLParser()
-  const parsedResponse = parser.parse(body)
-  const result = parsedResponse['soap:Envelope']['soap:Body']['cal:RecordingResponse']['cal:Result']
 
-  return { statusCode, result }
+  if (statusCode === '200') {
+    const parser = new XMLParser()
+    const parsedResponse = parser.parse(body)
+    const result = parsedResponse['soap:Envelope']['soap:Body']['cal:RecordingResponse']['cal:Result']
+
+    if (result === 0) {
+      return { statusCode, result }
+    } else {
+      throw new CallRecordingError('Call request returned result code %s', result)
+    }
+  } else {
+    throw new CallRecordingError('Call request returned status code %s', statusCode)
+  }
 }
