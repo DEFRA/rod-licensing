@@ -79,7 +79,7 @@ const buildXml = async (action, agentEmail) => {
 const parseResponse = async response => {
   const { body, statusCode } = response
 
-  if (statusCode === '200') {
+  if (statusCode === 200) {
     const parser = new XMLParser()
     const parsedResponse = parser.parse(body)
     const result = parsedResponse['soap:Envelope']['soap:Body']['cal:RecordingResponse']['cal:Result']

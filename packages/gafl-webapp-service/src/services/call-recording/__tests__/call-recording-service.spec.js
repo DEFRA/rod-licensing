@@ -16,7 +16,7 @@ describe('call-recording-service', () => {
       response: {
         headers: 'headers',
         body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>0</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
-        statusCode: '200'
+        statusCode: 200
       }
     })
   })
@@ -44,7 +44,7 @@ describe('call-recording-service', () => {
 
     it('logs the response code', async () => {
       await pauseRecording('agent@example.com')
-      expect(debug).toHaveBeenCalledWith('Pause recording response code: %s', '200')
+      expect(debug).toHaveBeenCalledWith('Pause recording response code: %s', 200)
     })
 
     it('logs the result', async () => {
@@ -57,7 +57,7 @@ describe('call-recording-service', () => {
         response: {
           headers: 'headers',
           body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>0</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
-          statusCode: '401'
+          statusCode: 401
         }
       })
 
@@ -69,7 +69,7 @@ describe('call-recording-service', () => {
         response: {
           headers: 'headers',
           body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>1</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
-          statusCode: '200'
+          statusCode: 200
         }
       })
 
@@ -97,7 +97,7 @@ describe('call-recording-service', () => {
 
     it('logs the response code', async () => {
       await resumeRecording('agent@example.com')
-      expect(debug).toHaveBeenCalledWith('Resume recording response code: %s', '200')
+      expect(debug).toHaveBeenCalledWith('Resume recording response code: %s', 200)
     })
 
     it('logs the result', async () => {
@@ -110,7 +110,7 @@ describe('call-recording-service', () => {
         response: {
           headers: 'headers',
           body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>0</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
-          statusCode: '401'
+          statusCode: 401
         }
       })
 
@@ -122,7 +122,7 @@ describe('call-recording-service', () => {
         response: {
           headers: 'headers',
           body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>1</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
-          statusCode: '200'
+          statusCode: 200
         }
       })
 
