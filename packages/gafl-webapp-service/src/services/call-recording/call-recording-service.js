@@ -1,18 +1,20 @@
 import soapRequest from 'easy-soap-request'
-import { XMLBuilder } from 'fast-xml-parser'
+import { XMLBuilder, XMLParser } from 'fast-xml-parser'
 import db from 'debug'
 const debug = db('webapp:call-recording-service')
 
 export const pauseRecording = async agentEmail => {
   debug('Sending pause recording request to Storm for agentEmail: %s', agentEmail)
-  const responseCode = await sendRequestToTelesales('pause', agentEmail)
-  debug('Pause recording response code: %s', responseCode)
+  const { statusCode, result } = await sendRequestToTelesales('pause', agentEmail)
+  debug('Pause recording response code: %s', statusCode)
+  debug('Pause recording response result: %s', result)
 }
 
 export const resumeRecording = async agentEmail => {
   debug('Sending resume recording request to Storm for agentEmail: %s', agentEmail)
-  const responseCode = await sendRequestToTelesales('resume', agentEmail)
-  debug('Resume recording response code: %s', responseCode)
+  const { statusCode, result } = await sendRequestToTelesales('resume', agentEmail)
+  debug('Resume recording response code: %s', statusCode)
+  debug('Resume recording response result: %s', result)
 }
 
 const sendRequestToTelesales = async (action, agentEmail) => {
@@ -73,10 +75,10 @@ const buildXml = async (action, agentEmail) => {
 }
 
 const parseResponse = async response => {
-  console.log(response)
-  const { headers, body, statusCode } = response
-  console.log(headers)
-  console.log(body)
-  console.log(statusCode)
-  return statusCode
+  const { body, statusCode } = response
+  const parser = new XMLParser()
+  const parsedResponse = parser.parse(body)
+  const result = parsedResponse['soap:Envelope']['soap:Body']['cal:RecordingResponse']['cal:Result']
+
+  return { statusCode, result }
 }

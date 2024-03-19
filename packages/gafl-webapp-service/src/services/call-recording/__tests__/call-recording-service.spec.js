@@ -15,7 +15,7 @@ describe('call-recording-service', () => {
     soapRequest.mockReturnValue({
       response: {
         headers: 'headers',
-        body: 'body',
+        body: '<soap:Envelope><soap:Body><cal:RecordingResponse><cal:Result>0</cal:Result></cal:RecordingResponse></soap:Body></soap:Envelope>',
         statusCode: '200'
       }
     })
@@ -46,6 +46,11 @@ describe('call-recording-service', () => {
       await pauseRecording('agent@example.com')
       expect(debug).toHaveBeenCalledWith('Pause recording response code: %s', '200')
     })
+
+    it('logs the result', async () => {
+      await pauseRecording('agent@example.com')
+      expect(debug).toHaveBeenCalledWith('Pause recording response result: %s', 0)
+    })
   })
 
   describe('resumeRecording', () => {
@@ -69,6 +74,11 @@ describe('call-recording-service', () => {
     it('logs the response code', async () => {
       await resumeRecording('agent@example.com')
       expect(debug).toHaveBeenCalledWith('Resume recording response code: %s', '200')
+    })
+
+    it('logs the result', async () => {
+      await resumeRecording('agent@example.com')
+      expect(debug).toHaveBeenCalledWith('Resume recording response result: %s', 0)
     })
   })
 })
