@@ -11,6 +11,7 @@ export class RecurringPayment extends BaseEntity {
   static _definition = new EntityDefinition(() => ({
     localName: 'recurringPayment',
     dynamicsCollection: 'defra_recurringpayments',
+    defaultFilter: 'statecode eq 0',
     mappings: {
       id: { field: 'defra_recurringpaymentid', type: 'string' },
       name: { field: 'defra_name', type: 'string' },
