@@ -28,10 +28,10 @@ describe('recurringPayReminderDisplay', () => {
 
 describe('validForRecurringPayment', () => {
   it.each([
-    [true, '12M', true, true, undefined],
-    [false, '8D', true, true, undefined],
-    [false, '12M', false, true, undefined],
-    [false, '12M', true, false, undefined],
+    [true, '12M', true, true, 'not telesales'],
+    [false, '8D', true, true, 'not telesales'],
+    [false, '12M', false, true, 'not telesales'],
+    [false, '12M', true, false, 'not telesales'],
     [false, '12M', true, true, 'telesales']
   ])(
     'should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s and journey is %s',
