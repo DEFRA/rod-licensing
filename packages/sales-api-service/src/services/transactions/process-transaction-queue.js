@@ -158,7 +158,7 @@ const processRecurringPayment = async transactionRecord => {
     recurringPayment.inceptionDay = inceptionMoment.date()
     recurringPayment.inceptionMonth = inceptionMoment.month()
     payer = await resolveContactPayload(transactionRecord.payment.recurring.payer)
-    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.payer, payer)
+    recurringPayment.bindToEntity(RecurringPayment.definition.relationships.contact, payer)
   }
   return { recurringPayment, payer }
 }
