@@ -134,6 +134,8 @@
                   errorMessage: { text: mssgs.enter_postcode } if error['postcode']
                 }) }}
 
+            {% endcall %}
+
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
@@ -142,7 +144,6 @@
                     classes: "govuk-!-margin-top-1"
                 }) }}
 
-            {% endcall %}
             {{ csrf() }}
         </form>
         <div>
