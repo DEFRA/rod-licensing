@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.2 (2024-03-19)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#1935](https://github.com/DEFRA/rod-licensing/pull/1935) Update dyncamics lib recurring payment ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.44.0-rc.0 (2024-03-14)
 

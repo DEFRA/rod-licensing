@@ -26,7 +26,7 @@ export * from './queries/permission.queries.js'
 export * from './queries/fulfilment.queries.js'
 export * from './queries/concession-proof.queries.js'
 export * from './queries/pocl-validation-error.queries.js'
-export * from './queries/recurring-payment.queries.js'
+export * from './queries/recurring-payments.queries.js'
 
 // Framework functionality
 export * from './client/util.js'
