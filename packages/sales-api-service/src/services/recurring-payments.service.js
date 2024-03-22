@@ -5,7 +5,7 @@ export const getRecurringPayments = date => executeQuery(findDueRecurringPayment
 /**
  * Process a recurring payment instruction
  * @param transactionRecord
- * @returns {Promise<{recurringPayment: null, contact: null}>}
+ * @returns {Promise<{recurringPayment: null}>}
  */
 export const processRecurringPayment = async (transactionRecord, contact) => {
   if (transactionRecord.payment?.recurring) {

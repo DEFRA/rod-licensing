@@ -66,7 +66,9 @@ export async function processQueue ({ id }) {
     )
 
     const { recurringPayment } = await processRecurringPayment(transactionRecord, contact)
-    recurringPayment && entities.push(recurringPayment)
+    if (recurringPayment) {
+      entities.push(recurringPayment)
+    }
 
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)

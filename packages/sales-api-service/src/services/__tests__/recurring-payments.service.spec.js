@@ -91,9 +91,8 @@ describe('recurring payments service', () => {
       dynamicsLib.executeQuery.mockResolvedValueOnce(mockRecurringPayments)
 
       const result = await getRecurringPayments(new Date())
-      const expected = getMockRPContactPermission(mockContact, mockPermission)
 
-      expect(result).toEqual([expected])
+      expect(result).toEqual([getMockRPContactPermission(mockContact, mockPermission)])
     })
 
     it('executeQuery is called with findDueRecurringPayments with a date', async () => {
