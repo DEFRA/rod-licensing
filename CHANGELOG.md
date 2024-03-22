@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.4 (2024-03-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1925](https://github.com/DEFRA/rod-licensing/pull/1925) Keyboard focus inconsistency ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.44.0-rc.3 (2024-03-22)
 
 #### :rocket: Enhancement
