@@ -7,8 +7,7 @@
 {% from "error-summary.njk" import errorSummary %}
 
 {% set title = mssgs.identify_title %}
-
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {%
     set errorMap = {
