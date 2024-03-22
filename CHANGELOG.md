@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.3 (2024-03-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1932](https://github.com/DEFRA/rod-licensing/pull/1932) NCCC users not see RCP option ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.44.0-rc.2 (2024-03-19)
 
 #### :rocket: Enhancement
