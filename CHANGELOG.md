@@ -1,4 +1,14 @@
 
+## v1.44.0-rc.5 (2024-03-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1937](https://github.com/DEFRA/rod-licensing/pull/1937) Ensuring page titles meet WCAG 2.1 criteria ([@lailien3](https://github.com/lailien3))
+  * [#1938](https://github.com/DEFRA/rod-licensing/pull/1938) Remove "Continue" button from within the fieldset ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.44.0-rc.4 (2024-03-22)
 
 #### :rocket: Enhancement
