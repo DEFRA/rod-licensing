@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.7 (2024-03-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1934](https://github.com/DEFRA/rod-licensing/pull/1934) Fix broken acceptance tests ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.44.0-rc.5 (2024-03-22)
 
