@@ -28,14 +28,19 @@ describe('recurringPayReminderDisplay', () => {
 
 describe('validForRecurringPayment', () => {
   it.each([
-    [true, '12M', true, true],
-    [false, '8D', true, true],
-    [false, '12M', false, true],
-    [false, '12M', true, false]
-  ])('should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s', (expected, length, licenceFor, recurring) => {
-    process.env.SHOW_RECURRING_PAYMENTS = recurring
-    const permission = getPermission({ licenceFor, length })
-    const result = validForRecurringPayment(permission)
-    expect(result).toEqual(expected)
-  })
+    [true, '12M', true, true, 'not telesales'],
+    [false, '8D', true, true, 'not telesales'],
+    [false, '12M', false, true, 'not telesales'],
+    [false, '12M', true, false, 'not telesales'],
+    [false, '12M', true, true, 'telesales']
+  ])(
+    'should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s and journey is %s',
+    (expected, length, licenceFor, recurring, telesales) => {
+      process.env.CHANNEL = telesales
+      process.env.SHOW_RECURRING_PAYMENTS = recurring
+      const permission = getPermission({ licenceFor, length })
+      const result = validForRecurringPayment(permission)
+      expect(result).toEqual(expected)
+    }
+  )
 })

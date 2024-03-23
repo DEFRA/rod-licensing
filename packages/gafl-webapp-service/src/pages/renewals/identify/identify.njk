@@ -10,6 +10,7 @@
 {% set title = mssgs.identify_title %}
 
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
+
 {%
     set errorMap = {
         'referenceNumber' : {
@@ -134,6 +135,8 @@
                   errorMessage: { text: mssgs.enter_postcode } if error['postcode']
                 }) }}
 
+            {% endcall %}
+
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
@@ -142,7 +145,6 @@
                     classes: "govuk-!-margin-top-1"
                 }) }}
 
-            {% endcall %}
             {{ csrf() }}
         </form>
         <div>

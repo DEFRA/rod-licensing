@@ -50,6 +50,8 @@
                   ]
                 }) }}
 
+            {% endcall %}
+
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
@@ -59,8 +61,7 @@
                 }) }}
             
             <p class="govuk-body no-print"><a class="govuk-link" href="{{ data.uri.single }}">{{ mssgs.recurring_payment_set_up_back }}</a></p>
-
-            {% endcall %}
+            
             {{ csrf() }}
         </form>
     </div>

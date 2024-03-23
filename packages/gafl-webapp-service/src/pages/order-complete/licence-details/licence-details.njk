@@ -6,7 +6,7 @@
 {% from "summary-list/macro.njk" import govukSummaryList %}
 
 {% set title = mssgs.licence_details_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% if data.permission.licenceLength === '1D' %}
     {% set lengthText = mssgs.licence_type_1d %}

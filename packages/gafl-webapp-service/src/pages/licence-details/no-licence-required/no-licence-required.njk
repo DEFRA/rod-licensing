@@ -22,13 +22,14 @@
               }
             }) %}
 
+            {% endcall %}
+
                 {{ govukButton({
                     text: mssgs.exit_service_button,
                     classes: "govuk-!-margin-top-6",
                     href: data.uri.servicePage
                 }) }}
-
-            {% endcall %}
+                
         </form>
     </div>
 </div>

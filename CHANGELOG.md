@@ -1,5 +1,65 @@
 
 
+## v1.44.0-rc.7 (2024-03-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1934](https://github.com/DEFRA/rod-licensing/pull/1934) Fix broken acceptance tests ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.44.0-rc.5 (2024-03-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1937](https://github.com/DEFRA/rod-licensing/pull/1937) Ensuring page titles meet WCAG 2.1 criteria ([@lailien3](https://github.com/lailien3))
+  * [#1938](https://github.com/DEFRA/rod-licensing/pull/1938) Remove "Continue" button from within the fieldset ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.44.0-rc.4 (2024-03-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1925](https://github.com/DEFRA/rod-licensing/pull/1925) Keyboard focus inconsistency ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.44.0-rc.3 (2024-03-22)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1932](https://github.com/DEFRA/rod-licensing/pull/1932) NCCC users not see RCP option ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.44.0-rc.2 (2024-03-19)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#1935](https://github.com/DEFRA/rod-licensing/pull/1935) Update dyncamics lib recurring payment ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.44.0-rc.0 (2024-03-14)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1926](https://github.com/DEFRA/rod-licensing/pull/1926) Warning message assistive text ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1915](https://github.com/DEFRA/rod-licensing/pull/1915) Cant access new prices page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
 ## v1.43.0-rc.3 (2024-03-08)
 
 #### :rocket: Enhancement

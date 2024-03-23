@@ -68,6 +68,8 @@
                     }) }}
                 {% endif %}
 
+            {% endcall %}
+
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
@@ -79,7 +81,7 @@
                 {% if data.paymentRequired %}
                     <span class="govuk-caption-m">{{ mssgs.terms_conds_pay_on_gov_uk }}</span>
                 {% endif %}
-            {% endcall %}
+
             {{ csrf() }}
         </form>
     </div>
