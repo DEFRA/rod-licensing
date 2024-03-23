@@ -1,16 +1,12 @@
 {% extends "standard-form.njk" %}
 {% from "input/macro.njk" import govukInput %}
 {% from "radios/macro.njk" import govukRadios %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.newsletter_title %}
 {% set emailError = mssgs.newsletter_error_set_email %}
 
-{% block pageTitle %}
-  {% if error %}
-    {{ mssgs.server_error_title_prefix_hyhenated }}
-  {% endif %}
-  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
-{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% set errorMap = {
        'newsletter' : {

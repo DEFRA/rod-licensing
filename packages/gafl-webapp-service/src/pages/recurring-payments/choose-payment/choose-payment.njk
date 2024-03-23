@@ -1,14 +1,10 @@
 {% extends "standard-form.njk" %}
 {% from "radios/macro.njk" import govukRadios %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.choose_payment_heading %}
 
-{% block pageTitle %}
-  {% if error %}
-    {{ mssgs.server_error_title_prefix_hyphenated }}
-  {% endif %}
-  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
-{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% set errorMsg = mssgs.choose_payment_error %}
 

@@ -3,13 +3,9 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary.njk" import errorSummary %}
+{% from "page-title.njk" import pageTitle %}
 
-{% block pageTitle %}
-  {% if error %}
-    {{ mssgs.server_error_title_prefix_hyphenated }}
-  {% endif %}
-  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
-{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

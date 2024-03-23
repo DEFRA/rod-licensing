@@ -2,18 +2,14 @@
 {% from "radios/macro.njk" import govukRadios %}
 {% from "input/macro.njk" import govukInput %}
 {% from "warning-text/macro.njk" import govukWarningText %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = data.title %}
 {% set errorMsg = data.errorMessage %}
 {% set emailError = mssgs.important_info_contact_error_email %}
 {% set mobileError = mssgs.important_info_contact_error_mobile %}
 
-{% block pageTitle %}
-  {% if error %}
-    {{ mssgs.server_error_title_prefix_hyphenated }}
-  {% endif %}
-  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
-{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% set errorMap = {
         'how-contacted': {
