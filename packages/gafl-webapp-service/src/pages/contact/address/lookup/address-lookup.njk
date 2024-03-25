@@ -4,6 +4,7 @@
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "input/macro.njk" import govukInput %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.address_lookup_title_you if data.isLicenceForYou else mssgs.address_lookup_title_other %}
 {% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -66,15 +67,16 @@
                   errorMessage: { text: mssgs.address_lookup_error_empty_postcode } if error['postcode']
                 }) }}
 
-                {{ govukButton({
-                    attributes: { id: 'continue' },
-                    preventDoubleClick: true,
-                    name: "continue",
-                    text: mssgs.continue,
-                    classes: "govuk-!-margin-top-5"
-                }) }}
-
             {% endcall %}
+
+            {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: mssgs.continue,
+                classes: "govuk-!-margin-top-5"
+            }) }}
+
             <p class="govuk-body-m">
                 <a class="govuk-link" href="{{ data.uri.entryPage }}">{{ mssgs.address_lookup_manually_enter_you if data.isLicenceForYou else mssgs.address_lookup_manually_enter_other }}</a>
             </p>

@@ -1,7 +1,8 @@
 {% extends "layout.njk" %}
 {% from "table/macro.njk" import govukTable %}
 
-{% block pageTitle %}{{ mssgs.cookies_title }}{% endblock %}
+{% set title = mssgs.cookies_title %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">

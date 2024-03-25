@@ -25,7 +25,7 @@
     <p class="govuk-body-m">
         {{ data.addresses.length }} {{ mssgs.address_select_link if data.addresses.length === 1 else mssgs.address_select_addresses }} {{ mssgs.address_select_found_for }}
         {{ data.searchTerms.premises }}{{ mssgs.and }}{{ data.searchTerms.postcode }}&nbsp;&nbsp;
-        <a href="{{ data.lookupPage }}">
+        <a class="govuk-link" href="{{ data.lookupPage }}">
             {{ mssgs.licence_summary_change }}<span class="govuk-visually-hidden">{{ mssgs.address_select_link }}</span>
         </a>
     </p>

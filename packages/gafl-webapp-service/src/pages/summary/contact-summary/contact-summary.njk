@@ -5,7 +5,7 @@
 {% from "button/macro.njk" import govukButton %}
 
 {% set title = mssgs.contact_summary_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set licenseeDetailsSummary %}
     {% call govukFieldset({
