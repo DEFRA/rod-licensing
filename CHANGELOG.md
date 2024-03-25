@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.9 (2024-03-25)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1930](https://github.com/DEFRA/rod-licensing/pull/1930) Adding in “Error” prefix in titles ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.44.0-rc.7 (2024-03-22)
 
