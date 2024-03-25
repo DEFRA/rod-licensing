@@ -2,9 +2,10 @@
 {% from "radios/macro.njk" import govukRadios %}
 
 {% set title = mssgs.choose_payment_heading %}
-{% block pageTitle %}{{ mssgs.choose_payment_title }}{% endblock %}
-
+{% set describedByTag = "recurring-payment-hint" %}
 {% set errorMsg = mssgs.choose_payment_error %}
+
+{% block pageTitle %}{{ mssgs.choose_payment_title }}{% endblock %}
 
 {% set errorMap = {
         'recurring-payment': {

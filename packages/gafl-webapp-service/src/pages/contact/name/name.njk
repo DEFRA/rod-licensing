@@ -2,6 +2,7 @@
 {% from "input/macro.njk" import govukInput %}
 
 {% set title = mssgs.name_title_you if data.isLicenceForYou else mssgs.name_title_other %}
+{% set describedByTag = "first-name-hint" %}
 
 {% set errorMap = {
         'first-name': {
