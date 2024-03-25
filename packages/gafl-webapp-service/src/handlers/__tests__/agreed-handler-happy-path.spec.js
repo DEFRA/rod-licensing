@@ -14,6 +14,7 @@ import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
+import { pauseRecording, resumeRecording } from '../../services/call-recording/call-recording-service.js'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -32,6 +33,7 @@ afterAll(() => {
 })
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('../../services/call-recording/call-recording-service.js')
 mockSalesApi()
 
 const paymentStatusSuccess = cost => ({
@@ -171,6 +173,45 @@ describe('The agreed handler', () => {
       const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
       expect(response.statusCode).toBe(200)
     })
+
+    describe('call recording', () => {
+      describe('in telesales mode', () => {
+        beforeEach(() => {
+          process.env.CHANNEL = 'telesales'
+        })
+        afterEach(() => {
+          delete process.env.CHANNEL
+        })
+
+        it('requests to pause call recording', async () => {
+          const authEmail = Symbol('foo@example.com')
+          const mockRequest = getMockRequest(journey.transactionResponse.cost, false, authEmail)
+          await agreedHandler(mockRequest, getRequestToolkit())
+          expect(pauseRecording).toHaveBeenCalledWith(authEmail)
+        })
+
+        it('requests to resume call recording', async () => {
+          const authEmail = Symbol('foo@example.com')
+          const mockRequest = getMockRequest(journey.transactionResponse.cost, true, authEmail)
+          await agreedHandler(mockRequest, getRequestToolkit())
+          expect(resumeRecording).toHaveBeenCalledWith(authEmail)
+        })
+      })
+
+      describe('not in telesales mode', () => {
+        it('does not request to pause call recording', async () => {
+          const mockRequest = getMockRequest(journey.transactionResponse.cost)
+          await agreedHandler(mockRequest, getRequestToolkit())
+          expect(pauseRecording).not.toHaveBeenCalled()
+        })
+
+        it('does not request to resume call recording', async () => {
+          const mockRequest = getMockRequest(journey.transactionResponse.cost, true)
+          await agreedHandler(mockRequest, getRequestToolkit())
+          expect(resumeRecording).not.toHaveBeenCalled()
+        })
+      })
+    })
   })
 
   describe.each([
@@ -239,6 +280,39 @@ describe('The agreed handler', () => {
       const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
       expect(response.statusCode).toBe(200)
     })
+
+    describe('call recording', () => {
+      describe('in telesales mode', () => {
+        beforeEach(() => {
+          process.env.CHANNEL = 'telesales'
+        })
+        afterEach(() => {
+          delete process.env.CHANNEL
+        })
+
+        it('does not request to pause call recording', async () => {
+          await agreedHandler(getMockRequest(), getRequestToolkit())
+          expect(pauseRecording).not.toHaveBeenCalled()
+        })
+
+        it('does not request to resume call recording', async () => {
+          await agreedHandler(getMockRequest(), getRequestToolkit())
+          expect(resumeRecording).not.toHaveBeenCalled()
+        })
+      })
+
+      describe('not in telesales mode', () => {
+        it('does not request to pause call recording', async () => {
+          await agreedHandler(getMockRequest(), getRequestToolkit())
+          expect(pauseRecording).not.toHaveBeenCalled()
+        })
+
+        it('does not request to resume call recording', async () => {
+          await agreedHandler(getMockRequest(), getRequestToolkit())
+          expect(resumeRecording).not.toHaveBeenCalled()
+        })
+      })
+    })
   })
 
   describe('finalised transactions', () => {
@@ -266,28 +340,6 @@ describe('The agreed handler', () => {
       expect(response.headers.location).toHaveValidPathFor(ORDER_COMPLETE.uri)
     })
 
-    const getMockRequest = (overrides = {}) => ({
-      cache: () => ({
-        helpers: {
-          transaction: {
-            get: async () => ({ cost: 0 })
-          },
-          status: {
-            get: async () => ({
-              [COMPLETION_STATUS.agreed]: true,
-              [COMPLETION_STATUS.posted]: true,
-              [COMPLETION_STATUS.finalised]: true
-            })
-          },
-          ...overrides
-        }
-      })
-    })
-
-    const getRequestToolkit = () => ({
-      redirectWithLanguageCode: jest.fn()
-    })
-
     it('calls redirect correctly', async () => {
       const requestToolkit = getRequestToolkit()
       const mockRequest = getMockRequest()
@@ -296,5 +348,52 @@ describe('The agreed handler', () => {
 
       expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
     })
+  })
+
+  const getMockRequest = (cost = 0, paymentCreated = false, authEmail) => ({
+    cache: () => ({
+      helpers: {
+        transaction: {
+          get: async () => ({
+            cost,
+            permissions: [
+              {
+                licensee: {}
+              }
+            ],
+            payment: {
+              payment_id: 1
+            }
+          }),
+          set: async () => ({})
+        },
+        status: {
+          get: async () => ({
+            [COMPLETION_STATUS.agreed]: true,
+            [COMPLETION_STATUS.posted]: true,
+            [COMPLETION_STATUS.finalised]: true,
+            [COMPLETION_STATUS.paymentCreated]: paymentCreated
+          }),
+          set: async () => ({})
+        }
+      }
+    }),
+    auth: {
+      credentials: {
+        email: authEmail
+      }
+    },
+    headers: { 'x-forwarded-proto': 'https' },
+    i18n: {
+      getCatalog: () => []
+    },
+    info: { host: 'localhost:1234' },
+    server: { info: { protocol: '' } },
+    url: { search: '' }
+  })
+
+  const getRequestToolkit = () => ({
+    redirect: jest.fn(),
+    redirectWithLanguageCode: jest.fn()
   })
 })

@@ -15,6 +15,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { sendPayment, getPaymentStatus } from '../services/payment/govuk-pay-service.js'
 import { preparePayment } from '../processors/payment.js'
+import { pauseRecording, resumeRecording } from '../services/call-recording/call-recording-service.js'
 import { COMPLETION_STATUS } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
@@ -231,6 +232,9 @@ export default async (request, h) => {
 
   // The payment section is ignored for zero cost transactions
   if (transaction.cost > 0) {
+    if (process.env.CHANNEL === 'telesales') {
+      await pauseRecording(request.auth.credentials.email)
+    }
     // Send the transaction to the GOV.UK payment API and process the response
     if (!status[COMPLETION_STATUS.paymentCreated]) {
       await createPayment(request, transaction, status)
@@ -252,5 +256,8 @@ export default async (request, h) => {
   }
 
   // If we are here we have completed
+  if (transaction.cost > 0 && process.env.CHANNEL === 'telesales') {
+    await resumeRecording(request.auth.credentials.email)
+  }
   return h.redirectWithLanguageCode(ORDER_COMPLETE.uri)
 }
