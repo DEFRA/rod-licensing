@@ -5,9 +5,11 @@
 {% from "date-input/macro.njk" import govukDateInput %}
 {% from "input/macro.njk" import govukInput %}
 {% from "error-summary.njk" import errorSummary %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.identify_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {%
     set errorMap = {

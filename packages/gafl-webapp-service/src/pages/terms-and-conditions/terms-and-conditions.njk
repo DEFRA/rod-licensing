@@ -5,9 +5,11 @@
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 {% from "error-summary.njk" import errorSummary %}
 {% from "warning-text/macro.njk" import govukWarningText %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.terms_conds_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {%
     set errorMap = {

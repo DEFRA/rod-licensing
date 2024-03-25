@@ -4,9 +4,11 @@
 {% from "checkboxes/macro.njk" import govukCheckboxes %}
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "radios/macro.njk" import govukRadios %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.recurring_payment_set_up_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
