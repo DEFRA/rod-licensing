@@ -1,0 +1,6 @@
+{% macro pageTitle(title, error, mssgs) %}
+  {% if error %}
+    {{ mssgs.server_error_title_prefix_hyphenated }}
+  {% endif %}
+  {{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}
+{% endmacro %}

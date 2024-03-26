@@ -12,4 +12,5 @@ export const recurringPayReminderDisplay = (permission, mssgs) => {
 export const validForRecurringPayment = permission =>
   process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
   permission.licenceLength === '12M' &&
-  permission.isLicenceForYou
+  permission.isLicenceForYou &&
+  process.env.CHANNEL?.toLowerCase() !== 'telesales'
