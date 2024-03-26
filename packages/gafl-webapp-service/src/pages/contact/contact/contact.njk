@@ -9,8 +9,6 @@
 {% set emailError = mssgs.important_info_contact_error_email %}
 {% set mobileError = mssgs.important_info_contact_error_mobile %}
 
-{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
-
 {% set errorMap = {
         'how-contacted': {
             'any.required': { ref: '#how-contacted', text: errorMsg }
