@@ -5,7 +5,7 @@
 {% from "inset-text/macro.njk" import govukInsetText %}
 
 {% set title = mssgs.address_entry_you if data.isLicenceForYou else mssgs.address_entry_other %}
-
+{% set describedByTag = "premises-hint postcode-hint" %}
 {% set countries = [] %}
 
 {% for country in data.countries %}

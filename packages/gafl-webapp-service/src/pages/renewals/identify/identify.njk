@@ -64,6 +64,7 @@
         {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
         <form method="post" class="govuk-!-margin-bottom-6">
             {% call govukFieldset({
+              describedBy: "ref-hint date-of-birth-hint postcode-hint",
               legend: {
                 text: title,
                 classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",

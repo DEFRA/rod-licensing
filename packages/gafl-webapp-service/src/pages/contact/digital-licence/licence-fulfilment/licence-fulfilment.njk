@@ -3,6 +3,7 @@
 {% from "notification-banner.njk" import notificationBanner %}
 
 {% set title = mssgs['licence_fulfilment_title_' + data.youOrOther] %}
+{% set describedByTag = "licence-option-item-hint licence-option-2-item-hint" %}
 
 {% set errorMap = {
         'licence-option': {
