@@ -8,7 +8,7 @@
 {% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.terms_conds_title %}
-{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {%
     set errorMap = {
