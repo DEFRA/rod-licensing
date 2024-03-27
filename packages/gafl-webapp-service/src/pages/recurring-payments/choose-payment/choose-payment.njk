@@ -5,7 +5,7 @@
 {% set describedByTag = "recurring-payment-hint" %}
 {% set errorMsg = mssgs.choose_payment_error %}
 
-{% block pageTitle %}{{ mssgs.choose_payment_title }}{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% set errorMap = {
         'recurring-payment': {
