@@ -3,7 +3,8 @@
 {% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.choose_payment_heading %}
-{% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
+
+{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% set errorMsg = mssgs.choose_payment_error %}
 
