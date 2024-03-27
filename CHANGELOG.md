@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.11 (2024-03-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1939](https://github.com/DEFRA/rod-licensing/pull/1939) Associating hint text with the field set ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.44.0-rc.10 (2024-03-27)
 
 #### :rocket: Enhancement
