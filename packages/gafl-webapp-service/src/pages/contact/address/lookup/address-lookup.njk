@@ -7,6 +7,7 @@
 {% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.address_lookup_title_you if data.isLicenceForYou else mssgs.address_lookup_title_other %}
+
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {% set errorMap = {
