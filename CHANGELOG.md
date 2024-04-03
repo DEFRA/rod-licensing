@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.12 (2024-04-03)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#1909](https://github.com/DEFRA/rod-licensing/pull/1909) Implement recurring payments ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.44.0-rc.11 (2024-03-27)
 
 #### :rocket: Enhancement
