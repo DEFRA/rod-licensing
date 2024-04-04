@@ -1,4 +1,13 @@
 
+## v1.44.0-rc.13 (2024-04-04)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1942](https://github.com/DEFRA/rod-licensing/pull/1942) https://eaflood.atlassian.net/browse/IWTF-4063 ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.44.0-rc.12 (2024-04-03)
 
 #### :rocket: Enhancement
