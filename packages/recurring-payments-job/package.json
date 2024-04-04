@@ -1,0 +1,42 @@
+{
+  "name": "@defra-fish/recurring-payments-job",
+  "version": "1.44.0-rc.12",
+  "description": "Rod Licensing Recurring Payments Job",
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "keywords": [
+    "rod",
+    "licensing",
+    "recurring",
+    "payments",
+    "job"
+  ],
+  "author": "DEFRA",
+  "license": "SEE LICENSE IN LICENSE",
+  "main": "src/recurring-payments-job.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/DEFRA/rod-licensing.git",
+    "directory": "packages/recurring-payments-job"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "start": "node src/recurring-payments-job.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@defra-fish/connectors-lib": "1.37.0-rc.2",
+    "commander": "^7.2.0"
+  }
+}

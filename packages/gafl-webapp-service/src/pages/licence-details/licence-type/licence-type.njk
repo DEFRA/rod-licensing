@@ -4,6 +4,7 @@
 {% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
 
 {% set title = mssgs.licence_type_title_you if data.isLicenceForYou else mssgs.licence_type_title_other %}
+{% set describedByTag = "selector-salmon-and-sea-trout-item-hint" %}
 
 {%
     set errorMap = {

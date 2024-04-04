@@ -33,6 +33,8 @@
                 {% endif %}
                 <p class="govuk-body-m">{{ mssgs.payment_failed_not_taken }}</p>
 
+            {% endcall %}
+
                 {{ govukButton({
                     attributes: { id: 'continue' },
                     preventDoubleClick: true,
@@ -40,7 +42,6 @@
                     text: mssgs.try_payment_again,
                     classes: "govuk-!-margin-top-5"
                 }) }}
-            {% endcall %}
 
             {{ csrf() }}
         </form>

@@ -2,7 +2,9 @@
 
 {% from "radios/macro.njk" import govukRadios %}
 {% from "date-input/macro.njk" import govukDateInput %}
+
 {% set title = mssgs.licence_start_title_you if data.isLicenceForYou else mssgs.licence_start_title_other %}
+{% set describedByTag = "licence-start-date-hint" %}
 
 {%
     set errorMap = {
