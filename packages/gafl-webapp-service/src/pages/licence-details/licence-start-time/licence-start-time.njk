@@ -3,10 +3,11 @@
 {% from "fieldset/macro.njk" import govukFieldset %}
 {% from "button/macro.njk" import govukButton %}
 {% from "error-summary.njk" import errorSummary %}
+{% from "page-title.njk" import pageTitle %}
 
 {% set title = mssgs.licence_start_time_title + data.startDateStr %}
 
-{% block pageTitle %}{{ title }}{{ mssgs.gov_uk }}{% endblock %}
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
 {%
     set errorMap = {
