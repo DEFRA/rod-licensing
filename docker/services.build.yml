@@ -82,3 +82,12 @@ services:
     build:
       <<: *common-build-options
       dockerfile: packages/sqs-receiver-service/${PROJECT_DOCKERFILE:-Dockerfile}
+
+  ##############################################################################################################
+  # rod-licensing recurring_payments_job
+  ##############################################################################################################
+  recurring_payments_job:
+    image: rod_licensing/recurring_payments_job:${TAG:-latest}
+    build:
+      <<: *common-build-options
+      dockerfile: packages/recurring-payments-job/${PROJECT_DOCKERFILE:-Dockerfile}
