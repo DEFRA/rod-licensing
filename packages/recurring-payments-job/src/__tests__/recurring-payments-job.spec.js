@@ -21,7 +21,25 @@ describe('recurring-payments-job', () => {
   })
 
   it('should set up rpJob command with action to process recurring payments', () => {
-    recurringPaymentsJob.action()
+    recurringPaymentsJob()
+
     expect(processRecurringPayments).toHaveBeenCalled()
+  })
+
+  it('should not call setTimeout if no delay', () => {
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
+
+    recurringPaymentsJob()
+
+    expect(setTimeoutSpy).not.toBeCalled()
+  })
+
+  it('should call setTimeout with the correct delay', () => {
+    process.env.RECURRING_PAYMENTS_LOCAL_DELAY = 5
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
+
+    recurringPaymentsJob()
+
+    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY, 10) * 1000)
   })
 })
