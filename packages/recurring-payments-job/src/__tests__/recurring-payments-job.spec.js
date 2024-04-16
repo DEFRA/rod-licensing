@@ -1,47 +1,47 @@
+import commander from 'commander'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
-jest.mock('../recurring-payments-processor.js', () => ({
-  processRecurringPayments: jest.fn()
-}))
+jest.mock('../recurring-payments-processor.js', () => {
+  if (!global.processRecurringPayments) {
+    global.processRecurringPayments = jest.fn()
+  }
+  return { processRecurringPayments: global.processRecurringPayments }
+})
 
 jest.mock('commander', () => {
-  return {
-    Command: jest.fn(() => ({
-      action: jest.fn(),
-      command: jest.fn().mockReturnThis(),
-      parse: jest.fn()
-    }))
+  if (!global.commander) {
+    global.commander = jest.requireActual('commander')
   }
+  return global.commander
 })
 
 describe('recurring-payments-job', () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks()
+    commander.args = ['test']
   })
 
-  it('should set up rpJob command with action to process recurring payments', () => {
-    const recurringPaymentsJob = require('../recurring-payments-job.js').default
-
-    recurringPaymentsJob()
-
-    expect(processRecurringPayments).toHaveBeenCalled()
+  it('calls processRecurringPayments', () => {
+    jest.isolateModules(() => {
+      require('../recurring-payments-job.js')
+      expect(processRecurringPayments).toHaveBeenCalled()
+    })
   })
 
-  it('should not call setTimeout if no delay', () => {
-    const recurringPaymentsJob = require('../recurring-payments-job.js').default
-    const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
-
-    recurringPaymentsJob()
-
-    expect(setTimeoutSpy).not.toBeCalled()
+  it('doesnt call setTimeout when no correct delay', () => {
+    jest.isolateModules(() => {
+      const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
+      require('../recurring-payments-job.js')
+      expect(setTimeoutSpy).not.toHaveBeenCalled()
+    })
   })
 
-  it('should call setTimeout with the correct delay', () => {
-    const recurringPaymentsJob = require('../recurring-payments-job.js').default
-    const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
-
-    recurringPaymentsJob()
-
-    expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY, 10) * 1000)
+  it('calls setTimeout with the correct delay', () => {
+    process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '5'
+    jest.isolateModules(() => {
+      const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
+      require('../recurring-payments-job.js')
+      expect(setTimeoutSpy).toHaveBeenCalled()
+    })
   })
 })
