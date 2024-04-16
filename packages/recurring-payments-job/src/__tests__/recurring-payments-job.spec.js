@@ -1,6 +1,8 @@
 import commander from 'commander'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
+jest.useFakeTimers()
+
 jest.mock('../recurring-payments-processor.js', () => {
   if (!global.processRecurringPayments) {
     global.processRecurringPayments = jest.fn()
@@ -21,7 +23,7 @@ describe('recurring-payments-job', () => {
     commander.args = ['test']
   })
 
-  it('calls processRecurringPayments', () => {
+  it('calls processRecurringPayments when no delay', () => {
     jest.isolateModules(() => {
       require('../recurring-payments-job.js')
       expect(processRecurringPayments).toHaveBeenCalled()
@@ -33,6 +35,15 @@ describe('recurring-payments-job', () => {
       const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
       require('../recurring-payments-job.js')
       expect(setTimeoutSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  it('calls processRecurringPayments when delay', () => {
+    process.env.RECURRING_PAYMENTS_LOCAL_DELAY = '5'
+    jest.isolateModules(() => {
+      require('../recurring-payments-job.js')
+      jest.advanceTimersByTime(parseInt(process.env.RECURRING_PAYMENTS_LOCAL_DELAY) * 1000)
+      expect(processRecurringPayments).toHaveBeenCalled()
     })
   })
 
