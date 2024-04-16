@@ -1,4 +1,3 @@
-import recurringPaymentsJob from '../recurring-payments-job.js'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
 jest.mock('../recurring-payments-processor.js', () => ({
@@ -21,12 +20,15 @@ describe('recurring-payments-job', () => {
   })
 
   it('should set up rpJob command with action to process recurring payments', () => {
+    const recurringPaymentsJob = require('../recurring-payments-job.js').default
+
     recurringPaymentsJob()
 
     expect(processRecurringPayments).toHaveBeenCalled()
   })
 
   it('should not call setTimeout if no delay', () => {
+    const recurringPaymentsJob = require('../recurring-payments-job.js').default
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
 
     recurringPaymentsJob()
@@ -35,7 +37,7 @@ describe('recurring-payments-job', () => {
   })
 
   it('should call setTimeout with the correct delay', () => {
-    process.env.RECURRING_PAYMENTS_LOCAL_DELAY = 5
+    const recurringPaymentsJob = require('../recurring-payments-job.js').default
     const setTimeoutSpy = jest.spyOn(global, 'setTimeout')
 
     recurringPaymentsJob()
