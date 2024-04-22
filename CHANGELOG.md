@@ -1,4 +1,13 @@
 
+## v1.45.0-rc.0 (2024-04-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1945](https://github.com/DEFRA/rod-licensing/pull/1945) Fixing privacy title discrepancy ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.44.0-rc.13 (2024-04-04)
 
