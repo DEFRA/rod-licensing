@@ -1,4 +1,13 @@
 
+## v1.45.0-rc.1 (2024-04-23)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#1946](https://github.com/DEFRA/rod-licensing/pull/1946) RP job local failure ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.45.0-rc.0 (2024-04-22)
 
 #### :bug: Bug Fix
