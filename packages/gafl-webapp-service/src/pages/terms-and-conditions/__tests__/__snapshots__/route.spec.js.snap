@@ -1,23 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`terms-and-conditions get data content returns correct when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals true 1`] = `
+exports[`terms-and-conditions get data content returns correct data not matching notify when date is before FULFILMENT_SWITCHOVER_DATE  1`] = `
 Object {
-  "agree": "Notify Agree",
-  "body": "Notify self body",
-  "bulletpointFive": "Notify self bulletpoint 5",
-  "bulletpointFourLink": "Notify self bulletpoint 4 link",
-  "bulletpointFourPartOne": "Notify self bulletpoint 4 part 1",
-  "bulletpointFourPartTwo": "Notify self bulletpoint 4 part 2",
-  "bulletpointOne": "Notify self bulletpoint 1",
-  "bulletpointSix": "Notify self bulletpoint 6",
-  "bulletpointSixLink": "Notify self bulletpoint 6 link",
-  "bulletpointThree": "Notify self bulletpoint 3",
-  "bulletpointTwo": "Notify self bulletpoint 2",
-  "title": "Notify self title",
+  "agree": "Agree",
+  "body": undefined,
+  "bulletpointFive": "Bulletpoint 5",
+  "bulletpointFourLink": "Bulletpoint 4 link",
+  "bulletpointFourPartOne": "Bulletpoint 4 part 1",
+  "bulletpointFourPartTwo": "Bulletpoint 4 part 2",
+  "bulletpointOne": "Bulletpoint 1",
+  "bulletpointThree": "Bulletpoint 3",
+  "bulletpointTwo": "Bulletpoint 2",
+  "title": "Title",
 }
 `;
 
-exports[`terms-and-conditions get data content returns correct when date is not after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals false 1`] = `
+exports[`terms-and-conditions get data content returns notify content when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals false 1`] = `
 Object {
   "agree": "Notify Agree",
   "body": "Notify bobo body",
@@ -31,5 +29,22 @@ Object {
   "bulletpointThree": "Notify bobo bulletpoint 3",
   "bulletpointTwo": "Notify bobo bulletpoint 2",
   "title": "Notify bobo title",
+}
+`;
+
+exports[`terms-and-conditions get data content returns notify content when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals true 1`] = `
+Object {
+  "agree": "Notify Agree",
+  "body": "Notify self body",
+  "bulletpointFive": "Notify self bulletpoint 5",
+  "bulletpointFourLink": "Notify self bulletpoint 4 link",
+  "bulletpointFourPartOne": "Notify self bulletpoint 4 part 1",
+  "bulletpointFourPartTwo": "Notify self bulletpoint 4 part 2",
+  "bulletpointOne": "Notify self bulletpoint 1",
+  "bulletpointSix": "Notify self bulletpoint 6",
+  "bulletpointSixLink": "Notify self bulletpoint 6 link",
+  "bulletpointThree": "Notify self bulletpoint 3",
+  "bulletpointTwo": "Notify self bulletpoint 2",
+  "title": "Notify self title",
 }
 `;

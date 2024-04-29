@@ -134,16 +134,19 @@ describe('terms-and-conditions get data', () => {
     expect(afterFulfilmentSwitchover).toEqual(expected)
   })
 
-  it.each([
-    ['is', true],
-    ['is not', false]
-  ])(
-    'content returns correct when date %s after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals %s',
-    async (fulfilmentDate, licenceForYou) => {
+  it.each([[true], [false]])(
+    'content returns notify content when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals %s',
+    async licenceForYou => {
       jest.useFakeTimers().setSystemTime(new Date('2024-06-01T23:00:00.000Z'))
 
       const { content } = await getData(getMockRequest({ isLicenceForYou: licenceForYou }))
       expect(content).toMatchSnapshot()
     }
   )
+
+  it('content returns correct data not matching notify when date is before FULFILMENT_SWITCHOVER_DATE ', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2024-04-01T23:00:00.000Z'))
+    const { content } = await getData(getMockRequest())
+    expect(content).toMatchSnapshot()
+  })
 })
