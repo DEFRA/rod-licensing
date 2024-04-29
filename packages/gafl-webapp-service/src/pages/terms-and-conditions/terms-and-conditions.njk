@@ -7,7 +7,7 @@
 {% from "warning-text/macro.njk" import govukWarningText %}
 {% from "page-title.njk" import pageTitle %}
 
-{% set title = mssgs.terms_conds_title %}
+{% set title = data.title %}
 
 {% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
 
@@ -35,19 +35,23 @@
               }
             }) %}
 
-            <div class="govuk-!-margin-bottom-9">
-                <p class="govuk-body">{{ mssgs.terms_conds_body }}</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>{{ mssgs.terms_conds_bulletpoint_1 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_2 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_3 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_4_1 }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_4_link }}</a>{{ mssgs.terms_conds_bulletpoint_4_2 }}</li>
-                    <li>{{ mssgs.terms_conds_bulletpoint_5 }}</li>
-                    {% if data.isSalmonAndSeaTrout %}
-                        <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
-                    {% endif %}
-                </ul>
-            </div>
+                <div class="govuk-!-margin-bottom-9">
+                    <p class="govuk-body">{{ data.body }}</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ data.bulletpointOne }}</li>
+                        <li>{{ data.bulletpointTwo }}</li>
+                        <li>{{ data.bulletpointThree }}</li>
+                        <li>{{ data.bulletpointFourPartOne }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ data.bulletpointFourLink }}</a>{{ data.bulletpointFourPartTwo }}</li>
+                        <li>{{ data.bulletpointFive }}</li>
+                        {% if data.isSalmonAndSeaTrout %}
+                            {% if data.afterFulfilmentSwitchover %}
+                                <li>{{ data.bulletpointSix }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ data.bulletpointSixLink }}</a></li>
+                            {% else %}
+                                <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
+                                {% endif %}
+                        {% endif %}
+                    </ul>
+                </div>
 
                 {{ govukCheckboxes({
                   idPrefix: "agree",
@@ -56,7 +60,7 @@
                   items: [
                     {
                       value: "yes",
-                      text: mssgs.terms_conds_item_agree
+                      text: data.agree
                     }
                   ]
                 }) }}

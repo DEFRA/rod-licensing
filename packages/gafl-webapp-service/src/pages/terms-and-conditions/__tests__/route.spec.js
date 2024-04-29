@@ -14,13 +14,58 @@ jest.mock('../../../processors/mapping-constants.js', () => ({
     'salmon-and-sea-trout': 'salmon_and_sea_trout'
   }
 }))
+jest.mock('@defra-fish/business-rules-lib', () => ({
+  FULFILMENT_SWITCHOVER_DATE: '2024-05-30T23:00:00.000Z'
+}))
+
+const getMessages = () => ({
+  terms_conds_item_agree: 'Agree',
+  terms_conds_body_notify: 'Body',
+  terms_conds_bulletpoint_1: 'Bulletpoint 1',
+  terms_conds_bulletpoint_2: 'Bulletpoint 2',
+  terms_conds_bulletpoint_3: 'Bulletpoint 3',
+  terms_conds_bulletpoint_4_1: 'Bulletpoint 4 part 1',
+  terms_conds_bulletpoint_4_2: 'Bulletpoint 4 part 2',
+  terms_conds_bulletpoint_4_link: 'Bulletpoint 4 link',
+  terms_conds_bulletpoint_5: 'Bulletpoint 5',
+  terms_conds_bulletpoint_6: 'Bulletpoint 6',
+  terms_conds_bulletpoint_6_link: 'Bulletpoint 6 link',
+  terms_conds_title: 'Title',
+  terms_conds_notify_agree: 'Notify Agree',
+  terms_conds_body_notify_bobo: 'Notify bobo body',
+  terms_conds_bulletpoint_1_notify_bobo: 'Notify bobo bulletpoint 1',
+  terms_conds_bulletpoint_2_notify_bobo: 'Notify bobo bulletpoint 2',
+  terms_conds_bulletpoint_3_notify_bobo: 'Notify bobo bulletpoint 3',
+  terms_conds_bulletpoint_4_1_notify_bobo: 'Notify bobo bulletpoint 4 part 1',
+  terms_conds_bulletpoint_4_2_notify_bobo: 'Notify bobo bulletpoint 4 part 2',
+  terms_conds_bulletpoint_4_link_notify_bobo: 'Notify bobo bulletpoint 4 link',
+  terms_conds_bulletpoint_5_notify_bobo: 'Notify bobo bulletpoint 5',
+  terms_conds_bulletpoint_6_notify_bobo: 'Notify bobo bulletpoint 6',
+  terms_conds_bulletpoint_6_link_notify_bobo: 'Notify bobo bulletpoint 6 link',
+  terms_conds_title_notify_bobo: 'Notify bobo title',
+  terms_conds_body_notify_self: 'Notify self body',
+  terms_conds_bulletpoint_1_notify_self: 'Notify self bulletpoint 1',
+  terms_conds_bulletpoint_2_notify_self: 'Notify self bulletpoint 2',
+  terms_conds_bulletpoint_3_notify_self: 'Notify self bulletpoint 3',
+  terms_conds_bulletpoint_4_1_notify_self: 'Notify self bulletpoint 4 part 1',
+  terms_conds_bulletpoint_4_2_notify_self: 'Notify self bulletpoint 4 part 2',
+  terms_conds_bulletpoint_4_link_notify_self: 'Notify self bulletpoint 4 link',
+  terms_conds_bulletpoint_5_notify_self: 'Notify self bulletpoint 5',
+  terms_conds_bulletpoint_6_notify_self: 'Notify self bulletpoint 6',
+  terms_conds_bulletpoint_6_link_notify_self: 'Notify self bulletpoint 6 link',
+  terms_conds_title_notify_self: 'Notify self title'
+})
 
 describe('terms-and-conditions get data', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
   const getMockRequest = ({
     licenceSummary = true,
     contactSummary = true,
     licenceType = 'old-wellies-and-shopping-trollies',
-    cost = 1.5
+    cost = 1.5,
+    isLicenceForYou = true
   } = {}) => ({
     cache: () => ({
       helpers: {
@@ -33,14 +78,19 @@ describe('terms-and-conditions get data', () => {
         transaction: {
           getCurrentPermission: async () => ({
             licenceType,
+            isLicenceForYou,
             permit: {
               cost
             }
           })
         }
       }
-    })
+    }),
+    i18n: {
+      getCatalog: () => getMessages()
+    }
   })
+
   it('salmon and sea trout flag is true when licence is a salmon and sea trout one', async () => {
     const request = getMockRequest({ licenceType: LICENCE_TYPE['salmon-and-sea-trout'] })
     const { isSalmonAndSeaTrout } = await getData(request)
@@ -71,4 +121,29 @@ describe('terms-and-conditions get data', () => {
     const request = getMockRequest({ contactSummary: false })
     expect(() => getData(request)).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
   })
+
+  it.each([
+    [true, 'after', '2024-06-01T23:00:00.000Z'],
+    [true, 'after', '2024-05-30T23:30:00.000Z'],
+    [false, 'before', '2024-05-29T23:00:00.000Z'],
+    [false, 'before', '2024-05-30T22:00:00.000Z']
+  ])('afterFulfilmentSwitchover returns %s when current date is %s FULFILMENT_SWITCHOVER_DATE', async (expected, beforeAfter, date) => {
+    jest.useFakeTimers().setSystemTime(new Date(date))
+
+    const { afterFulfilmentSwitchover } = await getData(getMockRequest())
+    expect(afterFulfilmentSwitchover).toEqual(expected)
+  })
+
+  it.each([
+    ['is', true],
+    ['is not', false]
+  ])(
+    'content returns correct when date %s after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals %s',
+    async (fulfilmentDate, licenceForYou) => {
+      jest.useFakeTimers().setSystemTime(new Date('2024-06-01T23:00:00.000Z'))
+
+      const { content } = await getData(getMockRequest({ isLicenceForYou: licenceForYou }))
+      expect(content).toMatchSnapshot()
+    }
+  )
 })
