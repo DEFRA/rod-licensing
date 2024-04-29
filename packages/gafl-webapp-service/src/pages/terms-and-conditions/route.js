@@ -49,32 +49,20 @@ const getContent = (afterFulfilmentSwitchover, permission, mssgs) => {
   }
 }
 
-const getNotifyContent = (permission, mssgs) => {
-  return {
-    agree: mssgs.terms_conds_notify_agree,
-    title: permission.isLicenceForYou ? mssgs.terms_conds_title_notify_self : mssgs.terms_conds_title_notify_bobo,
-    body: permission.isLicenceForYou ? mssgs.terms_conds_body_notify_self : mssgs.terms_conds_body_notify_bobo,
-    bulletpointOne: permission.isLicenceForYou ? mssgs.terms_conds_bulletpoint_1_notify_self : mssgs.terms_conds_bulletpoint_1_notify_bobo,
-    bulletpointTwo: permission.isLicenceForYou ? mssgs.terms_conds_bulletpoint_2_notify_self : mssgs.terms_conds_bulletpoint_2_notify_bobo,
-    bulletpointThree: permission.isLicenceForYou
-      ? mssgs.terms_conds_bulletpoint_3_notify_self
-      : mssgs.terms_conds_bulletpoint_3_notify_bobo,
-    bulletpointFourPartOne: permission.isLicenceForYou
-      ? mssgs.terms_conds_bulletpoint_4_1_notify_self
-      : mssgs.terms_conds_bulletpoint_4_1_notify_bobo,
-    bulletpointFourLink: permission.isLicenceForYou
-      ? mssgs.terms_conds_bulletpoint_4_link_notify_self
-      : mssgs.terms_conds_bulletpoint_4_link_notify_bobo,
-    bulletpointFourPartTwo: permission.isLicenceForYou
-      ? mssgs.terms_conds_bulletpoint_4_2_notify_self
-      : mssgs.terms_conds_bulletpoint_4_2_notify_bobo,
-    bulletpointFive: permission.isLicenceForYou ? mssgs.terms_conds_bulletpoint_5_notify_self : mssgs.terms_conds_bulletpoint_5_notify_bobo,
-    bulletpointSix: permission.isLicenceForYou ? mssgs.terms_conds_bulletpoint_6_notify_self : mssgs.terms_conds_bulletpoint_6_notify_bobo,
-    bulletpointSixLink: permission.isLicenceForYou
-      ? mssgs.terms_conds_bulletpoint_6_link_notify_self
-      : mssgs.terms_conds_bulletpoint_6_link_notify_bobo
-  }
-}
+const getNotifyContent = (permission, mssgs) => ({
+  agree: mssgs.terms_conds_notify_agree,
+  title: mssgs[`terms_conds_title_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  body: mssgs[`terms_conds_body_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointOne: mssgs[`terms_conds_bulletpoint_1_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointTwo: mssgs[`terms_conds_bulletpoint_2_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointThree: mssgs[`terms_conds_bulletpoint_3_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFourPartOne: mssgs[`terms_conds_bulletpoint_4_1_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFourLink: mssgs[`terms_conds_bulletpoint_4_link_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFourPartTwo: mssgs[`terms_conds_bulletpoint_4_2_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointFive: mssgs[`terms_conds_bulletpoint_5_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointSix: mssgs[`terms_conds_bulletpoint_6_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+  bulletpointSixLink: mssgs[`terms_conds_bulletpoint_6_link_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`]
+})
 
 export const validator = Joi.object({
   agree: Joi.string().valid('yes').required()
