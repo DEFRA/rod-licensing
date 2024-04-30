@@ -33,7 +33,7 @@ export const getData = async request => {
 const getContent = (afterFulfilmentSwitchover, permission, mssgs) => {
   if (afterFulfilmentSwitchover) {
     return {
-      agree: mssgs.terms_conds_notify_agree,
+      agree: mssgs[`terms_conds_agree_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
       title: mssgs[`terms_conds_title_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
       body: mssgs[`terms_conds_body_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
       bulletpoint: getBulletpointContent(permission.isLicenceForYou, mssgs)

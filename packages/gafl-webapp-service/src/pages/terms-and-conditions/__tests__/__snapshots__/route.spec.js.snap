@@ -10,7 +10,7 @@ Object {
 
 exports[`terms-and-conditions get data content returns notify content when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals false 1`] = `
 Object {
-  "agree": "Notify Agree",
+  "agree": "Notify bobo agree",
   "body": "Notify bobo body",
   "bulletpoint": Object {
     "bulletpointFive": "Notify bobo bulletpoint 5",
@@ -29,7 +29,7 @@ Object {
 
 exports[`terms-and-conditions get data content returns notify content when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals true 1`] = `
 Object {
-  "agree": "Notify Agree",
+  "agree": "Notify self agree",
   "body": "Notify self body",
   "bulletpoint": Object {
     "bulletpointFive": "Notify self bulletpoint 5",
