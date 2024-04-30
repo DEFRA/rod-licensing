@@ -20,16 +20,7 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
 
 const getMessages = () => ({
   terms_conds_item_agree: 'Agree',
-  terms_conds_body_notify: 'Body',
-  terms_conds_bulletpoint_1: 'Bulletpoint 1',
-  terms_conds_bulletpoint_2: 'Bulletpoint 2',
-  terms_conds_bulletpoint_3: 'Bulletpoint 3',
-  terms_conds_bulletpoint_4_1: 'Bulletpoint 4 part 1',
-  terms_conds_bulletpoint_4_2: 'Bulletpoint 4 part 2',
-  terms_conds_bulletpoint_4_link: 'Bulletpoint 4 link',
-  terms_conds_bulletpoint_5: 'Bulletpoint 5',
-  terms_conds_bulletpoint_6: 'Bulletpoint 6',
-  terms_conds_bulletpoint_6_link: 'Bulletpoint 6 link',
+  terms_conds_body: 'Body',
   terms_conds_title: 'Title',
   terms_conds_notify_agree: 'Notify Agree',
   terms_conds_body_notify_bobo: 'Notify bobo body',

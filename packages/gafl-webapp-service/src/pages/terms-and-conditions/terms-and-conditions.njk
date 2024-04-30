@@ -35,23 +35,33 @@
               }
             }) %}
 
-                <div class="govuk-!-margin-bottom-9">
-                    <p class="govuk-body">{{ data.body }}</p>
+            {% if data.afterFulfilmentSwitchover %}
                     <ul class="govuk-list govuk-list--bullet">
-                        <li>{{ data.bulletpointOne }}</li>
-                        <li>{{ data.bulletpointTwo }}</li>
-                        <li>{{ data.bulletpointThree }}</li>
-                        <li>{{ data.bulletpointFourPartOne }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ data.bulletpointFourLink }}</a>{{ data.bulletpointFourPartTwo }}</li>
-                        <li>{{ data.bulletpointFive }}</li>
+                        <li>{{ data.bulletpoint.bulletpointOne }}</li>
+                        <li>{{ data.bulletpoint.bulletpointTwo }}</li>
+                        <li>{{ data.bulletpoint.bulletpointThree }}</li>
+                        <li>{{ data.bulletpoint.bulletpointFourPartOne }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ data.bulletpoint.bulletpointFourLink }}</a>{{ data.bulletpoint.bulletpointFourPartTwo }}</li>
+                        <li>{{ data.bulletpoint.bulletpointFive }}</li>
                         {% if data.isSalmonAndSeaTrout %}
-                            {% if data.afterFulfilmentSwitchover %}
-                                <li>{{ data.bulletpointSix }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ data.bulletpointSixLink }}</a></li>
-                            {% else %}
-                                <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
-                                {% endif %}
+                            <li>{{ data.bulletpoint.bulletpointSix }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ data.bulletpoint.bulletpointSixLink }}</a></li>
                         {% endif %}
                     </ul>
                 </div>
+            {% else %}
+                <div class="govuk-!-margin-bottom-9">
+                    <p class="govuk-body">{{ data.body }}</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>{{ mssgs.terms_conds_bulletpoint_1 }}</li>
+                        <li>{{ data.terms_conds_bulletpoint_2 }}</li>
+                        <li>{{ data.terms_conds_bulletpoint_3 }}</li>
+                        <li>{{ data.terms_conds_bulletpoint_4_1 }}<a class="govuk-link" href="https://www.gov.uk/freshwater-rod-fishing-rules" rel="noreferrer noopener" target="_blank">{{ data.terms_conds_bulletpoint_4_link }}</a>{{ data.terms_conds_bulletpoint_4_2 }}</li>
+                        <li>{{ data.terms_conds_bulletpoint_5 }}</li>
+                        {% if data.isSalmonAndSeaTrout %}
+                            <li>{{ mssgs.terms_conds_bulletpoint_6_1 }}<a class="govuk-link" href="https://www.gov.uk/catch-return" rel="noreferrer noopener" target="_blank">{{ mssgs.terms_conds_bulletpoint_6_link }}</a>{{ mssgs.terms_conds_bulletpoint_6_2 }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
 
                 {{ govukCheckboxes({
                   idPrefix: "agree",
