@@ -114,7 +114,9 @@ export async function processQueue ({ id }) {
 
 const shouldCreateFulfilmentRequest = (permission, permit, contact) => {
   const switchoverDate = new Date(process.env.FULFILMENT_SWITCHOVER_DATE || FULFILMENT_SWITCHOVER_DATE)
-  return permit.isForFulfilment && contact.postalFulfilment && moment(permission.issueDate).isBefore(switchoverDate)
+  const scfr = permit.isForFulfilment && contact.postalFulfilment && moment(permission.issueDate).isBefore(switchoverDate)
+  debug(`Fulfilment switchover date is set to ${moment(switchoverDate).toISOString()}, permission issue date is ${moment(permission.issueDate).toISOString}, so ${scfr ? 'will' : 'will not'} create fulfilment request`)
+  return scfr
 }
 
 const mapToPermission = async (
