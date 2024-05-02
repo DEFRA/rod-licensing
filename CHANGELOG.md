@@ -1,4 +1,13 @@
 
+## v1.45.0-rc.2 (2024-05-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1947](https://github.com/DEFRA/rod-licensing/pull/1947) Amend refund policy page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.45.0-rc.1 (2024-04-23)
 
 #### :rocket: Enhancement
