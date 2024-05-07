@@ -63,12 +63,15 @@ const processQueryPage = async page => {
     const fulfilmentFile = await getTargetFulfilmentFile()
     const partNumber = getPartNumber(fulfilmentFile.numberOfRequests, config.file.partFileSize)
     const partFileSize = Math.min(config.file.partFileSize, config.file.size - fulfilmentFile.numberOfRequests)
-    const itemsToWrite = page.splice(0, partFileSize).map(result => ({
-      fulfilmentRequest: result.entity,
-      permission: result.expanded.permission.entity,
-      licensee: result.expanded.permission.expanded.licensee.entity,
-      permit: result.expanded.permission.expanded.permit.entity
-    }))
+    const itemsToWrite = page.splice(0, partFileSize).map((result, idx) => {
+      debug('Writing item id %s', result.id || result.defra_fulfilmentrequestid || 'not found')
+      return ({
+        fulfilmentRequest: result.entity,
+        permission: result.expanded.permission.entity,
+        licensee: result.expanded.permission.expanded.licensee.entity,
+        permit: result.expanded.permission.expanded.permit.entity
+      })
+    })
     await writeS3PartFile(fulfilmentFile, partNumber, itemsToWrite)
 
     fulfilmentFile.numberOfRequests += itemsToWrite.length
