@@ -64,7 +64,7 @@ const processQueryPage = async page => {
     const partNumber = getPartNumber(fulfilmentFile.numberOfRequests, config.file.partFileSize)
     const partFileSize = Math.min(config.file.partFileSize, config.file.size - fulfilmentFile.numberOfRequests)
     const itemsToWrite = page.splice(0, partFileSize).map((result, idx) => {
-      debug('Writing item id %s', result.id || result.defra_fulfilmentrequestid || 'not found')
+      debug('Writing item %s', JSON.stringify(result, undefined, '\t'))
       return ({
         fulfilmentRequest: result.entity,
         permission: result.expanded.permission.entity,
