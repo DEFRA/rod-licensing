@@ -15,7 +15,8 @@ describe('Fulfilment Queries', () => {
             ])
           })
         ]),
-        filter: 'defra_FulfilmentRequestFileId eq null and statecode eq 0',
+        filter:
+          "defra_FulfilmentRequestFileId eq null and defra_notes eq 'Initial fulfilment request created at point of sale' and statecode eq 0",
         select: expect.any(Array),
         orderBy: ['defra_requesttimestamp asc']
       })
