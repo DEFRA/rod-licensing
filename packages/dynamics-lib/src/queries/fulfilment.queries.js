@@ -10,7 +10,7 @@ import { FulfilmentRequestFile } from '../entities/fulfilment-request-file.entit
  */
 export const findUnassociatedFulfilmentRequests = () => {
   const { permission } = FulfilmentRequest.definition.relationships
-  const filter = `${FulfilmentRequest.definition.relationships.fulfilmentRequestFile.property} eq null and defra_notes eq 'Initial fulfilment request created at point of sale' and ${FulfilmentRequest.definition.defaultFilter}`
+  const filter = `${FulfilmentRequest.definition.relationships.fulfilmentRequestFile.property} eq null and ${FulfilmentRequest.definition.mappings.notes.field} eq 'Initial fulfilment request created at point of sale' and ${FulfilmentRequest.definition.defaultFilter}`
   return new PredefinedQuery({
     root: FulfilmentRequest,
     filter: filter,
