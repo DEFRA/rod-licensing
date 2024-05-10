@@ -1,4 +1,13 @@
 
+## v1.45.0-rc.4 (2024-05-10)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#1951](https://github.com/DEFRA/rod-licensing/pull/1951) Fix error generating fulfilment file after CRM fulfilment requests ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.45.0-rc.3 (2024-05-10)
 
 #### :rocket: Enhancement
