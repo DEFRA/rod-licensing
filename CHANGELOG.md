@@ -1,4 +1,13 @@
 
+## v1.45.0-rc.3 (2024-05-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1952](https://github.com/DEFRA/rod-licensing/pull/1952) Update footer for licence and crown copyright ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.45.0-rc.2 (2024-05-02)
 
 #### :rocket: Enhancement
