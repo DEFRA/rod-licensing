@@ -1,4 +1,49 @@
 
+## v1.45.0-rc.4 (2024-05-10)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#1951](https://github.com/DEFRA/rod-licensing/pull/1951) Fix error generating fulfilment file after CRM fulfilment requests ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.45.0-rc.3 (2024-05-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1952](https://github.com/DEFRA/rod-licensing/pull/1952) Update footer for licence and crown copyright ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.45.0-rc.2 (2024-05-02)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1947](https://github.com/DEFRA/rod-licensing/pull/1947) Amend refund policy page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.45.0-rc.1 (2024-04-23)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`
+  * [#1946](https://github.com/DEFRA/rod-licensing/pull/1946) RP job local failure ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.45.0-rc.0 (2024-04-22)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1945](https://github.com/DEFRA/rod-licensing/pull/1945) Fixing privacy title discrepancy ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.44.0-rc.13 (2024-04-04)
 
