@@ -28,9 +28,9 @@ export const licenceTypeDisplay = (permission, mssgs) => {
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
   switch (permission.licenceLength) {
     case '12M':
-      return `${licenceTypeDisplay(permission, mssgs)}, ${mssgs.licence_type_12m}`
+      return `${licenceTypeDisplay(permission, mssgs)}, 12 months`
     case '8D':
-      return `${licenceTypeDisplay(permission, mssgs)}, ${mssgs.licence_type_8d}`
+      return `${licenceTypeDisplay(permission, mssgs)}, 8 days`
     default:
       return `${licenceTypeDisplay(permission, mssgs)}, ${mssgs.licence_type_1d}`
   }
