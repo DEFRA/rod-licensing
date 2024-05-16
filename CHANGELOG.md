@@ -1,4 +1,13 @@
 
+## v1.46.0-rc.0 (2024-05-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1955](https://github.com/DEFRA/rod-licensing/pull/1955) Remove online cancellation from recurring payments terms ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.45.0-rc.4 (2024-05-10)
 
