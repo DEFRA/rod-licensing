@@ -9,10 +9,7 @@ const getCatalog = () => ({
   licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods',
   recurring_payment_set_up_bulletpoint_1_trout_2_rod: ' trout and coarse (2 rod)',
   recurring_payment_set_up_bulletpoint_1_trout_3_rod: ' trout and coarse (3 rod)',
-  recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout',
-  licence_type_12m: '12 months',
-  licence_type_8d: '8 days',
-  licence_type_1d: '1 day'
+  recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout'
 })
 
 jest.mock('../concession-helper', () => ({
