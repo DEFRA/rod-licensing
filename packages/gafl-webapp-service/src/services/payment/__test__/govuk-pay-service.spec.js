@@ -5,14 +5,6 @@ import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 
 jest.mock('../../../processors/uri-helper.js')
 
-// jest.mock('../../../locales/en.json', () => ({
-//   licence_type_8d: '8 days',
-// }));
-
-// jest.mock('../../../locales/cy.json', () => ({
-//   licence_type_8d: '8 niwrnod',
-// }));
-
 describe('The govuk-pay-service', () => {
   it('prepares a correct payment response endpoint for http', async () => {
     addLanguageCodeToUri.mockReturnValue('http://0.0.0.0:3000/buy/agreed')
