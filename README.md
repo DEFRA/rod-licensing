@@ -66,6 +66,8 @@ packages/
   > AWS SQS receiver service handles orchestration of SQS queues
 - [payment-mop-up-job](packages/payment-mop-up-job/README.md)
   > Handles reconciliation of incomplete sales
+- [permissions-data-lib](packages/permissions-data-lib/README.md)
+  > Shared permissions data management for the rod licensing services
 - [pocl-job](packages/pocl-job/README.md)
   > Handles processing of post-office counter sales
 - [fulfilment-job](packages/fulfilment-job/README.md)
