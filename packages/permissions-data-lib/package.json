@@ -1,7 +1,7 @@
 {
-  "name": "@defra-fish/renewals-lib",
+  "name": "@defra-fish/permissions-data-lib",
   "version": "1.45.0-rc.0",
-  "description": "Renewal data processing for the rod licensing digital services",
+  "description": "Permissions data processing for the rod licensing digital services",
   "type": "module",
   "engines": {
     "node": ">=18.17"
@@ -23,7 +23,7 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/DEFRA/rod-licensing.git",
-    "directory": "packages/renewals-lib"
+    "directory": "packages/permissions-data-lib"
   },
   "publishConfig": {
     "access": "public"
@@ -32,6 +32,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "moment": "^2.29.1"
+    "debug": "^4.3.3",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34"
   }
 }
