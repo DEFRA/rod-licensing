@@ -8,7 +8,25 @@ const licenceToStart = {
   ANOTHER_DATE: 'another-date'
 }
 
-export const prepareLicenseeData = existingPermission => {
+export const preparePermissionDataForRenewal = existingPermission => {
+  return {
+    ...prepareBasePermissionData(existingPermission),
+    ...prepareDateData(existingPermission),
+    licensee: prepareLicenseeData(existingPermission)
+  }
+}
+
+const prepareBasePermissionData = existingPermission => {
+  return {
+    isRenewal: true,
+    licenceLength: '12M', // Always for renewals
+    licenceType: existingPermission.permit.permitSubtype.label,
+    numberOfRods: existingPermission.permit.numberOfRods.toString(),
+    isLicenceForYou: true
+  }
+}
+
+const prepareLicenseeData = existingPermission => {
   const licenseeData = Object.assign(copyFilteredLicenseeData(existingPermission), prepareCountryCode(existingPermission))
 
   // Delete any licensee objects which are null
@@ -22,7 +40,7 @@ export const prepareLicenseeData = existingPermission => {
   return licenseeData
 }
 
-export const prepareDateData = existingPermission => {
+const prepareDateData = existingPermission => {
   const endDateMoment = moment.utc(existingPermission.endDate).tz(SERVICE_LOCAL_TIME)
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
 
