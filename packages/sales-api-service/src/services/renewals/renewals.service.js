@@ -8,12 +8,16 @@ const licenceToStart = {
   ANOTHER_DATE: 'another-date'
 }
 
-export const prepareContactMethodData = existingPermission => {
-  const licenseeData = {
-    preferredMethodOfNewsletter: existingPermission.licensee.preferredMethodOfNewsletter.label,
-    preferredMethodOfConfirmation: existingPermission.licensee.preferredMethodOfConfirmation.label,
-    preferredMethodOfReminder: existingPermission.licensee.preferredMethodOfReminder.label
-  }
+export const prepareLicenseeData = existingPermission => {
+  const licenseeData = Object.assign(copyFilteredLicenseeData(existingPermission), prepareCountryCode(existingPermission))
+
+  // Delete any licensee objects which are null
+  Object.entries(licenseeData)
+    .filter(e => e[1] === null)
+    .map(e => e[0])
+    .forEach(k => delete licenseeData[k])
+
+  Object.assign(licenseeData, prepareContactMethodData(existingPermission))
 
   return licenseeData
 }
@@ -26,6 +30,25 @@ export const prepareDateData = existingPermission => {
   dateData.renewedEndDate = endDateMoment.toISOString()
 
   return dateData
+}
+
+// Retain existing data except country and shortTermPreferredMethodOfConfirmation
+const copyFilteredLicenseeData = existingPermission => {
+  return (({ country: _country, shortTermPreferredMethodOfConfirmation: _shortTermPreferredMethodOfConfirmation, ...l }) => l)(
+    existingPermission.licensee
+  )
+}
+
+const prepareCountryCode = existingPermission => {
+  return { countryCode: existingPermission.licensee.country.description }
+}
+
+const prepareContactMethodData = existingPermission => {
+  return {
+    preferredMethodOfNewsletter: existingPermission.licensee.preferredMethodOfNewsletter.label,
+    preferredMethodOfConfirmation: existingPermission.licensee.preferredMethodOfConfirmation.label,
+    preferredMethodOfReminder: existingPermission.licensee.preferredMethodOfReminder.label
+  }
 }
 
 const getLicenceStartDate = (renewedHasExpired, licenceEndDate) => {

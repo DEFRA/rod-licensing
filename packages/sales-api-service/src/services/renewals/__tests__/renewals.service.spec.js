@@ -1,10 +1,20 @@
 import moment from 'moment'
-import { prepareContactMethodData, prepareDateData } from '../renewals.service.js'
+import { prepareDateData, prepareLicenseeData } from '../renewals.service.js'
 
-describe('prepareContactMethodData', () => {
+describe('prepareLicenseeData', () => {
   it('should copy the relevant data', async () => {
     const existingPermission = {
       licensee: {
+        birthDate: '1991-01-01',
+        country: {
+          description: 'GB-ENG'
+        },
+        email: 'email@example.com',
+        firstName: 'Sally',
+        lastName: 'Salmon',
+        postcode: 'TE1 1ST',
+        street: 'Angler Street',
+        town: 'Fishville',
         preferredMethodOfNewsletter: {
           label: 'Email'
         },
@@ -13,15 +23,26 @@ describe('prepareContactMethodData', () => {
         },
         preferredMethodOfReminder: {
           label: 'Letter'
+        },
+        shortTermPreferredMethodOfConfirmation: {
+          label: 'Text'
         }
       }
     }
     const expectedData = {
+      birthDate: '1991-01-01',
+      countryCode: 'GB-ENG',
+      email: 'email@example.com',
+      firstName: 'Sally',
+      lastName: 'Salmon',
+      postcode: 'TE1 1ST',
+      street: 'Angler Street',
+      town: 'Fishville',
       preferredMethodOfNewsletter: 'Email',
       preferredMethodOfConfirmation: 'Text',
       preferredMethodOfReminder: 'Letter'
     }
-    expect(prepareContactMethodData(existingPermission)).toEqual(expectedData)
+    expect(prepareLicenseeData(existingPermission)).toEqual(expectedData)
   })
 })
 
