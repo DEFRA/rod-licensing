@@ -22,9 +22,7 @@ export const prepareDateData = existingPermission => {
   const endDateMoment = moment.utc(existingPermission.endDate).tz(SERVICE_LOCAL_TIME)
   const renewedHasExpired = !endDateMoment.isAfter(moment().tz(SERVICE_LOCAL_TIME))
 
-  const dateData = renewedHasExpired
-    ? dateDataIfExpired(licenceToStart)
-    : dateDataIfNotExpired(licenceToStart, renewedHasExpired, endDateMoment)
+  const dateData = renewedHasExpired ? dateDataIfExpired() : dateDataIfNotExpired(renewedHasExpired, endDateMoment)
   dateData.renewedEndDate = endDateMoment.toISOString()
 
   return dateData
@@ -37,7 +35,7 @@ const getLicenceStartDate = (renewedHasExpired, licenceEndDate) => {
   return moment(licenceEndDate).add(1, 'minute').seconds(0).tz(SERVICE_LOCAL_TIME)
 }
 
-const dateDataIfExpired = licenceToStart => {
+const dateDataIfExpired = () => {
   return {
     renewedHasExpired: true,
     licenceToStart: licenceToStart.AFTER_PAYMENT,
@@ -46,7 +44,7 @@ const dateDataIfExpired = licenceToStart => {
   }
 }
 
-const dateDataIfNotExpired = (licenceToStart, renewedHasExpired, endDateMoment) => {
+const dateDataIfNotExpired = (renewedHasExpired, endDateMoment) => {
   const licenceStartDate = getLicenceStartDate(renewedHasExpired, endDateMoment)
   return {
     renewedHasExpired: false,
