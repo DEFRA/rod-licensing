@@ -11,6 +11,8 @@ describe('preparePermissionDataForRenewal', () => {
       email: 'email@example.com',
       firstName: 'Sally',
       lastName: 'Salmon',
+      mobilePhone: null,
+      postalFulfilment: false,
       postcode: 'TE1 1ST',
       street: 'Angler Street',
       town: 'Fishville',
@@ -61,7 +63,20 @@ describe('preparePermissionDataForRenewal', () => {
       preferredMethodOfConfirmation: 'Text',
       preferredMethodOfReminder: 'Letter'
     }
-    expect(preparePermissionDataForRenewal(existingPermission()).licensee).toEqual(expectedData)
+    expect(preparePermissionDataForRenewal(existingPermission()).licensee).toEqual(expect.objectContaining(expectedData))
+  })
+
+  it.each(['country', 'shortTermPreferredMethodOfConfirmation'])('should not assign %s to the licensee', async field => {
+    const licenseeData = preparePermissionDataForRenewal(existingPermission()).licensee
+    expect(licenseeData[field]).toBeUndefined()
+  })
+
+  it('should remove null values from the licensee object', async () => {
+    expect(preparePermissionDataForRenewal(existingPermission()).licensee).toEqual(expect.not.objectContaining({ mobilePhone: null }))
+  })
+
+  it('should keep false values on the licensee object', async () => {
+    expect(preparePermissionDataForRenewal(existingPermission()).licensee).toEqual(expect.objectContaining({ postalFulfilment: false }))
   })
 
   describe('when the original permission has expired', () => {
