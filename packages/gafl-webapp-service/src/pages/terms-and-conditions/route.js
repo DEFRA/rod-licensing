@@ -3,8 +3,6 @@ import * as mappings from '../../processors/mapping-constants.js'
 import Joi from 'joi'
 import { TERMS_AND_CONDITIONS, CONTACT_SUMMARY, LICENCE_SUMMARY } from '../../uri.js'
 import { nextPage } from '../../routes/next-page.js'
-import { FULFILMENT_SWITCHOVER_DATE } from '@defra-fish/business-rules-lib'
-import moment from 'moment'
 
 import GetDataRedirect from '../../handlers/get-data-redirect.js'
 
@@ -20,30 +18,20 @@ export const getData = async request => {
   }
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-  const afterFulfilmentSwitchover = moment.utc().isAfter(FULFILMENT_SWITCHOVER_DATE)
 
   return {
-    content: getContent(afterFulfilmentSwitchover, permission, request.i18n.getCatalog()),
+    content: getContent(permission, request.i18n.getCatalog()),
     isSalmonAndSeaTrout: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
-    paymentRequired: !!Number.parseInt(permission.permit.cost),
-    afterFulfilmentSwitchover
+    paymentRequired: !!Number.parseInt(permission.permit.cost)
   }
 }
 
-const getContent = (afterFulfilmentSwitchover, permission, mssgs) => {
-  if (afterFulfilmentSwitchover) {
-    return {
-      agree: mssgs[`terms_conds_agree_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
-      title: mssgs[`terms_conds_title_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
-      body: mssgs[`terms_conds_body_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
-      bulletpoint: getBulletpointContent(permission.isLicenceForYou, mssgs)
-    }
-  } else {
-    return {
-      agree: mssgs.terms_conds_item_agree,
-      title: mssgs.terms_conds_title,
-      body: mssgs.terms_conds_body
-    }
+const getContent = (permission, mssgs) => {
+  return {
+    agree: mssgs[`terms_conds_agree_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+    title: mssgs[`terms_conds_title_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+    body: mssgs[`terms_conds_body_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
+    bulletpoint: getBulletpointContent(permission.isLicenceForYou, mssgs)
   }
 }
 

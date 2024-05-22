@@ -14,14 +14,8 @@ jest.mock('../../../processors/mapping-constants.js', () => ({
     'salmon-and-sea-trout': 'salmon_and_sea_trout'
   }
 }))
-jest.mock('@defra-fish/business-rules-lib', () => ({
-  FULFILMENT_SWITCHOVER_DATE: '2024-05-30T23:00:00.000Z'
-}))
 
 const getMessages = () => ({
-  terms_conds_item_agree: 'Agree',
-  terms_conds_body: 'Body',
-  terms_conds_title: 'Title',
   terms_conds_agree_notify_bobo: 'Notify bobo agree',
   terms_conds_body_notify_bobo: 'Notify bobo body',
   terms_conds_bulletpoint_1_notify_bobo: 'Notify bobo bulletpoint 1',
@@ -114,31 +108,8 @@ describe('terms-and-conditions get data', () => {
     expect(() => getData(request)).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
   })
 
-  it.each([
-    [true, 'after', '2024-06-01T23:00:00.000Z'],
-    [true, 'after', '2024-05-30T23:30:00.000Z'],
-    [false, 'before', '2024-05-29T23:00:00.000Z'],
-    [false, 'before', '2024-05-30T22:00:00.000Z']
-  ])('afterFulfilmentSwitchover returns %s when current date is %s FULFILMENT_SWITCHOVER_DATE', async (expected, beforeAfter, date) => {
-    jest.useFakeTimers().setSystemTime(new Date(date))
-
-    const { afterFulfilmentSwitchover } = await getData(getMockRequest())
-    expect(afterFulfilmentSwitchover).toEqual(expected)
-  })
-
-  it.each([[true], [false]])(
-    'content returns notify content when date is after FULFILMENT_SWITCHOVER_DATE and isLicenceForYou equals %s',
-    async licenceForYou => {
-      jest.useFakeTimers().setSystemTime(new Date('2024-06-01T23:00:00.000Z'))
-
-      const { content } = await getData(getMockRequest({ isLicenceForYou: licenceForYou }))
-      expect(content).toMatchSnapshot()
-    }
-  )
-
-  it('content returns correct data not matching notify when date is before FULFILMENT_SWITCHOVER_DATE ', async () => {
-    jest.useFakeTimers().setSystemTime(new Date('2024-04-01T23:00:00.000Z'))
-    const { content } = await getData(getMockRequest())
+  it.each([[true], [false]])('content returns notify content when isLicenceForYou equals %s', async licenceForYou => {
+    const { content } = await getData(getMockRequest({ isLicenceForYou: licenceForYou }))
     expect(content).toMatchSnapshot()
   })
 })
