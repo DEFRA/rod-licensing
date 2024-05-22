@@ -1,3 +1,6 @@
+import moment from 'moment-timezone'
+import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '../constants.js'
+
 /**
  * Validate a permission reference number.
  *
@@ -33,3 +36,90 @@ export const permissionNumberUniqueComponentValidator = joi =>
     .required()
     .description('The unique part of the permission reference number')
     .example('B6HLG9')
+
+const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
+
+/**
+ * Create a validator to check a licence start date
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+const createLicenceDateStringValidator = joi =>
+  joi.string().extend({
+    type: 'licenceStartDate',
+    messages: {
+      'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
+      'date.min': '{{#label}} date before minimum allowed',
+      'date.max': '{{#label}} date after maximum allowed',
+      'date.dayMissing': 'Day is missing',
+      'date.dayMonthMissing': 'Enter a licence start date',
+      'date.dayYearMissing': 'Enter a licence start date',
+      'date.monthMissing': 'Month is missing',
+      'date.monthYearMissing': 'Enter a licence start date',
+      'date.yearMissing': 'Year is missing',
+      'date.allMissing': 'Enter a licence start date'
+    },
+    validate (value, helpers) {
+      const dateValue = moment(value, dateStringFormats, true)
+
+      if (!dateValue.isValid()) {
+        const parts = value.split('-')
+        const [year, month, day] = parts
+
+        if (!day && month && year) {
+          return { value, errors: helpers.error('date.dayMissing') }
+        }
+        if (!day && !month && year) {
+          return { value, errors: helpers.error('date.dayMonthMissing') }
+        }
+        if (!day && month && !year) {
+          return { value, errors: helpers.error('date.dayYearMissing') }
+        }
+        if (day && !month && year) {
+          return { value, errors: helpers.error('date.monthMissing') }
+        }
+        if (day && !month && !year) {
+          return { value, errors: helpers.error('date.monthYearMissing') }
+        }
+        if (day && month && !year) {
+          return { value, errors: helpers.error('date.yearMissing') }
+        }
+        if (!day && !month && !year) {
+          return { value, errors: helpers.error('date.allMissing') }
+        }
+
+        return { value, errors: helpers.error('date.format') }
+      }
+
+      return { value }
+    },
+    rules: {
+      licenceStartDate: {
+        validate (value, helpers) {
+          const licenceStartDate = moment(value, dateStringFormats, true)
+
+          if (licenceStartDate.isBefore(moment().tz(SERVICE_LOCAL_TIME).startOf('day'))) {
+            console.log('min')
+            return helpers.error('date.min')
+          }
+
+          const maxDate = moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+          if (licenceStartDate.isAfter(maxDate)) {
+            return helpers.error('date.max')
+          }
+
+          console.log('format')
+          return licenceStartDate.format('YYYY-MM-DD')
+        }
+      }
+    }
+  })
+
+/**
+ * Create a validator to check a licence start date
+ *
+ * @param {Joi.Root} joi the joi validator used by the consuming project
+ * @returns {Joi.AnySchema}
+ */
+export const createLicenceStartDateValidator = joi => createLicenceDateStringValidator(joi).trim().licenceStartDate(120).required().example('2000-01-01')

@@ -10,6 +10,13 @@
 {%
     set errorMap = {
         'date-of-birth': {
+            'date.dayMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error_day },
+            'date.dayMonthMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error },
+            'date.dayYearMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error },
+            'date.monthMissing': { ref: '#date-of-birth-month', text: mssgs.dob_error_month },
+            'date.monthYearMissing': { ref: '#date-of-birth-month', text: mssgs.dob_error },
+            'date.yearMissing': { ref: '#date-of-birth-year', text: mssgs.dob_error_year },
+            'date.allMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error },
             'date.format': { ref: '#date-of-birth-day', text: mssgs.dob_error_format },
             'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_max },
             'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_min }
@@ -56,6 +63,6 @@
       id: "date-of-birth",
       namePrefix: "date-of-birth",
       items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error } if error
+      errorMessage: { text: errorMap['date-of-birth'][error['date-of-birth']].text } if error['date-of-birth']
     }) }}
 {% endblock %}

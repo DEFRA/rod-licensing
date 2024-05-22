@@ -29,6 +29,31 @@ describe('contact validators', () => {
       await expect(contactValidation.createBirthDateValidator(Joi).validateAsync('1-111-19')).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)
     })
 
+    it('throws if the day is missing', async () => {
+      const testValueIn = validDate.format('2000-02-')
+      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Day is missing')
+    })
+
+    it('throws if the month is missing', async () => {
+      const testValueIn = validDate.format('2000--01')
+      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Month is missing')
+    })
+
+    it('throws if the year is missing', async () => {
+      const testValueIn = validDate.format('-02-01')
+      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Year is missing')
+    })
+
+    it.each([
+      ['day and month', '2000--'],
+      ['day and year', '-02-'],
+      ['month and year', '--01'],
+      ['day, month and year', '--']
+    ])('throws if %s is missing', async (missing, format) => {
+      const testValueIn = validDate.format(format)
+      await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Enter the date of birth')
+    })
+
     it('throws if the year is specified as 2 digits', async () => {
       const testValueIn = validDate.format('YY-MM-DD')
       await expect(contactValidation.createBirthDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)

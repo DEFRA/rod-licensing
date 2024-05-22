@@ -39,11 +39,43 @@ const createDateStringValidator = joi =>
     messages: {
       'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
       'date.min': '{{#label}} date before minimum allowed',
-      'date.max': '{{#label}} must be less than or equal to "now"'
+      'date.max': '{{#label}} must be less than or equal to "now"',
+      'date.dayMissing': 'Day is missing',
+      'date.dayMonthMissing': 'Enter the date of birth',
+      'date.dayYearMissing': 'Enter the date of birth',
+      'date.monthMissing': 'Month is missing',
+      'date.monthYearMissing': 'Enter the date of birth',
+      'date.yearMissing': 'Year is missing',
+      'date.allMissing': 'Enter the date of birth'
     },
     validate (value, helpers) {
       const dateValue = moment(value, dateStringFormats, true)
       if (!dateValue.isValid()) {
+        const parts = value.split('-')
+        const [year, month, day] = parts
+
+        if (!day && month && year) {
+          return { value, errors: helpers.error('date.dayMissing') }
+        }
+        if (!day && !month && year) {
+          return { value, errors: helpers.error('date.dayMonthMissing') }
+        }
+        if (!day && month && !year) {
+          return { value, errors: helpers.error('date.dayYearMissing') }
+        }
+        if (day && !month && year) {
+          return { value, errors: helpers.error('date.monthMissing') }
+        }
+        if (day && !month && !year) {
+          return { value, errors: helpers.error('date.monthYearMissing') }
+        }
+        if (day && month && !year) {
+          return { value, errors: helpers.error('date.yearMissing') }
+        }
+        if (!day && !month && !year) {
+          return { value, errors: helpers.error('date.allMissing') }
+        }
+
         return { value, errors: helpers.error('date.format') }
       }
 

@@ -12,6 +12,13 @@
             'any.required': { ref: '#licence-to-start', text: mssgs.licence_start_error_choose_when }
         },
         'licence-start-date': {
+            'date.dayMissing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_day },
+            'date.dayMonthMissing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error },
+            'date.dayYearMissing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error },
+            'date.monthMissing': { ref: '#licence-start-date-month', text: mssgs.licence_start_error_month },
+            'date.monthYearMissing': { ref: '#licence-start-date-month', text: mssgs.licence_start_error },
+            'date.yearMissing': { ref: '#licence-start-date-year', text: mssgs.licence_start_error_year },
+            'date.allMissing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error },
             'date.format': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_format },
             'date.max': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days },
             'date.min': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days }
@@ -53,7 +60,7 @@
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days } if error['licence-start-date'],
+      errorMessage: { text: errorMap['licence-start-date'][error['licence-start-date']].text } if error['licence-start-date'],
       hint: {
         text: mssgs.licence_start_hint + data.maxStartDate
       }
