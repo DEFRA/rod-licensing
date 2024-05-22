@@ -594,6 +594,7 @@
   "privacy_where_stored_body_1": "We transfer personal data through Amazon Web Services (AWS) servers in the UK. We store the data on Microsoft Azure servers in Ireland.",
   "privacy_where_stored_body_2": "The organisations we share personal data with process and store data in the UK. Our processor may also store this data outside the UK in Switzerland.",
   "privacy_where_stored_body_3": "We do not store payment details.",
+  "privacy_where_stored_body_4": "Our payment service partners Worldpay and GOV.UK Pay are compliant with the Payment Card Industry Data Security Standard (PCI DSS).",
   "purpose": "Purpose",
   "recurring_payment_set_up": "I agree to set up a recurring card payment",
   "recurring_payment_set_up_back": "Or go back and choose to pay for a single licence",
