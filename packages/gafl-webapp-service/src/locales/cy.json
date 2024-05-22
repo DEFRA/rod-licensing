@@ -595,6 +595,7 @@
   "privacy_where_stored_body_1": "Rydym yn trosglwyddo data personol drwy weinyddwyr Amazon Web Services (AWS) yn y DU. Rydym yn storio’r data ar weinyddwyr Microsoft Azure yn Iwerddon.",
   "privacy_where_stored_body_2": "Mae’r sefydliadau rydym yn rhannu data personol â hwy yn prosesu a storio data yn y DU. Gall ein prosesydd hefyd storio'r data hwn y tu allan i’r DU yn y Swistir.",
   "privacy_where_stored_body_3": "Nid ydym yn storio manylion talu.",
+  "privacy_where_stored_body_4": "Mae ein partneriaid gwasanaeth talu Worldpay a GOV.UK Pay yn cydymffurfio gyda Safon Diogelwch Data Diwydiant y Cardiau Talu.",
   "purpose": "Diben",
   "recurring_payment_set_up": "Rwy’n cytuno i greu taliad cerdyn sy’n ailadrodd",
   "recurring_payment_set_up_back": "Neu ewch yn ôl i dalu am drwydded unigol",
