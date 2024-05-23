@@ -1,4 +1,5 @@
 import moment from 'moment-timezone'
+import { dateMissing, licenceStartDateValid, dateNotNumber } from './date.validators.js'
 import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '../constants.js'
 
 /**
@@ -49,9 +50,18 @@ const createLicenceDateStringValidator = joi =>
   joi.string().extend({
     type: 'licenceStartDate',
     messages: {
-      'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
       'date.min': '{{#label}} date before minimum allowed',
       'date.max': '{{#label}} date after maximum allowed',
+      'date.dayInvalid': '{{#label}} must be a real date',
+      'date.dayMonthInvalid': '{{#label}} must be a real date',
+      'date.monthInvalid': '{{#label}} must be a real date',
+      'date.dayNotNumber': 'Enter only numbers',
+      'date.dayMonthNotNumber': 'Enter only numbers',
+      'date.dayYearNotNumber': 'Enter only numbers',
+      'date.monthNotNumber': 'Enter only numbers',
+      'date.monthYearNotNumber': 'Enter only numbers',
+      'date.yearNotNumber': 'Enter only numbers',
+      'date.allNotNumber': 'Enter only numbers',
       'date.dayMissing': 'Day is missing',
       'date.dayMonthMissing': 'Enter a licence start date',
       'date.dayYearMissing': 'Enter a licence start date',
@@ -67,29 +77,19 @@ const createLicenceDateStringValidator = joi =>
         const parts = value.split('-')
         const [year, month, day] = parts
 
-        if (!day && month && year) {
-          return { value, errors: helpers.error('date.dayMissing') }
+        const dateIsMissing = dateMissing(day, month, year, value, helpers)
+        if (dateIsMissing) {
+          return dateIsMissing
         }
-        if (!day && !month && year) {
-          return { value, errors: helpers.error('date.dayMonthMissing') }
-        }
-        if (!day && month && !year) {
-          return { value, errors: helpers.error('date.dayYearMissing') }
-        }
-        if (day && !month && year) {
-          return { value, errors: helpers.error('date.monthMissing') }
-        }
-        if (day && !month && !year) {
-          return { value, errors: helpers.error('date.monthYearMissing') }
-        }
-        if (day && month && !year) {
-          return { value, errors: helpers.error('date.yearMissing') }
-        }
-        if (!day && !month && !year) {
-          return { value, errors: helpers.error('date.allMissing') }
+        const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
+        if (dateIsNotNumber) {
+          return dateIsNotNumber
         }
 
-        return { value, errors: helpers.error('date.format') }
+        const dateIsInvalid = licenceStartDateValid(day, month, year, value, helpers)
+        if (dateIsInvalid) {
+          return dateIsInvalid
+        }
       }
 
       return { value }
@@ -100,7 +100,6 @@ const createLicenceDateStringValidator = joi =>
           const licenceStartDate = moment(value, dateStringFormats, true)
 
           if (licenceStartDate.isBefore(moment().tz(SERVICE_LOCAL_TIME).startOf('day'))) {
-            console.log('min')
             return helpers.error('date.min')
           }
 
@@ -109,7 +108,6 @@ const createLicenceDateStringValidator = joi =>
             return helpers.error('date.max')
           }
 
-          console.log('format')
           return licenceStartDate.format('YYYY-MM-DD')
         }
       }

@@ -2,7 +2,12 @@ import Joi from 'joi'
 import * as permissionValidation from '../permission.validators.js'
 import moment from 'moment-timezone'
 
-const INVALID_DATE_ERROR_MESSAGE = '"value" must be in [YYYY-MM-DD] format'
+jest.mock('./date.validators.spec.js', () => ({
+  ...jest.requireActual('./date.validators.spec.js'),
+  dateMissing: jest.fn(),
+  dateNotNumber: jest.fn(),
+  licenceStartDateValid: jest.fn()
+}))
 
 describe('permission validators', () => {
   describe('permissionNumberValidator', () => {
@@ -15,53 +20,19 @@ describe('permission validators', () => {
       await expect(permissionValidation.permissionNumberUniqueComponentValidator(Joi).validateAsync(number)).resolves.toEqual(number.trim())
     })
   })
-  describe('birthDateValidator', () => {
+  describe('licenceDateValidator', () => {
+    beforeEach(jest.clearAllMocks)
     const validDate = moment()
 
     it('allows today date', async () => {
-      const testValue = validDate.format('YYYY-MM-DD')
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(testValue)).resolves.toEqual(testValue)
+      const date = validDate.format('YYYY-MM-DD')
+      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(date)).resolves.toEqual(date)
     })
 
     it('allows a date in alternative format', async () => {
-      const testValueIn = validDate.format('YYYY-M-D')
-      const testValueOut = validDate.format('YYYY-MM-DD')
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(testValueIn)).resolves.toEqual(testValueOut)
-    })
-
-    it('throws if given an invalid format', async () => {
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(validDate.format('YYYY-MM-DDThh:mm:ss'))).rejects.toThrow(
-        INVALID_DATE_ERROR_MESSAGE
-      )
-    })
-
-    it('throws if given an invalid date', async () => {
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync('1-111-19')).rejects.toThrow(INVALID_DATE_ERROR_MESSAGE)
-    })
-
-    it('throws if the day is missing', async () => {
-      const testValueIn = validDate.format('2000-02-')
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Day is missing')
-    })
-
-    it('throws if the month is missing', async () => {
-      const testValueIn = validDate.format('2000--01')
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Month is missing')
-    })
-
-    it('throws if the year is missing', async () => {
-      const testValueIn = validDate.format('-02-01')
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Year is missing')
-    })
-
-    it.each([
-      ['day and month', '2000--'],
-      ['day and year', '-02-'],
-      ['month and year', '--01'],
-      ['day, month and year', '--']
-    ])('throws if %s is missing', async (missing, format) => {
-      const testValueIn = validDate.format(format)
-      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(testValueIn)).rejects.toThrow('Enter a licence start date')
+      const dateIn = validDate.format('YYYY-M-D')
+      const dateOutput = validDate.format('YYYY-MM-DD')
+      await expect(permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(dateIn)).resolves.toEqual(dateOutput)
     })
 
     it('throws if given date in past', async () => {
@@ -76,6 +47,33 @@ describe('permission validators', () => {
           .createLicenceStartDateValidator(Joi)
           .validateAsync(moment().add(31, 'days').format('YYYY-MM-DD'))
       ).rejects.toThrow('"value" date after maximum allowed')
+    })
+
+    it('returns the result of dateMissing if not null', () => {
+      const date = '2020-01-'
+      const validator = permissionValidation.createLicenceStartDateValidator(Joi)
+
+      const result = validator.validate(date)
+
+      expect(result.error.details[0].message).toBe('Day is missing')
+    })
+
+    it('returns the result of dateNotNumber if not null', () => {
+      const date = '2020-01-ee'
+      const validator = permissionValidation.createLicenceStartDateValidator(Joi)
+
+      const result = validator.validate(date)
+
+      expect(result.error.details[0].message).toBe('Enter only numbers')
+    })
+
+    it('returns the result of licenceStartDateValid if not null', () => {
+      const date = '2020-01-41'
+      const validator = permissionValidation.createLicenceStartDateValidator(Joi)
+
+      const result = validator.validate(date)
+
+      expect(result.error.details[0].message).toBe('"value" must be a real date')
     })
   })
 })

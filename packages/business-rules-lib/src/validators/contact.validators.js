@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { dateMissing, birthDateValid, dateNotNumber } from './date.validators.js'
 
 /**
  * Convert the string to use titlecase at each word boundary
@@ -37,9 +38,22 @@ const createDateStringValidator = joi =>
   joi.string().extend({
     type: 'birthDate',
     messages: {
-      'date.format': '{{#label}} must be in [YYYY-MM-DD] format',
       'date.min': '{{#label}} date before minimum allowed',
       'date.max': '{{#label}} must be less than or equal to "now"',
+      'date.dayInvalid': '{{#label}} must be a real date',
+      'date.dayMonthInvalid': '{{#label}} must be a real date',
+      'date.dayYearInvalid': '{{#label}} must be a real date',
+      'date.monthInvalid': '{{#label}} must be a real date',
+      'date.monthYearInvalid': '{{#label}} must be a real date',
+      'date.yearInvalid': '{{#label}} must be a real date',
+      'date.allInvalid': '{{#label}} must be a real date',
+      'date.dayNotNumber': 'Enter only numbers',
+      'date.dayMonthNotNumber': 'Enter only numbers',
+      'date.dayYearNotNumber': 'Enter only numbers',
+      'date.monthNotNumber': 'Enter only numbers',
+      'date.monthYearNotNumber': 'Enter only numbers',
+      'date.yearNotNumber': 'Enter only numbers',
+      'date.allNotNumber': 'Enter only numbers',
       'date.dayMissing': 'Day is missing',
       'date.dayMonthMissing': 'Enter the date of birth',
       'date.dayYearMissing': 'Enter the date of birth',
@@ -54,29 +68,19 @@ const createDateStringValidator = joi =>
         const parts = value.split('-')
         const [year, month, day] = parts
 
-        if (!day && month && year) {
-          return { value, errors: helpers.error('date.dayMissing') }
+        const dateIsMissing = dateMissing(day, month, year, value, helpers)
+        if (dateIsMissing) {
+          return dateIsMissing
         }
-        if (!day && !month && year) {
-          return { value, errors: helpers.error('date.dayMonthMissing') }
-        }
-        if (!day && month && !year) {
-          return { value, errors: helpers.error('date.dayYearMissing') }
-        }
-        if (day && !month && year) {
-          return { value, errors: helpers.error('date.monthMissing') }
-        }
-        if (day && !month && !year) {
-          return { value, errors: helpers.error('date.monthYearMissing') }
-        }
-        if (day && month && !year) {
-          return { value, errors: helpers.error('date.yearMissing') }
-        }
-        if (!day && !month && !year) {
-          return { value, errors: helpers.error('date.allMissing') }
+        const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
+        if (dateIsNotNumber) {
+          return dateIsNotNumber
         }
 
-        return { value, errors: helpers.error('date.format') }
+        const dateIsInvalid = birthDateValid(day, month, year, value, helpers)
+        if (dateIsInvalid) {
+          return dateIsInvalid
+        }
       }
 
       return { value }
