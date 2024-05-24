@@ -1,4 +1,17 @@
 
+## v1.46.0-rc.1 (2024-05-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1958](https://github.com/DEFRA/rod-licensing/pull/1958) Updating the accessibility statement. ([@lailien3](https://github.com/lailien3))
+  * [#1960](https://github.com/DEFRA/rod-licensing/pull/1960) Amend Welsh title service header to match through out the service ([@lailien3](https://github.com/lailien3))
+  * [#1961](https://github.com/DEFRA/rod-licensing/pull/1961) Updating recurring card payment consent page ([@lailien3](https://github.com/lailien3))
+  * [#1962](https://github.com/DEFRA/rod-licensing/pull/1962) Updating recurring card payment terms & conditions page ([@lailien3](https://github.com/lailien3))
+  * [#1963](https://github.com/DEFRA/rod-licensing/pull/1963) Amend privacy policy page for recurring card payments ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.46.0-rc.0 (2024-05-16)
 
 #### :rocket: Enhancement
