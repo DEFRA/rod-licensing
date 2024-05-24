@@ -24,23 +24,27 @@
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_how_subheading }}</h2>
         <p class="govuk-body">{{ mssgs.access_statement_how_info }}</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>{{ mssgs.access_statement_how_info_bulletpoint_1 }}</li>
-            <li>{{ mssgs.access_statement_how_info_bulletpoint_2 }}</li>
-        </ul>
+        <p class="govuk-body">{{ mssgs.access_statement_how_info_2 }}</p>
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_feedback_subheading }}</h2>
-        <p class="govuk-body">{{ mssgs.access_statement_feedback_info }}</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>{{ mssgs.access_statement_feedback_info_bulletpoint_1 }}<a href="mailto:enquiries@environment-agency.gov.uk" class="govuk-link">{{ mssgs.access_statement_feedback_info_bulletpoint_1_link }}</a></li>
-            <li>{{ mssgs.access_statement_feedback_info_bulletpoint_2_call }}<a href="tel:03708506506" class="govuk-link">{{ mssgs.access_statement_feedback_info_bulletpoint_2_link }}</a>{{ mssgs.access_statement_feedback_info_bulletpoint_2_times }}</li>
+
+        <h3 class="govuk-heading-m">{{ mssgs.access_statement_other_ways_to_buy_subheading }}</h3>
+        <p class="govuk-body">{{ mssgs.access_statement_other_ways_to_buy_body_1 }}</p>
+        <ul class="govuk-list">
+            <li>{{ mssgs.access_statement_other_ways_to_buy_body_2 }}</li>
+            <li>{{ mssgs.access_statement_other_ways_to_buy_body_3 }}</li>
+            <li>{{ mssgs.access_statement_other_ways_to_buy_body_4 }}</li>
+            <li><a href="https://www.gov.uk/call-charges" class="govuk-link" target="_blank">{{ mssgs.access_statement_other_ways_to_buy_body_link }}</a></li>
         </ul>
 
-        <h2 class="govuk-heading-m">{{ mssgs.access_statement_reporting_subheading }}</h2>
+        <h3 class="govuk-heading-m">{{ mssgs.access_statement_reporting_subheading }}</h3>
         <p class="govuk-body">{{ mssgs.access_statement_reporting_info }}</p>
-        <ul class="govuk-list govuk-list--bullet">
-            <li>{{ mssgs.access_statement_feedback_info_bulletpoint_1 }}<a href="mailto:enquiries@environment-agency.gov.uk" class="govuk-link">{{ mssgs.access_statement_feedback_info_bulletpoint_1_link }}</a></li>
-            <li>{{ mssgs.access_statement_feedback_info_bulletpoint_2_call }}<a href="tel:03708506506" class="govuk-link">{{ mssgs.access_statement_feedback_info_bulletpoint_2_link }}</a> {{ mssgs.access_statement_feedback_info_bulletpoint_2_times }}</li>
+        <ul class="govuk-list">
+            <li>{{ mssgs.access_statement_reporting_body_1 }}</li>
+            <li><a href="mailto:enquiries@environment-agency.gov.uk" class="govuk-link">{{ mssgs.access_statement_reporting_body_2 }}</a></li>            
+            <li>{{ mssgs.access_statement_reporting_body_3 }}</li>
+            <li>{{ mssgs.access_statement_reporting_body_4 }}</li>
+            <li><a href="https://www.gov.uk/call-charges" class="govuk-link" target="_blank">{{ mssgs.access_statement_reporting_body_5 }}</a></li>
         </ul>
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_enforcement_subheading }}</h2>
@@ -55,14 +59,18 @@
         <p class="govuk-body">{{ mssgs.access_statement_tech_body }}</p>
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_compliance_heading }}</h2>
-        <p class="govuk-body">{{ mssgs.access_statement_compliance_body_1 }}<a href="https://www.w3.org/TR/WCAG21/" class="govuk-link" target="_blank">{{ mssgs.access_statement_compliance_body_link }}</a>{{ mssgs.access_statement_compliance_body_2 }}</p>
+        <p class="govuk-body">{{ mssgs.access_statement_compliance_body_1 }}<a href="https://www.w3.org/TR/WCAG21/" class="govuk-link" target="_blank">{{ mssgs.access_statement_compliance_body_link_1 }}</a>{{ mssgs.period }}</p>
+        <p class="govuk-body">{{ mssgs.access_statement_compliance_body_2 }}<a href="https://www.w3.org/TR/WCAG21/" class="govuk-link" target="_blank">{{ mssgs.access_statement_compliance_body_link_2 }}</a>{{ mssgs.period }}</p>
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_nonaccess_heading }}</h2>
         <p class="govuk-body">{{ mssgs.access_statement_nonaccess_body }}</p>
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_noncompliance_heading }}</h2>
-        <p class="govuk-body">{{ mssgs.access_statement_noncompliance_body_1 }}<a href="https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html" class="govuk-link" target="_blank">{{ mssgs.access_statement_noncompliance_body_link }}</a>{{ mssgs.access_statement_noncompliance_body_2 }}</p>
-        <p class="govuk-body">{{ mssgs.access_statement_noncompliance_body_3 }}</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li> {{ mssgs.access_statement_noncompliance_body_1 }}<a href="https://www.w3.org/WAI/WCAG21/Understanding/keyboard-no-exception.html" class="govuk-link" target="_blank">{{ mssgs.access_statement_noncompliance_body_link_1 }}</a>{{ mssgs.access_statement_noncompliance_body_2 }}</li>
+            <li> {{ mssgs.access_statement_noncompliance_body_3 }}<a href="https://www.w3.org/WAI/WCAG21/Understanding/contrast-enhanced.html" class="govuk-link" target="_blank">{{ mssgs.access_statement_noncompliance_body_link_2 }}</a>{{ mssgs.access_statement_noncompliance_body_4 }} </li>
+            <li> {{ mssgs.access_statement_noncompliance_body_5 }}<a href="https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-link-only.html" class="govuk-link" target="_blank">{{ mssgs.access_statement_noncompliance_body_link_3 }}</a>{{ mssgs.access_statement_noncompliance_body_6 }} </li>
+        </ul>
 
         <h2 class="govuk-heading-m">{{ mssgs.access_statement_burden_title }}</h2>
         <p class="govuk-body">{{ mssgs.access_statement_none }}</p>
@@ -78,7 +86,6 @@
             <li>{{ mssgs.access_statement_prep_bulletpoint_1 }}</li>
             <li>{{ mssgs.access_statement_prep_bulletpoint_2 }}</li>
             <li>{{ mssgs.access_statement_prep_bulletpoint_3 }}</li>
-            <li>{{ mssgs.licence_type_1d }}</li>
         </ul>
         <p class="govuk-body">{{ mssgs.access_statement_prep_body_4 }}</p>
     </div>
