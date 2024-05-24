@@ -108,8 +108,8 @@ describe('terms-and-conditions get data', () => {
     expect(() => getData(request)).rejects.toThrowRedirectTo(CONTACT_SUMMARY.uri)
   })
 
-  it.each([[true], [false]])('content returns notify content when isLicenceForYou equals %s', async licenceForYou => {
-    const { content } = await getData(getMockRequest({ isLicenceForYou: licenceForYou }))
+  it.each([[true], [false]])('content returns notify content when isLicenceForYou equals %s', async isLicenceForYou => {
+    const { content } = await getData(getMockRequest({ isLicenceForYou }))
     expect(content).toMatchSnapshot()
   })
 })
