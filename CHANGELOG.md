@@ -1,4 +1,16 @@
 
+## v1.46.0-rc.6 (2024-05-28)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1949](https://github.com/DEFRA/rod-licensing/pull/1949) Licence conditions match Notify ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* [#1965](https://github.com/DEFRA/rod-licensing/pull/1965) github actions error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 
