@@ -71,14 +71,18 @@ export const licenceStartDateValid = (day, month, year, value, helpers) => {
     return { value, errors: helpers.error('date.monthInvalid') }
   }
 
-  if (monthNum === 2) {
-    const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0
+  return isLeapYear(dayNum, monthNum, yearNum, value, helpers)
+}
+
+const isLeapYear = (day, month, year, value, helpers) => {
+  if (month === 2) {
+    const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
     const maxDay = isLeapYear ? 29 : 28
-    if (dayNum > maxDay) {
+    if (day > maxDay) {
       return { value, errors: helpers.error(invalidDay) }
     }
-  } else if ([4, 6, 9, 11].includes(monthNum)) {
-    if (dayNum > 30) {
+  } else if ([4, 6, 9, 11].includes(month)) {
+    if (day > 30) {
       return { value, errors: helpers.error(invalidDay) }
     }
   }
@@ -110,16 +114,5 @@ export const birthDateValid = (day, month, year, value, helpers) => {
     return { value, errors: helpers.error('date.allInvalid') }
   }
 
-  if (monthNum === 2) {
-    const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0
-    const maxDay = isLeapYear ? 29 : 28
-    if (dayNum > maxDay) {
-      return { value, errors: helpers.error(invalidDay) }
-    }
-  } else if ([4, 6, 9, 11].includes(monthNum)) {
-    if (dayNum > 30) {
-      return { value, errors: helpers.error(invalidDay) }
-    }
-  }
-  return null
+  return isLeapYear(dayNum, monthNum, yearNum, value, helpers)
 }
