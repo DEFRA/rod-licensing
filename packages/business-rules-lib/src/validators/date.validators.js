@@ -53,6 +53,8 @@ export const dateNotNumber = (day, month, year, value, helpers) => {
   return null
 }
 
+const invalidDay = 'date.dayInvalid'
+
 export const licenceStartDateValid = (day, month, year, value, helpers) => {
   const dayNum = Number(day)
   const monthNum = Number(month)
@@ -65,7 +67,7 @@ export const licenceStartDateValid = (day, month, year, value, helpers) => {
     if (monthInvalid) {
       return { value, errors: helpers.error('date.dayMonthInvalid') }
     }
-    return { value, errors: helpers.error('date.dayInvalid') }
+    return { value, errors: helpers.error(invalidDay) }
   } else if (monthInvalid) {
     return { value, errors: helpers.error('date.monthInvalid') }
   }
@@ -74,11 +76,11 @@ export const licenceStartDateValid = (day, month, year, value, helpers) => {
     const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0
     const maxDay = isLeapYear ? 29 : 28
     if (dayNum > maxDay) {
-      return { value, errors: helpers.error('date.dayInvalid') }
+      return { value, errors: helpers.error(invalidDay) }
     }
   } else if ([4, 6, 9, 11].includes(monthNum)) {
     if (dayNum > 30) {
-      return { value, errors: helpers.error('date.dayInvalid') }
+      return { value, errors: helpers.error(invalidDay) }
     }
   }
   return null
@@ -94,7 +96,7 @@ export const birthDateValid = (day, month, year, value, helpers) => {
   const yearInvalid = year.length !== 4
 
   if (dayInvalid && !monthInvalid && !yearInvalid) {
-    return { value, errors: helpers.error('date.dayInvalid') }
+    return { value, errors: helpers.error(invalidDay) }
   } else if (dayInvalid && monthInvalid && !yearInvalid) {
     return { value, errors: helpers.error('date.dayMonthInvalid') }
   } else if (dayInvalid && !monthInvalid && yearInvalid) {
@@ -113,11 +115,11 @@ export const birthDateValid = (day, month, year, value, helpers) => {
     const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0
     const maxDay = isLeapYear ? 29 : 28
     if (dayNum > maxDay) {
-      return { value, errors: helpers.error('date.dayInvalid') }
+      return { value, errors: helpers.error(invalidDay) }
     }
   } else if ([4, 6, 9, 11].includes(monthNum)) {
     if (dayNum > 30) {
-      return { value, errors: helpers.error('date.dayInvalid') }
+      return { value, errors: helpers.error(invalidDay) }
     }
   }
   return null

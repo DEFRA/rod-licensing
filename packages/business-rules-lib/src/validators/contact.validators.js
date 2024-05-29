@@ -27,6 +27,9 @@ const capitaliseNamePrefixes = prefixes => {
 }
 
 const dateStringFormats = ['YYYY-MM-DD', 'YYYY-M-DD', 'YYYY-MM-D', 'YYYY-M-D']
+const invalidDate = '{{#label}} must be a real date'
+const numberDateError = 'Enter only numbers'
+const dateEntryMissing = 'Enter the date of birth'
 
 /**
  * Create a validator to check a contact's birth date
@@ -40,27 +43,27 @@ const createDateStringValidator = joi =>
     messages: {
       'date.min': '{{#label}} date before minimum allowed',
       'date.max': '{{#label}} must be less than or equal to "now"',
-      'date.dayInvalid': '{{#label}} must be a real date',
-      'date.dayMonthInvalid': '{{#label}} must be a real date',
-      'date.dayYearInvalid': '{{#label}} must be a real date',
-      'date.monthInvalid': '{{#label}} must be a real date',
-      'date.monthYearInvalid': '{{#label}} must be a real date',
-      'date.yearInvalid': '{{#label}} must be a real date',
-      'date.allInvalid': '{{#label}} must be a real date',
-      'date.dayNotNumber': 'Enter only numbers',
-      'date.dayMonthNotNumber': 'Enter only numbers',
-      'date.dayYearNotNumber': 'Enter only numbers',
-      'date.monthNotNumber': 'Enter only numbers',
-      'date.monthYearNotNumber': 'Enter only numbers',
-      'date.yearNotNumber': 'Enter only numbers',
-      'date.allNotNumber': 'Enter only numbers',
+      'date.dayInvalid': invalidDate,
+      'date.dayMonthInvalid': invalidDate,
+      'date.dayYearInvalid': invalidDate,
+      'date.monthInvalid': invalidDate,
+      'date.monthYearInvalid': invalidDate,
+      'date.yearInvalid': invalidDate,
+      'date.allInvalid': invalidDate,
+      'date.dayNotNumber': numberDateError,
+      'date.dayMonthNotNumber': numberDateError,
+      'date.dayYearNotNumber': numberDateError,
+      'date.monthNotNumber': numberDateError,
+      'date.monthYearNotNumber': numberDateError,
+      'date.yearNotNumber': numberDateError,
+      'date.allNotNumber': numberDateError,
       'date.dayMissing': 'Day is missing',
-      'date.dayMonthMissing': 'Enter the date of birth',
-      'date.dayYearMissing': 'Enter the date of birth',
+      'date.dayMonthMissing': dateEntryMissing,
+      'date.dayYearMissing': dateEntryMissing,
       'date.monthMissing': 'Month is missing',
-      'date.monthYearMissing': 'Enter the date of birth',
+      'date.monthYearMissing': dateEntryMissing,
       'date.yearMissing': 'Year is missing',
-      'date.allMissing': 'Enter the date of birth'
+      'date.allMissing': dateEntryMissing
     },
     validate (value, helpers) {
       const dateValue = moment(value, dateStringFormats, true)

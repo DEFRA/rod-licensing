@@ -39,6 +39,9 @@ export const permissionNumberUniqueComponentValidator = joi =>
     .example('B6HLG9')
 
 const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
+const invalidDate = '{{#label}} must be a real date'
+const numberDateError = 'Enter only numbers'
+const dateEntryMissing = 'Enter the date of birth'
 
 /**
  * Create a validator to check a licence start date
@@ -52,23 +55,23 @@ const createLicenceDateStringValidator = joi =>
     messages: {
       'date.min': '{{#label}} date before minimum allowed',
       'date.max': '{{#label}} date after maximum allowed',
-      'date.dayInvalid': '{{#label}} must be a real date',
-      'date.dayMonthInvalid': '{{#label}} must be a real date',
-      'date.monthInvalid': '{{#label}} must be a real date',
-      'date.dayNotNumber': 'Enter only numbers',
-      'date.dayMonthNotNumber': 'Enter only numbers',
-      'date.dayYearNotNumber': 'Enter only numbers',
-      'date.monthNotNumber': 'Enter only numbers',
-      'date.monthYearNotNumber': 'Enter only numbers',
-      'date.yearNotNumber': 'Enter only numbers',
-      'date.allNotNumber': 'Enter only numbers',
+      'date.dayInvalid': invalidDate,
+      'date.dayMonthInvalid': invalidDate,
+      'date.monthInvalid': invalidDate,
+      'date.dayNotNumber': numberDateError,
+      'date.dayMonthNotNumber': numberDateError,
+      'date.dayYearNotNumber': numberDateError,
+      'date.monthNotNumber': numberDateError,
+      'date.monthYearNotNumber': numberDateError,
+      'date.yearNotNumber': numberDateError,
+      'date.allNotNumber': numberDateError,
       'date.dayMissing': 'Day is missing',
-      'date.dayMonthMissing': 'Enter a licence start date',
-      'date.dayYearMissing': 'Enter a licence start date',
+      'date.dayMonthMissing': dateEntryMissing,
+      'date.dayYearMissing': dateEntryMissing,
       'date.monthMissing': 'Month is missing',
-      'date.monthYearMissing': 'Enter a licence start date',
+      'date.monthYearMissing': dateEntryMissing,
       'date.yearMissing': 'Year is missing',
-      'date.allMissing': 'Enter a licence start date'
+      'date.allMissing': dateEntryMissing
     },
     validate (value, helpers) {
       const dateValue = moment(value, dateStringFormats, true)
