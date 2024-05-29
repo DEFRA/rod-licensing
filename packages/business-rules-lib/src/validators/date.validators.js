@@ -25,32 +25,31 @@ export const dateMissing = (day, month, year, value, helpers) => {
 
 export const dateNotNumber = (day, month, year, value, helpers) => {
   const isNumber = str => /^\d+$/.test(str)
-  const dayNotNumber = day && !isNumber(day)
-  const monthNotNumber = month && !isNumber(month)
-  const yearNotNumber = year && !isNumber(year)
+  const errors = []
 
-  if (dayNotNumber && !monthNotNumber && !yearNotNumber) {
-    return { value, errors: helpers.error('date.dayNotNumber') }
+  if (day && !isNumber(day)) {
+    if (month && !isNumber(month)) {
+      if (year && !isNumber(year)) {
+        errors.push('date.allNotNumber')
+      } else {
+        errors.push('date.dayMonthNotNumber')
+      }
+    } else if (year && !isNumber(year)) {
+      errors.push('date.dayYearNotNumber')
+    } else {
+      errors.push('date.dayNotNumber')
+    }
+  } else if (month && !isNumber(month)) {
+    if (year && !isNumber(year)) {
+      errors.push('date.monthYearNotNumber')
+    } else {
+      errors.push('date.monthNotNumber')
+    }
+  } else if (year && !isNumber(year)) {
+    errors.push('date.yearNotNumber')
   }
-  if (dayNotNumber && monthNotNumber && !yearNotNumber) {
-    return { value, errors: helpers.error('date.dayMonthNotNumber') }
-  }
-  if (dayNotNumber && !monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.dayYearNotNumber') }
-  }
-  if (!dayNotNumber && monthNotNumber && !yearNotNumber) {
-    return { value, errors: helpers.error('date.monthNotNumber') }
-  }
-  if (!dayNotNumber && monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.monthYearNotNumber') }
-  }
-  if (!dayNotNumber && !monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.yearNotNumber') }
-  }
-  if (dayNotNumber && monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.allNotNumber') }
-  }
-  return null
+
+  return errors.length ? { value, errors: helpers.error(errors.join(' ')) } : null
 }
 
 const invalidDay = 'date.dayInvalid'
