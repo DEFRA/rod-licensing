@@ -7,7 +7,6 @@
 
 {% from "header/macro.njk" import govukHeader %}
 {% from "button/macro.njk" import govukButton %}
-{% from "footer/macro.njk" import govukFooter %}
 {% from "back-link/macro.njk" import govukBackLink %}
 
 {% if pageLanguageSetToWelsh %}
@@ -180,52 +179,71 @@
 {% endif %}
 {% endblock %}
 
-{% set footerHtml %}
-    <div class="no-print">
-        {% if (title === mssgs.address_lookup_title_you) or (title === mssgs.address_lookup_title_other) %}
-            <p class="govuk-body-s">{{ mssgs.address_lookup_crown_copyright }}<a class="govuk-link" href="http://www.ordnancesurvey.co.uk" rel="noreferrer noopener" target="_blank">{{ mssgs.address_lookup_crown_copyright_new_tab }}</a> {{ mssgs.address_lookup_crown_copyright_ref }}
-            <br>{{ mssgs.address_lookup_crown_copyright_terms }} <a class="govuk-link" href="{{ data.uri.osTerms }}">{{ mssgs.address_lookup_crown_copyright_terms_link }}</a></p>
-        {% endif %}
-        <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">{{ mssgs.footer_ea_helpline }} <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
-        <p class="govuk-!-margin-top-0">{{ mssgs.footer_ea_helpline_opening_hours }}</p>
-        <p class="govuk-!-margin-top-0"><a class="govuk-link" href="https://www.gov.uk/call-charges">{{ mssgs.footer_ea_helpline_charges_link }}</a></p>
-        <ul class="govuk-footer__inline-list">
-            <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="{{ _uri.refunds }}">
-                    {{ mssgs.footer_refund_policy }}
-                </a>
-            </li>
-
-            <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="{{ _uri.privacy }}">
-                    {{ mssgs.footer_privacy_policy }}
-                </a>
-            </li>
-
-            <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="{{ _uri.accessibility }}">
-                    {{ mssgs.footer_accessibility }}
-                </a>
-            </li>
-
-            <li class="govuk-footer__inline-list-item">
-                <a class="govuk-link" href="{{ _uri.cookies }}">
-                    {{ mssgs.footer_cookies }}
-                </a>
-            </li>
-        </ul>
-    </div>
-{% endset -%}
-
 {% block footer %}
-    {{ govukFooter({
-        classes: "no-print",
-        meta: {
-            html: footerHtml
-        }
-    }) }}
+    <footer class="govuk-footer">
+    <div class="govuk-width-container">
+        <div class="govuk-footer__meta">
+            <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">      
+                {% if (title === mssgs.address_lookup_title_you) or (title === mssgs.address_lookup_title_other) %}
+                    <p class="govuk-body-s">{{ mssgs.address_lookup_crown_copyright }}<a class="govuk-link" href="http://www.ordnancesurvey.co.uk" rel="noreferrer noopener" target="_blank">{{ mssgs.address_lookup_crown_copyright_new_tab }}</a> {{ mssgs.address_lookup_crown_copyright_ref }}
+                    <br>{{ mssgs.address_lookup_crown_copyright_terms }} <a class="govuk-link" href="{{ data.uri.osTerms }}">{{ mssgs.address_lookup_crown_copyright_terms_link }}</a></p>
+                {% endif %}
+                <p class="govuk-!-margin-top-5 govuk-!-margin-bottom-0">{{ mssgs.footer_ea_helpline }} <a class="govuk-link" href="tel:+443448005386">0344 800 5386</a></p>
+                <p class="govuk-!-margin-top-0">{{ mssgs.footer_ea_helpline_opening_hours }}</p>
+                <p class="govuk-!-margin-top-0"><a class="govuk-link" href="https://www.gov.uk/call-charges">{{ mssgs.footer_ea_helpline_charges_link }}</a></p>
+                <ul class="govuk-footer__inline-list">
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-link" href="{{ _uri.refunds }}">
+                            {{ mssgs.footer_refund_policy }}
+                        </a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-link" href="{{ _uri.privacy }}">
+                            {{ mssgs.footer_privacy_policy }}
+                        </a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-link" href="{{ _uri.accessibility }}">
+                            {{ mssgs.footer_accessibility }}
+                        </a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-link" href="{{ _uri.cookies }}">
+                            {{ mssgs.footer_cookies }}
+                        </a>
+                    </li>
+                </ul>
+                <svg
+                aria-hidden="true"
+                focusable="false"
+                class="govuk-footer__licence-logo"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 483.2 195.7"
+                height="17"
+                width="41">
+                <path
+                    fill="currentColor"
+                    d="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145" />
+                </svg>
+                <span class="govuk-footer__licence-description">
+                {{ mssgs.footer_licence_1 }}
+                <a
+                    class="govuk-footer__link"
+                    href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+                    rel="license">{{ mssgs.footer_licence_link }}</a>{{ mssgs.footer_licence_2 }}
+                </span>
+            </div>
+            <div class="govuk-footer__meta-item">
+                <a
+                class="govuk-footer__link govuk-footer__copyright-logo"
+                href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/">
+                {{ mssgs.footer_copyright }}
+                </a>
+            </div>
+        </div>
+    </div>
+    </footer>
 {% endblock %}
-
 {% block bodyEnd %}
     <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
     <script nonce="{{nonce}}" type="module">

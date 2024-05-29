@@ -1,4 +1,61 @@
 
+## v1.46.0-rc.6 (2024-05-28)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1949](https://github.com/DEFRA/rod-licensing/pull/1949) Licence conditions match Notify ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* [#1965](https://github.com/DEFRA/rod-licensing/pull/1965) github actions error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+
+
+## v1.46.0-rc.1 (2024-05-24)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1958](https://github.com/DEFRA/rod-licensing/pull/1958) Updating the accessibility statement. ([@lailien3](https://github.com/lailien3))
+  * [#1960](https://github.com/DEFRA/rod-licensing/pull/1960) Amend Welsh title service header to match through out the service ([@lailien3](https://github.com/lailien3))
+  * [#1961](https://github.com/DEFRA/rod-licensing/pull/1961) Updating recurring card payment consent page ([@lailien3](https://github.com/lailien3))
+  * [#1962](https://github.com/DEFRA/rod-licensing/pull/1962) Updating recurring card payment terms & conditions page ([@lailien3](https://github.com/lailien3))
+  * [#1963](https://github.com/DEFRA/rod-licensing/pull/1963) Amend privacy policy page for recurring card payments ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.46.0-rc.0 (2024-05-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1955](https://github.com/DEFRA/rod-licensing/pull/1955) Remove online cancellation from recurring payments terms ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.45.0-rc.4 (2024-05-10)
+
+#### :bug: Bug Fix
+* `dynamics-lib`
+  * [#1951](https://github.com/DEFRA/rod-licensing/pull/1951) Fix error generating fulfilment file after CRM fulfilment requests ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.45.0-rc.3 (2024-05-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1952](https://github.com/DEFRA/rod-licensing/pull/1952) Update footer for licence and crown copyright ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.45.0-rc.2 (2024-05-02)
 
 #### :rocket: Enhancement
