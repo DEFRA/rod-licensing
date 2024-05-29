@@ -22,6 +22,12 @@ import moment from 'moment'
 
 mockSalesApi()
 
+jest.mock('@defra-fish/business-rules-lib/src/validators/date.validators.js', () => ({
+  ...jest.requireActual('@defra-fish/business-rules-lib/src/validators/date.validators.js'),
+  dateMissing: jest.fn(),
+  dateNotNumber: jest.fn()
+}))
+
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))
@@ -47,7 +53,7 @@ describe("The 'when would you like you licence to start?' page", () => {
       'licence-to-start': licenceToStart.ANOTHER_DATE,
       'licence-start-date-year': '2020',
       'licence-start-date-month': '11',
-      'licence-start-date-day': '35'
+      'licence-start-date-day': ''
     })
     expect(response.statusCode).toBe(302)
     expect(response.headers.location).toHaveValidPathFor(LICENCE_TO_START.uri)
