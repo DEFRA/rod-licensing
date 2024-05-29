@@ -25,17 +25,6 @@ export const licenceTypeDisplay = (permission, mssgs) => {
   return typesStrArr.join('')
 }
 
-// export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
-//   switch (permission.licenceLength) {
-//     case '12M':
-//       return `${licenceTypeDisplay(permission, mssgs)}, ${mssgs.licence_type_12m}`
-//     case '8D':
-//       return `${licenceTypeDisplay(permission, mssgs)}, ${mssgs.licence_type_8d}`
-//     default:
-//       return `${licenceTypeDisplay(permission, mssgs)}, ${mssgs.licence_type_1d}`
-//   }
-// }
-
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
   switch (permission.licenceLength) {
     case '12M':
