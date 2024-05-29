@@ -106,8 +106,8 @@ export const birthDateValid = (day, month, year, value, helpers) => {
 
 const isLeapYear = (day, month, year, value, helpers) => {
   if (month === 2) {
-    const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
-    const maxDay = isLeapYear ? 29 : 28
+    const leapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
+    const maxDay = leapYear ? 29 : 28
     if (day > maxDay) {
       return { value, errors: helpers.error(invalidDay) }
     }
