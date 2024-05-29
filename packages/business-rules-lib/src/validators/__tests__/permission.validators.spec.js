@@ -43,9 +43,7 @@ describe('permission validators', () => {
 
     it('throws if given a date 30 days in future', async () => {
       await expect(
-        permissionValidation
-          .createLicenceStartDateValidator(Joi)
-          .validateAsync(moment().add(31, 'days').format('YYYY-MM-DD'))
+        permissionValidation.createLicenceStartDateValidator(Joi).validateAsync(moment().add(31, 'days').format('YYYY-MM-DD'))
       ).rejects.toThrow('"value" date after maximum allowed')
     })
 

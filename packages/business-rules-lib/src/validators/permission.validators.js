@@ -120,4 +120,5 @@ const createLicenceDateStringValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.AnySchema}
  */
-export const createLicenceStartDateValidator = joi => createLicenceDateStringValidator(joi).trim().licenceStartDate(120).required().example('2000-01-01')
+export const createLicenceStartDateValidator = joi =>
+  createLicenceDateStringValidator(joi).trim().licenceStartDate(120).required().example('2000-01-01')

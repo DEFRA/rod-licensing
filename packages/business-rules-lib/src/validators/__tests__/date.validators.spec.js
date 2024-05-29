@@ -17,7 +17,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: message }))
+        error: jest.fn(type => ({ type, message: message }))
       }
 
       const result = dateMissing(day, month, year, date, helpers)
@@ -32,7 +32,7 @@ describe('DateValidator', () => {
       const date = '2024-02-01'
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = dateMissing(day, month, year, date, helpers)
@@ -54,7 +54,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: NUMBERS_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: NUMBERS_DATE_ERROR_MESSAGE }))
       }
 
       const result = dateNotNumber(day, month, year, date, helpers)
@@ -69,7 +69,7 @@ describe('DateValidator', () => {
       const date = '2024-02-01'
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = dateNotNumber(day, month, year, date, helpers)
@@ -87,7 +87,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = licenceStartDateValid(day, month, year, date, helpers)
@@ -98,15 +98,11 @@ describe('DateValidator', () => {
       })
     })
 
-    it.each([
-      ['2023-02-29'],
-      ['2022-02-29'],
-      ['2021-02-29']
-    ])('throws if 29th February and is not a leap year', async (format) => {
+    it.each([['2023-02-29'], ['2022-02-29'], ['2021-02-29']])('throws if 29th February and is not a leap year', async format => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = licenceStartDateValid(day, month, year, date, helpers)
@@ -121,7 +117,7 @@ describe('DateValidator', () => {
       const date = '2024-02-29'
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = licenceStartDateValid(day, month, year, date, helpers)
@@ -139,7 +135,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = licenceStartDateValid(day, month, year, date, helpers)
@@ -160,7 +156,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = licenceStartDateValid(day, month, year, date, helpers)
@@ -180,7 +176,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = licenceStartDateValid(day, month, year, date, helpers)
@@ -202,7 +198,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = birthDateValid(day, month, year, date, helpers)
@@ -213,15 +209,11 @@ describe('DateValidator', () => {
       })
     })
 
-    it.each([
-      ['2023-02-29'],
-      ['2022-02-29'],
-      ['2021-02-29']
-    ])('throws if 29th February and is not a leap year', async (format) => {
+    it.each([['2023-02-29'], ['2022-02-29'], ['2021-02-29']])('throws if 29th February and is not a leap year', async format => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = birthDateValid(day, month, year, date, helpers)
@@ -236,7 +228,7 @@ describe('DateValidator', () => {
       const date = '2024-02-29'
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = birthDateValid(day, month, year, date, helpers)
@@ -254,7 +246,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = birthDateValid(day, month, year, date, helpers)
@@ -275,7 +267,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = birthDateValid(day, month, year, date, helpers)
@@ -295,7 +287,7 @@ describe('DateValidator', () => {
       const date = format
       const [year, month, day] = date.split('-')
       const helpers = {
-        error: jest.fn((type) => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
+        error: jest.fn(type => ({ type, message: INVALID_DATE_ERROR_MESSAGE }))
       }
 
       const result = birthDateValid(day, month, year, date, helpers)

@@ -24,7 +24,7 @@ export const dateMissing = (day, month, year, value, helpers) => {
 }
 
 export const dateNotNumber = (day, month, year, value, helpers) => {
-  const isNumber = (str) => /^\d+$/.test(str)
+  const isNumber = str => /^\d+$/.test(str)
   const dayNotNumber = day && !isNumber(day)
   const monthNotNumber = month && !isNumber(month)
   const yearNotNumber = year && !isNumber(year)
@@ -71,7 +71,7 @@ export const licenceStartDateValid = (day, month, year, value, helpers) => {
   }
 
   if (monthNum === 2) {
-    const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || (yearNum % 400 === 0)
+    const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0
     const maxDay = isLeapYear ? 29 : 28
     if (dayNum > maxDay) {
       return { value, errors: helpers.error('date.dayInvalid') }
@@ -110,7 +110,7 @@ export const birthDateValid = (day, month, year, value, helpers) => {
   }
 
   if (monthNum === 2) {
-    const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || (yearNum % 400 === 0)
+    const isLeapYear = (yearNum % 4 === 0 && yearNum % 100 !== 0) || yearNum % 400 === 0
     const maxDay = isLeapYear ? 29 : 28
     if (dayNum > maxDay) {
       return { value, errors: helpers.error('date.dayInvalid') }
