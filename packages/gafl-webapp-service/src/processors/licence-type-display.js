@@ -25,7 +25,7 @@ export const licenceTypeDisplay = (permission, mssgs) => {
   return typesStrArr.join('')
 }
 
-(permission, mssgs) => {
+export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
   const licenceTypeMessage =
     permission.licenceLength === '12M'
       ? mssgs.licence_type_12m
