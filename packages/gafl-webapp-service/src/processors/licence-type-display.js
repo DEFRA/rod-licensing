@@ -26,8 +26,8 @@ export const licenceTypeDisplay = (permission, mssgs) => {
 }
 
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
-  const licenceTypeMessage = getLicenceTypeMessage(permission.licenceLength, mssgs);
-  return `${licenceTypeDisplay(permission, mssgs)}, ${licenceTypeMessage}`;
+  const licenceTypeMessage = getLicenceTypeMessage(permission.licenceLength, mssgs)
+  return `${licenceTypeDisplay(permission, mssgs)}, ${licenceTypeMessage}`
 }
 
 const getLicenceTypeMessage = (licenceLength, mssgs) => {
