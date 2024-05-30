@@ -1,8 +1,14 @@
 export const dateMissing = (day, month, year, value, helpers) => {
   const missingParts = []
-  if (!day) missingParts.push('day')
-  if (!month) missingParts.push('month')
-  if (!year) missingParts.push('year')
+  if (!day) {
+    missingParts.push('day')
+  }
+  if (!month) {
+    missingParts.push('month')
+  }
+  if (!year) {
+    missingParts.push('year')
+  }
 
   if (missingParts.length > 1) {
     const missingPartsCombined = missingParts.join('')
@@ -18,9 +24,15 @@ export const dateMissing = (day, month, year, value, helpers) => {
 
 export const dateNotNumber = (day, month, year, value, helpers) => {
   const notNumber = []
-  if (isNaN(day)) notNumber.push('day')
-  if (isNaN(month)) notNumber.push('month')
-  if (isNaN(year)) notNumber.push('year')
+  if (isNaN(day)) {
+    notNumber.push('day')
+  }
+  if (isNaN(month)) {
+    notNumber.push('month')
+  }
+  if (isNaN(year)) {
+    notNumber.push('year')
+  }
 
   if (notNumber.length > 1) {
     const notNumberCombined = notNumber.join('')
@@ -63,9 +75,15 @@ export const birthDateValid = (day, month, year, value, helpers) => {
 
   const errors = []
 
-  if (dayNum < 1 || dayNum > 31) errors.push('day')
-  if (monthNum < 1 || monthNum > 12) errors.push('month')
-  if (year.length !== 4) errors.push('year')
+  if (dayNum < 1 || dayNum > 31) {
+    errors.push('day')
+  }
+  if (monthNum < 1 || monthNum > 12) {
+    errors.push('month')
+  }
+  if (year.length !== 4) {
+    errors.push('year')
+  }
 
   if (errors.length > 1) {
     const errorsCombined = errors.join('')
