@@ -1,54 +1,34 @@
 export const dateMissing = (day, month, year, value, helpers) => {
-  if (!day && month && year) {
-    return { value, errors: helpers.error('date.dayMissing') }
+  const missingParts = []
+  if (!day) missingParts.push('day')
+  if (!month) missingParts.push('month')
+  if (!year) missingParts.push('year')
+
+  if (missingParts.length > 1) {
+    const missingPartsCombined = missingParts.join('')
+    const errorType = `date.${missingPartsCombined}Missing`
+    return { value, errors: helpers.error(errorType) }
+  } else if (missingParts.length === 1) {
+    const errorType = `date.${missingParts}Missing`
+    return { value, errors: helpers.error(errorType) }
+  } else {
+    return null
   }
-  if (!day && !month && year) {
-    return { value, errors: helpers.error('date.dayMonthMissing') }
-  }
-  if (!day && month && !year) {
-    return { value, errors: helpers.error('date.dayYearMissing') }
-  }
-  if (day && !month && year) {
-    return { value, errors: helpers.error('date.monthMissing') }
-  }
-  if (day && !month && !year) {
-    return { value, errors: helpers.error('date.monthYearMissing') }
-  }
-  if (day && month && !year) {
-    return { value, errors: helpers.error('date.yearMissing') }
-  }
-  if (!day && !month && !year) {
-    return { value, errors: helpers.error('date.allMissing') }
-  }
-  return null
 }
 
 export const dateNotNumber = (day, month, year, value, helpers) => {
-  const isNumber = str => /^\d+$/.test(str)
-  const dayNotNumber = day && !isNumber(day)
-  const monthNotNumber = month && !isNumber(month)
-  const yearNotNumber = year && !isNumber(year)
+  const notNumber = []
+  if (isNaN(day)) notNumber.push('day')
+  if (isNaN(month)) notNumber.push('month')
+  if (isNaN(year)) notNumber.push('year')
 
-  if (dayNotNumber && !monthNotNumber && !yearNotNumber) {
-    return { value, errors: helpers.error('date.dayNotNumber') }
-  }
-  if (dayNotNumber && monthNotNumber && !yearNotNumber) {
-    return { value, errors: helpers.error('date.dayMonthNotNumber') }
-  }
-  if (dayNotNumber && !monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.dayYearNotNumber') }
-  }
-  if (!dayNotNumber && monthNotNumber && !yearNotNumber) {
-    return { value, errors: helpers.error('date.monthNotNumber') }
-  }
-  if (!dayNotNumber && monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.monthYearNotNumber') }
-  }
-  if (!dayNotNumber && !monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.yearNotNumber') }
-  }
-  if (dayNotNumber && monthNotNumber && yearNotNumber) {
-    return { value, errors: helpers.error('date.allNotNumber') }
+  if (notNumber.length > 1) {
+    const notNumberCombined = notNumber.join('')
+    const errorType = `date.${notNumberCombined}NotNumber`
+    return { value, errors: helpers.error(errorType) }
+  } else if (notNumber.length === 1) {
+    const errorType = `date.${notNumber}NotNumber`
+    return { value, errors: helpers.error(errorType) }
   } else {
     return null
   }
@@ -66,7 +46,7 @@ export const licenceStartDateValid = (day, month, year, value, helpers) => {
 
   if (dayInvalid) {
     if (monthInvalid) {
-      return { value, errors: helpers.error('date.dayMonthInvalid') }
+      return { value, errors: helpers.error('date.daymonthInvalid') }
     }
     return { value, errors: helpers.error(invalidDay) }
   } else if (monthInvalid) {
@@ -81,27 +61,22 @@ export const birthDateValid = (day, month, year, value, helpers) => {
   const monthNum = Number(month)
   const yearNum = Number(year)
 
-  const dayInvalid = dayNum < 1 || dayNum > 31
-  const monthInvalid = monthNum < 1 || monthNum > 12
-  const yearInvalid = year.length !== 4
+  const errors = []
 
-  if (dayInvalid && !monthInvalid && !yearInvalid) {
-    return { value, errors: helpers.error(invalidDay) }
-  } else if (dayInvalid && monthInvalid && !yearInvalid) {
-    return { value, errors: helpers.error('date.dayMonthInvalid') }
-  } else if (dayInvalid && !monthInvalid && yearInvalid) {
-    return { value, errors: helpers.error('date.dayYearInvalid') }
-  } else if (!dayInvalid && monthInvalid && !yearInvalid) {
-    return { value, errors: helpers.error('date.monthInvalid') }
-  } else if (!dayInvalid && monthInvalid && yearInvalid) {
-    return { value, errors: helpers.error('date.monthYearInvalid') }
-  } else if (!dayInvalid && !monthInvalid && yearInvalid) {
-    return { value, errors: helpers.error('date.yearInvalid') }
-  } else if (dayInvalid && monthInvalid && yearInvalid) {
-    return { value, errors: helpers.error('date.allInvalid') }
-  } else {
-    return isLeapYear(dayNum, monthNum, yearNum, value, helpers)
+  if (dayNum < 1 || dayNum > 31) errors.push('day')
+  if (monthNum < 1 || monthNum > 12) errors.push('month')
+  if (year.length !== 4) errors.push('year')
+
+  if (errors.length > 1) {
+    const errorsCombined = errors.join('')
+    const errorType = `date.${errorsCombined}Invalid`
+    return { value, errors: helpers.error(errorType) }
+  } else if (errors.length === 1) {
+    const errorType = `date.${errors}Invalid`
+    return { value, errors: helpers.error(errorType) }
   }
+
+  return isLeapYear(dayNum, monthNum, yearNum, value, helpers)
 }
 
 const isLeapYear = (day, month, year, value, helpers) => {

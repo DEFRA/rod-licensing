@@ -9,10 +9,10 @@ describe('DateValidator', () => {
       ['day', '2000-02-', 'date.dayMissing', 'Day is missing'],
       ['month', '2000--01', 'date.monthMissing', 'Month is missing'],
       ['year', '-02-01', 'date.yearMissing', 'Year is missing'],
-      ['day and month', '2000--', 'date.dayMonthMissing', 'Enter a licence start date'],
-      ['day and year', '-02-', 'date.dayYearMissing', 'Enter a licence start date'],
-      ['month and year', '--01', 'date.monthYearMissing', 'Enter a licence start date'],
-      ['day, month and year', '--', 'date.allMissing', 'Enter a licence start date']
+      ['day and month', '2000--', 'date.daymonthMissing', 'Enter a licence start date'],
+      ['day and year', '-02-', 'date.dayyearMissing', 'Enter a licence start date'],
+      ['month and year', '--01', 'date.monthyearMissing', 'Enter a licence start date'],
+      ['day, month and year', '--', 'date.daymonthyearMissing', 'Enter a licence start date']
     ])('throws if %s is missing', async (missing, format, errorType, message) => {
       const date = format
       const [year, month, day] = date.split('-')
@@ -46,10 +46,10 @@ describe('DateValidator', () => {
       ['day', '2000-02-ee', 'date.dayNotNumber'],
       ['month', '2000-ee-01', 'date.monthNotNumber'],
       ['year', 'eeee-02-01', 'date.yearNotNumber'],
-      ['day and month', '2000-ee-ee', 'date.dayMonthNotNumber'],
-      ['day and year', 'eeee-02-ee', 'date.dayYearNotNumber'],
-      ['month and year', 'eeee-ee-01', 'date.monthYearNotNumber'],
-      ['day, month and year', 'eeee-ee-ee', 'date.allNotNumber']
+      ['day and month', '2000-ee-ee', 'date.daymonthNotNumber'],
+      ['day and year', 'eeee-02-ee', 'date.dayyearNotNumber'],
+      ['month and year', 'eeee-ee-01', 'date.monthyearNotNumber'],
+      ['day, month and year', 'eeee-ee-ee', 'date.daymonthyearNotNumber']
     ])('throws if %s is not a number', async (string, format, errorType) => {
       const date = format
       const [year, month, day] = date.split('-')
@@ -82,7 +82,7 @@ describe('DateValidator', () => {
     it.each([
       ['day', '2000-02-45', 'date.dayInvalid'],
       ['month', '2000-17-01', 'date.monthInvalid'],
-      ['day and month', '2000-13-67', 'date.dayMonthInvalid']
+      ['day and month', '2000-13-67', 'date.daymonthInvalid']
     ])('throws if %s is not valid', async (invalid, format, errorType) => {
       const date = format
       const [year, month, day] = date.split('-')
@@ -190,10 +190,10 @@ describe('DateValidator', () => {
       ['day', '2000-02-45', 'date.dayInvalid'],
       ['month', '2000-17-01', 'date.monthInvalid'],
       ['year', '00-02-01', 'date.yearInvalid'],
-      ['day and month', '2000-13-67', 'date.dayMonthInvalid'],
-      ['day and year', '00-02-41', 'date.dayYearInvalid'],
-      ['month and year', '00-14-01', 'date.monthYearInvalid'],
-      ['day, month and year', '00-14-35', 'date.allInvalid']
+      ['day and month', '2000-13-67', 'date.daymonthInvalid'],
+      ['day and year', '00-02-41', 'date.dayyearInvalid'],
+      ['month and year', '00-14-01', 'date.monthyearInvalid'],
+      ['day, month and year', '00-14-35', 'date.daymonthyearInvalid']
     ])('throws if %s is not valid', async (invalid, format, errorType) => {
       const date = format
       const [year, month, day] = date.split('-')
