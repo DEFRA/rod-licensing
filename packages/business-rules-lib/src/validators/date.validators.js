@@ -48,13 +48,18 @@ export const dateNotNumber = (day, month, year, value, helpers) => {
 
 const invalidDay = 'date.dayInvalid'
 
+const FIRST_DAY = 1
+const FIRST_MONTH = 1
+const LAST_DAY = 31
+const LAST_MONTH = 12
+
 export const licenceStartDateValid = (day, month, year, value, helpers) => {
   const dayNum = Number(day)
   const monthNum = Number(month)
   const yearNum = Number(year)
 
-  const dayInvalid = dayNum < 1 || dayNum > 31
-  const monthInvalid = monthNum < 1 || monthNum > 12
+  const dayInvalid = dayNum < FIRST_DAY || dayNum > LAST_DAY
+  const monthInvalid = monthNum < FIRST_MONTH || monthNum > LAST_MONTH
 
   if (dayInvalid) {
     if (monthInvalid) {
@@ -75,10 +80,10 @@ export const birthDateValid = (day, month, year, value, helpers) => {
 
   const errors = []
 
-  if (dayNum < 1 || dayNum > 31) {
+  if (dayNum < FIRST_DAY || dayNum > LAST_DAY) {
     errors.push('day')
   }
-  if (monthNum < 1 || monthNum > 12) {
+  if (monthNum < FIRST_MONTH || monthNum > LAST_MONTH) {
     errors.push('month')
   }
   if (year.length !== 4) {
@@ -97,19 +102,30 @@ export const birthDateValid = (day, month, year, value, helpers) => {
   }
 }
 
+const LEAP_YEAR_DIVISOR_4 = 4
+const LEAP_YEAR_DIVISOR_100 = 100
+const LEAP_YEAR_DIVISOR_400 = 400
+const DAYS_IN_FEB_LEAP_YEAR = 29
+const DAYS_IN_FEB_NON_LEAP_YEAR = 28
+const MAX_DAYS_IN_MONTH_WITH_30_DAYS = 30
+const MONTH_FEBRUARY = 2
+const MONTHS_WITH_30_DAYS = [4, 6, 9, 11]
+
 const isLeapYear = (day, month, year, value, helpers) => {
-  if (month === 2) {
-    const leapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
-    const maxDay = leapYear ? 29 : 28
+  const isFebruary = month === MONTH_FEBRUARY
+  const isMonthWith30Days = MONTHS_WITH_30_DAYS.includes(month)
+
+  if (isFebruary) {
+    const isLeapYear = (year % LEAP_YEAR_DIVISOR_4 === 0 && year % LEAP_YEAR_DIVISOR_100 !== 0) || year % LEAP_YEAR_DIVISOR_400 === 0
+    const maxDay = isLeapYear ? DAYS_IN_FEB_LEAP_YEAR : DAYS_IN_FEB_NON_LEAP_YEAR
     if (day > maxDay) {
       return { value, errors: helpers.error(invalidDay) }
     }
-  } else if ([4, 6, 9, 11].includes(month)) {
-    if (day > 30) {
+  } else if (isMonthWith30Days) {
+    if (day > MAX_DAYS_IN_MONTH_WITH_30_DAYS) {
       return { value, errors: helpers.error(invalidDay) }
     }
-  } else {
-    return null
   }
+
   return null
 }
