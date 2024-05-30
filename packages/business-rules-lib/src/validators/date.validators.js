@@ -108,24 +108,27 @@ const LEAP_YEAR_DIVISOR_400 = 400
 const DAYS_IN_FEB_LEAP_YEAR = 29
 const DAYS_IN_FEB_NON_LEAP_YEAR = 28
 const MAX_DAYS_IN_MONTH_WITH_30_DAYS = 30
-const MONTH_FEBRUARY = 2
-const MONTHS_WITH_30_DAYS = [4, 6, 9, 11]
+const MONTH_FEB = 2
+const MONTH_APRIL = 4
+const MONTH_JUNE = 6
+const MONTH_SEPT = 9
+const MONTH_NOV = 11
+const MONTHS_WITH_30_DAYS = [MONTH_APRIL, MONTH_JUNE, MONTH_SEPT, MONTH_NOV]
 
 const isLeapYear = (day, month, year, value, helpers) => {
-  const isFebruary = month === MONTH_FEBRUARY
+  const isFebruary = month === MONTH_FEB
   const isMonthWith30Days = MONTHS_WITH_30_DAYS.includes(month)
 
   if (isFebruary) {
-    const isLeapYear = (year % LEAP_YEAR_DIVISOR_4 === 0 && year % LEAP_YEAR_DIVISOR_100 !== 0) || year % LEAP_YEAR_DIVISOR_400 === 0
-    const maxDay = isLeapYear ? DAYS_IN_FEB_LEAP_YEAR : DAYS_IN_FEB_NON_LEAP_YEAR
+    const leapYear = (year % LEAP_YEAR_DIVISOR_4 === 0 && year % LEAP_YEAR_DIVISOR_100 !== 0) || year % LEAP_YEAR_DIVISOR_400 === 0
+    const maxDay = leapYear ? DAYS_IN_FEB_LEAP_YEAR : DAYS_IN_FEB_NON_LEAP_YEAR
     if (day > maxDay) {
       return { value, errors: helpers.error(invalidDay) }
     }
-  } else if (isMonthWith30Days) {
-    if (day > MAX_DAYS_IN_MONTH_WITH_30_DAYS) {
-      return { value, errors: helpers.error(invalidDay) }
-    }
+  } else if (isMonthWith30Days && day > MAX_DAYS_IN_MONTH_WITH_30_DAYS) {
+    return { value, errors: helpers.error(invalidDay) }
+  } else {
+    return null
   }
-
   return null
 }
