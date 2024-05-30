@@ -28,7 +28,7 @@ export const licenceTypeDisplay = (permission, mssgs) => {
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
   const licenceTypeMessage = getLicenceTypeMessage(permission.licenceLength, mssgs);
   return `${licenceTypeDisplay(permission, mssgs)}, ${licenceTypeMessage}`;
-};
+}
 
 const getLicenceTypeMessage = (licenceLength, mssgs) => {
   if (licenceLength === '12M') {
@@ -38,8 +38,7 @@ const getLicenceTypeMessage = (licenceLength, mssgs) => {
   } else {
     return mssgs.licence_type_1d;
   }
-};
-
+}
 
 export const isPhysical = permission => permission?.permit?.isForFulfilment
 
