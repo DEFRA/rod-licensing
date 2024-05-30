@@ -101,4 +101,4 @@ const createLicenceDateStringValidator = joi =>
  * @returns {Joi.AnySchema}
  */
 export const createLicenceStartDateValidator = joi =>
-  createLicenceDateStringValidator(joi).trim().licenceStartDate(120).required().example('2000-01-01')
+  createLicenceDateStringValidator(joi).trim().licenceStartDate(ADVANCED_PURCHASE_MAX_DAYS).required().example('2000-01-01')
