@@ -92,7 +92,7 @@ const messages = {
 
 export const DATE_OF_BIRTH_MESSAGES = {
   'date.min': '{{#label}} date before minimum allowed',
-  'date.max': '{{#label}} date after maximum allowed',
+  'date.max': '{{#label}} must be less than or equal to "now"',
   'date.dayMonthMissing': dateofBirthEntryMissing,
   'date.dayYearMissing': dateofBirthEntryMissing,
   'date.monthYearMissing': dateofBirthEntryMissing,
@@ -102,7 +102,7 @@ export const DATE_OF_BIRTH_MESSAGES = {
 
 export const LICENCE_START_DATE_MESSAGES = {
   'date.min': '{{#label}} date before minimum allowed',
-  'date.max': '{{#label}} must be less than or equal to "now"',
+  'date.max': '{{#label}} date after maximum allowed',
   'date.dayMonthMissing': licenceStartDateEntryMissing,
   'date.dayYearMissing': licenceStartDateEntryMissing,
   'date.monthYearMissing': licenceStartDateEntryMissing,

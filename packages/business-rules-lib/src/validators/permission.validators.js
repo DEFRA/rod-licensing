@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { dateMissing, licenceStartDateValid, dateNotNumber } from './date.validators.js'
-import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME, DATE_OF_BIRTH_MESSAGES } from '../constants.js'
+import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME, LICENCE_START_DATE_MESSAGES } from '../constants.js'
 
 /**
  * Validate a permission reference number.
@@ -49,23 +49,23 @@ const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YY
 const createLicenceDateStringValidator = joi =>
   joi.string().extend({
     type: 'licenceStartDate',
-    messages: DATE_OF_BIRTH_MESSAGES,
+    messages: LICENCE_START_DATE_MESSAGES,
     validate (value, helpers) {
-      const parts = value.split('-')
-      const [year, month, day] = parts
+      const dateValue = moment(value, dateStringFormats, true)
+      if (!dateValue.isValid()) {
+        const parts = value.split('-')
+        const [year, month, day] = parts
 
-      const dateIsMissing = dateMissing(day, month, year, value, helpers)
-      if (dateIsMissing) {
-        return dateIsMissing
-      }
-      const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
-      if (dateIsNotNumber) {
-        return dateIsNotNumber
-      }
+        const dateIsMissing = dateMissing(day, month, year, value, helpers)
+        if (dateIsMissing) {
+          return dateIsMissing
+        }
+        const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
+        if (dateIsNotNumber) {
+          return dateIsNotNumber
+        }
 
-      const dateIsInvalid = licenceStartDateValid(day, month, year, value, helpers)
-      if (dateIsInvalid) {
-        return dateIsInvalid
+        return licenceStartDateValid(day, month, year, value, helpers)
       }
 
       return { value }

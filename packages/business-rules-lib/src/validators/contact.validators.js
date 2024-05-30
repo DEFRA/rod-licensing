@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { dateMissing, birthDateValid, dateNotNumber } from './date.validators.js'
-import { LICENCE_START_DATE_MESSAGES } from '../constants.js'
+import { DATE_OF_BIRTH_MESSAGES } from '../constants.js'
 
 /**
  * Convert the string to use titlecase at each word boundary
@@ -38,23 +38,23 @@ const dateStringFormats = ['YYYY-MM-DD', 'YYYY-M-DD', 'YYYY-MM-D', 'YYYY-M-D']
 const createDateStringValidator = joi =>
   joi.string().extend({
     type: 'birthDate',
-    messages: LICENCE_START_DATE_MESSAGES,
+    messages: DATE_OF_BIRTH_MESSAGES,
     validate (value, helpers) {
-      const parts = value.split('-')
-      const [year, month, day] = parts
+      const dateValue = moment(value, dateStringFormats, true)
+      if (!dateValue.isValid()) {
+        const parts = value.split('-')
+        const [year, month, day] = parts
 
-      const dateIsMissing = dateMissing(day, month, year, value, helpers)
-      if (dateIsMissing) {
-        return dateIsMissing
-      }
-      const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
-      if (dateIsNotNumber) {
-        return dateIsNotNumber
-      }
+        const dateIsMissing = dateMissing(day, month, year, value, helpers)
+        if (dateIsMissing) {
+          return dateIsMissing
+        }
+        const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
+        if (dateIsNotNumber) {
+          return dateIsNotNumber
+        }
 
-      const dateIsInvalid = birthDateValid(day, month, year, value, helpers)
-      if (dateIsInvalid) {
-        return dateIsInvalid
+        return birthDateValid(day, month, year, value, helpers)
       }
 
       return { value }
