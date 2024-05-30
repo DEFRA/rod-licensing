@@ -68,3 +68,44 @@ export const SERVICE_LOCAL_TIME = 'Europe/London'
  * Date for switching paper fulfilment provider
  */
 export const FULFILMENT_SWITCHOVER_DATE = '2024-05-30T23:00:00.000Z'
+
+const invalidDate = '{{#label}} must be a real date'
+const numberDateError = 'Enter only numbers'
+const dateofBirthEntryMissing = 'Enter the date of birth'
+const licenceStartDateEntryMissing = 'Enter the licence start date'
+
+const messages = {
+  'date.dayInvalid': invalidDate,
+  'date.dayMonthInvalid': invalidDate,
+  'date.monthInvalid': invalidDate,
+  'date.dayNotNumber': numberDateError,
+  'date.dayMonthNotNumber': numberDateError,
+  'date.dayYearNotNumber': numberDateError,
+  'date.monthNotNumber': numberDateError,
+  'date.monthYearNotNumber': numberDateError,
+  'date.yearNotNumber': numberDateError,
+  'date.allNotNumber': numberDateError,
+  'date.dayMissing': 'Day is missing',
+  'date.monthMissing': 'Month is missing',
+  'date.yearMissing': 'Year is missing'
+}
+
+export const DATE_OF_BIRTH_MESSAGES = {
+  'date.min': '{{#label}} date before minimum allowed',
+  'date.max': '{{#label}} date after maximum allowed',
+  'date.dayMonthMissing': dateofBirthEntryMissing,
+  'date.dayYearMissing': dateofBirthEntryMissing,
+  'date.monthYearMissing': dateofBirthEntryMissing,
+  'date.allMissing': dateofBirthEntryMissing,
+  ...messages
+}
+
+export const LICENCE_START_DATE_MESSAGES = {
+  'date.min': '{{#label}} date before minimum allowed',
+  'date.max': '{{#label}} must be less than or equal to "now"',
+  'date.dayMonthMissing': licenceStartDateEntryMissing,
+  'date.dayYearMissing': licenceStartDateEntryMissing,
+  'date.monthYearMissing': licenceStartDateEntryMissing,
+  'date.allMissing': licenceStartDateEntryMissing,
+  ...messages
+}

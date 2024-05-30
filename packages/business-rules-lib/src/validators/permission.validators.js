@@ -1,6 +1,6 @@
 import moment from 'moment-timezone'
 import { dateMissing, licenceStartDateValid, dateNotNumber } from './date.validators.js'
-import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '../constants.js'
+import { ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME, DATE_OF_BIRTH_MESSAGES } from '../constants.js'
 
 /**
  * Validate a permission reference number.
@@ -39,9 +39,6 @@ export const permissionNumberUniqueComponentValidator = joi =>
     .example('B6HLG9')
 
 const dateStringFormats = ['YYYY-MM-DD', 'YY-MM-DD', 'YYYY-M-DD', 'YY-M-DD', 'YYYY-MM-D', 'YY-MM-D', 'YYYY-M-D', 'YY-M-D']
-const invalidDate = '{{#label}} must be a real date'
-const numberDateError = 'Enter only numbers'
-const dateEntryMissing = 'Enter the date of birth'
 
 /**
  * Create a validator to check a licence start date
@@ -52,27 +49,7 @@ const dateEntryMissing = 'Enter the date of birth'
 const createLicenceDateStringValidator = joi =>
   joi.string().extend({
     type: 'licenceStartDate',
-    messages: {
-      'date.min': '{{#label}} date before minimum allowed',
-      'date.max': '{{#label}} date after maximum allowed',
-      'date.dayInvalid': invalidDate,
-      'date.dayMonthInvalid': invalidDate,
-      'date.monthInvalid': invalidDate,
-      'date.dayNotNumber': numberDateError,
-      'date.dayMonthNotNumber': numberDateError,
-      'date.dayYearNotNumber': numberDateError,
-      'date.monthNotNumber': numberDateError,
-      'date.monthYearNotNumber': numberDateError,
-      'date.yearNotNumber': numberDateError,
-      'date.allNotNumber': numberDateError,
-      'date.dayMissing': 'Day is missing',
-      'date.dayMonthMissing': dateEntryMissing,
-      'date.dayYearMissing': dateEntryMissing,
-      'date.monthMissing': 'Month is missing',
-      'date.monthYearMissing': dateEntryMissing,
-      'date.yearMissing': 'Year is missing',
-      'date.allMissing': dateEntryMissing
-    },
+    messages: DATE_OF_BIRTH_MESSAGES,
     validate (value, helpers) {
       const dateValue = moment(value, dateStringFormats, true)
 

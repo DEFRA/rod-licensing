@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { dateMissing, birthDateValid, dateNotNumber } from './date.validators.js'
+import { LICENCE_START_DATE_MESSAGES } from '../constants.js'
 
 /**
  * Convert the string to use titlecase at each word boundary
@@ -27,9 +28,6 @@ const capitaliseNamePrefixes = prefixes => {
 }
 
 const dateStringFormats = ['YYYY-MM-DD', 'YYYY-M-DD', 'YYYY-MM-D', 'YYYY-M-D']
-const invalidDate = '{{#label}} must be a real date'
-const numberDateError = 'Enter only numbers'
-const dateEntryMissing = 'Enter the date of birth'
 
 /**
  * Create a validator to check a contact's birth date
@@ -40,31 +38,7 @@ const dateEntryMissing = 'Enter the date of birth'
 const createDateStringValidator = joi =>
   joi.string().extend({
     type: 'birthDate',
-    messages: {
-      'date.min': '{{#label}} date before minimum allowed',
-      'date.max': '{{#label}} must be less than or equal to "now"',
-      'date.dayInvalid': invalidDate,
-      'date.daymonthInvalid': invalidDate,
-      'date.dayyearInvalid': invalidDate,
-      'date.monthInvalid': invalidDate,
-      'date.monthyearInvalid': invalidDate,
-      'date.yearInvalid': invalidDate,
-      'date.daymonthyearInvalid': invalidDate,
-      'date.dayNotNumber': numberDateError,
-      'date.daymonthNotNumber': numberDateError,
-      'date.dayyearNotNumber': numberDateError,
-      'date.monthNotNumber': numberDateError,
-      'date.monthyearNotNumber': numberDateError,
-      'date.yearNotNumber': numberDateError,
-      'date.daymonthyearNotNumber': numberDateError,
-      'date.dayMissing': 'Day is missing',
-      'date.daymonthMissing': dateEntryMissing,
-      'date.dayyearMissing': dateEntryMissing,
-      'date.monthMissing': 'Month is missing',
-      'date.monthyearMissing': dateEntryMissing,
-      'date.yearMissing': 'Year is missing',
-      'date.daymonthyearMissing': dateEntryMissing
-    },
+    messages: LICENCE_START_DATE_MESSAGES,
     validate (value, helpers) {
       const dateValue = moment(value, dateStringFormats, true)
       if (!dateValue.isValid()) {
