@@ -92,9 +92,9 @@ export const birthDateValid = (day, month, year, value, helpers) => {
   } else if (errors.length === 1) {
     const errorType = `date.${errors}Invalid`
     return { value, errors: helpers.error(errorType) }
+  } else {
+    return isLeapYear(dayNum, monthNum, yearNum, value, helpers)
   }
-
-  return isLeapYear(dayNum, monthNum, yearNum, value, helpers)
 }
 
 const isLeapYear = (day, month, year, value, helpers) => {
