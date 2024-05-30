@@ -51,25 +51,21 @@ const createLicenceDateStringValidator = joi =>
     type: 'licenceStartDate',
     messages: DATE_OF_BIRTH_MESSAGES,
     validate (value, helpers) {
-      const dateValue = moment(value, dateStringFormats, true)
+      const parts = value.split('-')
+      const [year, month, day] = parts
 
-      if (!dateValue.isValid()) {
-        const parts = value.split('-')
-        const [year, month, day] = parts
+      const dateIsMissing = dateMissing(day, month, year, value, helpers)
+      if (dateIsMissing) {
+        return dateIsMissing
+      }
+      const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
+      if (dateIsNotNumber) {
+        return dateIsNotNumber
+      }
 
-        const dateIsMissing = dateMissing(day, month, year, value, helpers)
-        if (dateIsMissing) {
-          return dateIsMissing
-        }
-        const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
-        if (dateIsNotNumber) {
-          return dateIsNotNumber
-        }
-
-        const dateIsInvalid = licenceStartDateValid(day, month, year, value, helpers)
-        if (dateIsInvalid) {
-          return dateIsInvalid
-        }
+      const dateIsInvalid = licenceStartDateValid(day, month, year, value, helpers)
+      if (dateIsInvalid) {
+        return dateIsInvalid
       }
 
       return { value }

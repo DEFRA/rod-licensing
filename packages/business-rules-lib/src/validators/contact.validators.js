@@ -40,24 +40,21 @@ const createDateStringValidator = joi =>
     type: 'birthDate',
     messages: LICENCE_START_DATE_MESSAGES,
     validate (value, helpers) {
-      const dateValue = moment(value, dateStringFormats, true)
-      if (!dateValue.isValid()) {
-        const parts = value.split('-')
-        const [year, month, day] = parts
+      const parts = value.split('-')
+      const [year, month, day] = parts
 
-        const dateIsMissing = dateMissing(day, month, year, value, helpers)
-        if (dateIsMissing) {
-          return dateIsMissing
-        }
-        const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
-        if (dateIsNotNumber) {
-          return dateIsNotNumber
-        }
+      const dateIsMissing = dateMissing(day, month, year, value, helpers)
+      if (dateIsMissing) {
+        return dateIsMissing
+      }
+      const dateIsNotNumber = dateNotNumber(day, month, year, value, helpers)
+      if (dateIsNotNumber) {
+        return dateIsNotNumber
+      }
 
-        const dateIsInvalid = birthDateValid(day, month, year, value, helpers)
-        if (dateIsInvalid) {
-          return dateIsInvalid
-        }
+      const dateIsInvalid = birthDateValid(day, month, year, value, helpers)
+      if (dateIsInvalid) {
+        return dateIsInvalid
       }
 
       return { value }
