@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`terms-and-conditions get data content returns notify content when isLicenceForYou equals false 1`] = `
+Object {
+  "agree": "Notify bobo agree",
+  "body": "Notify bobo body",
+  "bulletpoint": Object {
+    "bulletpointFive": "Notify bobo bulletpoint 5",
+    "bulletpointFourLink": "Notify bobo bulletpoint 4 link",
+    "bulletpointFourPartOne": "Notify bobo bulletpoint 4 part 1",
+    "bulletpointFourPartTwo": "Notify bobo bulletpoint 4 part 2",
+    "bulletpointOne": "Notify bobo bulletpoint 1",
+    "bulletpointSix": "Notify bobo bulletpoint 6",
+    "bulletpointSixLink": "Notify bobo bulletpoint 6 link",
+    "bulletpointThree": "Notify bobo bulletpoint 3",
+    "bulletpointTwo": "Notify bobo bulletpoint 2",
+  },
+  "title": "Notify bobo title",
+}
+`;
+
+exports[`terms-and-conditions get data content returns notify content when isLicenceForYou equals true 1`] = `
+Object {
+  "agree": "Notify self agree",
+  "body": "Notify self body",
+  "bulletpoint": Object {
+    "bulletpointFive": "Notify self bulletpoint 5",
+    "bulletpointFourLink": "Notify self bulletpoint 4 link",
+    "bulletpointFourPartOne": "Notify self bulletpoint 4 part 1",
+    "bulletpointFourPartTwo": "Notify self bulletpoint 4 part 2",
+    "bulletpointOne": "Notify self bulletpoint 1",
+    "bulletpointSix": "Notify self bulletpoint 6",
+    "bulletpointSixLink": "Notify self bulletpoint 6 link",
+    "bulletpointThree": "Notify self bulletpoint 3",
+    "bulletpointTwo": "Notify self bulletpoint 2",
+  },
+  "title": "Notify self title",
+}
+`;
