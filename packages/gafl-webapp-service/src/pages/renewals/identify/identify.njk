@@ -22,9 +22,29 @@
             }
         },
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday },
-            'date.max': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday_max },
-            'date.min': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday_min }
+            'date.dayMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error_day },
+            'date.daymonthMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error },
+            'date.dayyearMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error },
+            'date.monthMissing': { ref: '#date-of-birth-month', text: mssgs.dob_error_month },
+            'date.monthyearMissing': { ref: '#date-of-birth-month', text: mssgs.dob_error },
+            'date.yearMissing': { ref: '#date-of-birth-year', text: mssgs.dob_error_year },
+            'date.daymonthyearMissing': { ref: '#date-of-birth-day', text: mssgs.dob_error },
+            'date.dayNotNumber': { ref: '#date-of-birth-day', text: mssgs.dob_error_not_number },
+            'date.daymonthNotNumber': { ref: '#date-of-birth-day', text: mssgs.dob_error_not_number },
+            'date.dayyearNotNumber': { ref: '#date-of-birth-day', text: mssgs.dob_error_not_number },
+            'date.monthNotNumber': { ref: '#date-of-birth-month', text: mssgs.dob_error_not_number },
+            'date.monthyearNotNumber': { ref: '#date-of-birth-month', text: mssgs.dob_error_not_number },
+            'date.yearNotNumber': { ref: '#date-of-birth-year', text: mssgs.dob_error_not_number },
+            'date.daymonthyearNotNumber': { ref: '#date-of-birth-day', text: mssgs.dob_error_not_number },
+            'date.dayInvalid': { ref: '#date-of-birth-day', text: mssgs.dob_error_invalid },
+            'date.daymonthInvalid': { ref: '#date-of-birth-day', text: mssgs.dob_error_invalid },
+            'date.dayyearInvalid': { ref: '#date-of-birth-day', text: mssgs.dob_error_invalid },
+            'date.monthInvalid': { ref: '#date-of-birth-month', text: mssgs.dob_error_invalid },
+            'date.monthyearInvalid': { ref: '#date-of-birth-month', text: mssgs.dob_error_invalid },
+            'date.yearInvalid': { ref: '#date-of-birth-year', text: mssgs.dob_error_invalid },
+            'date.daymonthyearInvalid': { ref: '#date-of-birth-day', text: mssgs.dob_error_invalid },
+            'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_max },
+            'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_min }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },

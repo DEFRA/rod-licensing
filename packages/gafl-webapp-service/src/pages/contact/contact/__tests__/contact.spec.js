@@ -27,6 +27,13 @@ jest.mock('../../../../processors/licence-type-display.js')
 
 mockSalesApi()
 
+jest.mock('@defra-fish/business-rules-lib/src/validators/date.validators.js', () => ({
+  ...jest.requireActual('@defra-fish/business-rules-lib/src/validators/date.validators.js'),
+  dateMissing: jest.fn(),
+  dateNotNumber: jest.fn(),
+  licenceStartDateValid: jest.fn()
+}))
+
 beforeAll(() => new Promise(resolve => start(resolve)))
 beforeAll(() => new Promise(resolve => initialize(resolve)))
 afterAll(d => stop(d))

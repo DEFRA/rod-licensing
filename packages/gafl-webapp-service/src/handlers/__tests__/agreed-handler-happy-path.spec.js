@@ -15,6 +15,13 @@ import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
 
+jest.mock('@defra-fish/business-rules-lib/src/validators/date.validators.js', () => ({
+  ...jest.requireActual('@defra-fish/business-rules-lib/src/validators/date.validators.js'),
+  dateMissing: jest.fn(),
+  dateNotNumber: jest.fn(),
+  licenceStartDateValid: jest.fn()
+}))
+
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
   process.env.ANALYTICS_PROPERTY_API = 'XHHDjknw-sadcC'
