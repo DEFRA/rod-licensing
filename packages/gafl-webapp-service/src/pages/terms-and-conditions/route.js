@@ -18,34 +18,11 @@ export const getData = async request => {
   }
 
   const permission = await request.cache().helpers.transaction.getCurrentPermission()
-
   return {
-    content: getContent(permission, request.i18n.getCatalog()),
     isSalmonAndSeaTrout: permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout'],
     paymentRequired: !!Number.parseInt(permission.permit.cost)
   }
 }
-
-const getContent = (permission, mssgs) => {
-  return {
-    agree: mssgs[`terms_conds_agree_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
-    title: mssgs[`terms_conds_title_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
-    body: mssgs[`terms_conds_body_notify_${permission.isLicenceForYou ? 'self' : 'bobo'}`],
-    bulletpoint: getBulletpointContent(permission.isLicenceForYou, mssgs)
-  }
-}
-
-const getBulletpointContent = (isLicenceForYou, mssgs) => ({
-  bulletpointOne: mssgs[`terms_conds_bulletpoint_1_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointTwo: mssgs[`terms_conds_bulletpoint_2_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointThree: mssgs[`terms_conds_bulletpoint_3_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFourPartOne: mssgs[`terms_conds_bulletpoint_4_1_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFourLink: mssgs[`terms_conds_bulletpoint_4_link_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFourPartTwo: mssgs[`terms_conds_bulletpoint_4_2_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointFive: mssgs[`terms_conds_bulletpoint_5_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointSix: mssgs[`terms_conds_bulletpoint_6_notify_${isLicenceForYou ? 'self' : 'bobo'}`],
-  bulletpointSixLink: mssgs[`terms_conds_bulletpoint_6_link_notify_${isLicenceForYou ? 'self' : 'bobo'}`]
-})
 
 export const validator = Joi.object({
   agree: Joi.string().valid('yes').required()
