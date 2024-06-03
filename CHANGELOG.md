@@ -1,4 +1,16 @@
 
+## v1.46.0-rc.7 (2024-06-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1969](https://github.com/DEFRA/rod-licensing/pull/1969) Corrected accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### :memo: Documentation
+* [#1953](https://github.com/DEFRA/rod-licensing/pull/1953) Update Node version prerequisite in README ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.46.0-rc.6 (2024-05-28)
 
 #### :rocket: Enhancement
