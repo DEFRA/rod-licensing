@@ -1,4 +1,13 @@
 
+## v1.46.0-rc.9 (2024-06-03)
+
+#### :bug: Bug Fix
+* [#1972](https://github.com/DEFRA/rod-licensing/pull/1972) dependencies error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.46.0-rc.7 (2024-06-03)
 
