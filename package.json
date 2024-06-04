@@ -48,7 +48,7 @@
     "husky": "^7.0.4",
     "jest": "^27.5.1",
     "jest-circus": "^27.5.1",
-    "lerna": "^4.0.0",
+    "lerna": "^5.0.0",
     "lerna-changelog": "^2.2.0",
     "lerna-update-wizard": "^1.1.1",
     "lint-staged": "^11.2.6",
