@@ -1,4 +1,13 @@
 
+## v1.46.0-rc.11 (2024-06-04)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#1974](https://github.com/DEFRA/rod-licensing/pull/1974) update lerna ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.46.0-rc.9 (2024-06-03)
 
