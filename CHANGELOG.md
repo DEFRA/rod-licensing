@@ -1,4 +1,15 @@
 
+## v1.47.0-rc.0 (2024-06-06)
+
+#### :rocket: Enhancement
+* `connectors-lib`
+  * [#1978](https://github.com/DEFRA/rod-licensing/pull/1978) Add new route to Sales API connector ([@irisfaraway](https://github.com/irisfaraway))
+* `dynamics-lib`
+  * [#1977](https://github.com/DEFRA/rod-licensing/pull/1977) Add new query based on full reference number ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.46.0-rc.11 (2024-06-04)
 
