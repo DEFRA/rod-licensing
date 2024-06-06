@@ -285,3 +285,13 @@ export const isSystemError = statusCode => Math.floor(statusCode / 100) === 5
  * @throws on a non-2xx response
  */
 export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL(`/dueRecurringPayments/${date}`, urlBase), 'get'))
+
+/**
+ * Prepare permission data for renewal
+ *
+ * @param referenceNumber
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const preparePermissionDataForRenewal = async referenceNumber =>
+  exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
