@@ -36,7 +36,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/connectors-lib": "1.46.0",
+    "@defra-fish/connectors-lib": "1.47.0-rc.1",
     "commander": "^7.2.0"
   }
 }
