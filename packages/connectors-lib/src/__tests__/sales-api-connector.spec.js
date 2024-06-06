@@ -643,4 +643,17 @@ describe('sales-api-connector', () => {
       })
     })
   })
+
+  describe('preparePermissionDataForRenewal', () => {
+    it('retrieves all items using .getAll()', async () => {
+      const expectedResponse = { foo: 'bar' }
+      fetch.mockReturnValue({ ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(expectedResponse) })
+      await expect(salesApi.preparePermissionDataForRenewal('AAAAAA')).resolves.toEqual(expectedResponse)
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0:4000/permissionRenewalData/AAAAAA', {
+        method: 'get',
+        headers: expect.any(Object),
+        timeout: 20000
+      })
+    })
+  })
 })
