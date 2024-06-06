@@ -2,7 +2,10 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
 jest.mock('@defra-fish/connectors-lib', () => ({
-  salesApi: { getDueRecurringPayments: jest.fn() }
+  salesApi: {
+    getDueRecurringPayments: jest.fn(() => []),
+    preparePermissionDataForRenewal: jest.fn()
+  }
 }))
 
 describe('recurring-payments-processor', () => {
@@ -40,11 +43,19 @@ describe('recurring-payments-processor', () => {
   it('console log displays "Recurring Payments found: " when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    const rpSymbol = Symbol('rp')
-    salesApi.getDueRecurringPayments.mockReturnValueOnce(rpSymbol)
 
     await processRecurringPayments()
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', rpSymbol)
+    expect(consoleLogSpy).toHaveBeenCalledWith('Recurring Payments found: ', [])
+  })
+
+  it('prepares the data for found recurring payments', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    const referenceNumber = Symbol('reference')
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber } } } }])
+
+    await processRecurringPayments()
+
+    expect(salesApi.preparePermissionDataForRenewal).toHaveBeenCalledWith(referenceNumber)
   })
 })
