@@ -6,6 +6,7 @@ describe('preparePermissionDataForRenewal', () => {
     licensee: {
       birthDate: '1991-01-01',
       country: {
+        label: 'England',
         description: 'GB-ENG'
       },
       email: 'email@example.com',
@@ -52,6 +53,7 @@ describe('preparePermissionDataForRenewal', () => {
   it('should copy the relevant licensee data', async () => {
     const expectedData = {
       birthDate: '1991-01-01',
+      country: 'England',
       countryCode: 'GB-ENG',
       email: 'email@example.com',
       firstName: 'Sally',
@@ -66,9 +68,9 @@ describe('preparePermissionDataForRenewal', () => {
     expect(preparePermissionDataForRenewal(existingPermission()).licensee).toEqual(expect.objectContaining(expectedData))
   })
 
-  it.each(['country', 'shortTermPreferredMethodOfConfirmation'])('should not assign %s to the licensee', async field => {
+  it('should not assign shortTermPreferredMethodOfConfirmation to the licensee', async () => {
     const licenseeData = preparePermissionDataForRenewal(existingPermission()).licensee
-    expect(licenseeData[field]).toBeUndefined()
+    expect(licenseeData.shortTermPreferredMethodOfConfirmation).toBeUndefined()
   })
 
   it('should remove null values from the licensee object', async () => {

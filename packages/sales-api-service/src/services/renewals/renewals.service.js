@@ -27,7 +27,7 @@ const prepareBasePermissionData = existingPermission => {
 }
 
 const prepareLicenseeData = existingPermission => {
-  const licenseeData = Object.assign(copyFilteredLicenseeData(existingPermission), prepareCountryCode(existingPermission))
+  const licenseeData = Object.assign(copyFilteredLicenseeData(existingPermission), prepareCountryData(existingPermission))
 
   // Delete any licensee objects which are null
   Object.entries(licenseeData)
@@ -57,8 +57,11 @@ const copyFilteredLicenseeData = existingPermission => {
   )
 }
 
-const prepareCountryCode = existingPermission => {
-  return { countryCode: existingPermission.licensee.country.description }
+const prepareCountryData = existingPermission => {
+  return {
+    country: existingPermission.licensee.country.label,
+    countryCode: existingPermission.licensee.country.description
+  }
 }
 
 const prepareContactMethodData = existingPermission => {
