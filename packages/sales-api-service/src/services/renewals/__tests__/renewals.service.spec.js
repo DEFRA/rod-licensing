@@ -31,6 +31,7 @@ describe('preparePermissionDataForRenewal', () => {
       }
     },
     permit: {
+      id: '123456',
       permitSubtype: {
         label: 'Salmon and sea trout'
       },
@@ -45,7 +46,8 @@ describe('preparePermissionDataForRenewal', () => {
       licenceLength: '12M',
       licenceType: 'Salmon and sea trout',
       numberOfRods: '1',
-      isLicenceForYou: true
+      isLicenceForYou: true,
+      permitId: '123456'
     }
     expect(preparePermissionDataForRenewal(existingPermission())).toEqual(expect.objectContaining(expectedData))
   })

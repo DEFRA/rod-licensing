@@ -4,6 +4,7 @@ import { concessionProofSchema } from './concession-proof.schema.js'
 import { permitSchema } from './permit.schema.js'
 import { contactResponseSchema } from './contact.schema.js'
 import { finalisedPermissionSchemaContent } from './permission.schema.js'
+import { v4 as uuid } from 'uuid'
 
 export const permissionRenewalDataRequestParamsSchema = Joi.object({
   referenceNumber: validation.permission.createPermissionNumberValidator(Joi)
@@ -14,6 +15,7 @@ export const permissionRenewalDataResponseSchema = Joi.object({
     ...finalisedPermissionSchemaContent,
     licensee: contactResponseSchema,
     concessions: concessionProofSchema,
-    permit: permitSchema
+    permit: permitSchema,
+    permitId: Joi.string().guid().required().example(uuid())
   }
 }).label('permission-renewal-data-response')

@@ -39,7 +39,8 @@ describe('permissionRenewalDataResponseSchema', () => {
         isForFulfilment: true,
         isCounterSales: false,
         isRecurringPaymentSupported: true
-      }
+      },
+      permitId: 'dbd3a8a7-cad7-4567-9e68-c787899f5093'
     }
   })
 

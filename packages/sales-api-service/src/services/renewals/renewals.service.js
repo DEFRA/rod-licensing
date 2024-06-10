@@ -12,7 +12,8 @@ export const preparePermissionDataForRenewal = existingPermission => {
   return {
     ...prepareBasePermissionData(existingPermission),
     ...prepareDateData(existingPermission),
-    licensee: prepareLicenseeData(existingPermission)
+    licensee: prepareLicenseeData(existingPermission),
+    permitId: preparePermitId(existingPermission)
   }
 }
 
@@ -93,4 +94,8 @@ const dateDataIfNotExpired = endDateMoment => {
     licenceStartDate: licenceStartDate.format(cacheDateFormat),
     licenceStartTime: licenceStartDate.hours()
   }
+}
+
+const preparePermitId = existingPermission => {
+  return existingPermission.permit.id
 }
