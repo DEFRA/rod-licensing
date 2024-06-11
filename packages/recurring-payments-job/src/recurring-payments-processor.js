@@ -38,7 +38,7 @@ const processPermissionData = async referenceNumber => {
         isLicenceForYou: data.isLicenceForYou,
         isRenewal: data.isRenewal,
         issueDate: null,
-        licensee: Object.assign((({ countryCode, ...l }) => l)(data.licensee)),
+        licensee: Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee)),
         permitId: data.permitId,
         startDate: prepareStartDate(data)
       }
