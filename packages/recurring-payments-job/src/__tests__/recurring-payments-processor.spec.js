@@ -1,10 +1,14 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
+jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
   salesApi: {
     getDueRecurringPayments: jest.fn(() => []),
-    preparePermissionDataForRenewal: jest.fn()
+    preparePermissionDataForRenewal: jest.fn(() => ({
+      licensee: { countryCode: 'GB-ENG' }
+    })),
+    createTransaction: jest.fn()
   }
 }))
 
@@ -57,5 +61,109 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(salesApi.preparePermissionDataForRenewal).toHaveBeenCalledWith(referenceNumber)
+  })
+
+  it('creates a transaction with the correct data', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+
+    const isLicenceForYou = Symbol('isLicenceForYou')
+    const isRenewal = Symbol('isRenewal')
+    const country = Symbol('country')
+    const permitId = Symbol('permitId')
+
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      isLicenceForYou,
+      isRenewal,
+      licensee: {
+        country,
+        countryCode: 'GB-ENG'
+      },
+      licenceStartDate: '2020-01-01',
+      licenceStartTime: 3,
+      permitId
+    })
+
+    const expectedData = {
+      dataSource: 'Recurring Payment',
+      permissions: [
+        {
+          isLicenceForYou,
+          isRenewal,
+          issueDate: null,
+          licensee: { country },
+          permitId,
+          startDate: '2020-01-01T03:00:00.000Z'
+        }
+      ]
+    }
+
+    await processRecurringPayments()
+
+    expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
+  })
+
+  it('raises an error if createTransaction fails', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+    const error = 'Wuh-oh!'
+    salesApi.createTransaction.mockImplementationOnce(() => {
+      throw new Error(error)
+    })
+
+    await expect(processRecurringPayments()).rejects.toThrowError(error)
+  })
+
+  describe('if there are multiple recurring payments', () => {
+    it('prepares the data for each one', async () => {
+      process.env.RUN_RECURRING_PAYMENTS = 'true'
+      const firstReferenceNumber = Symbol('reference1')
+      const secondReferenceNumber = Symbol('reference2')
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([
+        { expanded: { activePermission: { entity: { referenceNumber: firstReferenceNumber } } } },
+        { expanded: { activePermission: { entity: { referenceNumber: secondReferenceNumber } } } }
+      ])
+
+      await processRecurringPayments()
+
+      expect(salesApi.preparePermissionDataForRenewal.mock.calls).toEqual([[firstReferenceNumber], [secondReferenceNumber]])
+    })
+
+    it('creates a transaction for each one', async () => {
+      process.env.RUN_RECURRING_PAYMENTS = 'true'
+      salesApi.getDueRecurringPayments.mockReturnValueOnce([
+        { expanded: { activePermission: { entity: { referenceNumber: '1' } } } },
+        { expanded: { activePermission: { entity: { referenceNumber: '2' } } } }
+      ])
+
+      const firstPermit = Symbol('permit1')
+      const secondPermit = Symbol('permit2')
+      salesApi.preparePermissionDataForRenewal
+        .mockReturnValueOnce({
+          licensee: { countryCode: 'GB-ENG' },
+          permitId: firstPermit
+        })
+        .mockReturnValueOnce({
+          licensee: { countryCode: 'GB-ENG' },
+          permitId: secondPermit
+        })
+
+      await processRecurringPayments()
+
+      expect(salesApi.createTransaction.mock.calls).toEqual([
+        [
+          {
+            dataSource: 'Recurring Payment',
+            permissions: [expect.objectContaining({ permitId: firstPermit })]
+          }
+        ],
+        [
+          {
+            dataSource: 'Recurring Payment',
+            permissions: [expect.objectContaining({ permitId: secondPermit })]
+          }
+        ]
+      ])
+    })
   })
 })
