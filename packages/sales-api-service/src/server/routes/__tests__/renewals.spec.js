@@ -96,4 +96,16 @@ describe('permissionRenewalData', () => {
       await expect(permissionRenewalData[0].options.handler(request, responseToolkit)).rejects.toThrow(error)
     })
   })
+
+  it('should throw error if query execution fails', async () => {
+    permissionForFullReferenceNumber.mockResolvedValueOnce({ filter: 'coffee' })
+    const error = 'Wuh-oh!'
+    executeQuery.mockImplementationOnce(() => {
+      throw new Error(error)
+    })
+    const request = getMockRequest({})
+    const responseToolkit = getMockResponseToolkit()
+
+    await expect(permissionRenewalData[0].options.handler(request, responseToolkit)).rejects.toThrow(error)
+  })
 })
