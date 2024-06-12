@@ -91,7 +91,8 @@ describe('licenceTypeAndLengthDisplay', () => {
     expect(result).toEqual('Salmon and sea trout (over_66), 12 months')
   })
 
-    it('returns correct licence length using symbols', () => {
+
+  it('returns correct licence length', () => {
     const permission = getPermission({ licenceLength: Symbol('12M') })
     let result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('Salmon and sea trout, 12 months')
