@@ -1,10 +1,30 @@
 import { ANALYTICS } from '../constants.js'
+import db from 'debug'
+const debug = db('webapp:analytics-handler')
+
 /**
  * Analytics route handler
  * @param request
  * @param h
  * @returns {Promise}
  */
+
+export const trackGTM = async request => {
+  const pageOmit = await pageOmitted(request)
+  const canTrack = await trackAnalyticsAccepted(request, pageOmit)
+  const optDebug = process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING?.toLowerCase() === 'true'
+  const gtmContainerId = process.env.GTM_CONTAINER_ID
+  if (optDebug && gtmContainerId) {
+    if (canTrack === true) {
+      debug(`GTM Container Id: ${gtmContainerId} is being tracked`)
+    } else if (pageOmit === true) {
+      debug(`GTM Container Id: ${gtmContainerId} is not being tracked for current page`)
+    } else {
+      debug(`GTM Container Id: ${gtmContainerId} is not being tracked`)
+    }
+  }
+  return canTrack
+}
 
 export const trackAnalyticsAccepted = async (request, pageSkip) => {
   try {
@@ -26,13 +46,6 @@ export const pageOmitted = async request => {
   } catch {}
 
   return false
-}
-export const getAnalyticsSessionId = async request => {
-  try {
-    return request.cache().getId()
-  } catch {}
-
-  return null
 }
 
 export default async (request, h) => {

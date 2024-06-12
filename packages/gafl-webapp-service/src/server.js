@@ -26,6 +26,7 @@ import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
 import { addEmptyFragmentToUri, addLanguageCodeToUri } from './processors/uri-helper.js'
+import { trackGTM } from './handlers/analytics-handler.js'
 airbrake.initialise()
 let server
 
@@ -80,6 +81,7 @@ export const layoutContextAmalgamation = (request, h) => {
       CSRF_TOKEN_VALUE: response.source.context[getCsrfTokenCookieName()],
       TELESALES: process.env.CHANNEL && process.env.CHANNEL !== CHANNEL_DEFAULT,
       SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true',
+      GOOGLE_TAG_MANAGER_APPROVED: trackGTM(request),
       _uri: {
         cookies: `${COOKIES.uri}${queryString}`,
         refunds: `${REFUND_POLICY.uri}${queryString}`,
