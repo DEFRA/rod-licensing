@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/recurring-payments-job",
-  "version": "1.46.0-rc.6",
+  "version": "1.47.0-rc.2",
   "description": "Rod Licensing Recurring Payments Job",
   "type": "module",
   "engines": {

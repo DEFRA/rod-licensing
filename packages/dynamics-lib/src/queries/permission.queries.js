@@ -24,3 +24,14 @@ export const permissionForLicensee = (permissionReferenceNumber, licenseeBirthDa
     expand: [licensee, permit, concessionProofs]
   })
 }
+
+export const permissionForFullReferenceNumber = permissionReferenceNumber => {
+  const { licensee, permit, concessionProofs } = Permission.definition.relationships
+  let filter = `${Permission.definition.mappings.referenceNumber.field} eq '${escapeODataStringValue(permissionReferenceNumber)}'`
+  filter += ` and ${Permission.definition.defaultFilter}`
+  return new PredefinedQuery({
+    root: Permission,
+    filter: filter,
+    expand: [licensee, permit, concessionProofs]
+  })
+}

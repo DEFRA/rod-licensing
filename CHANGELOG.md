@@ -1,4 +1,50 @@
 
+
+
+## v1.47.0-rc.0 (2024-06-06)
+
+#### :rocket: Enhancement
+* `connectors-lib`
+  * [#1978](https://github.com/DEFRA/rod-licensing/pull/1978) Add new route to Sales API connector ([@irisfaraway](https://github.com/irisfaraway))
+* `dynamics-lib`
+  * [#1977](https://github.com/DEFRA/rod-licensing/pull/1977) Add new query based on full reference number ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.46.0-rc.11 (2024-06-04)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#1974](https://github.com/DEFRA/rod-licensing/pull/1974) update lerna ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.46.0-rc.9 (2024-06-03)
+
+#### :bug: Bug Fix
+* [#1972](https://github.com/DEFRA/rod-licensing/pull/1972) dependencies error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- [@lailien3](https://github.com/lailien3)
+
+
+## v1.46.0-rc.7 (2024-06-03)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1969](https://github.com/DEFRA/rod-licensing/pull/1969) Corrected accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### :memo: Documentation
+* [#1953](https://github.com/DEFRA/rod-licensing/pull/1953) Update Node version prerequisite in README ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.46.0-rc.6 (2024-05-28)
 
 #### :rocket: Enhancement
