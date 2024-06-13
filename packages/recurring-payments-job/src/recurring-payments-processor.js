@@ -30,7 +30,7 @@ const processRecurringPayment = async record => {
 const processPermissionData = async referenceNumber => {
   console.log('Preparing data based on', referenceNumber)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
-  const transactionData = {
+  return {
     dataSource: 'Recurring Payment',
     permissions: [
       {
@@ -43,7 +43,6 @@ const processPermissionData = async referenceNumber => {
       }
     ]
   }
-  return transactionData
 }
 
 const prepareStartDate = permission => {
