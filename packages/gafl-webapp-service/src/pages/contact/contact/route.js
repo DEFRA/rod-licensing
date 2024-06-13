@@ -28,7 +28,6 @@ export const getData = async request => {
   }
 
   const junior = hasJunior(permission)
-  console.log(permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email)
 
   return {
     title: getTitle(permission, mssgs, junior),
