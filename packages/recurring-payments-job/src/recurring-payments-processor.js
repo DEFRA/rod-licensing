@@ -18,10 +18,9 @@ const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const transactionData = await processPermissionData(referenceNumber)
   console.log('Creating new transaction based on', referenceNumber)
-  console.log(transactionData)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    console.log(response)
+    console.log('New transaction created:', response)
   } catch (e) {
     console.log('Error creating transaction', JSON.stringify(transactionData))
     throw e
