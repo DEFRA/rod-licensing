@@ -30,6 +30,7 @@ const processRecurringPayment = async record => {
 const processPermissionData = async referenceNumber => {
   console.log('Preparing data based on', referenceNumber)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
+  const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
     dataSource: 'Recurring Payment',
     permissions: [
@@ -37,7 +38,7 @@ const processPermissionData = async referenceNumber => {
         isLicenceForYou: data.isLicenceForYou,
         isRenewal: data.isRenewal,
         issueDate: null,
-        licensee: Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee)),
+        licensee: licenseeWithoutCountryCode,
         permitId: data.permitId,
         startDate: prepareStartDate(data)
       }
