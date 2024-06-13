@@ -8,24 +8,20 @@ const licenceToStart = {
   ANOTHER_DATE: 'another-date'
 }
 
-export const preparePermissionDataForRenewal = existingPermission => {
-  return {
-    ...prepareBasePermissionData(existingPermission),
-    ...prepareDateData(existingPermission),
-    licensee: prepareLicenseeData(existingPermission),
-    permitId: preparePermitId(existingPermission)
-  }
-}
+export const preparePermissionDataForRenewal = existingPermission => ({
+  ...prepareBasePermissionData(existingPermission),
+  ...prepareDateData(existingPermission),
+  licensee: prepareLicenseeData(existingPermission),
+  permitId: preparePermitId(existingPermission)
+})
 
-const prepareBasePermissionData = existingPermission => {
-  return {
-    isRenewal: true,
-    licenceLength: '12M', // Always for renewals
-    licenceType: existingPermission.permit.permitSubtype.label,
-    numberOfRods: existingPermission.permit.numberOfRods.toString(),
-    isLicenceForYou: true
-  }
-}
+const prepareBasePermissionData = existingPermission => ({
+  isRenewal: true,
+  licenceLength: '12M', // Always for renewals
+  licenceType: existingPermission.permit.permitSubtype.label,
+  numberOfRods: existingPermission.permit.numberOfRods.toString(),
+  isLicenceForYou: true
+})
 
 const prepareLicenseeData = existingPermission => {
   const licenseeData = Object.assign(copyFilteredLicenseeData(existingPermission), prepareCountryData(existingPermission))
@@ -52,39 +48,30 @@ const prepareDateData = existingPermission => {
 }
 
 // Retain existing data except country and shortTermPreferredMethodOfConfirmation
-const copyFilteredLicenseeData = existingPermission => {
-  return (({ country: _country, shortTermPreferredMethodOfConfirmation: _shortTermPreferredMethodOfConfirmation, ...l }) => l)(
+const copyFilteredLicenseeData = existingPermission =>
+  (({ country: _country, shortTermPreferredMethodOfConfirmation: _shortTermPreferredMethodOfConfirmation, ...l }) => l)(
     existingPermission.licensee
   )
-}
 
-const prepareCountryData = existingPermission => {
-  return {
-    country: existingPermission.licensee.country.label,
-    countryCode: existingPermission.licensee.country.description
-  }
-}
+const prepareCountryData = existingPermission => ({
+  country: existingPermission.licensee.country.label,
+  countryCode: existingPermission.licensee.country.description
+})
 
-const prepareContactMethodData = existingPermission => {
-  return {
-    preferredMethodOfNewsletter: existingPermission.licensee.preferredMethodOfNewsletter.label,
-    preferredMethodOfConfirmation: existingPermission.licensee.preferredMethodOfConfirmation.label,
-    preferredMethodOfReminder: existingPermission.licensee.preferredMethodOfReminder.label
-  }
-}
+const prepareContactMethodData = existingPermission => ({
+  preferredMethodOfNewsletter: existingPermission.licensee.preferredMethodOfNewsletter.label,
+  preferredMethodOfConfirmation: existingPermission.licensee.preferredMethodOfConfirmation.label,
+  preferredMethodOfReminder: existingPermission.licensee.preferredMethodOfReminder.label
+})
 
-const getLicenceStartDate = licenceEndDate => {
-  return moment(licenceEndDate).add(1, 'minute').seconds(0).tz(SERVICE_LOCAL_TIME)
-}
+const getLicenceStartDate = licenceEndDate => moment(licenceEndDate).add(1, 'minute').seconds(0).tz(SERVICE_LOCAL_TIME)
 
-const dateDataIfExpired = () => {
-  return {
-    renewedHasExpired: true,
-    licenceToStart: licenceToStart.AFTER_PAYMENT,
-    licenceStartDate: moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat),
-    licenceStartTime: 0
-  }
-}
+const dateDataIfExpired = () => ({
+  renewedHasExpired: true,
+  licenceToStart: licenceToStart.AFTER_PAYMENT,
+  licenceStartDate: moment().tz(SERVICE_LOCAL_TIME).format(cacheDateFormat),
+  licenceStartTime: 0
+})
 
 const dateDataIfNotExpired = endDateMoment => {
   const licenceStartDate = getLicenceStartDate(endDateMoment)
@@ -96,6 +83,4 @@ const dateDataIfNotExpired = endDateMoment => {
   }
 }
 
-const preparePermitId = existingPermission => {
-  return existingPermission.permit.id
-}
+const preparePermitId = existingPermission => existingPermission.permit.id
