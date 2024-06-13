@@ -91,7 +91,7 @@
 {% endset -%}
 
 {% set itemsArray = [] %}
-{% if data.emailConfirmation %}
+{% if data.emailConfirmation and data.twelveMonthLicence %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "email",
@@ -112,7 +112,7 @@
     %}
 {% endif %}
 
-{% if data.mobileConfirmation %}
+{% if data.mobileConfirmation and data.twelveMonthLicence %}
     {% set itemsArray = (itemsArray.push(
         {
             value: "text",
