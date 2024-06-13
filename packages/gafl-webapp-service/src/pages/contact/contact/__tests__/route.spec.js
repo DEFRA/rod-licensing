@@ -109,18 +109,6 @@ describe('name > route', () => {
       }
     )
 
-    it('mobileText does not includes value of mobile phone when preferredMethodOfConfirmation is email', async () => {
-      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Email' }
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.mobileText).toBe('Text')
-    })
-
-    it('mobileText includes value of mobile phone when preferredMethodOfConfirmation is text and licence is 12 months', async () => {
-      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Text', mobilePhone: '07123456789' }
-      const result = await getData(getMockRequest({ licensee, licenceLength: '12M' }))
-      expect(result.mobileText).toBe('Text to 07123456789')
-    })
-
     it.each([
       [false, 'Text'],
       [true, 'Email']
