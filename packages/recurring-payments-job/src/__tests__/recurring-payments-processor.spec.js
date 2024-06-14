@@ -159,56 +159,64 @@ describe('recurring-payments-processor', () => {
     await expect(processRecurringPayments()).rejects.toThrowError(error)
   })
 
-  describe('if there are multiple recurring payments', () => {
+  describe.each([2, 3, 10])('if there are (%count) recurring payments', count => {
     it('prepares the data for each one', async () => {
       process.env.RUN_RECURRING_PAYMENTS = 'true'
-      const firstReferenceNumber = Symbol('reference1')
-      const secondReferenceNumber = Symbol('reference2')
-      salesApi.getDueRecurringPayments.mockReturnValueOnce([
-        { expanded: { activePermission: { entity: { referenceNumber: firstReferenceNumber } } } },
-        { expanded: { activePermission: { entity: { referenceNumber: secondReferenceNumber } } } }
-      ])
+      const references = []
+      for (let i = 0; i < count; i++) {
+        references.push(Symbol('reference' + i))
+      }
+
+      const mockGetDueRecurringPayments = []
+      references.forEach(reference => {
+        mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: reference } } } })
+      })
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+
+      const expectedData = []
+      references.forEach(reference => {
+        expectedData.push([reference])
+      })
 
       await processRecurringPayments()
 
-      expect(salesApi.preparePermissionDataForRenewal.mock.calls).toEqual([[firstReferenceNumber], [secondReferenceNumber]])
+      expect(salesApi.preparePermissionDataForRenewal.mock.calls).toEqual(expectedData)
     })
 
     it('creates a transaction for each one', async () => {
       process.env.RUN_RECURRING_PAYMENTS = 'true'
-      salesApi.getDueRecurringPayments.mockReturnValueOnce([
-        { expanded: { activePermission: { entity: { referenceNumber: '1' } } } },
-        { expanded: { activePermission: { entity: { referenceNumber: '2' } } } }
-      ])
 
-      const firstPermit = Symbol('permit1')
-      const secondPermit = Symbol('permit2')
-      salesApi.preparePermissionDataForRenewal
-        .mockReturnValueOnce({
+      const mockGetDueRecurringPayments = []
+      for (let i = 0; i < count; i++) {
+        mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: i } } } })
+      }
+      salesApi.getDueRecurringPayments.mockReturnValueOnce(mockGetDueRecurringPayments)
+
+      const permits = []
+      for (let i = 0; i < count; i++) {
+        permits.push(Symbol('permit' + i))
+      }
+
+      permits.forEach(permit => {
+        salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
           licensee: { countryCode: 'GB-ENG' },
-          permitId: firstPermit
+          permitId: permit
         })
-        .mockReturnValueOnce({
-          licensee: { countryCode: 'GB-ENG' },
-          permitId: secondPermit
-        })
+      })
+
+      const expectedData = []
+      permits.forEach(permit => {
+        expectedData.push([
+          {
+            dataSource: 'Recurring Payment',
+            permissions: [expect.objectContaining({ permitId: permit })]
+          }
+        ])
+      })
 
       await processRecurringPayments()
 
-      expect(salesApi.createTransaction.mock.calls).toEqual([
-        [
-          {
-            dataSource: 'Recurring Payment',
-            permissions: [expect.objectContaining({ permitId: firstPermit })]
-          }
-        ],
-        [
-          {
-            dataSource: 'Recurring Payment',
-            permissions: [expect.objectContaining({ permitId: secondPermit })]
-          }
-        ]
-      ])
+      expect(salesApi.createTransaction.mock.calls).toEqual(expectedData)
     })
   })
 })
