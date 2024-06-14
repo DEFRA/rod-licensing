@@ -159,7 +159,7 @@ describe('recurring-payments-processor', () => {
     await expect(processRecurringPayments()).rejects.toThrowError(error)
   })
 
-  describe.each([2, 3, 10])('if there are (%count) recurring payments', count => {
+  describe.each([2, 3, 10])('if there are %d recurring payments', count => {
     it('prepares the data for each one', async () => {
       process.env.RUN_RECURRING_PAYMENTS = 'true'
       const references = []
