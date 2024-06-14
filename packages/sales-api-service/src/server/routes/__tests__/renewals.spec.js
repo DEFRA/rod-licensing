@@ -75,6 +75,12 @@ describe('permissionRenewalData', () => {
     expect(await permissionRenewalData[0].options.handler(request, responseToolkit)).toEqual(responseToolkit.continue)
   })
 
+  describe('metadata', () => {
+    it.each(['description', 'notes', 'tags', 'validate'])('should have expected %s', async key => {
+      expect(permissionRenewalData[0].options[key]).toMatchSnapshot()
+    })
+  })
+
   describe('if there are no matching permissions', () => {
     it('should raise an error', async () => {
       executeQuery.mockResolvedValueOnce([])
