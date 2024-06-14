@@ -71,11 +71,15 @@ describe('recurring-payments-processor', () => {
     const isRenewal = Symbol('isRenewal')
     const country = Symbol('country')
     const permitId = Symbol('permitId')
+    const firstName = Symbol('firstName')
+    const lastName = Symbol('lastName')
 
     salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
       isLicenceForYou,
       isRenewal,
       licensee: {
+        firstName,
+        lastName,
         country,
         countryCode: 'GB-ENG'
       },
@@ -91,7 +95,11 @@ describe('recurring-payments-processor', () => {
           isLicenceForYou,
           isRenewal,
           issueDate: null,
-          licensee: { country },
+          licensee: {
+            firstName,
+            lastName,
+            country
+          },
           permitId,
           startDate: '2020-01-01T03:00:00.000Z'
         }
@@ -101,6 +109,43 @@ describe('recurring-payments-processor', () => {
     await processRecurringPayments()
 
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
+  })
+
+  it('assigns the correct startDate when licenceStartTime is present', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      licensee: { countryCode: 'GB-ENG' },
+      licenceStartDate: '2020-03-14',
+      licenceStartTime: 15
+    })
+
+    await processRecurringPayments()
+
+    expect(salesApi.createTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        permissions: [expect.objectContaining({ startDate: '2020-03-14T15:00:00.000Z' })]
+      })
+    )
+  })
+
+  it('assigns the correct startDate when licenceStartTime is not present', async () => {
+    process.env.RUN_RECURRING_PAYMENTS = 'true'
+    salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
+
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      licensee: { countryCode: 'GB-ENG' },
+      licenceStartDate: '2020-03-14'
+    })
+
+    await processRecurringPayments()
+
+    expect(salesApi.createTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        permissions: [expect.objectContaining({ startDate: '2020-03-14T00:00:00.000Z' })]
+      })
+    )
   })
 
   it('raises an error if createTransaction fails', async () => {
