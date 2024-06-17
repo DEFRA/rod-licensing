@@ -156,6 +156,25 @@ describe('The page handler function', () => {
     expect(toolkit.view).toMatchSnapshot()
   })
 
+  it('sets the value of gtmContainerId to the GTM_CONTAINER_ID env var', async () => {
+    const expectedValue = 'expected'
+    process.env.GTM_CONTAINER_ID = expectedValue
+
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+
+    await get(getMockRequest(), toolkit)
+
+    expect(toolkit.view).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        gtmContainerId: expectedValue
+      })
+    )
+
+    delete process.env.GTM_CONTAINER_ID
+  })
+
   it.each([
     ['payment cancelled', PAYMENT_CANCELLED.uri],
     ['payment failed', PAYMENT_FAILED.uri],

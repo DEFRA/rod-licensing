@@ -16,11 +16,11 @@ export const trackGTM = async request => {
   const gtmContainerId = process.env.GTM_CONTAINER_ID
   if (optDebug && gtmContainerId) {
     if (canTrack === true) {
-      debug(`GTM Container Id: ${gtmContainerId} is being tracked`)
+      debug('Session is being tracked')
     } else if (pageOmit === true) {
-      debug(`GTM Container Id: ${gtmContainerId} is not being tracked for current page`)
+      debug('Session is not being tracked for current page')
     } else {
-      debug(`GTM Container Id: ${gtmContainerId} is not being tracked`)
+      debug('Session is not being tracked')
     }
   }
   return canTrack

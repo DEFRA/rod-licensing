@@ -119,18 +119,18 @@ describe('The analytics handler', () => {
     })
 
     it.each([
-      [true, 'session_id_example', 'GTM Container Id: session_id_example is being tracked', false],
-      [false, 'testing_session_id', 'GTM Container Id: testing_session_id is not being tracked', false],
-      [true, 'example_session_id', 'GTM Container Id: example_session_id is being tracked', false],
-      [false, 'test_session_id', 'GTM Container Id: test_session_id is not being tracked for current page', true]
+      [true, false, 'Session is being tracked'],
+      [false, false, 'Session is not being tracked'],
+      [true, false, 'Session is being tracked'],
+      [false, true, 'Session is not being tracked for current page']
     ])(
-      'when tracking is %s, GTM container Id is %s and %s and sets ENABLE_ANALYTICS_OPT_IN_DEBUGGING to true when pageOmitted returns %s',
-      async (tracking, id, expectedResult, skip) => {
+      'when tracking is %s, GTM container Id has value, ENABLE_ANALYTICS_OPT_IN_DEBUGGING is true and pageOmitted is %s, trackGTM returns %s',
+      async (tracking, skip, expectedResult) => {
         const analytics = {
           [ANALYTICS.acceptTracking]: tracking,
           [ANALYTICS.omitPageFromAnalytics]: skip
         }
-        process.env.GTM_CONTAINER_ID = id
+        process.env.GTM_CONTAINER_ID = 'ABC123  '
         process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = true
 
         await trackGTM(generateRequestMock('payload', analytics))

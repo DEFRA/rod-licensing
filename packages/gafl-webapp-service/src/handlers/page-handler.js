@@ -132,7 +132,7 @@ export default (path, view, completion, getData) => ({
     pageData.analyticsMessageDisplayed = retrieveKeyOrFalse(analytics, ANALYTICS.seenMessage)
     pageData.analyticsSelected = retrieveKeyOrFalse(analytics, ANALYTICS.selected)
     pageData.acceptedTracking = retrieveKeyOrFalse(analytics, ANALYTICS.acceptTracking)
-
+    pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || false
     pageData.displayAnalytics = displayAnalytics(request)
 
     await omitPageFromAnalytics(request)
