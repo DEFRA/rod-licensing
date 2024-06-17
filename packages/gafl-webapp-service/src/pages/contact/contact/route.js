@@ -39,7 +39,8 @@ export const getData = async request => {
     mobileText: getMobileText(permission, mssgs),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    errorMessage: getErrorText(permission, mssgs, junior)
+    errorMessage: getErrorText(permission, mssgs, junior),
+    twelveMonthLicence: permission.licenceLength === '12M'
   }
 }
 
@@ -69,12 +70,12 @@ const getContent = (permission, messages, junior) => {
 }
 
 const getMobileText = (permission, messages) =>
-  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text && permission.licenceLength === '12M'
     ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}`
     : messages.important_info_contact_item_txt
 
 const getEmailText = (permission, messages) =>
-  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email && permission.licenceLength === '12M'
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 

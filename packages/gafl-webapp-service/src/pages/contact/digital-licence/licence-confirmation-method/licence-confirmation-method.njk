@@ -46,12 +46,6 @@
           value: data.licensee.email if data.licensee.email and not error['email'] else payload.email
         }) }}
     </div>
-    <div id="email-ro" class="govuk-body-m initially-hidden">
-        {{ mssgs.important_info_contact_input_email }}</br>
-        <span class="govuk-body-m govuk-!-font-weight-bold contact-scroll">{{ data.licensee.email }}
-            &nbsp;&nbsp;<a id="change-email" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
-        </span>
-    </div>
 {% endset -%}
 
 {% set textMessageHtml %}
@@ -74,12 +68,6 @@
           },
           value: data.licensee.mobilePhone if data.licensee.mobilePhone and not error['text'] else payload.text
         }) }}
-     </div>
-     <div id="text-ro" class="govuk-body-m initially-hidden">
-         {{ mssgs.important_info_contact_input_mobile_note }}</br>
-         <span class="govuk-body-m govuk-!-font-weight-bold">{{ data.licensee.mobilePhone }}
-             &nbsp;&nbsp;<a id="change-text" href="#" class="govuk-link">{{ mssgs.licence_summary_change }}</a>
-         </span>
      </div>
 {% endset -%}
 
@@ -133,32 +121,4 @@
         import { initAll } from '/public/javascript/govuk-frontend-min.js'
         initAll()
     </script>
-    <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.email }}' && !'{{ data.changeEmail }}' && !'{{ error.email }}' ) {
-            document.getElementById("email-ro").style.display = "block"
-            document.getElementById("email-rw").style.display = "none"
-        } else {
-            document.getElementById("email-ro").style.display = "none"
-            document.getElementById("email-rw").style.display = "block"
-        }
-        document.getElementById("change-email").addEventListener("click", function () {
-            document.getElementById("email-ro").style.display = "none"
-            document.getElementById("email-rw").style.display = "block"
-            document.getElementById("email").focus()
-        })
-    })()</script>
-    <script nonce={{nonce}}>(function () {
-        if ('{{ data.licensee.mobilePhone }}' && !'{{ data.changeMobile }}' && !'{{ error.text }}' ) {
-            document.getElementById("text-ro").style.display = "block"
-            document.getElementById("text-rw").style.display = "none"
-        } else {
-            document.getElementById("text-ro").style.display = "none"
-            document.getElementById("text-rw").style.display = "block"
-        }
-        document.getElementById("change-text").addEventListener("click", function () {
-            document.getElementById("text-ro").style.display = "none"
-            document.getElementById("text-rw").style.display = "block"
-            document.getElementById("text").focus()
-        })
-    })()</script>
 {% endblock %}

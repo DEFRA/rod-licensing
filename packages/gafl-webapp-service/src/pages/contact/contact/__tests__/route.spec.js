@@ -79,29 +79,35 @@ describe('name > route', () => {
       }
     )
 
-    it('mobileText includes value of mobile phone when preferredMethodOfConfirmation is text', async () => {
-      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Text' }
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.emailText).toBe('Email')
-    })
+    it.each([
+      ['Email', '12M', 'Email test@email.com', 'test@email.com'],
+      ['Text', '12M', 'Email', undefined],
+      ['Email', '8D', 'Email', 'test@email.com'],
+      ['Text', '8D', 'Email', undefined]
+    ])(
+      'when preferredMethodOfConfirmation is %s and licenceLength is %s, emailText returns %s',
+      async (preferredMethodOfConfirmation, licenceLength, expected, email) => {
+        const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation, email }
 
-    it('emailText includes value of email when preferredMethodOfConfirmation is email', async () => {
-      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Email', email: 'test@email.com' }
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.emailText).toBe('Email test@email.com')
-    })
+        const result = await getData(getMockRequest({ licensee, licenceLength }))
+        expect(result.emailText).toBe(expected)
+      }
+    )
 
-    it('mobileText includes value of mobile phone when preferredMethodOfConfirmation is email', async () => {
-      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Email' }
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.mobileText).toBe('Text')
-    })
+    it.each([
+      ['Text', '12M', 'Text to 07111111111', '07111111111'],
+      ['Email', '12M', 'Text', undefined],
+      ['Text', '8D', 'Text', '07111111111'],
+      ['Email', '8D', 'Text', undefined]
+    ])(
+      'when preferredMethodOfConfirmation is %s and licenceLength is %s, mobileText returns %s',
+      async (preferredMethodOfConfirmation, licenceLength, expected, mobilePhone) => {
+        const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation, mobilePhone }
 
-    it('mobileText includes value of mobile phone when preferredMethodOfConfirmation is text', async () => {
-      const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation: 'Text', mobilePhone: '07123456789' }
-      const result = await getData(getMockRequest({ licensee }))
-      expect(result.mobileText).toBe('Text to 07123456789')
-    })
+        const result = await getData(getMockRequest({ licensee, licenceLength }))
+        expect(result.mobileText).toBe(expected)
+      }
+    )
 
     it.each([
       [false, 'Text'],
@@ -173,6 +179,16 @@ describe('name > route', () => {
       hasJunior.mockReturnValueOnce(junior)
       const result = await getData(getMockRequest({ licenceLength, licensee }))
       expect(result.errorMessage).toBe(expected)
+    })
+
+    it.each([
+      [true, '12M'],
+      [false, '8D'],
+      [false, '1D']
+    ])('result.twelveMonthLicence returns %s when licence length is %s', async (expected, licenceLength) => {
+      const licensee = { birthDate: 'birthDate' }
+      const result = await getData(getMockRequest({ licensee, licenceLength }))
+      expect(result.twelveMonthLicence).toBe(expected)
     })
   })
 
