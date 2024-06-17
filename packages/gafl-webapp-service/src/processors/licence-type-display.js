@@ -31,7 +31,7 @@ export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
 }
 
 const getLicenceTypeMessage = (licenceLength, mssgs) => {
-  const length = typeof licenceLength === 'Symbol' ? licenceLength.description : licenceLength
+  const length = typeof licenceLength === 'symbol' ? licenceLength.description : licenceLength
   if (length === '12M') {
     return mssgs.licence_type_12m
   } else if (length === '8D') {
