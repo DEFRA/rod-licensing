@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.3 (2024-06-17)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#1957](https://github.com/DEFRA/rod-licensing/pull/1957) Recurring payments job sets up new permissions in DynamoDb ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 
 ## v1.47.0-rc.0 (2024-06-06)
