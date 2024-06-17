@@ -7,6 +7,7 @@ import StagingExceptions from './staging-exceptions.js'
 import Authenticate from './authenticate.js'
 import Users from './system-users.js'
 import RecurringPayment from './recurring-payments.js'
+import Renewals from './renewals.js'
 
 import Static from './static.js'
 
@@ -20,5 +21,6 @@ export default [
   ...StagingExceptions,
   ...Authenticate,
   ...Users,
-  ...RecurringPayment
+  ...RecurringPayment,
+  ...Renewals
 ]
