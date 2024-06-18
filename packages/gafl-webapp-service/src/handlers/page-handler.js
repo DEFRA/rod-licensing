@@ -137,8 +137,6 @@ export default (path, view, completion, getData) => ({
     pageData.displayAnalytics = displayAnalytics(request)
     pageData.approvedGTM = await trackGTM(request)
 
-    console.log('gtm: ', pageData.approvedGTM)
-
     await omitPageFromAnalytics(request)
 
     if (pagesJourneyBeginning.includes(request.path)) {
