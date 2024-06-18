@@ -15,6 +15,7 @@ import GetDataRedirect from './get-data-redirect.js'
 import journeyDefinition from '../routes/journey-definition.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
+import { trackGTM } from './analytics-handler.js'
 
 const pagesToOmitAnalyticsBanner = [AGREED.uri, LICENCE_DETAILS.uri, ORDER_COMPLETE.uri, PAYMENT_CANCELLED.uri, PAYMENT_FAILED.uri]
 const pagesJourneyBeginning = [LICENCE_FOR.uri, IDENTIFY.uri]
@@ -134,6 +135,9 @@ export default (path, view, completion, getData) => ({
     pageData.acceptedTracking = retrieveKeyOrFalse(analytics, ANALYTICS.acceptTracking)
     pageData.gtmContainerId = process.env.GTM_CONTAINER_ID || false
     pageData.displayAnalytics = displayAnalytics(request)
+    pageData.approvedGTM = await trackGTM(request)
+
+    console.log('gtm: ', pageData.approvedGTM)
 
     await omitPageFromAnalytics(request)
 
