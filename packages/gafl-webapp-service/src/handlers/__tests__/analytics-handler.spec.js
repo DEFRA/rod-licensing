@@ -130,7 +130,7 @@ describe('The analytics handler', () => {
           [ANALYTICS.acceptTracking]: tracking,
           [ANALYTICS.omitPageFromAnalytics]: skip
         }
-        process.env.GTM_CONTAINER_ID = 'ABC123  '
+        process.env.GTM_CONTAINER_ID = 'ABC123'
         process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = true
 
         await trackGTM(generateRequestMock('payload', analytics))
