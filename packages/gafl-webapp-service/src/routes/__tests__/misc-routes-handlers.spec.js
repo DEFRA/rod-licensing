@@ -328,24 +328,6 @@ describe('guidance page handlers', () => {
         })
       )
     })
-
-    it('sets the value of gtmContainerId to the GTM_CONTAINER_ID env var', async () => {
-      const expectedValue = 'expected'
-      process.env.GTM_CONTAINER_ID = expectedValue
-
-      const toolkit = getMockToolkit()
-      const request = getMockRequest()
-      await pageHandler(request, toolkit)
-
-      expect(toolkit.view).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          gtmContainerId: expectedValue
-        })
-      )
-
-      delete process.env.GTM_CONTAINER_ID
-    })
   })
 
   const getMockRequest = (i18nValues, referer) => {

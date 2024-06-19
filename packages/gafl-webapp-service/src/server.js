@@ -26,6 +26,7 @@ import { initialise as initialiseOIDC } from './handlers/oidc-handler.js'
 import { getPlugins } from './plugins.js'
 import { airbrake } from '@defra-fish/connectors-lib'
 import { addEmptyFragmentToUri, addLanguageCodeToUri } from './processors/uri-helper.js'
+
 airbrake.initialise()
 let server
 

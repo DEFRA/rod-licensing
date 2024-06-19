@@ -1,5 +1,7 @@
 import { ANALYTICS } from '../../constants.js'
-import analyticsHandler from '../analytics-handler.js'
+import analyticsHandler, { trackGTM } from '../analytics-handler.js'
+import db from 'debug'
+const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:analytics-handler')]
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -8,6 +10,8 @@ jest.mock('../../constants', () => ({
     seenMessage: 'seen-message'
   }
 }))
+
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 describe('The analytics handler', () => {
   beforeEach(() => {
@@ -99,6 +103,64 @@ describe('The analytics handler', () => {
     await analyticsHandler(request, generateResponseToolkitMock())
 
     expect(mockAnalyticsSet).not.toHaveBeenCalled()
+  })
+
+  describe('trackGTM', () => {
+    it.each([
+      [true, true],
+      [false, false]
+    ])('when acceptedTracking property equals %s, trackGTM should return %s', async (tracking, expectedResult) => {
+      const analytics = {
+        [ANALYTICS.acceptTracking]: tracking
+      }
+      const result = await trackGTM(generateRequestMock('payload', analytics))
+
+      expect(result).toBe(expectedResult)
+    })
+
+    it.each([
+      [true, false, 'Session is being tracked'],
+      [false, false, 'Session is not being tracked'],
+      [true, false, 'Session is being tracked'],
+      [false, true, 'Session is not being tracked for current page']
+    ])(
+      'when tracking is %s, GTM container Id has value, ENABLE_ANALYTICS_OPT_IN_DEBUGGING is true and pageOmitted is %s, trackGTM returns %s',
+      async (tracking, skip, expectedResult) => {
+        const analytics = {
+          [ANALYTICS.acceptTracking]: tracking,
+          [ANALYTICS.omitPageFromAnalytics]: skip
+        }
+        process.env.GTM_CONTAINER_ID = 'ABC123'
+        process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = true
+
+        await trackGTM(generateRequestMock('payload', analytics))
+
+        expect(debug).toHaveBeenCalledWith(expectedResult)
+      }
+    )
+
+    it('debug isnt called if ENABLE_ANALYTICS_OPT_IN_DEBUGGING is set to false', async () => {
+      const analytics = {
+        [ANALYTICS.acceptTracking]: true
+      }
+      process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = false
+
+      await trackGTM(generateRequestMock('payload', analytics))
+
+      expect(debug).toBeCalledTimes(0)
+    })
+
+    it('debug isnt called if GTM_CONTAINER_ID is undefined', async () => {
+      const analytics = {
+        [ANALYTICS.acceptTracking]: true
+      }
+      process.env.ENABLE_ANALYTICS_OPT_IN_DEBUGGING = 'true'
+      delete process.env.GTM_CONTAINER_ID
+
+      await trackGTM(generateRequestMock('payload', analytics))
+
+      expect(debug).toBeCalledTimes(0)
+    })
   })
 
   const mockAnalyticsSet = jest.fn()
