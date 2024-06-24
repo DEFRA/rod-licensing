@@ -34,13 +34,13 @@ export const getData = async request => {
     postHint: getPostHint(permission, mssgs),
     content: getContent(permission, mssgs, junior),
     emailConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email,
-    emailText: getEmailText(permission, mssgs),
+    emailText: getEmailText(permission, mssgs, junior),
     mobileConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text,
-    mobileText: getMobileText(permission, mssgs),
+    mobileText: getMobileText(permission, mssgs, junior),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
     errorMessage: getErrorText(permission, mssgs, junior),
-    twelveMonthLicence: permission.licenceLength === '12M'
+    twelveMonthAdultLicence: !junior && permission.licenceLength === '12M'
   }
 }
 
@@ -69,13 +69,13 @@ const getContent = (permission, messages, junior) => {
   return isSalmonLicense ? messages.important_info_contact_content_salmon : messages.important_info_contact_content_not_salmon
 }
 
-const getMobileText = (permission, messages) =>
-  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text && permission.licenceLength === '12M'
+const getMobileText = (permission, messages, junior) =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text && permission.licenceLength === '12M' && !junior
     ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}`
     : messages.important_info_contact_item_txt
 
-const getEmailText = (permission, messages) =>
-  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email && permission.licenceLength === '12M'
+const getEmailText = (permission, messages, junior) =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email && permission.licenceLength === '12M' && !junior
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 
