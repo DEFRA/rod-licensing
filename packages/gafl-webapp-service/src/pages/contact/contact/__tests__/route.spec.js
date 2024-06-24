@@ -82,7 +82,7 @@ describe('name > route', () => {
     it.each([
       ['Email', '12M', false, 'Email test@email.com', 'test@email.com'],
       ['Text', '12M', false, 'Email', undefined],
-      [undefined, '12M', true, 'Email', undefined],
+      [undefined, undefined, true, 'Email', undefined],
       ['Email', '8D', false, 'Email', 'test@email.com'],
       ['Text', '8D', false, 'Email', undefined]
     ])(
@@ -98,7 +98,7 @@ describe('name > route', () => {
     it.each([
       ['Text', '12M', false, 'Text to 07111111111', '07111111111'],
       ['Email', '12M', false, 'Text', undefined],
-      [undefined, '12M', true, 'Text', undefined],
+      [undefined, undefined, true, 'Text', undefined],
       ['Text', '8D', false, 'Text', '07111111111'],
       ['Email', '8D', false, 'Text', undefined]
     ])(
