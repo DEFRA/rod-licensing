@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.7 (2024-06-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1979](https://github.com/DEFRA/rod-licensing/pull/1979) GTM activiated by user ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.47.0-rc.5 (2024-06-17)
 
