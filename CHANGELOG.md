@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.8 (2024-06-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1984](https://github.com/DEFRA/rod-licensing/pull/1984) Header service name lacks capitalisation. ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.47.0-rc.7 (2024-06-19)
 
 #### :rocket: Enhancement
