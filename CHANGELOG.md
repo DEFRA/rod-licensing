@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.9 (2024-06-26)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#1982](https://github.com/DEFRA/rod-licensing/pull/1982) remove full stop ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.47.0-rc.8 (2024-06-26)
 
 #### :bug: Bug Fix
