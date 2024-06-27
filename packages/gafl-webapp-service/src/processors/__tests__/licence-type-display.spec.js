@@ -91,17 +91,21 @@ describe('licenceTypeAndLengthDisplay', () => {
     expect(result).toEqual('Salmon and sea trout (over_66), 12 months')
   })
 
-  it('returns correct licence length', () => {
+  it('returns correct licence length, 12 months', () => {
     const permission = getPermission({ licenceLength: Symbol('12M') })
-    let result = licenceTypeAndLengthDisplay(permission, getCatalog())
+    const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('Salmon and sea trout, 12 months')
+  })
 
-    permission.licenceLength = Symbol('8D')
-    result = licenceTypeAndLengthDisplay(permission, getCatalog())
+  it('returns correct licence length, 8 days', () => {
+    const permission = getPermission({ licenceLength: Symbol('8D') })
+    const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('Salmon and sea trout, 8 days')
+  })
 
-    permission.licenceLength = Symbol('1D')
-    result = licenceTypeAndLengthDisplay(permission, getCatalog())
+  it('returns correct licence length, 1 day', () => {
+    const permission = getPermission({ licenceLength: Symbol('1D') })
+    const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('Salmon and sea trout, 1 day')
   })
 })
