@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.11 (2024-06-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1986](https://github.com/DEFRA/rod-licensing/pull/1986) Update privacy policy ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.47.0-rc.10 (2024-06-27)
 
 #### :bug: Bug Fix
