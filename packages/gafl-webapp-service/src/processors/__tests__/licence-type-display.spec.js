@@ -9,7 +9,10 @@ const getCatalog = () => ({
   licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods',
   recurring_payment_set_up_bulletpoint_1_trout_2_rod: ' trout and coarse (2 rod)',
   recurring_payment_set_up_bulletpoint_1_trout_3_rod: ' trout and coarse (3 rod)',
-  recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout'
+  recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout',
+  licence_type_12m: '12 months',
+  licence_type_8d: '8 days',
+  licence_type_1d: '1 day'
 })
 
 jest.mock('../concession-helper', () => ({
@@ -86,6 +89,24 @@ describe('licenceTypeAndLengthDisplay', () => {
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
     expect(result).toEqual('Salmon and sea trout (over_66), 12 months')
+  })
+
+  it('returns correct licence length, 12 months', () => {
+    const permission = getPermission({ licenceLength: Symbol('12M') })
+    const result = licenceTypeAndLengthDisplay(permission, getCatalog())
+    expect(result).toEqual('Salmon and sea trout, 12 months')
+  })
+
+  it('returns correct licence length, 8 days', () => {
+    const permission = getPermission({ licenceLength: Symbol('8D') })
+    const result = licenceTypeAndLengthDisplay(permission, getCatalog())
+    expect(result).toEqual('Salmon and sea trout, 8 days')
+  })
+
+  it('returns correct licence length, 1 day', () => {
+    const permission = getPermission({ licenceLength: Symbol('1D') })
+    const result = licenceTypeAndLengthDisplay(permission, getCatalog())
+    expect(result).toEqual('Salmon and sea trout, 1 day')
   })
 })
 
