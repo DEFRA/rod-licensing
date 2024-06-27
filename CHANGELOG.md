@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.10 (2024-06-27)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1966](https://github.com/DEFRA/rod-licensing/pull/1966) Incorrect details on Welsh payment screen ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.47.0-rc.9 (2024-06-26)
 
 #### :rocket: Enhancement
