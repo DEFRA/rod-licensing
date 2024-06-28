@@ -28,7 +28,7 @@
   "access_statement_made_simple": "We have also made the website text as simple as possible to understand.",
   "access_statement_nonaccess_body": "The content listed below is non-accessible for the following reasons.",
   "access_statement_nonaccess_heading": "Non-accessible content",
-  "access_statement_noncompliance_body_1": "We give users the option of a calendar date picker to select a date, but it is not accessible to those using keyboards or screen readers. This fails WCA 2.1 success criterion ",
+  "access_statement_noncompliance_body_1": "We give users the option of a calendar date picker to select a date, but it is not accessible to those using keyboards or screen readers. This fails WCAG 2.1 success criterion ",
   "access_statement_noncompliance_body_2": ". Users with accessibility requirements can enter this date using the standard day, month and year fields instead. We plan to review this by December 2024.",
   "access_statement_noncompliance_body_3": "Colours used for links have insufficient contrast. This fails WCAG 2.1 success criterion ",
   "access_statement_noncompliance_body_4": ". We plan to review this by December 2024.",
