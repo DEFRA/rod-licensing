@@ -17,7 +17,6 @@ const mockConcessions = [
     id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
     name: 'Disabled'
   }
-
 ]
 
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
@@ -62,7 +61,6 @@ const concessionProofDisabledBlueBadge = {
 const concessionProofDisabledNi = {
   id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
   ...disabledNi
-
 }
 
 describe('Concession service', () => {
