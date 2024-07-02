@@ -1,6 +1,6 @@
 import { ANALYTICS } from '../../constants.js'
 import { CacheError } from '../../session-cache/cache-manager.js'
-import { trackAnalyticsAccepted, getAnalyticsSessionId, pageOmitted } from '../analytics-handler.js'
+import { trackAnalyticsAccepted, pageOmitted } from '../analytics-handler.js'
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -59,34 +59,6 @@ describe('pageOmitted', () => {
       })
     )
     expect(result).toEqual(false)
-  })
-})
-
-describe('getAnalyticsSessionId', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  it.each([['session_id_example'], ['testing_session_id'], ['example_session_id']])('returns the value sessionId', async id => {
-    const result = await getAnalyticsSessionId(
-      generateRequestMock(
-        () => null,
-        () => id
-      )
-    )
-    expect(result).toEqual(id)
-  })
-
-  it('empty session cache returns false', async () => {
-    const result = await getAnalyticsSessionId(
-      generateRequestMock(
-        () => null,
-        () => {
-          throw new CacheError()
-        }
-      )
-    )
-    expect(result).toEqual(null)
   })
 })
 
