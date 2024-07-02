@@ -48,20 +48,20 @@ export const addSenior = permission => {
   }
 }
 
-export const hasSenior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.SENIOR)
-
 export const removeSenior = permission => {
   if (hasSenior(permission)) {
     permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.SENIOR)
   }
 }
 
-export const hasJunior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
+export const hasSenior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.SENIOR)
 
 export const removeJunior = permission => {
   if (hasJunior(permission)) {
     permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.JUNIOR)
   }
 }
+
+export const hasJunior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
 
 //  clear, getAgeConcession and addJunior to be added this file?

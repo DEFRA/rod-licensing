@@ -26,7 +26,7 @@ export default [
           const permissionData = preparePermissionDataForRenewal({
             ...results[0].entity.toJSON(),
             licensee: results[0].expanded.licensee.entity.toJSON(),
-            concessions: results[0].expanded.concessions.entity.toJSON(),
+            concessions: results[0].expanded.concessionProofs[0].expanded.concession.entity.toJSON(),
             permit: results[0].expanded.permit.entity.toJSON()
           })
           return h.response(permissionData)
