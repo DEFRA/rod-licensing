@@ -1,5 +1,6 @@
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
+import { addConcessionProofs, addSenior, removeSenior } from '../concessions.service.js'
 
 // Replicated from GAFL - need to decide whether to move
 const cacheDateFormat = 'YYYY-MM-DD'
@@ -12,7 +13,8 @@ export const preparePermissionDataForRenewal = existingPermission => ({
   ...prepareBasePermissionData(existingPermission),
   ...prepareDateData(existingPermission),
   licensee: prepareLicenseeData(existingPermission),
-  permitId: preparePermitId(existingPermission)
+  permitId: preparePermitId(existingPermission),
+  concessions: prepareConcessionDataForRenewal(existingPermission)
 })
 
 const prepareBasePermissionData = existingPermission => ({
@@ -84,3 +86,17 @@ const dateDataIfNotExpired = endDateMoment => {
 }
 
 const preparePermitId = existingPermission => existingPermission.permit.id
+
+const prepareConcessionDataForRenewal = existingPermission => {
+  addConcessionProofs(existingPermission)
+  delete existingPermission.licensee.noLicenceRequired
+  const ageAtLicenceStartDate = existingPermission.licenceStartDate
+
+  // add check minor here for easy renewals (not needed for recurring payment as cant purchase if junior)
+  if (isSenior(ageAtLicenceStartDate)) {
+    addSenior(existingPermission)
+  } else {
+    removeSenior(existingPermission)
+  }
+  return existingPermission.concessions
+}

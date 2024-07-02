@@ -61,7 +61,7 @@ describe('permissionRenewalData', () => {
     const expectedData = {
       ...permissionMock.entity.toJSON(),
       licensee: permissionMock.expanded.licensee.entity.toJSON(),
-      concessions: [],
+      concessions: permissionMock.expanded.concessionProofs[0].expanded.concession.entity.toJSON(),
       permit: permissionMock.expanded.permit.entity.toJSON()
     }
     expect(preparePermissionDataForRenewal).toHaveBeenCalledWith(expectedData)
