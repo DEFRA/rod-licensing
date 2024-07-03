@@ -1,4 +1,4 @@
-import { isSenior, SERVICE_LOCAL_TIME, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
+import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 import { addConcessionProofs, addSenior, removeSenior } from '../concessions.service.js'
 
@@ -94,9 +94,7 @@ const preparePermitId = existingPermission => existingPermission.permit.id
 const prepareConcessionDataForRenewal = (existingPermission, dateData) => {
   addConcessionProofs(existingPermission)
   delete existingPermission.licensee.noLicenceRequired
-  const ageAtLicenceStartDate = dateData.licenceStartDate
-    ? moment(dateData.licenceStartDate).diff(moment(existingPermission.licensee.birthDate), 'years')
-    : moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(existingPermission.licensee.birthDate), 'years')
+  const ageAtLicenceStartDate = moment(dateData.licenceStartDate).diff(moment(existingPermission.licensee.birthDate), 'years')
 
   // add check minor here for easy renewals (not needed for recurring payment as cant purchase if junior)
   if (isSenior(ageAtLicenceStartDate)) {
