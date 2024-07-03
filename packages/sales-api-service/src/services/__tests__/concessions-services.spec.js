@@ -80,6 +80,12 @@ describe('Concession service', () => {
       await concessionService.addConcessionProofs(permission)
       expect(permission.concessions[0]).toBeUndefined()
     })
+
+    it('should not set disabled concession to permission if concession isnt disabled', async () => {
+      permission.concessions = [senior]
+      await concessionService.addConcessionProofs(permission)
+      expect(permission.concessions[0].type).not.toEqual('Disabled')
+    })
   })
 
   describe('Disabled', () => {
@@ -90,6 +96,18 @@ describe('Concession service', () => {
       })
 
       it('add NI', () => {
+        concessionService.addDisabled(permission, CONCESSION_PROOF.NI, '456')
+        expect(permission.concessions).toContainEqual(disabledNi)
+      })
+
+      it('add blue badge to senior licence', () => {
+        permission.concessions = [senior]
+        concessionService.addDisabled(permission, CONCESSION_PROOF.blueBadge, '123')
+        expect(permission.concessions).toContainEqual(disabledBlueBadge)
+      })
+
+      it('add NI to senior licence', () => {
+        permission.concessions = [senior]
         concessionService.addDisabled(permission, CONCESSION_PROOF.NI, '456')
         expect(permission.concessions).toContainEqual(disabledNi)
       })
@@ -133,6 +151,11 @@ describe('Concession service', () => {
   describe('Senior', () => {
     describe('addSenior', () => {
       it('add senior', () => {
+        concessionService.addSenior(permission)
+        expect(permission.concessions).toContainEqual(senior)
+      })
+
+      it('add senior when already senior', () => {
         concessionService.addSenior(permission)
         expect(permission.concessions).toContainEqual(senior)
       })

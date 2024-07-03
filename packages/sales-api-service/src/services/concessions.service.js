@@ -13,6 +13,7 @@ export const addConcessionProofs = async permission => {
 
 export const addDisabled = (permission, concessionProof, referenceNumber) => {
   removeDisabled(permission)
+  console.log(!permission.concessions)
   if (!permission.concessions) {
     permission.concessions = []
   }
@@ -34,8 +35,10 @@ export const removeDisabled = permission => {
 export const hasDisabled = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.DISABLED)
 
 export const addSenior = permission => {
+  console.log(!hasSenior(permission))
   if (!hasSenior(permission)) {
     removeJunior(permission)
+    console.log(permission.concessions)
     if (!permission.concessions) {
       permission.concessions = []
     }
