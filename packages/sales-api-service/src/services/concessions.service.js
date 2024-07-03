@@ -13,7 +13,6 @@ export const addConcessionProofs = async permission => {
 
 export const addDisabled = (permission, concessionProof, referenceNumber) => {
   removeDisabled(permission)
-  console.log(!permission.concessions)
   if (!permission.concessions) {
     permission.concessions = []
   }
