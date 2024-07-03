@@ -91,6 +91,7 @@ describe('Concession service', () => {
   describe('Disabled', () => {
     describe('addDisabled', () => {
       it('add blue badge', () => {
+        permission.concesssions = undefined
         concessionService.addDisabled(permission, CONCESSION_PROOF.blueBadge, '123')
         expect(permission.concessions).toContainEqual(disabledBlueBadge)
       })
