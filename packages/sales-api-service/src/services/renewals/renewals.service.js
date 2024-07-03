@@ -95,7 +95,7 @@ const prepareConcessionDataForRenewal = (existingPermission, dateData) => {
   addConcessionProofs(existingPermission)
   delete existingPermission.licensee.noLicenceRequired
   const ageAtLicenceStartDate = dateData.licenceStartDate
-    ? moment(existingPermission.licenceStartDate).diff(moment(existingPermission.licensee.birthDate), 'years')
+    ? moment(dateData.licenceStartDate).diff(moment(existingPermission.licensee.birthDate), 'years')
     : moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(existingPermission.licensee.birthDate), 'years')
 
   // add check minor here for easy renewals (not needed for recurring payment as cant purchase if junior)
