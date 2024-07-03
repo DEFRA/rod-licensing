@@ -1,4 +1,4 @@
-import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { isSenior, SERVICE_LOCAL_TIME, ADVANCED_PURCHASE_MAX_DAYS } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
 import { addConcessionProofs, addSenior, removeSenior } from '../concessions.service.js'
 
@@ -9,13 +9,17 @@ const licenceToStart = {
   ANOTHER_DATE: 'another-date'
 }
 
-export const preparePermissionDataForRenewal = existingPermission => ({
-  ...prepareBasePermissionData(existingPermission),
-  ...prepareDateData(existingPermission),
-  licensee: prepareLicenseeData(existingPermission),
-  permitId: preparePermitId(existingPermission),
-  concessions: prepareConcessionDataForRenewal(existingPermission)
-})
+export const preparePermissionDataForRenewal = existingPermission => {
+  const dateData = prepareDateData(existingPermission)
+  const concessionData = prepareConcessionDataForRenewal(existingPermission, dateData)
+  return {
+    ...prepareBasePermissionData(existingPermission),
+    ...dateData,
+    licensee: prepareLicenseeData(existingPermission),
+    permitId: preparePermitId(existingPermission),
+    concessions: concessionData.concessions
+  }
+}
 
 const prepareBasePermissionData = existingPermission => ({
   isRenewal: true,
@@ -87,10 +91,12 @@ const dateDataIfNotExpired = endDateMoment => {
 
 const preparePermitId = existingPermission => existingPermission.permit.id
 
-const prepareConcessionDataForRenewal = existingPermission => {
+const prepareConcessionDataForRenewal = (existingPermission, dateData) => {
   addConcessionProofs(existingPermission)
   delete existingPermission.licensee.noLicenceRequired
-  const ageAtLicenceStartDate = existingPermission.licenceStartDate
+  const ageAtLicenceStartDate = dateData.licenceStartDate
+    ? moment(existingPermission.licenceStartDate).diff(moment(existingPermission.licensee.birthDate), 'years')
+    : moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days').diff(moment(existingPermission.licensee.birthDate), 'years')
 
   // add check minor here for easy renewals (not needed for recurring payment as cant purchase if junior)
   if (isSenior(ageAtLicenceStartDate)) {
@@ -98,5 +104,5 @@ const prepareConcessionDataForRenewal = existingPermission => {
   } else {
     removeSenior(existingPermission)
   }
-  return existingPermission.concessions
+  return existingPermission
 }
