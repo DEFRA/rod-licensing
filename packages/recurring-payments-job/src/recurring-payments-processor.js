@@ -1,6 +1,16 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
+
+const finaliseTransactionWithGovUkPay = async (transactionId, amount) => {
+  try {
+    const govUkPayResponse = await govUkPayApi.finaliseTransaction(transactionId, amount)
+    console.log('Transaction finalised with GOV.UK Pay:', govUkPayResponse)
+  } catch (error) {
+    console.error('Error finalising transaction with GOV.UK Pay:', error)
+    throw error
+  }
+}
 
 export const processRecurringPayments = async () => {
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
@@ -16,11 +26,14 @@ export const processRecurringPayments = async () => {
 
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
+  console.log('Processing recurring payment for reference number: ', referenceNumber)
   const transactionData = await processPermissionData(referenceNumber)
   console.log('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
     console.log('New transaction created:', response)
+
+    await finaliseTransactionWithGovUkPay(response.id, response.payment.amount)
   } catch (e) {
     console.log('Error creating transaction', JSON.stringify(transactionData))
     throw e
