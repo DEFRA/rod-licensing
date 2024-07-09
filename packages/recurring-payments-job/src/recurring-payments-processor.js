@@ -31,14 +31,18 @@ const processRecurringPayment = async record => {
   console.log('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
+    if (!response || !response.id || !response.payment || !response.payment.amount) {
+      throw new Error('Invalid response structure from createTransaction')
+    }
     console.log('New transaction created:', response)
 
     await finaliseTransactionWithGovUkPay(response.id, response.payment.amount)
   } catch (e) {
-    console.log('Error creating transaction', JSON.stringify(transactionData))
+    console.error('Error creating or finalising transaction', e)
     throw e
   }
 }
+
 
 const processPermissionData = async referenceNumber => {
   console.log('Preparing data based on', referenceNumber)

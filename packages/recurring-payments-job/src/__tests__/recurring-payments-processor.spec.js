@@ -1,4 +1,4 @@
-import { salesApi } from '@defra-fish/connectors-lib'
+import { salesApi, govUkPayApi } from '@defra-fish/connectors-lib'
 import { processRecurringPayments } from '../recurring-payments-processor.js'
 
 jest.mock('@defra-fish/business-rules-lib')
@@ -50,7 +50,6 @@ describe('recurring-payments-processor', () => {
   it('console log displays "Recurring Payments found: " when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
-    // salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
 
     await processRecurringPayments()
 
@@ -62,9 +61,22 @@ describe('recurring-payments-processor', () => {
     const referenceNumber = Symbol('reference')
     salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber } } } }])
 
+    salesApi.preparePermissionDataForRenewal.mockReturnValueOnce({
+      licensee: { countryCode: 'GB-ENG' }
+    })
+
+    salesApi.createTransaction.mockResolvedValueOnce({
+      id: 'transactionId',
+      payment: {
+        amount: 100
+      }
+    })
+
     await processRecurringPayments()
 
     expect(salesApi.preparePermissionDataForRenewal).toHaveBeenCalledWith(referenceNumber)
+    expect(salesApi.createTransaction).toHaveBeenCalled()
+    expect(govUkPayApi.finaliseTransaction).toHaveBeenCalledWith('transactionId', 100)
   })
 
   it('creates a transaction with the correct data', async () => {
