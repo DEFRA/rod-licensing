@@ -23,10 +23,10 @@ export default [
         const results = await executeWithErrorLog(permissionForFullReferenceNumber(request.params.referenceNumber))
 
         if (results.length === 1) {
-          const permissionData = preparePermissionDataForRenewal({
+          const permissionData = await preparePermissionDataForRenewal({
             ...results[0].entity.toJSON(),
             licensee: results[0].expanded.licensee.entity.toJSON(),
-            concessions: results[0].expanded.concessionProofs[0].expanded.concession.entity.toJSON(),
+            concessions: results[0].expanded.concessionProofs[0]?.expanded.concession.entity.toJSON() ?? [],
             permit: results[0].expanded.permit.entity.toJSON()
           })
           return h.response(permissionData)
