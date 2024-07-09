@@ -8,11 +8,11 @@ const getCatalog = () => ({
 
 const getPermission = ({ reminder, licenceFor, length, age }) => ({
   licensee: {
-    preferredMethodOfReminder: reminder
+    preferredMethodOfReminder: reminder,
+    age: age
   },
   isLicenceForYou: licenceFor,
-  licenceLength: length,
-  age: age
+  licenceLength: length
 })
 
 describe('recurringPayReminderDisplay', () => {
@@ -33,7 +33,8 @@ describe('validForRecurringPayment', () => {
     [false, '8D', true, true, 'not telesales', 18],
     [false, '12M', false, true, 'not telesales', 18],
     [false, '12M', true, false, 'not telesales', 18],
-    [false, '12M', true, true, 'telesales'], 18,
+    [false, '12M', true, true, 'telesales'],
+    18,
     [false, '12M', true, true, 'not telesales', 16],
     [false, '12M', true, true, 'not telesales', 17]
   ])(
@@ -41,7 +42,7 @@ describe('validForRecurringPayment', () => {
     (expected, length, licenceFor, recurring, telesales, age) => {
       process.env.CHANNEL = telesales
       process.env.SHOW_RECURRING_PAYMENTS = recurring
-      const permission = getPermission({ licenceFor, length, age })
+      const permission = getPermission({ reminder: 'Email', licenceFor, length, age })
       const result = validForRecurringPayment(permission)
       expect(result).toEqual(expected)
     }
