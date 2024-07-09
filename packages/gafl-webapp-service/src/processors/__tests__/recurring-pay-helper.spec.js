@@ -33,8 +33,7 @@ describe('validForRecurringPayment', () => {
     [false, '8D', true, true, 'not telesales', 18],
     [false, '12M', false, true, 'not telesales', 18],
     [false, '12M', true, false, 'not telesales', 18],
-    [false, '12M', true, true, 'telesales'],
-    18,
+    [false, '12M', true, true, 'telesales', 18],
     [false, '12M', true, true, 'not telesales', 16],
     [false, '12M', true, true, 'not telesales', 17]
   ])(
