@@ -30,11 +30,6 @@ export const getData = async request => {
   const junior = hasJunior(permission)
   const twelveMonthNonJuniorLicence = !junior && permission.licenceLength === '12M'
 
-  console.log(permission.licensee.preferredMethodOfConfirmation)
-  console.log(mssgs)
-  console.log(twelveMonthNonJuniorLicence)
-  console.log(HOW_CONTACTED.text)
-
   return {
     title: getTitle(permission, mssgs, twelveMonthNonJuniorLicence),
     postHint: getPostHint(permission, mssgs),
