@@ -37,7 +37,7 @@ describe('validForRecurringPayment', () => {
     [false, '12M', true, true, 'not telesales', 16],
     [false, '12M', true, true, 'not telesales', 17]
   ])(
-    'should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s and journey is %s and age is %s',
+    'should return %s as licence length is %s, licence for you is %s, SHOW_RECURRING_PAYMENTS is %s, journey is %s, and age is %s',
     (expected, length, licenceFor, recurring, telesales, age) => {
       process.env.CHANNEL = telesales
       process.env.SHOW_RECURRING_PAYMENTS = recurring
