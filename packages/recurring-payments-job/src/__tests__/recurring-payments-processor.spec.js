@@ -43,7 +43,7 @@ describe('recurring-payments-processor', () => {
     const date = new Date().toISOString().split('T')[0]
 
     await processRecurringPayments()
-
+ 
     expect(salesApi.getDueRecurringPayments).toHaveBeenCalledWith(date)
   })
 
