@@ -9,7 +9,7 @@ const getCatalog = () => ({
 const getPermission = ({ reminder, licenceFor, length, age }) => ({
   licensee: {
     preferredMethodOfReminder: reminder,
-    age: age
+    age
   },
   isLicenceForYou: licenceFor,
   licenceLength: length
@@ -28,14 +28,15 @@ describe('recurringPayReminderDisplay', () => {
 })
 
 describe('validForRecurringPayment', () => {
-  it.each([
-    [true, '12M', true, true, 'not telesales', 18],
-    [false, '8D', true, true, 'not telesales', 18],
-    [false, '12M', false, true, 'not telesales', 18],
-    [false, '12M', true, false, 'not telesales', 18],
-    [false, '12M', true, true, 'telesales', 18],
-    [false, '12M', true, true, 'not telesales', 17]
-  ])(
+  it.each`
+    expected  | length | licenceFor | recurring | telesales        | age
+    ${true}   |'12M'   | ${true}    | ${true}   | 'not telesales'  | 18
+    ${false}  |'8D'    | ${true}    | ${true}   | 'not telesales'  | 18
+    ${false}  |'12M'   | ${false}   | ${true}   | 'not telesales'  | 18
+    ${false}  |'12M'   | ${true}    | ${false}  | 'not telesales'  | 18
+    ${false}  |'12M'   | ${true}    | ${true}   | 'telesales'      | 18
+    ${false}  |'12M'   | ${true}    | ${true}   | 'not telesales'  | 17
+  `(
     'should return %s as licence length is %s, licence for you is %s, SHOW_RECURRING_PAYMENTS is %s, journey is %s, and age is %s',
     (expected, length, licenceFor, recurring, telesales, age) => {
       process.env.CHANNEL = telesales

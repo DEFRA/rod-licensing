@@ -1,6 +1,5 @@
 import { HOW_CONTACTED } from './mapping-constants.js'
-
-const MIN_AGE_FOR_RECURRING_PAYMENT = 18
+import { isJunior } from '../ages.js'
 
 export const recurringPayReminderDisplay = (permission, mssgs) => {
   if (permission.licensee.preferredMethodOfReminder === HOW_CONTACTED.email) {
@@ -15,5 +14,5 @@ export const validForRecurringPayment = permission =>
   process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
   permission.licenceLength === '12M' &&
   permission.isLicenceForYou &&
-  permission.licensee.age >= MIN_AGE_FOR_RECURRING_PAYMENT &&
+  permission.licensee.age > isJunior &&
   process.env.CHANNEL?.toLowerCase() !== 'telesales'
