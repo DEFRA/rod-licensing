@@ -9,6 +9,9 @@ jest.mock('@defra-fish/connectors-lib', () => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
     createTransaction: jest.fn()
+  },
+  govUkPayApi: {
+    finaliseTransaction: jest.fn()
   }
 }))
 
@@ -47,6 +50,7 @@ describe('recurring-payments-processor', () => {
   it('console log displays "Recurring Payments found: " when env is true', async () => {
     process.env.RUN_RECURRING_PAYMENTS = 'true'
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(jest.fn())
+    // salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
 
     await processRecurringPayments()
 
