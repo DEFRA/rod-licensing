@@ -169,8 +169,27 @@ export default [
     path: PROCESS_ANALYTICS_PREFERENCES.uri,
     handler: analytics
   },
+  {
+    method: 'GET',
+    path: PRIVACY_POLICY.uri,
+    handler: async (request, h) => {
+      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const gtmContainerId = gtmContainerIdOrNull()
+      const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
+
+      return h.view(PRIVACY_POLICY.page, {
+        altLang,
+        gtmContainerId,
+        pageLanguageSetToWelsh,
+        mssgs: request.i18n.getCatalog(),
+        uri: {
+          back: addLanguageCodeToUri(request, CONTROLLER.uri),
+          cookies: addLanguageCodeToUri(request, COOKIES.uri)
+        }
+      })
+    }
+  },
   simpleView(ACCESSIBILITY_STATEMENT),
-  simpleView(PRIVACY_POLICY),
   simpleView(REFUND_POLICY),
   simpleView(OS_TERMS)
 ]
