@@ -34,7 +34,7 @@
 
             <h2 class="govuk-heading-m">{{ mssgs.order_complete_when_fishing_title }}</h2>
             {% if data.postalLicence and not data.digitalConfirmation %}
-                <p class="govuk-body">{{ data.content.whenFishingParagraphOne }}<a class="govuk-link" href="{{ data.uri.licenceDetails }}">{{ data.content.whenFishingParagraphOneLink }}</a>{{ mssgs.period }}</p>
+                <p class="govuk-body">{{ data.content.whenFishingParagraphOne }}<a class="govuk-link" href="{{ data.uri.licenceDetails }}">{{ data.content.whenFishingParagraphOneLink }}</a>{{ mssgs.full_stop }}</p>
             {% else %}
                 <p class="govuk-body">{{ data.content.whenFishingParagraphOne }}</p>
             {% endif %}
