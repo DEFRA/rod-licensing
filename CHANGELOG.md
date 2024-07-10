@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.13 (2024-07-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1988](https://github.com/DEFRA/rod-licensing/pull/1988) Remove unused local data ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.47.0-rc.11 (2024-06-27)
 
