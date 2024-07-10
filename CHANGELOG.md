@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.14 (2024-07-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1994](https://github.com/DEFRA/rod-licensing/pull/1994) Remove Americanisation ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.47.0-rc.13 (2024-07-10)
 
 #### :rocket: Enhancement
