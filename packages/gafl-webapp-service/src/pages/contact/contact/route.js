@@ -28,24 +28,25 @@ export const getData = async request => {
   }
 
   const junior = hasJunior(permission)
+  const twelveMonthNonJuniorLicence = !junior && permission.licenceLength === '12M'
 
   return {
-    title: getTitle(permission, mssgs, junior),
+    title: getTitle(permission, mssgs, twelveMonthNonJuniorLicence),
     postHint: getPostHint(permission, mssgs),
-    content: getContent(permission, mssgs, junior),
+    content: getContent(permission, mssgs, twelveMonthNonJuniorLicence),
     emailConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email,
-    emailText: getEmailText(permission, mssgs),
+    emailText: getEmailText(permission, mssgs, twelveMonthNonJuniorLicence),
     mobileConfirmation: permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text,
-    mobileText: getMobileText(permission, mssgs),
+    mobileText: getMobileText(permission, mssgs, twelveMonthNonJuniorLicence),
     licensee: permission.licensee,
     isPhysical: isPhysical(permission),
-    errorMessage: getErrorText(permission, mssgs, junior),
-    twelveMonthLicence: permission.licenceLength === '12M'
+    errorMessage: getErrorText(mssgs, twelveMonthNonJuniorLicence),
+    twelveMonthNonJuniorLicence
   }
 }
 
-const getTitle = (permission, messages, junior) => {
-  if (permission.licenceLength === '12M' && !junior) {
+const getTitle = (permission, messages, twelveMonthNonJuniorLicence) => {
+  if (twelveMonthNonJuniorLicence) {
     return permission.isLicenceForYou ? messages.important_info_contact_title_you : messages.important_info_contact_title_other
   }
   return permission.isLicenceForYou ? messages.licence_confirm_method_where_title_you : messages.licence_confirm_method_where_title_other
@@ -54,9 +55,9 @@ const getTitle = (permission, messages, junior) => {
 const getPostHint = (permission, messages) =>
   permission.isLicenceForYou ? messages.important_info_contact_post_hint_you : messages.important_info_contact_post_hint_other
 
-const getContent = (permission, messages, junior) => {
+const getContent = (permission, messages, twelveMonthNonJuniorLicence) => {
   const isSalmonLicense = permission.licenceType === 'Salmon and sea trout'
-  if (permission.licenceLength === '12M' && !junior) {
+  if (twelveMonthNonJuniorLicence) {
     if (isSalmonLicense) {
       return permission.isLicenceForYou
         ? messages.important_info_contact_post_salmon_you
@@ -69,20 +70,18 @@ const getContent = (permission, messages, junior) => {
   return isSalmonLicense ? messages.important_info_contact_content_salmon : messages.important_info_contact_content_not_salmon
 }
 
-const getMobileText = (permission, messages) =>
-  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text && permission.licenceLength === '12M'
+const getMobileText = (permission, messages, twelveMonthNonJuniorLicence) =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.text && twelveMonthNonJuniorLicence
     ? `${messages.important_info_contact_item_txt_value}${permission.licensee.mobilePhone}`
     : messages.important_info_contact_item_txt
 
-const getEmailText = (permission, messages) =>
-  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email && permission.licenceLength === '12M'
+const getEmailText = (permission, messages, twelveMonthNonJuniorLicence) =>
+  permission.licensee.preferredMethodOfConfirmation === HOW_CONTACTED.email && twelveMonthNonJuniorLicence
     ? `${messages.important_info_contact_item_email_value}${permission.licensee.email}`
     : messages.important_info_contact_item_email
 
-const getErrorText = (permission, messages, junior) =>
-  permission.licenceLength === '12M' && !junior
-    ? messages.important_info_contact_error_choose
-    : messages.important_info_contact_error_choose_short
+const getErrorText = (messages, twelveMonthNonJuniorLicence) =>
+  twelveMonthNonJuniorLicence ? messages.important_info_contact_error_choose : messages.important_info_contact_error_choose_short
 
 export const validator = Joi.object({
   'how-contacted': Joi.string().valid('email', 'text', 'none').required(),
