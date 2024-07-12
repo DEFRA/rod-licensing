@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.16 (2024-07-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1992](https://github.com/DEFRA/rod-licensing/pull/1992) Hyperlinks on privacy policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.47.0-rc.15 (2024-07-11)
 
 #### :rocket: Enhancement
