@@ -79,35 +79,31 @@ describe('name > route', () => {
       }
     )
 
-    it.each`
-      preferredMethodOfConfirmation | licenceLength | junior   | email                  | expected
-      ${'Email'}                    | ${'12M'}      | ${false} | ${'test@email.com'}    | ${'Email test@email.com'}
-      ${'Text'}                     | ${'12M'}      | ${false} | ${undefined}           | ${'Email'}
-      ${undefined}                  | ${'12M'}      | ${true}  | ${undefined}           | ${'Email'}
-      ${'Email'}                    | ${'8D'}       | ${false} | ${'example@email.com'} | ${'Email'}
-      ${'Text'}                     | ${'8D'}       | ${false} | ${undefined}           | ${'Email'}
-    `(
-      'when preferredMethodOfConfirmation is $preferredMethodOfConfirmation, licenceLength is $licenceLength, hasJunior returns $junior and email value is $email then emailText returns $expected',
-      async ({ preferredMethodOfConfirmation, licenceLength, junior, email, expected }) => {
+    it.each([
+      ['Email', '12M', 'Email test@email.com', 'test@email.com'],
+      ['Text', '12M', 'Email', undefined],
+      ['Email', '8D', 'Email', 'test@email.com'],
+      ['Text', '8D', 'Email', undefined]
+    ])(
+      'when preferredMethodOfConfirmation is %s and licenceLength is %s, emailText returns %s',
+      async (preferredMethodOfConfirmation, licenceLength, expected, email) => {
         const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation, email }
-        hasJunior.mockReturnValueOnce(junior)
+
         const result = await getData(getMockRequest({ licensee, licenceLength }))
         expect(result.emailText).toBe(expected)
       }
     )
 
-    it.each`
-      preferredMethodOfConfirmation | licenceLength | junior   | mobilePhone      | expected
-      ${'Text'}                     | ${'12M'}      | ${false} | ${'07111111111'} | ${'Text to 07111111111'}
-      ${'Email'}                    | ${'12M'}      | ${false} | ${undefined}     | ${'Text'}
-      ${undefined}                  | ${'12M'}      | ${true}  | ${undefined}     | ${'Text'}
-      ${'Text'}                     | ${'8D'}       | ${false} | ${'07123456789'} | ${'Text'}
-      ${'Email'}                    | ${'8D'}       | ${false} | ${undefined}     | ${'Text'}
-    `(
-      'when preferredMethodOfConfirmation is $preferredMethodOfConfirmation, licenceLength is $licenceLength, hasJunior returns $junior and mobilePhone value is $mobilePhone then mobileText returns $expected',
-      async ({ preferredMethodOfConfirmation, licenceLength, junior, mobilePhone, expected }) => {
+    it.each([
+      ['Text', '12M', 'Text to 07111111111', '07111111111'],
+      ['Email', '12M', 'Text', undefined],
+      ['Text', '8D', 'Text', '07111111111'],
+      ['Email', '8D', 'Text', undefined]
+    ])(
+      'when preferredMethodOfConfirmation is %s and licenceLength is %s, mobileText returns %s',
+      async (preferredMethodOfConfirmation, licenceLength, expected, mobilePhone) => {
         const licensee = { birthDate: 'birthDate', preferredMethodOfConfirmation, mobilePhone }
-        hasJunior.mockReturnValueOnce(junior)
+
         const result = await getData(getMockRequest({ licensee, licenceLength }))
         expect(result.mobileText).toBe(expected)
       }
@@ -185,21 +181,15 @@ describe('name > route', () => {
       expect(result.errorMessage).toBe(expected)
     })
 
-    it.each`
-      licenceLength | junior   | expected
-      ${'12M'}      | ${false} | ${true}
-      ${'8D'}       | ${false} | ${false}
-      ${'1D'}       | ${false} | ${false}
-      ${undefined}  | ${true}  | ${false}
-    `(
-      'when licencelength is $licenceLength and hasJunior returns $junior then twelveMonthNonJuniorLicence is $expected',
-      async ({ licenceLength, junior, expected }) => {
-        const licensee = { birthDate: 'birthDate' }
-        const result = await getData(getMockRequest({ licensee, licenceLength }))
-        hasJunior.mockReturnValueOnce(junior)
-        expect(result.twelveMonthNonJuniorLicence).toBe(expected)
-      }
-    )
+    it.each([
+      [true, '12M'],
+      [false, '8D'],
+      [false, '1D']
+    ])('result.twelveMonthLicence returns %s when licence length is %s', async (expected, licenceLength) => {
+      const licensee = { birthDate: 'birthDate' }
+      const result = await getData(getMockRequest({ licensee, licenceLength }))
+      expect(result.twelveMonthLicence).toBe(expected)
+    })
   })
 
   describe('default', () => {
