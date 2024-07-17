@@ -1,4 +1,5 @@
-import { salesApi } from '@defra-fish/connectors-lib'
+import { getReferenceDataForEntity } from './reference-data.service.js'
+import { Permit, Concession, PermitConcession } from '@defra-fish/dynamics-lib'
 
 export const findPermit = async existingPermission => {
   const licenseeConcessions = existingPermission.concessions || []
@@ -26,9 +27,9 @@ export const findPermit = async existingPermission => {
 }
 
 const getPermitsJoinPermitConcessions = async () => {
-  const permits = await salesApi.permits.getAll()
-  const permitConcessions = await salesApi.permitConcessions.getAll()
-  const concessions = await salesApi.concessions.getAll()
+  const permits = await getReferenceDataForEntity(Permit)
+  const permitConcessions = await getReferenceDataForEntity(PermitConcession)
+  const concessions = await getReferenceDataForEntity(Concession)
   return permits.map(p => ({
     ...p,
     concessions: permitConcessions.filter(pc => pc.permitId === p.id).map(pc => concessions.find(c => c.id === pc.concessionId))
