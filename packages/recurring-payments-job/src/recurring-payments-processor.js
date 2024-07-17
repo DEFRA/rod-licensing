@@ -56,13 +56,13 @@ const prepareStartDate = permission => {
 }
 
 const processPayment = async transaction => {
-  console.log('Processing payment for transaction:', transaction.id)
+  console.log('Sending payment for transaction:', transaction.id)
   try {
-    const response = await salesApi.generatePayment(transaction)
-    console.log('Payment processed:', response)
+    const response = await salesApi.sendPayment(transaction)
+    console.log('Payment sent:', response)
     return response
   } catch (e) {
-    console.log('Error processing payment', JSON.stringify(transaction))
+    console.log('Error sending payment', JSON.stringify(transaction))
     throw e
   }
 }
