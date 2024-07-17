@@ -1,52 +1,62 @@
-import { findPermit } from '../permit-service.js'
+import { findPermit } from '../permit.service.js'
+import { Permit, Concession, PermitConcession } from '@defra-fish/dynamics-lib'
+import { getReferenceDataForEntity } from '../reference-data.service.js'
 
-jest.mock('@defra-fish/connectors-lib', () => ({
-  salesApi: {
-    permits: {
-      getAll: async () => [
-        {
-          id: 'prm-111',
-          numberOfRods: 1,
-          durationMagnitude: '12',
-          durationDesignator: { description: 'M' },
-          permitSubtype: { label: 'type-1' }
-        },
-        {
-          id: 'prm-222',
-          numberOfRods: 3,
-          durationMagnitude: '12',
-          durationDesignator: { description: 'M' },
-          permitSubtype: { label: 'type-2' }
-        },
-        {
-          id: 'prm-333',
-          numberOfRods: 1,
-          durationMagnitude: '12',
-          durationDesignator: { description: 'M' },
-          permitSubtype: { label: 'type-2' }
-        },
-        {
-          id: 'prm-444',
-          numberOfRods: 1,
-          durationMagnitude: '12',
-          durationDesignator: { description: 'M' },
-          permitSubtype: { label: 'type-3' }
-        }
-      ]
-    },
-    permitConcessions: {
-      getAll: async () => [{ permitId: 'prm-111', concessionId: 'con-111' }]
-    },
-    concessions: {
-      getAll: async () => [
-        { id: 'con-111', name: 'concession-type-1' },
-        { id: 'con-222', name: 'concession-type-2' }
-      ]
-    }
+jest.mock('../reference-data.service.js')
+
+const getSamplePermits = () => [
+  {
+    id: 'prm-111',
+    numberOfRods: 1,
+    durationMagnitude: '12',
+    durationDesignator: { description: 'M' },
+    permitSubtype: { label: 'type-1' }
+  },
+  {
+    id: 'prm-222',
+    numberOfRods: 3,
+    durationMagnitude: '12',
+    durationDesignator: { description: 'M' },
+    permitSubtype: { label: 'type-2' }
+  },
+  {
+    id: 'prm-333',
+    numberOfRods: 1,
+    durationMagnitude: '12',
+    durationDesignator: { description: 'M' },
+    permitSubtype: { label: 'type-2' }
+  },
+  {
+    id: 'prm-444',
+    numberOfRods: 1,
+    durationMagnitude: '12',
+    durationDesignator: { description: 'M' },
+    permitSubtype: { label: 'type-3' }
   }
-}))
+]
+
+const getSamplePermitConcessions = () => [{ permitId: 'prm-111', concessionId: 'con-111' }]
+
+const getSampleConcessions = () => [
+  { id: 'con-111', name: 'concession-type-1' },
+  { id: 'con-222', name: 'concession-type-2' }
+]
 
 describe('findPermit', () => {
+  beforeAll(() => {
+    getReferenceDataForEntity.mockImplementation(async entity => {
+      if (entity === Permit) {
+        return getSamplePermits()
+      }
+      if (entity === PermitConcession) {
+        return getSamplePermitConcessions()
+      }
+      if (entity === Concession) {
+        return getSampleConcessions()
+      }
+      return []
+    })
+  })
   const getSamplePermission = overrides => ({
     permit: {
       numberOfRods: '1',

@@ -1,10 +1,10 @@
 import { CONCESSION, CONCESSION_PROOF } from './constants.js'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { getReferenceDataForEntityAndId } from './reference-data.service.js'
+import { Concession } from '@defra-fish/dynamics-lib'
 
 export const addConcessionProofs = async permission => {
-  const concessions = await salesApi.concessions.getAll()
-  permission.concessions.forEach(concessionProof => {
-    const concessionReference = concessions.find(c => c.id === concessionProof.id)
+  permission.concessions.forEach(async concessionProof => {
+    const concessionReference = await getReferenceDataForEntityAndId(Concession, concessionProof.id)
     if (concessionReference && concessionReference.name === CONCESSION.DISABLED) {
       addDisabled(permission, concessionProof.proof.type.label, concessionProof.proof.referenceNumber)
     }
