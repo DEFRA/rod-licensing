@@ -21,14 +21,11 @@ export default [
         const { recurringPayment } = await processRecurringPayment(transactionRecord, contact)
 
         if (!recurringPayment) {
-          return h.response({ error: 'No recurring payment found' }).code(404);
+          return h.response({ error: 'No recurring payment found' }).code(404)
         }
 
         const preparedPayment = preparePayment(request, recurringPayment)
         const paymentResponse = await sendPayment(preparedPayment)
-
-        // updatePaymentJournal(paymentResponse)
-        // updateTransaction(paymentResponse)
 
         return h.response(paymentResponse)
       } catch (error) {
