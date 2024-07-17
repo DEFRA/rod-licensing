@@ -54,3 +54,15 @@ const prepareStartDate = permission => {
     .utc()
     .toISOString()
 }
+
+const processPayment = async transaction => {
+  console.log('Processing payment for transaction:', transaction.id)
+  try {
+    const response = await salesApi.generatePayment(transaction)
+    console.log('Payment processed:', response)
+    return response
+  } catch (e) {
+    console.log('Error processing payment', JSON.stringify(transaction))
+    throw e
+  }
+}
