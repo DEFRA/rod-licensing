@@ -27,23 +27,66 @@ describe('recurringPayReminderDisplay', () => {
   })
 })
 
+// describe('validForRecurringPayment', () => {
+//   it.each([
+//     [true, '12M', true, true, 'not telesales', 18],
+//     [false, '8D', true, true, 'not telesales', 18],
+//     [false, '12M', false, true, 'not telesales', 18],
+//     [false, '12M', true, false, 'not telesales', 18],
+//     [false, '12M', true, true, 'telesales', 18],
+//     [false, '12M', true, true, 'telesales', 16],
+//   ])(
+//     'should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s and journey is %s and age is %s',
+//     (expected, length, licenceFor, recurring, telesales, age) => {
+//       process.env.CHANNEL = telesales
+//       process.env.SHOW_RECURRING_PAYMENTS = recurring
+//       const permission = getPermission({ licenceFor, length, age })
+//       const result = validForRecurringPayment(permission)
+//       expect(result).toEqual(expected)
+//     }
+//   )
+// })
+
 describe('validForRecurringPayment', () => {
-  it.each`
-    expected  | length | licenceFor | recurring | telesales        | age
-    ${true}   |'12M'   | ${true}    | ${true}   | 'not telesales'  | 18
-    ${false}  |'8D'    | ${true}    | ${true}   | 'not telesales'  | 18
-    ${false}  |'12M'   | ${false}   | ${true}   | 'not telesales'  | 18
-    ${false}  |'12M'   | ${true}    | ${false}  | 'not telesales'  | 18
-    ${false}  |'12M'   | ${true}    | ${true}   | 'telesales'      | 18
-    ${false}  |'12M'   | ${true}    | ${true}   | 'not telesales'  | 17
-  `(
-    'should return %s as licence length is %s, licence for you is %s, SHOW_RECURRING_PAYMENTS is %s, journey is %s, and age is %s',
+  it.each([
+    [true, '12M', true, true, 'not telesales', 18],
+    [false, '8D', true, true, 'not telesales', 18],
+    [false, '12M', false, true, 'not telesales', 18],
+    [false, '12M', true, false, 'not telesales', 18],
+    [false, '12M', true, true, 'telesales', 18],
+    [false, '12M', true, true, 'not telesales', 17],
+  ])(
+    'should return %s as licence length is %s, licence for you is %s and SHOW_RECURRING_PAYMENTS is %s and journey is %s and age is %s',
     (expected, length, licenceFor, recurring, telesales, age) => {
       process.env.CHANNEL = telesales
       process.env.SHOW_RECURRING_PAYMENTS = recurring
-      const permission = getPermission({ reminder: 'Email', licenceFor, length, age })
+      const permission = getPermission({ licenceFor, length, age })
       const result = validForRecurringPayment(permission)
       expect(result).toEqual(expected)
     }
   )
 })
+
+// describe('validForRecurringPayment', () => {
+//   test.each`
+//     expected  | length   | licenceFor | recurring | telesales           | age
+//     ${true}   | ${'12M'} | ${true}    | ${true}   | ${'not telesales'}  | ${18}
+//     ${false}  | ${'8D'}  | ${true}    | ${true}   | ${'not telesales'}  | ${18}
+//     ${false}  | ${'12M'} | ${false}   | ${true}   | ${'not telesales'}  | ${18}
+//     ${false}  | ${'12M'} | ${true}    | ${false}  | ${'not telesales'}  | ${18}
+//     ${false}  | ${'12M'} | ${true}    | ${true}   | ${'telesales'}      | ${18}
+//     ${false}  | ${'12M'} | ${true}    | ${true}   | ${'not telesales'}  | ${17}
+//   `(
+//     // 'should return %s as licence length is %s, licence for you is %s, SHOW_RECURRING_PAYMENTS is %s, journey is %s, and age is %s',
+//     // '"age": age, "expected": expected, "length": length, "licenceFor": licenceFor, "recurring": recurring, "telesales": telesales',
+//     // 'should return $expected as licence length is $length, licence for you is $licenceFor, SHOW_RECURRING_PAYMENTS is $recurring, journey is $telesales, and age is $age',
+
+//     (expected, length, licenceFor, recurring, telesales, age) => {
+//       process.env.CHANNEL = telesales
+//       process.env.SHOW_RECURRING_PAYMENTS = recurring
+//       const permission = getPermission({ reminder: 'Email', licenceFor, length, age })
+//       const result = validForRecurringPayment(permission)
+//       expect(result).toEqual(expected)
+//     }
+//   )
+// })
