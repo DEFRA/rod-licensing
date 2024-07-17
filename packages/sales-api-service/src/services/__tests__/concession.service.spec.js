@@ -1,6 +1,5 @@
-import * as concessionService from '../concessions.service.js'
+import * as concessionService from '../concession.service.js'
 import { CONCESSION, CONCESSION_PROOF } from '../constants.js'
-import { salesApi } from '@defra-fish/connectors-lib'
 import { getReferenceDataForEntityAndId } from '../reference-data.service.js'
 
 jest.mock('@defra-fish/connectors-lib')
@@ -21,7 +20,7 @@ const mockConcessions = [
   }
 ]
 
-getReferenceDataForEntityAndId.mockImplementation((_e,id) => {
+getReferenceDataForEntityAndId.mockImplementation((_e, id) => {
   return mockConcessions.find(concession => concession.id === id)
 })
 
