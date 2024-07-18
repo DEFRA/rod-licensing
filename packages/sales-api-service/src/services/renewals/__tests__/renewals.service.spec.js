@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { preparePermissionDataForRenewal } from '../renewals.service.js'
-import { findPermit } from '../../permit-service.js'
+import { findPermit } from '../../permit.service.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 
 jest.mock('@defra-fish/connectors-lib')
@@ -23,7 +23,7 @@ const mockConcessions = [
 salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
 const mockPermit = { id: '123456' }
 
-jest.mock('../../permit-service.js', () => ({
+jest.mock('../../permit.service.js', () => ({
   findPermit: jest.fn(() => mockPermit)
 }))
 

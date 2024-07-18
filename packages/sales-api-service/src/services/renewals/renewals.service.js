@@ -1,7 +1,7 @@
 import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
-import { addConcessionProofs, addSenior } from '../concessions.service.js'
-import { findPermit } from '../permit-service.js'
+import { addConcessionProofs, addSenior } from '../concession.service.js'
+import { findPermit } from '../permit.service.js'
 
 // Replicated from GAFL - need to decide whether to move
 const cacheDateFormat = 'YYYY-MM-DD'
