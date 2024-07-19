@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.17 (2024-07-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2000](https://github.com/DEFRA/rod-licensing/pull/2000) "Cost" is missing from the licence summary page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.47.0-rc.16 (2024-07-12)
 
 #### :bug: Bug Fix
