@@ -14,5 +14,5 @@ export const validForRecurringPayment = permission =>
   process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
   permission.licenceLength === '12M' &&
   permission.isLicenceForYou &&
-  permission.licensee.age > JUNIOR_MAX_AGE + 1 &&
+  permission.licensee.birthDate > JUNIOR_MAX_AGE &&
   process.env.CHANNEL?.toLowerCase() !== 'telesales'
