@@ -24,6 +24,9 @@ const initialiseDisinfectPlugin = () => ({
   }
 })
 
+const unsafeInline = 'unsafe-inline'
+const googleTagUrl = '*.googletagmanager.com'
+
 const initialiseBlankiePlugin = () => ({
   plugin: Blankie,
   options: {
@@ -31,22 +34,22 @@ const initialiseBlankiePlugin = () => ({
      * This defines the content security policy - which is as restrictive as possible
      * It must allow web-fonts from 'fonts.gstatic.com'
      */
-    fontSrc: ['self', 'fonts.gstatic.com'],
+    fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
     scriptSrc: [
       'self',
-      'unsafe-inline',
+      unsafeInline,
       scriptHash,
-      '*.googletagmanager.com',
+      googleTagUrl,
       '*.tagassistant.google.com',
       'unsafe-eval',
       'https://tagmanager.google.com/'
     ],
-    connectSrc: ['self', '*.google-analytics.com', '*.googletagmanager.com', '*.analytics.google.com'],
+    connectSrc: ['self', '*.google-analytics.com', googleTagUrl, '*.analytics.google.com'],
     generateNonces: true,
     frameAncestors: 'none',
-    imgSrc: ['self', 'unsafe-inline', 'www.googletagmanager.com', 'fonts.gstatic.com', 'data:', 'https://ssl.gstatic.com/'],
+    imgSrc: ['self', unsafeInline, googleTagUrl, 'fonts.gstatic.com', 'data:', 'https://ssl.gstatic.com/'],
     manifestSrc: ['self'],
-    styleSrc: ['unsafe-inline', 'self', 'fonts.googleapis.com', '*.googletagmanager.com', 'https://tagmanager.google.com/']
+    styleSrc: [unsafeInline, 'self', 'fonts.googleapis.com', googleTagUrl, 'https://tagmanager.google.com/']
   }
 })
 
