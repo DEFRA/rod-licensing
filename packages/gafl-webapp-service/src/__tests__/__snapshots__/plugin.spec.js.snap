@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plugins initialiseBlankiePlugin should return expecetd src details 1`] = `
+Object {
+  "connectSrc": Array [
+    "self",
+    "*.google-analytics.com",
+    "*.googletagmanager.com",
+    "*.analytics.google.com",
+  ],
+  "fontSrc": Array [
+    "self",
+    "fonts.gstatic.com",
+    "data:",
+  ],
+  "frameAncestors": "none",
+  "generateNonces": true,
+  "imgSrc": Array [
+    "self",
+    "unsafe-inline",
+    "*.googletagmanager.com",
+    "fonts.gstatic.com",
+    "data:",
+    "https://ssl.gstatic.com/",
+  ],
+  "manifestSrc": Array [
+    "self",
+  ],
+  "scriptSrc": Array [
+    "self",
+    "unsafe-inline",
+    "'sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw='",
+    "*.googletagmanager.com",
+    "*.tagassistant.google.com",
+    "unsafe-eval",
+    "https://tagmanager.google.com/",
+  ],
+  "styleSrc": Array [
+    "unsafe-inline",
+    "self",
+    "fonts.googleapis.com",
+    "*.googletagmanager.com",
+    "https://tagmanager.google.com/",
+  ],
+}
+`;
