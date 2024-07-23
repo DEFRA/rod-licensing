@@ -24,6 +24,9 @@ const initialiseDisinfectPlugin = () => ({
   }
 })
 
+const unsafeInline = 'unsafe-inline'
+const googleTagUrl = '*.googletagmanager.com'
+
 const initialiseBlankiePlugin = () => ({
   plugin: Blankie,
   options: {
@@ -32,10 +35,21 @@ const initialiseBlankiePlugin = () => ({
      * It must allow web-fonts from 'fonts.gstatic.com'
      */
     fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-    scriptSrc: ['self', 'unsafe-inline', scriptHash, 'www.googletagmanager.com'],
-    connectSrc: ['self', '*.google-analytics.com'],
+    scriptSrc: [
+      'self',
+      unsafeInline,
+      scriptHash,
+      googleTagUrl,
+      '*.tagassistant.google.com',
+      'unsafe-eval',
+      'https://tagmanager.google.com/'
+    ],
+    connectSrc: ['self', '*.google-analytics.com', googleTagUrl, '*.analytics.google.com'],
     generateNonces: true,
-    frameAncestors: 'none'
+    frameAncestors: 'none',
+    imgSrc: ['self', unsafeInline, googleTagUrl, 'fonts.gstatic.com', 'data:', 'https://ssl.gstatic.com/'],
+    manifestSrc: ['self'],
+    styleSrc: [unsafeInline, 'self', 'fonts.googleapis.com', googleTagUrl, 'https://tagmanager.google.com/']
   }
 })
 
