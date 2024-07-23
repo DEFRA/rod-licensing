@@ -31,11 +31,22 @@ const initialiseBlankiePlugin = () => ({
      * This defines the content security policy - which is as restrictive as possible
      * It must allow web-fonts from 'fonts.gstatic.com'
      */
-    fontSrc: ['self', 'fonts.gstatic.com', 'data:'],
-    scriptSrc: ['self', 'unsafe-inline', scriptHash, 'www.googletagmanager.com'],
-    connectSrc: ['self', '*.google-analytics.com'],
+    fontSrc: ['self', 'fonts.gstatic.com'],
+    scriptSrc: [
+      'self',
+      'unsafe-inline',
+      scriptHash,
+      '*.googletagmanager.com',
+      '*.tagassistant.google.com',
+      'unsafe-eval',
+      'https://tagmanager.google.com/'
+    ],
+    connectSrc: ['self', '*.google-analytics.com', '*.googletagmanager.com', '*.analytics.google.com'],
     generateNonces: true,
-    frameAncestors: 'none'
+    frameAncestors: 'none',
+    imgSrc: ['self', 'unsafe-inline', 'www.googletagmanager.com', 'fonts.gstatic.com', 'data:', 'https://ssl.gstatic.com/'],
+    manifestSrc: ['self'],
+    styleSrc: ['unsafe-inline', 'self', 'fonts.googleapis.com', '*.googletagmanager.com', 'https://tagmanager.google.com/']
   }
 })
 
