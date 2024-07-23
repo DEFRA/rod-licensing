@@ -1,4 +1,13 @@
 
+## v1.47.0-rc.18 (2024-07-23)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2002](https://github.com/DEFRA/rod-licensing/pull/2002) content security policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.47.0-rc.17 (2024-07-19)
 
 #### :bug: Bug Fix
