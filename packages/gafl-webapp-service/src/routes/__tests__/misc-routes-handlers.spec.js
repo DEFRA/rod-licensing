@@ -237,9 +237,31 @@ describe('guidance page handlers', () => {
     })
   })
 
+  it('privacy policy page handler provides expected data for privacy page', async () => {
+    const catalog = Symbol('catalog')
+    const mockUri = Symbol('terms')
+    const welshEnabled = Symbol('enabled')
+    addLanguageCodeToUri.mockReturnValue(mockUri)
+    welshEnabledAndApplied.mockReturnValueOnce(welshEnabled)
+    const mockRequest = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog })
+    const mockToolkit = getMockToolkit()
+
+    await privacyPolicyPageHandler(mockRequest, mockToolkit)
+
+    expect(mockToolkit.view).toHaveBeenCalledWith(uri.PRIVACY_POLICY.page, {
+      altLang: ['that-locale'],
+      gtmContainerId: false,
+      pageLanguageSetToWelsh: welshEnabled,
+      mssgs: catalog,
+      uri: {
+        back: mockUri,
+        cookies: mockUri
+      }
+    })
+  })
+
   describe.each([
     { pageHandler: accessibilityPageHandler, handlerName: 'Accessibility' },
-    { pageHandler: privacyPolicyPageHandler, handlerName: 'Privacy policy' },
     { pageHandler: refundPolicyPageHandler, handlerName: 'Refund policy' },
     { pageHandler: cookiesPageHandler, handlerName: 'Cookies' }
   ])('back button tests for $handlerName page', ({ pageHandler }) => {
@@ -327,24 +349,6 @@ describe('guidance page handlers', () => {
           pageLanguageSetToWelsh: expectedValue
         })
       )
-    })
-
-    it('sets the value of gtmContainerId to the GTM_CONTAINER_ID env var', async () => {
-      const expectedValue = 'expected'
-      process.env.GTM_CONTAINER_ID = expectedValue
-
-      const toolkit = getMockToolkit()
-      const request = getMockRequest()
-      await pageHandler(request, toolkit)
-
-      expect(toolkit.view).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          gtmContainerId: expectedValue
-        })
-      )
-
-      delete process.env.GTM_CONTAINER_ID
     })
   })
 

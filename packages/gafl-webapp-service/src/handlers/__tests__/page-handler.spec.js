@@ -5,10 +5,14 @@ import { welshEnabledAndApplied } from '../../processors/page-language-helper.js
 import GetDataRedirect from '../get-data-redirect.js'
 import { ANALYTICS } from '../../constants.js'
 import { AGREED, IDENTIFY, LICENCE_DETAILS, LICENCE_FOR, ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../../uri.js'
+import { trackGTM } from '../analytics-handler.js'
 
 jest.mock('../../routes/journey-definition.js', () => [])
 jest.mock('../../processors/uri-helper.js')
 jest.mock('../../processors/page-language-helper.js')
+jest.mock('../analytics-handler.js', () => ({
+  trackGTM: jest.fn()
+}))
 
 jest.mock('../../constants', () => ({
   ANALYTICS: {
@@ -141,6 +145,7 @@ describe('The page handler function', () => {
   it('sets the value of pageData with displayAnalytics true', async () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
     welshEnabledAndApplied.mockReturnValueOnce(false)
+    trackGTM.mockReturnValueOnce(false)
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest(), toolkit)
@@ -150,6 +155,7 @@ describe('The page handler function', () => {
   it('sets the value of pageData with displayAnalytics false', async () => {
     addLanguageCodeToUri.mockReturnValueOnce('/buy/process-analytics-preferences')
     welshEnabledAndApplied.mockReturnValueOnce(false)
+    trackGTM.mockReturnValueOnce(false)
     const { get } = pageHandler('', 'view', '/next/page')
     const toolkit = getMockToolkit()
     await get(getMockRequest({ path: '/we/are/here' }), toolkit)
@@ -169,6 +175,24 @@ describe('The page handler function', () => {
       expect.any(String),
       expect.objectContaining({
         gtmContainerId: expectedValue
+      })
+    )
+
+    delete process.env.GTM_CONTAINER_ID
+  })
+
+  it.each([false, true])('sets the value of approvedGTM as %s when trackGTM returns same', async gtm => {
+    trackGTM.mockReturnValueOnce(gtm)
+
+    const { get } = pageHandler('', 'view', '/next/page')
+    const toolkit = getMockToolkit()
+
+    await get(getMockRequest(), toolkit)
+
+    expect(toolkit.view).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        approvedGTM: gtm
       })
     )
 

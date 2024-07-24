@@ -26,13 +26,18 @@ export const licenceTypeDisplay = (permission, mssgs) => {
 }
 
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
-  switch (permission.licenceLength) {
-    case '12M':
-      return `${licenceTypeDisplay(permission, mssgs)}, 12 months`
-    case '8D':
-      return `${licenceTypeDisplay(permission, mssgs)}, 8 days`
-    default:
-      return `${licenceTypeDisplay(permission, mssgs)}, 1 day`
+  const licenceTypeMessage = getLicenceTypeMessage(permission.licenceLength, mssgs)
+  return `${licenceTypeDisplay(permission, mssgs)}, ${licenceTypeMessage}`
+}
+
+const getLicenceTypeMessage = (licenceLength, mssgs) => {
+  const length = typeof licenceLength === 'symbol' ? licenceLength.description : licenceLength
+  if (length === '12M') {
+    return mssgs.licence_type_12m
+  } else if (length === '8D') {
+    return mssgs.licence_type_8d
+  } else {
+    return mssgs.licence_type_1d
   }
 }
 

@@ -41,7 +41,7 @@
                                     {{ mssgs.analytics_banner_preamble_1 }}
                                     </p>
                                     <p class="govuk-body">
-                                    {{ mssgs.analytics_banner_preamble_2 }} <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.cookie_banner_link }}</a>
+                                    {{ mssgs.analytics_banner_preamble_2 }}
                                     </p>
                                 </div>
                                 <div class="govuk-button-group">
@@ -59,6 +59,7 @@
                                         text: mssgs.analytics_banner_reject,
                                         value: 'reject'
                                     }) }}
+                                    <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_view_cookies_link }}</a>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +71,7 @@
                             <div class="govuk-width-container">
                                 <div class="govuk-cookie-banner__content">
                                     <p class="govuk-body" id="cookie-acceptance">
-                                        {{ mssgs.analytics_banner_acceptance }}
+                                        {{ mssgs.analytics_banner_acceptance_1 }} <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_cookies_link }}</a> {{ mssgs.analytics_banner_acceptance_2 }}
                                     </p>
                                 </div>
                                 <div class="govuk-button-group">
@@ -90,7 +91,7 @@
                             <div class="govuk-width-container">
                                 <div class="govuk-cookie-banner__content">
                                     <p class="govuk-body">
-                                        {{ mssgs.analytics_banner_rejection }}
+                                        {{ mssgs.analytics_banner_rejection_1 }} <a class="govuk-link" href="{{ _uri.cookies }}">{{ mssgs.analytics_banner_cookies_link }}</a> {{ mssgs.analytics_banner_rejection_2 }}
                                     </p>
                                 </div>
                                 <div class="govuk-button-group">
@@ -171,7 +172,7 @@
 {% endblock %}
 
 {% block bodyStart %}
-{% if gtmContainerId %}
+{% if approvedGTM %}
     <script type="text/javascript" nonce="{{nonce}}">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{gtmContainerId}}');</script>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{gtmContainerId}}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

@@ -1,4 +1,138 @@
 
+## v1.47.0-rc.18 (2024-07-23)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2002](https://github.com/DEFRA/rod-licensing/pull/2002) content security policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.47.0-rc.17 (2024-07-19)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2000](https://github.com/DEFRA/rod-licensing/pull/2000) "Cost" is missing from the licence summary page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.47.0-rc.16 (2024-07-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1992](https://github.com/DEFRA/rod-licensing/pull/1992) Hyperlinks on privacy policy ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.47.0-rc.15 (2024-07-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1985](https://github.com/DEFRA/rod-licensing/pull/1985) Email/Text display junior ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.47.0-rc.14 (2024-07-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1994](https://github.com/DEFRA/rod-licensing/pull/1994) Remove Americanisation ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.47.0-rc.13 (2024-07-10)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1988](https://github.com/DEFRA/rod-licensing/pull/1988) Remove unused local data ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+
+## v1.47.0-rc.11 (2024-06-27)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1986](https://github.com/DEFRA/rod-licensing/pull/1986) Update privacy policy ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.47.0-rc.10 (2024-06-27)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1966](https://github.com/DEFRA/rod-licensing/pull/1966) Incorrect details on Welsh payment screen ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.47.0-rc.9 (2024-06-26)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `connectors-lib`, `dynamics-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#1982](https://github.com/DEFRA/rod-licensing/pull/1982) remove full stop ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.47.0-rc.8 (2024-06-26)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#1984](https://github.com/DEFRA/rod-licensing/pull/1984) Header service name lacks capitalisation. ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.47.0-rc.7 (2024-06-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1979](https://github.com/DEFRA/rod-licensing/pull/1979) GTM activiated by user ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.47.0-rc.5 (2024-06-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1980](https://github.com/DEFRA/rod-licensing/pull/1980) Change behaviour revisiting mobile/email ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#1976](https://github.com/DEFRA/rod-licensing/pull/1976) Update cookies banner for new analytics ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.47.0-rc.3 (2024-06-17)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#1957](https://github.com/DEFRA/rod-licensing/pull/1957) Recurring payments job sets up new permissions in DynamoDb ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+
+## v1.47.0-rc.0 (2024-06-06)
+
+#### :rocket: Enhancement
+* `connectors-lib`
+  * [#1978](https://github.com/DEFRA/rod-licensing/pull/1978) Add new route to Sales API connector ([@irisfaraway](https://github.com/irisfaraway))
+* `dynamics-lib`
+  * [#1977](https://github.com/DEFRA/rod-licensing/pull/1977) Add new query based on full reference number ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.46.0-rc.11 (2024-06-04)
 
