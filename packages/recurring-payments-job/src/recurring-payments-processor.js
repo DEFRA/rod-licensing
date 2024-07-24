@@ -19,7 +19,8 @@ const processRecurringPayment = async record => {
   const transactionData = await processPermissionData(referenceNumber)
   console.log('Creating new transaction based on', referenceNumber)
   try {
-    const response = await salesApi.createTransaction(transactionData)
+    const transaction = await salesApi.createTransaction(transactionData)
+    const response = await processPayment(transaction)
     console.log('New transaction created:', response)
   } catch (e) {
     console.log('Error creating transaction', JSON.stringify(transactionData))
@@ -52,4 +53,16 @@ const prepareStartDate = permission => {
     .add(permission.licenceStartTime ?? 0, 'hours')
     .utc()
     .toISOString()
+}
+
+const processPayment = async transaction => {
+  console.log('Sending payment for transaction:', transaction.id)
+  try {
+    const response = await salesApi.sendPayment(transaction)
+    console.log('Payment sent:', response)
+    return response
+  } catch (e) {
+    console.log('Error sending payment', JSON.stringify(transaction))
+    throw e
+  }
 }
