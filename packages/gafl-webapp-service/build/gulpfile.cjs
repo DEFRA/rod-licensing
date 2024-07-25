@@ -66,7 +66,8 @@ const buildSass = () => {
     .pipe(
       sass({
         outputStyle: 'compressed',
-        includePaths: path.join('..', 'node_modules')
+        includePaths: path.join('..', 'node_modules'),
+        quietDeps: true
       }).on('error', sass.logError)
     )
     .pipe(sourcemaps.write())
