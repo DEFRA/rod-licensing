@@ -9,19 +9,8 @@
 
 {%
     set errorMap = {
-        'date-of-birth-day': {
-            'date.empty': { ref: '#date-of-birth-day', text: mssgs.dob_error_day },
-            'date.format': { ref: '#date-of-birth-day', text: mssgs.dob_error_format },
-        },
-        'date-of-birth-month': {
-            'date.empty': { ref: '#date-of-birth-month', text: mssgs.dob_error_month },
-            'date.format': { ref: '#date-of-birth-month', text: mssgs.dob_error_format },
-        },
-        'date-of-birth-year': {
-            'date.empty': { ref: '#date-of-birth-year', text: mssgs.dob_error_year },
-            'date.format': { ref: '#date-of-birth-year', text: mssgs.dob_error_format },
-        },
         'date-of-birth': {
+            'date.format': { ref: '#date-of-birth-day', text: mssgs.dob_error_format },
             'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_max },
             'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_min }
         }
@@ -33,21 +22,21 @@
       label: mssgs.dob_day,
       name: 'day',
       classes: "govuk-input--width-2",
-      value: payload['day'],
+      value: payload['date-of-birth-day'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_month,
       name: 'month',
       classes: "govuk-input--width-2",
-      value: payload['month'],
+      value: payload['date-of-birth-month'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_year,
       name: 'year',
       classes: "govuk-input--width-4",
-      value: payload['year'],
+      value: payload['date-of-birth-year'],
       attributes: { maxlength : 4 }
     }
   ]
@@ -63,105 +52,10 @@
       iconFallbackText: mssgs.warning
     }) }}
 
-    {# {{ govukDateInput({
+    {{ govukDateInput({
       id: "date-of-birth",
       namePrefix: "date-of-birth",
       items: dateInputItems,
       errorMessage: { text: mssgs.dob_error } if error
-    }) }} #}
-    
-    {{ govukDateInput({
-      id: "day",
-      items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error_day } if error
-    }) }}
-
-    {{ govukDateInput({
-      id: "month",
-      items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error_month } if error
-    }) }}
-
-    {{ govukDateInput({
-      id: "year",
-      items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error_year } if error
     }) }}
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-{# {% set dateInputItems = [
-    {
-      label: mssgs.dob_day,
-      name: 'day',
-      classes: "govuk-input--width-2",
-      value: payload['date-of-birth-day'],
-      attributes: { maxlength : 2 },
-      errorMessage: { text: mssgs.dob_error_day } if error['date-of-birth-day']
-    },
-    {
-      label: mssgs.dob_month,
-      name: 'month',
-      classes: "govuk-input--width-2",
-      value: payload['date-of-birth-month'],
-      attributes: { maxlength : 2 },
-      errorMessage: { text: mssgs.dob_error_month } if error['date-of-birth-month']
-    },
-    {
-      label: mssgs.dob_year,
-      name: 'year',
-      classes: "govuk-input--width-4",
-      value: payload['date-of-birth-year'],
-      attributes: { maxlength : 4 },
-      errorMessage: { text: mssgs.dob_error_year } if error['date-of-birth-year']
-    }
-  ]
-%}
-
-{% block pageContent %}
-    <div id="{{ describedByTag }}" class="govuk-hint">
-      {{ mssgs.dob_entry_hint }}
-    </div>
-
-    {{ govukWarningText({
-      html: mssgs.dob_privacy_link_prefix + '<a class="govuk-link" href="' + _uri.privacy + '" rel="noreferrer noopener" target="_blank">' + mssgs.dob_privacy_link + '</a>',
-      iconFallbackText: mssgs.warning
-    }) }}
-
-    {% if error %}
-    <div class="govuk-error-summary" data-module="govuk-error-summary">
-      <div role="alert">
-        <h2 class="govuk-error-summary__title">
-          There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-          <ul class="govuk-list govuk-error-summary__list">
-            {% for errKey, errValue in error %}
-              {% if errorMap[errKey] %}
-                <li><a href="{{ errorMap[errKey].ref }}">{{ errorMap[errKey].text }}</a></li>
-              {% else %}
-                <li><a href="#">{{ errKey }}: {{ errValue }}</a></li>
-              {% endif %}
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-
-    {{ govukDateInput({
-      id: "date-of-birth",
-      namePrefix: "date-of-birth",
-      items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error } if error
-    }) }}
-{% endblock %} #}
