@@ -52,6 +52,16 @@
 
         <p class="govuk-body">{{ mssgs.cookies_infrastructure_body }}</p>
 
+        {{ govukTable({
+          caption: mssgs.cookies_infrastructure_caption,
+          firstCellIsHeader: true,
+          head: [ { text: mssgs.cookies_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
+          rows: [
+            [ { text: cookie.alb }, { text: mssgs.cookies_infrastructure_row_1 }, { text: mssgs.cookies_infrastructure_row_2 } ],
+            [ { text: cookie.albcors }, { text: mssgs.cookies_infrastructure_row_1 }, { text: mssgs.cookies_infrastructure_row_2 } ]
+          ]
+        }) }}
+
         <h2 class="govuk-heading-m">{{ mssgs.cookies_analytics_subheading }}</h2>
 
         <p class="govuk-body">{{ mssgs.cookies_analytics_body_1 }}</p>
