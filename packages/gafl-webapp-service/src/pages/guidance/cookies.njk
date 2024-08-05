@@ -105,14 +105,22 @@
           },
           items: [
             {
-              value: "yes",
+              value: 'accept',
               text: mssgs.yes
             },
             {
-              value: "no",
+              value: 'reject',
               text: mssgs.no
             }
           ]
+        }) }}
+
+        {{ govukButton({
+            attributes: { id: 'save-changes' },
+            preventDoubleClick: true,
+            name: "save-changes",
+            text: mssgs.save_changes,
+            classes: "govuk-!-margin-top-5"
         }) }}
 
         <h2 class="govuk-heading-m">{{ mssgs.cookies_survey_subheading }}</h2>
