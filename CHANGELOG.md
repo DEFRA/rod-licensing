@@ -1,4 +1,14 @@
 
+## v1.48.0-rc.0 (2024-08-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1989](https://github.com/DEFRA/rod-licensing/pull/1989) Hide RCP option for Junior licence purchases ([@lailien3](https://github.com/lailien3))
+  * [#2006](https://github.com/DEFRA/rod-licensing/pull/2006) Revising accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.47.0-rc.18 (2024-07-23)
 
