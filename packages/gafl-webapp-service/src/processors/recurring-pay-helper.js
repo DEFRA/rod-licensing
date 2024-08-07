@@ -1,7 +1,6 @@
 import { HOW_CONTACTED } from './mapping-constants.js'
-import { JUNIOR_MAX_AGE } from '../../../business-rules-lib/src/util/ages.js'
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib';
-import moment from 'moment-timezone';
+import { JUNIOR_MAX_AGE, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import moment from 'moment-timezone'
 
 export const recurringPayReminderDisplay = (permission, mssgs) => {
   if (permission.licensee.preferredMethodOfReminder === HOW_CONTACTED.email) {
@@ -14,9 +13,11 @@ export const recurringPayReminderDisplay = (permission, mssgs) => {
 
 export const validForRecurringPayment = permission => {
   const licenseeAge = moment().tz(SERVICE_LOCAL_TIME).diff(moment(permission.licensee.birthDate), 'years')
-  return process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
+  return (
+    process.env.SHOW_RECURRING_PAYMENTS?.toLowerCase() === 'true' &&
     permission.licenceLength === '12M' &&
     permission.isLicenceForYou &&
     licenseeAge > JUNIOR_MAX_AGE &&
     process.env.CHANNEL?.toLowerCase() !== 'telesales'
+  )
 }
