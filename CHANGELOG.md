@@ -1,4 +1,13 @@
 
+## v1.48.0-rc.2 (2024-08-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2009](https://github.com/DEFRA/rod-licensing/pull/2009) Fix ages reference ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.48.0-rc.0 (2024-08-05)
 
