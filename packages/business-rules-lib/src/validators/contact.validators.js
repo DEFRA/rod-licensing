@@ -383,14 +383,14 @@ export const createNationalInsuranceNumberValidator = joi =>
     .description('A UK national insurance number')
     .example('NH 12 34 56 A')
 
-const checkCopyPasteValidator = joi =>
+const checkCopyPasteValidator = (joi, forbiddenRegex) =>
   joi.extend({
     type: 'string',
     base: joi.string(),
     rules: {
       allowable: {
         validate (value, helpers) {
-          if (forbiddenCharsRegex.test(value)) {
+          if (forbiddenRegex.test(value)) {
             return helpers.error('string.forbidden')
           }
           return value
