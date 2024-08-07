@@ -80,11 +80,8 @@ const createDateStringValidator = joi =>
 
 const allowedUnicodeBlocks = '\\u0000-\\u024F'
 const forbiddenCharsRegex = new RegExp(`[^${allowedUnicodeBlocks}\\s'’()-]`, 'gu')
-
 const forbiddenEmailRegex = new RegExp(`[^A-Za-z0-9\\s'’@._${allowedUnicodeBlocks}]`, 'gu')
-
 const forbiddenCharsNumbersRegex = new RegExp(`[^A-Za-z0-9\\s${allowedUnicodeBlocks}]`, 'gu')
-
 const forbiddenMobileRegex = /[^+()0-9\-.\s]+/g
 
 /**
@@ -102,14 +99,7 @@ export const createBirthDateValidator = joi => createDateStringValidator(joi).tr
  * @returns {Joi.StringSchema}
  */
 export const createEmailValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex: forbiddenEmailRegex })
-    .string()
-    .allowable()
-    .trim()
-    .email()
-    .max(100)
-    .lowercase()
-    .example('person@example.com')
+  checkCopyPasteValidator(joi, forbiddenEmailRegex).string().allowable().trim().email().max(100).lowercase().example('person@example.com')
 
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
 /**
@@ -119,12 +109,7 @@ export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
  * @returns {Joi.StringSchema}
  */
 export const createMobilePhoneValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex: forbiddenMobileRegex })
-    .string()
-    .allowable()
-    .trim()
-    .pattern(mobilePhoneRegex)
-    .example('person@example.com')
+  checkCopyPasteValidator(joi, forbiddenMobileRegex).string().allowable().trim().pattern(mobilePhoneRegex).example('person@example.com')
 
 const maxPremises = 50
 
@@ -135,7 +120,7 @@ const maxPremises = 50
  * @returns {Joi.StringSchema}
  */
 export const createPremisesValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex: forbiddenCharsNumbersRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
     .string()
     .allowable()
     .trim()
@@ -152,7 +137,7 @@ export const createPremisesValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createStreetValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsRegex)
     .string()
     .allowable()
     .trim()
@@ -168,7 +153,7 @@ export const createStreetValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createLocalityValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsRegex)
     .string()
     .allowable()
     .trim()
@@ -184,7 +169,7 @@ export const createLocalityValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createTownValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsRegex)
     .string()
     .allowable()
     .trim()
@@ -206,7 +191,7 @@ const maxPostcode = 12
  * @returns {Joi.StringSchema}
  */
 export const createUKPostcodeValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex: forbiddenCharsNumbersRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
     .string()
     .allowable()
     .trim()
@@ -224,7 +209,7 @@ export const createUKPostcodeValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createOverseasPostcodeValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex: forbiddenCharsNumbersRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
     .string()
     .allowable()
     .trim()
@@ -372,7 +357,7 @@ const ukNINORegEx =
   /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])(?<!(?:BG|GB|KN|NK|NT|TN|ZZ))\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
 
 export const createNationalInsuranceNumberValidator = joi =>
-  checkCopyPasteValidator(joi, { forbiddenCharsRegex: forbiddenCharsNumbersRegex })
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
     .string()
     .allowable()
     .trim()
