@@ -126,6 +126,8 @@ export const createMobilePhoneValidator = joi =>
     .pattern(mobilePhoneRegex)
     .example('person@example.com')
 
+const maxPremises = 50
+
 /**
  * Create a validator to check a contact's address premises
  *
@@ -138,7 +140,7 @@ export const createPremisesValidator = joi =>
     .allowable()
     .trim()
     .min(1)
-    .max(50)
+    .max(maxPremises)
     .external(toTitleCase())
     .required()
     .example('Example House')
@@ -193,6 +195,7 @@ export const createTownValidator = joi =>
 
 export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s{0,6}([0-9][A-Z]{2})$/i
 export const overseasPostcodeRegex = /^([a-zA-Z0-9 ]{1,12})$/i
+const maxPostcode = 12
 
 /**
  * Create a validator to check a contact's postcode
@@ -208,7 +211,7 @@ export const createUKPostcodeValidator = joi =>
     .allowable()
     .trim()
     .min(1)
-    .max(12)
+    .max(maxPostcode)
     .required()
     .pattern(ukPostcodeRegex)
     .replace(ukPostcodeRegex, '$1 $2')
@@ -226,7 +229,7 @@ export const createOverseasPostcodeValidator = joi =>
     .allowable()
     .trim()
     .min(1)
-    .max(12)
+    .max(maxPostcode)
     .uppercase()
     .required()
     .pattern(overseasPostcodeRegex)
@@ -380,8 +383,8 @@ export const createNationalInsuranceNumberValidator = joi =>
     .description('A UK national insurance number')
     .example('NH 12 34 56 A')
 
-const checkCopyPasteValidator = (joi, { forbiddenCharsRegex }) =>
-  joi.extend(joi => ({
+const checkCopyPasteValidator = joi =>
+  joi.extend({
     type: 'string',
     base: joi.string(),
     rules: {
@@ -397,4 +400,4 @@ const checkCopyPasteValidator = (joi, { forbiddenCharsRegex }) =>
     messages: {
       'string.forbidden': '{{#label}} contains forbidden characters'
     }
-  }))
+  })
