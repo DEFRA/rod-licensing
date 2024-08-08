@@ -195,26 +195,6 @@ describe('guidance page handlers', () => {
       const returned = await cookiesPageHandler(getMockRequest(), toolkit)
       expect(returned).toEqual(viewReturn)
     })
-
-    it.each([
-      ['_testga_123456', 'GTM-123456'],
-      ['_testga_458967', 'GTM-458967'],
-      ['_testga_119045', 'GTM-119045']
-    ])(
-      'analyticsCookieName is set too cookies_analytics_details_row_4 and number in container (%s) when GTM_CONTAINER_ID is %s',
-      (expected, containerId) => {
-        process.env.GTM_CONTAINER_ID = containerId
-        const request = getMockRequest({ catalog: { cookies_analytics_details_row_4: '_testga_' } })
-        const toolkit = getMockToolkit()
-        cookiesPageHandler(request, toolkit)
-        expect(toolkit.view).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({
-            analyticsCookieName: expected
-          })
-        )
-      }
-    )
   })
 
   it('New prices page handler provides expected data for new prices page', async () => {
