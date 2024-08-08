@@ -1,5 +1,7 @@
-import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
+import { addConcessionProofs, addSenior } from '../concession.service.js'
+import { findPermit } from '../permit.service.js'
 
 // Replicated from GAFL - need to decide whether to move
 const cacheDateFormat = 'YYYY-MM-DD'
@@ -8,12 +10,17 @@ const licenceToStart = {
   ANOTHER_DATE: 'another-date'
 }
 
-export const preparePermissionDataForRenewal = existingPermission => ({
-  ...prepareBasePermissionData(existingPermission),
-  ...prepareDateData(existingPermission),
-  licensee: prepareLicenseeData(existingPermission),
-  permitId: preparePermitId(existingPermission)
-})
+export const preparePermissionDataForRenewal = async existingPermission => {
+  const dateData = prepareDateData(existingPermission)
+  const concessions = await prepareConcessionsData(existingPermission, dateData)
+  return {
+    ...prepareBasePermissionData(existingPermission),
+    ...dateData,
+    licensee: prepareLicenseeData(existingPermission),
+    concessions: concessions.concessions,
+    permitId: await preparePermit(existingPermission)
+  }
+}
 
 const prepareBasePermissionData = existingPermission => ({
   isRenewal: true,
@@ -83,4 +90,23 @@ const dateDataIfNotExpired = endDateMoment => {
   }
 }
 
-const preparePermitId = existingPermission => existingPermission.permit.id
+const preparePermit = async existingPermission => {
+  const permit = await findPermit(existingPermission)
+
+  return permit.id
+}
+
+const prepareConcessionsData = async (existingPermission, dateData) => {
+  await addConcessionProofs(existingPermission)
+  delete existingPermission.licensee.noLicenceRequired
+  const ageAtLicenceStartDate = moment(dateData.licenceStartDate)
+    .add(1, 'year')
+    .diff(moment(existingPermission.licensee.birthDate), 'years')
+
+  // add check minor here for easy renewals (not needed for recurring payment as cant purchase if junior)
+  if (isSenior(ageAtLicenceStartDate)) {
+    addSenior(existingPermission)
+  } // do we need remove senior
+
+  return existingPermission
+}
