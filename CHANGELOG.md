@@ -1,4 +1,13 @@
 
+## v1.48.0-rc.3 (2024-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2008](https://github.com/DEFRA/rod-licensing/pull/2008) Correcting Cookie Banner Service Name ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.48.0-rc.2 (2024-08-07)
 
 #### :bug: Bug Fix
