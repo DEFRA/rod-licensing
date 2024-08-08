@@ -103,16 +103,18 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) => {
       const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+      const mssgs = request.i18n.getCatalog()
       const gtmContainerId = gtmContainerIdOrNull()
+      const analyticsCookieName = gtmContainerId.replace('GTM-', mssgs.cookies_analytics_details_row_4)
       const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
       const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
       const backUri = request?.headers?.referer?.endsWith(recurringUri) ? recurringUri : addLanguageCodeToUri(request, CONTROLLER.uri)
 
       return h.view(COOKIES.page, {
         altLang,
-        gtmContainerId,
+        analyticsCookieName,
         pageLanguageSetToWelsh,
-        mssgs: request.i18n.getCatalog(),
+        mssgs,
         cookie: {
           csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
           sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,

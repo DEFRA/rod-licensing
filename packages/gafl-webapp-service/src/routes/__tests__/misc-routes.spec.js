@@ -41,6 +41,7 @@ describe('The miscellaneous route handlers', () => {
   })
 
   it('return the cookie page when requested', async () => {
+    process.env.GTM_CONTAINER_ID = 'GTM-123456'
     const data = await injectWithCookies('GET', COOKIES.uri)
     expect(data.statusCode).toBe(200)
   })

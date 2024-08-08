@@ -34,10 +34,12 @@ describe('guidance page handlers', () => {
 
   describe('cookies page handler', () => {
     const processEnv = process.env
+    process.env.GTM_CONTAINER_ID = 'GTM-000000'
 
     beforeEach(jest.resetAllMocks)
     afterEach(() => {
       process.env = processEnv
+      process.env.GTM_CONTAINER_ID = 'GTM-000000'
     })
 
     it('only calls toolkit view function once', () => {
@@ -193,6 +195,26 @@ describe('guidance page handlers', () => {
       const returned = await cookiesPageHandler(getMockRequest(), toolkit)
       expect(returned).toEqual(viewReturn)
     })
+
+    it.each([
+      ['_testga_123456', 'GTM-123456'],
+      ['_testga_458967', 'GTM-458967'],
+      ['_testga_119045', 'GTM-119045']
+    ])(
+      'analyticsCookieName is set too cookies_analytics_details_row_4 and number in container (%s) when GTM_CONTAINER_ID is %s',
+      (expected, containerId) => {
+        process.env.GTM_CONTAINER_ID = containerId
+        const request = getMockRequest({ catalog: { cookies_analytics_details_row_4: '_testga_' } })
+        const toolkit = getMockToolkit()
+        cookiesPageHandler(request, toolkit)
+        expect(toolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            analyticsCookieName: expected
+          })
+        )
+      }
+    )
   })
 
   it('New prices page handler provides expected data for new prices page', async () => {
@@ -206,7 +228,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.NEW_PRICES.page, {
       altLang: ['that-locale'],
-      gtmContainerId: false,
+      gtmContainerId: 'GTM-000000',
       mssgs: catalog,
       uri: {
         back: mockUri
@@ -227,7 +249,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.RECURRING_TERMS_CONDITIONS.page, {
       altLang: ['that-locale'],
-      gtmContainerId: false,
+      gtmContainerId: 'GTM-000000',
       pageLanguageSetToWelsh: welshEnabled,
       mssgs: catalog,
       uri: {
@@ -250,7 +272,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.PRIVACY_POLICY.page, {
       altLang: ['that-locale'],
-      gtmContainerId: false,
+      gtmContainerId: 'GTM-000000',
       pageLanguageSetToWelsh: welshEnabled,
       mssgs: catalog,
       uri: {
