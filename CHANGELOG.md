@@ -1,4 +1,13 @@
 
+## v1.48.0-rc.4 (2024-08-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2007](https://github.com/DEFRA/rod-licensing/pull/2007) Updating Cookies Policy Page to Include GA4 Analytics ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.48.0-rc.3 (2024-08-08)
 
 #### :bug: Bug Fix
