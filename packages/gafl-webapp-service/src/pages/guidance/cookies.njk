@@ -1,5 +1,6 @@
 {% extends "layout.njk" %}
 {% from "table/macro.njk" import govukTable %}
+{% from "radios/macro.njk" import govukRadios %}
 
 {% set title = mssgs.cookies_title %}
 {% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
@@ -62,10 +63,70 @@
           ]
         }) }}
 
+        <h2 class="govuk-heading-m">{{ mssgs.cookies_analytics_subheading }}</h2>
+
+        <p class="govuk-body">{{ mssgs.cookies_analytics_body_1 }}</p>
+
+        <p class="govuk-body">{{ mssgs.cookies_analytics_body_2 }}</p>
+
+        <p class="govuk-body">{{ mssgs.cookies_analytics_body_3 }}</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>{{ mssgs.cookies_analytics_list_1 }}</li>
+            <li>{{ mssgs.cookies_analytics_list_2 }}</li>
+            <li>{{ mssgs.cookies_analytics_list_3 }}</li>
+        </ul>
+
+        <p class="govuk-body">{{ mssgs.cookies_analytics_body_4 }}</p>
+
+        <p class="govuk-body">{{ mssgs.cookies_analytics_body_5 }}</p>
+
+        {{ govukTable({
+          caption: mssgs.cookies_analytics_details_caption,
+          firstCellIsHeader: true,
+          head: [ { text: mssgs.cookies_name }, { text: mssgs.purpose }, { text: mssgs.expires } ],
+          rows: [
+            [ { text: mssgs.cookies_analytics_details_row_1 }, { text: mssgs.cookies_analytics_details_row_2 }, { text: mssgs.cookies_analytics_details_row_3 } ],
+            [ { text: mssgs.cookies_analytics_details_row_4 }, { text: mssgs.cookies_analytics_details_row_5 }, { text: mssgs.cookies_analytics_details_row_3 } ]
+          ]
+        }) }}
+
+        <p class="govuk-body">{{ mssgs.cookies_analytics_body_6 }} <a class="govuk-link" href="https://support.google.com/analytics/answer/6004245">{{ mssgs.cookies_analytics_link }}</a> {{ mssgs.full_stop }}</p>
+
+        <p class="govuk-heading-s">{{ mssgs.cookies_analytics_radio_heading }}</p>
+
+        {{ govukRadios({
+          name: "accept-google-analytics",
+          fieldset: {
+            legend: {
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          items: [
+            {
+              value: 'accept',
+              text: mssgs.yes
+            },
+            {
+              value: 'reject',
+              text: mssgs.no
+            }
+          ]
+        }) }}
+
+        {{ govukButton({
+            attributes: { id: 'save-changes' },
+            preventDoubleClick: true,
+            name: "save-changes",
+            text: mssgs.save_changes,
+            classes: "govuk-!-margin-top-5"
+        }) }}
+
         <h2 class="govuk-heading-m">{{ mssgs.cookies_survey_subheading }}</h2>
 
         <p class="govuk-body">{{ mssgs.cookies_survey_body_1 }}<a class="govuk-link" href="https://www.smartsurvey.co.uk/">{{ mssgs.cookies_survey_body_link_1 }}</a>{{ mssgs.cookies_survey_body_2 }}</p>
-        <p class="govuk-body">{{ mssgs.cookies_survey_body_3 }}<a class="govuk-link" href="https://www.smartsurvey.co.uk/privacy-policy">{{ mssgs.cookies_survey_body_link_2 }}</a>{{ mssgs.cookies_survey_body_4 }}<a href="https://www.smartsurvey.co.uk/how-we-use-cookies">{{ mssgs.cookies_survey_body_link_3 }}</a>{{ mssgs.cookies_survey_body_5 }}</p>
+        <p class="govuk-body">{{ mssgs.cookies_survey_body_3 }}<a class="govuk-link" href="https://www.smartsurvey.co.uk/privacy-policy">{{ mssgs.cookies_survey_body_link_2 }}</a>{{ mssgs.cookies_survey_body_4 }}<a class="govuk-link" href="https://www.smartsurvey.co.uk/how-we-use-cookies">{{ mssgs.cookies_survey_body_link_3 }}</a>{{ mssgs.cookies_survey_body_5 }}</p>
    </div>
 </div>
 {% endblock %}
