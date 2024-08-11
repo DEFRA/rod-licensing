@@ -1,14 +1,9 @@
-// Day field is outside of range
 export const createDayValidator = joi => joi.number().integer().min(1).max(31).required()
 
-// Month field is outside of range
 export const createMonthValidator = joi => joi.number().integer().min(1).max(12).required()
 
-// Year field is outside of range
-// Date too far in past
 export const createYearValidator = (joi, minYear, maxYear) => joi.number().integer().min(minYear).max(maxYear).required()
 
-// Non-numeric character entered
 export const createNumericCharacterValidator = joi =>
   joi.string().trim().pattern(/^\d*$/).description('A string of numeric characters only').example('31')
 
