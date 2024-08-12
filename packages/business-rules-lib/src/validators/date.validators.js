@@ -1,6 +1,9 @@
-export const createDayValidator = joi => joi.number().integer().min(1).max(31).required()
+const MAX_DAY = 31
+const MAX_MONTH = 12
 
-export const createMonthValidator = joi => joi.number().integer().min(1).max(12).required()
+export const createDayValidator = joi => joi.number().integer().min(1).max(MAX_DAY).required()
+
+export const createMonthValidator = joi => joi.number().integer().min(1).max(MAX_MONTH).required()
 
 export const createYearValidator = (joi, minYear, maxYear) => joi.number().integer().min(minYear).max(maxYear).required()
 
@@ -17,7 +20,7 @@ export const createRealDateValidator = joi =>
       const enteredDate = [value.year, value.month - 1, value.day]
       const constructedDate = new Date(Date.UTC(...enteredDate))
       const deconstructedDate = [constructedDate.getFullYear(), constructedDate.getMonth(), constructedDate.getDate()]
-      for (const i in enteredDate) {
+      for (let i = 0; i < enteredDate.length; i++) {
         if (enteredDate[i] !== deconstructedDate[i]) {
           return { value, errors: helpers.error('date.real') }
         }
