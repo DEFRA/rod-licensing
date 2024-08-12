@@ -373,7 +373,7 @@
   "licence_length_title_you": "Am ba hyd yr hoffech chi gael y drwydded?",
   "licence_num": "Rhif trwydded",
   "licence_start_days": " diwrnod nesaf",
-  "licence_start_enter_todays_date": "Rhowch ddyddiad heddiw os ydych chi am i’r drwydded 1 neu 8 diwrnod ddechrau yn hwyrach heddiw.",
+  "licence_start_enter_todays_date": "Rhowch ddyddiad heddiw os ydych chi am i’r drwydded 1 diwrnod neu 8 diwrnod ddechrau yn hwyrach heddiw.",
   "licence_start_error_choose_when": "Dewiswch pryd y dylai'r drwydded ddechrau",
   "licence_start_error_format": "Nodwch y dyddiad y mae angen i'r drwydded ddechrau a chynnwys diwrnod, mis a blwyddyn",
   "licence_start_error_within": "Nodwch ddyddiad o fewn y ",
