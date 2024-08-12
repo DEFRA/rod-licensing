@@ -1,4 +1,18 @@
 
+## v1.48.0-rc.5 (2024-08-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2011](https://github.com/DEFRA/rod-licensing/pull/2011) Remove analytics button ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2012](https://github.com/DEFRA/rod-licensing/pull/2012) Correcting date in statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.48.0-rc.4 (2024-08-09)
 
 #### :rocket: Enhancement
