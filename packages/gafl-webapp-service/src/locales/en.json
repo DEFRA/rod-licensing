@@ -373,7 +373,7 @@
   "licence_length_title_you": "How long do you want your licence for?",
   "licence_num": "Licence number",
   "licence_start_days": " days",
-  "licence_start_enter_todays_date": "Enter today’s date if you want the 1 or 8 day licence to start later today.",
+  "licence_start_enter_todays_date": "Enter today’s date if you want the 1-day or 8-day licence to start later today.",
   "licence_start_error_choose_when": "Choose when the licence should start",
   "licence_start_error_format": "Enter the date the licence needs to start, include a day, month and year",
   "licence_start_error_within": "Enter a date within the next ",
