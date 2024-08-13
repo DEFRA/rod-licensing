@@ -34,10 +34,12 @@ describe('guidance page handlers', () => {
 
   describe('cookies page handler', () => {
     const processEnv = process.env
+    process.env.GTM_CONTAINER_ID = 'GTM-000000'
 
     beforeEach(jest.resetAllMocks)
     afterEach(() => {
       process.env = processEnv
+      process.env.GTM_CONTAINER_ID = 'GTM-000000'
     })
 
     it('only calls toolkit view function once', () => {
@@ -206,7 +208,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.NEW_PRICES.page, {
       altLang: ['that-locale'],
-      gtmContainerId: false,
+      gtmContainerId: 'GTM-000000',
       mssgs: catalog,
       uri: {
         back: mockUri
@@ -227,7 +229,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.RECURRING_TERMS_CONDITIONS.page, {
       altLang: ['that-locale'],
-      gtmContainerId: false,
+      gtmContainerId: 'GTM-000000',
       pageLanguageSetToWelsh: welshEnabled,
       mssgs: catalog,
       uri: {
@@ -250,7 +252,7 @@ describe('guidance page handlers', () => {
 
     expect(mockToolkit.view).toHaveBeenCalledWith(uri.PRIVACY_POLICY.page, {
       altLang: ['that-locale'],
-      gtmContainerId: false,
+      gtmContainerId: 'GTM-000000',
       pageLanguageSetToWelsh: welshEnabled,
       mssgs: catalog,
       uri: {

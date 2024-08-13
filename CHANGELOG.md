@@ -1,4 +1,67 @@
 
+## v1.48.0-rc.8 (2024-08-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2018](https://github.com/DEFRA/rod-licensing/pull/2018) Links open new tab ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+
+## v1.48.0-rc.5 (2024-08-12)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2011](https://github.com/DEFRA/rod-licensing/pull/2011) Remove analytics button ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2012](https://github.com/DEFRA/rod-licensing/pull/2012) Correcting date in statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- [@lailien3](https://github.com/lailien3)
+
+## v1.48.0-rc.4 (2024-08-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2007](https://github.com/DEFRA/rod-licensing/pull/2007) Updating Cookies Policy Page to Include GA4 Analytics ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.48.0-rc.3 (2024-08-08)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2008](https://github.com/DEFRA/rod-licensing/pull/2008) Correcting Cookie Banner Service Name ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.48.0-rc.2 (2024-08-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2009](https://github.com/DEFRA/rod-licensing/pull/2009) Fix ages reference ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+
+## v1.48.0-rc.0 (2024-08-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#1989](https://github.com/DEFRA/rod-licensing/pull/1989) Hide RCP option for Junior licence purchases ([@lailien3](https://github.com/lailien3))
+  * [#2006](https://github.com/DEFRA/rod-licensing/pull/2006) Revising accessibility statement ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 
 ## v1.47.0-rc.18 (2024-07-23)
 
