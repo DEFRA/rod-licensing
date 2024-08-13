@@ -1,4 +1,13 @@
 
+## v1.48.0-rc.8 (2024-08-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2018](https://github.com/DEFRA/rod-licensing/pull/2018) Links open new tab ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 
 ## v1.48.0-rc.5 (2024-08-12)
