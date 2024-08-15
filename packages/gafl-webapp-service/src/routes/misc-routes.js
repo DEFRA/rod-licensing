@@ -58,13 +58,13 @@ const simpleView = view => ({
   }
 })
 
-const cookiesView = (request, analytics) => {
+const cookiesView = (request, analyticsCache) => {
   const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
   const gtmContainerId = gtmContainerIdOrNull()
   const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
   const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
   const backUri = request?.headers?.referer?.endsWith(recurringUri) ? recurringUri : addLanguageCodeToUri(request, CONTROLLER.uri)
-  const analyticsResponse = analytics?.[ANALYTICS.acceptTracking] === true ? 'accept' : 'reject'
+  const analyticsResponse = analyticsCache?.[ANALYTICS.acceptTracking] === true ? 'accept' : 'reject'
 
   return {
     altLang,
@@ -135,8 +135,8 @@ export default [
     method: 'GET',
     path: COOKIES.uri,
     handler: async (request, h) => {
-      const analytics = await request.cache().helpers.analytics.get()
-      return h.view(COOKIES.page, cookiesView(request, analytics))
+      const analyticsCache = await request.cache().helpers.analytics.get()
+      return h.view(COOKIES.page, cookiesView(request, analyticsCache))
     }
   },
   {
@@ -144,12 +144,12 @@ export default [
     path: COOKIES.uri,
     handler: async (request, h) => {
       await checkAnalyticsResponse(request)
-      const analytics = await request.cache().helpers.analytics.get()
+      const analyticsCache = await request.cache().helpers.analytics.get()
 
       const showNotification = request.payload?.analyticsResponse !== undefined ? true : undefined
 
       return h.view(COOKIES.page, {
-        ...cookiesView(request, analytics),
+        ...cookiesView(request, analyticsCache),
         showNotification,
         SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true'
       })
