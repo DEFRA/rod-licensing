@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.0 (2024-08-15)
+
+#### :rocket: Enhancement
+* `business-rules-lib`
+  * [#2010](https://github.com/DEFRA/rod-licensing/pull/2010) Add new validators for date fields ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.48.0-rc.8 (2024-08-13)
 
