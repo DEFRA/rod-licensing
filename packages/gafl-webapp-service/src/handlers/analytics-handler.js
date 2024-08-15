@@ -65,7 +65,7 @@ export default async (request, h) => {
   return h.redirectWithLanguageCode('/buy')
 }
 
-export const checkAnalyticsResponse = async (request) => {
+export const checkAnalyticsResponse = async request => {
   const { payload } = request
   const analytics = await request.cache().helpers.analytics.get()
 

@@ -16,7 +16,13 @@ import {
   RECURRING_TERMS_CONDITIONS
 } from '../uri.js'
 
-import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME, ANALYTICS } from '../constants.js'
+import {
+  SESSION_COOKIE_NAME_DEFAULT,
+  CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+  ALB_COOKIE_NAME,
+  ALBCORS_COOKIE_NAME,
+  ANALYTICS
+} from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
 import newSessionHandler from '../handlers/new-session-handler.js'
@@ -140,9 +146,7 @@ export default [
       await checkAnalyticsResponse(request)
       const analytics = await request.cache().helpers.analytics.get()
 
-      const showNotification = request.payload?.analyticsResponse !== undefined
-        ? true
-        : undefined
+      const showNotification = request.payload?.analyticsResponse !== undefined ? true : undefined
 
       return h.view(COOKIES.page, {
         ...cookiesView(request, analytics),

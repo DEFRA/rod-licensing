@@ -52,7 +52,10 @@ describe('guidance page handlers', () => {
         process.env.GTM_CONTAINER_ID = 'GTM-000000'
       })
 
-      it.each([['get', cookiesPageGetHandler], ['post', cookiesPagePostHandler]])('only calls toolkit view function once for %s', async (method, handler) => {
+      it.each([
+        ['get', cookiesPageGetHandler],
+        ['post', cookiesPagePostHandler]
+      ])('only calls toolkit view function once for %s', async (method, handler) => {
         const toolkit = getMockToolkit()
         await handler(getMockRequest(), toolkit)
         expect(toolkit.view).toHaveBeenCalledTimes(1)
@@ -206,21 +209,18 @@ describe('guidance page handlers', () => {
         }
       )
 
-      it.each([['123456'], ['XXXXXX'], ['124567']])(
-        'returns gtmContainerId',
-        async gtm => {
-          process.env.GTM_CONTAINER_ID = gtm
-          const request = getMockRequest({})
-          const toolkit = getMockToolkit()
-          await handler(request, toolkit)
-          expect(toolkit.view).toHaveBeenCalledWith(
-            expect.any(String),
-            expect.objectContaining({
-              gtmContainerId: gtm
-            })
-          )
-        }
-      )
+      it.each([['123456'], ['XXXXXX'], ['124567']])('returns gtmContainerId', async gtm => {
+        process.env.GTM_CONTAINER_ID = gtm
+        const request = getMockRequest({})
+        const toolkit = getMockToolkit()
+        await handler(request, toolkit)
+        expect(toolkit.view).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.objectContaining({
+            gtmContainerId: gtm
+          })
+        )
+      })
 
       it('returns pageLanguageSetToWelsh', async () => {
         const welshEnabled = Symbol('enabled')
@@ -261,7 +261,11 @@ describe('guidance page handlers', () => {
           [ANALYTICS.acceptTracking]: acceptTracking
         }
         const referrer = CONTROLLER.uri
-        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer, analytics)
+        const request = getMockRequest(
+          { locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' },
+          referrer,
+          analytics
+        )
         const toolkit = getMockToolkit()
         await handler(request, toolkit)
         expect(toolkit.view).toHaveBeenCalledWith(
@@ -296,7 +300,12 @@ describe('guidance page handlers', () => {
         [{}, undefined]
       ])('sets showNotification based on analyticsResponse', async (payload, expected) => {
         const referrer = CONTROLLER.uri
-        const request = getMockRequest({ locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' }, referrer, '', payload)
+        const request = getMockRequest(
+          { locale: 'this-locale', locales: ['this-locale', 'that-locale'], catalog: 'catalog' },
+          referrer,
+          '',
+          payload
+        )
         const toolkit = getMockToolkit()
 
         await cookiesPagePostHandler(request, toolkit)
