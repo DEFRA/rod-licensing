@@ -2,7 +2,6 @@ import moment from 'moment'
 import { preparePermissionDataForRenewal } from '../renewals.service.js'
 import { findPermit } from '../../permit.service.js'
 import { getReferenceDataForEntity } from '../../reference-data.service.js'
-import { Permit } from '@defra-fish/dynamics-lib'
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../reference-data.service.js')

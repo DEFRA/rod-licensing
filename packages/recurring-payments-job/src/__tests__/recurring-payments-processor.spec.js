@@ -1,6 +1,5 @@
 import { salesApi } from '@defra-fish/connectors-lib'
-import { processRecurringPayments, processRecurringPayment } from '../recurring-payments-processor.js'
-import { concessions } from '@defra-fish/connectors-lib/src/sales-api-connector.js'
+import { processRecurringPayments } from '../recurring-payments-processor.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('@defra-fish/connectors-lib', () => ({
@@ -108,7 +107,6 @@ describe('recurring-payments-processor', () => {
     expect(salesApi.createTransaction).toHaveBeenCalledWith(expectedData)
   })
 
-
   it('strips the concession name returned by preparePermissionDataForRenewal before passing to createTransaction', async () => {
     salesApi.getDueRecurringPayments.mockReturnValueOnce([{ expanded: { activePermission: { entity: { referenceNumber: '1' } } } }])
 
@@ -116,13 +114,14 @@ describe('recurring-payments-processor', () => {
       licensee: {
         countryCode: 'GB-ENG'
       },
-      concessions: [{
-        id: 'abc-123',
-        name: 'concession-type-1',
-        proof: { type: 'NO-PROOF' }
-      }]
+      concessions: [
+        {
+          id: 'abc-123',
+          name: 'concession-type-1',
+          proof: { type: 'NO-PROOF' }
+        }
+      ]
     })
-
 
     await processRecurringPayments()
 
@@ -132,7 +131,7 @@ describe('recurring-payments-processor', () => {
           expect.objectContaining({
             concessions: expect.arrayContaining([
               expect.not.objectContaining({
-                name: 'concession-type-1',
+                name: 'concession-type-1'
               })
             ])
           })
@@ -210,7 +209,6 @@ describe('recurring-payments-processor', () => {
     })
 
     it('creates a transaction for each one', async () => {
-
       const mockGetDueRecurringPayments = []
       for (let i = 0; i < count; i++) {
         mockGetDueRecurringPayments.push({ expanded: { activePermission: { entity: { referenceNumber: i } } } })

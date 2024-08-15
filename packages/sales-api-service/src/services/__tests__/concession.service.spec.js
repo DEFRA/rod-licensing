@@ -201,7 +201,7 @@ describe('preparePermissionDataForRenewal', () => {
     describe('removeSenior', () => {
       it.each([
         ['has only a senior concession', [getSeniorConcession()], []],
-        ['has senior and disabled concessions', [getSeniorConcession(), getDisabledBlueBadgeConcession()], [getDisabledBlueBadgeConcession()]],
+        ['has senior and disabled concessions', [getSeniorConcession(), getDisabledBlueBadgeConcession()], [getDisabledBlueBadgeConcession()]]
       ])('removes senior concession if permission %s', async (_desc, concessions, expectedConcessions) => {
         const permission = getMockPermission()
         permission.concessions = concessions
@@ -243,7 +243,7 @@ describe('preparePermissionDataForRenewal', () => {
     describe('removeJunior', () => {
       it.each([
         ['has only a junior concession', [getJuniorConcession()], []],
-        ['has junior and disabled concessions', [getJuniorConcession(), getDisabledBlueBadgeConcession()], [getDisabledBlueBadgeConcession()]],
+        ['has junior and disabled concessions', [getJuniorConcession(), getDisabledBlueBadgeConcession()], [getDisabledBlueBadgeConcession()]]
       ])('removes junior concession if concessions %s', async (_desc, concessions, expectedConcessions) => {
         const permission = getMockPermission()
         permission.concessions = concessions
@@ -262,7 +262,6 @@ describe('preparePermissionDataForRenewal', () => {
         await concessionService.removeJunior(permission)
         expect(permission.concessions).toEqual(concessions)
       })
-
     })
 
     describe('hasJunior', () => {

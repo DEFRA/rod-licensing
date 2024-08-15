@@ -37,7 +37,7 @@ const getSamplePermits = () => {
   ]
   return samplePermits.map(sp => ({
     ...sp,
-    toJSON: function () { 
+    toJSON: function () {
       const props = {
         ...this
       }
@@ -81,7 +81,7 @@ describe('findPermit', () => {
     ...overrides
   })
   const getSamplePermissionWithConcession = () => ({
-    concessions: [{ name: 'concession-type-1', id: 'abc-123', proof: {}}],
+    concessions: [{ name: 'concession-type-1', id: 'abc-123', proof: {} }],
     permit: {
       numberOfRods: '1',
       permitSubtype: {
@@ -115,8 +115,8 @@ describe('findPermit', () => {
   })
 
   it.each([
-    ['with one element', [{ type: 'concession-type-1', id: 'con-111', proof: {}}]],
-    ['with two elements, one', [{ name: 'concession-type-1', id: 'con-111', proof: {}}, { type: 'concession-type-2', id: 'abc-123', proof: {}}]]
+    ['with one element', [{ type: 'concession-type-1', id: 'con-111', proof: {} }]],
+    ['with two elements, one', [{ name: 'concession-type-1', id: 'con-111', proof: {} }, { type: 'concession-type-2', id: 'abc-123', proof: {} }]]
   ])('throws an error if concessions array %s containing type rather than name', async (_d, concessions) => {
     const perm = getSamplePermissionWithConcession()
     perm.concessions = concessions
