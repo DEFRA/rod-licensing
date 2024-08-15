@@ -1,4 +1,14 @@
 
+## v1.49.0-rc.1 (2024-08-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2015](https://github.com/DEFRA/rod-licensing/pull/2015) Minor Content Change To licence-details Page ([@lailien3](https://github.com/lailien3))
+  * [#2014](https://github.com/DEFRA/rod-licensing/pull/2014) Minor Content Change To start-kind Page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
 ## v1.49.0-rc.0 (2024-08-15)
 
 #### :rocket: Enhancement
