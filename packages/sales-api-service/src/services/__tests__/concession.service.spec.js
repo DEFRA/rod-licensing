@@ -99,9 +99,7 @@ describe('preparePermissionDataForRenewal', () => {
       it('add NI', async () => {
         const permission = getMockPermission()
         await concessionService.addDisabled(permission, CONCESSION_PROOF.NI, 'national-insurance-456')
-        expect(permission.concessions).toContainEqual(
-          expect.objectContaining(getDisabledNiConcession())
-        )
+        expect(permission.concessions).toContainEqual(expect.objectContaining(getDisabledNiConcession()))
       })
 
       it('add blue badge to senior licence', async () => {
@@ -180,10 +178,7 @@ describe('preparePermissionDataForRenewal', () => {
         const disabledConcession = getDisabledNiConcession()
         permission.concessions = [disabledConcession]
         await concessionService.addSenior(permission)
-        expect(permission.concessions).toEqual([
-          disabledConcession,
-          getSeniorConcession()
-        ])
+        expect(permission.concessions).toEqual([disabledConcession, getSeniorConcession()])
       })
 
       it('add senior to NI', async () => {
@@ -191,17 +186,18 @@ describe('preparePermissionDataForRenewal', () => {
         const disabledConcession = getDisabledBlueBadgeConcession()
         permission.concessions = [disabledConcession]
         await concessionService.addSenior(permission)
-        expect(permission.concessions).toEqual([
-          disabledConcession,
-          getSeniorConcession()
-        ])
+        expect(permission.concessions).toEqual([disabledConcession, getSeniorConcession()])
       })
     })
 
     describe('removeSenior', () => {
       it.each([
         ['has only a senior concession', [getSeniorConcession()], []],
-        ['has senior and disabled concessions', [getSeniorConcession(), getDisabledBlueBadgeConcession()], [getDisabledBlueBadgeConcession()]]
+        [
+          'has senior and disabled concessions',
+          [getSeniorConcession(), getDisabledBlueBadgeConcession()],
+          [getDisabledBlueBadgeConcession()]
+        ]
       ])('removes senior concession if permission %s', async (_desc, concessions, expectedConcessions) => {
         const permission = getMockPermission()
         permission.concessions = concessions
@@ -230,7 +226,7 @@ describe('preparePermissionDataForRenewal', () => {
         expect(isSenior).toBe(true)
       })
 
-      it('is false if licensee doesn\'t have senior concession', async () => {
+      it("is false if licensee doesn't have senior concession", async () => {
         const permission = getMockPermission()
         permission.concessions = []
         const isSenior = await concessionService.hasSenior(permission)
@@ -243,7 +239,11 @@ describe('preparePermissionDataForRenewal', () => {
     describe('removeJunior', () => {
       it.each([
         ['has only a junior concession', [getJuniorConcession()], []],
-        ['has junior and disabled concessions', [getJuniorConcession(), getDisabledBlueBadgeConcession()], [getDisabledBlueBadgeConcession()]]
+        [
+          'has junior and disabled concessions',
+          [getJuniorConcession(), getDisabledBlueBadgeConcession()],
+          [getDisabledBlueBadgeConcession()]
+        ]
       ])('removes junior concession if concessions %s', async (_desc, concessions, expectedConcessions) => {
         const permission = getMockPermission()
         permission.concessions = concessions

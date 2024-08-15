@@ -2,7 +2,7 @@ import { CONCESSION, CONCESSION_PROOF } from './constants.js'
 import { getReferenceDataForEntity } from './reference-data.service.js'
 import { Concession } from '@defra-fish/dynamics-lib'
 
-const getTypeConcessionId = async (type) => {
+const getTypeConcessionId = async type => {
   const concessions = await getReferenceDataForEntity(Concession)
   const { id } = concessions.find(c => c.name === type)
   return id

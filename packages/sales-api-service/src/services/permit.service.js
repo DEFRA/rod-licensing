@@ -35,7 +35,7 @@ const getPermitsJoinPermitConcessions = async () => {
   const permitConcessions = await getReferenceDataForEntity(PermitConcession)
   const concessions = await getReferenceDataForEntity(Concession)
   return permits.map(p => ({
-    ...(p.toJSON()),
+    ...p.toJSON(),
     concessions: permitConcessions.filter(pc => pc.permitId === p.id).map(pc => concessions.find(c => c.id === pc.concessionId))
   }))
 }
