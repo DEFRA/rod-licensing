@@ -40,7 +40,10 @@ const processPermissionData = async referenceNumber => {
         issueDate: null,
         licensee: licenseeWithoutCountryCode,
         permitId: data.permitId,
-        startDate: prepareStartDate(data)
+        startDate: prepareStartDate(data),
+        concessions: data.concessions && data.concessions.map(({ name: _name, ...c }) => ({
+          ...c
+        }))
       }
     ]
   }

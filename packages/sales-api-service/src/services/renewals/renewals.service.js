@@ -1,6 +1,6 @@
 import { isSenior, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
 import moment from 'moment-timezone'
-import { addConcessionProofs, addSenior } from '../concession.service.js'
+import { addSenior } from '../concession.service.js'
 import { findPermit } from '../permit.service.js'
 
 // Replicated from GAFL - need to decide whether to move
@@ -92,21 +92,18 @@ const dateDataIfNotExpired = endDateMoment => {
 
 const preparePermit = async existingPermission => {
   const permit = await findPermit(existingPermission)
-
   return permit.id
 }
 
 const prepareConcessionsData = async (existingPermission, dateData) => {
-  await addConcessionProofs(existingPermission)
   delete existingPermission.licensee.noLicenceRequired
   const ageAtLicenceStartDate = moment(dateData.licenceStartDate)
     .add(1, 'year')
     .diff(moment(existingPermission.licensee.birthDate), 'years')
 
-  // add check minor here for easy renewals (not needed for recurring payment as cant purchase if junior)
   if (isSenior(ageAtLicenceStartDate)) {
-    addSenior(existingPermission)
-  } // do we need remove senior
+    await addSenior(existingPermission)
+  }
 
   return existingPermission
 }

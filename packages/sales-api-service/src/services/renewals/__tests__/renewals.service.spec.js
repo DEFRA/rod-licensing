@@ -1,11 +1,13 @@
 import moment from 'moment'
 import { preparePermissionDataForRenewal } from '../renewals.service.js'
 import { findPermit } from '../../permit.service.js'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { getReferenceDataForEntity } from '../../reference-data.service.js'
+import { Permit } from '@defra-fish/dynamics-lib'
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('../../reference-data.service.js')
 
-const mockConcessions = [
+getReferenceDataForEntity.mockResolvedValue([
   {
     id: '3230c68f-ef65-e611-80dc-c4346bad4004',
     name: 'Junior'
@@ -18,16 +20,11 @@ const mockConcessions = [
     id: 'd1ece997-ef65-e611-80dc-c4346bad4004',
     name: 'Disabled'
   }
-]
-
-salesApi.concessions.getAll.mockResolvedValue(mockConcessions)
-const mockPermit = { id: '123456' }
+])
 
 jest.mock('../../permit.service.js', () => ({
-  findPermit: jest.fn(() => mockPermit)
+  findPermit: jest.fn(() => ({ id: '123456' }))
 }))
-
-findPermit.mockReturnValue({ id: '123456' })
 
 describe('preparePermissionDataForRenewal', () => {
   const existingPermission = overrides => ({
@@ -146,36 +143,11 @@ describe('preparePermissionDataForRenewal', () => {
 
   describe('prepareConcessionsData', () => {
     it('should add senior concession if the licensee is senior', async () => {
-      const licensee = {
-        birthDate: '1954-01-01',
-        country: {
-          label: 'England',
-          description: 'GB-ENG'
-        },
-        email: 'email@example.com',
-        firstName: 'Sally',
-        lastName: 'Salmon',
-        mobilePhone: null,
-        postalFulfilment: false,
-        postcode: 'TE1 1ST',
-        street: 'Angler Street',
-        town: 'Fishville',
-        preferredMethodOfNewsletter: {
-          label: 'Email'
-        },
-        preferredMethodOfConfirmation: {
-          label: 'Text'
-        },
-        preferredMethodOfReminder: {
-          label: 'Letter'
-        },
-        shortTermPreferredMethodOfConfirmation: {
-          label: 'Text'
-        }
-      }
-      const permission = await preparePermissionDataForRenewal(existingPermission({ licensee }))
-      const senior = { type: 'Senior', proof: { type: 'No Proof' } }
-      expect(permission.concessions[0]).toEqual(senior)
+      const samplePermission = existingPermission()
+      samplePermission.licensee.birthDate = '1954-01-01'
+      const ppd = await preparePermissionDataForRenewal(samplePermission)
+      const senior = { name: 'Senior', id: 'd0ece997-ef65-e611-80dc-c4346bad4004', proof: { type: 'No Proof' } }
+      expect(ppd.concessions[0]).toEqual(senior)
     })
 
     it('should remove senior concession if the licensee is not senior', async () => {

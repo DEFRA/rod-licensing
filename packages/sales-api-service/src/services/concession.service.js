@@ -1,46 +1,52 @@
 import { CONCESSION, CONCESSION_PROOF } from './constants.js'
-import { getReferenceDataForEntityAndId } from './reference-data.service.js'
+import { getReferenceDataForEntity } from './reference-data.service.js'
 import { Concession } from '@defra-fish/dynamics-lib'
 
-export const addConcessionProofs = async permission => {
-  permission.concessions.forEach(async concessionProof => {
-    const concessionReference = await getReferenceDataForEntityAndId(Concession, concessionProof.id)
-    if (concessionReference && concessionReference.name === CONCESSION.DISABLED) {
-      addDisabled(permission, concessionProof.proof.type.label, concessionProof.proof.referenceNumber)
-    }
-  })
+const getTypeConcessionId = async (type) => {
+  const concessions = await getReferenceDataForEntity(Concession)
+  const { id } = concessions.find(c => c.name === type)
+  return id
 }
 
-export const addDisabled = (permission, concessionProof, referenceNumber) => {
-  removeDisabled(permission)
+const hasConcessionType = async (permission, type) => {
+  const id = await getTypeConcessionId(type)
+  return !!permission.concessions && permission.concessions.some(c => c.id === id)
+}
+
+const removeConcessionType = async (permission, type) => {
+  if (await hasConcessionType(permission, type)) {
+    const id = await getTypeConcessionId(type)
+    permission.concessions = permission.concessions.filter(c => c.id !== id)
+  }
+}
+
+export const addDisabled = async (permission, concessionProof, referenceNumber) => {
+  await removeDisabled(permission)
   if (!permission.concessions) {
     permission.concessions = []
   }
   permission.concessions.push({
-    type: CONCESSION.DISABLED,
+    id: await getTypeConcessionId(CONCESSION.DISABLED),
+    name: CONCESSION.DISABLED,
     proof: {
       type: concessionProof,
-      referenceNumber: referenceNumber
+      referenceNumber
     }
   })
 }
 
-export const removeDisabled = permission => {
-  if (hasDisabled(permission)) {
-    permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.DISABLED)
-  }
-}
+export const removeDisabled = permission => removeConcessionType(permission, CONCESSION.DISABLED)
+export const hasDisabled = permission => hasConcessionType(permission, CONCESSION.DISABLED)
 
-export const hasDisabled = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.DISABLED)
-
-export const addSenior = permission => {
-  if (!hasSenior(permission)) {
-    removeJunior(permission)
+export const addSenior = async permission => {
+  if (!(await hasSenior(permission))) {
+    await removeJunior(permission)
     if (!permission.concessions) {
       permission.concessions = []
     }
     permission.concessions.push({
-      type: CONCESSION.SENIOR,
+      id: await getTypeConcessionId(CONCESSION.SENIOR),
+      name: CONCESSION.SENIOR,
       proof: {
         type: CONCESSION_PROOF.none
       }
@@ -48,20 +54,8 @@ export const addSenior = permission => {
   }
 }
 
-export const removeSenior = permission => {
-  if (hasSenior(permission)) {
-    permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.SENIOR)
-  }
-}
+export const removeSenior = permission => removeConcessionType(permission, CONCESSION.SENIOR)
+export const hasSenior = permission => hasConcessionType(permission, CONCESSION.SENIOR)
 
-export const hasSenior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.SENIOR)
-
-export const removeJunior = permission => {
-  if (hasJunior(permission)) {
-    permission.concessions = permission.concessions.filter(c => c.type !== CONCESSION.JUNIOR)
-  }
-}
-
-export const hasJunior = permission => permission.concessions && !!permission.concessions.find(c => c.type === CONCESSION.JUNIOR)
-
-//  clear, getAgeConcession and addJunior to be added this file?
+export const removeJunior = permission => removeConcessionType(permission, CONCESSION.JUNIOR)
+export const hasJunior = permission => hasConcessionType(permission, CONCESSION.JUNIOR)

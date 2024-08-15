@@ -5,10 +5,14 @@ export const findPermit = async existingPermission => {
   const licenseeConcessions = existingPermission.concessions || []
   const permitsJoinPermitConcessions = await getPermitsJoinPermitConcessions()
 
+  if (licenseeConcessions.some(c => !c.name && !!c.type)) {
+    throw new Error("Concession should contain 'name' not 'type'")
+  }
+
   // Filter the joined list to include every and only those concessions in licenseeConcessions
   const filteredPermitsJoinPermitConcessions = permitsJoinPermitConcessions.filter(
     pjpc =>
-      licenseeConcessions.map(lc => lc.type).every(t => pjpc.concessions.map(c => c.name).includes(t)) &&
+      licenseeConcessions.map(lc => lc.name).every(t => pjpc.concessions.map(c => c.name).includes(t)) &&
       pjpc.concessions.length === licenseeConcessions.length
   )
 
@@ -31,7 +35,7 @@ const getPermitsJoinPermitConcessions = async () => {
   const permitConcessions = await getReferenceDataForEntity(PermitConcession)
   const concessions = await getReferenceDataForEntity(Concession)
   return permits.map(p => ({
-    ...p,
+    ...(p.toJSON()),
     concessions: permitConcessions.filter(pc => pc.permitId === p.id).map(pc => concessions.find(c => c.id === pc.concessionId))
   }))
 }
