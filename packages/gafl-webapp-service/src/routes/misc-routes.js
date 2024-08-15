@@ -16,7 +16,7 @@ import {
   RECURRING_TERMS_CONDITIONS
 } from '../uri.js'
 
-import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME } from '../constants.js'
+import { SESSION_COOKIE_NAME_DEFAULT, CSRF_TOKEN_COOKIE_NAME_DEFAULT, ALB_COOKIE_NAME, ALBCORS_COOKIE_NAME, ANALYTICS } from '../constants.js'
 
 import addPermission from '../session-cache/add-permission.js'
 import newSessionHandler from '../handlers/new-session-handler.js'
@@ -24,7 +24,7 @@ import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
-import analytics from '../handlers/analytics-handler.js'
+import analytics, { checkAnalyticsResponse } from '../handlers/analytics-handler.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
 
 const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || false
@@ -51,6 +51,33 @@ const simpleView = view => ({
     })
   }
 })
+
+const cookiesView = (request, analytics) => {
+  const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
+  const gtmContainerId = gtmContainerIdOrNull()
+  const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
+  const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
+  const backUri = request?.headers?.referer?.endsWith(recurringUri) ? recurringUri : addLanguageCodeToUri(request, CONTROLLER.uri)
+  const analyticsResponse = analytics?.[ANALYTICS.acceptTracking] === true ? 'accept' : 'reject'
+
+  return {
+    altLang,
+    gtmContainerId,
+    pageLanguageSetToWelsh,
+    mssgs: request.i18n.getCatalog(),
+    cookie: {
+      csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
+      sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,
+      alb: ALB_COOKIE_NAME,
+      albcors: ALBCORS_COOKIE_NAME
+    },
+    uri: {
+      back: backUri,
+      cookies: addLanguageCodeToUri(request, COOKIES.uri)
+    },
+    analyticsResponse
+  }
+}
 
 export default [
   {
@@ -102,26 +129,25 @@ export default [
     method: 'GET',
     path: COOKIES.uri,
     handler: async (request, h) => {
-      const altLang = request.i18n.getLocales().filter(locale => locale !== request.i18n.getLocale())
-      const gtmContainerId = gtmContainerIdOrNull()
-      const pageLanguageSetToWelsh = welshEnabledAndApplied(request)
-      const recurringUri = addLanguageCodeToUri(request, RECURRING_TERMS_CONDITIONS.uri)
-      const backUri = request?.headers?.referer?.endsWith(recurringUri) ? recurringUri : addLanguageCodeToUri(request, CONTROLLER.uri)
+      const analytics = await request.cache().helpers.analytics.get()
+      return h.view(COOKIES.page, cookiesView(request, analytics))
+    }
+  },
+  {
+    method: 'POST',
+    path: COOKIES.uri,
+    handler: async (request, h) => {
+      await checkAnalyticsResponse(request)
+      const analytics = await request.cache().helpers.analytics.get()
+
+      const showNotification = request.payload?.analyticsResponse !== undefined
+        ? true
+        : undefined
 
       return h.view(COOKIES.page, {
-        altLang,
-        gtmContainerId,
-        pageLanguageSetToWelsh,
-        mssgs: request.i18n.getCatalog(),
-        cookie: {
-          csrf: process.env.CSRF_TOKEN_COOKIE_NAME || CSRF_TOKEN_COOKIE_NAME_DEFAULT,
-          sess: process.env.SESSION_COOKIE_NAME || SESSION_COOKIE_NAME_DEFAULT,
-          alb: ALB_COOKIE_NAME,
-          albcors: ALBCORS_COOKIE_NAME
-        },
-        uri: {
-          back: backUri
-        }
+        ...cookiesView(request, analytics),
+        showNotification,
+        SHOW_WELSH_CONTENT: process.env.SHOW_WELSH_CONTENT?.toLowerCase() === 'true'
       })
     }
   },
