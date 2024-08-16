@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.3 (2024-08-16)
+
+#### :bug: Bug Fix
+* `business-rules-lib`
+  * [#2021](https://github.com/DEFRA/rod-licensing/pull/2021) Export date validations ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.49.0-rc.1 (2024-08-15)
 
