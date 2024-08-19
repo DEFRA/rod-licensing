@@ -9,10 +9,29 @@
 
 {%
     set errorMap = {
+        'day': {
+            'any.required': { ref: '#date-of-birth-day', text: mssgs.dob_error_missing_day },
+            'number.base': { ref: '#date-of-birth-day', text: mssgs.dob_error_non_numeric },
+            'number.integer': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real },
+            'number.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real },
+            'number.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
+        },
+        'month': {
+            'any.required': { ref: '#date-of-birth-month', text: mssgs.dob_error_missing_month },
+            'number.base': { ref: '#date-of-birth-month', text: mssgs.dob_error_non_numeric },
+            'number.integer': { ref: '#date-of-birth-month', text: mssgs.dob_error_date_real },
+            'number.min': { ref: '#date-of-birth-month', text: mssgs.dob_error_date_real },
+            'number.max': { ref: '#date-of-birth-month', text: mssgs.dob_error_date_real }
+        },
+        'year': {
+            'any.required': { ref: '#date-of-birth-year', text: mssgs.dob_error_missing_year },
+            'number.base': { ref: '#date-of-birth-year', text: mssgs.dob_error_non_numeric },
+            'number.integer': { ref: '#date-of-birth-year', text: mssgs.dob_error_date_real },
+            'number.min': { ref: '#date-of-birth-year', text: mssgs.dob_error_year_min },
+            'number.max': { ref: '#date-of-birth-year', text: mssgs.dob_error_year_max }
+        },
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: mssgs.dob_error_format },
-            'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_max },
-            'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_format_min }
+            'date.real': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
         }
     }
 %}

@@ -5,13 +5,34 @@ import { validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 
+const MAX_AGE = 120
+
 export const validator = payload => {
-  const dateOfBirth = `${payload['date-of-birth-year']}-${payload['date-of-birth-month']}-${payload['date-of-birth-day']}`
+  const maxYear = new Date().getFullYear()
+  const minYear = maxYear - MAX_AGE
+
+  const day = payload['date-of-birth-day'] || undefined
+  const month = payload['date-of-birth-month'] || undefined
+  const year = payload['date-of-birth-year'] || undefined
+  const dateOfBirth = {
+    day: parseInt(payload['date-of-birth-day']),
+    month: parseInt(payload['date-of-birth-month']),
+    year: parseInt(payload['date-of-birth-year'])
+  }
+
   Joi.assert(
-    { 'date-of-birth': dateOfBirth },
+    {
+      day,
+      month,
+      year,
+      'date-of-birth': dateOfBirth
+    },
     Joi.object({
-      'date-of-birth': validation.contact.createBirthDateValidator(Joi)
-    })
+      day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+      month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
+      year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear)),
+      'date-of-birth': validation.date.createRealDateValidator(Joi)
+    }).options({ abortEarly: false })
   )
 }
 
