@@ -78,6 +78,12 @@ const createDateStringValidator = joi =>
     }
   })
 
+const allowedUnicodeBlocks = '\\u0000-\\u024F'
+const forbiddenCharsRegex = new RegExp(`[^${allowedUnicodeBlocks}\\s'’()-]`, 'gu')
+const forbiddenEmailRegex = new RegExp(`[^A-Za-z0-9\\s'’@._${allowedUnicodeBlocks}]`, 'gu')
+const forbiddenCharsNumbersRegex = new RegExp(`[^A-Za-z0-9\\s${allowedUnicodeBlocks}]`, 'gu')
+const forbiddenMobileRegex = /[^+()0-9\-.\s]+/g
+
 /**
  * Create a validator to check a contact's birth date
  *
@@ -92,7 +98,8 @@ export const createBirthDateValidator = joi => createDateStringValidator(joi).tr
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createEmailValidator = joi => joi.string().trim().email().max(100).lowercase().example('person@example.com')
+export const createEmailValidator = joi =>
+  checkCopyPasteValidator(joi, forbiddenEmailRegex).string().allowable().trim().email().max(100).lowercase().example('person@example.com')
 
 export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
 /**
@@ -101,7 +108,10 @@ export const mobilePhoneRegex = /^[+]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createMobilePhoneValidator = joi => joi.string().trim().pattern(mobilePhoneRegex).example('+44 7700 900088')
+export const createMobilePhoneValidator = joi =>
+  checkCopyPasteValidator(joi, forbiddenMobileRegex).string().allowable().trim().pattern(mobilePhoneRegex).example('person@example.com')
+
+const maxPremises = 50
 
 /**
  * Create a validator to check a contact's address premises
@@ -109,7 +119,16 @@ export const createMobilePhoneValidator = joi => joi.string().trim().pattern(mob
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createPremisesValidator = joi => joi.string().trim().min(1).max(50).external(toTitleCase()).required().example('Example House')
+export const createPremisesValidator = joi =>
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
+    .string()
+    .allowable()
+    .trim()
+    .min(1)
+    .max(maxPremises)
+    .external(toTitleCase())
+    .required()
+    .example('Example House')
 
 /**
  * Create a validator to check a contact's address street
@@ -117,7 +136,15 @@ export const createPremisesValidator = joi => joi.string().trim().min(1).max(50)
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createStreetValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Example Street')
+export const createStreetValidator = joi =>
+  checkCopyPasteValidator(joi, forbiddenCharsRegex)
+    .string()
+    .allowable()
+    .trim()
+    .max(100)
+    .external(toTitleCase())
+    .empty('')
+    .example('Example Street')
 
 /**
  * Create a validator to check a contact's address locality
@@ -125,7 +152,15 @@ export const createStreetValidator = joi => joi.string().trim().max(100).externa
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createLocalityValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Near Sample')
+export const createLocalityValidator = joi =>
+  checkCopyPasteValidator(joi, forbiddenCharsRegex)
+    .string()
+    .allowable()
+    .trim()
+    .max(100)
+    .external(toTitleCase())
+    .empty('')
+    .example('Near Sample')
 
 /**
  * Create a validator to check a contact's address town
@@ -134,8 +169,9 @@ export const createLocalityValidator = joi => joi.string().trim().max(100).exter
  * @returns {Joi.StringSchema}
  */
 export const createTownValidator = joi =>
-  joi
+  checkCopyPasteValidator(joi, forbiddenCharsRegex)
     .string()
+    .allowable()
     .trim()
     .max(100)
     .external(toTitleCase(['under', 'upon', 'in', 'on', 'cum', 'next', 'the', 'en', 'le', 'super']))
@@ -144,6 +180,7 @@ export const createTownValidator = joi =>
 
 export const ukPostcodeRegex = /^([A-PR-UWYZ][0-9]{1,2}[A-HJKPSTUW]?|[A-PR-UWYZ][A-HK-Y][0-9]{1,2}[ABEHMNPRVWXY]?)\s{0,6}([0-9][A-Z]{2})$/i
 export const overseasPostcodeRegex = /^([a-zA-Z0-9 ]{1,12})$/i
+const maxPostcode = 12
 
 /**
  * Create a validator to check a contact's postcode
@@ -154,7 +191,17 @@ export const overseasPostcodeRegex = /^([a-zA-Z0-9 ]{1,12})$/i
  * @returns {Joi.StringSchema}
  */
 export const createUKPostcodeValidator = joi =>
-  joi.string().trim().min(1).max(12).required().pattern(ukPostcodeRegex).replace(ukPostcodeRegex, '$1 $2').uppercase().example('AB12 3CD')
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
+    .string()
+    .allowable()
+    .trim()
+    .min(1)
+    .max(maxPostcode)
+    .required()
+    .pattern(ukPostcodeRegex)
+    .replace(ukPostcodeRegex, '$1 $2')
+    .uppercase()
+    .example('AB12 3CD')
 
 /**
  * Create a validator to check/format overseas postcodes
@@ -162,7 +209,15 @@ export const createUKPostcodeValidator = joi =>
  * @returns {Joi.StringSchema}
  */
 export const createOverseasPostcodeValidator = joi =>
-  joi.string().trim().min(1).max(12).uppercase().required().pattern(overseasPostcodeRegex)
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
+    .string()
+    .allowable()
+    .trim()
+    .min(1)
+    .max(maxPostcode)
+    .uppercase()
+    .required()
+    .pattern(overseasPostcodeRegex)
 
 const nameStringSubstitutions = [
   /*
@@ -251,7 +306,7 @@ const createNameStringValidator = (joi, { minimumLength }) =>
             return helpers.error('string.min')
           }
           value = standardiseName(value)
-          if (!nameStringRegex.test(value)) {
+          if (!nameStringRegex.test(value) || forbiddenCharsRegex.test(value)) {
             return helpers.error('string.forbidden')
           }
           return value
@@ -302,8 +357,9 @@ const ukNINORegEx =
   /^([ABCEGHJ-PRSTW-Z][ABCEGHJ-NPRSTW-Z])(?<!(?:BG|GB|KN|NK|NT|TN|ZZ))\s?([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([0-9]{2})\s{0,3}([ABCD])$/
 
 export const createNationalInsuranceNumberValidator = joi =>
-  joi
+  checkCopyPasteValidator(joi, forbiddenCharsNumbersRegex)
     .string()
+    .allowable()
     .trim()
     .uppercase()
     .pattern(ukNINORegEx)
@@ -311,3 +367,22 @@ export const createNationalInsuranceNumberValidator = joi =>
     .required()
     .description('A UK national insurance number')
     .example('NH 12 34 56 A')
+
+const checkCopyPasteValidator = (joi, forbiddenRegex) =>
+  joi.extend({
+    type: 'string',
+    base: joi.string(),
+    rules: {
+      allowable: {
+        validate (value, helpers) {
+          if (forbiddenRegex.test(value)) {
+            return helpers.error('string.forbidden')
+          }
+          return value
+        }
+      }
+    },
+    messages: {
+      'string.forbidden': '{{#label}} contains forbidden characters'
+    }
+  })
