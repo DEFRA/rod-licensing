@@ -6,6 +6,22 @@
 {% block pageTitle %}{{ title }}{{ mssgs.header_service_name_title }}{{ mssgs.gov_uk }}{% endblock %}
 
 {% block content %}
+
+{% if showNotification %}
+  <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+    <div class="govuk-notification-banner__header">
+      <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+        {{ mssgs.cookies_analytics_notification_heading }}
+      </h2>
+    </div>
+    <div class="govuk-notification-banner__content">
+      <p class="govuk-notification-banner__heading">
+        {{ mssgs.cookies_analytics_notification_paragraph }}<a class="govuk-notification-banner__link" href="{{ uri.back }}">{{ mssgs.cookies_analytics_notification_link }}</a> {{ mssgs.full_stop }}
+      </p>
+    </div>
+  </div>
+{% endif %}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
@@ -92,6 +108,42 @@
         }) }}
 
         <p class="govuk-body">{{ mssgs.cookies_analytics_body_6 }} <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://support.google.com/analytics/answer/6004245">{{ mssgs.cookies_analytics_link }}</a> {{ mssgs.full_stop }}</p>
+
+        <p class="govuk-heading-s">{{ mssgs.cookies_analytics_radio_heading }}</p>
+
+        <form method="post" novalidate action='{{ uri.cookies }}'>
+          {{ govukRadios({
+            name: "analyticsResponse",
+            fieldset: {
+              legend: {
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--l"
+              }
+            },
+            items: [
+              {
+                value: 'accept',
+                text: mssgs.yes,
+                checked: analyticsResponse === 'accept'
+              },
+              {
+                value: 'reject',
+                text: mssgs.no,
+                checked: analyticsResponse === 'reject'
+              }
+            ]
+          }) }}
+
+          {{ govukButton({
+              attributes: { id: 'save-changes' },
+              preventDoubleClick: true,
+              name: "save-changes",
+              text: mssgs.save_changes,
+              classes: "govuk-!-margin-top-5"
+          }) }}
+
+          {{ csrf() }}
+        </form>
 
         <h2 class="govuk-heading-m">{{ mssgs.cookies_survey_subheading }}</h2>
 
