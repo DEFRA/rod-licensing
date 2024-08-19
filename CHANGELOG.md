@@ -1,4 +1,15 @@
 
+## v1.49.0-rc.4 (2024-08-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2020](https://github.com/DEFRA/rod-licensing/pull/2020) Cookies page functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+* `business-rules-lib`
+  * [#1995](https://github.com/DEFRA/rod-licensing/pull/1995) Copy and paste into input fields ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.49.0-rc.3 (2024-08-16)
 
 #### :bug: Bug Fix
