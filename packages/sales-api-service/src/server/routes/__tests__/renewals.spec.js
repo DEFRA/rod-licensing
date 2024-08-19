@@ -16,6 +16,7 @@ jest.mock('../../../services/renewals/renewals.service.js', () => ({
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
+  concessionsByIds: jest.fn(),
   permissionForFullReferenceNumber: jest.fn(),
   executeQuery: jest.fn()
 }))
@@ -32,8 +33,16 @@ const permissionForFullReferenceNumberMock = () => ({
   entity: MOCK_EXISTING_PERMISSION_ENTITY,
   expanded: {
     licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-    concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
+    concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY }],
     permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
+  }
+})
+
+const concessionMock = () => ({
+  expanded: {
+    concession: {
+      entity: MOCK_CONCESSION
+    }
   }
 })
 
@@ -42,6 +51,7 @@ describe('permissionRenewalData', () => {
 
   it('should call permissionForFullReferenceNumber with referenceNumber', async () => {
     executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+    executeQuery.mockResolvedValueOnce([concessionMock()])
 
     const referenceNumber = 'REFERENCE123'
     const request = getMockRequest(referenceNumber)
@@ -53,22 +63,27 @@ describe('permissionRenewalData', () => {
   })
 
   it('should call preparePermissionDataForRenewal with the expected data', async () => {
+    executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+    executeQuery.mockResolvedValueOnce([concessionMock()])
+
+    await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
+
+    expect(preparePermissionDataForRenewal).toMatchSnapshot()
+  })
+
+  it('should set concessions to an empty array if concessions is empty', async () => {
     const permissionMock = permissionForFullReferenceNumberMock()
+    permissionMock.expanded.concessionProofs = []
     executeQuery.mockResolvedValueOnce([permissionMock])
 
     await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
 
-    const expectedData = {
-      ...permissionMock.entity.toJSON(),
-      licensee: permissionMock.expanded.licensee.entity.toJSON(),
-      concessions: permissionMock.expanded.concessionProofs[0].expanded.concession.entity.toJSON(),
-      permit: permissionMock.expanded.permit.entity.toJSON()
-    }
-    expect(preparePermissionDataForRenewal).toHaveBeenCalledWith(expectedData)
+    expect(preparePermissionDataForRenewal.mock.calls[0][0].concessions).toEqual([])
   })
 
   it('should return continue response', async () => {
     executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+    executeQuery.mockResolvedValueOnce([concessionMock()])
     const request = getMockRequest({})
     const responseToolkit = getMockResponseToolkit()
 
