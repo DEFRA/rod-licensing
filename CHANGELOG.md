@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.6 (2024-08-20)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#1983](https://github.com/DEFRA/rod-licensing/pull/1983) Recurring payment job concessions ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.49.0-rc.4 (2024-08-19)
 
