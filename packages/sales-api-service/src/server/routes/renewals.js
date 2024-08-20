@@ -2,7 +2,7 @@ import Boom from '@hapi/boom'
 import { preparePermissionDataForRenewal } from '../../services/renewals/renewals.service.js'
 import { permissionRenewalDataRequestParamsSchema, permissionRenewalDataResponseSchema } from '../../schema/renewals.schema.js'
 import db from 'debug'
-import { permissionForFullReferenceNumber, executeQuery } from '@defra-fish/dynamics-lib'
+import { concessionsByIds, permissionForFullReferenceNumber, executeQuery } from '@defra-fish/dynamics-lib'
 const debug = db('sales:permission-renewal-data')
 
 const executeWithErrorLog = async query => {
@@ -14,6 +14,14 @@ const executeWithErrorLog = async query => {
   }
 }
 
+const getConcessions = async permission => {
+  if (permission.expanded.concessionProofs.length) {
+    const concessionProofs = await executeWithErrorLog(concessionsByIds(permission.expanded.concessionProofs.map(cp => cp.entity.id)))
+    return concessionProofs.map(cp => cp.expanded.concession.entity.toJSON())
+  }
+  return []
+}
+
 export default [
   {
     method: 'GET',
@@ -23,11 +31,12 @@ export default [
         const results = await executeWithErrorLog(permissionForFullReferenceNumber(request.params.referenceNumber))
 
         if (results.length === 1) {
-          const permissionData = preparePermissionDataForRenewal({
-            ...results[0].entity.toJSON(),
-            licensee: results[0].expanded.licensee.entity.toJSON(),
-            concessions: [],
-            permit: results[0].expanded.permit.entity.toJSON()
+          const [permission] = results
+          const permissionData = await preparePermissionDataForRenewal({
+            ...permission.entity.toJSON(),
+            licensee: permission.expanded.licensee.entity.toJSON(),
+            concessions: await getConcessions(permission),
+            permit: permission.expanded.permit.entity.toJSON()
           })
           return h.response(permissionData)
         } else if (results.length === 0) {
