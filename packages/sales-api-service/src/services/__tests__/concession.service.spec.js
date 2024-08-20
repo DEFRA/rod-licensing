@@ -104,16 +104,22 @@ describe('preparePermissionDataForRenewal', () => {
 
       it('add blue badge to senior licence', async () => {
         const permission = getMockPermission()
-        permission.concessions = [getSeniorConcession()]
+        const seniorConcession = getSeniorConcession()
+        permission.concessions = [seniorConcession]
         await concessionService.addDisabled(permission, CONCESSION_PROOF.blueBadge, 'blue-badge-123')
-        expect(permission.concessions).toContainEqual(getDisabledBlueBadgeConcession())
+        expect(permission.concessions).toEqual(
+          expect.arrayContaining([expect.objectContaining(getDisabledBlueBadgeConcession()), expect.objectContaining(seniorConcession)])
+        )
       })
 
       it('add NI to senior licence', async () => {
         const permission = getMockPermission()
-        permission.concessions = [getSeniorConcession()]
+        const seniorConcession = getSeniorConcession()
+        permission.concessions = [seniorConcession]
         await concessionService.addDisabled(permission, CONCESSION_PROOF.NI, 'national-insurance-456')
-        expect(permission.concessions).toContainEqual(getDisabledNiConcession())
+        expect(permission.concessions).toEqual(
+          expect.arrayContaining([expect.objectContaining(getDisabledNiConcession()), expect.objectContaining(seniorConcession)])
+        )
       })
     })
 
