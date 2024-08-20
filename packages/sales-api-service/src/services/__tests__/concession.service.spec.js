@@ -124,18 +124,38 @@ describe('preparePermissionDataForRenewal', () => {
     })
 
     describe('removeDisabled', () => {
-      it('remove blue badge', async () => {
+      it.each([
+        ['blue badge', []],
+        ['blue badge and senior', [getSeniorConcession()]]
+      ])('remove disabled concession from array with %s concession(s)', async (_d, additionalConcessions) => {
         const permission = getMockPermission()
-        permission.concessions = [getDisabledBlueBadgeConcession()]
+        const disabledConcession = getDisabledBlueBadgeConcession()
+        permission.concessions = [disabledConcession, ...additionalConcessions]
         await concessionService.removeDisabled(permission)
-        expect(permission.concessions.length).toBe(0)
+        expect(permission.concessions).toEqual(expect.not.arrayContaining([expect.objectContaining(disabledConcession)]))
       })
 
-      it('remove NI', async () => {
+      it.each([
+        ['NI', []],
+        ['NI and senior', [getSeniorConcession()]]
+      ])('remove disabled concession from array with %s concession(s)', async (_d, additionalConcessions) => {
         const permission = getMockPermission()
-        permission.concessions = [getDisabledNiConcession()]
+        const disabledConcession = getDisabledNiConcession()
+        permission.concessions = [disabledConcession, ...additionalConcessions]
         await concessionService.removeDisabled(permission)
-        expect(permission.concessions.length).toBe(0)
+        expect(permission.concessions).toEqual(expect.not.arrayContaining([expect.objectContaining(disabledConcession)]))
+      })
+
+      it.each([
+        ['senior', 'blue badge', getSeniorConcession(), getDisabledBlueBadgeConcession()],
+        ['junior', 'blue badge', getJuniorConcession(), getDisabledBlueBadgeConcession()],
+        ['senior', 'NI', getSeniorConcession(), getDisabledNiConcession()],
+        ['junior', 'NI', getJuniorConcession(), getDisabledNiConcession()]
+      ])('leaves remaining %s concession when removing a disabled %s concession', async (_cd, _dcd, concession, disabledConcession) => {
+        const permission = getMockPermission()
+        permission.concessions = [disabledConcession, concession]
+        await concessionService.removeDisabled(permission)
+        expect(permission.concessions).toEqual(expect.arrayContaining([expect.objectContaining(concession)]))
       })
     })
 
