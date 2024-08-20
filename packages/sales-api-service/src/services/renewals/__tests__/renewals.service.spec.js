@@ -52,8 +52,7 @@ describe('preparePermissionDataForRenewal', () => {
       },
       shortTermPreferredMethodOfConfirmation: {
         label: 'Text'
-      },
-      noLicenceRequired: true
+      }
     },
     permit: {
       id: '123456',
@@ -155,8 +154,10 @@ describe('preparePermissionDataForRenewal', () => {
     })
 
     it('should remove noLicenceRequired from licensee', async () => {
-      const permission = await preparePermissionDataForRenewal(existingPermission())
-      expect(permission.licensee.noLicenceRequired).toBeUndefined()
+      const permission = existingPermission()
+      permission.licensee.noLicenceRequired = true
+      const preparedPermission = await preparePermissionDataForRenewal(existingPermission())
+      expect(preparedPermission.licensee.noLicenceRequired).toBeUndefined()
     })
   })
 
