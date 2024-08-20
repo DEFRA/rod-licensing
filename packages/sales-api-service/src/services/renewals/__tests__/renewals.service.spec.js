@@ -148,7 +148,7 @@ describe('preparePermissionDataForRenewal', () => {
       expect(ppd.concessions[0]).toEqual(senior)
     })
 
-    it('should remove senior concession if the licensee is not senior', async () => {
+    it("doesn't add senior concession if the licensee is not senior", async () => {
       const permission = await preparePermissionDataForRenewal(existingPermission())
       expect(permission.concessions).toEqual([])
     })
