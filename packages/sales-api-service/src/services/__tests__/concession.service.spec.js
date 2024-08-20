@@ -245,16 +245,19 @@ describe('preparePermissionDataForRenewal', () => {
     })
 
     describe('hasSenior', () => {
-      it('is true if licensee has senior concession', async () => {
+      it.each(['senior'])('is true if licensee has senior concession', async () => {
         const permission = getMockPermission()
         permission.concessions = [getSeniorConcession()]
         const isSenior = await concessionService.hasSenior(permission)
         expect(isSenior).toBe(true)
       })
 
-      it("is false if licensee doesn't have senior concession", async () => {
+      it.each([
+        ['empty array', []],
+        ['array with disabled concession', [getDisabledBlueBadgeConcession()]]
+      ])("is false if licensee doesn't have senior concession in %s", async (_d, concessions) => {
         const permission = getMockPermission()
-        permission.concessions = []
+        permission.concessions = concessions
         const isSenior = await concessionService.hasSenior(permission)
         expect(isSenior).toBe(false)
       })
@@ -298,11 +301,14 @@ describe('preparePermissionDataForRenewal', () => {
         expect(result).toBe(true)
       })
 
-      it('returns false if are not junior', async () => {
+      it.each([
+        ['empty array', []],
+        ['array with disabled concession', [getDisabledBlueBadgeConcession()]]
+      ])("is false if licensee doesn't have junior concession in %s", async (_d, concessions) => {
         const permission = getMockPermission()
-        permission.concessions = []
-        const result = await concessionService.hasJunior(permission)
-        expect(result).toBe(false)
+        permission.concessions = concessions
+        const isJunior = await concessionService.hasJunior(permission)
+        expect(isJunior).toBe(false)
       })
     })
   })
