@@ -31,7 +31,16 @@ export const validator = payload => {
       day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
       month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
       year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear)),
-      'date-of-birth': validation.date.createRealDateValidator(Joi)
+      'date-of-birth': Joi.when(
+        Joi.object({
+          day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+          month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
+          year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+        }).unknown(),
+        {
+          then: validation.date.createRealDateValidator(Joi)
+        }
+      )
     }).options({ abortEarly: false })
   )
 }

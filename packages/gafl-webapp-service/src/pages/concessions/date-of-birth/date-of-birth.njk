@@ -47,14 +47,14 @@
     {
       label: mssgs.dob_month,
       name: 'month',
-      classes: "govuk-input--width-2 govuk-input--error" if error['month'] or error['date-of-birth'] else "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if error['month'] else "govuk-input--width-2",
       value: payload['date-of-birth-month'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_year,
       name: 'year',
-      classes: "govuk-input--width-4 govuk-input--error" if error['year'] or error['date-of-birth'] else "govuk-input--width-4",
+      classes: "govuk-input--width-4 govuk-input--error" if error['year'] else "govuk-input--width-4",
       value: payload['date-of-birth-year'],
       attributes: { maxlength : 4 }
     }
