@@ -27,7 +27,10 @@
             'any.required': { ref: '#date-of-birth-year', text: mssgs.dob_error_missing_year },
             'number.base': { ref: '#date-of-birth-year', text: mssgs.dob_error_non_numeric },
             'number.integer': { ref: '#date-of-birth-year', text: mssgs.dob_error_date_real },
-            'number.min': { ref: '#date-of-birth-year', text: mssgs.dob_error_year_min },
+            'number.min': {
+              ref: '#date-of-birth-year',
+              text: mssgs.dob_error_year_min_you if data.isLicenceForYou else mssgs.dob_error_year_min_other
+            },
             'number.max': { ref: '#date-of-birth-year', text: mssgs.dob_error_year_max }
         },
         'date-of-birth': {
