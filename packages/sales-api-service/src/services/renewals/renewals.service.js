@@ -17,7 +17,7 @@ export const preparePermissionDataForRenewal = async existingPermission => {
     ...prepareBasePermissionData(existingPermission),
     ...dateData,
     licensee: prepareLicenseeData(existingPermission),
-    concessions: concessions.concessions,
+    concessions,
     permitId: await preparePermit(existingPermission)
   }
 }
@@ -105,5 +105,5 @@ const prepareConcessionsData = async (existingPermission, dateData) => {
     await addSenior(existingPermission)
   }
 
-  return existingPermission
+  return existingPermission.concessions
 }
