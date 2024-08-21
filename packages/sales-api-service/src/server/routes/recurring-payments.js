@@ -19,7 +19,7 @@ export default [
         return h.response(value).code(200)
       },
       description: 'Retrieve recurring payments due on provided date',
-      notes: 'This endpoint returns the list of recurring payments that are due on the provided date.',
+      notes: 'This returns the list of recurring payments that are due on the provided date.',
       tags: ['api', 'recurring-payments'],
       validate: {
         params: recurringPaymentsRequestParamsSchema
