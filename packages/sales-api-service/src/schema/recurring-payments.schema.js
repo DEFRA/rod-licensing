@@ -12,6 +12,4 @@ const recurringPaymentSchema = Joi.object({
   status: Joi.string().valid('pending', 'paid', 'failed').required().description('The status of the payment')
 }).label('recurring-payment')
 
-export const recurringPaymentsResponseSchema = Joi.array()
-  .items(recurringPaymentSchema)
-  .label('recurring-payments-response')
+export const recurringPaymentsResponseSchema = Joi.array().items(recurringPaymentSchema).label('recurring-payments-response')

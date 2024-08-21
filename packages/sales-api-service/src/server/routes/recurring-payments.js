@@ -1,8 +1,5 @@
 import { getRecurringPayments } from '../../services/recurring-payments.service.js'
-import {
-  recurringPaymentsRequestParamsSchema,
-  recurringPaymentsResponseSchema
-} from '../../schema/recurring-payments-schema.js'
+import { recurringPaymentsRequestParamsSchema, recurringPaymentsResponseSchema } from '../../schema/recurring-payments-schema.js'
 import Joi from 'joi'
 
 export default [
@@ -13,7 +10,7 @@ export default [
       handler: async (request, h) => {
         const { date } = request.params
         const result = await getRecurringPayments(date)
-        
+
         const { error, value } = recurringPaymentsResponseSchema.validate(result)
         if (error) {
           throw new Joi.ValidationError('Response validation failed', error.details, value)
