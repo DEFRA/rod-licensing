@@ -92,7 +92,9 @@ export const checkAnalyticsCookiesPage = async request => {
         [ANALYTICS.acceptTracking]: true,
         [ANALYTICS.seenMessage]: true
       })
-    } else if (payload.analyticsResponse === 'reject') {
+    }
+
+    if (payload.analyticsResponse === 'reject') {
       await request.cache().helpers.analytics.set({
         [ANALYTICS.selected]: true,
         [ANALYTICS.acceptTracking]: false,
