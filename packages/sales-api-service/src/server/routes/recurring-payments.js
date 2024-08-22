@@ -18,7 +18,7 @@ export default [
       validate: {
         params: recurringPaymentsSchema
       },
-      plugins : {
+      plugins: {
         'hapi-swagger': {
           responses: {
             200: { description: 'Recurring payments due retrieved successfully', schema: recurringPaymentsSchema },
