@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.7 (2024-08-22)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2024](https://github.com/DEFRA/rod-licensing/pull/2024) RCP Job Fails Locally ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.49.0-rc.6 (2024-08-20)
 
 #### :rocket: Enhancement
