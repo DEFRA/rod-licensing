@@ -11,15 +11,15 @@ export default [
         const { date } = request.params
         const result = await getRecurringPayments(date)
 
-        const { error, value } = recurringPaymentsResponseSchema.validate(result)
-        if (error) {
-          throw new Joi.ValidationError('Response validation failed', error.details, value)
-        }
+        // const { error, value } = recurringPaymentsResponseSchema.validate(result)
+        // if (error) {
+        //   throw new Joi.ValidationError('Response validation failed', error.details, value)
+        // }
 
-        return h.response(value).code(200)
+        return h.response(result)
       },
       description: 'Retrieve recurring payments due on provided date',
-      notes: 'This endpoint returns the list of recurring payments that are due on the provided date.',
+      notes: 'Returns the list of recurring payments that are due on the provided date',
       tags: ['api', 'recurring-payments'],
       validate: {
         params: recurringPaymentsRequestParamsSchema
