@@ -1,34 +1,37 @@
 import moment from 'moment-timezone'
 import { SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { salesApi, airbrake } from '@defra-fish/connectors-lib'
+import db from 'debug'
+const debug = db('recurring-payments')
 
 export const processRecurringPayments = async () => {
+  airbrake.initialise()
   if (process.env.RUN_RECURRING_PAYMENTS?.toLowerCase() === 'true') {
-    console.log('Recurring Payments job enabled')
+    debug('Recurring Payments job enabled')
     const date = new Date().toISOString().split('T')[0]
     const response = await salesApi.getDueRecurringPayments(date)
-    console.log('Recurring Payments found: ', response)
+    debug('Recurring Payments found: ', response)
     // await Promise.all(response.map(record => processRecurringPayment(record)))
   } else {
-    console.log('Recurring Payments job disabled')
+    debug('Recurring Payments job disabled')
   }
 }
 
 const processRecurringPayment = async record => {
   const referenceNumber = record.expanded.activePermission.entity.referenceNumber
   const transactionData = await processPermissionData(referenceNumber)
-  console.log('Creating new transaction based on', referenceNumber)
+  debug('Creating new transaction based on', referenceNumber)
   try {
     const response = await salesApi.createTransaction(transactionData)
-    console.log('New transaction created:', response)
+    debug('New transaction created:', response)
   } catch (e) {
-    console.log('Error creating transaction', JSON.stringify(transactionData))
+    debug('Error creating transaction', JSON.stringify(transactionData))
     throw e
   }
 }
 
 const processPermissionData = async referenceNumber => {
-  console.log('Preparing data based on', referenceNumber)
+  debug('Preparing data based on', referenceNumber)
   const data = await salesApi.preparePermissionDataForRenewal(referenceNumber)
   const licenseeWithoutCountryCode = Object.assign((({ countryCode: _countryCode, ...l }) => l)(data.licensee))
   return {
@@ -56,3 +59,11 @@ const prepareStartDate = permission => {
     .utc()
     .toISOString()
 }
+
+const shutdown = async code => {
+  await airbrake.flush()
+  process.exit(code)
+}
+
+process.on('SIGINT', () => shutdown(130))
+process.on('SIGTERM', () => shutdown(137))
