@@ -22,7 +22,8 @@ export default [
         'hapi-swagger': {
           responses: {
             200: { description: 'List of due recurring payments', schema: recurringPaymentsResponseSchema },
-            400: { description: 'Invalid date format' }
+            400: { description: 'Invalid date format' },
+            401: { description: 'Unable to retrieve due recurring payments' }
           },
           order: 1
         }
