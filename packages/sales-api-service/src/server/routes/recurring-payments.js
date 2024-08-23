@@ -1,5 +1,5 @@
 import { getRecurringPayments } from '../../services/recurring-payments.service.js'
-import { recurringPaymentsResponseSchema } from '../../schema/recurring-payments-schema.js'
+import { recurringPaymentsResponseSchema } from '../../schema/recurring-payments.schema.js'
 
 export default [
   {
