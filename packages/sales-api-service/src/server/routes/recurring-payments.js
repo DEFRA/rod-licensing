@@ -1,6 +1,5 @@
 import { getRecurringPayments } from '../../services/recurring-payments.service.js'
-import { recurringPaymentsRequestParamsSchema, recurringPaymentsResponseSchema } from '../../schema/recurring-payments-schema.js'
-import Joi from 'joi'
+import { recurringPaymentsResponseSchema } from '../../schema/recurring-payments-schema.js'
 
 export default [
   {
@@ -11,18 +10,13 @@ export default [
         const { date } = request.params
         const result = await getRecurringPayments(date)
 
-        // const { error, value } = recurringPaymentsResponseSchema.validate(result)
-        // if (error) {
-        //   throw new Joi.ValidationError('Response validation failed', error.details, value)
-        // }
-
         return h.response(result)
       },
       description: 'Retrieve recurring payments due on provided date',
       notes: 'Returns the list of recurring payments that are due on the provided date',
       tags: ['api', 'recurring-payments'],
       validate: {
-        params: recurringPaymentsRequestParamsSchema
+        params: recurringPaymentsResponseSchema
       },
       plugins: {
         'hapi-swagger': {
@@ -30,7 +24,7 @@ export default [
             200: { description: 'List of due recurring payments', schema: recurringPaymentsResponseSchema },
             400: { description: 'Invalid date format' }
           },
-          order: 2
+          order: 1
         }
       }
     }
