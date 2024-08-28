@@ -359,7 +359,6 @@ const checkCopyPasteValidator = (joi, forbiddenRegex) =>
     rules: {
       allowable: {
         validate (value, helpers) {
-          console.log('value: ', value)
           if (forbiddenRegex.test(value)) {
             return helpers.error('string.forbidden')
           }
