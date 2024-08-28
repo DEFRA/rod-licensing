@@ -79,9 +79,9 @@ const createDateStringValidator = joi =>
   })
 
 const allowedUnicodeBlocks = '\\u0000-\\u024F'
-const forbiddenCharsRegex = new RegExp(`[^${allowedUnicodeBlocks}\\s'’()-]`, 'gu')
-const forbiddenEmailRegex = new RegExp(`[^A-Za-z0-9\\s'’@._${allowedUnicodeBlocks}]`, 'gu')
-const forbiddenCharsNumbersRegex = new RegExp(`[^A-Za-z0-9\\s${allowedUnicodeBlocks}]`, 'gu')
+const forbiddenCharsRegex = new RegExp(`[^${allowedUnicodeBlocks}\\s'’()-]`, 'u')
+const forbiddenEmailRegex = new RegExp(`[^A-Za-z0-9\\s'’@._${allowedUnicodeBlocks}]`, 'u')
+const forbiddenCharsNumbersRegex = new RegExp(`[^A-Za-z0-9\\s${allowedUnicodeBlocks}]`, 'u')
 const forbiddenMobileRegex = /[^+()0-9\-.\s]+/g
 
 /**
@@ -136,15 +136,7 @@ export const createPremisesValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createStreetValidator = joi =>
-  checkCopyPasteValidator(joi, forbiddenCharsRegex)
-    .string()
-    .allowable()
-    .trim()
-    .max(100)
-    .external(toTitleCase())
-    .empty('')
-    .example('Example Street')
+export const createStreetValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Example Street')
 
 /**
  * Create a validator to check a contact's address locality
@@ -152,15 +144,7 @@ export const createStreetValidator = joi =>
  * @param {Joi.Root} joi the joi validator used by the consuming project
  * @returns {Joi.StringSchema}
  */
-export const createLocalityValidator = joi =>
-  checkCopyPasteValidator(joi, forbiddenCharsRegex)
-    .string()
-    .allowable()
-    .trim()
-    .max(100)
-    .external(toTitleCase())
-    .empty('')
-    .example('Near Sample')
+export const createLocalityValidator = joi => joi.string().trim().max(100).external(toTitleCase()).empty('').example('Near Sample')
 
 /**
  * Create a validator to check a contact's address town
@@ -375,6 +359,7 @@ const checkCopyPasteValidator = (joi, forbiddenRegex) =>
     rules: {
       allowable: {
         validate (value, helpers) {
+          console.log('value: ', value)
           if (forbiddenRegex.test(value)) {
             return helpers.error('string.forbidden')
           }
