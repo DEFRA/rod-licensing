@@ -9,12 +9,12 @@ export const licenceTypeDisplay = (permission, mssgs) => {
     typesStrArr.push(mssgs.age_junior)
   }
   if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
-    typesStrArr.push(mssgs.licence_type_radio_salmon)
+    typesStrArr.push(mssgs.licence_type_radio_salmon_payment_summary)
   } else if (permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse']) {
     if (permission.numberOfRods === '2') {
-      typesStrArr.push(mssgs.licence_type_radio_trout_two_rod)
+      typesStrArr.push(mssgs.licence_type_radio_trout_two_rod_payment_summary)
     } else {
-      typesStrArr.push(mssgs.licence_type_radio_trout_three_rod)
+      typesStrArr.push(mssgs.licence_type_radio_trout_three_rod_payment_summary)
     }
   }
 
@@ -27,17 +27,17 @@ export const licenceTypeDisplay = (permission, mssgs) => {
 
 export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
   const licenceTypeMessage = getLicenceTypeMessage(permission.licenceLength, mssgs)
-  return `${licenceTypeDisplay(permission, mssgs)}, ${licenceTypeMessage}`
+  return `${licenceTypeMessage} ${licenceTypeDisplay(permission, mssgs)}`
 }
 
 const getLicenceTypeMessage = (licenceLength, mssgs) => {
   const length = typeof licenceLength === 'symbol' ? licenceLength.description : licenceLength
   if (length === '12M') {
-    return mssgs.licence_type_12m
+    return mssgs.new_prices_row_12_month
   } else if (length === '8D') {
-    return mssgs.licence_type_8d
+    return mssgs.new_prices_row_8_day
   } else {
-    return mssgs.licence_type_1d
+    return mssgs.new_prices_row_1_day
   }
 }
 
