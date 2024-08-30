@@ -61,6 +61,18 @@ describe('permissionRenewalData', () => {
     expect(preparePermissionDataForRenewal).toMatchSnapshot()
   })
 
+  it("omits concession proof reference number if it's not present", async () => {
+    const sampleData = permissionForFullReferenceNumberMock()
+    sampleData.expanded.concessionProofs[0].entity = {
+      type: { label: 'No Proof' }
+    }
+    executeQuery.mockResolvedValueOnce([sampleData])
+
+    await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
+
+    expect(preparePermissionDataForRenewal.mock.calls[0][0].concessions[0].proof.referenceNumber).toBeUndefined()
+  })
+
   it('should set concessions to an empty array if concessions is empty', async () => {
     const permissionMock = permissionForFullReferenceNumberMock()
     permissionMock.expanded.concessionProofs = []

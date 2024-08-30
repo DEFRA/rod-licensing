@@ -16,6 +16,7 @@ const executeWithErrorLog = async query => {
 
 const getConcessions = async permission => {
   if (permission.expanded.concessionProofs.length) {
+    console.log('permission.expanded.concessionProofs', permission.expanded.concessionProofs)
     return permission.expanded.concessionProofs.map(cp => ({
       ...cp.expanded.concession.entity.toJSON(),
       proof: {
