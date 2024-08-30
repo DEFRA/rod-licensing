@@ -33,16 +33,8 @@ const permissionForFullReferenceNumberMock = () => ({
   entity: MOCK_EXISTING_PERMISSION_ENTITY,
   expanded: {
     licensee: { entity: MOCK_EXISTING_CONTACT_ENTITY, expanded: {} },
-    concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY }],
+    concessionProofs: [{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }],
     permit: { entity: MOCK_1DAY_SENIOR_PERMIT_ENTITY, expanded: {} }
-  }
-})
-
-const concessionMock = () => ({
-  expanded: {
-    concession: {
-      entity: MOCK_CONCESSION
-    }
   }
 })
 
@@ -51,7 +43,6 @@ describe('permissionRenewalData', () => {
 
   it('should call permissionForFullReferenceNumber with referenceNumber', async () => {
     executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
-    executeQuery.mockResolvedValueOnce([concessionMock()])
 
     const referenceNumber = 'REFERENCE123'
     const request = getMockRequest(referenceNumber)
@@ -64,7 +55,6 @@ describe('permissionRenewalData', () => {
 
   it('should call preparePermissionDataForRenewal with the expected data', async () => {
     executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
-    executeQuery.mockResolvedValueOnce([concessionMock()])
 
     await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
 
@@ -83,7 +73,6 @@ describe('permissionRenewalData', () => {
 
   it('should return continue response', async () => {
     executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
-    executeQuery.mockResolvedValueOnce([concessionMock()])
     const request = getMockRequest({})
     const responseToolkit = getMockResponseToolkit()
 
