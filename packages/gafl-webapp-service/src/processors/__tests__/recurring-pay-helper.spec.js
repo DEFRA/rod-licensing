@@ -29,13 +29,13 @@ describe('recurringPayReminderDisplay', () => {
 
 describe('validForRecurringPayment', () => {
   test.each`
-    expected  | length   | licenceFor | recurring | telesales           | birthDate
-    ${true}   | ${'12M'} | ${true}    | ${true}   | ${'not telesales'}  | ${'1946-01-01'}
-    ${false}  | ${'8D'}  | ${true}    | ${true}   | ${'not telesales'}  | ${'1946-01-01'}
-    ${false}  | ${'12M'} | ${false}   | ${true}   | ${'not telesales'}  | ${'1946-01-01'}
-    ${false}  | ${'12M'} | ${true}    | ${false}  | ${'not telesales'}  | ${'1946-01-01'}
-    ${false}  | ${'12M'} | ${true}    | ${true}   | ${'telesales'}      | ${'1946-01-01'}
-    ${false}  | ${'12M'} | ${true}    | ${true}   | ${'not telesales'}  | ${'2010-01-01'}
+    expected | length   | licenceFor | recurring | telesales          | birthDate
+    ${true}  | ${'12M'} | ${true}    | ${true}   | ${'not telesales'} | ${'1946-01-01'}
+    ${false} | ${'8D'}  | ${true}    | ${true}   | ${'not telesales'} | ${'1946-01-01'}
+    ${false} | ${'12M'} | ${false}   | ${true}   | ${'not telesales'} | ${'1946-01-01'}
+    ${false} | ${'12M'} | ${true}    | ${false}  | ${'not telesales'} | ${'1946-01-01'}
+    ${false} | ${'12M'} | ${true}    | ${true}   | ${'telesales'}     | ${'1946-01-01'}
+    ${false} | ${'12M'} | ${true}    | ${true}   | ${'not telesales'} | ${'2010-01-01'}
   `(
     'should return %s as licence length is %s, licence for you is %s, SHOW_RECURRING_PAYMENTS is %s, journey is %s, and birthDate is %s',
     ({ expected, length, licenceFor, recurring, telesales, birthDate }) => {

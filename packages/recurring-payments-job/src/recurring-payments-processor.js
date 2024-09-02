@@ -58,7 +58,7 @@ const prepareStartDate = permission => {
     .toISOString()
 }
 
-const processPayment = async transaction => {
+export const processPayment = async transaction => {
   try {
     const response = await salesApi.sendPayment(transaction)
     console.log('Payment sent successfully:', response)
