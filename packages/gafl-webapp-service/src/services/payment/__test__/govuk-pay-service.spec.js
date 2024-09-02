@@ -15,7 +15,7 @@ describe('The govuk-pay-service', () => {
           i18n: {
             getCatalog: () => ({
               over_66: 'Over 66',
-              licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+              licence_type_radio_trout_three_rod_payment_summary: 'trout and coarse (up to 3 rods)'
             })
           },
           info: { host: '0.0.0.0:3000' },
@@ -35,7 +35,7 @@ describe('The govuk-pay-service', () => {
           i18n: {
             getCatalog: () => ({
               over_66: 'Over 66',
-              licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods'
+              licence_type_radio_trout_three_rod_payment_summary: 'trout and coarse (up to 3 rods)'
             })
           },
           info: { host: '0.0.0.0:3000' },
@@ -55,8 +55,8 @@ describe('The govuk-pay-service', () => {
           i18n: {
             getCatalog: () => ({
               over_66: ' (Over 66)',
-              licence_type_radio_salmon: 'Salmon and sea trout',
-              licence_type_12m: '12 months'
+              licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
+              new_prices_row_12_month: '12-month'
             })
           },
           info: { host: '0.0.0.0:3000' },
@@ -68,7 +68,7 @@ describe('The govuk-pay-service', () => {
     ).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Salmon and sea trout (Over 66), 12 months',
+      description: '12-month salmon and sea trout (Over 66)',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
@@ -98,8 +98,8 @@ describe('The govuk-pay-service', () => {
           i18n: {
             getCatalog: () => ({
               over_66: ' (Over 66)',
-              licence_type_radio_salmon: 'Salmon and sea trout',
-              licence_type_8d: '8 days'
+              licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
+              new_prices_row_8_day: '8-day'
             })
           },
           info: { host: '0.0.0.0:3000' },
@@ -110,7 +110,7 @@ describe('The govuk-pay-service', () => {
     ).toEqual({
       amount: 5400,
       delayed_capture: false,
-      description: 'Salmon and sea trout (Over 66), 8 days',
+      description: '8-day salmon and sea trout (Over 66)',
       email: 'angling@email.com',
       reference: '44728b47-c809-4c31-8c92-bdf961be0c80',
       return_url: 'https://0.0.0.0:3000' + AGREED.uri,
