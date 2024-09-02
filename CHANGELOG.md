@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.8 (2024-09-02)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#2028](https://github.com/DEFRA/rod-licensing/pull/2028) Prevent copy and paste values ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.49.0-rc.7 (2024-08-22)
 
 #### :bug: Bug Fix
