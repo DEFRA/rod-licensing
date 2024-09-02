@@ -183,6 +183,23 @@ describe('The analytics handler', () => {
       }
     )
 
+    it('analytics cache is not set when analyticsResponse is not accept or reject', async () => {
+      const payload = { analyticsResponse: 'fail' }
+      const request = generateRequestMock(payload, {})
+
+      await checkAnalyticsCookiesPage(request)
+
+      expect(mockAnalyticsSet).not.toHaveBeenCalled()
+    })
+
+    it('analytics cache is not set when no payload', async () => {
+      const request = generateRequestMock()
+
+      await checkAnalyticsCookiesPage(request)
+
+      expect(mockAnalyticsSet).not.toHaveBeenCalled()
+    })
+
     it('analytics cache is not set when no analyticsResponse in payload', async () => {
       const payload = {}
       const request = generateRequestMock(payload, {})
