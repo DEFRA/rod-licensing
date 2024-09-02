@@ -8,7 +8,8 @@ jest.mock('@defra-fish/connectors-lib', () => ({
     preparePermissionDataForRenewal: jest.fn(() => ({
       licensee: { countryCode: 'GB-ENG' }
     })),
-    createTransaction: jest.fn()
+    createTransaction: jest.fn(),
+    sendPayment: jest.fn()
   }
 }))
 
