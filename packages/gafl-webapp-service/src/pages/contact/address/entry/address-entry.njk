@@ -21,15 +21,18 @@
     set errorMap = {
         'premises': {
             'string.empty': { ref: '#premises', text: mssgs.address_entry_error_empty_num },
-            'string.max': { ref: '#premises', text: mssgs.address_entry_error_max_char_num }
+            'string.max': { ref: '#premises', text: mssgs.address_entry_error_max_char_num },
+            'string.forbidden': { ref: '#premises', text: mssgs.address_entry_error_invalid_premises }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.address_entry_error_empty_postcode },
-            'string.pattern.base': { ref: '#postcode', text: mssgs.address_entry_error_pattern_postcode }
+            'string.pattern.base': { ref: '#postcode', text: mssgs.address_entry_error_pattern_postcode },
+            'string.forbidden': { ref: '#postcode', text: mssgs.address_entry_error_invalid_postcode }
         },
         'town': {
             'string.empty': { ref: '#town', text: mssgs.address_entry_error_empty_town },
-            'string.max': { ref: '#town', text: mssgs.address_entry_error_max_char_town }
+            'string.max': { ref: '#town', text: mssgs.address_entry_error_max_char_town },
+            'string.forbidden': { ref: '#town', text: mssgs.address_entry_error_invalid_town }
         },
         'country': {
             'string.empty': { ref: '#country', text: mssgs.address_entry_error_empty_country }

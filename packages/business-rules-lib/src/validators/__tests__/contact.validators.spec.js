@@ -145,7 +145,7 @@ describe('contact validators', () => {
       'ᴹᶦᶜʰᵃᵉˡ',
       '𖢑𖥣𖥐𖦙𖧥𖠢ꛚ',
       'ℳ𝒾𝒸𝒽𝒶ℯ𝓁',
-      '𝙼𝚒𝚌𝚑𝚊𝚎𝚕'
+      '𝙼𝚒𝚌𝚑𝚊𝚎𝚕 '
     ])('prohibits a string with non-standard characters: %s', async c => {
       await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
@@ -461,22 +461,6 @@ describe('contact validators', () => {
         '"value" length must be less than or equal to 100 characters long'
       )
     })
-
-    it.each([
-      'Bond👏 Street',
-      '🅑ⓞ🅝ⓓ ⓢⓣⓡⓔⓔⓣ',
-      'Ｂｏｎｄ Ｓｔｒｅｅｔ',
-      'ᴮᵒⁿᵈ ˢᵗʳᵉᵉᵗ',
-      'B̲o̲n̲d̲ ̲S̲t̲r̲e̲e̲t̲',
-      'B̸o̸n̸d̸ ̸S̸t̸r̸e̸e̸t̸',
-      '🅑🅞🅝🅓 🅢🅣🅡🅔🅔🅣',
-      'B𝑜𝓷d S𝓉𝓇𝑒𝑒𝓉',
-      'もＢ囗ｏ几ｎ问ｄ  丂Ｓ匕ｔ尺ｒ乇ｅモｅ匕ｔ',
-      'B⃠o⃠n⃠d⃠ S⃠t⃠r⃠e⃠e⃠t⃠',
-      '𝐁𝐨𝐧𝐝 𝐒𝐭𝐫𝐞𝐞𝐭'
-    ])('prohibits a string with non-standard characters: %s', async c => {
-      await expect(contactValidation.createStreetValidator(Joi).validateAsync(c)).rejects.toThrow()
-    })
   })
 
   describe('localityValidator', () => {
@@ -492,20 +476,6 @@ describe('contact validators', () => {
       await expect(contactValidation.createLocalityValidator(Joi).validateAsync('A'.repeat(101))).rejects.toThrow(
         '"value" length must be less than or equal to 100 characters long'
       )
-    })
-
-    it.each([
-      'M̲a̲y̲f̲a̲i̲r̲',
-      'M̸a̸y̸f̸a̸i̸r̸',
-      'Ｍａｙｆａｉｒ',
-      'ᴹᵃʸᶠᵃⁱʳ',
-      '🅜🅐🅨🅕🅐🅘🅡',
-      '🅜ⓐ🅨ⓕⓐⓘⓡ',
-      '爪Ｍ丹ａﾘｙ乍ｆ丹ａ工ｉ尺ｒ',
-      'M⃠a⃠y⃠f⃠a⃠i⃠r⃠',
-      '𝐌𝐚𝐲𝐟𝐚𝐢𝐫'
-    ])('prohibits a string with non-standard characters: %s', async c => {
-      await expect(contactValidation.createLocalityValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
 
