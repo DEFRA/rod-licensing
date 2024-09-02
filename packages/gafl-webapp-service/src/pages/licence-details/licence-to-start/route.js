@@ -2,7 +2,7 @@ import Joi from 'joi'
 import moment from 'moment-timezone'
 
 import JoiDate from '@hapi/joi-date'
-import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME, validation } from '@defra-fish/business-rules-lib'
 import { LICENCE_TO_START } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { dateFormats } from '../../../constants.js'
@@ -11,15 +11,31 @@ import { nextPage } from '../../../routes/next-page.js'
 const JoiX = Joi.extend(JoiDate)
 
 const validator = payload => {
-  const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
+  const minYear = new Date().getFullYear()
+  const maxYear = minYear + 1
+
+  const day = payload['licence-start-date-day'] || undefined
+  const month = payload['licence-start-date-month'] || undefined
+  const year = payload['licence-start-date-year'] || undefined
+  const licenceStartDate = {
+    day: parseInt(payload['licence-start-date-day']),
+    month: parseInt(payload['licence-start-date-month']),
+    year: parseInt(payload['licence-start-date-year'])
+  }
+
+  const licenceStartDateOld = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
   Joi.assert(
     {
-      'licence-start-date': licenceStartDate,
-      'licence-to-start': payload['licence-to-start']
+      'licence-start-date-old': licenceStartDateOld,
+      'licence-to-start': payload['licence-to-start'],
+      day,
+      month,
+      year,
+      'licence-start-date': licenceStartDate
     },
     Joi.object({
       'licence-to-start': Joi.string().valid('after-payment', 'another-date').required(),
-      'licence-start-date': Joi.alternatives().conditional('licence-to-start', {
+      'licence-start-date-old': Joi.alternatives().conditional('licence-to-start', {
         is: 'another-date',
         then: JoiX.date()
           .format(dateFormats)
@@ -27,6 +43,32 @@ const validator = payload => {
           .max(moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
           .required(),
         otherwise: Joi.string().empty('')
+      }),
+      day: Joi.when('licence-to-start', {
+        is: 'another-date',
+        then: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+        otherwise: Joi.any()
+      }),
+      month: Joi.when('licence-to-start', {
+        is: 'another-date',
+        then: Joi.any().required().concat(validation.date.createMonthValidator(Joi))
+      }),
+      year: Joi.when('licence-to-start', {
+        is: 'another-date',
+        then: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+      }),
+      'licence-start-date': Joi.when('licence-to-start', {
+        is: 'another-date',
+        then: Joi.when(
+          Joi.object({
+            day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+            month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
+            year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+          }).unknown(),
+          {
+            then: validation.date.createRealDateValidator(Joi)
+          }
+        )
       })
     }).options({ abortEarly: false, allowUnknown: true })
   )
