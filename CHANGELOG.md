@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.9 (2024-09-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `sales-api-service`
+  * [#2029](https://github.com/DEFRA/rod-licensing/pull/2029) Amend transaction creation payload ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.49.0-rc.8 (2024-09-02)
 
 #### :rocket: Enhancement
