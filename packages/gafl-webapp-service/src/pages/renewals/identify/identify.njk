@@ -21,10 +21,29 @@
                 ref: "#ref"
             }
         },
+        'day': {
+            'any.required': { ref: '#date-of-birth-day', text: mssgs.identify_error_missing_day },
+            'number.base': { ref: '#date-of-birth-day', text: mssgs.identify_error_non_numeric },
+            'number.integer': { ref: '#date-of-birth-day', text: mssgs.identify_error_date_real },
+            'number.min': { ref: '#date-of-birth-day', text: mssgs.identify_error_date_real },
+            'number.max': { ref: '#date-of-birth-day', text: mssgs.identify_error_date_real }
+        },
+        'month': {
+            'any.required': { ref: '#date-of-birth-month', text: mssgs.identify_error_missing_month },
+            'number.base': { ref: '#date-of-birth-month', text: mssgs.identify_error_non_numeric },
+            'number.integer': { ref: '#date-of-birth-month', text: mssgs.identify_error_date_real },
+            'number.min': { ref: '#date-of-birth-month', text: mssgs.identify_error_date_real },
+            'number.max': { ref: '#date-of-birth-month', text: mssgs.identify_error_date_real }
+        },
+        'year': {
+            'any.required': { ref: '#date-of-birth-year', text: mssgs.identify_error_missing_year },
+            'number.base': { ref: '#date-of-birth-year', text: mssgs.identify_error_non_numeric },
+            'number.integer': { ref: '#date-of-birth-year', text: mssgs.identify_error_date_real },
+            'number.min': { ref: '#date-of-birth-year', text: mssgs.identify_error_year_min },
+            'number.max': { ref: '#date-of-birth-year', text: mssgs.identify_error_year_max }
+        },
         'date-of-birth': {
-            'date.format': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday },
-            'date.max': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday_max },
-            'date.min': { ref: '#date-of-birth-day', text: mssgs.identify_error_enter_bday_min }
+            'date.real': { ref: '#date-of-birth-day', text: mssgs.identify_error_date_real }
         },
         'postcode': {
             'string.empty': { ref: '#postcode', text: mssgs.identify_error_empty_postcode },
@@ -37,21 +56,21 @@
     {
       label: mssgs.dob_day,
       name: "day",
-      classes: "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if error['day'] or error['date-of-birth'] else "govuk-input--width-2",
       value: payload['date-of-birth-day'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_month,
       name: "month",
-      classes: "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if error['month'] else "govuk-input--width-2",
       value: payload['date-of-birth-month'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_year,
       name: "year",
-      classes: "govuk-input--width-4",
+      classes: "govuk-input--width-4 govuk-input--error" if error['year'] else "govuk-input--width-4",
       value: payload['date-of-birth-year'],
       attributes: { maxlength : 4 }
     }
