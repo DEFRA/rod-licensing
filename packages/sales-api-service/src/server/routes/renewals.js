@@ -2,7 +2,7 @@ import Boom from '@hapi/boom'
 import { preparePermissionDataForRenewal } from '../../services/renewals/renewals.service.js'
 import { permissionRenewalDataRequestParamsSchema, permissionRenewalDataResponseSchema } from '../../schema/renewals.schema.js'
 import db from 'debug'
-import { concessionsByIds, permissionForFullReferenceNumber, executeQuery } from '@defra-fish/dynamics-lib'
+import { permissionForFullReferenceNumber, executeQuery } from '@defra-fish/dynamics-lib'
 const debug = db('sales:permission-renewal-data')
 
 const executeWithErrorLog = async query => {
@@ -16,8 +16,13 @@ const executeWithErrorLog = async query => {
 
 const getConcessions = async permission => {
   if (permission.expanded.concessionProofs.length) {
-    const concessionProofs = await executeWithErrorLog(concessionsByIds(permission.expanded.concessionProofs.map(cp => cp.entity.id)))
-    return concessionProofs.map(cp => cp.expanded.concession.entity.toJSON())
+    return permission.expanded.concessionProofs.map(cp => ({
+      ...cp.expanded.concession.entity.toJSON(),
+      proof: {
+        ...(cp.entity.referenceNumber ? { referenceNumber: cp.entity.referenceNumber } : {}),
+        type: cp.entity.type.label
+      }
+    }))
   }
   return []
 }

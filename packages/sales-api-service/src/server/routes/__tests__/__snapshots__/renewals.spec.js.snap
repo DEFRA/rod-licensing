@@ -463,6 +463,10 @@ exports[`permissionRenewalData should call preparePermissionDataForRenewal with 
           Object {
             "id": "d0ece997-ef65-e611-80dc-c4346bad4004",
             "name": "Senior",
+            "proof": Object {
+              "referenceNumber": "AB 01 02 03 CD",
+              "type": "National Insurance Number",
+            },
           },
         ],
         "dataSource": Object {
