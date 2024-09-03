@@ -49,23 +49,6 @@ export const pageOmitted = async request => {
 }
 
 export default async (request, h) => {
-  await checkAnalyticsResponse(request)
-
-  const {
-    url: { host },
-    headers: { origin, referer }
-  } = request
-  const referrerHost = new URL(referer).host
-
-  if (host === referrerHost) {
-    const redirect = referer.replace(origin, '')
-    return h.redirectWithLanguageCode(redirect)
-  }
-
-  return h.redirectWithLanguageCode('/buy')
-}
-
-export const checkAnalyticsResponse = async request => {
   const { payload } = request
   const analytics = await request.cache().helpers.analytics.get()
 
@@ -83,5 +66,40 @@ export const checkAnalyticsResponse = async request => {
       [ANALYTICS.selected]: true,
       [ANALYTICS.acceptTracking]: false
     })
+  }
+
+  const {
+    url: { host },
+    headers: { origin, referer }
+  } = request
+  const referrerHost = new URL(referer).host
+
+  if (host === referrerHost) {
+    const redirect = referer.replace(origin, '')
+    return h.redirectWithLanguageCode(redirect)
+  }
+
+  return h.redirectWithLanguageCode('/buy')
+}
+
+export const checkAnalyticsCookiesPage = async request => {
+  const { payload } = request
+
+  if (payload?.analyticsResponse) {
+    if (payload.analyticsResponse === 'accept') {
+      await request.cache().helpers.analytics.set({
+        [ANALYTICS.selected]: true,
+        [ANALYTICS.acceptTracking]: true,
+        [ANALYTICS.seenMessage]: true
+      })
+    }
+
+    if (payload.analyticsResponse === 'reject') {
+      await request.cache().helpers.analytics.set({
+        [ANALYTICS.selected]: true,
+        [ANALYTICS.acceptTracking]: false,
+        [ANALYTICS.seenMessage]: true
+      })
+    }
   }
 }

@@ -30,7 +30,7 @@ import agreedHandler from '../handlers/agreed-handler.js'
 import controllerHandler from '../handlers/controller-handler.js'
 import authenticationHandler from '../handlers/authentication-handler.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
-import analytics, { checkAnalyticsResponse } from '../handlers/analytics-handler.js'
+import analytics, { checkAnalyticsCookiesPage } from '../handlers/analytics-handler.js'
 import { welshEnabledAndApplied } from '../processors/page-language-helper.js'
 
 const gtmContainerIdOrNull = () => process.env.GTM_CONTAINER_ID || false
@@ -143,7 +143,7 @@ export default [
     method: 'POST',
     path: COOKIES.uri,
     handler: async (request, h) => {
-      await checkAnalyticsResponse(request)
+      await checkAnalyticsCookiesPage(request)
       const analyticsCache = await request.cache().helpers.analytics.get()
 
       const showNotification = request.payload?.analyticsResponse !== undefined ? true : undefined

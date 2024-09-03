@@ -3,7 +3,7 @@ import miscRoutes from '../misc-routes.js'
 import constants, { ANALYTICS } from '../../constants.js'
 import { addLanguageCodeToUri } from '../../processors/uri-helper.js'
 import { welshEnabledAndApplied } from '../../processors/page-language-helper.js'
-import { checkAnalyticsResponse } from '../../handlers/analytics-handler.js'
+import { checkAnalyticsCookiesPage } from '../../handlers/analytics-handler.js'
 
 jest.mock('../../uri.js', () => ({
   ...jest.requireActual('../../uri.js'),
@@ -285,13 +285,13 @@ describe('guidance page handlers', () => {
     })
 
     describe('cookies page handler for post', () => {
-      it('calls checkAnalyticsResponse with the request', async () => {
+      it('calls checkAnalyticsCookiesPage with the request', async () => {
         const request = getMockRequest()
         const toolkit = getMockToolkit()
 
         await cookiesPagePostHandler(request, toolkit)
 
-        expect(checkAnalyticsResponse).toHaveBeenCalledWith(request)
+        expect(checkAnalyticsCookiesPage).toHaveBeenCalledWith(request)
       })
 
       it.each([
