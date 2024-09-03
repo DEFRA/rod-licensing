@@ -9,28 +9,62 @@ import { dateFormats } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 
 const JoiX = Joi.extend(JoiDate)
+const minYear = new Date().getFullYear()
+const maxYear = minYear + 1
+
+const daySchema = () => {
+  Joi.when('licence-to-start', {
+    is: 'another-date',
+    then: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+    otherwise: Joi.any()
+  })
+}
+
+const monthSchema = () => {
+  Joi.when('licence-to-start', {
+    is: 'another-date',
+    then: Joi.any().required().concat(validation.date.createMonthValidator(Joi))
+  })
+}
+
+const yearSchema = () => {
+  Joi.when('licence-to-start', {
+    is: 'another-date',
+    then: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+  })
+}
+
+const licenceStartDateSchema = () => {
+  Joi.when('licence-to-start', {
+    is: 'another-date',
+    then: Joi.when(
+      Joi.object({
+        day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+        month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
+        year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+      }).unknown(),
+      {
+        then: validation.date.createRealDateValidator(Joi)
+      }
+    )
+  })
+}
 
 const validator = payload => {
-  const minYear = new Date().getFullYear()
-  const maxYear = minYear + 1
+  const day = payload['licence-start-date-day']
+  const month = payload['licence-start-date-month']
+  const year = payload['licence-start-date-year']
 
-  const day = payload['licence-start-date-day'] || undefined
-  const month = payload['licence-start-date-month'] || undefined
-  const year = payload['licence-start-date-year'] || undefined
-  const licenceStartDate = {
-    day: parseInt(payload['licence-start-date-day']),
-    month: parseInt(payload['licence-start-date-month']),
-    year: parseInt(payload['licence-start-date-year'])
-  }
+  const licenceStartDate = { day: parseInt(day), month: parseInt(month), year: parseInt(year) }
+  const licenceStartDateOld = `${year}-${month}-${day}`
 
-  const licenceStartDateOld = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
   Joi.assert(
     {
       'licence-start-date-old': licenceStartDateOld,
       'licence-to-start': payload['licence-to-start'],
-      day,
-      month,
-      year,
+      day: day || undefined,
+      month: month || undefined,
+      year: year || undefined,
       'licence-start-date': licenceStartDate
     },
     Joi.object({
@@ -44,32 +78,10 @@ const validator = payload => {
           .required(),
         otherwise: Joi.string().empty('')
       }),
-      day: Joi.when('licence-to-start', {
-        is: 'another-date',
-        then: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
-        otherwise: Joi.any()
-      }),
-      month: Joi.when('licence-to-start', {
-        is: 'another-date',
-        then: Joi.any().required().concat(validation.date.createMonthValidator(Joi))
-      }),
-      year: Joi.when('licence-to-start', {
-        is: 'another-date',
-        then: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
-      }),
-      'licence-start-date': Joi.when('licence-to-start', {
-        is: 'another-date',
-        then: Joi.when(
-          Joi.object({
-            day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
-            month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
-            year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
-          }).unknown(),
-          {
-            then: validation.date.createRealDateValidator(Joi)
-          }
-        )
-      })
+      day: daySchema,
+      month: monthSchema,
+      year: yearSchema,
+      'licence-start-date': licenceStartDateSchema
     }).options({ abortEarly: false, allowUnknown: true })
   )
 }
