@@ -295,3 +295,13 @@ export const getDueRecurringPayments = async date => exec2xxOrThrow(call(new URL
  */
 export const preparePermissionDataForRenewal = async referenceNumber =>
   exec2xxOrThrow(call(new URL(`/permissionRenewalData/${referenceNumber}`, urlBase), 'get'))
+
+/**
+ * Send payment details for processing
+ *
+ * @param transaction
+ * @returns {Promise<*>}
+ * @throws on a non-2xx response
+ */
+export const sendPayment = async transaction =>
+  exec2xxOrThrow(call(new URL('/sendPayment', urlBase), 'post', { body: JSON.stringify(transaction) }))
