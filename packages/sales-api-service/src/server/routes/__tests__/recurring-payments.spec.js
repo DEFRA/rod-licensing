@@ -38,7 +38,7 @@ describe('recurring payments', () => {
 
     const request = getMockRequest({ date })
     const responseToolkit = getMockResponseToolkit()
-    
+
     await dueRecurringPayments[0].handler(request, responseToolkit)
 
     expect(responseToolkit.response).toHaveBeenCalledWith(mockResponseData)
@@ -58,14 +58,14 @@ describe('recurring payments', () => {
 describe('POST /processRecurringPayment', () => {
   it('should return 404 if no recurringPayment is found', async () => {
     processRecurringPayment.mockResolvedValue({ recurringPayment: null })
-    
+
     const request = getMockRequest()
     const responseToolkit = getMockResponseToolkit()
-    
+
     await dueRecurringPayments[1].handler(request, responseToolkit)
 
     expect(processRecurringPayment).toHaveBeenCalledWith(request.payload.transactionRecord, request.payload.contact)
-    
+
     expect(responseToolkit.response).toHaveBeenCalledWith({ error: 'No recurring payment found' })
     expect(responseToolkit.response().code).toHaveBeenCalledWith(404)
   })
@@ -81,13 +81,13 @@ describe('POST /processRecurringPayment', () => {
 
     const request = getMockRequest()
     const responseToolkit = getMockResponseToolkit()
-    
+
     await dueRecurringPayments[1].handler(request, responseToolkit)
 
     expect(processRecurringPayment).toHaveBeenCalledWith(request.payload.transactionRecord, request.payload.contact)
     expect(preparePayment).toHaveBeenCalledWith(request, recurringPayment)
     expect(sendPayment).toHaveBeenCalledWith(preparedPayment)
-    
+
     expect(responseToolkit.response).toHaveBeenCalledWith(paymentResponse)
   })
 
@@ -103,5 +103,4 @@ describe('POST /processRecurringPayment', () => {
     expect(responseToolkit.response).toHaveBeenCalledWith({ error: 'Failed to process recurring payment' })
     expect(responseToolkit.response().code).toHaveBeenCalledWith(500)
   })
-  
 })
