@@ -2,6 +2,9 @@ import { getRecurringPayments, processRecurringPayment } from '../../services/re
 import { preparePayment } from '../../../../gafl-webapp-service/src/processors/payment.js'
 import { sendPayment } from '../../../../gafl-webapp-service/src/services/payment/govuk-pay-service.js'
 
+const HTTP_STATUS_NOT_FOUND = 404
+const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500
+
 export default [
   {
     method: 'GET',
@@ -21,7 +24,7 @@ export default [
         const { recurringPayment } = await processRecurringPayment(transactionRecord, contact)
 
         if (!recurringPayment) {
-          return h.response({ error: 'No recurring payment found' }).code(404)
+          return h.response({ error: 'No recurring payment found' }).code(HTTP_STATUS_NOT_FOUND)
         }
 
         const preparedPayment = preparePayment(request, recurringPayment)
@@ -30,7 +33,7 @@ export default [
         return h.response(paymentResponse)
       } catch (error) {
         console.error('Error processing recurring payment:', error)
-        return h.response({ error: 'Failed to process recurring payment' }).code(500)
+        return h.response({ error: 'Failed to process recurring payment' }).code(HTTP_STATUS_INTERNAL_SERVER_ERROR)
       }
     }
   }
