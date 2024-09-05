@@ -1,4 +1,13 @@
 
+## v1.49.0-rc.11 (2024-09-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2036](https://github.com/DEFRA/rod-licensing/pull/2036) Save multiple times cookies page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.49.0-rc.9 (2024-09-02)
 
