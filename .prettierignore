@@ -39,5 +39,8 @@ docker/volumes/**/*
 # Lerna json (lerna tool formats this file differently to prettier-standard, add to ignore to avoid constantly reformatting every time we version)
 lerna.json
 
+# Can't think why this isn't ignored, but it isn't
+package-lock.json
+
 # Don't format the changelog
 CHANGELOG.md

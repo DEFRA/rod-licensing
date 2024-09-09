@@ -14,6 +14,19 @@ const executeWithErrorLog = async query => {
   }
 }
 
+const getConcessions = async permission => {
+  if (permission.expanded.concessionProofs.length) {
+    return permission.expanded.concessionProofs.map(cp => ({
+      ...cp.expanded.concession.entity.toJSON(),
+      proof: {
+        ...(cp.entity.referenceNumber ? { referenceNumber: cp.entity.referenceNumber } : {}),
+        type: cp.entity.type.label
+      }
+    }))
+  }
+  return []
+}
+
 export default [
   {
     method: 'GET',
@@ -23,11 +36,12 @@ export default [
         const results = await executeWithErrorLog(permissionForFullReferenceNumber(request.params.referenceNumber))
 
         if (results.length === 1) {
-          const permissionData = preparePermissionDataForRenewal({
-            ...results[0].entity.toJSON(),
-            licensee: results[0].expanded.licensee.entity.toJSON(),
-            concessions: [],
-            permit: results[0].expanded.permit.entity.toJSON()
+          const [permission] = results
+          const permissionData = await preparePermissionDataForRenewal({
+            ...permission.entity.toJSON(),
+            licensee: permission.expanded.licensee.entity.toJSON(),
+            concessions: await getConcessions(permission),
+            permit: permission.expanded.permit.entity.toJSON()
           })
           return h.response(permissionData)
         } else if (results.length === 0) {

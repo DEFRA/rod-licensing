@@ -1,4 +1,91 @@
 
+## v1.49.0-rc.11 (2024-09-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2036](https://github.com/DEFRA/rod-licensing/pull/2036) Save multiple times cookies page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.49.0-rc.9 (2024-09-02)
+
+#### :bug: Bug Fix
+* `dynamics-lib`, `sales-api-service`
+  * [#2029](https://github.com/DEFRA/rod-licensing/pull/2029) Amend transaction creation payload ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.49.0-rc.8 (2024-09-02)
+
+#### :rocket: Enhancement
+* `business-rules-lib`, `gafl-webapp-service`
+  * [#2028](https://github.com/DEFRA/rod-licensing/pull/2028) Prevent copy and paste values ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.49.0-rc.7 (2024-08-22)
+
+#### :bug: Bug Fix
+* `recurring-payments-job`
+  * [#2024](https://github.com/DEFRA/rod-licensing/pull/2024) RCP Job Fails Locally ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.49.0-rc.6 (2024-08-20)
+
+#### :rocket: Enhancement
+* `recurring-payments-job`, `sales-api-service`
+  * [#1983](https://github.com/DEFRA/rod-licensing/pull/1983) Recurring payment job concessions ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.49.0-rc.4 (2024-08-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2020](https://github.com/DEFRA/rod-licensing/pull/2020) Cookies page functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+* `business-rules-lib`
+  * [#1995](https://github.com/DEFRA/rod-licensing/pull/1995) Copy and paste into input fields ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.49.0-rc.3 (2024-08-16)
+
+#### :bug: Bug Fix
+* `business-rules-lib`
+  * [#2021](https://github.com/DEFRA/rod-licensing/pull/2021) Export date validations ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.49.0-rc.1 (2024-08-15)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2015](https://github.com/DEFRA/rod-licensing/pull/2015) Minor Content Change To licence-details Page ([@lailien3](https://github.com/lailien3))
+  * [#2014](https://github.com/DEFRA/rod-licensing/pull/2014) Minor Content Change To start-kind Page ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- [@lailien3](https://github.com/lailien3)
+
+## v1.49.0-rc.0 (2024-08-15)
+
+#### :rocket: Enhancement
+* `business-rules-lib`
+  * [#2010](https://github.com/DEFRA/rod-licensing/pull/2010) Add new validators for date fields ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 
 ## v1.48.0-rc.8 (2024-08-13)
 

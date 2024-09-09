@@ -453,3 +453,94 @@ Object {
   },
 }
 `;
+
+exports[`permissionRenewalData should call preparePermissionDataForRenewal with the expected data 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "concessions": Array [
+          Object {
+            "id": "d0ece997-ef65-e611-80dc-c4346bad4004",
+            "name": "Senior",
+            "proof": Object {
+              "referenceNumber": "AB 01 02 03 CD",
+              "type": "National Insurance Number",
+            },
+          },
+        ],
+        "dataSource": Object {
+          "description": "Web Sales",
+          "id": 910400003,
+          "label": "Web Sales",
+        },
+        "endDate": "2020-12-13T23:59:59Z",
+        "id": "347a9083-361e-ea11-a810-000d3a25c5d6",
+        "issueDate": "2019-12-13T09:00:00Z",
+        "licensee": Object {
+          "birthDate": "1946-01-01",
+          "country": Object {
+            "description": "GB-ENG",
+            "id": 910400195,
+            "label": "England",
+          },
+          "email": "fester@tester.com",
+          "firstName": "Fester",
+          "id": "1329a866-d175-ea11-a811-000d3a64905b",
+          "lastName": "Tester",
+          "locality": "Testville",
+          "mobilePhone": "01234 567890",
+          "organisation": "Test Organisation",
+          "postalFulfilment": true,
+          "postcode": "AB12 3CD",
+          "preferredMethodOfConfirmation": Object {
+            "description": "Email",
+            "id": 910400000,
+            "label": "Email",
+          },
+          "premises": "1",
+          "street": "Tester Avenue",
+          "town": "Tersterton",
+        },
+        "permit": Object {
+          "availableFrom": "2017-03-31T23:00:00Z",
+          "availableTo": "2021-03-31T22:59:00Z",
+          "cost": 6,
+          "description": "Coarse 1 day 2 Rod Licence (Senior)",
+          "durationDesignator": Object {
+            "description": "D",
+            "id": 910400000,
+            "label": "Day(s)",
+          },
+          "durationMagnitude": 1,
+          "id": "9f1b34a0-0c66-e611-80dc-c4346bad0190",
+          "isCounterSales": true,
+          "isForFulfilment": false,
+          "isRecurringPaymentSupported": false,
+          "itemId": "42290",
+          "numberOfRods": 2,
+          "permitSubtype": Object {
+            "description": "C",
+            "id": 910400001,
+            "label": "Trout and coarse",
+          },
+          "permitType": Object {
+            "description": "Rod Fishing Licence",
+            "id": 910400000,
+            "label": "Rod Fishing Licence",
+          },
+        },
+        "referenceNumber": "00000000-2WC3FDR-CD379B",
+        "stagingId": "71ad9a25-2a03-406b-a0e3-f4ff37799374",
+        "startDate": "2019-12-14T00:00:00Z",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;

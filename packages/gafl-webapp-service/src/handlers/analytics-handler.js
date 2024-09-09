@@ -81,3 +81,25 @@ export default async (request, h) => {
 
   return h.redirectWithLanguageCode('/buy')
 }
+
+export const checkAnalyticsCookiesPage = async request => {
+  const { payload } = request
+
+  if (payload?.analyticsResponse) {
+    if (payload.analyticsResponse === 'accept') {
+      await request.cache().helpers.analytics.set({
+        [ANALYTICS.selected]: true,
+        [ANALYTICS.acceptTracking]: true,
+        [ANALYTICS.seenMessage]: true
+      })
+    }
+
+    if (payload.analyticsResponse === 'reject') {
+      await request.cache().helpers.analytics.set({
+        [ANALYTICS.selected]: true,
+        [ANALYTICS.acceptTracking]: false,
+        [ANALYTICS.seenMessage]: true
+      })
+    }
+  }
+}

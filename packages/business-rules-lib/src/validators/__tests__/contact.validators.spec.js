@@ -5,6 +5,9 @@ import moment from 'moment'
 const INVALID_DATE_ERROR_MESSAGE = '"value" must be in [YYYY-MM-DD] format'
 
 describe('contact validators', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
   describe('birthDateValidator', () => {
     const validDate = moment().subtract(1, 'day')
 
@@ -128,6 +131,24 @@ describe('contact validators', () => {
         '"value" must contain at least 3 alpha characters'
       )
     })
+
+    it.each([
+      'M̵i̵c̵h̵a̵e̵l̵',
+      'M̷i̷c̷h̷a̷e̷l̷',
+      'M͟i͟c͟h͟a͟e͟l͟',
+      '𝔐𝔦𝔠𝔥𝔞𝔢𝔩',
+      '𝕄𝕚𝕔𝕙𝕒𝕖𝕝',
+      'ןǝɐɥɔıW',
+      'Ⓜⓘⓒⓗⓐⓔⓛ',
+      '🄼🄸🄲🄷🄰🄴🄻',
+      'Mɪᴄʜᴀᴇʟ',
+      'ᴹᶦᶜʰᵃᵉˡ',
+      '𖢑𖥣𖥐𖦙𖧥𖠢ꛚ',
+      'ℳ𝒾𝒸𝒽𝒶ℯ𝓁',
+      '𝙼𝚒𝚌𝚑𝚊𝚎𝚕 '
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createFirstNameValidator(Joi).validateAsync(c)).rejects.toThrow()
+    })
   })
 
   describe('lastNameValidator', () => {
@@ -229,6 +250,24 @@ describe('contact validators', () => {
         '"value" must contain at least 3 alpha characters'
       )
     })
+
+    it.each([
+      'M̵i̵c̵h̵a̵e̵l̵',
+      'M̷i̷c̷h̷a̷e̷l̷',
+      'M͟i͟c͟h͟a͟e͟l͟',
+      '𝔐𝔦𝔠𝔥𝔞𝔢𝔩',
+      '𝕄𝕚𝕔𝕙𝕒𝕖𝕝',
+      'ןǝɐɥɔıW',
+      'Ⓜⓘⓒⓗⓐⓔⓛ',
+      '🄼🄸🄲🄷🄰🄴🄻',
+      'Mɪᴄʜᴀᴇʟ',
+      'ᴹᶦᶜʰᵃᵉˡ',
+      '𖢑𖥣𖥐𖦙𖧥𖠢ꛚ',
+      'ℳ𝒾𝒸𝒽𝒶ℯ𝓁',
+      '𝙼𝚒𝚌𝚑𝚊𝚎𝚕'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createLastNameValidator(Joi).validateAsync(c)).rejects.toThrow()
+    })
   })
 
   describe('emailValidator', () => {
@@ -241,6 +280,28 @@ describe('contact validators', () => {
         '"value" must be a valid email'
       )
     })
+
+    it('allows a range of unicode characters from plane 1', async () => {
+      const internationStr = 'æçéñøķť@email.com'
+      await expect(contactValidation.createEmailValidator(Joi).validateAsync(internationStr)).resolves.toEqual('æçéñøķť@email.com')
+    })
+
+    it.each([
+      'ᵐᵢᶜₕᵃₑˡ@ᵉₘᵃᵢˡ.ᶜₒᵐ',
+      '𝓂𝒾𝒸𝒽𝒶ℯ𝓁@ℯ𝓂𝒶𝒾𝓁.𝒸ℴ𝓂',
+      'm̶i̶c̶h̶a̶e̶l̶@̶e̶m̶a̶i̶l̶.̶c̶o̶m̶',
+      'm̷i̷c̷h̷a̷e̷l̷@̷e̷m̷a̷i̷l̷.̷c̷o̷m̷',
+      '𝖒𝖎𝖈𝖍𝖆𝖊𝖑@𝖊𝖒𝖆𝖎𝖑.𝖈𝖔𝖒',
+      'm̲i̲c̲h̲a̲e̲l̲@̲e̲m̲a̲i̲l̲.̲c̲o̲m̲',
+      'ꕮꕯꖀꖾꗇꗍꝆ@ꗍꕮꗇꕯꝆ.ꖀꗞꕮ',
+      '🅼🅘🅲🅗🅰🅔🅻@🅴🅜🅰🅘🅻.🅲🅞🅼',
+      'ɯoɔ˙ןıɐɯǝ@ןǝɐɥɔıɯ',
+      'ꮇꮖꮯꮋꭺꭼꮮ@ꭼꮇꭺꮖꮮ.ꮯꮎꮇ',
+      'ｍｉｃｈａｅｌ＠ｅｍａｉｌ．ｃｏｍ',
+      'ₘᵢcₕaₑₗ@ₑₘaᵢₗ.cₒₘ'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createEmailValidator(Joi).validateAsync(c)).rejects.toThrow()
+    })
   })
 
   describe('mobilePhoneValidator', () => {
@@ -250,6 +311,24 @@ describe('contact validators', () => {
 
     it.each(['test', '07700 test'])('rejects the invalid number %s', async number => {
       await expect(contactValidation.createMobilePhoneValidator(Joi).validateAsync(number)).rejects.toThrow()
+    })
+
+    it.each([
+      '𝟘𝟟𝟟𝟘𝟘 𝟡𝟘𝟘𝟘𝟠𝟠',
+      '0𝟟7𝟘0 9𝟘0𝟘8𝟠',
+      '0𝟽𝟽00 𝟿000𝟾𝟾',
+      '0̵7̵7̵0̵0̵ ̵9̵0̵0̵0̵8̵8̵',
+      '0͟7͟7͟0͟0͟ ͟9͟0͟0͟0͟8͟8͟',
+      '0̸7̸7̸0̸0̸ ̸9̸0̸0̸0̸8̸8̸',
+      '０７７００ ９０００８８',
+      '⁰⁷⁷⁰⁰ ⁹⁰⁰⁰⁸⁸',
+      '⓿➐➐⓿⓿ ➒⓿⓿⓿➑➑',
+      '+ㄐㄐワワㄖㄖ ㄢㄖㄖㄖ曰曰',
+      '07700👏 900088',
+      '0̐̈7̐̈7̐̈0̐̈0̐̈ ̐̈9̐̈0̐̈0̐̈0̐̈8̐̈8̐̈',
+      '+4④7⑦0⓪ ⑨0⓪0⑧8'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createMobilePhoneValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
 
@@ -265,15 +344,35 @@ describe('contact validators', () => {
     it('expects a minimum of 1 character', async () => {
       await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync('')).rejects.toThrow('"value" is not allowed to be empty')
     })
+
     it('expects a maximum of 12 characters', async () => {
       await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync('0123456789ABC')).rejects.toThrow(
         '"value" length must be less than or equal to 12 characters long'
       )
     })
+
     it('expects postcodes to conform to the pattern used in the UK', async () => {
       await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync('0123456789')).rejects.toThrow(
         /fails to match the required pattern/
       )
+    })
+
+    it.each([
+      'A⃣B⃣1⃣2⃣ 1⃣A⃣B⃣',
+      '🄐🄑⑴⑵ ⑴🄐🄑',
+      '丹乃丨己 丨丹乃',
+      'A͢B͢1͢2͢ ͢1͢A͢B͢',
+      'A⃟B⃟1⃟2⃟ 1⃟A⃟B⃟',
+      'AB12👏 1AB',
+      '🅐Ⓑ➊② ①🅐Ⓑ',
+      '𝘼𝐵𝟭𝟮 1𝘼𝘽',
+      '🅰𝙱12 1𝕬𝓑',
+      '1ᴬAᴮB¹²',
+      'ᴬᴮ¹² ¹ᴬᴮ',
+      'q∀1 21q∀',
+      'A̶B̶1̶2̶ ̶1̶A̶B̶'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createUKPostcodeValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
 
@@ -281,16 +380,37 @@ describe('contact validators', () => {
     it('converts to uppercase and trims', async () => {
       await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('a ')).resolves.toEqual('A')
     })
+
     it('expects a minimum of 1 character', async () => {
       await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('')).rejects.toThrow(
         '"value" is not allowed to be empty'
       )
     })
+
     it('expects a maximum of 12 characters', async () => {
       await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('123456789AAAA')).rejects.toThrow()
     })
+
     it('will not accept special characters', async () => {
       await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync('12£4')).rejects.toThrow()
+    })
+
+    it.each([
+      'A⃣B⃣1⃣2⃣ 1⃣A⃣B⃣',
+      '🄐🄑⑴⑵ ⑴🄐🄑',
+      '丹乃丨己 丨丹乃',
+      'A͢B͢1͢2͢ ͢1͢A͢B͢',
+      'A⃟B⃟1⃟2⃟ 1⃟A⃟B⃟',
+      'AB12👏 1AB',
+      '🅐Ⓑ➊② ①🅐Ⓑ',
+      '𝘼𝐵𝟭𝟮 1𝘼𝘽',
+      '🅰𝙱12 1𝕬𝓑',
+      '1ᴬAᴮB¹²',
+      'ᴬᴮ¹² ¹ᴬᴮ',
+      'q∀1 21q∀',
+      'A̶B̶1̶2̶ ̶1̶A̶B̶'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createOverseasPostcodeValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
 
@@ -307,6 +427,23 @@ describe('contact validators', () => {
       await expect(contactValidation.createPremisesValidator(Joi).validateAsync('A'.repeat(51))).rejects.toThrow(
         '"value" length must be less than or equal to 50 characters long'
       )
+    })
+
+    it.each([
+      '15 𐝥ꗞꕷꗍ ꖀꗞꖡꖡꗇꗱꗍ',
+      '１５ Ｒｏｓｅ Ｃｏｔｔａｇｅ',
+      '¹⁵ ᴿᵒˢᵉ ᶜᵒᵗᵗᵃᵍᵉ',
+      '15 ᖇᐤᔆᕪ ᐸᐤᐩᐩᐞᕐᕪ',
+      '15👏 Rose👏 Cottage',
+      '1̶5̶ ̶R̶o̶s̶e̶ ̶C̶o̶t̶t̶a̶g̶e̶',
+      '1̲5̲ ̲R̲o̲s̲e̲ ̲C̲o̲t̲t̲a̲g̲e̲',
+      '1̸5̸ ̸R̸o̸s̸e̸ ̸C̸o̸t̸t̸a̸g̸e̸',
+      '➊➎ 🅡🅞🅢🅔 🅒🅞🅣🅣🅐🅖🅔',
+      '①➎ 🅡ⓞ🅢ⓔ Ⓒ🅞ⓣ🅣ⓐ🅖ⓔ',
+      '1⑤ 𝑅𝐨𝑠ⓔ 𝒞𝓸𝘁𝕥𝒶ℊ🄴',
+      '𝟏𝟓 𝐑𝐨𝐬𝐞 𝐂𝐨𝐭𝐭𝐚𝐠𝐞'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createPremisesValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
 
@@ -373,6 +510,13 @@ describe('contact validators', () => {
         '"value" length must be less than or equal to 100 characters long'
       )
     })
+
+    it.each(['Ｌｏｎｄｏｎ', 'ᴸᵒⁿᵈᵒⁿ', '𝐋𝐨𝐧𝐝𝐨𝐧', 'ㄥＬ口ｏ几ｎ冂ｄ口ｏ几ｎ', 'L⃠o⃠n⃠d⃠o⃠n⃠', '🅛🅞🅝🅓🅞🅝', 'L̸o̸n̸d̸o̸n̸', 'L̲o̲n̲d̲o̲n̲'])(
+      'prohibits a string with non-standard characters: %s',
+      async c => {
+        await expect(contactValidation.createTownValidator(Joi).validateAsync(c)).rejects.toThrow()
+      }
+    )
   })
 
   describe('nationalInsuranceNumberValidator', () => {
@@ -381,11 +525,28 @@ describe('contact validators', () => {
         'AB 12 34 56 A'
       )
     })
+
     it('Disallows invalid NI number QQ123456A', async () => {
       await expect(contactValidation.createNationalInsuranceNumberValidator(Joi).validateAsync('QQ123456A')).rejects.toThrow()
     })
+
     it('Disallows invalid NI number BG123456A', async () => {
       await expect(contactValidation.createNationalInsuranceNumberValidator(Joi).validateAsync('QQ123456A')).rejects.toThrow()
+    })
+
+    it.each([
+      'A̲B̲1̲2̲3̲4̲5̲6̲A̲',
+      'A̸B̸1̸2̸3̸4̸5̸6̸A̸',
+      'ＡＢ１２３４５６Ａ',
+      'ᴬᴮ¹²³⁴⁵⁶ᴬ',
+      '🅐🅑①②③④⑤⑥🅐',
+      '🅐ⓑ①②③④⑤⑥ⓐ',
+      'A⃠B⃠1⃠2⃠3⃠4⃠5⃠6⃠A⃠',
+      '升Ａ马Ｂ丨１己２ヨ３ㄐ４丂５石６刄Ａ',
+      '✌️AB123456A✌️',
+      '𝐀𝐁𝟏𝟐𝟑𝟒𝟓𝟔𝐀'
+    ])('prohibits a string with non-standard characters: %s', async c => {
+      await expect(contactValidation.createNationalInsuranceNumberValidator(Joi).validateAsync(c)).rejects.toThrow()
     })
   })
 })

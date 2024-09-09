@@ -1,6 +1,7 @@
 import { PredefinedQuery } from './predefined-query.js'
 import { Permission } from '../entities/permission.entity.js'
 import { escapeODataStringValue } from '../client/util.js'
+import { ConcessionProof } from '../entities/concession-proof.entity.js'
 
 /**
  * Builds a query to retrieve a permission and related entities for a given reference number and related contact information
@@ -32,6 +33,6 @@ export const permissionForFullReferenceNumber = permissionReferenceNumber => {
   return new PredefinedQuery({
     root: Permission,
     filter: filter,
-    expand: [licensee, permit, concessionProofs]
+    expand: [licensee, permit, { ...concessionProofs, expand: [ConcessionProof.definition.relationships.concession] }]
   })
 }

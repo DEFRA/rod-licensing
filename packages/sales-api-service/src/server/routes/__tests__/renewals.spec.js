@@ -16,6 +16,7 @@ jest.mock('../../../services/renewals/renewals.service.js', () => ({
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
+  concessionsByIds: jest.fn(),
   permissionForFullReferenceNumber: jest.fn(),
   executeQuery: jest.fn()
 }))
@@ -53,18 +54,33 @@ describe('permissionRenewalData', () => {
   })
 
   it('should call preparePermissionDataForRenewal with the expected data', async () => {
+    executeQuery.mockResolvedValueOnce([permissionForFullReferenceNumberMock()])
+
+    await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
+
+    expect(preparePermissionDataForRenewal).toMatchSnapshot()
+  })
+
+  it("omits concession proof reference number if it's not present", async () => {
+    const sampleData = permissionForFullReferenceNumberMock()
+    sampleData.expanded.concessionProofs[0].entity = {
+      type: { label: 'No Proof' }
+    }
+    executeQuery.mockResolvedValueOnce([sampleData])
+
+    await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
+
+    expect(preparePermissionDataForRenewal.mock.calls[0][0].concessions[0].proof.referenceNumber).toBeUndefined()
+  })
+
+  it('should set concessions to an empty array if concessions is empty', async () => {
     const permissionMock = permissionForFullReferenceNumberMock()
+    permissionMock.expanded.concessionProofs = []
     executeQuery.mockResolvedValueOnce([permissionMock])
 
     await permissionRenewalData[0].options.handler(getMockRequest(), getMockResponseToolkit())
 
-    const expectedData = {
-      ...permissionMock.entity.toJSON(),
-      licensee: permissionMock.expanded.licensee.entity.toJSON(),
-      concessions: [],
-      permit: permissionMock.expanded.permit.entity.toJSON()
-    }
-    expect(preparePermissionDataForRenewal).toHaveBeenCalledWith(expectedData)
+    expect(preparePermissionDataForRenewal.mock.calls[0][0].concessions).toEqual([])
   })
 
   it('should return continue response', async () => {

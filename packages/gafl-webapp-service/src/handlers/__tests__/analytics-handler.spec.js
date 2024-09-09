@@ -1,5 +1,5 @@
 import { ANALYTICS } from '../../constants.js'
-import analyticsHandler, { trackGTM } from '../analytics-handler.js'
+import analyticsHandler, { trackGTM, checkAnalyticsCookiesPage } from '../analytics-handler.js'
 import db from 'debug'
 const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:analytics-handler')]
 
@@ -160,6 +160,53 @@ describe('The analytics handler', () => {
       await trackGTM(generateRequestMock('payload', analytics))
 
       expect(debug).toBeCalledTimes(0)
+    })
+  })
+
+  describe('checkAnalyticsCookiesPage', () => {
+    it.each([
+      [true, false, true, 'reject'],
+      [true, true, true, 'accept']
+    ])(
+      'sets selected to %s, acceptTracking to %s and seenMessage to %s when analyticsResponse is %s',
+      async (selected, acceptTracking, seenMessage, analyticsResponse) => {
+        const payload = { analyticsResponse }
+        const request = generateRequestMock(payload, {})
+
+        await checkAnalyticsCookiesPage(request)
+
+        expect(mockAnalyticsSet).toHaveBeenCalledWith({
+          [ANALYTICS.selected]: selected,
+          [ANALYTICS.acceptTracking]: acceptTracking,
+          [ANALYTICS.seenMessage]: seenMessage
+        })
+      }
+    )
+
+    it('analytics cache is not set when analyticsResponse is not accept or reject', async () => {
+      const payload = { analyticsResponse: 'fail' }
+      const request = generateRequestMock(payload, {})
+
+      await checkAnalyticsCookiesPage(request)
+
+      expect(mockAnalyticsSet).not.toHaveBeenCalled()
+    })
+
+    it('analytics cache is not set when no payload', async () => {
+      const request = generateRequestMock()
+
+      await checkAnalyticsCookiesPage(request)
+
+      expect(mockAnalyticsSet).not.toHaveBeenCalled()
+    })
+
+    it('analytics cache is not set when no analyticsResponse in payload', async () => {
+      const payload = {}
+      const request = generateRequestMock(payload, {})
+
+      await checkAnalyticsCookiesPage(request)
+
+      expect(mockAnalyticsSet).not.toHaveBeenCalled()
     })
   })
 
