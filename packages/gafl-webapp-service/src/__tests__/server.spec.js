@@ -15,7 +15,8 @@ jest.mock('../uri.js', () => ({
   PRIVACY_POLICY: { uri: '/PRIVACY_POLICY' },
   REFUND_POLICY: { uri: '/REFUND_POLICY' },
   NEW_TRANSACTION: { uri: '/NEW_TRANSACTION' },
-  NEW_PRICES: { uri: '/NEW_PRICES' }
+  NEW_PRICES: { uri: '/NEW_PRICES' },
+  RECURRING_TERMS_CONDITIONS: { uri: '/RECURRING_TERMS_CONDITIONS' }
 }))
 
 export const catboxOptions = {
@@ -52,31 +53,37 @@ describe('The server', () => {
     expect(serverDecorateSpy).toHaveBeenCalledWith('toolkit', 'redirectWithLanguageCode', expect.any(Function))
   })
 
-  it('addLanguageCodeToUri is called with request but not new prices', async () => {
-    createServer(catboxOptions)
-    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
+  it.each([[uris.NEW_PRICES.uri], [uris.RECURRING_TERMS_CONDITIONS.uri]])(
+    'addLanguageCodeToUri is called with request but not %s',
+    async uri => {
+      createServer(catboxOptions)
+      const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
 
-    await init()
-    const redirect = serverDecorateSpy.mock.calls[1][2]
-    const mockRequest = { url: { pathname: '/buy' } }
-    const mockRedirect = () => {}
-    await redirect.call({ request: mockRequest, redirect: mockRedirect })
+      await init()
+      const redirect = serverDecorateSpy.mock.calls[1][2]
+      const mockRequest = { url: { pathname: '/buy' } }
+      const mockRedirect = () => {}
+      await redirect.call({ request: mockRequest, redirect: mockRedirect })
 
-    expect(addLanguageCodeToUri).not.toHaveBeenCalledWith(expect.any(Object), uris.NEW_PRICES.uri)
-  })
+      expect(addLanguageCodeToUri).not.toHaveBeenCalledWith(expect.any(Object), uri)
+    }
+  )
 
-  it('addLanguageCodeToUri is called with request and new prices', async () => {
-    createServer(catboxOptions)
-    const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
+  it.each([[uris.NEW_PRICES.uri], [uris.RECURRING_TERMS_CONDITIONS.uri]])(
+    'addLanguageCodeToUri is called with request and %s',
+    async uri => {
+      createServer(catboxOptions)
+      const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
 
-    await init()
-    const redirect = serverDecorateSpy.mock.calls[1][2]
-    const mockRequest = { url: { pathname: uris.NEW_PRICES.uri } }
-    const mockRedirect = () => {}
-    await redirect.call({ request: mockRequest, redirect: mockRedirect })
+      await init()
+      const redirect = serverDecorateSpy.mock.calls[1][2]
+      const mockRequest = { url: { pathname: uri } }
+      const mockRedirect = () => {}
+      await redirect.call({ request: mockRequest, redirect: mockRedirect })
 
-    expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uris.NEW_PRICES.uri)
-  })
+      expect(addLanguageCodeToUri).toHaveBeenCalledWith(mockRequest, uri)
+    }
+  )
 
   it('configures session handling in redis by default', async () => {
     process.env.REDIS_HOST = '0.0.0.0'
