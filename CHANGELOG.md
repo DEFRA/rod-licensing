@@ -1,4 +1,32 @@
 
+## v1.50.0-rc.1 (2024-09-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2039](https://github.com/DEFRA/rod-licensing/pull/2039) RCP T&C - Shrink Subheadings ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.50.0-rc.0 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2043](https://github.com/DEFRA/rod-licensing/pull/2043) Update postal fulfilment information banner ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.49.0-rc.11 (2024-09-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2036](https://github.com/DEFRA/rod-licensing/pull/2036) Save multiple times cookies page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.49.0-rc.9 (2024-09-02)
 
