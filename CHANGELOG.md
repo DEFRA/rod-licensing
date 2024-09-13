@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.2 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2040](https://github.com/DEFRA/rod-licensing/pull/2040) Amend Change link in Easy Renew Journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.50.0-rc.1 (2024-09-13)
 
 #### :bug: Bug Fix
