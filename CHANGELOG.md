@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.1 (2024-09-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2039](https://github.com/DEFRA/rod-licensing/pull/2039) RCP T&C - Shrink Subheadings ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.50.0-rc.0 (2024-09-13)
 
 #### :rocket: Enhancement
