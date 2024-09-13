@@ -141,6 +141,7 @@
   "buy_different_licence": "Buy a different licence",
   "change_licence_details_you": "Review or change the licence details",
   "change_licence_details_other": "Review or change the licence details",
+  "change_licence_number": "Change licence number",
   "choose_payment_heading": "Would you like to set up a recurring card payment to renew this licence each year?",
   "choose_payment_error": "Select yes or no",
   "choose_payment_hint": "A recurring card payment is an automatic payment taken from your debit or credit card",
