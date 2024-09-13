@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.0 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2043](https://github.com/DEFRA/rod-licensing/pull/2043) Update postal fulfilment information banner ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 
 ## v1.49.0-rc.11 (2024-09-05)
 
