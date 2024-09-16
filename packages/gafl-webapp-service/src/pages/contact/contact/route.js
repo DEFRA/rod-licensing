@@ -84,7 +84,7 @@ const getErrorText = (messages, twelveMonthNonJuniorLicence) =>
   twelveMonthNonJuniorLicence ? messages.important_info_contact_error_choose : messages.important_info_contact_error_choose_short
 
 export const validator = Joi.object({
-  'how-contacted': Joi.string().valid('email', 'text', 'none').required(),
+  'how-contacted': Joi.string().valid('email', 'text', 'post').required(),
   email: Joi.alternatives().conditional('how-contacted', {
     is: 'email',
     then: validation.contact.createEmailValidator(Joi),
