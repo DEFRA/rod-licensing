@@ -53,15 +53,15 @@ describe('The server', () => {
     expect(serverDecorateSpy).toHaveBeenCalledWith('toolkit', 'redirectWithLanguageCode', expect.any(Function))
   })
 
-  it.each([[uris.NEW_PRICES.uri], [uris.RECURRING_TERMS_CONDITIONS.uri]])(
-    'addLanguageCodeToUri is called with request but not %s',
+  it.each([[uris.REFUND_POLICY.uri], [uris.COOKIES.uri], [uris.PRIVACY_POLICY.uri]])(
+    'addLanguageCodeToUri is not called with %s which is not in redirect exception array',
     async uri => {
       createServer(catboxOptions)
       const serverDecorateSpy = jest.spyOn(server, 'decorate').mockImplementation(() => {})
 
       await init()
       const redirect = serverDecorateSpy.mock.calls[1][2]
-      const mockRequest = { url: { pathname: '/buy' } }
+      const mockRequest = { url: { pathname: uri } }
       const mockRedirect = () => {}
       await redirect.call({ request: mockRequest, redirect: mockRedirect })
 

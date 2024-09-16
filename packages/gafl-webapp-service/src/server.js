@@ -198,12 +198,14 @@ const init = async () => {
    */
   server.decorate('request', 'cache', cacheDecorator(sessionCookieName))
 
+  const redirectExceptionUris = [NEW_PRICES.uri, RECURRING_TERMS_CONDITIONS.uri]
+
   server.decorate('toolkit', 'redirectWithLanguageCode', function (redirect) {
     const pathname = this.request.url.pathname
-    const uriWithLanguage =
-      pathname === NEW_PRICES.uri || pathname === RECURRING_TERMS_CONDITIONS.uri
-        ? addLanguageCodeToUri(this.request, pathname)
-        : addLanguageCodeToUri(this.request, redirect)
+
+    const uriWithLanguage = redirectExceptionUris.includes(pathname)
+      ? addLanguageCodeToUri(this.request, pathname)
+      : addLanguageCodeToUri(this.request, redirect)
 
     const uriWithLanguageAndEmptyFragment = addEmptyFragmentToUri(uriWithLanguage)
 
