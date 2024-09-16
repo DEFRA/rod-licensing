@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.4 (2024-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2047](https://github.com/DEFRA/rod-licensing/pull/2047) Fulfilment page deselecting post ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.50.0-rc.3 (2024-09-16)
 
 #### :rocket: Enhancement
