@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.3 (2024-09-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2046](https://github.com/DEFRA/rod-licensing/pull/2046) Change link on address page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.50.0-rc.2 (2024-09-13)
 
 #### :rocket: Enhancement
