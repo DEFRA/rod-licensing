@@ -1,6 +1,21 @@
 import { dynamicsClient } from '../client/dynamics-client.js'
-// eslint-disable-next-line no-unused-vars
-import { ContactByLicenceAndPostcode } from '../entities/contact-by-licence-and-postcode.entity.js'
+
+/**
+ * @typedef {Object} ContactByLicenceAndPostcode
+ * @property {string|null} ContactId - The contact's unique identifier
+ * @property {string|null} FirstName - The contact's first name
+ * @property {string|null} LastName - The contact's last name
+ * @property {string|null} DateOfBirth - The contact's date of birth
+ * @property {string|null} Street - The contact's street
+ * @property {string|null} Town - The contact's town
+ * @property {string|null} Locality - The contact's locality
+ * @property {string|null} Postcode - The contact's postcode
+ * @property {string} ReturnStatus - The status of the request (e.g., "success" or "error")
+ * @property {string|null} SuccessMessage - A success message if the contact is found
+ * @property {string|null} ErrorMessage - An error message if the contact is not found
+ * @property {string|null} ReturnPermissionNumber - The full permission number of the contact
+ * @property {string} oDataContext - The OData context URL
+ */
 
 /**
  * Calls the defra_GetContactByLicenceAndPostcode CRM plugin to retrieve a contact by the last 6 characters if their license number and postcode
