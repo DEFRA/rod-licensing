@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.5 (2024-09-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2045](https://github.com/DEFRA/rod-licensing/pull/2045) Display Recurring payment terms and conditions ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.50.0-rc.4 (2024-09-16)
 
 #### :bug: Bug Fix
