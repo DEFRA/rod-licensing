@@ -1,7 +1,6 @@
 import { contactForLicensee } from '../contact.queries.js'
 import { dynamicsClient } from '../../client/dynamics-client.js'
 
-// Mock the dynamicsClient
 jest.mock('dynamics-web-api', () => {
   return jest.fn().mockImplementation(() => {
     return {
