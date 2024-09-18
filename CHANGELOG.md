@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.7 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2051](https://github.com/DEFRA/rod-licensing/pull/2051) Add missing export for RCR angler login ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.50.0-rc.6 (2024-09-18)
 
 #### :rocket: Enhancement
