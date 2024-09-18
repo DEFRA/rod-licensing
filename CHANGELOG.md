@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.6 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2049](https://github.com/DEFRA/rod-licensing/pull/2049) Add query to allow angler to login in to RCR ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
 ## v1.50.0-rc.5 (2024-09-17)
 
 #### :rocket: Enhancement
