@@ -80,19 +80,21 @@ describe('Contact Queries', () => {
 
       const result = await contactForLicensee('654321', 'ZZ1 1ZZ')
 
-      expect(result.ContactId).toBeNull()
-      expect(result.FirstName).toBeNull()
-      expect(result.LastName).toBeNull()
-      expect(result.DateOfBirth).toBeNull()
-      expect(result.Premises).toBeNull()
-      expect(result.Street).toBeNull()
-      expect(result.Town).toBeNull()
-      expect(result.Locality).toBeNull()
-      expect(result.Postcode).toBeNull()
-      expect(result.ReturnStatus).toBe('error')
-      expect(result.SuccessMessage).toBe('')
-      expect(result.ErrorMessage).toBe('contact does not exists')
-      expect(result.ReturnPermissionNumber).toBeNull()
+      expect(result).toMatchObject({
+        ContactId: null,
+        FirstName: null,
+        LastName: null,
+        DateOfBirth: null,
+        Premises: null,
+        Street: null,
+        Town: null,
+        Locality: null,
+        Postcode: null,
+        ReturnStatus: 'error',
+        SuccessMessage: '',
+        ErrorMessage: 'contact does not exists',
+        ReturnPermissionNumber: null
+      })
     })
   })
 })
