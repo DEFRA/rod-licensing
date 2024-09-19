@@ -14,18 +14,19 @@ const getMockResponseToolkit = () => ({
 })
 
 describe('recurring payments', () => {
+  const getDueRecurringPayments = dueRecurringPayments[0].options.handler
   beforeEach(jest.clearAllMocks)
 
   it('handler should return continue response', async () => {
     const request = getMockRequest({})
     const responseToolkit = getMockResponseToolkit()
-    expect(await dueRecurringPayments[0].handler(request, responseToolkit)).toEqual(responseToolkit.continue)
+    expect(await getDueRecurringPayments(request, responseToolkit)).toEqual(responseToolkit.continue)
   })
 
   it('should call getRecurringPayments with date', async () => {
     const date = Symbol('date')
     const request = getMockRequest({ date })
-    await dueRecurringPayments[0].handler(request, getMockResponseToolkit())
+    await getDueRecurringPayments(request, getMockResponseToolkit())
     expect(getRecurringPayments).toHaveBeenCalledWith(date)
   })
 })
