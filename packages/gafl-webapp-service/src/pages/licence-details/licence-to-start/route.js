@@ -6,36 +6,40 @@ import { LICENCE_TO_START } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 
+const LICENCE_TO_START_FIELD = 'licence-to-start'
+const AFTER_PAYMENT = 'after-payment'
+const ANOTHER_DATE = 'another-date'
+
 const minTime = moment().tz(SERVICE_LOCAL_TIME).startOf('day')
 const maxTime = moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
 const minYear = minTime.year()
 const maxYear = maxTime.year()
 
 const daySchema = () => {
-  Joi.when('licence-to-start', {
-    is: 'another-date',
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
     then: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
     otherwise: Joi.any()
   })
 }
 
 const monthSchema = () => {
-  Joi.when('licence-to-start', {
-    is: 'another-date',
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
     then: Joi.any().required().concat(validation.date.createMonthValidator(Joi))
   })
 }
 
 const yearSchema = () => {
-  Joi.when('licence-to-start', {
-    is: 'another-date',
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
     then: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
   })
 }
 
 const licenceStartDateSchema = () => {
-  Joi.when('licence-to-start', {
-    is: 'another-date',
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
     then: Joi.when(
       Joi.object({
         day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
@@ -55,21 +59,21 @@ const validator = payload => {
   const year = payload['licence-start-date-year']
 
   const licenceStartDate = { day: parseInt(day), month: parseInt(month), year: parseInt(year) }
-  const licenceStartDateOld = `${year}-${month}-${day}`
+  const licenceStartDateForRange = `${year}-${month}-${day}`
 
   Joi.assert(
     {
-      'licence-start-date-old': licenceStartDateOld,
-      'licence-to-start': payload['licence-to-start'],
+      'licence-start-date-for-range': licenceStartDateForRange,
+      'licence-to-start': payload[LICENCE_TO_START_FIELD],
       day: day || undefined,
       month: month || undefined,
       year: year || undefined,
       'licence-start-date': licenceStartDate
     },
     Joi.object({
-      'licence-to-start': Joi.string().valid('after-payment', 'another-date').required(),
-      'licence-start-date-old': Joi.when('licence-to-start', {
-        is: 'another-date',
+      'licence-to-start': Joi.string().valid(AFTER_PAYMENT, ANOTHER_DATE).required(),
+      'licence-start-date-for-range': Joi.when(LICENCE_TO_START_FIELD, {
+        is: ANOTHER_DATE,
         then: Joi.date().min(minTime).max(maxTime).required()
       }),
       day: daySchema,
