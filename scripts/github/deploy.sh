@@ -67,13 +67,18 @@ echo "Updating version from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package files versions, project inter-dependencies and lerna.json with new version number
 lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact
 
-# Update package lock with new version number
-lerna exec -- npm install --package-lock-only
-
 # Generate changelog information for changes since the last tag
 echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} and ${NEW_VERSION}"
 lerna-changelog --from "${PREVIOUS_VERSION}" --to "${NEW_VERSION}" | cat - CHANGELOG.md > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
 git commit -a --amend --no-edit --no-verify
+
+# Publish packages to npm
+echo "Publishing latest packages to npm"
+lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc --no-verify-access
+
+# Update package lock with new version number
+echo "Updating package-lock.json for all packages"
+lerna exec -- npm install --package-lock-only
 
 # Push new tag, updated changelog and package metadata to the remote
 echo "Pushing new release to the remote"
@@ -82,10 +87,6 @@ git push origin "${BRANCH}:${BRANCH}" --no-verify
 echo "Pushing new release tag to the remote"
 git tag "${NEW_VERSION}" -m "${NEW_VERSION}" -f
 git push origin "${NEW_VERSION}"
-
-# Publish packages to npm
-echo "Publishing latest packages to npm"
-lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc --no-verify-access
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
 if [ "${BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
