@@ -1,16 +1,15 @@
 import Joi from 'joi'
 import moment from 'moment-timezone'
 
-import JoiDate from '@hapi/joi-date'
 import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME, validation } from '@defra-fish/business-rules-lib'
 import { LICENCE_TO_START } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
-import { dateFormats } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 
-const JoiX = Joi.extend(JoiDate)
-const minYear = new Date().getFullYear()
-const maxYear = minYear + 1
+const minTime = moment().tz(SERVICE_LOCAL_TIME).startOf('day')
+const maxTime = moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+const minYear = minTime.year()
+const maxYear = maxTime.year()
 
 const daySchema = () => {
   Joi.when('licence-to-start', {
@@ -69,14 +68,9 @@ const validator = payload => {
     },
     Joi.object({
       'licence-to-start': Joi.string().valid('after-payment', 'another-date').required(),
-      'licence-start-date-old': Joi.alternatives().conditional('licence-to-start', {
+      'licence-start-date-old': Joi.when('licence-to-start', {
         is: 'another-date',
-        then: JoiX.date()
-          .format(dateFormats)
-          .min(moment().tz(SERVICE_LOCAL_TIME).startOf('day'))
-          .max(moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
-          .required(),
-        otherwise: Joi.string().empty('')
+        then: Joi.date().min(minTime).max(maxTime).required()
       }),
       day: daySchema,
       month: monthSchema,
