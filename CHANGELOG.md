@@ -1,4 +1,86 @@
 
+## v1.50.0-rc.7 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2051](https://github.com/DEFRA/rod-licensing/pull/2051) Add missing export for RCR angler login ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.50.0-rc.6 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2049](https://github.com/DEFRA/rod-licensing/pull/2049) Add query to allow angler to login in to RCR ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.50.0-rc.5 (2024-09-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2045](https://github.com/DEFRA/rod-licensing/pull/2045) Display Recurring payment terms and conditions ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.4 (2024-09-16)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2047](https://github.com/DEFRA/rod-licensing/pull/2047) Fulfilment page deselecting post ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.3 (2024-09-16)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2046](https://github.com/DEFRA/rod-licensing/pull/2046) Change link on address page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.2 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2040](https://github.com/DEFRA/rod-licensing/pull/2040) Amend Change link in Easy Renew Journey ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.50.0-rc.1 (2024-09-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2039](https://github.com/DEFRA/rod-licensing/pull/2039) RCP T&C - Shrink Subheadings ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.50.0-rc.0 (2024-09-13)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2043](https://github.com/DEFRA/rod-licensing/pull/2043) Update postal fulfilment information banner ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 1
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+
+## v1.49.0-rc.11 (2024-09-05)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2036](https://github.com/DEFRA/rod-licensing/pull/2036) Save multiple times cookies page ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.49.0-rc.9 (2024-09-02)
 
