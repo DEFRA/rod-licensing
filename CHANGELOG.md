@@ -1,4 +1,31 @@
 
+## v1.50.0-rc.7 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2051](https://github.com/DEFRA/rod-licensing/pull/2051) Add missing export for RCR angler login ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.50.0-rc.6 (2024-09-18)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2049](https://github.com/DEFRA/rod-licensing/pull/2049) Add query to allow angler to login in to RCR ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- [@nabeelamir-defra](https://github.com/nabeelamir-defra)
+
+## v1.50.0-rc.5 (2024-09-17)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2045](https://github.com/DEFRA/rod-licensing/pull/2045) Display Recurring payment terms and conditions ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.50.0-rc.4 (2024-09-16)
 
 #### :bug: Bug Fix
