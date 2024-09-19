@@ -1,33 +1,85 @@
 import Joi from 'joi'
 import moment from 'moment-timezone'
 
-import JoiDate from '@hapi/joi-date'
-import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME } from '@defra-fish/business-rules-lib'
+import { START_AFTER_PAYMENT_MINUTES, ADVANCED_PURCHASE_MAX_DAYS, SERVICE_LOCAL_TIME, validation } from '@defra-fish/business-rules-lib'
 import { LICENCE_TO_START } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
-import { dateFormats } from '../../../constants.js'
 import { nextPage } from '../../../routes/next-page.js'
 
-const JoiX = Joi.extend(JoiDate)
+const LICENCE_TO_START_FIELD = 'licence-to-start'
+const AFTER_PAYMENT = 'after-payment'
+const ANOTHER_DATE = 'another-date'
+
+const minTime = moment().tz(SERVICE_LOCAL_TIME).startOf('day')
+const maxTime = moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days')
+const minYear = minTime.year()
+const maxYear = maxTime.year()
+
+const daySchema = () => {
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
+    then: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+    otherwise: Joi.any()
+  })
+}
+
+const monthSchema = () => {
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
+    then: Joi.any().required().concat(validation.date.createMonthValidator(Joi))
+  })
+}
+
+const yearSchema = () => {
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
+    then: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+  })
+}
+
+const licenceStartDateSchema = () => {
+  Joi.when(LICENCE_TO_START_FIELD, {
+    is: ANOTHER_DATE,
+    then: Joi.when(
+      Joi.object({
+        day: Joi.any().required().concat(validation.date.createDayValidator(Joi)),
+        month: Joi.any().required().concat(validation.date.createMonthValidator(Joi)),
+        year: Joi.any().required().concat(validation.date.createYearValidator(Joi, minYear, maxYear))
+      }).unknown(),
+      {
+        then: validation.date.createRealDateValidator(Joi)
+      }
+    )
+  })
+}
 
 const validator = payload => {
-  const licenceStartDate = `${payload['licence-start-date-year']}-${payload['licence-start-date-month']}-${payload['licence-start-date-day']}`
+  const day = payload['licence-start-date-day']
+  const month = payload['licence-start-date-month']
+  const year = payload['licence-start-date-year']
+
+  const licenceStartDate = { day: parseInt(day), month: parseInt(month), year: parseInt(year) }
+  const licenceStartDateForRange = `${year}-${month}-${day}`
+
   Joi.assert(
     {
-      'licence-start-date': licenceStartDate,
-      'licence-to-start': payload['licence-to-start']
+      'licence-start-date-for-range': licenceStartDateForRange,
+      'licence-to-start': payload[LICENCE_TO_START_FIELD],
+      day: day || undefined,
+      month: month || undefined,
+      year: year || undefined,
+      'licence-start-date': licenceStartDate
     },
     Joi.object({
-      'licence-to-start': Joi.string().valid('after-payment', 'another-date').required(),
-      'licence-start-date': Joi.alternatives().conditional('licence-to-start', {
-        is: 'another-date',
-        then: JoiX.date()
-          .format(dateFormats)
-          .min(moment().tz(SERVICE_LOCAL_TIME).startOf('day'))
-          .max(moment().tz(SERVICE_LOCAL_TIME).add(ADVANCED_PURCHASE_MAX_DAYS, 'days'))
-          .required(),
-        otherwise: Joi.string().empty('')
-      })
+      'licence-to-start': Joi.string().valid(AFTER_PAYMENT, ANOTHER_DATE).required(),
+      'licence-start-date-for-range': Joi.when(LICENCE_TO_START_FIELD, {
+        is: ANOTHER_DATE,
+        then: Joi.date().min(minTime).max(maxTime).required()
+      }),
+      day: daySchema,
+      month: monthSchema,
+      year: yearSchema,
+      'licence-start-date': licenceStartDateSchema
     }).options({ abortEarly: false, allowUnknown: true })
   )
 }
