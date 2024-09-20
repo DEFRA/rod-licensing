@@ -13,9 +13,9 @@ import Boom from '@hapi/boom'
 import db from 'debug'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
-import { sendPayment, getPaymentStatus } from '../services/payment/govuk-pay-service.js'
-import { preparePayment } from '../processors/payment.js'
-import { COMPLETION_STATUS } from '../constants.js'
+import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
+import { preparePayment, prepareRecurringPayment } from '../processors/payment.js'
+import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
 const debug = db('webapp:agreed-handler')
@@ -45,6 +45,35 @@ const sendToSalesApi = async (request, transaction, status) => {
   await request.cache().helpers.status.set(status)
 
   return transaction
+}
+
+/**
+ * Grab the agreement id in GOV.UK pay using the API
+ * (1) Prepare payment (payload) for the API (processor)
+ * (2) Send to GOV.UK pay API (connector)
+ * (3) Handle exceptions and error (agreed handler)
+ * (4) Write into the journal tables (agreed handler)
+ * (5) Process the results - write into the cache
+ * @param request
+ * @param transaction
+ * @param status
+ * @returns {Promise<void>}
+ */
+const createRecurringPayment = async (request, transaction, status) => {
+  /*
+   * Prepare the payment payload
+  */
+  const preparedPayment = await prepareRecurringPayment(request, transaction)
+
+  /*
+    * Send the prepared payment to the GOV.UK pay API using the connector
+  */
+  const paymentResponse = await sendRecurringPayment(preparedPayment)
+
+  console.log('agreement id: ', paymentResponse.agreementId)
+
+  status[COMPLETION_STATUS.recurringAgreement] = true
+  await request.cache().helpers.status.set(status)
 }
 
 /**
@@ -221,6 +250,10 @@ export default async (request, h) => {
 
   // Send the transaction to the sales API and process the response
   if (!status[COMPLETION_STATUS.posted]) {
+    // Create the agreement if a recurring payment
+    if (status[RECURRING_PAYMENT] === true) {
+      await createRecurringPayment(request, transaction, status)
+    }
     try {
       await sendToSalesApi(request, transaction, status)
     } catch (e) {

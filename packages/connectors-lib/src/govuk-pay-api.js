@@ -11,6 +11,25 @@ const headers = () => ({
 })
 
 /**
+ * Create a new recurring payment
+ * @param preparedPayment - see the GOV.UK pay API reference for details
+ * @returns {Promise<*>}
+ */
+export const createRecurringPayment = async preparedPayment => {
+  try {
+    return fetch(process.env.GOV_PAY_RCP_API_URL, {
+      headers: headers(),
+      method: 'post',
+      body: JSON.stringify(preparedPayment),
+      timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
+    })
+  } catch (err) {
+    console.error(`Error creating recurring payment agreement in the GOV.UK API service - agreement: ${JSON.stringify(preparedPayment, null, 4)}`, err)
+    throw err
+  }
+}
+
+/**
  * Create a new payment
  * @param preparedPayment - see the GOV.UK pay API reference for details
  * @returns {Promise<*>}
