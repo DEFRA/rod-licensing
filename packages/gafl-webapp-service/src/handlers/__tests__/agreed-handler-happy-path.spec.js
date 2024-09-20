@@ -12,7 +12,7 @@ import {
 } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
-import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE, SET_UP_PAYMENT } from '../../uri.js'
+import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
 
