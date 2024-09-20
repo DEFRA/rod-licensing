@@ -62,12 +62,12 @@ const sendToSalesApi = async (request, transaction, status) => {
 const createRecurringPayment = async (request, transaction, status) => {
   /*
    * Prepare the payment payload
-  */
+   */
   const preparedPayment = await prepareRecurringPayment(request, transaction)
 
   /*
-    * Send the prepared payment to the GOV.UK pay API using the connector
-  */
+   * Send the prepared payment to the GOV.UK pay API using the connector
+   */
   const paymentResponse = await sendRecurringPayment(preparedPayment)
 
   console.log('agreement id: ', paymentResponse.agreementId)

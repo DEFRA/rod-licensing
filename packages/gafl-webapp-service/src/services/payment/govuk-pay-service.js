@@ -108,7 +108,7 @@ export const getPaymentStatus = async paymentId => {
   }
 }
 
-export const sendRecurringPayment = async (preparedPayment) => {
+export const sendRecurringPayment = async preparedPayment => {
   let response
   try {
     response = await govUkPayApi.createRecurringPayment()

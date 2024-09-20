@@ -24,7 +24,10 @@ export const createRecurringPayment = async preparedPayment => {
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
   } catch (err) {
-    console.error(`Error creating recurring payment agreement in the GOV.UK API service - agreement: ${JSON.stringify(preparedPayment, null, 4)}`, err)
+    console.error(
+      `Error creating recurring payment agreement in the GOV.UK API service - agreement: ${JSON.stringify(preparedPayment, null, 4)}`,
+      err
+    )
     throw err
   }
 }
