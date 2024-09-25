@@ -67,9 +67,6 @@ echo "Updating version from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package files versions, project inter-dependencies and lerna.json with new version number
 lerna version "${NEW_VERSION}" --yes --no-push --force-publish --exact
 
-# Update package lock with new version number
-lerna exec -- npm install --package-lock-only
-
 # Generate changelog information for changes since the last tag
 echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} and ${NEW_VERSION}"
 lerna-changelog --from "${PREVIOUS_VERSION}" --to "${NEW_VERSION}" | cat - CHANGELOG.md > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
