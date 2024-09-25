@@ -1,4 +1,14 @@
 
+## v1.50.0-rc.8 (2024-09-25)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2054](https://github.com/DEFRA/rod-licensing/pull/2054) Correcting styling for RCP T&C headers ([@lailien3](https://github.com/lailien3))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.50.0-rc.7 (2024-09-18)
 
 #### :rocket: Enhancement
