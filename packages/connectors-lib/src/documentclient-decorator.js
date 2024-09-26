@@ -1,10 +1,11 @@
 import db from 'debug'
-import AWS from 'aws-sdk'
-const { DynamoDB } = AWS
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
 const debug = db('connectors:aws')
 
 export const createDocumentClient = options => {
-  const docClient = new DynamoDB.DocumentClient(options)
+  const client = new DynamoDBClient(options)
+  const docClient = DynamoDBDocument.from(client)
 
   // Support for large query/scan operations which return results in pages
   const wrapPagedDocumentClientOperation = operationName => {
