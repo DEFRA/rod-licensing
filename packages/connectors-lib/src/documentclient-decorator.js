@@ -3,13 +3,13 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
 const debug = db('connectors:aws')
 
-export const createDocumentClient = (options) => {
+export const createDocumentClient = options => {
   const client = new DynamoDBClient(options)
   const docClient = DynamoDBDocument.from(client)
 
   // Support for large query/scan operations which return results in pages
-  const wrapPagedDocumentClientOperation = (operationName) => {
-    return async (params) => {
+  const wrapPagedDocumentClientOperation = operationName => {
+    return async params => {
       const items = []
       let lastEvaluatedKey = null
       do {
@@ -32,7 +32,7 @@ export const createDocumentClient = (options) => {
    * @param {DocumentClient.BatchWriteItemInput} params as per DynamoDB.DocumentClient.batchWrite
    * @returns {Promise<void>}
    */
-  docClient.batchWriteAllPromise = async (params) => {
+  docClient.batchWriteAllPromise = async params => {
     let request = { ...params }
     let hasUnprocessedItems = !!Object.keys(request.RequestItems).length
     let unprocessedItemsDelay = 500
@@ -47,14 +47,14 @@ export const createDocumentClient = (options) => {
             'Failed to write items to DynamoDB using batch write.  UnprocessedItems were returned and maxRetries has been reached.'
           )
         }
-        await new Promise((resolve) => setTimeout(resolve, unprocessedItemsDelay))
+        await new Promise(resolve => setTimeout(resolve, unprocessedItemsDelay))
         unprocessedItemsDelay = Math.min(2500, unprocessedItemsDelay * 1.5)
         debug('Replaying DynamoDB batchWrite operation due to UnprocessedItems: %o', params.RequestItems)
       }
     }
   }
 
-  docClient.createUpdateExpression = (payload) =>
+  docClient.createUpdateExpression = payload =>
     Object.entries(payload).reduce(
       (acc, [k, v], idx) => {
         acc.UpdateExpression += `${idx > 0 ? ',' : ''}#${k} = :${k}`
@@ -62,7 +62,7 @@ export const createDocumentClient = (options) => {
         acc.ExpressionAttributeValues[`:${k}`] = v
         return acc
       },
-       { UpdateExpression: 'SET ', ExpressionAttributeNames: {}, ExpressionAttributeValues: {} }
+      { UpdateExpression: 'SET ', ExpressionAttributeNames: {}, ExpressionAttributeValues: {} }
     )
 
   return docClient
