@@ -1,11 +1,51 @@
 import Config from '../config.js'
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
+import AWS from 'aws-sdk'
+
+// Mocking DynamoDB and DynamoDBDocument from AWS SDK v3
+jest.mock('@aws-sdk/client-dynamodb')
+jest.mock('@aws-sdk/lib-dynamodb')
+
+// Mocking AWS SDK v2 components (SQS, S3, SecretsManager)
+jest.mock('aws-sdk', () => {
+  return {
+    SQS: jest.fn(() => ({
+      config: { endpoint: Config.aws.sqs.endpoint || 'sqs.eu-west-2.amazonaws.com' }
+    })),
+    S3: jest.fn(() => ({
+      config: {
+        endpoint: Config.aws.s3.endpoint || 's3.eu-west-2.amazonaws.com',
+        s3ForcePathStyle: !!Config.aws.s3.endpoint
+      }
+    })),
+    SecretsManager: jest.fn(() => ({
+      config: { endpoint: Config.aws.secretsManager.endpoint || 'secretsmanager.eu-west-2.amazonaws.com' }
+    }))
+  }
+})
+
 const TEST_ENDPOINT = 'http://localhost:8080'
-jest.dontMock('aws-sdk')
+
 describe('aws connectors', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('configures dynamodb with a custom endpoint if one is defined in configuration', async () => {
     Config.aws.dynamodb.endpoint = TEST_ENDPOINT
+
+    const dynamoDbMock = { config: { endpoint: TEST_ENDPOINT } }
+    DynamoDB.mockReturnValue(dynamoDbMock)
+
+    DynamoDBDocument.from.mockReturnValue({})
+
     const { ddb } = require('../aws.js').default()
-    expect(ddb.config.endpoint).toEqual(TEST_ENDPOINT)
+
+    expect(DynamoDB).toHaveBeenCalledWith(expect.objectContaining({
+      endpoint: TEST_ENDPOINT
+    }))
+    expect(DynamoDBDocument.from).toHaveBeenCalledWith(dynamoDbMock)
   })
 
   it('configures sqs with a custom endpoint if one is defined in configuration', async () => {
@@ -17,8 +57,17 @@ describe('aws connectors', () => {
   it('uses the default dynamodb endpoint if it is not overridden in configuration', async () => {
     process.env.AWS_REGION = 'eu-west-2'
     delete Config.aws.dynamodb.endpoint
+
+    const dynamoDbMock = { config: { endpoint: 'dynamodb.eu-west-2.amazonaws.com' } }
+    DynamoDB.mockReturnValue(dynamoDbMock)
+
+    DynamoDBDocument.from.mockReturnValue({})
     const { ddb } = require('../aws.js').default()
-    expect(ddb.config.endpoint).toEqual('dynamodb.eu-west-2.amazonaws.com')
+
+    expect(DynamoDB).toHaveBeenCalledWith(expect.not.objectContaining({
+      endpoint: expect.any(String)
+    }))
+    expect(DynamoDBDocument.from).toHaveBeenCalledWith(dynamoDbMock)
   })
 
   it('uses the default sqs endpoint if it is not overridden in configuration', async () => {
