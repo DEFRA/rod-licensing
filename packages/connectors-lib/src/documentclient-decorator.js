@@ -11,16 +11,18 @@ export const createDocumentClient = (options = {}) => {
   const docClient = DynamoDBDocument.from(client)
 
   // Support for large query/scan operations which return results in pages
-  const wrapPagedDocumentClientOperation = (operationName) => {
-    return async (params) => {
+  const wrapPagedDocumentClientOperation = operationName => {
+    return async params => {
       const items = []
       let lastEvaluatedKey = null
       do {
         const Command = operationName === 'query' ? QueryCommand : ScanCommand
-        const response = await docClient.send(new Command({
-          ...params,
-          ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
-        }))
+        const response = await docClient.send(
+          new Command({
+            ...params,
+            ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
+          })
+        )
         lastEvaluatedKey = response.LastEvaluatedKey
         response.Items && items.push(...response.Items)
       } while (lastEvaluatedKey)
@@ -36,7 +38,7 @@ export const createDocumentClient = (options = {}) => {
    * @param {DocumentClient.BatchWriteItemInput} params as per DynamoDB.DocumentClient.batchWrite
    * @returns {Promise<void>}
    */
-  docClient.batchWriteAllPromise = async (params) => {
+  docClient.batchWriteAllPromise = async params => {
     let request = { ...params }
     let hasUnprocessedItems = !!Object.keys(request.RequestItems).length
     let unprocessedItemsDelay = 500
@@ -58,7 +60,7 @@ export const createDocumentClient = (options = {}) => {
     }
   }
 
-  docClient.createUpdateExpression = (payload) =>
+  docClient.createUpdateExpression = payload =>
     Object.entries(payload).reduce(
       (acc, [k, v], idx) => {
         acc.UpdateExpression += `${idx > 0 ? ',' : ''}#${k} = :${k}`

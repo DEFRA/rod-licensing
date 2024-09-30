@@ -8,17 +8,14 @@ describe('document client decorations', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient)
 
   beforeEach(() => {
-    ddbMock.reset()  // Reset mock before each test
+    ddbMock.reset() // Reset mock before each test
   })
 
   it('deals with pagination where DynamoDB returns a LastEvaluatedKey in a query response', async () => {
     const testLastEvaluatedKey = { id: '16324258-85-92746491' }
 
     // Mock QueryCommand to return items with a LastEvaluatedKey
-    ddbMock
-      .on(QueryCommand)
-      .resolvesOnce({ Items: [], LastEvaluatedKey: testLastEvaluatedKey })
-      .resolvesOnce({ Items: [] })
+    ddbMock.on(QueryCommand).resolvesOnce({ Items: [], LastEvaluatedKey: testLastEvaluatedKey }).resolvesOnce({ Items: [] })
 
     await docClient.queryAllPromise({ TableName: 'TEST' })
 
@@ -32,10 +29,7 @@ describe('document client decorations', () => {
     const testLastEvaluatedKey = { id: '16324258-85-92746491' }
 
     // Mock ScanCommand to return items with a LastEvaluatedKey
-    ddbMock
-      .on(ScanCommand)
-      .resolvesOnce({ Items: [], LastEvaluatedKey: testLastEvaluatedKey })
-      .resolvesOnce({ Items: [] })
+    ddbMock.on(ScanCommand).resolvesOnce({ Items: [], LastEvaluatedKey: testLastEvaluatedKey }).resolvesOnce({ Items: [] })
 
     await docClient.scanAllPromise({ TableName: 'TEST' })
 

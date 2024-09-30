@@ -1,7 +1,6 @@
 import Config from '../config.js'
 import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
-import AWS from 'aws-sdk'
 
 // Mocking DynamoDB and DynamoDBDocument from AWS SDK v3
 jest.mock('@aws-sdk/client-dynamodb')
@@ -40,11 +39,14 @@ describe('aws connectors', () => {
 
     DynamoDBDocument.from.mockReturnValue({})
 
-    const { ddb } = require('../aws.js').default()
+    // Remove unused `ddb` from destructuring
+    require('../aws.js').default()
 
-    expect(DynamoDB).toHaveBeenCalledWith(expect.objectContaining({
-      endpoint: TEST_ENDPOINT
-    }))
+    expect(DynamoDB).toHaveBeenCalledWith(
+      expect.objectContaining({
+        endpoint: TEST_ENDPOINT
+      })
+    )
     expect(DynamoDBDocument.from).toHaveBeenCalledWith(dynamoDbMock)
   })
 
@@ -62,11 +64,15 @@ describe('aws connectors', () => {
     DynamoDB.mockReturnValue(dynamoDbMock)
 
     DynamoDBDocument.from.mockReturnValue({})
-    const { ddb } = require('../aws.js').default()
 
-    expect(DynamoDB).toHaveBeenCalledWith(expect.not.objectContaining({
-      endpoint: expect.any(String)
-    }))
+    // Remove unused `ddb` from destructuring
+    require('../aws.js').default()
+
+    expect(DynamoDB).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        endpoint: expect.any(String)
+      })
+    )
     expect(DynamoDBDocument.from).toHaveBeenCalledWith(dynamoDbMock)
   })
 
