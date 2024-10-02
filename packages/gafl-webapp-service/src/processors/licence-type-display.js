@@ -6,7 +6,7 @@ export const licenceTypeDisplay = (permission, mssgs) => {
 
   // Build the display string for the licence type
   if (concessionHelper.hasJunior(permission)) {
-    typesStrArr.push(mssgs.junior)
+    typesStrArr.push(mssgs.age_junior)
   }
   if (permission.licenceType === mappings.LICENCE_TYPE['salmon-and-sea-trout']) {
     typesStrArr.push(mssgs.licence_type_radio_salmon_payment_summary)

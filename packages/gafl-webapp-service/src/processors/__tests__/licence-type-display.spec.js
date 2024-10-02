@@ -3,7 +3,7 @@ import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringL
 
 const getCatalog = () => ({
   over_66: ' (over_66)',
-  junior: 'junior ',
+  age_junior: 'junior ',
   licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
   licence_type_radio_trout_two_rod_payment_summary: 'trout and coarse (up to 2 rods)',
   licence_type_radio_trout_three_rod_payment_summary: 'trout and coarse (up to 3 rods)',
