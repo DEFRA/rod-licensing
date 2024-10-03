@@ -39,7 +39,6 @@ describe('aws connectors', () => {
 
     DynamoDBDocument.from.mockReturnValue({})
 
-    // Remove unused `ddb` from destructuring
     require('../aws.js').default()
 
     expect(DynamoDB).toHaveBeenCalledWith(
@@ -65,7 +64,6 @@ describe('aws connectors', () => {
 
     DynamoDBDocument.from.mockReturnValue({})
 
-    // Remove unused `ddb` from destructuring
     require('../aws.js').default()
 
     expect(DynamoDB).toHaveBeenCalledWith(
