@@ -40,7 +40,7 @@ describe('document client decorations', () => {
   })
 
   it('deals with UnprocessedItems when making batchWrite requests to DynamoDB', async () => {
-    //mMock BatchWriteCommand to return UnprocessedItems
+    // mock BatchWriteCommand to return UnprocessedItems
     ddbMock
       .on(BatchWriteCommand)
       .resolvesOnce({
