@@ -1,7 +1,33 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
-import AwsMock from 'aws-sdk'
+import { SQS, S3, SecretsManager } from 'aws-sdk'
+import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb'
+import { mockClient } from 'aws-sdk-client-mock'
+
 let server = null
+const ddbMock = mockClient(DynamoDBClient)
+
+jest.mock('aws-sdk', () => {
+  const SQS = jest.fn(() => ({
+    listQueues: jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({ QueueUrls: ['TestQueue'] })
+    })
+  }))
+  
+  const S3 = jest.fn(() => ({
+    listBuckets: jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({ Buckets: [{ Name: 'TestBucket' }] })
+    })
+  }))
+
+  const SecretsManager = jest.fn(() => ({
+    getSecretValue: jest.fn().mockReturnValue({
+      promise: jest.fn().mockResolvedValue({ SecretString: JSON.stringify({ secretKey: 'secretValue' }) })
+    })
+  }))
+
+  return { SQS, S3, SecretsManager }
+})
 
 describe('hapi healthcheck', () => {
   beforeAll(async () => {
@@ -10,6 +36,11 @@ describe('hapi healthcheck', () => {
 
   afterAll(async () => {
     await server.stop()
+  })
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    ddbMock.reset()
   })
 
   it('exposes a simple status endpoint returning a 200 response when healthy', async () => {
@@ -21,16 +52,19 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
-    AwsMock.SQS.__init({
-      expectedResponses: {
-        listQueues: { QueueUrls: ['TestQueue'] }
-      }
-    })
-    AwsMock.DynamoDB.__init({
-      expectedResponses: {
-        listTables: { TableNames: ['TestTable'] }
-      }
-    })
+    // v2 responses
+    const sqs = new SQS()
+    sqs.listQueues.mockResolvedValue({ QueueUrls: ['TestQueue'] })
+
+    const s3 = new S3()
+    s3.listBuckets.mockResolvedValue({ Buckets: [{ Name: 'TestBucket' }] })
+
+    const secretsManager = new SecretsManager()
+    secretsManager.getSecretValue.mockResolvedValue({ SecretString: JSON.stringify({ secretKey: 'secretValue' }) })
+
+    // v3 response
+    ddbMock.on(ListTablesCommand).resolves({ TableNames: ['TestTable'] })
+
     const result = await server.inject({
       method: 'GET',
       url: '/service-status?v&h'
@@ -47,25 +81,27 @@ describe('hapi healthcheck', () => {
         version: expect.any(String),
         status: {
           state: 'GOOD',
-          message: expect.arrayContaining([
-            expect.arrayContaining([expect.stringContaining('no feature tests have been defined')]),
-            expect.arrayContaining([
-              expect.objectContaining({
-                connection: 'dynamics',
-                status: 'ok'
-              }),
-              expect.objectContaining({
-                connection: 'dynamodb',
-                status: 'ok',
-                TableNames: expect.arrayContaining(['TestTable'])
-              }),
-              expect.objectContaining({
-                connection: 'sqs',
-                status: 'ok',
-                QueueUrls: expect.arrayContaining(['TestQueue'])
-              })
-            ])
-          ])
+          message: [
+            ["no feature tests have been defined"],
+            [
+              {
+                "@odata.context": expect.any(String),
+                Version: expect.any(String),
+                connection: "dynamics",
+                status: "ok"
+              },
+              {
+                TableNames: ["TestTable"],
+                connection: "dynamodb",
+                status: "ok"
+              },
+              {
+                QueueUrls: ["TestQueue"],
+                connection: "sqs",
+                status: "ok"
+              }
+            ]
+          ]
         },
         custom: expect.objectContaining({ health: expect.anything() })
       }
