@@ -13,7 +13,7 @@ jest.mock('aws-sdk', () => {
       promise: jest.fn().mockResolvedValue({ QueueUrls: ['TestQueue'] })
     })
   }))
-  
+
   const S3 = jest.fn(() => ({
     listBuckets: jest.fn().mockReturnValue({
       promise: jest.fn().mockResolvedValue({ Buckets: [{ Name: 'TestBucket' }] })
@@ -82,23 +82,23 @@ describe('hapi healthcheck', () => {
         status: {
           state: 'GOOD',
           message: [
-            ["no feature tests have been defined"],
+            ['no feature tests have been defined'],
             [
               {
-                "@odata.context": expect.any(String),
+                '@odata.context': expect.any(String),
                 Version: expect.any(String),
-                connection: "dynamics",
-                status: "ok"
+                connection: 'dynamics',
+                status: 'ok'
               },
               {
-                TableNames: ["TestTable"],
-                connection: "dynamodb",
-                status: "ok"
+                TableNames: ['TestTable'],
+                connection: 'dynamodb',
+                status: 'ok'
               },
               {
-                QueueUrls: ["TestQueue"],
-                connection: "sqs",
-                status: "ok"
+                QueueUrls: ['TestQueue'],
+                connection: 'sqs',
+                status: 'ok'
               }
             ]
           ]
