@@ -105,5 +105,10 @@
     "testEnvironment": "node",
     "testRunner": "jest-circus/runner",
     "silent": true
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.665.0",
+    "@aws-sdk/lib-dynamodb": "^3.665.0",
+    "aws-sdk-client-mock": "^4.0.2"
   }
 }
