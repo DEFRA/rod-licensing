@@ -3,7 +3,21 @@ import stream from 'stream'
 import AwsMock from 'aws-sdk'
 
 const MOCK_TMP = '/tmp/local/mock'
-jest.mock('fs')
+
+jest.mock('fs', () => {
+  const originalFs = jest.requireActual('fs')
+  return {
+    ...originalFs,
+    promises: {
+      readFile: jest.fn().mockResolvedValue('mocked file content')
+    },
+    createWriteStream: jest.fn(() => ({
+      on: jest.fn(),
+      end: jest.fn()
+    }))
+  }
+})
+
 jest.mock('stream')
 jest.mock('../../io/file.js', () => ({
   getTempDir: jest.fn((...subfolders) => `${MOCK_TMP}/${subfolders.join('/')}`)
