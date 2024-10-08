@@ -10,9 +10,9 @@ const getCatalog = () => ({
   recurring_payment_set_up_bulletpoint_1_trout_2_rod: ' trout and coarse (2 rod)',
   recurring_payment_set_up_bulletpoint_1_trout_3_rod: ' trout and coarse (3 rod)',
   recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout',
-  new_prices_row_12_month: '12-month',
-  new_prices_row_8_day: '8-day',
-  new_prices_row_1_day: '1-day'
+  licence_1_day: '1-day',
+  licence_8_day: '8-day',
+  licence_12_month: '12-month'
 })
 
 jest.mock('../concession-helper', () => ({

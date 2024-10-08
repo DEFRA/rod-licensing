@@ -56,7 +56,7 @@ describe('The govuk-pay-service', () => {
             getCatalog: () => ({
               over_66: ' (Over 66)',
               licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
-              new_prices_row_12_month: '12-month'
+              licence_12_month: '12-month'
             })
           },
           info: { host: '0.0.0.0:3000' },
@@ -99,7 +99,7 @@ describe('The govuk-pay-service', () => {
             getCatalog: () => ({
               over_66: ' (Over 66)',
               licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
-              new_prices_row_8_day: '8-day'
+              licence_8_day: '8-day'
             })
           },
           info: { host: '0.0.0.0:3000' },

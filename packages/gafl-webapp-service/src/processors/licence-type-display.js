@@ -33,11 +33,11 @@ export const licenceTypeAndLengthDisplay = (permission, mssgs) => {
 const getLicenceTypeMessage = (licenceLength, mssgs) => {
   const length = typeof licenceLength === 'symbol' ? licenceLength.description : licenceLength
   if (length === '12M') {
-    return mssgs.new_prices_row_12_month
+    return mssgs.licence_12_month
   } else if (length === '8D') {
-    return mssgs.new_prices_row_8_day
+    return mssgs.licence_8_day
   } else {
-    return mssgs.new_prices_row_1_day
+    return mssgs.licence_1_day
   }
 }
 
