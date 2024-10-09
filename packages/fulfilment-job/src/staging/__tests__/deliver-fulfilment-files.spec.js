@@ -44,16 +44,10 @@ describe('deliverFulfilmentFiles', () => {
     executeQuery.mockResolvedValue([{ entity: mockFulfilmentRequestFile2 }, { entity: mockFulfilmentRequestFile1 }])
 
     // Streams for file1
-    const {
-      s3DataStreamFile: s3DataStreamFile1,
-      s3HashStreamFile: s3HashStreamFile1
-    } = createMockFileStreams()
+    const { s3DataStreamFile: s3DataStreamFile1, s3HashStreamFile: s3HashStreamFile1 } = createMockFileStreams()
 
     // Streams for file2
-    const {
-      s3DataStreamFile: s3DataStreamFile2,
-      s3HashStreamFile: s3HashStreamFile2
-    } = createMockFileStreams()
+    const { s3DataStreamFile: s3DataStreamFile2, s3HashStreamFile: s3HashStreamFile2 } = createMockFileStreams()
 
     // Run the delivery
     await expect(deliverFulfilmentFiles()).resolves.toBeUndefined()
@@ -183,10 +177,7 @@ describe('deliverFulfilmentFiles', () => {
     const s3 = createTestableStream()
     streamHelper.pipelinePromise.mockResolvedValue()
     openpgp.encrypt.mockResolvedValue(s2)
-    merge2
-      .mockReturnValueOnce(s1)
-      .mockReturnValueOnce(s2)
-      .mockReturnValueOnce(s3)
+    merge2.mockReturnValueOnce(s1).mockReturnValueOnce(s2).mockReturnValueOnce(s3)
     await mockExecuteQuery()
     createMockFileStreams()
 

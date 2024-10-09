@@ -69,8 +69,5 @@ const createEncryptedDataReadStream = async file => {
 const deliver = async (targetFileName, readableStream, ...transforms) => {
   const { s3WriteStream: s3DataStream, managedUpload: s3DataManagedUpload } = createS3WriteStream(targetFileName)
 
-  await Promise.all([
-    streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream]),
-    s3DataManagedUpload
-  ])
+  await Promise.all([streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream]), s3DataManagedUpload])
 }
