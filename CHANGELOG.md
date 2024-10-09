@@ -1,4 +1,12 @@
 
+## v1.50.0-rc.9 (2024-10-09)
+
+#### :bug: Bug Fix
+* [#2063](https://github.com/DEFRA/rod-licensing/pull/2063) Fix localstack config ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.50.0-rc.8 (2024-09-25)
 
 #### :bug: Bug Fix

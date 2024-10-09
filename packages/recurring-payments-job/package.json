@@ -1,6 +1,6 @@
 {
   "name": "@defra-fish/recurring-payments-job",
-  "version": "1.50.0-rc.8",
+  "version": "1.50.0-rc.9",
   "description": "Rod Licensing Recurring Payments Job",
   "type": "module",
   "engines": {
@@ -36,8 +36,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@defra-fish/business-rules-lib": "1.50.0-rc.8",
-    "@defra-fish/connectors-lib": "1.50.0-rc.8",
+    "@defra-fish/business-rules-lib": "1.50.0-rc.9",
+    "@defra-fish/connectors-lib": "1.50.0-rc.9",
     "commander": "^7.2.0",
     "moment-timezone": "^0.5.34"
   }
