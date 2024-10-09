@@ -4,7 +4,6 @@ import merge2 from 'merge2'
 import moment from 'moment'
 import { executeQuery, persist, findFulfilmentFiles } from '@defra-fish/dynamics-lib'
 import { createS3WriteStream, readS3PartFiles } from '../transport/s3.js'
-import { createFtpWriteStream } from '../transport/ftp.js'
 import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from './staging-common.js'
 import db from 'debug'
 import openpgp from 'openpgp'
@@ -69,11 +68,9 @@ const createEncryptedDataReadStream = async file => {
  */
 const deliver = async (targetFileName, readableStream, ...transforms) => {
   const { s3WriteStream: s3DataStream, managedUpload: s3DataManagedUpload } = createS3WriteStream(targetFileName)
-  const { ftpWriteStream: ftpDataStream, managedUpload: ftpDataManagedUpload } = createFtpWriteStream(targetFileName)
 
   await Promise.all([
-    streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream, ftpDataStream]),
-    s3DataManagedUpload,
-    ftpDataManagedUpload
+    streamHelper.pipelinePromise([readableStream, ...transforms, s3DataStream]),
+    s3DataManagedUpload
   ])
 }

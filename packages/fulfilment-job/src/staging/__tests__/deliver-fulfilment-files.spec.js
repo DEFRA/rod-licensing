@@ -1,7 +1,6 @@
 import { Readable, PassThrough, Writable } from 'stream'
 import { deliverFulfilmentFiles } from '../deliver-fulfilment-files.js'
 import { createS3WriteStream, readS3PartFiles } from '../../transport/s3.js'
-import { createFtpWriteStream } from '../../transport/ftp.js'
 import { FULFILMENT_FILE_STATUS_OPTIONSET, getOptionSetEntry } from '../staging-common.js'
 import { FulfilmentRequestFile, executeQuery, persist } from '@defra-fish/dynamics-lib'
 import openpgp from 'openpgp'
@@ -10,7 +9,6 @@ import streamHelper from '../streamHelper.js'
 import merge2 from 'merge2'
 
 jest.mock('../../transport/s3.js')
-jest.mock('../../transport/ftp.js')
 jest.mock('openpgp', () => ({
   readKey: jest.fn(() => ({})),
   encrypt: jest.fn(({ message: readableStream }) => readableStream),
@@ -48,17 +46,13 @@ describe('deliverFulfilmentFiles', () => {
     // Streams for file1
     const {
       s3DataStreamFile: s3DataStreamFile1,
-      ftpDataStreamFile: ftpDataStreamFile1,
-      s3HashStreamFile: s3HashStreamFile1,
-      ftpHashStreamFile: ftpHashStreamFile1
+      s3HashStreamFile: s3HashStreamFile1
     } = createMockFileStreams()
 
     // Streams for file2
     const {
       s3DataStreamFile: s3DataStreamFile2,
-      ftpDataStreamFile: ftpDataStreamFile2,
-      s3HashStreamFile: s3HashStreamFile2,
-      ftpHashStreamFile: ftpHashStreamFile2
+      s3HashStreamFile: s3HashStreamFile2
     } = createMockFileStreams()
 
     // Run the delivery
@@ -69,22 +63,14 @@ describe('deliverFulfilmentFiles', () => {
     // File 1 expectations
     expect(createS3WriteStream).toHaveBeenNthCalledWith(1, 'EAFF202006180001.json')
     expect(createS3WriteStream).toHaveBeenNthCalledWith(3, 'EAFF202006180001.json.sha256')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(1, 'EAFF202006180001.json')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(3, 'EAFF202006180001.json.sha256')
     expect(JSON.parse(s3DataStreamFile1.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
-    expect(JSON.parse(ftpDataStreamFile1.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
     expect(s3HashStreamFile1.dataProcessed).toEqual(fileShaHash) // validated
-    expect(ftpHashStreamFile1.dataProcessed).toEqual(fileShaHash) // validated
 
     // File 2 expectations
     expect(createS3WriteStream).toHaveBeenNthCalledWith(4, 'EAFF202006180002.json')
     expect(createS3WriteStream).toHaveBeenNthCalledWith(6, 'EAFF202006180002.json.sha256')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(4, 'EAFF202006180002.json')
-    expect(createFtpWriteStream).toHaveBeenNthCalledWith(6, 'EAFF202006180002.json.sha256')
     expect(JSON.parse(s3DataStreamFile2.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
-    expect(JSON.parse(ftpDataStreamFile2.dataProcessed)).toEqual({ licences: [{ part: 0 }, { part: 1 }] })
     expect(s3HashStreamFile2.dataProcessed).toEqual(fileShaHash) // validated
-    expect(ftpHashStreamFile2.dataProcessed).toEqual(fileShaHash) // validated
 
     // Persist to dynamics for file 1
     expect(persist).toHaveBeenNthCalledWith(1, [
@@ -227,27 +213,18 @@ const createMockFulfilmentRequestFile = async (fileName, date) =>
 
 const createMockFileStreams = () => {
   const s3DataStreamFile = createTestableStream()
-  const ftpDataStreamFile = createTestableStream()
   createS3WriteStream.mockReturnValueOnce({ s3WriteStream: s3DataStreamFile, managedUpload: Promise.resolve() })
-  createFtpWriteStream.mockReturnValueOnce({ ftpWriteStream: ftpDataStreamFile, managedUpload: Promise.resolve() })
 
   const s3EncryptedDataStreamFile = createTestableStream()
-  const ftpEncryptedDataStreamFile = createTestableStream()
   createS3WriteStream.mockReturnValueOnce({ s3WriteStream: s3EncryptedDataStreamFile, managedUpload: Promise.resolve() })
-  createFtpWriteStream.mockReturnValueOnce({ ftpWriteStream: ftpEncryptedDataStreamFile, managedUpload: Promise.resolve() })
 
   const s3HashStreamFile = createTestableStream()
-  const ftpHashStreamFile = createTestableStream()
   createS3WriteStream.mockReturnValueOnce({ s3WriteStream: s3HashStreamFile, managedUpload: Promise.resolve() })
-  createFtpWriteStream.mockReturnValueOnce({ ftpWriteStream: ftpHashStreamFile, managedUpload: Promise.resolve() })
 
   return {
     s3DataStreamFile,
-    ftpDataStreamFile,
     s3EncryptedDataStreamFile,
-    ftpEncryptedDataStreamFile,
-    s3HashStreamFile,
-    ftpHashStreamFile
+    s3HashStreamFile
   }
 }
 
