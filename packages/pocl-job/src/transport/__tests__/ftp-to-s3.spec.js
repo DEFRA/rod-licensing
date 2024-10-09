@@ -9,7 +9,23 @@ import md5File from 'md5-file'
 import AwsMock from 'aws-sdk'
 import { mockedFtpMethods } from 'ssh2-sftp-client'
 
-jest.mock('fs')
+jest.mock('fs', () => {
+  const originalFs = jest.requireActual('fs')
+  return {
+    ...originalFs,
+    promises: {
+      readFile: jest.fn().mockResolvedValue('mocked file content')
+    },
+    createWriteStream: jest.fn(() => ({
+      on: jest.fn(),
+      end: jest.fn()
+    })),
+    createReadStream: jest.fn(() => 'mocked stream'),
+    statSync: jest.fn(() => ({ size: 1024 })),
+    unlinkSync: jest.fn()
+  }
+})
+
 jest.mock('md5-file')
 jest.mock('../../io/db.js')
 jest.mock('../../io/file.js')
