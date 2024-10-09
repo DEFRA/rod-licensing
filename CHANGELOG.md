@@ -1,4 +1,13 @@
 
+## v1.50.0-rc.10 (2024-10-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2061](https://github.com/DEFRA/rod-licensing/pull/2061) Uninstall pdfmake ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.50.0-rc.9 (2024-10-09)
 
 #### :bug: Bug Fix
