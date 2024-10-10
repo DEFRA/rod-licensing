@@ -28,6 +28,10 @@ describe('s3 operations', () => {
   })
 
   describe('refreshS3Metadata', () => {
+    afterEach(() => {
+      jest.clearAllMocks()
+    })
+
     it('gets a list of files from S3 and logs file processing', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
       const s3Key2 = `${moment().format('YYYY-MM-DD')}/test2.xml`
@@ -57,18 +61,26 @@ describe('s3 operations', () => {
     it('gets a truncated list of files from S3', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
-      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValueOnce({
+      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
+        promise: () => ({
+          IsTruncated: false,
+          Contents: [
+            {
+              Key: s3Key1,
+              LastModified: moment().toISOString()
+            }
+          ]
+        })
+      }).mockReturnValueOnce({
         promise: () => ({
           IsTruncated: true,
           NextContinuationToken: 'token',
-          Contents: [{ Key: s3Key1, LastModified: moment().toISOString() }]
-        })
-      })
-
-      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValueOnce({
-        promise: () => ({
-          IsTruncated: false,
-          Contents: [{ Key: s3Key1, LastModified: moment().toISOString() }]
+          Contents: [
+            {
+              Key: s3Key1,
+              LastModified: moment().toISOString()
+            }
+          ]
         })
       })
 
