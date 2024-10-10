@@ -61,18 +61,14 @@ describe('s3 operations', () => {
         .mockReturnValue({
           promise: () => ({
             IsTruncated: false,
-            Contents: [
-              { Key: s3Key1, LastModified: moment().toISOString() }
-            ]
+            Contents: [{ Key: s3Key1, LastModified: moment().toISOString() }]
           })
         })
         .mockReturnValueOnce({
           promise: () => ({
             IsTruncated: true,
             NextContinuationToken: 'token',
-            Contents: [
-              { Key: s3Key1, LastModified: moment().toISOString() }
-            ]
+            Contents: [{ Key: s3Key1, LastModified: moment().toISOString() }]
           })
         })
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
