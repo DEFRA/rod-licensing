@@ -61,28 +61,30 @@ describe('s3 operations', () => {
     it('gets a truncated list of files from S3', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
-      AwsMock.S3.mockedMethods.listObjectsV2.mockReturnValue({
-        promise: () => ({
-          IsTruncated: false,
-          Contents: [
-            {
-              Key: s3Key1,
-              LastModified: moment().toISOString()
-            }
-          ]
+      AwsMock.S3.mockedMethods.listObjectsV2
+        .mockReturnValue({
+          promise: () => ({
+            IsTruncated: false,
+            Contents: [
+              {
+                Key: s3Key1,
+                LastModified: moment().toISOString()
+              }
+            ]
+          })
         })
-      }).mockReturnValueOnce({
-        promise: () => ({
-          IsTruncated: true,
-          NextContinuationToken: 'token',
-          Contents: [
-            {
-              Key: s3Key1,
-              LastModified: moment().toISOString()
-            }
-          ]
+        .mockReturnValueOnce({
+          promise: () => ({
+            IsTruncated: true,
+            NextContinuationToken: 'token',
+            Contents: [
+              {
+                Key: s3Key1,
+                LastModified: moment().toISOString()
+              }
+            ]
+          })
         })
-      })
 
       const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
 
