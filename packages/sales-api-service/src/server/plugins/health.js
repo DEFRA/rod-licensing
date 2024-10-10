@@ -2,7 +2,9 @@ import HapiAndHealthy from 'hapi-and-healthy'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import Project from '../../project.cjs'
 import { AWS } from '@defra-fish/connectors-lib'
-const { ddb, sqs } = AWS()
+import { ListTablesCommand } from '@aws-sdk/client-dynamodb'
+
+const { ddb, sqs } = AWS() // ddb is using v3 client, sqs is using v2 client
 
 export default {
   plugin: HapiAndHealthy,
@@ -22,7 +24,8 @@ export default {
           return { connection: 'dynamics', status: 'ok', ...(await dynamicsClient.executeUnboundFunction('RetrieveVersion')) }
         },
         async () => {
-          return { connection: 'dynamodb', status: 'ok', ...(await ddb.listTables().promise()) }
+          const listTablesResult = await ddb.send(new ListTablesCommand({}))
+          return { connection: 'dynamodb', status: 'ok', ...listTablesResult }
         },
         async () => {
           return { connection: 'sqs', status: 'ok', ...(await sqs.listQueues().promise()) }
