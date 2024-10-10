@@ -98,9 +98,10 @@ describe('s3 operations', () => {
         Bucket: 'testbucket',
         ContinuationToken: 'token'
       })
-      expect(consoleLogSpy).toHaveBeenCalledWith('Processing 1 S3 files')
+      expect(consoleLogSpy).toHaveBeenCalledWith('Processing 2 S3 files')
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing test1.xml')
-      expect(consoleLogSpy).toHaveBeenCalledTimes(3)
+      expect(consoleLogSpy).toHaveBeenCalledWith('Processing test1.xml')
+      expect(consoleLogSpy).toHaveBeenCalledWith('Processed S3 files')
     })
 
     it('logs any errors raised by calling s3.listObjectsV2', async () => {
