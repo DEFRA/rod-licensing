@@ -1,12 +1,15 @@
-import { preparePayment } from '../payment.js'
+import { preparePayment, prepareRecurringPayment } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 import { addLanguageCodeToUri } from '../uri-helper.js'
 import { AGREED } from '../../uri.js'
+import db from 'debug'
+const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:payment-processors')]
 
 jest.mock('../uri-helper.js')
 
 jest.mock('../licence-type-display.js')
 licenceTypeAndLengthDisplay.mockReturnValue('Trout and coarse, up to 2 rods, 8 day')
+jest.mock('debug', () => jest.fn(() => jest.fn()))
 
 const createRequest = (opts = {}, catalog = {}) => ({
   i18n: {
@@ -22,6 +25,7 @@ const createTransaction = ({ isLicenceForYou = true, additionalPermissions = [],
   cost,
   permissions: [
     {
+      id: 'permission-id',
       licensee: {
         firstName: 'Lando',
         lastName: 'Norris',
@@ -206,5 +210,38 @@ describe('preparePayment', () => {
       const result = preparePayment(createRequest(), boboTransaction)
       expect(result.email).toBe(undefined)
     })
+  })
+})
+
+describe('prepareRecurringPayment', () => {
+  it('reference equals transaction.id', async () => {
+    const transaction = createTransaction()
+    const result = await prepareRecurringPayment(createRequest(), transaction)
+    expect(result.reference).toBe(transaction.id)
+  })
+
+  it('description equals the recurring payment description from catalog', async () => {
+    const mockCatalog = {
+      recurring_payment_description: 'The recurring card payment for your rod fishing licence'
+    }
+    const request = createRequest({}, mockCatalog)
+    const transaction = createTransaction()
+
+    const result = await prepareRecurringPayment(request, transaction)
+    expect(result.description).toBe(mockCatalog.recurring_payment_description)
+  })
+
+  it('user_identifier equals the permission id', async () => {
+    const transaction = createTransaction()
+    const result = await prepareRecurringPayment(createRequest(), transaction)
+    expect(result.user_identifier).toBe(transaction.permissions[0].id)
+  })
+
+  it('logs to debug for recurring payment', async () => {
+    const transaction = createTransaction()
+    const request = createRequest()
+
+    const result = await prepareRecurringPayment(request, transaction)
+    expect(debug).toHaveBeenCalledWith('Creating prepared recurring payment %o', result)
   })
 })

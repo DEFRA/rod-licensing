@@ -31,7 +31,8 @@ export const COMPLETION_STATUS = {
   paymentFailed: 'payment-failed',
   paymentCompleted: 'payment-completed',
   finalised: 'finalised',
-  completed: 'completed'
+  completed: 'completed',
+  recurringAgreement: 'recurring-agreement'
 }
 
 export const GOVPAYFAIL = {
@@ -69,3 +70,5 @@ export const LICENCE_SUMMARY_SEEN = 'licence-summary'
 // These cookies are used by the load balancer
 export const ALB_COOKIE_NAME = 'AWSALBTG'
 export const ALBCORS_COOKIE_NAME = 'AWSALBTGCORS'
+
+export const RECURRING_PAYMENT = 'recurring-payment'

@@ -1,0 +1,132 @@
+import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
+import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../__mocks__/test-utils-system'
+
+import {
+  ADULT_FULL_1_DAY_LICENCE,
+  ADULT_DISABLED_12_MONTH_LICENCE,
+  SENIOR_12_MONTH_LICENCE,
+  MOCK_PAYMENT_RESPONSE,
+  JUNIOR_LICENCE,
+  JUNIOR_DISABLED_LICENCE,
+  MOCK_RECURRING_PAYMENT_RESPONSE
+} from '../../__mocks__/mock-journeys.js'
+
+import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
+import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
+import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
+import agreedHandler from '../agreed-handler.js'
+import { prepareRecurringPayment } from '../../processors/payment.js'
+import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
+import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../../processors/api-transaction.js'
+import { v4 as uuidv4 } from 'uuid'
+
+
+jest.mock('@defra-fish/connectors-lib')
+jest.mock('../../processors/payment.js')
+jest.mock('../../services/payment/govuk-pay-service.js', () => ({
+  sendPayment: jest.fn(),
+  getPaymentStatus: jest.fn(),
+  sendRecurringPayment: jest.fn(() => ({ agreementId: 'agr-eem-ent-id1' }))
+}))
+jest.mock('../../processors/api-transaction.js')
+jest.mock('@defra-fish/connectors-lib')
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'abc-123-def-456')
+}))
+
+const paymentStatusSuccess = cost => ({
+  amount: cost,
+  state: {
+    status: 'success',
+    finished: true
+  }
+})
+
+describe('The agreed handler', () => {
+  beforeAll(() => {
+    salesApi.createTransaction.mockResolvedValue({
+      id: 'transaction-id-1',
+      cost: 0
+    })
+  })
+  beforeEach(jest.clearAllMocks)
+
+
+  const getMockRequest = (overrides = {}) => ({
+    cache: () => ({
+      helpers: {
+        transaction: {
+          get: async () => ({ id: 'id-111', cost: 0 }),
+          set: async () => {}
+        },
+        status: {
+          get: async () => ({
+            [COMPLETION_STATUS.agreed]: true,
+            [COMPLETION_STATUS.posted]: false,
+            [COMPLETION_STATUS.finalised]: true,
+            [RECURRING_PAYMENT]: true
+          }),
+          set: jest.fn()
+        },
+        ...overrides
+      }
+    })
+  })
+
+  const getRequestToolkit = () => ({
+    redirectWithLanguageCode: jest.fn()
+  })
+
+  describe('recurring card payments', () => {
+    it('sends the request and transaction to prepare the recurring payment', async () => {
+      const transaction = { cost: 0 }
+      const mockRequest = getMockRequest({
+        transaction: {
+          get: async () => transaction,
+          set: () => {}
+        }
+      })
+      await agreedHandler(mockRequest, getRequestToolkit())
+      expect(prepareRecurringPayment).toHaveBeenCalledWith(mockRequest, transaction)
+    })
+
+    it('adds a v4 guid to the transaction as an id', async () => {
+      let transactionPayload = null
+      prepareRecurringPayment.mockImplementationOnce((_p1, tp) => {
+        transactionPayload = { ...tp }
+      })
+      const v4guid = Symbol('v4guid')
+      uuidv4.mockReturnValue(v4guid)
+      const transaction = { cost: 0 }
+      const mockRequest = getMockRequest({
+        transaction: {
+          get: async () => transaction,
+          set: () => {}
+        }
+      })
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(transactionPayload.id).toBe(v4guid)
+    })
+
+    it('sends a recurring payment creation request to Gov.UK Pay', async () => {
+      const preparedPayment = Symbol('preparedPayment')
+      prepareRecurringPayment.mockResolvedValueOnce(preparedPayment)
+      await agreedHandler(getMockRequest(), getRequestToolkit())
+      expect(sendRecurringPayment).toHaveBeenCalledWith(preparedPayment)
+    })
+
+    it('sends the generated guid to the sales api, rather than requesting it from the sales api', async () => {
+      const v4guid = Symbol('v4guid')
+      uuidv4.mockReturnValue(v4guid)
+
+      await agreedHandler(getMockRequest(), getRequestToolkit())
+
+      expect(prepareApiTransactionPayload).toHaveBeenCalledWith(
+        expect.any(Object),
+        v4guid
+      )
+    })
+  })
+})

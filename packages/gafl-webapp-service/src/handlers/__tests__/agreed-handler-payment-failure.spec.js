@@ -9,8 +9,12 @@ import { AGREED, TEST_TRANSACTION, TEST_STATUS, PAYMENT_FAILED, PAYMENT_CANCELLE
 import agreedHandler from '../agreed-handler.js'
 import { getPaymentStatus, sendPayment } from '../../services/payment/govuk-pay-service.js'
 import { preparePayment } from '../../processors/payment.js'
+import { v4 as uuidv4 } from 'uuid'
 jest.mock('../../services/payment/govuk-pay-service.js')
 jest.mock('../../processors/payment.js')
+jest.mock('uuid', () => ({
+  v4: jest.fn()
+}))
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -158,6 +162,7 @@ describe('The agreed handler', () => {
   ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
+    uuidv4.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     govUkPayApi.createPayment = jest.fn(
