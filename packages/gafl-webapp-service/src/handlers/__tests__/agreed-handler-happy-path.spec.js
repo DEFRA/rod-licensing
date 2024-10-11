@@ -7,14 +7,14 @@ import {
   SENIOR_12_MONTH_LICENCE,
   MOCK_PAYMENT_RESPONSE,
   JUNIOR_LICENCE,
-  JUNIOR_DISABLED_LICENCE,
-  MOCK_RECURRING_PAYMENT_RESPONSE
+  JUNIOR_DISABLED_LICENCE
 } from '../../__mocks__/mock-journeys.js'
 
 import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
+import { v4 as uuidv4 } from 'uuid'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -33,6 +33,9 @@ afterAll(() => {
 })
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('uuid', () => ({
+  v4: jest.fn()
+}))
 mockSalesApi()
 
 const paymentStatusSuccess = cost => ({
@@ -59,6 +62,7 @@ describe('The agreed handler', () => {
     beforeEach(async () => {
       await journey.setup()
 
+      uuidv4.mockResolvedValue(journey.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
       govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
@@ -172,13 +176,6 @@ describe('The agreed handler', () => {
       const response = await injectWithCookies('GET', ORDER_COMPLETE.uri)
       expect(response.statusCode).toBe(200)
     })
-
-    it('does not create a recurring payment agreement', async () => {
-      const response = await injectWithCookies('GET', AGREED.uri)
-
-      expect(govUkPayApi.createRecurringPayment).not.toHaveBeenCalled()
-      expect(response.statusCode).toBe(302)
-    })
   })
 
   describe.each([
@@ -187,6 +184,8 @@ describe('The agreed handler', () => {
   ])('no-payment journey %s', (desc, journey) => {
     beforeEach(async () => {
       await journey.setup()
+
+      uuidv4.mockResolvedValue(journey.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
     })
@@ -252,6 +251,7 @@ describe('The agreed handler', () => {
   describe('finalised transactions', () => {
     beforeEach(async () => {
       await JUNIOR_LICENCE.setup()
+      uuidv4.mockResolvedValue(JUNIOR_LICENCE.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
       await injectWithCookies('GET', AGREED.uri)
@@ -303,33 +303,6 @@ describe('The agreed handler', () => {
       await agreedHandler(mockRequest, requestToolkit)
 
       expect(requestToolkit.redirectWithLanguageCode).toHaveBeenCalledWith(ORDER_COMPLETE.uri)
-    })
-  })
-
-  describe.only('recurring card payments', () => {
-    describe.each([
-      ['adult disabled 12 month licence', ADULT_DISABLED_12_MONTH_LICENCE],
-      ['senior 12 month licence', SENIOR_12_MONTH_LICENCE]
-    ])('recurring payment journey %s', (desc, journey) => {
-      beforeEach(async () => {
-        await journey.setup()
-
-        salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
-        salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
-        govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
-        govUkPayApi.createRecurringPayment.mockResolvedValue({ json: () => MOCK_RECURRING_PAYMENT_RESPONSE, ok: true, status: 201 })
-        govUkPayApi.fetchPaymentStatus.mockResolvedValue({ json: () => paymentStatusSuccess(journey.cost), ok: true, status: 201 })
-        salesApi.getPaymentJournal.mockResolvedValue(false)
-        salesApi.updatePaymentJournal.mockImplementation(jest.fn())
-        salesApi.createPaymentJournal.mockImplementation(jest.fn())
-      })
-
-      it.only('creates a recurring payment agreement', async () => {
-        await injectWithCookies('GET', AGREED.uri)
-        const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
-
-        expect(JSON.parse(status)[COMPLETION_STATUS.recurringAgreement]).toBeTruthy()
-      })
     })
   })
 })

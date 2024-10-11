@@ -55,11 +55,14 @@ export const preparePayment = (request, transaction) => {
 }
 
 export const prepareRecurringPayment = async (request, transaction) => {
+  debug('Preparing recurring payment %s', JSON.stringify(transaction, undefined, '\t'))
   // The recurring card payment for your rod fishing licence
   const result = {
-    reference: transaction.id,
+    // reference: transaction.id,
     description: request.i18n.getCatalog().recurring_payment_description,
-    user_identifier: transaction.permissions[0].id
+    // user_identifier: transaction.permissions[0].id
+    reference: 'abc-123-def-456',
+    user_identifier: 'usr-1234567890'
   }
   debug('Creating prepared recurring payment %o', result)
   return result

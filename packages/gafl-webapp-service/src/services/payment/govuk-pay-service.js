@@ -108,10 +108,9 @@ export const getPaymentStatus = async paymentId => {
   }
 }
 
-export const sendRecurringPayment = async preparedPayment => {
-  let response
+const createRecurringPayment = async preparedPayment => {
   try {
-    response = await govUkPayApi.createRecurringPayment()
+    return await govUkPayApi.createRecurringPayment(preparedPayment)
   } catch (err) {
     /*
      * Potentially errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
@@ -122,6 +121,10 @@ export const sendRecurringPayment = async preparedPayment => {
     badImplementationError.output.payload.origin = GOVPAYFAIL.prePaymentRetry
     throw badImplementationError
   }
+}
+
+export const sendRecurringPayment = async preparedPayment => {
+  const response = await createRecurringPayment(preparedPayment)
 
   if (response.ok) {
     const resBody = await response.json()

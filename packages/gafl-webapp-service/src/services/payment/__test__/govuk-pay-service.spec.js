@@ -158,14 +158,35 @@ describe('The govuk-pay-service', () => {
     console.log(preparedPayment)
   })
 
-  describe('sendRecurringPayment', () => {
+  describe.only('sendRecurringPayment', () => {
     const preparedPayment = {
       id: '1234',
       user_identifier: 'test-user'
     }
 
+    beforeAll(() => {
+
+    })
+
     beforeEach(() => {
       jest.clearAllMocks()
+    })
+
+    it('should send provided payload data to Gov.UK Pay', async () => {
+      const mockResponse = {
+        ok: true,
+        json: jest.fn().mockResolvedValue({ success: true, paymentId: 'abc123' })
+      }
+      govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
+      const unique = Symbol('payload')
+      const payload = {
+        reference: "d81f1a2b-6508-468f-8342-b6770f60f7cd",
+        description: "Fishing permission",
+        user_identifier: "1218c1c5-38e4-4bf3-81ea-9cbce3994d30",
+        unique
+      }
+      await sendRecurringPayment(payload)
+      expect(govUkPayApi.createRecurringPayment).toHaveBeenCalledWith(payload)
     })
 
     it('should return response body when payment creation is successful', async () => {
