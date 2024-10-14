@@ -56,13 +56,14 @@ describe('s3 operations', () => {
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing 2 S3 files')
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing test1.xml')
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing test2.xml')
+      expect(consoleLogSpy).toHaveBeenCalledWith('Processed S3 files')
     })
 
     it('gets a truncated list of files from S3', async () => {
       const s3Key1 = `${moment().format('YYYY-MM-DD')}/test1.xml`
 
       AwsMock.S3.mockedMethods.listObjectsV2
-        .mockReturnValue({
+        .mockReturnValueOnce({
           promise: () => ({
             IsTruncated: false,
             Contents: [
@@ -73,7 +74,7 @@ describe('s3 operations', () => {
             ]
           })
         })
-        .mockReturnValueOnce({
+        .mockReturnValue({
           promise: () => ({
             IsTruncated: true,
             NextContinuationToken: 'token',
@@ -98,8 +99,7 @@ describe('s3 operations', () => {
         Bucket: 'testbucket',
         ContinuationToken: 'token'
       })
-      expect(consoleLogSpy).toHaveBeenCalledWith('Processing 2 S3 files')
-      expect(consoleLogSpy).toHaveBeenCalledWith('Processing test1.xml')
+      expect(consoleLogSpy).toHaveBeenCalledWith('Processing 1 S3 files')
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing test1.xml')
       expect(consoleLogSpy).toHaveBeenCalledWith('Processed S3 files')
     })
