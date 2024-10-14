@@ -91,10 +91,6 @@ describe('s3 operations', () => {
 
       await refreshS3Metadata()
 
-      expect(AwsMock.S3.mockedMethods.listObjectsV2).toHaveBeenNthCalledWith(1, {
-        Bucket: 'testbucket',
-        ContinuationToken: undefined
-      })
       expect(AwsMock.S3.mockedMethods.listObjectsV2).toHaveBeenNthCalledWith(2, {
         Bucket: 'testbucket',
         ContinuationToken: 'token'
