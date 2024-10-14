@@ -91,9 +91,9 @@ describe('s3 operations', () => {
 
       await refreshS3Metadata()
 
-      expect(AwsMock.S3.mockedMethods.listObjectsV2).toHaveBeenNthCalledWith(2, {
+      expect(AwsMock.S3.mockedMethods.listObjectsV2).toHaveBeenNthCalledWith(1, {
         Bucket: 'testbucket',
-        ContinuationToken: 'token'
+        ContinuationToken: undefined
       })
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing 1 S3 files')
       expect(consoleLogSpy).toHaveBeenCalledWith('Processing test1.xml')
