@@ -7,10 +7,24 @@ import { finaliseTransactions } from '../finalise-transactions.js'
 import { getFileRecord, updateFileStagingTable } from '../../io/db.js'
 import fs from 'fs'
 
+jest.mock('fs', () => {
+  const originalFs = jest.requireActual('fs')
+  return {
+    ...originalFs,
+    promises: {
+      readFile: jest.fn().mockResolvedValue('mocked file content')
+    },
+    createWriteStream: jest.fn(() => ({
+      on: jest.fn(),
+      end: jest.fn()
+    })),
+    statSync: jest.fn(() => ({ size: 1024 }))
+  }
+})
+
 jest.mock('../create-transactions.js')
 jest.mock('../finalise-transactions.js')
 jest.mock('../../io/db.js')
-jest.mock('fs')
 jest.mock('md5-file', () => () => 'test-md5')
 
 jest.mock('@defra-fish/connectors-lib', () => {

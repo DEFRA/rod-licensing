@@ -1,6 +1,17 @@
-import AwsSdk from 'aws-sdk'
 import { PAYMENTS_TABLE } from '../../../config.js'
 import { createPaymentJournal, updatePaymentJournal, getPaymentJournal, queryJournalsByTimestamp } from '../payment-journals.service.js'
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
+
+jest.mock('@aws-sdk/lib-dynamodb', () => ({
+  DynamoDBDocument: {
+    from: jest.fn().mockReturnValue({
+      put: jest.fn().mockResolvedValue({}),
+      update: jest.fn().mockResolvedValue({ Attributes: { some: 'data' } }),
+      get: jest.fn().mockResolvedValue({ Item: { id: 'test-id', some: 'data' } }),
+      query: jest.fn().mockResolvedValue({ Items: [] })
+    })
+  }
+}))
 
 describe('payment-journals service', () => {
   beforeAll(async () => {
@@ -10,7 +21,7 @@ describe('payment-journals service', () => {
   describe('createPaymentJournal', () => {
     it('calls put on dynamodb', async () => {
       await createPaymentJournal('test-id', { some: 'data' })
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.put).toHaveBeenCalledWith({
+      expect(DynamoDBDocument.from().put).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Item: { id: 'test-id', some: 'data', expires: expect.any(Number) },
         ConditionExpression: 'attribute_not_exists(id)'
@@ -21,10 +32,10 @@ describe('payment-journals service', () => {
   describe('updatePaymentJournal', () => {
     it('calls update on dynamodb', async () => {
       await updatePaymentJournal('test-id', { some: 'data' })
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith({
+      expect(DynamoDBDocument.from().update).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
-        UpdateExpression: 'SET #expires = :expires,#some = :some',
+        UpdateExpression: 'SET #expires = :expires, #some = :some',
         ExpressionAttributeNames: {
           '#expires': 'expires',
           '#some': 'some'
@@ -42,7 +53,7 @@ describe('payment-journals service', () => {
   describe('getPaymentJournal', () => {
     it('calls get on dynamodb', async () => {
       await getPaymentJournal('test-id')
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.get).toHaveBeenCalledWith({
+      expect(DynamoDBDocument.from().get).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
         ConsistentRead: true
@@ -53,7 +64,7 @@ describe('payment-journals service', () => {
   describe('queryJournalsByTimestamp', () => {
     it('calls query on dynamodb', async () => {
       await queryJournalsByTimestamp({ paymentStatus: 'In Progress', from: '2020-05-29T11:44:45.875Z', to: '2020-05-29T11:44:45.875Z' })
-      expect(AwsSdk.DynamoDB.DocumentClient.mockedMethods.query).toHaveBeenCalledWith({
+      expect(DynamoDBDocument.from().query).toHaveBeenCalledWith({
         TableName: PAYMENTS_TABLE.TableName,
         IndexName: 'PaymentJournalsByStatusAndTimestamp',
         KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
