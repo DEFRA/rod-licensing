@@ -11,7 +11,11 @@ const debug = db('sales:paymentjournals')
  */
 export async function createPaymentJournal (id, payload) {
   const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' }).promise()
+  await docClient.put({
+    TableName: PAYMENTS_TABLE.TableName,
+    Item: record,
+    ConditionExpression: 'attribute_not_exists(id)'
+  })
   debug('Payment journal stored with payload %o', record)
   return record
 }
@@ -23,25 +27,33 @@ export async function createPaymentJournal (id, payload) {
  */
 export async function updatePaymentJournal (id, payload) {
   const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  const result = await docClient
-    .update({
-      TableName: PAYMENTS_TABLE.TableName,
-      Key: { id },
-      ...docClient.createUpdateExpression(updates),
-      ConditionExpression: 'attribute_exists(id)',
-      ReturnValues: 'ALL_NEW'
-    })
-    .promise()
+  const result = await docClient.update({
+    TableName: PAYMENTS_TABLE.TableName,
+    Key: { id },
+    UpdateExpression:
+      'SET ' +
+      Object.keys(updates)
+        .map(key => `#${key} = :${key}`)
+        .join(', '),
+    ExpressionAttributeNames: Object.keys(updates).reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {}),
+    ExpressionAttributeValues: Object.keys(updates).reduce((acc, key) => ({ ...acc, [`:${key}`]: updates[key] }), {}),
+    ConditionExpression: 'attribute_exists(id)',
+    ReturnValues: 'ALL_NEW'
+  })
   return result.Attributes
 }
 
 /**
  * Get an existing payment journal
- * @param {*} payload
+ * @param {*} id
  * @returns {Promise<*>}
  */
 export async function getPaymentJournal (id) {
-  const result = await docClient.get({ TableName: PAYMENTS_TABLE.TableName, Key: { id }, ConsistentRead: true }).promise()
+  const result = await docClient.get({
+    TableName: PAYMENTS_TABLE.TableName,
+    Key: { id },
+    ConsistentRead: true
+  })
   return result.Item
 }
 
@@ -51,7 +63,7 @@ export async function getPaymentJournal (id) {
  * @returns {Promise<*>}
  */
 export async function queryJournalsByTimestamp ({ paymentStatus, from, to }) {
-  return docClient.queryAllPromise({
+  return docClient.query({
     TableName: PAYMENTS_TABLE.TableName,
     IndexName: 'PaymentJournalsByStatusAndTimestamp',
     KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
