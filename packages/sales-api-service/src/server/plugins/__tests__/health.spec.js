@@ -1,11 +1,30 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
 import AwsMock from 'aws-sdk'
+import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb'
+import { mockClient } from 'aws-sdk-client-mock'
+
 let server = null
+
+const dynamoDbMock = mockClient(DynamoDBClient)
 
 describe('hapi healthcheck', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
+
+    AwsMock.SQS.__init({
+      expectedResponses: {
+        listQueues: { QueueUrls: ['TestQueue'] }
+      }
+    })
+    
+    dynamoDbMock.on(ListTablesCommand).resolves({
+      TableNames: ['TestTable']
+    })
+  })
+
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   afterAll(async () => {
@@ -21,16 +40,6 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
-    AwsMock.SQS.__init({
-      expectedResponses: {
-        listQueues: { QueueUrls: ['TestQueue'] }
-      }
-    })
-    AwsMock.DynamoDB.__init({
-      expectedResponses: {
-        listTables: { TableNames: ['TestTable'] }
-      }
-    })
     const result = await server.inject({
       method: 'GET',
       url: '/service-status?v&h'
