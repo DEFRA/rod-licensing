@@ -17,7 +17,7 @@ describe('hapi healthcheck', () => {
         listQueues: { QueueUrls: ['TestQueue'] }
       }
     })
-    
+
     dynamoDbMock.on(ListTablesCommand).resolves({
       TableNames: ['TestTable']
     })
