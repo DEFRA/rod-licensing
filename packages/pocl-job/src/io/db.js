@@ -1,3 +1,4 @@
+import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import config from '../config.js'
 import { AWS } from '@defra-fish/connectors-lib'
 const { docClient } = AWS()
@@ -10,13 +11,13 @@ const { docClient } = AWS()
  * @returns {Promise<void>}
  */
 export const updateFileStagingTable = async ({ filename, ...entries }) => {
-  await docClient
-    .update({
+  await docClient.send(
+    new UpdateCommand({
       TableName: config.db.fileStagingTable,
       Key: { filename },
       ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
     })
-    .promise()
+  )
 }
 
 /**
@@ -42,7 +43,13 @@ export const getFileRecords = async (...stages) => {
  * @returns {DocumentClient.AttributeMap}
  */
 export const getFileRecord = async filename => {
-  const result = await docClient.get({ TableName: config.db.fileStagingTable, Key: { filename }, ConsistentRead: true }).promise()
+  const result = await docClient.send(
+    new GetCommand({
+      TableName: config.db.fileStagingTable,
+      Key: { filename },
+      ConsistentRead: true
+    })
+  )
   return result.Item
 }
 
