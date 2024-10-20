@@ -59,7 +59,6 @@ describe('transaction service', () => {
         Item: expectedResult,
         ConditionExpression: 'attribute_not_exists(id)'
       })
-      
     })
 
     it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
@@ -105,10 +104,7 @@ describe('transaction service', () => {
       expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
       expect(BatchWriteCommand).toHaveBeenCalledWith({
         RequestItems: {
-          [TRANSACTION_STAGING_TABLE.TableName]: [
-            { PutRequest: { Item: expectedRecord } },
-            { PutRequest: { Item: expectedRecord } }
-          ]
+          [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
         }
       })
       expect(mockDynamoDb.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))

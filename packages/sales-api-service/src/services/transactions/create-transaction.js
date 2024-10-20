@@ -19,7 +19,7 @@ const docClient = DynamoDBDocumentClient.from(client)
  */
 export async function createTransaction (payload) {
   const record = await createTransactionRecord(payload)
-  
+
   await docClient.send(
     new PutCommand({
       TableName: TRANSACTION_STAGING_TABLE.TableName,
@@ -27,7 +27,7 @@ export async function createTransaction (payload) {
       ConditionExpression: 'attribute_not_exists(id)'
     })
   )
-  
+
   debug('Transaction %s successfully created in DynamoDB table %s', record.id, TRANSACTION_STAGING_TABLE.TableName)
   return record
 }
