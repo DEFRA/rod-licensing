@@ -6,9 +6,9 @@ import {
   MOCK_12MONTH_DISABLED_PERMIT
 } from '../../../__mocks__/test-data.js'
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
-import AwsMock from 'aws-sdk'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
+import { DynamoDBDocumentClient, PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
@@ -22,12 +22,23 @@ jest.mock('../../reference-data.service.js', () => ({
   })
 }))
 
+jest.mock('@aws-sdk/lib-dynamodb', () => ({
+  DynamoDBDocumentClient: {
+    from: jest.fn().mockReturnValue({
+      send: jest.fn()
+    })
+  },
+  PutCommand: jest.fn(),
+  BatchWriteCommand: jest.fn()
+}))
+
 describe('transaction service', () => {
+  let mockDynamoDb
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
     getPermissionCost.mockReturnValue(54)
+    mockDynamoDb = DynamoDBDocumentClient.from()
   })
-  beforeEach(AwsMock.__resetAll)
   beforeEach(jest.clearAllMocks)
 
   describe('createTransaction', () => {
@@ -43,12 +54,12 @@ describe('transaction service', () => {
 
       const result = await createTransaction(mockPayload)
       expect(result).toMatchObject(expectedResult)
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
-        expect.objectContaining({
-          TableName: TRANSACTION_STAGING_TABLE.TableName,
-          Item: expectedResult
-        })
-      )
+      expect(PutCommand).toHaveBeenCalledWith({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Item: expectedResult,
+        ConditionExpression: 'attribute_not_exists(id)'
+      })
+      
     })
 
     it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
@@ -74,7 +85,7 @@ describe('transaction service', () => {
     })
 
     it('throws exceptions back up the stack', async () => {
-      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
+      mockDynamoDb.send.mockRejectedValueOnce(new Error('Test error'))
       await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
 
@@ -99,17 +110,19 @@ describe('transaction service', () => {
 
       const result = await createTransactions([mockPayload, mockPayload])
       expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
-        expect.objectContaining({
-          RequestItems: {
-            [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
-          }
-        })
-      )
+      expect(BatchWriteCommand).toHaveBeenCalledWith({
+        RequestItems: {
+          [TRANSACTION_STAGING_TABLE.TableName]: [
+            { PutRequest: { Item: expectedRecord } },
+            { PutRequest: { Item: expectedRecord } }
+          ]
+        }
+      })
+      expect(mockDynamoDb.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
     })
 
     it('throws exceptions back up the stack', async () => {
-      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
+      mockDynamoDb.send.mockRejectedValueOnce(new Error('Test error'))
       await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })
