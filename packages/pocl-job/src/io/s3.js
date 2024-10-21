@@ -1,6 +1,9 @@
 import moment from 'moment'
+import filesize from 'filesize'
 import config from '../config.js'
-import { AWS } from '@defra-fish/connectors-lib'
+import { DYNAMICS_IMPORT_STAGE } from '../staging/constants.js'
+import { storeS3Metadata } from '../transport/storeS3MetaData.js'
+import { AWS, salesApi } from '@defra-fish/connectors-lib'
 const { s3 } = AWS()
 
 const listObjectsV2 = async function (params) {
@@ -44,6 +47,13 @@ export const refreshS3Metadata = async () => {
     const filename = file.Key.split('/').pop()
 
     console.log(`Processing ${filename}`)
+
+    const dynamicsRecord = await salesApi.getTransactionFile(filename)
+    if (!dynamicsRecord || !DYNAMICS_IMPORT_STAGE.isAlreadyProcessed(dynamicsRecord.status.description)) {
+      await storeS3Metadata(file.ETag, filesize(file.Size), filename, file.Key, moment(new Date(file.LastModified)))
+    } else {
+      console.log(`${file.Key} is already processed, skipping`)
+    }
   }
 
   console.log('Processed S3 files')
