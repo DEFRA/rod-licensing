@@ -41,6 +41,7 @@ jest.mock('../config.js', () => ({
     bucket: 'testbucket'
   }
 }))
+jest.mock('../transport/storeS3MetaData.js')
 jest.mock('../transport/s3-to-local.js')
 jest.mock('../io/db.js')
 jest.mock('../io/s3.js')
