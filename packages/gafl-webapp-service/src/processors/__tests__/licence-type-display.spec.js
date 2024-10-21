@@ -3,16 +3,16 @@ import { licenceTypeDisplay, licenceTypeAndLengthDisplay, isPhysical, recurringL
 
 const getCatalog = () => ({
   over_66: ' (over_66)',
-  age_junior: 'Junior, ',
-  licence_type_radio_salmon: 'Salmon and sea trout',
-  licence_type_radio_trout_two_rod: 'Trout and coarse, up to 2 rods',
-  licence_type_radio_trout_three_rod: 'Trout and coarse, up to 3 rods',
+  age_junior: 'junior ',
+  licence_type_radio_salmon_payment_summary: 'salmon and sea trout',
+  licence_type_radio_trout_two_rod_payment_summary: 'trout and coarse (up to 2 rods)',
+  licence_type_radio_trout_three_rod_payment_summary: 'trout and coarse (up to 3 rods)',
   recurring_payment_set_up_bulletpoint_1_trout_2_rod: ' trout and coarse (2 rod)',
   recurring_payment_set_up_bulletpoint_1_trout_3_rod: ' trout and coarse (3 rod)',
   recurring_payment_set_up_bulletpoint_1_salmon: ' salmon and sea trout',
-  licence_type_12m: '12 months',
-  licence_type_8d: '8 days',
-  licence_type_1d: '1 day'
+  licence_1_day: '1-day',
+  licence_8_day: '8-day',
+  licence_12_month: '12-month'
 })
 
 jest.mock('../concession-helper', () => ({
@@ -39,20 +39,20 @@ describe('licenceTypeDisplay', () => {
     const permission = getPermission()
     hasJunior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
-    expect(result).toEqual('Junior, Salmon and sea trout')
+    expect(result).toEqual('junior salmon and sea trout')
   })
 
   it('returns senior if person is senior', () => {
     const permission = getPermission()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeDisplay(permission, getCatalog())
-    expect(result).toEqual('Salmon and sea trout (over_66)')
+    expect(result).toEqual('salmon and sea trout (over_66)')
   })
 
   it.each([
-    ['Salmon and sea trout', null, 'Salmon and sea trout'],
-    ['Trout and coarse', '2', 'Trout and coarse, up to 2 rods'],
-    ['Trout and coarse', '3', 'Trout and coarse, up to 3 rods']
+    ['Salmon and sea trout', null, 'salmon and sea trout'],
+    ['Trout and coarse', '2', 'trout and coarse (up to 2 rods)'],
+    ['Trout and coarse', '3', 'trout and coarse (up to 3 rods)']
   ])('returns correct licence type', (licenceType, numberOfRods, expected) => {
     const permission = getPermission({ licenceType, numberOfRods })
     const result = licenceTypeDisplay(permission, getCatalog())
@@ -62,15 +62,15 @@ describe('licenceTypeDisplay', () => {
 
 describe('licenceTypeAndLengthDisplay', () => {
   it.each([
-    ['12M', 'Salmon and sea trout', null, 'Salmon and sea trout, 12 months'],
-    ['12M', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 12 months'],
-    ['12M', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 12 months'],
-    ['8D', 'Salmon and sea trout', null, 'Salmon and sea trout, 8 days'],
-    ['8D', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 8 days'],
-    ['8D', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 8 days'],
-    ['1D', 'Salmon and sea trout', null, 'Salmon and sea trout, 1 day'],
-    ['1D', 'Trout and coarse', '2', 'Trout and coarse, up to 2 rods, 1 day'],
-    ['1D', 'Trout and coarse', '3', 'Trout and coarse, up to 3 rods, 1 day']
+    ['12M', 'Salmon and sea trout', null, '12-month salmon and sea trout'],
+    ['12M', 'Trout and coarse', '2', '12-month trout and coarse (up to 2 rods)'],
+    ['12M', 'Trout and coarse', '3', '12-month trout and coarse (up to 3 rods)'],
+    ['8D', 'Salmon and sea trout', null, '8-day salmon and sea trout'],
+    ['8D', 'Trout and coarse', '2', '8-day trout and coarse (up to 2 rods)'],
+    ['8D', 'Trout and coarse', '3', '8-day trout and coarse (up to 3 rods)'],
+    ['1D', 'Salmon and sea trout', null, '1-day salmon and sea trout'],
+    ['1D', 'Trout and coarse', '2', '1-day trout and coarse (up to 2 rods)'],
+    ['1D', 'Trout and coarse', '3', '1-day trout and coarse (up to 3 rods)']
   ])('returns correct licence length', (licenceLength, licenceType, numberOfRods, expected) => {
     const permission = getPermission({ licenceLength, licenceType, numberOfRods })
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
@@ -81,32 +81,32 @@ describe('licenceTypeAndLengthDisplay', () => {
     const permission = getPermission()
     hasJunior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('Junior, Salmon and sea trout, 12 months')
+    expect(result).toEqual('12-month junior salmon and sea trout')
   })
 
   it('returns senior if licence length is senior', () => {
     const permission = getPermission()
     hasSenior.mockImplementationOnce(() => true)
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('Salmon and sea trout (over_66), 12 months')
+    expect(result).toEqual('12-month salmon and sea trout (over_66)')
   })
 
   it('returns correct licence length, 12 months', () => {
     const permission = getPermission({ licenceLength: Symbol('12M') })
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('Salmon and sea trout, 12 months')
+    expect(result).toEqual('12-month salmon and sea trout')
   })
 
   it('returns correct licence length, 8 days', () => {
     const permission = getPermission({ licenceLength: Symbol('8D') })
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('Salmon and sea trout, 8 days')
+    expect(result).toEqual('8-day salmon and sea trout')
   })
 
   it('returns correct licence length, 1 day', () => {
     const permission = getPermission({ licenceLength: Symbol('1D') })
     const result = licenceTypeAndLengthDisplay(permission, getCatalog())
-    expect(result).toEqual('Salmon and sea trout, 1 day')
+    expect(result).toEqual('1-day salmon and sea trout')
   })
 })
 
