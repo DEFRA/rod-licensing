@@ -5,7 +5,6 @@ import { DYNAMICS_IMPORT_STAGE, FILE_STAGE, POST_OFFICE_DATASOURCE } from '../..
 import { salesApi } from '@defra-fish/connectors-lib'
 import fs from 'fs'
 import AwsMock from 'aws-sdk'
-import { mockedFtpMethods } from 'ssh2-sftp-client'
 
 jest.mock('fs')
 jest.mock('md5-file')
@@ -159,7 +158,6 @@ describe('s3 operations', () => {
     })
 
     it('skips file processing if a file has already been marked as processed in Dynamics', async () => {
-      mockedFtpMethods.list.mockResolvedValue([{ name: 'test-already-processed.xml' }])
       fs.createReadStream.mockReturnValueOnce('teststream')
       fs.statSync.mockReturnValueOnce({ size: 1024 })
       salesApi.getTransactionFile.mockResolvedValueOnce({ status: { description: 'Processed' } })

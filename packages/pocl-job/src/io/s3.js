@@ -2,7 +2,7 @@ import moment from 'moment'
 import filesize from 'filesize'
 import config from '../config.js'
 import { DYNAMICS_IMPORT_STAGE } from '../staging/constants.js'
-import { storeS3Metadata } from '../transport/ftp-to-s3.js'
+import { storeS3Metadata } from '../transport/storeS3MetaData.js'
 import { AWS, salesApi } from '@defra-fish/connectors-lib'
 const { s3 } = AWS()
 
