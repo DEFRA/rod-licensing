@@ -48,7 +48,7 @@ export async function createTransactions (payload) {
  * @returns {Promise<*>}
  */
 async function createTransactionRecord (payload) {
-  const transactionId = uuidv4()
+  const transactionId = payload.transactionId || uuidv4()
   debug('Creating new transaction %s for %s', transactionId, payload.dataSource)
   const record = {
     id: transactionId,
