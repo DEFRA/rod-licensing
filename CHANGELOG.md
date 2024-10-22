@@ -1,4 +1,15 @@
 
+## v1.51.0-rc.0 (2024-10-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2067](https://github.com/DEFRA/rod-licensing/pull/2067) Payment complete 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#2066](https://github.com/DEFRA/rod-licensing/pull/2066) Update content to 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
 ## v1.50.0-rc.10 (2024-10-09)
 
 #### :rocket: Enhancement
