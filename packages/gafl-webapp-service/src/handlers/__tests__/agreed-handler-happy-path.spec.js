@@ -34,7 +34,7 @@ afterAll(() => {
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('uuid', () => ({
-  v4: jest.fn()
+  v4: jest.fn(() => '')
 }))
 mockSalesApi()
 
@@ -62,7 +62,7 @@ describe('The agreed handler', () => {
     beforeEach(async () => {
       await journey.setup()
 
-      uuidv4.mockResolvedValue(journey.transactionResponse.id)
+      uuidv4.mockReturnValue(journey.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
       govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
@@ -185,7 +185,7 @@ describe('The agreed handler', () => {
     beforeEach(async () => {
       await journey.setup()
 
-      uuidv4.mockResolvedValue(journey.transactionResponse.id)
+      uuidv4.mockReturnValue(journey.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
     })
@@ -251,7 +251,7 @@ describe('The agreed handler', () => {
   describe('finalised transactions', () => {
     beforeEach(async () => {
       await JUNIOR_LICENCE.setup()
-      uuidv4.mockResolvedValue(JUNIOR_LICENCE.transactionResponse.id)
+      uuidv4.mockReturnValue(JUNIOR_LICENCE.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
       await injectWithCookies('GET', AGREED.uri)
