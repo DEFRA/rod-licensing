@@ -158,15 +158,11 @@ describe('The govuk-pay-service', () => {
     console.log(preparedPayment)
   })
 
-  describe.only('sendRecurringPayment', () => {
+  describe('sendRecurringPayment', () => {
     const preparedPayment = {
       id: '1234',
       user_identifier: 'test-user'
     }
-
-    beforeAll(() => {
-
-    })
 
     beforeEach(() => {
       jest.clearAllMocks()
@@ -180,9 +176,9 @@ describe('The govuk-pay-service', () => {
       govUkPayApi.createRecurringPayment.mockResolvedValue(mockResponse)
       const unique = Symbol('payload')
       const payload = {
-        reference: "d81f1a2b-6508-468f-8342-b6770f60f7cd",
-        description: "Fishing permission",
-        user_identifier: "1218c1c5-38e4-4bf3-81ea-9cbce3994d30",
+        reference: 'd81f1a2b-6508-468f-8342-b6770f60f7cd',
+        description: 'Fishing permission',
+        user_identifier: '1218c1c5-38e4-4bf3-81ea-9cbce3994d30',
         unique
       }
       await sendRecurringPayment(payload)

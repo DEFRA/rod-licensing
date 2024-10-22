@@ -1,25 +1,10 @@
-import { govUkPayApi, salesApi } from '@defra-fish/connectors-lib'
-import { initialize, injectWithCookies, start, stop, mockSalesApi } from '../../__mocks__/test-utils-system'
-
-import {
-  ADULT_FULL_1_DAY_LICENCE,
-  ADULT_DISABLED_12_MONTH_LICENCE,
-  SENIOR_12_MONTH_LICENCE,
-  MOCK_PAYMENT_RESPONSE,
-  JUNIOR_LICENCE,
-  JUNIOR_DISABLED_LICENCE,
-  MOCK_RECURRING_PAYMENT_RESPONSE
-} from '../../__mocks__/mock-journeys.js'
-
+import { salesApi } from '@defra-fish/connectors-lib'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
-import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
-import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
 import { prepareRecurringPayment } from '../../processors/payment.js'
-import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
-import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../../processors/api-transaction.js'
+import { sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
+import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
-
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
@@ -34,14 +19,6 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => 'abc-123-def-456')
 }))
 
-const paymentStatusSuccess = cost => ({
-  amount: cost,
-  state: {
-    status: 'success',
-    finished: true
-  }
-})
-
 describe('The agreed handler', () => {
   beforeAll(() => {
     salesApi.createTransaction.mockResolvedValue({
@@ -50,7 +27,6 @@ describe('The agreed handler', () => {
     })
   })
   beforeEach(jest.clearAllMocks)
-
 
   const getMockRequest = (overrides = {}) => ({
     cache: () => ({
@@ -123,10 +99,7 @@ describe('The agreed handler', () => {
 
       await agreedHandler(getMockRequest(), getRequestToolkit())
 
-      expect(prepareApiTransactionPayload).toHaveBeenCalledWith(
-        expect.any(Object),
-        v4guid
-      )
+      expect(prepareApiTransactionPayload).toHaveBeenCalledWith(expect.any(Object), v4guid)
     })
   })
 })
