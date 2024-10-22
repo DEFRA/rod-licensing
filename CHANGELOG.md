@@ -1,4 +1,32 @@
 
+## v1.51.0-rc.0 (2024-10-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2067](https://github.com/DEFRA/rod-licensing/pull/2067) Payment complete 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#2066](https://github.com/DEFRA/rod-licensing/pull/2066) Update content to 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.50.0-rc.10 (2024-10-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2061](https://github.com/DEFRA/rod-licensing/pull/2061) Uninstall pdfmake ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.50.0-rc.9 (2024-10-09)
+
+#### :bug: Bug Fix
+* [#2063](https://github.com/DEFRA/rod-licensing/pull/2063) Fix localstack config ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.50.0-rc.8 (2024-09-25)
 
 #### :bug: Bug Fix

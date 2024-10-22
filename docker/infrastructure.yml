@@ -16,14 +16,13 @@ services:
     environment:
       - SERVICES=s3,dynamodb,secretsmanager,cloudformation
       - DEFAULT_REGION=eu-west-2
-      - DATA_DIR=/tmp/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=false
       - DYNAMODB_HEAP_SIZE=1G
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/localstack:/tmp/localstack
+      - ./volumes/localstack:/var/lib/localstack
       - ./resources/infrastructure/localstack/localstack-init.sh:/docker-entrypoint-initaws.d/init.sh
       - ./resources/infrastructure/localstack/localstack-cfn.yml:/docker-entrypoint-initaws.d/localstack-cfn.yml
     deploy:
