@@ -71,7 +71,6 @@ echo "Updating package-lock.json from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package-lock.json files to reflect new versions
 lerna exec -- npm install --package-lock-only
 
-
 # Generate changelog information for changes since the last tag
 echo "Generating changelog updates for all changes between ${PREVIOUS_VERSION} and ${NEW_VERSION}"
 lerna-changelog --from "${PREVIOUS_VERSION}" --to "${NEW_VERSION}" | cat - CHANGELOG.md > CHANGELOG.new && mv CHANGELOG.new CHANGELOG.md
