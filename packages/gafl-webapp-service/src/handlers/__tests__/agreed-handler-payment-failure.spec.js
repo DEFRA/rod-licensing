@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid'
 jest.mock('../../services/payment/govuk-pay-service.js')
 jest.mock('../../processors/payment.js')
 jest.mock('uuid', () => ({
-  v4: jest.fn()
+  v4: jest.fn(() => '')
 }))
 
 beforeAll(() => {
@@ -146,6 +146,8 @@ const getSendPaymentMockImplementation = () => ({
 describe('The agreed handler', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    uuidv4.mockReset()
+    uuidv4.mockReturnValue('')
     const { sendPayment: realSendPayment, getPaymentStatus: realGetPaymentStatus } = jest.requireActual(
       '../../services/payment/govuk-pay-service.js'
     )
@@ -160,9 +162,9 @@ describe('The agreed handler', () => {
     ['expired', paymentStatusExpired],
     ['general-error', paymentGeneralError]
   ])('redirects to the payment-failed page if the GOV.UK Pay returns %s on payment status fetch', async (desc, pstat) => {
+    uuidv4.mockReturnValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     await ADULT_FULL_1_DAY_LICENCE.setup()
 
-    uuidv4.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     govUkPayApi.createPayment = jest.fn(
@@ -262,6 +264,7 @@ describe('The agreed handler', () => {
   })
 
   it('redirects to the payment-cancelled page if the GOV.UK Pay returns cancelled', async () => {
+    uuidv4.mockReturnValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -352,6 +355,7 @@ describe('The agreed handler', () => {
   })
 
   it('posts a 500 (server) error with the retry flag set if the GOV.UK Pay API throws a (recoverable) exception on payment creation', async () => {
+    uuidv4.mockReturnValueOnce(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -380,9 +384,9 @@ describe('The agreed handler', () => {
   })
 
   it('posts a 500 (server) error with the retry flag set if the GOV.UK Pay API rate limit is exceeded on create payment', async () => {
+    uuidv4.mockReturnValueOnce(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     await ADULT_FULL_1_DAY_LICENCE.setup()
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
-
     govUkPayApi.createPayment = jest.fn(
       async () => new Promise(resolve => resolve({ json: () => paymentTooManyRequests, ok: false, status: 429 }))
     )
@@ -408,6 +412,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 error without the retry flag set if the GOV.UK Pay API returns any arbitrary 400 error on payment creation', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
+    uuidv4.mockReturnValueOnce(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
 
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
@@ -434,6 +439,7 @@ describe('The agreed handler', () => {
 
   it('posts a 500 error without the retry flag set if the GOV.UK Pay API returns any arbitrary 500 error on payment creation', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
+    uuidv4.mockReturnValueOnce(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     salesApi.createTransaction = jest.fn(async () => new Promise(resolve => resolve(ADULT_FULL_1_DAY_LICENCE.transactionResponse)))
 
     govUkPayApi.createPayment = jest.fn(
