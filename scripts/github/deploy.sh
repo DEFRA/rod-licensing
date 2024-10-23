@@ -84,6 +84,10 @@ git push origin "${NEW_VERSION}"
 echo "Publishing latest packages to npm"
 lerna publish --registry=https://registry.npmjs.org/ from-git --yes --pre-dist-tag rc --no-verify-access
 
+# Add a delay to allow NPM registry to propagate the new versions
+echo "Waiting for NPM registry to propagate new versions"
+sleep 30
+
 echo "Updating package-lock.json from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package-lock.json files to reflect new versions
 lerna exec -- npm install --package-lock-only
