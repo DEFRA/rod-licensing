@@ -70,6 +70,7 @@ const createRecurringPayment = async (request, transaction, status) => {
    */
   const paymentResponse = await sendRecurringPayment(preparedPayment)
 
+  debug(`Created agreement with id ${paymentResponse.agreement_id}`)
   status[COMPLETION_STATUS.recurringAgreement] = true
   await request.cache().helpers.status.set(status)
 }

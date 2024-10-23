@@ -5,6 +5,7 @@ import { prepareRecurringPayment } from '../../processors/payment.js'
 import { sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
 import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
+import db from 'debug'
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
@@ -18,6 +19,9 @@ jest.mock('@defra-fish/connectors-lib')
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'abc-123-def-456')
 }))
+jest.mock('debug', () => jest.fn(() => jest.fn()))
+
+const debugMock = db.mock.results[0].value
 
 describe('The agreed handler', () => {
   beforeAll(() => {
@@ -93,6 +97,8 @@ describe('The agreed handler', () => {
       expect(sendRecurringPayment).toHaveBeenCalledWith(preparedPayment)
     })
 
+    // this doesn't really belong here, but until the other agreed handler tests are refactored to
+    // not use injectWithCookies, it'll have to live here
     it('sends the generated guid to the sales api, rather than requesting it from the sales api', async () => {
       const v4guid = Symbol('v4guid')
       uuidv4.mockReturnValue(v4guid)
@@ -101,5 +107,21 @@ describe('The agreed handler', () => {
 
       expect(prepareApiTransactionPayload).toHaveBeenCalledWith(expect.any(Object), v4guid)
     })
+
+    it.each(['zxy-098-wvu-765', '467482f1-099d-403d-b6b3-8db7e70d19e3'])(
+      "logs out agreement id '%s' when recurring payment agreement created",
+      // eslint-disable-next-line camelcase
+      async agreement_id => {
+        sendRecurringPayment.mockResolvedValueOnce({
+          // eslint-disable-next-line camelcase
+          agreement_id
+        })
+
+        await agreedHandler(getMockRequest(), getRequestToolkit())
+
+        // eslint-disable-next-line camelcase
+        expect(debugMock).toHaveBeenCalledWith(`Created agreement with id ${agreement_id}`)
+      }
+    )
   })
 })
