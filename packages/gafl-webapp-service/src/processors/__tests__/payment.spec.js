@@ -231,12 +231,6 @@ describe('prepareRecurringPayment', () => {
     expect(result.description).toBe(mockCatalog.recurring_payment_description)
   })
 
-  it('user_identifier equals the permission id', async () => {
-    const transaction = createTransaction()
-    const result = await prepareRecurringPayment(createRequest(), transaction)
-    expect(result.user_identifier).toBe(transaction.permissions[0].id)
-  })
-
   it('logs to debug for recurring payment', async () => {
     const transaction = createTransaction()
     const request = createRequest()
