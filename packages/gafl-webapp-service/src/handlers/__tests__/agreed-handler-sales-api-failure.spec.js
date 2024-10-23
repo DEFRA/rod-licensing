@@ -22,7 +22,7 @@ afterAll(() => {
 
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('uuid', () => ({
-  v4: jest.fn()
+  v4: jest.fn(() => '')
 }))
 mockSalesApi()
 
@@ -39,13 +39,13 @@ describe('The agreed handler', () => {
 
   it('throw a status 500 (server) exception and the posted status is not set if there is an error fetching reference data', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    uuidv4.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     salesApi.permits.getAll = jest.fn(async () => new Promise((resolve, reject) => reject(new Error())))
     const data = await injectWithCookies('GET', AGREED.uri)
     expect(data.statusCode).toBe(500)
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).not.toBeTruthy()
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+    console.log('payload', payload)
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
@@ -71,7 +71,7 @@ describe('The agreed handler', () => {
 
   it('throws a status 500 (server) exception and if there is an exception thrown finalizing the transaction', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
-    uuidv4.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
+    uuidv4.mockReturnValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockRejectedValue(new Error())
     govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
