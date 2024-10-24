@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install app dependencies
 COPY packages/recurring-payments-job/package*.json /app/
-RUN npm ci && npm cache clean --force > /dev/null 2>&1
+RUN npm install --production && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
 COPY packages/recurring-payments-job/ /app
