@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install app dependencies
 COPY packages/sales-api-service/package*.json /app/
-RUN npm install && npm cache clean --force > /dev/null 2>&1
+RUN npm ci && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
 COPY packages/sales-api-service/ /app

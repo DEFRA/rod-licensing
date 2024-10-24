@@ -8,7 +8,7 @@ WORKDIR /app
 COPY packages/gafl-webapp-service/package*.json /app/
 COPY packages/gafl-webapp-service/assets /app/assets
 COPY packages/gafl-webapp-service/build /app/build
-RUN npm install \
+RUN npm ci \
     && npm run prepare \
     && npm prune --production \
     && npm cache clean --force > /dev/null 2>&1
