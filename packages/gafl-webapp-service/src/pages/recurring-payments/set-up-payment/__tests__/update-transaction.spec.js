@@ -1,5 +1,5 @@
 import updateTransaction from '../update-transaction.js'
-import { COMPLETION_STATUS } from '../../../../constants.js'
+import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../../../constants.js'
 import db from 'debug'
 
 jest.mock('debug', () => jest.fn(() => jest.fn()))
@@ -32,5 +32,16 @@ describe('update transaction', () => {
     await updateTransaction(getSampleRequest())
 
     expect(debug).toHaveBeenCalledWith('Setting status to agreed')
+  })
+
+  it('should set status to a recurring payment', async () => {
+    const statusSet = jest.fn()
+    await updateTransaction(getSampleRequest(statusSet))
+
+    expect(statusSet).toHaveBeenCalledWith(
+      expect.objectContaining({
+        [RECURRING_PAYMENT]: true
+      })
+    )
   })
 })
