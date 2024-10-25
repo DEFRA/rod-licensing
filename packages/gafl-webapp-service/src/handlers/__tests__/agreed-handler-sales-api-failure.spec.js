@@ -45,7 +45,7 @@ describe('The agreed handler', () => {
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).not.toBeTruthy()
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
-    console.log('payload', payload)
+
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
