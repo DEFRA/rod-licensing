@@ -646,6 +646,7 @@
   "privacy_where_stored_body_3": "Nid ydym yn storio manylion talu.",
   "privacy_where_stored_body_4": "Mae ein partneriaid gwasanaeth talu Worldpay a GOV.UK Pay yn cydymffurfio gyda Safon Diogelwch Data Diwydiant y Cardiau Talu.",
   "purpose": "Diben",
+  "recurring_payment_description": "Y taliad cerdyn sy’n ailadrodd ar gyfer eich trwydded bysgota â gwialen",
   "recurring_payment_set_up": "Rwy’n cytuno i greu taliad cerdyn sy’n ailadrodd",
   "recurring_payment_set_up_back": "Neu ewch yn ôl i dalu am drwydded unigol",
   "recurring_payment_set_up_body": "Mae creu taliad cerdyn sy’n ailadrodd yn golygu eich bod yn deall ac yn cytuno:",

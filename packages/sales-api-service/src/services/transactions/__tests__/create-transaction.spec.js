@@ -77,6 +77,13 @@ describe('transaction service', () => {
       AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('put')
       await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
+
+    it('uses transaction id if supplied in payload', async () => {
+      const mockPayload = mockTransactionPayload()
+      mockPayload.transactionId = 'abc-123-def-456'
+      const result = await createTransaction(mockPayload)
+      expect(result.id).toBe(mockPayload.transactionId)
+    })
   })
 
   describe('createTransactions', () => {

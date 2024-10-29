@@ -14,6 +14,7 @@ import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES } from '@defra-fish/business-rules-lib'
 import agreedHandler from '../agreed-handler.js'
+import { v4 as uuidv4 } from 'uuid'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -32,6 +33,9 @@ afterAll(() => {
 })
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => '')
+}))
 mockSalesApi()
 
 const paymentStatusSuccess = cost => ({
@@ -58,6 +62,7 @@ describe('The agreed handler', () => {
     beforeEach(async () => {
       await journey.setup()
 
+      uuidv4.mockReturnValue(journey.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
       govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
@@ -179,6 +184,8 @@ describe('The agreed handler', () => {
   ])('no-payment journey %s', (desc, journey) => {
     beforeEach(async () => {
       await journey.setup()
+
+      uuidv4.mockReturnValue(journey.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(journey.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(journey.transactionResponse)
     })
@@ -244,6 +251,7 @@ describe('The agreed handler', () => {
   describe('finalised transactions', () => {
     beforeEach(async () => {
       await JUNIOR_LICENCE.setup()
+      uuidv4.mockReturnValue(JUNIOR_LICENCE.transactionResponse.id)
       salesApi.createTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
       salesApi.finaliseTransaction.mockResolvedValue(JUNIOR_LICENCE.transactionResponse)
       await injectWithCookies('GET', AGREED.uri)

@@ -6,6 +6,7 @@ import { COMPLETION_STATUS } from '../../constants.js'
 import { AGREED, TEST_TRANSACTION, TEST_STATUS, ORDER_COMPLETE } from '../../uri.js'
 
 import mockPermits from '../../__mocks__/data/permits.js'
+import { v4 as uuidv4 } from 'uuid'
 
 beforeAll(() => {
   process.env.ANALYTICS_PRIMARY_PROPERTY = 'GJDJKDKFJ'
@@ -20,6 +21,9 @@ afterAll(() => {
 })
 
 jest.mock('@defra-fish/connectors-lib')
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => '')
+}))
 mockSalesApi()
 
 const paymentStatusSuccess = cost => ({
@@ -41,6 +45,7 @@ describe('The agreed handler', () => {
     const { payload } = await injectWithCookies('GET', TEST_TRANSACTION.uri)
     expect(JSON.parse(payload).id).not.toBeTruthy()
     const { payload: status } = await injectWithCookies('GET', TEST_STATUS.uri)
+
     const parsedStatus = JSON.parse(status)
     expect(parsedStatus[COMPLETION_STATUS.agreed]).toBeTruthy()
     expect(parsedStatus[COMPLETION_STATUS.posted]).not.toBeTruthy()
@@ -66,6 +71,7 @@ describe('The agreed handler', () => {
 
   it('throws a status 500 (server) exception and if there is an exception thrown finalizing the transaction', async () => {
     await ADULT_FULL_1_DAY_LICENCE.setup()
+    uuidv4.mockReturnValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse.id)
     salesApi.createTransaction.mockResolvedValue(ADULT_FULL_1_DAY_LICENCE.transactionResponse)
     salesApi.finaliseTransaction.mockRejectedValue(new Error())
     govUkPayApi.createPayment.mockResolvedValue({ json: () => MOCK_PAYMENT_RESPONSE, ok: true, status: 201 })
