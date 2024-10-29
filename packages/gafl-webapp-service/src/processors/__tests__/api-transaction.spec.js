@@ -63,6 +63,14 @@ describe('prepareApiTransactionPayload', () => {
     })
   })
 
+  it('adds transaction id to payload', async () => {
+    const transactionId = Symbol('transactionId')
+
+    const payload = await prepareApiTransactionPayload(getMockRequest(), transactionId)
+
+    expect(payload.transactionId).toBe(transactionId)
+  })
+
   const getMockRequest = (overrides = {}, state = {}) => ({
     cache: () => ({
       helpers: {
