@@ -1,4 +1,18 @@
 
+## v1.51.0-rc.1 (2024-10-29)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2050](https://github.com/DEFRA/rod-licensing/pull/2050) Create rcp agreement with GOV.UK pay ([@ScottDormand96](https://github.com/ScottDormand96))
+* `gafl-webapp-service`
+  * [#2030](https://github.com/DEFRA/rod-licensing/pull/2030) Content amendments to payment summary ([@lailien3](https://github.com/lailien3))
+* Other
+  * [#2060](https://github.com/DEFRA/rod-licensing/pull/2060) Update dependencies in package-lock ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
 ## v1.51.0-rc.0 (2024-10-21)
 
 #### :rocket: Enhancement
