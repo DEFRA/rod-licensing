@@ -206,7 +206,14 @@ const processPayment = async (request, transaction, status) => {
 const finaliseTransaction = async (request, transaction, status) => {
   const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
   debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
-  const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+  let response
+  try {
+    response  = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+  } catch (e) {
+    debug('Error finalising transaction: %o, payload %o', e, apiFinalisationPayload)
+    throw e
+  }
+  // const response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
 
   /*
    * Write the licence number and end dates into the cache
