@@ -16,9 +16,13 @@ const debug = db('sales:transactions')
  */
 export async function createTransaction (payload) {
   const record = await createTransactionRecord(payload)
-  await docClient
-    .put({ TableName: TRANSACTION_STAGING_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
-    .promise()
+  try {
+    await docClient
+      .put({ TableName: TRANSACTION_STAGING_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
+      .promise()
+  } catch (e) {
+    debug('Error persisting transaction to %s: %o (%o)', TRANSACTION_STAGING_TABLE.TableName, e, record)
+  }
   debug('Transaction %s successfully created in DynamoDB table %s', record.id, TRANSACTION_STAGING_TABLE.TableName)
   return record
 }
