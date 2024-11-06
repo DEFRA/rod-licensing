@@ -205,10 +205,10 @@ const processPayment = async (request, transaction, status) => {
 
 const finaliseTransaction = async (request, transaction, status) => {
   const apiFinalisationPayload = await prepareApiFinalisationPayload(request)
-  debug('Patch transaction finalisation : %s', JSON.stringify(apiFinalisationPayload, null, 4))
+  debug('Patch transaction finalisation : %s for transaction %s', JSON.stringify(apiFinalisationPayload, null, 4), transaction.id)
   let response
   try {
-    response  = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
+    response = await salesApi.finaliseTransaction(transaction.id, apiFinalisationPayload)
   } catch (e) {
     debug('Error finalising transaction: %o, payload %o', e, apiFinalisationPayload)
     throw e
