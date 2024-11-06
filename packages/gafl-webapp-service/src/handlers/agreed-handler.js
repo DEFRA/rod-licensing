@@ -241,7 +241,9 @@ const finaliseTransaction = async (request, transaction, status) => {
 export default async (request, h) => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
-  transaction.id = uuidv4()
+  if (!transaction.id) {
+    transaction.id = uuidv4()
+  }
 
   // If the agreed flag is not set to true then throw an exception
   if (!status[COMPLETION_STATUS.agreed]) {
