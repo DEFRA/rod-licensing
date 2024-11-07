@@ -1,4 +1,13 @@
 
+## v1.51.0-rc.4 (2024-11-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#2069](https://github.com/DEFRA/rod-licensing/pull/2069) Change docker to not install dev dependency ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.51.0-rc.2 (2024-11-07)
 
