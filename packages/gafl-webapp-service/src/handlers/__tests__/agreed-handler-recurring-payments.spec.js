@@ -94,19 +94,34 @@ describe('The agreed handler', () => {
       const setTransaction = jest.fn()
       const transactionId = 'abc-123-def-456'
       uuidv4.mockReturnValue('def-789-ghi-012')
-      const mockRequest = getMockRequest({
-        transaction: {
-          get: async () => ({ cost: 0, id: transactionId }),
-          set: setTransaction
-        }
+      salesApi.finaliseTransaction.mockReturnValueOnce({
+        permissions: []
       })
+      const mockRequest = {
+        cache: () => ({
+          helpers: {
+            status: {
+              get: async () => ({
+                [COMPLETION_STATUS.agreed]: true,
+                [COMPLETION_STATUS.posted]: true,
+                [COMPLETION_STATUS.finalised]: false,
+                [RECURRING_PAYMENT]: false
+              }),
+              set: () => {}
+            },
+            transaction: {
+              get: async () => ({ cost: 0, id: transactionId }),
+              set: setTransaction
+            }
+          }
+        })
+      }
 
       await agreedHandler(mockRequest, getRequestToolkit())
 
-      expect(setTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: transactionId
-        })
+      expect(salesApi.finaliseTransaction).toHaveBeenCalledWith(
+        transactionId,
+        undefined // prepareApiFinalisationPayload has no mocked return value
       )
     })
 

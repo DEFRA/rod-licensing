@@ -281,6 +281,7 @@ export default async (request, h) => {
 
   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
+    console.log('finalising transaction', request, transaction, status)
     await finaliseTransaction(request, transaction, status)
   } else {
     debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)
