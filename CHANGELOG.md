@@ -1,4 +1,13 @@
 
+## v1.51.0-rc.2 (2024-11-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2071](https://github.com/DEFRA/rod-licensing/pull/2071) Fix bug where transaction id is not recognised ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.51.0-rc.1 (2024-10-29)
 
 #### :rocket: Enhancement
