@@ -241,7 +241,9 @@ const finaliseTransaction = async (request, transaction, status) => {
 export default async (request, h) => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
-  transaction.id = uuidv4()
+  if (!transaction.id) {
+    transaction.id = uuidv4()
+  }
 
   // If the agreed flag is not set to true then throw an exception
   if (!status[COMPLETION_STATUS.agreed]) {
@@ -279,6 +281,7 @@ export default async (request, h) => {
 
   // If the transaction has already been finalised then redirect to the order completed page
   if (!status[COMPLETION_STATUS.finalised]) {
+    console.log('finalising transaction', request, transaction, status)
     await finaliseTransaction(request, transaction, status)
   } else {
     debug('Transaction %s already finalised, redirect to order complete: %s', transaction.id)

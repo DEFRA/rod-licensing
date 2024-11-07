@@ -36,7 +36,7 @@ describe('The agreed handler', () => {
     cache: () => ({
       helpers: {
         transaction: {
-          get: async () => ({ id: 'id-111', cost: 0 }),
+          get: async () => ({ cost: 0 }),
           set: async () => {}
         },
         status: {
@@ -88,6 +88,41 @@ describe('The agreed handler', () => {
       await agreedHandler(mockRequest, getRequestToolkit())
 
       expect(transactionPayload.id).toBe(v4guid)
+    })
+
+    it("doesn't overwrite transaction id if one is already set", async () => {
+      const setTransaction = jest.fn()
+      const transactionId = 'abc-123-def-456'
+      uuidv4.mockReturnValue('def-789-ghi-012')
+      salesApi.finaliseTransaction.mockReturnValueOnce({
+        permissions: []
+      })
+      const mockRequest = {
+        cache: () => ({
+          helpers: {
+            status: {
+              get: async () => ({
+                [COMPLETION_STATUS.agreed]: true,
+                [COMPLETION_STATUS.posted]: true,
+                [COMPLETION_STATUS.finalised]: false,
+                [RECURRING_PAYMENT]: false
+              }),
+              set: () => {}
+            },
+            transaction: {
+              get: async () => ({ cost: 0, id: transactionId }),
+              set: setTransaction
+            }
+          }
+        })
+      }
+
+      await agreedHandler(mockRequest, getRequestToolkit())
+
+      expect(salesApi.finaliseTransaction).toHaveBeenCalledWith(
+        transactionId,
+        undefined // prepareApiFinalisationPayload has no mocked return value
+      )
     })
 
     it('sends a recurring payment creation request to Gov.UK Pay', async () => {
