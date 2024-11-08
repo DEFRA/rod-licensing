@@ -1,6 +1,5 @@
 class Config {
   _db
-  _ftp
   _s3
 
   async initialise () {
