@@ -1,4 +1,4 @@
-import { createCRMActivity } from '../activity.queries.js'
+import { createActivity } from '../activity.queries.js'
 import { dynamicsClient } from '../../client/dynamics-client.js'
 
 jest.mock('dynamics-web-api', () => {
@@ -10,7 +10,7 @@ jest.mock('dynamics-web-api', () => {
 })
 
 describe('Activity Service', () => {
-  describe('createCRMActivity', () => {
+  describe('createActivity', () => {
     const mockResponse = {
       '@odata.context': 'https://dynamics.com/api/data/v9.1/defra_CreateRCRActivityResponse',
       RCRActivityId: 'abc123',
@@ -32,7 +32,7 @@ describe('Activity Service', () => {
     it('should call dynamicsClient with correct parameters', async () => {
       dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
 
-      await createCRMActivity('contact-identifier-123', 2023)
+      await createActivity('contact-identifier-123', 2023)
 
       expect(dynamicsClient.executeUnboundAction).toHaveBeenCalledWith('defra_CreateRCRActivity', {
         ContactId: 'contact-identifier-123',
@@ -44,7 +44,7 @@ describe('Activity Service', () => {
     it('should return the CRM response correctly', async () => {
       dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
 
-      const result = await createCRMActivity('contact-identifier-123', 2024)
+      const result = await createActivity('contact-identifier-123', 2024)
 
       expect(result).toEqual(mockResponse)
     })
@@ -53,13 +53,13 @@ describe('Activity Service', () => {
       const error = new Error('Failed to create activity')
       dynamicsClient.executeUnboundAction.mockRejectedValue(error)
 
-      await expect(createCRMActivity('contact-identifier-123', 2024)).rejects.toThrow('Failed to create activity')
+      await expect(createActivity('contact-identifier-123', 2024)).rejects.toThrow('Failed to create activity')
     })
 
     it('should handle the case where activity creation fails', async () => {
       dynamicsClient.executeUnboundAction.mockResolvedValue(errorResponse)
 
-      const result = await createCRMActivity('invalid-contact-id', 2024)
+      const result = await createActivity('invalid-contact-id', 2024)
 
       expect(result).toMatchObject({
         RCRActivityId: null,

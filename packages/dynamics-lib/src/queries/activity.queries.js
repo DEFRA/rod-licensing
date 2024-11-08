@@ -13,7 +13,7 @@ import { dynamicsClient } from '../client/dynamics-client.js'
  * @property {string|null} response.ErrorMessage - An error message if the activity creation failed, otherwise null.
  * @property {string} response.oDataContext - The OData context URL of the response.
  */
-export const createCRMActivity = (contactId, season) => {
+export const createActivity = (contactId, season) => {
   const request = {
     ContactId: contactId,
     ActivityStatus: 'STARTED',
