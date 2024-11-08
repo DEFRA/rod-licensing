@@ -365,3 +365,10 @@ export const MOCK_PAYMENT_RESPONSE = {
     }
   }
 }
+
+export const MOCK_RECURRING_PAYMENT_RESPONSE = {
+  state: { status: 'created', finished: false },
+  reference: 'transaction-id',
+  description: 'recurring card payments',
+  user_identifier: 'permission-id'
+}
