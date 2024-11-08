@@ -47,4 +47,10 @@ describe('dateSchema', () => {
       })
     )
   })
+
+  it('valid date passes validation', () => {
+    expect(() => {
+      Joi.assert(dateSchemaInput('12', '10', '1987'), dateSchema)
+    }).not.toThrow()
+  })
 })
