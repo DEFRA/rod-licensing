@@ -268,7 +268,7 @@
   "dob_error_date_real": "Mae’n rhaid i’r dyddiad geni fod yn ddyddiad dilys",
   "dob_error_missing_day_and_month": "Mae’n rhaid i’r dyddiad geni gynnwys diwrnod a mis",
   "dob_error_missing_day_and_year": "Mae’n rhaid i’r dyddiad geni gynnwys diwrnod a blwyddyn",
-  "dob_error_missing_month_and_year": "Mae’n rhaid i’r dyddiad geni gynnwys mis a blwyddyn",  
+  "dob_error_missing_month_and_year": "Mae’n rhaid i’r dyddiad geni gynnwys mis a blwyddyn",
   "dob_error_missing_day": "Mae’n rhaid i’r dyddiad geni gynnwys diwrnod",
   "dob_error_missing_month": "Mae’n rhaid i’r dyddiad geni gynnwys mis",
   "dob_error_missing_year": "Mae’n rhaid i’r dyddiad geni gynnwys blwyddyn",

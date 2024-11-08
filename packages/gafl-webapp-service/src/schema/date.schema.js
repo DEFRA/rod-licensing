@@ -49,7 +49,7 @@ export const dateSchema = Joi.object({
   }),
   // 'invalid-date': Joi.date().iso().strict()
   'invalid-date': Joi.custom((dateToValidate, helpers) => {
-    if ((new Date(dateToValidate)).toISOString() !== `${dateToValidate}T00:00:00.000Z`) {
+    if (new Date(dateToValidate).toISOString() !== `${dateToValidate}T00:00:00.000Z`) {
       throw helpers.error('invalid-date')
     }
 

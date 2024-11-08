@@ -8,12 +8,6 @@ describe('dateSchemaInput', () => {
 })
 
 describe('dateSchema', () => {
-  const getSamplePayload = ({ day = '', month = '', year = '' } = {}) => ({
-    'date-of-birth-day': day,
-    'date-of-birth-month': month,
-    'date-of-birth-year': year
-  })
-
   it.each`
     payload                                                     | expectedError          | payloadDesc
     ${{}}                                                       | ${'full-date'}         | ${'empty day, month and year'}

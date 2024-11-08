@@ -268,7 +268,7 @@
   "dob_error_date_real": "Date of birth must be a real date",
   "dob_error_missing_day_and_month": "Date of birth must include a day and month",
   "dob_error_missing_day_and_year": "Date of birth must include a day and year",
-  "dob_error_missing_month_and_year": "Date of birth must include a month and year",  
+  "dob_error_missing_month_and_year": "Date of birth must include a month and year",
   "dob_error_missing_day": "Date of birth must include a day",
   "dob_error_missing_month": "Date of birth must include a month",
   "dob_error_missing_year": "Date of birth must include a year",
