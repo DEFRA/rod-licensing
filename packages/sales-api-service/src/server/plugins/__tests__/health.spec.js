@@ -1,26 +1,21 @@
 import initialiseServer from '../../server.js'
 import { dynamicsClient } from '@defra-fish/dynamics-lib'
-import AwsMock from 'aws-sdk'
-import { DynamoDBClient, ListTablesCommand } from '@aws-sdk/client-dynamodb'
-import { mockClient } from 'aws-sdk-client-mock'
+import { docClient, sqs } from '../../../../../connectors-lib/src/aws.js'
+
+jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn()
+  },
+  sqs: {
+    listQueues: jest.fn()
+  }
+}))
 
 let server = null
-
-const dynamoDbMock = mockClient(DynamoDBClient)
 
 describe('hapi healthcheck', () => {
   beforeAll(async () => {
     server = await initialiseServer({ port: null })
-
-    AwsMock.SQS.__init({
-      expectedResponses: {
-        listQueues: { QueueUrls: ['TestQueue'] }
-      }
-    })
-
-    dynamoDbMock.on(ListTablesCommand).resolves({
-      TableNames: ['TestTable']
-    })
   })
 
   beforeEach(() => {
@@ -40,6 +35,12 @@ describe('hapi healthcheck', () => {
   })
 
   it('exposes a service status endpoint providing additional detailed information', async () => {
+    sqs.listQueues.mockReturnValue({
+      promise: jest.fn().mockResolvedValue({ QueueUrls: ['TestQueue'] })
+    })
+
+    docClient.send.mockResolvedValueOnce({ TableNames: ['TestTable'] })
+
     const result = await server.inject({
       method: 'GET',
       url: '/service-status?v&h'
