@@ -21,7 +21,7 @@ RUN rm -Rf /app/build /app/assets
 ####################################################################################################################################
 FROM rod_licensing/base
 WORKDIR /app
-COPY --from=builder /app/ /app/
+COPY --from=builder --chown=node:node /app/ /app/
 
 RUN npm prune --production && npm cache clean --force > /dev/null 2>&1
 
