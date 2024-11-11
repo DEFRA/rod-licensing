@@ -29,7 +29,7 @@ const debug = db('webapp:agreed-handler')
  * @returns {Promise<*>}
  */
 const sendToSalesApi = async (request, transaction, status) => {
-  const apiTransactionPayload = await prepareApiTransactionPayload(request, transaction.id)
+  const apiTransactionPayload = await prepareApiTransactionPayload(request, transaction.id, transaction.agreementId)
   let response
   try {
     response = await salesApi.createTransaction(apiTransactionPayload)

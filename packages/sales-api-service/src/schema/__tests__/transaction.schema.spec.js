@@ -71,7 +71,7 @@ describe('createTransactionSchema', () => {
     await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow('"permissions[0].isLicenceForYou" must be a boolean')
   })
 
-  it('validates successfully when a uuid v4 transaction id is supplied', async () => {
+  it('validates successfully when a uuid v4 transactionId is supplied', async () => {
     const mockPayload = mockTransactionPayload()
     mockPayload.transactionId = '25fa0126-55da-4309-9bce-9957990d141e'
     await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
@@ -90,9 +90,34 @@ describe('createTransactionSchema', () => {
     ['uuid6 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
     ['uuid7 string', '01927705-ffac-77b5-89af-c97451b1bbe2'],
     ['numeric', 4567]
-  ])('fails validation when provided with a %s', async (_d, transactionId) => {
+  ])('fails validation when provided with a %s for transactionId', async (_d, transactionId) => {
     const mockPayload = mockTransactionPayload()
     mockPayload.transactionId = transactionId
+    await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
+  })
+
+  it('validates successfully when a uuid v4 agreementId is supplied', async () => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.agreementId = '25fa0126-55da-4309-9bce-9957990d141e'
+    await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
+  })
+
+  it('validates successfully when agreementId is omitted', async () => {
+    const mockPayload = mockTransactionPayload()
+    await expect(createTransactionSchema.validateAsync(mockPayload)).resolves.not.toThrow()
+  })
+
+  it.each([
+    ['uuid1 string', '5a429f62-871b-11ef-b864-0242ac120002'],
+    ['uuid2 string', '000003e8-871b-21ef-8000-325096b39f47'],
+    ['uuid3 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
+    ['uuid5 string', 'a6edc906-2f9f-5fb2-a373-efac406f0ef2'],
+    ['uuid6 string', 'a3bb189e-8bf9-3888-9912-ace4e6543002'],
+    ['uuid7 string', '01927705-ffac-77b5-89af-c97451b1bbe2'],
+    ['numeric', 4567]
+  ])('fails validation when provided with a %s for agreementId', async (_d, agreementId) => {
+    const mockPayload = mockTransactionPayload()
+    mockPayload.agreementId = agreementId
     await expect(createTransactionSchema.validateAsync(mockPayload)).rejects.toThrow()
   })
 })

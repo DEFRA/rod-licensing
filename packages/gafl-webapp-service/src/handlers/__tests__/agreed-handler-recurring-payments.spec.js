@@ -106,7 +106,7 @@ describe('The agreed handler', () => {
 
       await agreedHandler(getMockRequest(), getRequestToolkit())
 
-      expect(prepareApiTransactionPayload).toHaveBeenCalledWith(expect.any(Object), v4guid)
+      expect(prepareApiTransactionPayload).toHaveBeenCalledWith(expect.any(Object), v4guid, undefined)
     })
 
     it.each(['zxy-098-wvu-765', '467482f1-099d-403d-b6b3-8db7e70d19e3'])(
