@@ -1,4 +1,13 @@
 
+## v1.51.0-rc.5 (2024-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2073](https://github.com/DEFRA/rod-licensing/pull/2073) Building tag error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.51.0-rc.4 (2024-11-07)
 
 #### :rocket: Enhancement
