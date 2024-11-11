@@ -34,7 +34,7 @@ const createTransactionRequestSchemaContent = {
   createdBy: Joi.string().optional(),
   journalId: Joi.string().optional(),
   transactionId: Joi.string().guid({ version: 'uuidv4' }),
-  agreementId: Joi.string().guid({ version: 'uuidv4' })
+  agreementId: Joi.string().alphanum().length(26).optional()
 }
 
 /**
