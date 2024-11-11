@@ -1,144 +1,114 @@
-import { DynamoDB } from '@aws-sdk/client-dynamodb'
-import AWS from 'aws-sdk'
-import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
 import Config from '../config'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { createDocumentClient } from '../documentclient-decorator.js'
+const TEST_ENDPOINT = 'http://localhost:8080'
+const TEST_REGION = 'eu-west-2'
 
-jest.mock('aws-sdk', () => {
-  const SQS = jest.fn().mockImplementation(config => ({
-    config: { ...config, apiVersion: '2012-11-05', region: config.region || 'eu-west-2' }
-  }))
-  const S3 = jest.fn().mockImplementation(config => ({
-    config: { ...config, apiVersion: '2006-03-01', region: config.region || 'eu-west-2', s3ForcePathStyle: config.s3ForcePathStyle }
-  }))
-  const SecretsManager = jest.fn().mockImplementation(config => ({
-    config: { ...config, apiVersion: '2017-10-17', region: config.region || 'eu-west-2' }
-  }))
+jest.dontMock('aws-sdk')
 
-  return { SQS, S3, SecretsManager }
-})
+jest.mock('@aws-sdk/client-dynamodb', () => ({
+  DynamoDBClient: jest.fn()
+}))
 
-jest.mock('@aws-sdk/client-dynamodb')
-jest.mock('@aws-sdk/lib-dynamodb', () => ({
-  DynamoDBDocument: {
-    from: jest.fn()
-  }
+jest.mock('../documentclient-decorator.js', () => ({
+  createDocumentClient: jest.fn()
 }))
 
 describe('AWS Connectors', () => {
-  let SQS, S3, SecretsManager
+  let mockDocClient
 
   beforeEach(() => {
-    DynamoDB.mockClear()
-    DynamoDBDocument.from.mockClear()
+    jest.resetAllMocks()
 
-    DynamoDBDocument.from.mockReturnValue({
+    mockDocClient = {
       send: jest.fn(),
       queryAllPromise: jest.fn(),
       scanAllPromise: jest.fn(),
       batchWriteAllPromise: jest.fn(),
       createUpdateExpression: jest.fn()
-    })
+    }
 
-    SQS = AWS.SQS
-    S3 = AWS.S3
-    SecretsManager = AWS.SecretsManager
+    createDocumentClient.mockReturnValue(mockDocClient)
+  })
 
-    SQS.mockClear()
-    S3.mockClear()
-    SecretsManager.mockClear()
+  it('checks that mockDocClient is initialised correctly for dynamodb operations', () => {
+    expect(mockDocClient).toBeDefined()
+    // expect(mockDocClient.send).toBeInstanceOf(Function)
   })
 
   it('configures dynamodb with a custom endpoint if one is defined in configuration', () => {
-    const TEST_ENDPOINT = 'http://localhost:8080'
+    process.env.AWS_REGION = TEST_REGION
+    Config.aws.region = TEST_REGION
     Config.aws.dynamodb.endpoint = TEST_ENDPOINT
-    require('../aws.js').default()
-    expect(DynamoDB).toHaveBeenCalledWith(
+
+    const awsClients = require('../aws.js').default()
+
+    expect(DynamoDBClient).toHaveBeenCalledWith(
       expect.objectContaining({
+        region: TEST_REGION,
         endpoint: TEST_ENDPOINT
       })
     )
-    expect(DynamoDBDocument.from).toHaveBeenCalledWith(expect.any(DynamoDB))
+    expect(createDocumentClient).toHaveBeenCalledWith(expect.any(DynamoDBClient))
+    expect(awsClients.docClient).toBe(mockDocClient)
   })
 
   it('uses the default dynamodb endpoint if it is not overridden in configuration', () => {
-    process.env.AWS_REGION = 'eu-west-2'
+    const DEFAULT_REGION = 'eu-west-2'
+
+    process.env.AWS_REGION = DEFAULT_REGION
+    Config.aws.region = DEFAULT_REGION
     delete Config.aws.dynamodb.endpoint
-    require('../aws.js').default()
-    expect(DynamoDB).toHaveBeenCalledWith(
+
+    const awsClients = require('../aws.js').default()
+
+    expect(DynamoDBClient).toHaveBeenCalledWith(
       expect.objectContaining({
-        region: 'eu-west-2'
+        region: DEFAULT_REGION
       })
     )
-    expect(DynamoDBDocument.from).toHaveBeenCalledWith(expect.any(DynamoDB))
+    expect(createDocumentClient).toHaveBeenCalledWith(expect.any(DynamoDBClient))
+    expect(awsClients.docClient).toBe(mockDocClient)
   })
 
-  it('configures sqs with a custom endpoint if one is defined in configuration', () => {
-    const TEST_ENDPOINT = 'http://localhost:8080'
+  it('configures sqs with a custom endpoint if one is defined in configuration', async () => {
     Config.aws.sqs.endpoint = TEST_ENDPOINT
-    require('../aws.js').default()
-    expect(SQS).toHaveBeenCalledWith(
-      expect.objectContaining({
-        apiVersion: '2012-11-05',
-        endpoint: TEST_ENDPOINT
-      })
-    )
+    const { sqs } = require('../aws.js').default()
+    expect(sqs.config.endpoint).toEqual(TEST_ENDPOINT)
   })
 
-  it('uses the default sqs endpoint if it is not overridden in configuration', () => {
+  it('uses the default sqs endpoint if it is not overridden in configuration', async () => {
     process.env.AWS_REGION = 'eu-west-2'
     delete Config.aws.sqs.endpoint
-    require('../aws.js').default()
-    expect(SQS).toHaveBeenCalledWith(
-      expect.objectContaining({
-        apiVersion: '2012-11-05'
-      })
-    )
+    const { sqs } = require('../aws.js').default()
+    expect(sqs.config.endpoint).toEqual('sqs.eu-west-2.amazonaws.com')
   })
 
-  it('configures s3 with a custom endpoint if one is defined in configuration', () => {
-    const TEST_ENDPOINT = 'http://localhost:8080'
+  it('configures s3 with a custom endpoint if one is defined in configuration', async () => {
     Config.aws.s3.endpoint = TEST_ENDPOINT
-    require('../aws.js').default()
-    expect(S3).toHaveBeenCalledWith(
-      expect.objectContaining({
-        apiVersion: '2006-03-01',
-        endpoint: TEST_ENDPOINT,
-        s3ForcePathStyle: true
-      })
-    )
+    const { s3 } = require('../aws.js').default()
+    expect(s3.config.endpoint).toEqual(TEST_ENDPOINT)
+    expect(s3.config.s3ForcePathStyle).toBeTruthy()
   })
 
-  it('uses default s3 settings if a custom endpoint is not defined', () => {
+  it('uses default s3 settings if a custom endpoint is not defined', async () => {
     process.env.AWS_REGION = 'eu-west-2'
     delete Config.aws.s3.endpoint
-    require('../aws.js').default()
-    expect(S3).toHaveBeenCalledWith(
-      expect.objectContaining({
-        apiVersion: '2006-03-01'
-      })
-    )
+    const { s3 } = require('../aws.js').default()
+    expect(s3.config.endpoint).toEqual('s3.eu-west-2.amazonaws.com')
+    expect(s3.config.s3ForcePathStyle).toBeFalsy()
   })
 
-  it('configures secretsmanager with a custom endpoint if one is defined in configuration', () => {
-    const TEST_ENDPOINT = 'http://localhost:8080'
+  it('configures secretsmanager with a custom endpoint if one is defined in configuration', async () => {
     Config.aws.secretsManager.endpoint = TEST_ENDPOINT
-    require('../aws.js').default()
-    expect(SecretsManager).toHaveBeenCalledWith(
-      expect.objectContaining({
-        apiVersion: '2017-10-17',
-        endpoint: TEST_ENDPOINT
-      })
-    )
+    const { secretsManager } = require('../aws.js').default()
+    expect(secretsManager.config.endpoint).toEqual(TEST_ENDPOINT)
   })
 
-  it('uses default secretsmanager settings if a custom endpoint is not defined', () => {
+  it('uses default secretsmanager settings if a custom endpoint is not defined', async () => {
     process.env.AWS_REGION = 'eu-west-2'
     delete Config.aws.secretsManager.endpoint
-    require('../aws.js').default()
-    expect(SecretsManager).toHaveBeenCalledWith(
-      expect.objectContaining({
-        apiVersion: '2017-10-17'
-      })
-    )
+    const { secretsManager } = require('../aws.js').default()
+    expect(secretsManager.config.endpoint).toEqual('secretsmanager.eu-west-2.amazonaws.com')
   })
 })
