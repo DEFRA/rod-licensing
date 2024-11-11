@@ -1,7 +1,7 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
 import agreedHandler from '../agreed-handler.js'
-import { prepareRecurringPayment } from '../../processors/payment.js'
+import { prepareRecurringPaymentAgreement } from '../../processors/payment.js'
 import { sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
 import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -32,12 +32,13 @@ describe('The agreed handler', () => {
   })
   beforeEach(jest.clearAllMocks)
 
+  const mockTransactionCacheSet = jest.fn()
   const getMockRequest = (overrides = {}) => ({
     cache: () => ({
       helpers: {
         transaction: {
           get: async () => ({ cost: 0 }),
-          set: async () => {}
+          set: mockTransactionCacheSet
         },
         status: {
           get: async () => ({
@@ -67,12 +68,12 @@ describe('The agreed handler', () => {
         }
       })
       await agreedHandler(mockRequest, getRequestToolkit())
-      expect(prepareRecurringPayment).toHaveBeenCalledWith(mockRequest, transaction)
+      expect(prepareRecurringPaymentAgreement).toHaveBeenCalledWith(mockRequest, transaction)
     })
 
     it('adds a v4 guid to the transaction as an id', async () => {
       let transactionPayload = null
-      prepareRecurringPayment.mockImplementationOnce((_p1, tp) => {
+      prepareRecurringPaymentAgreement.mockImplementationOnce((_p1, tp) => {
         transactionPayload = { ...tp }
       })
       const v4guid = Symbol('v4guid')
@@ -90,44 +91,9 @@ describe('The agreed handler', () => {
       expect(transactionPayload.id).toBe(v4guid)
     })
 
-    it("doesn't overwrite transaction id if one is already set", async () => {
-      const setTransaction = jest.fn()
-      const transactionId = 'abc-123-def-456'
-      uuidv4.mockReturnValue('def-789-ghi-012')
-      salesApi.finaliseTransaction.mockReturnValueOnce({
-        permissions: []
-      })
-      const mockRequest = {
-        cache: () => ({
-          helpers: {
-            status: {
-              get: async () => ({
-                [COMPLETION_STATUS.agreed]: true,
-                [COMPLETION_STATUS.posted]: true,
-                [COMPLETION_STATUS.finalised]: false,
-                [RECURRING_PAYMENT]: false
-              }),
-              set: () => {}
-            },
-            transaction: {
-              get: async () => ({ cost: 0, id: transactionId }),
-              set: setTransaction
-            }
-          }
-        })
-      }
-
-      await agreedHandler(mockRequest, getRequestToolkit())
-
-      expect(salesApi.finaliseTransaction).toHaveBeenCalledWith(
-        transactionId,
-        undefined // prepareApiFinalisationPayload has no mocked return value
-      )
-    })
-
     it('sends a recurring payment creation request to Gov.UK Pay', async () => {
       const preparedPayment = Symbol('preparedPayment')
-      prepareRecurringPayment.mockResolvedValueOnce(preparedPayment)
+      prepareRecurringPaymentAgreement.mockResolvedValueOnce(preparedPayment)
       await agreedHandler(getMockRequest(), getRequestToolkit())
       expect(sendRecurringPayment).toHaveBeenCalledWith(preparedPayment)
     })
@@ -156,6 +122,23 @@ describe('The agreed handler', () => {
 
         // eslint-disable-next-line camelcase
         expect(debugMock).toHaveBeenCalledWith(`Created agreement with id ${agreement_id}`)
+      }
+    )
+
+    it.each(['zxy-098-wvu-765', '467482f1-099d-403d-b6b3-8db7e70d19e3'])(
+      "assigns agreement id '%s' to the transaction when recurring payment agreement created",
+      async agreementId => {
+        sendRecurringPayment.mockResolvedValueOnce({
+          agreement_id: agreementId
+        })
+
+        await agreedHandler(getMockRequest(), getRequestToolkit())
+
+        expect(mockTransactionCacheSet).toHaveBeenCalledWith(
+          expect.objectContaining({
+            agreementId
+          })
+        )
       }
     )
   })
