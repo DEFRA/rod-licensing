@@ -1,4 +1,5 @@
 import { AGREED } from '../uri.js'
+import { COMPLETION_STATUS } from '../constants.js'
 import db from 'debug'
 import { licenceTypeAndLengthDisplay } from './licence-type-display.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
@@ -17,7 +18,7 @@ const getAddressLine1 = licensee => (licensee.street ? `${licensee.premises} ${l
  * @param request
  * @returns {{reference: *, delayed_capture: boolean, amount: number, return_url: string, description: string}}
  */
-export const preparePayment = (request, transaction) => {
+export const preparePayment = (request, transaction, status) => {
   const uri = addLanguageCodeToUri(request, AGREED.uri)
   const url = new URL(uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
 
@@ -50,17 +51,21 @@ export const preparePayment = (request, transaction) => {
     }
   }
 
+  if (status && status[COMPLETION_STATUS.recurringAgreement] === true) {
+    result.set_up_agreement = transaction.agreementId
+  }
+
   debug('Creating prepared payment %o', result)
   return result
 }
 
-export const prepareRecurringPayment = async (request, transaction) => {
+export const prepareRecurringPaymentAgreement = async (request, transaction) => {
   debug('Preparing recurring payment %s', JSON.stringify(transaction, undefined, '\t'))
-  // The recurring card payment for your rod fishing licence
+  // The recurring card payment agreement for your rod fishing licence
   const result = {
     reference: transaction.id,
     description: request.i18n.getCatalog().recurring_payment_description
   }
-  debug('Creating prepared recurring payment %o', result)
+  debug('Creating prepared recurring payment agreement %o', result)
   return result
 }
