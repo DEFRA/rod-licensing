@@ -7,6 +7,8 @@ import { MAX_PERMISSIONS_PER_TRANSACTION, POCL_TRANSACTION_SOURCES } from '@defr
 
 import { v4 as uuidv4 } from 'uuid'
 
+const AGREEMENT_ID_LENGTH = 26
+
 /**
  * Maximum number of items that can be created in a batch - limited by DynamoDB max batch size
  * @type {number}
@@ -34,7 +36,7 @@ const createTransactionRequestSchemaContent = {
   createdBy: Joi.string().optional(),
   journalId: Joi.string().optional(),
   transactionId: Joi.string().guid({ version: 'uuidv4' }),
-  agreementId: Joi.string().alphanum().length(26).optional()
+  agreementId: Joi.string().alphanum().length(AGREEMENT_ID_LENGTH).optional()
 }
 
 /**
