@@ -1,39 +1,5 @@
 import * as db from '../db.js'
-import { DynamoDBDocument, GetCommand, UpdateCommand, BatchWriteCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
-
-jest.mock('@aws-sdk/lib-dynamodb', () => {
-  const actualLib = jest.requireActual('@aws-sdk/lib-dynamodb')
-
-  return {
-    DynamoDBDocument: {
-      from: jest.fn().mockReturnValue({
-        send: jest.fn(command => {
-          if (command instanceof actualLib.GetCommand) {
-            return Promise.resolve({ Item: { id: 'testfile.xml' } })
-          }
-
-          if (command instanceof actualLib.UpdateCommand) {
-            return Promise.resolve({ Attributes: { id: 'testfile.xml', param1: 'test1', param2: 'test2' } })
-          }
-
-          if (command instanceof actualLib.BatchWriteCommand) {
-            return Promise.resolve({ UnprocessedItems: {} })
-          }
-
-          if (command instanceof actualLib.QueryCommand || command instanceof actualLib.ScanCommand) {
-            return Promise.resolve({ Items: [] })
-          }
-          return Promise.resolve({})
-        })
-      })
-    },
-    GetCommand: actualLib.GetCommand,
-    UpdateCommand: actualLib.UpdateCommand,
-    BatchWriteCommand: actualLib.BatchWriteCommand,
-    QueryCommand: actualLib.QueryCommand,
-    ScanCommand: actualLib.ScanCommand
-  }
-})
+import { docClient } from '../../../../connectors-lib/src/aws.js'
 
 jest.mock('../../config.js', () => ({
   db: {
@@ -43,6 +9,30 @@ jest.mock('../../config.js', () => ({
   }
 }))
 
+jest.mock('../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn(),
+    scanAllPromise: jest.fn(),
+    queryAllPromise: jest.fn(),
+    batchWriteAllPromise: jest.fn(),
+    createUpdateExpression: jest.fn()
+  }
+}))
+
+jest.mock('@aws-sdk/lib-dynamodb', () => {
+  const originalModule = jest.requireActual('@aws-sdk/lib-dynamodb')
+  return {
+    ...originalModule,
+    GetCommand: jest.fn(),
+    UpdateCommand: jest.fn(),
+    ScanCommand: jest.fn(),
+    QueryCommand: jest.fn(),
+    BatchWriteCommand: jest.fn()
+  }
+})
+
+const { GetCommand: MockGetCommand, UpdateCommand: MockUpdateCommand } = require('@aws-sdk/lib-dynamodb')
+
 describe('database operations', () => {
   const TEST_FILENAME = 'testfile.xml'
 
@@ -51,141 +41,160 @@ describe('database operations', () => {
   })
 
   describe('getFileRecord', () => {
-    it('calls a get operation on dynamodb', async () => {
-      await db.getFileRecord(TEST_FILENAME)
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(GetCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            TableName: 'TestFileTable',
-            Key: { filename: TEST_FILENAME },
-            ConsistentRead: true
-          }
-        })
-      )
+    it('calls GetCommand on dynamodb', async () => {
+      const mockItem = { id: 'testfile.xml' }
+      docClient.send.mockResolvedValueOnce({ Item: mockItem })
+
+      const result = await db.getFileRecord(TEST_FILENAME)
+
+      expect(MockGetCommand).toHaveBeenCalledWith({
+        TableName: 'TestFileTable',
+        Key: { filename: TEST_FILENAME },
+        ConsistentRead: true
+      })
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(MockGetCommand))
+      expect(result).toEqual(mockItem)
     })
   })
 
   describe('getFileRecords', () => {
     it('retrieves all records for the given file if no stages are provided', async () => {
-      await db.getFileRecords()
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(ScanCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            TableName: 'TestFileTable',
-            ConsistentRead: true,
-            ExpressionAttributeValues: {}
-          }
-        })
-      )
+      const mockItems = []
+      docClient.scanAllPromise.mockResolvedValueOnce(mockItems)
+
+      const result = await db.getFileRecords()
+
+      expect(docClient.scanAllPromise).toHaveBeenCalledWith({
+        TableName: 'TestFileTable',
+        ConsistentRead: true,
+        ExpressionAttributeValues: {}
+      })
+      expect(result).toEqual(mockItems)
     })
 
     it('retrieves all records for a given set of stages', async () => {
-      await db.getFileRecords('STAGE 1', 'STAGE 2')
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(ScanCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            TableName: 'TestFileTable',
-            FilterExpression: 'stage IN (:stage0,:stage1)',
-            ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-            ConsistentRead: true
-          }
-        })
-      )
+      const mockItems = []
+      docClient.scanAllPromise.mockResolvedValueOnce(mockItems)
+
+      const result = await db.getFileRecords('STAGE 1', 'STAGE 2')
+
+      expect(docClient.scanAllPromise).toHaveBeenCalledWith({
+        TableName: 'TestFileTable',
+        FilterExpression: 'stage IN (:stage0,:stage1)',
+        ExpressionAttributeValues: { ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
+        ConsistentRead: true
+      })
+      expect(result).toEqual(mockItems)
     })
   })
 
   describe('updateFileStagingTable', () => {
-    it('calls update on dynamodb including all necessary parameters', async () => {
-      await db.updateFileStagingTable({ filename: TEST_FILENAME, param1: 'test1', param2: 'test2' })
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(UpdateCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            TableName: 'TestFileTable',
-            Key: { filename: TEST_FILENAME },
-            UpdateExpression: 'SET #expires = :expires,#param1 = :param1,#param2 = :param2',
-            ExpressionAttributeNames: {
-              '#expires': 'expires',
-              '#param1': 'param1',
-              '#param2': 'param2'
-            },
-            ExpressionAttributeValues: {
-              ':expires': expect.any(Number),
-              ':param1': 'test1',
-              ':param2': 'test2'
-            }
-          }
-        })
-      )
+    it('calls UpdateCommand on dynamodb', async () => {
+      const entries = { param1: 'test1', param2: 'test2' }
+      const mockAttributes = { id: 'testfile.xml', param1: 'test1', param2: 'test2' }
+      const mockUpdateExpression = {
+        UpdateExpression: 'SET #expires = :expires,#param1 = :param1,#param2 = :param2',
+        ExpressionAttributeNames: {
+          '#expires': 'expires',
+          '#param1': 'param1',
+          '#param2': 'param2'
+        },
+        ExpressionAttributeValues: {
+          ':expires': 1234567890,
+          ':param1': 'test1',
+          ':param2': 'test2'
+        }
+      }
+      docClient.createUpdateExpression.mockReturnValue(mockUpdateExpression)
+      docClient.send.mockResolvedValueOnce({ Attributes: mockAttributes })
+
+      await db.updateFileStagingTable({ filename: TEST_FILENAME, ...entries })
+
+      expect(docClient.createUpdateExpression).toHaveBeenCalledWith({
+        expires: expect.any(Number),
+        ...entries
+      })
+      expect(MockUpdateCommand).toHaveBeenCalledWith({
+        TableName: 'TestFileTable',
+        Key: { filename: TEST_FILENAME },
+        UpdateExpression: 'SET #expires = :expires,#param1 = :param1,#param2 = :param2',
+        ExpressionAttributeNames: {
+          '#expires': 'expires',
+          '#param1': 'param1',
+          '#param2': 'param2'
+        },
+        ExpressionAttributeValues: {
+          ':expires': expect.any(Number),
+          ':param1': 'test1',
+          ':param2': 'test2'
+        }
+      })
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(MockUpdateCommand))
     })
   })
 
   describe('updateRecordStagingTable', () => {
-    it('calls batchWrite on dynamodb including all necessary parameters', async () => {
+    it('calls batchWriteAllPromise on dynamodb', async () => {
       const records = [{ id: 'test1' }, { id: 'test2' }]
+      docClient.batchWriteAllPromise.mockResolvedValueOnce({ UnprocessedItems: {} })
+
       await db.updateRecordStagingTable(TEST_FILENAME, records)
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            RequestItems: {
-              TestRecordTable: [
-                {
-                  PutRequest: {
-                    Item: { filename: TEST_FILENAME, id: 'test1', expires: expect.any(Number) }
-                  }
-                },
-                {
-                  PutRequest: {
-                    Item: { filename: TEST_FILENAME, id: 'test2', expires: expect.any(Number) }
-                  }
-                }
-              ]
+
+      expect(docClient.batchWriteAllPromise).toHaveBeenCalledWith({
+        RequestItems: {
+          TestRecordTable: [
+            {
+              PutRequest: {
+                Item: { filename: TEST_FILENAME, id: 'test1', expires: expect.any(Number) }
+              }
+            },
+            {
+              PutRequest: {
+                Item: { filename: TEST_FILENAME, id: 'test2', expires: expect.any(Number) }
+              }
             }
-          }
-        })
-      )
+          ]
+        }
+      })
     })
 
-    it('is a no-op if records are empty', async () => {
+    it('is a no-op if records is empty', async () => {
       await db.updateRecordStagingTable(TEST_FILENAME, [])
-      expect(DynamoDBDocument.from().send).not.toHaveBeenCalled()
+
+      expect(docClient.batchWriteAllPromise).not.toHaveBeenCalled()
     })
   })
 
   describe('getProcessedRecords', () => {
     it('retrieves all records for the given file if no stages are provided', async () => {
-      await db.getProcessedRecords(TEST_FILENAME)
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(QueryCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            TableName: 'TestRecordTable',
-            KeyConditionExpression: 'filename = :filename',
-            ExpressionAttributeValues: { ':filename': TEST_FILENAME },
-            ConsistentRead: true
-          }
-        })
-      )
+      const mockItems = []
+      docClient.queryAllPromise.mockResolvedValueOnce(mockItems)
+
+      const result = await db.getProcessedRecords(TEST_FILENAME)
+
+      expect(docClient.queryAllPromise).toHaveBeenCalledWith({
+        TableName: 'TestRecordTable',
+        KeyConditionExpression: 'filename = :filename',
+        ExpressionAttributeValues: { ':filename': TEST_FILENAME },
+        ConsistentRead: true
+      })
+      expect(result).toEqual(mockItems)
     })
 
     it('retrieves all records for a given set of stages', async () => {
-      await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(expect.any(QueryCommand))
-      expect(DynamoDBDocument.from().send).toHaveBeenCalledWith(
-        expect.objectContaining({
-          input: {
-            TableName: 'TestRecordTable',
-            KeyConditionExpression: 'filename = :filename',
-            FilterExpression: 'stage IN (:stage0,:stage1)',
-            ExpressionAttributeValues: { ':filename': TEST_FILENAME, ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
-            ConsistentRead: true
-          }
-        })
-      )
+      const mockItems = []
+      docClient.queryAllPromise.mockResolvedValueOnce(mockItems)
+
+      const result = await db.getProcessedRecords(TEST_FILENAME, 'STAGE 1', 'STAGE 2')
+
+      expect(docClient.queryAllPromise).toHaveBeenCalledWith({
+        TableName: 'TestRecordTable',
+        KeyConditionExpression: 'filename = :filename',
+        FilterExpression: 'stage IN (:stage0,:stage1)',
+        ExpressionAttributeValues: { ':filename': TEST_FILENAME, ':stage0': 'STAGE 1', ':stage1': 'STAGE 2' },
+        ConsistentRead: true
+      })
+      expect(result).toEqual(mockItems)
     })
   })
 })
