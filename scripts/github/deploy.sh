@@ -90,7 +90,7 @@ sleep 30
 
 echo "Updating package-lock.json from ${PREVIOUS_VERSION} to ${NEW_VERSION}"
 # Update package-lock.json files to reflect new versions
-lerna exec -- npm install --package-lock-only
+lerna exec -- rm -rf node_modules && npm install --package-lock-only
 
 # If we've pushed a new release into master and it is not a hotfix/patch, then merge the changes back to develop
 if [ "${BRANCH}" == "master" ] && [ "${RELEASE_TYPE}" != "patch" ]; then
