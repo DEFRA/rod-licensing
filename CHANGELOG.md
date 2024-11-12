@@ -1,4 +1,56 @@
 
+## v1.51.0-rc.5 (2024-11-11)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2073](https://github.com/DEFRA/rod-licensing/pull/2073) Building tag error ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.51.0-rc.4 (2024-11-07)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`, `recurring-payments-job`, `sales-api-service`
+  * [#2069](https://github.com/DEFRA/rod-licensing/pull/2069) Change docker to not install dev dependency ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.51.0-rc.2 (2024-11-07)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2071](https://github.com/DEFRA/rod-licensing/pull/2071) Fix bug where transaction id is not recognised ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
+## v1.51.0-rc.1 (2024-10-29)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `fulfilment-job`, `gafl-webapp-service`, `payment-mop-up-job`, `pocl-job`, `recurring-payments-job`, `sales-api-service`, `sqs-receiver-service`
+  * [#2050](https://github.com/DEFRA/rod-licensing/pull/2050) Create rcp agreement with GOV.UK pay ([@ScottDormand96](https://github.com/ScottDormand96))
+* `gafl-webapp-service`
+  * [#2030](https://github.com/DEFRA/rod-licensing/pull/2030) Content amendments to payment summary ([@lailien3](https://github.com/lailien3))
+* Other
+  * [#2060](https://github.com/DEFRA/rod-licensing/pull/2060) Update dependencies in package-lock ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 2
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+- laila aleissa ([@lailien3](https://github.com/lailien3))
+
+## v1.51.0-rc.0 (2024-10-21)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2067](https://github.com/DEFRA/rod-licensing/pull/2067) Payment complete 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+  * [#2066](https://github.com/DEFRA/rod-licensing/pull/2066) Update content to 10 days ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 
 ## v1.50.0-rc.10 (2024-10-09)
 
