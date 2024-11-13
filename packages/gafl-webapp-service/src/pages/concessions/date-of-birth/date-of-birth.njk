@@ -34,7 +34,11 @@
         'number.base': { ref: '#date-of-birth-day', text: mssgs.dob_error_non_numeric }
       },
       'invalid-date': {
-        'date.base': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
+        'any.custom': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
+      },
+      'birthDate': {
+        'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_min },
+        'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
       }
     }
 %}

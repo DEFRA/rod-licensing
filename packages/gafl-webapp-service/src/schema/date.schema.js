@@ -1,17 +1,23 @@
 'use strict'
 import Joi from 'joi'
 
-export const dateSchemaInput = (day, month, year) => ({
-  'full-date': { day, month, year },
-  'day-and-month': { day, month },
-  'day-and-year': { day, year },
-  'month-and-year': { month, year },
-  day,
-  month,
-  year,
-  'non-numeric': { day, month, year },
-  'invalid-date': `${year}-${(month || '').padStart(2, '0')}-${(day || '').padStart(2, '0')}`
-})
+export const dateSchemaInput = (unparsedDay, unparsedMonth, unparsedYear) => {
+  const day = unparsedDay === '' ? undefined : unparsedDay
+  const month = unparsedMonth === '' ? undefined : unparsedMonth
+  const year = unparsedYear === '' ? undefined : unparsedYear
+
+  return {
+    'full-date': { day, month, year },
+    'day-and-month': { day, month },
+    'day-and-year': { day, year },
+    'month-and-year': { month, year },
+    day,
+    month,
+    year,
+    'non-numeric': { day, month, year },
+    'invalid-date': `${year}-${(month || '').padStart(2, '0')}-${(day || '').padStart(2, '0')}`
+  }
+}
 
 export const dateSchema = Joi.object({
   'full-date': Joi.object()
@@ -47,7 +53,6 @@ export const dateSchema = Joi.object({
     month: Joi.number(),
     year: Joi.number()
   }),
-  // 'invalid-date': Joi.date().iso().strict()
   'invalid-date': Joi.custom((dateToValidate, helpers) => {
     if (new Date(dateToValidate).toISOString() !== `${dateToValidate}T00:00:00.000Z`) {
       throw helpers.error('invalid-date')

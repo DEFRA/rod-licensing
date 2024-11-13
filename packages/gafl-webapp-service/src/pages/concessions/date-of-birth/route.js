@@ -5,18 +5,20 @@ import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { dateSchema, dateSchemaInput } from '../../../schema/date.schema.js'
+import moment from 'moment'
 
 const MAX_AGE = 120
 
 export const validator = payload => {
-  const maxYear = new Date().getFullYear()
-  const minYear = maxYear - MAX_AGE
-
   const day = payload['date-of-birth-day']
   const month = payload['date-of-birth-month']
   const year = payload['date-of-birth-year']
 
   Joi.assert(dateSchemaInput(day, month, year), dateSchema)
+  const minDate = moment().subtract(MAX_AGE, 'years').startOf('day').toDate()
+  const maxDate = moment().subtract(1, 'day').startOf('day').toDate()
+  const birthDate = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00.000Z`)
+  Joi.assert({ birthDate }, Joi.object({ birthDate: Joi.date().min(minDate).max(maxDate) }))
 }
 
 const redirectToStartOfJourney = status => {
