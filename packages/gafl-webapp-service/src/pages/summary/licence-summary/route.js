@@ -113,16 +113,13 @@ class RowGenerator {
     )
   }
 
-  generateLicenceLengthRow() {
-    const args = [
-      'licence_summary_length',
-      this.labels[`licence_type_${this.permission.licenceLength.toLowerCase()}`]
-    ]
-  
+  generateLicenceLengthRow () {
+    const args = ['licence_summary_length', this.labels[`licence_type_${this.permission.licenceLength.toLowerCase()}`]]
+
     if (!(this.permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse'] && this.permission.numberOfRods === '3')) {
       args.push(LICENCE_LENGTH.uri, 'change-licence-length')
     }
-  
+
     return this.generateStandardRow(...args)
   }
 }
