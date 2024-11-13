@@ -1,4 +1,13 @@
 
+## v1.55.0-rc.0 (2024-11-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2072](https://github.com/DEFRA/rod-licensing/pull/2072) Create activity in CRM ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
 
 
 
