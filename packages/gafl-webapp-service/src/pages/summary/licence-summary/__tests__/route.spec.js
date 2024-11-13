@@ -116,7 +116,7 @@ const getMockPermission = (licenseeOverrides = {}) => ({
   licenceToStart: 'after-payment',
   licenceStartDate: '2022-11-10',
   licenceType: 'Trout and coarse',
-  numberOfRods: '3',
+  numberOfRods: '2',
   permit: { cost: 6 }
 })
 
@@ -372,16 +372,17 @@ describe('licence-summary > route', () => {
 
   describe('licence summary rows', () => {
     it.each`
-      desc                         | currentPermission
-      ${'1 year renewal'}          | ${getMockPermission()}
-      ${'1 year new licence'}      | ${getMockNewPermission()}
-      ${'1 year senior renewal'}   | ${getMockSeniorPermission()}
-      ${'8 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
-      ${'1 day licence'}           | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
-      ${'Junior licence'}          | ${getMockJuniorPermission()}
-      ${'Blue badge concession'}   | ${getMockBlueBadgePermission()}
-      ${'Continuing permission'}   | ${getMockContinuingPermission()}
-      ${'Another date permission'} | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
+      desc                               | currentPermission
+      ${'1 year renewal'}                | ${getMockPermission()}
+      ${'1 year new licence'}            | ${getMockNewPermission()}
+      ${'1 year senior renewal'}         | ${getMockSeniorPermission()}
+      ${'8 day licence'}                 | ${{ ...getMockNewPermission(), licenceLength: '8D' }}
+      ${'1 day licence'}                 | ${{ ...getMockNewPermission(), licenceLength: '1D' }}
+      ${'Junior licence'}                | ${getMockJuniorPermission()}
+      ${'Blue badge concession'}         | ${getMockBlueBadgePermission()}
+      ${'Continuing permission'}         | ${getMockContinuingPermission()}
+      ${'Another date permission'}       | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
+      ${'1 year new three rod licence '} | ${{ ...getMockNewPermission(), licenceType: 'Trout and coarse', numberOfRods: '3' }}
     `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
       const data = await getData(mockRequest)

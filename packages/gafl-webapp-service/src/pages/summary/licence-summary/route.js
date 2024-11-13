@@ -22,6 +22,7 @@ import { CONCESSION, CONCESSION_PROOF } from '../../../processors/mapping-consta
 import { nextPage } from '../../../routes/next-page.js'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import { displayPermissionPrice } from '../../../processors/price-display.js'
+import * as mappings from '../../../processors/mapping-constants.js'
 import db from 'debug'
 const debug = db('webapp:licence-summary')
 
@@ -112,13 +113,17 @@ class RowGenerator {
     )
   }
 
-  generateLicenceLengthRow () {
-    return this.generateStandardRow(
+  generateLicenceLengthRow() {
+    const args = [
       'licence_summary_length',
-      this.labels[`licence_type_${this.permission.licenceLength.toLowerCase()}`],
-      LICENCE_LENGTH.uri,
-      'change-licence-length'
-    )
+      this.labels[`licence_type_${this.permission.licenceLength.toLowerCase()}`]
+    ]
+  
+    if (!(this.permission.licenceType === mappings.LICENCE_TYPE['trout-and-coarse'] && this.permission.numberOfRods === '3')) {
+      args.push(LICENCE_LENGTH.uri, 'change-licence-length')
+    }
+  
+    return this.generateStandardRow(...args)
   }
 }
 
