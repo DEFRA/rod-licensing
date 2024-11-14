@@ -5,6 +5,7 @@ const fetch = require('node-fetch')
 process.env.GOV_PAY_API_URL = 'http://0.0.0.0/payment'
 process.env.GOV_PAY_RCP_API_URL = 'http://0.0.0.0/agreement'
 process.env.GOV_PAY_APIKEY = 'key'
+process.env.GOV_PAY_RECURRING_APIKEY = 'recurringkey'
 
 const headers = {
   accept: 'application/json',
@@ -40,6 +41,32 @@ describe('govuk-pay-api-connector', () => {
         timeout: 10000
       })
       expect(consoleErrorSpy).toHaveBeenCalled()
+    })
+
+    it('uses the correct API key if recurring arg is set to true', async () => {
+      fetch.mockReturnValue({ ok: true, status: 200 })
+      await expect(govUkPayApi.createPayment({ cost: 0 }, true)).resolves.toEqual({ ok: true, status: 200 })
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0/payment',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            authorization: `Bearer ${process.env.GOV_PAY_RECURRING_APIKEY}`
+          })
+        })
+      )
+    })
+
+    it('uses the correct API key if recurring arg is set to false', async () => {
+      fetch.mockReturnValue({ ok: true, status: 200 })
+      await expect(govUkPayApi.createPayment({ cost: 0 }, false)).resolves.toEqual({ ok: true, status: 200 })
+      expect(fetch).toHaveBeenCalledWith(
+        'http://0.0.0.0/payment',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            authorization: `Bearer ${process.env.GOV_PAY_APIKEY}`
+          })
+        })
+      )
     })
   })
 
