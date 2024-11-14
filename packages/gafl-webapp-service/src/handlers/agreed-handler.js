@@ -92,15 +92,17 @@ const createRecurringPayment = async (request, transaction, status) => {
  * @returns {Promise<void>}
  */
 const createPayment = async (request, transaction, status) => {
+  const recurring = status && status[COMPLETION_STATUS.recurringAgreement] === true
+
   /*
    * Prepare the payment payload
    */
-  const preparedPayment = preparePayment(request, transaction, status)
+  const preparedPayment = preparePayment(request, transaction, recurring)
 
   /*
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
-  const paymentResponse = await sendPayment(preparedPayment)
+  const paymentResponse = await sendPayment(preparedPayment, recurring)
 
   /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey

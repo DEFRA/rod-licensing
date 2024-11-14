@@ -1,5 +1,4 @@
 import { AGREED } from '../uri.js'
-import { COMPLETION_STATUS } from '../constants.js'
 import db from 'debug'
 import { licenceTypeAndLengthDisplay } from './licence-type-display.js'
 import { addLanguageCodeToUri } from '../processors/uri-helper.js'
@@ -18,7 +17,7 @@ const getAddressLine1 = licensee => (licensee.street ? `${licensee.premises} ${l
  * @param request
  * @returns {{reference: *, delayed_capture: boolean, amount: number, return_url: string, description: string}}
  */
-export const preparePayment = (request, transaction, status) => {
+export const preparePayment = (request, transaction, recurring = false) => {
   const uri = addLanguageCodeToUri(request, AGREED.uri)
   const url = new URL(uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
 
@@ -51,7 +50,7 @@ export const preparePayment = (request, transaction, status) => {
     }
   }
 
-  if (status && status[COMPLETION_STATUS.recurringAgreement] === true) {
+  if (recurring) {
     result.set_up_agreement = transaction.agreementId
   }
 

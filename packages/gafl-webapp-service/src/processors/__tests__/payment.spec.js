@@ -2,7 +2,6 @@ import { preparePayment, prepareRecurringPaymentAgreement } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 import { addLanguageCodeToUri } from '../uri-helper.js'
 import { AGREED } from '../../uri.js'
-import { COMPLETION_STATUS } from '../../constants.js'
 import db from 'debug'
 const { value: debug } = db.mock.results[db.mock.calls.findIndex(c => c[0] === 'webapp:payment-processors')]
 
@@ -52,16 +51,12 @@ const createTransaction = ({
   ]
 })
 
-const createStatus = (recurringAgreement = false) => ({
-  [COMPLETION_STATUS.recurringAgreement]: recurringAgreement
-})
-
 describe('preparePayment', () => {
   describe('provides the correct return url', () => {
     it.each(['http', 'https'])('uses SSL when "x-forwarded-proto" header is present, proto "%s"', proto => {
       addLanguageCodeToUri.mockReturnValue(proto + '://localhost:1234/buy/agreed')
       const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
-      const result = preparePayment(request, createTransaction(), createStatus())
+      const result = preparePayment(request, createTransaction(), false)
 
       expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
     })
@@ -73,13 +68,13 @@ describe('preparePayment', () => {
     ])('uses request data when "x-forwarded-proto" header is not present, protocol "%s", host "%s"', (protocol, host) => {
       addLanguageCodeToUri.mockReturnValue(protocol + '://' + host + '/buy/agreed')
       const request = createRequest({ headers: {}, protocol, host })
-      const result = preparePayment(request, createTransaction(), createStatus())
+      const result = preparePayment(request, createTransaction(), false)
       expect(result.return_url).toBe(`${protocol}://${host}/buy/agreed`)
     })
 
     it('calls addLanguageCodeToUri with correct arguments', () => {
       const request = createRequest()
-      preparePayment(request, createTransaction(), createStatus())
+      preparePayment(request, createTransaction(), false)
       expect(addLanguageCodeToUri).toHaveBeenCalledWith(request, AGREED.uri)
     })
   })
@@ -89,13 +84,13 @@ describe('preparePayment', () => {
     ${createTransaction()}               | ${1200}
     ${createTransaction({ cost: 35.8 })} | ${3580}
   `('provides the correct transaction amount of $expectedAmount when cost is $transaction.cost', ({ transaction, expectedAmount }) => {
-    const result = preparePayment(createRequest(), transaction, createStatus())
+    const result = preparePayment(createRequest(), transaction, false)
     expect(result.amount).toBe(expectedAmount)
   })
 
   it('provides the correct reference', () => {
     const transaction = createTransaction()
-    const result = preparePayment(createRequest(), transaction, createStatus())
+    const result = preparePayment(createRequest(), transaction, false)
     expect(result.reference).toBe(transaction.id)
   })
 
@@ -105,7 +100,7 @@ describe('preparePayment', () => {
     const transaction = createTransaction()
     const permission = transaction.permissions[0]
 
-    preparePayment(request, transaction, createStatus())
+    preparePayment(request, transaction, false)
 
     expect(licenceTypeAndLengthDisplay).toHaveBeenCalledWith(permission, catalog)
   })
@@ -114,7 +109,7 @@ describe('preparePayment', () => {
     const returnValue = Symbol('return value')
     licenceTypeAndLengthDisplay.mockReturnValueOnce(returnValue)
 
-    const result = preparePayment(createRequest(), createTransaction(), createStatus())
+    const result = preparePayment(createRequest(), createTransaction(), false)
     const ret = result.description
 
     expect(ret).toEqual(returnValue)
@@ -126,20 +121,20 @@ describe('preparePayment', () => {
     ['when the language is not set', 'https://localhost:1234/buy/agreed', 'en']
   ])('provides the correct language %s', (_desc, decoratedUrl, expectedLanguageCode) => {
     addLanguageCodeToUri.mockReturnValue(decoratedUrl)
-    const result = preparePayment(createRequest(), createTransaction(), createStatus())
+    const result = preparePayment(createRequest(), createTransaction(), false)
     expect(result.language).toEqual(expectedLanguageCode)
   })
 
   describe('provides the correct description', () => {
     it('when there is only 1 permission', () => {
-      const result = preparePayment(createRequest(), createTransaction(), createStatus())
+      const result = preparePayment(createRequest(), createTransaction(), false)
       expect(result.description).toBe('Trout and coarse, up to 2 rods, 8 day')
     })
 
     it('when there are multiple permissions', () => {
       const additionalPermissions = [{ licensee: { firstName: 'Test' } }]
       const transaction = createTransaction({ additionalPermissions })
-      const result = preparePayment(createRequest(), transaction, createStatus())
+      const result = preparePayment(createRequest(), transaction, false)
       expect(result.description).toBe('Multiple permits')
     })
   })
@@ -148,7 +143,7 @@ describe('preparePayment', () => {
     it('provides the licensee name as cardholder name', () => {
       const transaction = createTransaction()
       const licensee = transaction.permissions[0].licensee
-      const result = preparePayment(createRequest(), transaction, createStatus())
+      const result = preparePayment(createRequest(), transaction, false)
 
       expect(result.prefilled_cardholder_details.cardholder_name).toBe(`${licensee.firstName} ${licensee.lastName}`)
     })
@@ -157,7 +152,7 @@ describe('preparePayment', () => {
       it('line1 includes street name if provided', () => {
         const transaction = createTransaction()
         const licensee = transaction.permissions[0].licensee
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
 
         expect(result.prefilled_cardholder_details.billing_address.line1).toBe(`${licensee.premises} ${licensee.street}`)
       })
@@ -165,7 +160,7 @@ describe('preparePayment', () => {
       it('line1 does not include street name if not provided', () => {
         const transaction = createTransaction({ licenseeOverrides: { street: null } })
         const licensee = transaction.permissions[0].licensee
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
 
         expect(result.prefilled_cardholder_details.billing_address.line1).toBe(licensee.premises)
       })
@@ -173,14 +168,14 @@ describe('preparePayment', () => {
       it('postcode is provided', () => {
         const transaction = createTransaction()
         const licensee = transaction.permissions[0].licensee
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
         expect(result.prefilled_cardholder_details.billing_address.postcode).toBe(licensee.postcode)
       })
 
       it('city is provided', () => {
         const transaction = createTransaction()
         const licensee = transaction.permissions[0].licensee
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
 
         expect(result.prefilled_cardholder_details.billing_address.city).toBe(licensee.town)
       })
@@ -188,7 +183,7 @@ describe('preparePayment', () => {
       it('country is provided', () => {
         const transaction = createTransaction()
         const licensee = transaction.permissions[0].licensee
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
 
         expect(result.prefilled_cardholder_details.billing_address.country).toBe(licensee.countryCode)
       })
@@ -196,14 +191,14 @@ describe('preparePayment', () => {
       it('line2 is provided if locality is present', () => {
         const transaction = createTransaction()
         const licensee = transaction.permissions[0].licensee
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
 
         expect(result.prefilled_cardholder_details.billing_address.line2).toBe(licensee.locality)
       })
 
       it('line2 is undefined if locality is not present', () => {
         const transaction = createTransaction({ licenseeOverrides: { locality: null } })
-        const result = preparePayment(createRequest(), transaction, createStatus())
+        const result = preparePayment(createRequest(), transaction, false)
 
         expect(result.prefilled_cardholder_details.billing_address.line2).toBe(undefined)
       })
@@ -213,28 +208,37 @@ describe('preparePayment', () => {
   describe('if there is only 1 permission and the user is buying on behalf of another, does not provide licensee info', () => {
     it('does not provide the prefilled_cardholder_details', () => {
       const boboTransaction = createTransaction({ isLicenceForYou: false })
-      const result = preparePayment(createRequest(), boboTransaction, createStatus())
+      const result = preparePayment(createRequest(), boboTransaction, false)
       expect(result.prefilled_cardholder_details).toBe(undefined)
     })
 
     it('does not provide the email', () => {
       const boboTransaction = createTransaction({ isLicenceForYou: false })
-      const result = preparePayment(createRequest(), boboTransaction, createStatus())
+      const result = preparePayment(createRequest(), boboTransaction, false)
       expect(result.email).toBe(undefined)
     })
   })
 
-  it('does not include set_up_agreement', () => {
-    const result = preparePayment(createRequest(), createTransaction(), createStatus())
-    expect(result.set_up_agreement).toBe(undefined)
+  describe('if recurring is false', () => {
+    it('does not include set_up_agreement', () => {
+      const result = preparePayment(createRequest(), createTransaction(), false)
+      expect(result.set_up_agreement).toBe(undefined)
+    })
   })
 
-  describe('if the payment is a recurring payment', () => {
+  describe('if recurring is undefined', () => {
+    it('does not include set_up_agreement', () => {
+      const result = preparePayment(createRequest(), createTransaction())
+      expect(result.set_up_agreement).toBe(undefined)
+    })
+  })
+
+  describe('if recurring is true', () => {
     it('set_up_agreement is set to agreementId', () => {
       const agreementId = 'foo'
       const recurringPaymentTransaction = createTransaction({ agreementId })
 
-      const result = preparePayment(createRequest(), recurringPaymentTransaction, createStatus(true))
+      const result = preparePayment(createRequest(), recurringPaymentTransaction, true)
 
       expect(result.set_up_agreement).toBe(agreementId)
     })

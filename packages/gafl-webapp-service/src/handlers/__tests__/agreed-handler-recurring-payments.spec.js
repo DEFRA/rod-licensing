@@ -1,8 +1,8 @@
 import { salesApi } from '@defra-fish/connectors-lib'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
 import agreedHandler from '../agreed-handler.js'
-import { prepareRecurringPaymentAgreement } from '../../processors/payment.js'
-import { sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
+import { preparePayment, prepareRecurringPaymentAgreement } from '../../processors/payment.js'
+import { sendPayment, sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
 import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
 import db from 'debug'
@@ -10,7 +10,13 @@ import db from 'debug'
 jest.mock('@defra-fish/connectors-lib')
 jest.mock('../../processors/payment.js')
 jest.mock('../../services/payment/govuk-pay-service.js', () => ({
-  sendPayment: jest.fn(),
+  sendPayment: jest.fn(() => ({
+    payment_id: 'payment-id-1',
+    _links: {
+      next_url: { href: 'next-url' },
+      self: { href: 'self-url' }
+    }
+  })),
   getPaymentStatus: jest.fn(),
   sendRecurringPayment: jest.fn(() => ({ agreementId: 'agr-eem-ent-id1' }))
 }))
@@ -55,6 +61,7 @@ describe('The agreed handler', () => {
   })
 
   const getRequestToolkit = () => ({
+    redirect: jest.fn(),
     redirectWithLanguageCode: jest.fn()
   })
 
@@ -91,11 +98,42 @@ describe('The agreed handler', () => {
       expect(transactionPayload.id).toBe(v4guid)
     })
 
-    it('sends a recurring payment creation request to Gov.UK Pay', async () => {
+    it('sends a recurring payment agreement creation request to Gov.UK Pay', async () => {
       const preparedPayment = Symbol('preparedPayment')
       prepareRecurringPaymentAgreement.mockResolvedValueOnce(preparedPayment)
       await agreedHandler(getMockRequest(), getRequestToolkit())
       expect(sendRecurringPayment).toHaveBeenCalledWith(preparedPayment)
+    })
+
+    describe('when there is a cost and recurringAgreement status is set to true', () => {
+      beforeEach(() => {
+        salesApi.createTransaction.mockResolvedValueOnce({
+          id: 'transaction-id-1',
+          cost: 100
+        })
+      })
+
+      it('calls preparePayment with recurring as true', async () => {
+        const transaction = { id: Symbol('transaction') }
+        const request = getMockRequest({
+          transaction: {
+            get: async () => transaction,
+            set: () => {}
+          }
+        })
+        const toolkit = getRequestToolkit()
+
+        await agreedHandler(request, toolkit)
+        expect(preparePayment).toHaveBeenCalledWith(request, transaction, true)
+      })
+
+      it('calls sendPayment with recurring as true', async () => {
+        const preparedPayment = Symbol('preparedPayment')
+        preparePayment.mockReturnValueOnce(preparedPayment)
+
+        await agreedHandler(getMockRequest(), getRequestToolkit())
+        expect(sendPayment).toHaveBeenCalledWith(preparedPayment, true)
+      })
     })
 
     // this doesn't really belong here, but until the other agreed handler tests are refactored to
