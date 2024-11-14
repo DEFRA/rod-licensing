@@ -46,10 +46,10 @@ const getTransactionErrorMessage = async (transactionId, payload, response) => (
  * @param preparedPayment - the prepared payload for the payment. See in processors/payment.js
  * @returns {Promise<*>}
  */
-export const sendPayment = async preparedPayment => {
+export const sendPayment = async (preparedPayment, recurring = false) => {
   let response
   try {
-    response = await govUkPayApi.createPayment(preparedPayment)
+    response = await govUkPayApi.createPayment(preparedPayment, recurring)
   } catch (err) {
     /*
      * Potentially errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
