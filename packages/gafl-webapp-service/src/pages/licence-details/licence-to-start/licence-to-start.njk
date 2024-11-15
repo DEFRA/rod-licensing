@@ -46,21 +46,21 @@
     {
       name: "day",
       label: mssgs.dob_day,
-      classes: "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if error['full-date'] or error['day-and-month'] or error['day-and-year'] or error['day'] or error['invalid-date'] or error['birthDate'] else "govuk-input--width-2",
       value: payload['licence-start-date-day'],
       attributes: { maxlength : 2 }
     },
     {
       name: "month",
       label: mssgs.dob_month,
-      classes: "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if error['full-date'] or error['day-and-month'] or error['month-and-year'] or error['month'] or error['invalid-date'] or error['birthDate'] else "govuk-input--width-2",
       value: payload['licence-start-date-month'],
       attributes: { maxlength : 2 }
     },
     {
       name: "year",
       label: mssgs.dob_year,
-      classes: "govuk-input--width-4",
+      classes: "govuk-input--width-4 govuk-input--error" if error['full-date'] or error['month-and-year'] or error['day-and-year'] or error['year'] or error['invalid-date'] or error['birthDate'] else "govuk-input--width-4",
       value: payload['licence-start-date-year'],
       attributes: { maxlength : 4 }
     }
