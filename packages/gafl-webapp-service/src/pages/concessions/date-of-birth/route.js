@@ -1,7 +1,6 @@
 import { DATE_OF_BIRTH, LICENCE_FOR } from '../../../uri.js'
 import Joi from 'joi'
 import pageRoute from '../../../routes/page-route.js'
-// import { validation } from '@defra-fish/business-rules-lib'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
 import { dateSchema, dateSchemaInput } from '../../../schema/date.schema.js'
