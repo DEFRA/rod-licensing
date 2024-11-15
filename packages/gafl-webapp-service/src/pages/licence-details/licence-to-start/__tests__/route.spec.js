@@ -7,6 +7,13 @@ import { startDateValidator } from '../../../../schema/validators/validators.js'
 jest.mock('../../../../routes/next-page.js')
 jest.mock('../../../../routes/page-route.js')
 jest.mock('../../../../schema/validators/validators.js')
+jest.mock('../../../../uri.js', () => ({
+  ...jest.requireActual('../../../../uri.js'),
+  LICENCE_TO_START: {
+    page: Symbol('licence-to-start-page'),
+    uri: Symbol('/licence-to-start')
+  }
+}))
 
 describe('licence-to-start > route', () => {
   const getMockRequest = (isLicenceForYou = true) => ({
