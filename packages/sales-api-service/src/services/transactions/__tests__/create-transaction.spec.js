@@ -8,7 +8,8 @@ import {
 import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
-import { DynamoDBDocumentClient, PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+import { docClient } from '../../../../../connectors-lib/src/aws.js'
+import { PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
@@ -22,50 +23,57 @@ jest.mock('../../reference-data.service.js', () => ({
   })
 }))
 
-jest.mock('@aws-sdk/lib-dynamodb', () => ({
-  DynamoDBDocumentClient: {
-    from: jest.fn().mockReturnValue({
-      send: jest.fn()
-    })
-  },
-  PutCommand: jest.fn(),
-  BatchWriteCommand: jest.fn()
+jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn()
+  }
 }))
 
+jest.mock('@aws-sdk/lib-dynamodb', () => {
+  const originalModule = jest.requireActual('@aws-sdk/lib-dynamodb')
+  return {
+    ...originalModule,
+    PutCommand: jest.fn(),
+    BatchWriteCommand: jest.fn()
+  }
+})
+
 describe('transaction service', () => {
-  let mockDynamoDb
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
     getPermissionCost.mockReturnValue(54)
-    mockDynamoDb = DynamoDBDocumentClient.from()
   })
   beforeEach(jest.clearAllMocks)
 
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedResult = Object.assign({}, mockPayload, {
+      const expectedResult = {
+        ...mockPayload,
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
         isRecurringPaymentSupported: true,
         status: { id: 'STAGED' }
-      })
+      }
 
-      const result = await createTransaction(mockPayload)
-      expect(result).toMatchObject(expectedResult)
-      expect(PutCommand).toHaveBeenCalledWith({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Item: expectedResult,
-        ConditionExpression: 'attribute_not_exists(id)'
-      })
+      await createTransaction(mockPayload)
+
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
+      expect(PutCommand).toHaveBeenCalledWith(
+        expect.objectContaining({
+          TableName: TRANSACTION_STAGING_TABLE.TableName,
+          Item: expectedResult,
+          ConditionExpression: 'attribute_not_exists(id)'
+        })
+      )
     })
 
     it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
       getPermissionCost.mockReturnValueOnce(permitPrice)
       const mockPayload = mockTransactionPayload()
-      const { cost } = await createTransaction(mockPayload)
-      expect(cost).toBe(permitPrice)
+      const result = await createTransaction(mockPayload)
+      expect(result.cost).toBe(permitPrice)
     })
 
     it('passes startDate and permit to getPermissionCost', async () => {
@@ -84,7 +92,7 @@ describe('transaction service', () => {
     })
 
     it('throws exceptions back up the stack', async () => {
-      mockDynamoDb.send.mockRejectedValueOnce(new Error('Test error'))
+      docClient.send.mockRejectedValueOnce(new Error('Test error'))
       await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
 
@@ -99,27 +107,30 @@ describe('transaction service', () => {
   describe('createTransactions', () => {
     it('accepts multiple transactions', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedRecord = Object.assign({}, mockPayload, {
+      const expectedRecord = {
+        ...mockPayload,
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
         isRecurringPaymentSupported: true,
         status: { id: 'STAGED' }
-      })
+      }
 
-      const result = await createTransactions([mockPayload, mockPayload])
-      expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
-      expect(BatchWriteCommand).toHaveBeenCalledWith({
-        RequestItems: {
-          [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
-        }
-      })
-      expect(mockDynamoDb.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
+      await createTransactions([mockPayload, mockPayload])
+
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
+      expect(BatchWriteCommand).toHaveBeenCalledWith(
+        expect.objectContaining({
+          RequestItems: {
+            [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
+          }
+        })
+      )
     })
 
     it('throws exceptions back up the stack', async () => {
-      mockDynamoDb.send.mockRejectedValueOnce(new Error('Test error'))
-      await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+      docClient.send.mockRejectedValueOnce(new Error('Test error'))
+      await expect(createTransactions([mockTransactionPayload()])).rejects.toThrow('Test error')
     })
   })
 })
