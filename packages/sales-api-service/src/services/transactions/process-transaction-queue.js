@@ -16,10 +16,11 @@ import { processRecurringPayment } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
-import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 import moment from 'moment'
-const { docClient } = AWS()
+import { PutCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb'
+import { docClient } from '../../../../connectors-lib/src/aws.js' // Adjust the path as needed
+
 const debug = db('sales:transactions')
 
 /**
@@ -73,8 +74,9 @@ export async function processQueue ({ id }) {
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
     permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
-    transactionRecord.transactionFile &&
+    if (transactionRecord.transactionFile) {
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
+    }
 
     entities.push(contact, permission)
 
@@ -102,12 +104,22 @@ export async function processQueue ({ id }) {
   debug('Persisting %d entities for staging id %s', entities.length, id)
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.delete({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } })
-  await docClient.put({
-    TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
-    Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
-    ConditionExpression: 'attribute_not_exists(id)'
-  })
+  await docClient.send(
+    new DeleteCommand({
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
+      Key: { id }
+    })
+  )
+  await docClient.send(
+    new PutCommand({
+      TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+      Item: {
+        ...transactionRecord,
+        expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl
+      },
+      ConditionExpression: 'attribute_not_exists(id)'
+    })
+  )
 }
 
 const shouldCreateFulfilmentRequest = (permission, permit, contact) => {
@@ -161,8 +173,9 @@ const createTransactionEntities = async transactionRecord => {
   transaction.channelId = transactionRecord.channelId
 
   transaction.bindToEntity(Transaction.definition.relationships.transactionCurrency, currency)
-  transactionRecord.transactionFile &&
+  if (transactionRecord.transactionFile) {
     transaction.bindToAlternateKey(Transaction.definition.relationships.poclFile, transactionRecord.transactionFile)
+  }
 
   const chargeJournal = await createTransactionJournal(transactionRecord, transaction, 'Charge', currency)
   const paymentJournal = await createTransactionJournal(transactionRecord, transaction, 'Payment', currency)
