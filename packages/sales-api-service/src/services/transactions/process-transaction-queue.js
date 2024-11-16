@@ -19,7 +19,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import db from 'debug'
 import moment from 'moment'
 import { PutCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb'
-import { docClient } from '../../../../connectors-lib/src/aws.js' // Adjust the path as needed
+import { docClient } from '../../../../connectors-lib/src/aws.js'
 
 const debug = db('sales:transactions')
 
