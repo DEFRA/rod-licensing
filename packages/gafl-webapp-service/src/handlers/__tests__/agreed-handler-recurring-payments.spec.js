@@ -2,7 +2,7 @@ import { salesApi } from '@defra-fish/connectors-lib'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../../constants.js'
 import agreedHandler from '../agreed-handler.js'
 import { preparePayment, prepareRecurringPaymentAgreement } from '../../processors/payment.js'
-import { sendPayment, sendRecurringPayment } from '../../services/payment/govuk-pay-service.js'
+import { sendPayment, sendRecurringPayment, getPaymentStatus } from '../../services/payment/govuk-pay-service.js'
 import { prepareApiTransactionPayload } from '../../processors/api-transaction.js'
 import { v4 as uuidv4 } from 'uuid'
 import db from 'debug'
@@ -133,6 +133,33 @@ describe('The agreed handler', () => {
 
         await agreedHandler(getMockRequest(), getRequestToolkit())
         expect(sendPayment).toHaveBeenCalledWith(preparedPayment, true)
+      })
+
+      it('calls getPaymentStatus with recurring as true', async () => {
+        const id = Symbol('paymentId')
+        const transaction = { id: '123', payment: { payment_id: id } }
+        const request = getMockRequest({
+          transaction: {
+            get: async () => transaction,
+            set: () => {}
+          },
+          status: {
+            get: async () => ({
+              [COMPLETION_STATUS.agreed]: true,
+              [COMPLETION_STATUS.posted]: false,
+              [COMPLETION_STATUS.finalised]: true,
+              [RECURRING_PAYMENT]: true,
+              [COMPLETION_STATUS.paymentCreated]: true
+            }),
+            set: () => {}
+          }
+        })
+        const toolkit = getRequestToolkit()
+
+        getPaymentStatus.mockReturnValueOnce({ state: { finished: true, status: 'success' } })
+
+        await agreedHandler(request, toolkit)
+        expect(getPaymentStatus).toHaveBeenCalledWith(id, true)
       })
     })
 

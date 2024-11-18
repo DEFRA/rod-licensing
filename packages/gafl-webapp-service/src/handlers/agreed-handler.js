@@ -149,10 +149,12 @@ const createPayment = async (request, transaction, status) => {
  * @returns {Promise<void>}
  */
 const processPayment = async (request, transaction, status) => {
+  const recurring = status && status[COMPLETION_STATUS.recurringAgreement] === true
+
   /*
    * Get the payment status
    */
-  const { state } = await getPaymentStatus(transaction.payment.payment_id)
+  const { state } = await getPaymentStatus(transaction.payment.payment_id, recurring)
 
   if (!state.finished) {
     throw Boom.forbidden('Attempt to access the agreed handler during payment journey')
