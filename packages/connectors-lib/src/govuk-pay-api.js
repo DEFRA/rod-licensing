@@ -18,7 +18,7 @@ const headers = (recurring = false) => ({
 export const createRecurringPayment = async preparedPayment => {
   try {
     return fetch(process.env.GOV_PAY_RCP_API_URL, {
-      headers: headers(),
+      headers: headers(true),
       method: 'post',
       body: JSON.stringify(preparedPayment),
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
@@ -56,10 +56,10 @@ export const createPayment = async (preparedPayment, recurring = false) => {
  * @param paymentId
  * @returns {Promise<unknown>}
  */
-export const fetchPaymentStatus = async paymentId => {
+export const fetchPaymentStatus = async (paymentId, recurring = false) => {
   try {
     return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}`, {
-      headers: headers(),
+      headers: headers(recurring),
       method: 'get',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })
@@ -74,10 +74,10 @@ export const fetchPaymentStatus = async paymentId => {
  * @param paymentId
  * @returns {Promise<unknown>}
  */
-export const fetchPaymentEvents = async paymentId => {
+export const fetchPaymentEvents = async (paymentId, recurring = false) => {
   try {
     return fetch(`${process.env.GOV_PAY_API_URL}/${paymentId}/events`, {
-      headers: headers(),
+      headers: headers(recurring),
       method: 'get',
       timeout: process.env.GOV_PAY_REQUEST_TIMEOUT_MS || GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT
     })

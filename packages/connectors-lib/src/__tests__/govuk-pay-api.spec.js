@@ -13,6 +13,12 @@ const headers = {
   'content-type': 'application/json'
 }
 
+const recurringHeaders = {
+  accept: 'application/json',
+  authorization: `Bearer ${process.env.GOV_PAY_RECURRING_APIKEY}`,
+  'content-type': 'application/json'
+}
+
 describe('govuk-pay-api-connector', () => {
   beforeEach(jest.clearAllMocks)
 
@@ -46,27 +52,12 @@ describe('govuk-pay-api-connector', () => {
     it('uses the correct API key if recurring arg is set to true', async () => {
       fetch.mockReturnValue({ ok: true, status: 200 })
       await expect(govUkPayApi.createPayment({ cost: 0 }, true)).resolves.toEqual({ ok: true, status: 200 })
-      expect(fetch).toHaveBeenCalledWith(
-        'http://0.0.0.0/payment',
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            authorization: `Bearer ${process.env.GOV_PAY_RECURRING_APIKEY}`
-          })
-        })
-      )
-    })
-
-    it('uses the correct API key if recurring arg is set to false', async () => {
-      fetch.mockReturnValue({ ok: true, status: 200 })
-      await expect(govUkPayApi.createPayment({ cost: 0 }, false)).resolves.toEqual({ ok: true, status: 200 })
-      expect(fetch).toHaveBeenCalledWith(
-        'http://0.0.0.0/payment',
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            authorization: `Bearer ${process.env.GOV_PAY_APIKEY}`
-          })
-        })
-      )
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/payment', {
+        body: JSON.stringify({ cost: 0 }),
+        headers: recurringHeaders,
+        method: 'post',
+        timeout: 10000
+      })
     })
   })
 
@@ -90,6 +81,16 @@ describe('govuk-pay-api-connector', () => {
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/payment/123', { headers, method: 'get', timeout: 10000 })
       expect(consoleErrorSpy).toHaveBeenCalled()
     })
+
+    it('uses the correct API key if recurring arg is set to true', async () => {
+      fetch.mockReturnValue({ ok: true, status: 200, json: () => {} })
+      await expect(govUkPayApi.fetchPaymentStatus(123, true)).resolves.toEqual(expect.objectContaining({ ok: true, status: 200 }))
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/payment/123', {
+        headers: recurringHeaders,
+        method: 'get',
+        timeout: 10000
+      })
+    })
   })
 
   describe('fetchPaymentEvents', () => {
@@ -107,6 +108,16 @@ describe('govuk-pay-api-connector', () => {
       await expect(govUkPayApi.fetchPaymentEvents(123)).rejects.toEqual(Error('test event error'))
       expect(consoleErrorSpy).toHaveBeenCalled()
     })
+
+    it('uses the correct API key if recurring arg is set to true', async () => {
+      fetch.mockReturnValue({ ok: true, status: 200, json: () => {} })
+      await expect(govUkPayApi.fetchPaymentEvents(123, true)).resolves.toEqual(expect.objectContaining({ ok: true, status: 200 }))
+      expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/payment/123/events', {
+        headers: recurringHeaders,
+        method: 'get',
+        timeout: 10000
+      })
+    })
   })
 
   describe('createRecurringPayment', () => {
@@ -115,7 +126,7 @@ describe('govuk-pay-api-connector', () => {
       await expect(govUkPayApi.createRecurringPayment({ cost: 0 })).resolves.toEqual({ ok: true, status: 200 })
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement', {
         body: JSON.stringify({ cost: 0 }),
-        headers,
+        headers: recurringHeaders,
         method: 'post',
         timeout: 10000
       })
@@ -129,7 +140,7 @@ describe('govuk-pay-api-connector', () => {
       expect(govUkPayApi.createRecurringPayment({ reference: '123' })).rejects.toEqual(Error(''))
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement', {
         body: JSON.stringify({ reference: '123' }),
-        headers,
+        headers: recurringHeaders,
         method: 'post',
         timeout: 10000
       })
