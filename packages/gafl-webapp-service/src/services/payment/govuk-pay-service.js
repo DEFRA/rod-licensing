@@ -78,11 +78,11 @@ export const sendPayment = async (preparedPayment, recurring = false) => {
  * @param paymentId - the paymentId
  * @returns {Promise<any>}
  */
-export const getPaymentStatus = async paymentId => {
+export const getPaymentStatus = async (paymentId, recurring = false) => {
   debug(`Get payment status for paymentId: ${paymentId}`)
   let response
   try {
-    response = await govUkPayApi.fetchPaymentStatus(paymentId)
+    response = await govUkPayApi.fetchPaymentStatus(paymentId, recurring)
   } catch (err) {
     /*
      * Errors caught here (unreachable, timeouts) may be retried - set origin on the error to indicate
