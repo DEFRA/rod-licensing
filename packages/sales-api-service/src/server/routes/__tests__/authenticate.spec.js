@@ -40,9 +40,9 @@ describe('authenticate handler', () => {
       executeQuery.mockResolvedValueOnce([{ entity: MOCK_CONCESSION_PROOF_ENTITY, expanded: { concession: { entity: MOCK_CONCESSION } } }])
       const result = await server.inject({
         method: 'GET',
-        url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+        url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD&licenceEndDate=2020-12-13'
       })
-      expect(permissionForLicensee).toHaveBeenCalledWith('CD379B', '2000-01-01', 'AB12 3CD')
+      expect(permissionForLicensee).toHaveBeenCalledWith('CD379B', '2000-01-01', 'AB12 3CD', '2020-12-13')
       expect(result.statusCode).toBe(200)
       expect(JSON.parse(result.payload)).toMatchObject({
         permission: expect.objectContaining({
@@ -73,10 +73,10 @@ describe('authenticate handler', () => {
         ])
       })
 
-      it('should call permissionForLicensee with the licence number, dob and postcode for a renewal request, ', async () => {
+      it('should call permissionForLicensee with the licence number, dob, postcode and end date for a renewal request, ', async () => {
         await server.inject({
           method: 'GET',
-          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD&licenceEndDate=2020-12-13'
         })
         expect(permissionForLicensee).toHaveBeenCalledWith('CD379B', '2000-01-01', 'AB12 3CD')
       })
@@ -84,7 +84,7 @@ describe('authenticate handler', () => {
       it('returns 200 from a renewal request', async () => {
         const result = await server.inject({
           method: 'GET',
-          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD&licenceEndDate=2020-12-13'
         })
         expect(result.statusCode).toBe(200)
       })
@@ -92,7 +92,7 @@ describe('authenticate handler', () => {
       it('returns permission from a renewal request', async () => {
         const result = await server.inject({
           method: 'GET',
-          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+          url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD&licenceEndDate=2020-12-13'
         })
         expect(JSON.parse(result.payload)).toMatchObject({
           permission: expect.objectContaining({
@@ -109,7 +109,7 @@ describe('authenticate handler', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       const result = await server.inject({
         method: 'GET',
-        url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+        url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD&licenceEndDate=2020-12-13'
       })
       expect(result.statusCode).toBe(500)
       expect(JSON.parse(result.payload)).toMatchObject({
@@ -124,7 +124,7 @@ describe('authenticate handler', () => {
       executeQuery.mockResolvedValueOnce([])
       const result = await server.inject({
         method: 'GET',
-        url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
+        url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD&licenceEndDate=2020-12-13'
       })
       expect(result.statusCode).toBe(401)
       expect(JSON.parse(result.payload)).toMatchObject({

@@ -25,9 +25,10 @@ export default async (request, h) => {
 
   const permission = await request.cache().helpers.status.getCurrentPermission()
   const referenceNumber = payload.referenceNumber || permission.referenceNumber
+  const endDate = payload.endDate || permission.endDate
 
   // Authenticate
-  const authenticationResult = await salesApi.authenticate(referenceNumber, dateOfBirth, postcode)
+  const authenticationResult = await salesApi.authenticate(referenceNumber, dateOfBirth, postcode, endDate)
 
   const linkInactive = async reason => {
     await request.cache().helpers.status.setCurrentPermission({

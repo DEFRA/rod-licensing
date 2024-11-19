@@ -23,9 +23,13 @@ export default [
     path: '/authenticate/renewal/{referenceNumber}',
     options: {
       handler: async (request, h) => {
-        const { licenseeBirthDate, licenseePostcode } = request.query
+        console.log('hit')
+        const { licenseeBirthDate, licenseePostcode, licenceEndDate } = request.query
+        console.log('request.query', request.query)
+        console.log('licenceEndDate', licenceEndDate)
+        console.log('licenseeBirthDate', licenseeBirthDate)
         const results = await executeWithErrorLog(
-          permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode)
+          permissionForLicensee(request.params.referenceNumber, licenseeBirthDate, licenseePostcode, licenceEndDate)
         )
 
         if (results.length === 1) {
