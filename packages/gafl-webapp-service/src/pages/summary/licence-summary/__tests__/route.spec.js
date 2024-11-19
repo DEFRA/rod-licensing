@@ -382,7 +382,7 @@ describe('licence-summary > route', () => {
       ${'Blue badge concession'}         | ${getMockBlueBadgePermission()}
       ${'Continuing permission'}         | ${getMockContinuingPermission()}
       ${'Another date permission'}       | ${{ ...getMockPermission(), licenceToStart: 'another-date' }}
-      ${'1 year new three rod licence '} | ${{ ...getMockNewPermission(), licenceType: 'Trout and coarse', numberOfRods: '3' }}
+      ${'1 year new three rod licence '} | ${{ ...getMockNewPermission(), numberOfRods: '3' }}
     `('creates licence summary name rows for $desc', async ({ currentPermission }) => {
       const mockRequest = getMockRequest({ currentPermission })
       const data = await getData(mockRequest)
