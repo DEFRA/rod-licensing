@@ -13,9 +13,16 @@ const redirectToStartOfJourney = status => {
 export const getData = async request => {
   const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
   const status = await request.cache().helpers.status.getCurrentPermission()
+  const page = await request.cache().helpers.page.getCurrentPermission(DATE_OF_BIRTH.page)
 
   redirectToStartOfJourney(status)
 
+  if (page?.error) {
+    const [errorKey] = Object.keys(page.error)
+    const errorValue = page.error[errorKey]
+
+    return { isLicenceForYou, error: { errorKey, errorValue } }
+  }
   return { isLicenceForYou }
 }
 

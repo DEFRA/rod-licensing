@@ -8,8 +8,8 @@ import { startDateValidator } from '../../../schema/validators/validators.js'
 export const getData = async request => {
   const fmt = 'DD MM YYYY'
   const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
-
-  return {
+  const page = await request.cache().helpers.page.getCurrentPermission(LICENCE_TO_START.page)
+  const pageData = {
     isLicenceForYou,
     exampleStartDate: moment().tz(SERVICE_LOCAL_TIME).add(1, 'days').format(fmt),
     minStartDate: moment().tz(SERVICE_LOCAL_TIME).format(fmt),
@@ -17,6 +17,14 @@ export const getData = async request => {
     advancedPurchaseMaxDays: ADVANCED_PURCHASE_MAX_DAYS,
     startAfterPaymentMinutes: START_AFTER_PAYMENT_MINUTES
   }
+
+  if (page?.error) {
+    const [errorKey] = Object.keys(page.error)
+    const errorValue = page.error[errorKey]
+    pageData.error = { errorKey, errorValue }
+  }
+
+  return pageData
 }
 
 export default pageRoute(LICENCE_TO_START.page, LICENCE_TO_START.uri, startDateValidator, nextPage, getData)

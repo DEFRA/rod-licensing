@@ -82,6 +82,6 @@
       id: "date-of-birth",
       namePrefix: "date-of-birth",
       items: dateInputItems,
-      errorMessage: { text: mssgs.dob_error } if error
+      errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error
     }) }}
 {% endblock %}

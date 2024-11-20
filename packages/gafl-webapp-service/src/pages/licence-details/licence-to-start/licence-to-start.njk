@@ -76,7 +76,7 @@
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days } if error['licence-start-date-old'],
+      errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
       hint: {
         text: mssgs.licence_start_hint + data.maxStartDate
       }

@@ -16,13 +16,16 @@ jest.mock('../../../../uri.js', () => ({
 }))
 
 describe('licence-to-start > route', () => {
-  const getMockRequest = (isLicenceForYou = true) => ({
+  const getMockRequest = (isLicenceForYou = true, pageGet = () => {}) => ({
     cache: () => ({
       helpers: {
         transaction: {
           getCurrentPermission: () => ({
             isLicenceForYou
           })
+        },
+        page: {
+          getCurrentPermission: pageGet
         }
       }
     })
@@ -39,6 +42,29 @@ describe('licence-to-start > route', () => {
       const request = getMockRequest(false)
       const result = await getData(request)
       expect(result.isLicenceForYou).toBeFalsy()
+    })
+
+    it.each([
+      ['full-date', 'object.missing'],
+      ['day', 'any.required']
+    ])('should add error details ({%s: %s}) to the page data', async (errorKey, errorValue) => {
+      const pageGet = async () => ({
+        error: { [errorKey]: errorValue }
+      })
+
+      const result = await getData(getMockRequest(undefined, pageGet))
+      expect(result.error).toEqual({ errorKey, errorValue })
+    })
+
+    it('omits error if there is no error', async () => {
+      const result = await getData(getMockRequest())
+      expect(result.error).toBeUndefined()
+    })
+
+    it('passes correct page name when getting page cache', async () => {
+      const pageGet = jest.fn(() => {})
+      await getData(getMockRequest(undefined, pageGet))
+      expect(pageGet).toHaveBeenCalledWith(LICENCE_TO_START.page)
     })
   })
 
