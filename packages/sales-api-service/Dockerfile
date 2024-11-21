@@ -6,8 +6,6 @@ WORKDIR /app
 
 # Install app dependencies
 COPY packages/sales-api-service/package*.json /app/
-RUN rm -rf node_modules
-RUN npm install --package-lock-only  --production
 RUN npm install --production && npm cache clean --force > /dev/null 2>&1
 
 # Bundle app source
