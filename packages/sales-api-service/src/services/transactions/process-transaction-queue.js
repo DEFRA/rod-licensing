@@ -101,10 +101,7 @@ export async function processQueue ({ id }) {
   debug('Persisting %d entities for staging id %s', entities.length, id)
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
-  await docClient.send(
-    new DeleteCommand({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id }
-    })
-  )
+  await docClient.send(new DeleteCommand({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id } }))
   await docClient.send(
     new PutCommand({
       TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
