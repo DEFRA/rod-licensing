@@ -35,11 +35,11 @@ export async function processQueue ({ id }) {
   debug('Processing message from queue for staging id %s', id)
   const entities = []
   const transactionRecord = await retrieveStagedTransaction(id)
+
   const { transaction, chargeJournal, paymentJournal } = await createTransactionEntities(transactionRecord)
   entities.push(transaction, chargeJournal, paymentJournal)
 
   const totalTransactionValue = transactionRecord.payment.amount
-
   const dataSource = await getGlobalOptionSetValue(Permission.definition.mappings.dataSource.ref, transactionRecord.dataSource)
   for (const {
     licensee,
@@ -74,9 +74,8 @@ export async function processQueue ({ id }) {
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
     permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
-    if (transactionRecord.transactionFile) {
+    transactionRecord.transactionFile &&
       permission.bindToAlternateKey(Permission.definition.relationships.poclFile, transactionRecord.transactionFile)
-    }
 
     entities.push(contact, permission)
 
@@ -105,9 +104,7 @@ export async function processQueue ({ id }) {
   await persist(entities, transactionRecord.createdBy)
   debug('Moving staging data to history table for staging id %s', id)
   await docClient.send(
-    new DeleteCommand({
-      TableName: TRANSACTION_STAGING_TABLE.TableName,
-      Key: { id }
+    new DeleteCommand({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id }
     })
   )
   await docClient.send(
