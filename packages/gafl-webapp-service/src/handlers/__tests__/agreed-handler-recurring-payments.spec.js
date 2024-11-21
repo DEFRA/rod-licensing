@@ -113,7 +113,7 @@ describe('The agreed handler', () => {
         })
       })
 
-      it('calls preparePayment with recurring as true', async () => {
+      it('calls preparePayment', async () => {
         const transaction = { id: Symbol('transaction') }
         const request = getMockRequest({
           transaction: {
@@ -124,7 +124,7 @@ describe('The agreed handler', () => {
         const toolkit = getRequestToolkit()
 
         await agreedHandler(request, toolkit)
-        expect(preparePayment).toHaveBeenCalledWith(request, transaction, true)
+        expect(preparePayment).toHaveBeenCalledWith(request, transaction)
       })
 
       it('calls sendPayment with recurring as true', async () => {

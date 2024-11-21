@@ -17,7 +17,7 @@ const getAddressLine1 = licensee => (licensee.street ? `${licensee.premises} ${l
  * @param request
  * @returns {{reference: *, delayed_capture: boolean, amount: number, return_url: string, description: string}}
  */
-export const preparePayment = (request, transaction, recurring = false) => {
+export const preparePayment = (request, transaction) => {
   const uri = addLanguageCodeToUri(request, AGREED.uri)
   const url = new URL(uri, `${request.headers['x-forwarded-proto'] || request.server.info.protocol}:${request.info.host}`)
 
@@ -50,7 +50,7 @@ export const preparePayment = (request, transaction, recurring = false) => {
     }
   }
 
-  if (recurring) {
+  if (transaction.agreementId) {
     result.set_up_agreement = transaction.agreementId
   }
 

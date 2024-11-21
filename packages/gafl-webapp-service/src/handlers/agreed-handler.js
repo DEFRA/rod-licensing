@@ -97,7 +97,7 @@ const createPayment = async (request, transaction, status) => {
   /*
    * Prepare the payment payload
    */
-  const preparedPayment = preparePayment(request, transaction, recurring)
+  const preparedPayment = preparePayment(request, transaction)
 
   /*
    * Send the prepared payment to the GOV.UK pay API using the connector
