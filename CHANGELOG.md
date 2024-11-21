@@ -1,4 +1,13 @@
 
+## v1.55.0-rc.4 (2024-11-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2074](https://github.com/DEFRA/rod-licensing/pull/2074) Add agreement_id to existing GOV.UK Pay request ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.55.0-rc.3 (2024-11-21)
 
 #### :rocket: Enhancement
