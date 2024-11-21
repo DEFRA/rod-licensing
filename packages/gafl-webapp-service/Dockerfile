@@ -9,8 +9,6 @@ COPY packages/gafl-webapp-service/package*.json /app/
 COPY packages/gafl-webapp-service/assets /app/assets
 COPY packages/gafl-webapp-service/build /app/build
 
-RUN rm -rf node_modules
-RUN npm install --package-lock-only
 RUN npm install && npm run prepare
 
 # Bundle app source
