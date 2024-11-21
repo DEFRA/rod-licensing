@@ -9,9 +9,11 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../../config.js'
 import BusinessRulesLib from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import AwsMock from 'aws-sdk'
 import { TRANSACTION_STATUS } from '../constants.js'
 import permissionsService from '../../permissions.service.js'
+import { docClient } from '../../../../../connectors-lib/src/aws.js'
+import { sqs } from '@defra-fish/connectors-lib'
+import { UpdateCommand, GetCommand } from '@aws-sdk/lib-dynamodb'
 
 const { START_AFTER_PAYMENT_MINUTES } = BusinessRulesLib
 
@@ -29,6 +31,19 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
+jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn(),
+    createUpdateExpression: jest.fn()
+  }
+}))
+
+jest.mock('@defra-fish/connectors-lib', () => ({
+  sqs: {
+    sendMessage: jest.fn()
+  }
+}))
+
 const getStagedTransactionRecord = () => {
   const record = mockStagedTransactionRecord()
   const {
@@ -44,10 +59,55 @@ describe('transaction service', () => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
     TRANSACTION_QUEUE.Url = 'TestQueueUrl'
   })
-  beforeEach(AwsMock.__resetAll)
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   describe('finaliseTransaction', () => {
-    beforeEach(jest.clearAllMocks)
+    beforeEach(() => {
+      jest.clearAllMocks()
+    })
+
+    // helper function - GetCommand
+    const expectDynamoDbGet = mockRecord => {
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(GetCommand))
+      const getCommandInstance = docClient.send.mock.calls[0][0]
+      expect(getCommandInstance).toBeInstanceOf(GetCommand)
+      expect(getCommandInstance.input).toEqual({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { id: mockRecord.id },
+        ConsistentRead: true
+      })
+    }
+
+    // helper function - UpdateCommand
+    const expectDynamoDbUpdate = (mockRecord, completionFields) => {
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(UpdateCommand))
+      const updateCommandInstance = docClient.send.mock.calls[1][0]
+      expect(updateCommandInstance).toBeInstanceOf(UpdateCommand)
+      expect(updateCommandInstance.input).toEqual({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Key: { id: mockRecord.id },
+        ...docClient.createUpdateExpression({
+          ...completionFields,
+          permissions: mockRecord.permissions.map(p => ({
+            ...p,
+            issueDate: p.issueDate ?? completionFields.payment.timestamp,
+            startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
+            endDate: expect.any(String),
+            referenceNumber: expect.any(String),
+            licensee: {
+              ...p.licensee,
+              obfuscatedDob: expect.any(String)
+            }
+          })),
+          status: { id: TRANSACTION_STATUS.FINALISED }
+        }),
+        ReturnValues: 'ALL_NEW'
+      })
+    }
+
     it.each([
       ['records with a predetermined issue and start date', getStagedTransactionRecord],
       [
@@ -68,44 +128,26 @@ describe('transaction service', () => {
           method: 'Debit card'
         }
       }
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
+
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({
         Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
       })
-      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
+      sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
 
       const result = await finaliseTransaction({ id: mockRecord.id, ...completionFields })
+
       expect(result).toEqual({
         ...mockRecord,
         ...completionFields,
         status: { id: TRANSACTION_STATUS.FINALISED, messageId: 'Test_Message' }
       })
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toBeCalledWith({
-        TableName: TRANSACTION_STAGING_TABLE.TableName,
-        Key: { id: mockRecord.id },
-        UpdateExpression: 'SET #payment = :payment,#permissions = :permissions,#status = :status',
-        ExpressionAttributeNames: {
-          '#payment': 'payment',
-          '#permissions': 'permissions',
-          '#status': 'status'
-        },
-        ExpressionAttributeValues: {
-          ':payment': completionFields.payment,
-          ':permissions': mockRecord.permissions.map(p => ({
-            ...p,
-            issueDate: p.issueDate ?? completionFields.payment.timestamp,
-            startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
-            endDate: expect.any(String),
-            referenceNumber: expect.any(String)
-          })),
-          ':status': {
-            id: TRANSACTION_STATUS.FINALISED
-          }
-        },
-        ReturnValues: 'ALL_NEW'
-      })
 
-      expect(AwsMock.SQS.mockedMethods.sendMessage).toBeCalledWith(
+      expect(docClient.send).toHaveBeenCalledTimes(2)
+      expectDynamoDbGet(mockRecord)
+      expectDynamoDbUpdate(mockRecord, completionFields)
+
+      expect(sqs.sendMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           QueueUrl: TRANSACTION_QUEUE.Url,
           MessageGroupId: mockRecord.id,
@@ -117,7 +159,7 @@ describe('transaction service', () => {
 
     it('throws 410 Gone if the transaction has already been finalised (and not yet staged into Dynamics)', async () => {
       const recordData = { status: { id: 'FINALISED' } }
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: recordData })
+      docClient.send.mockResolvedValueOnce({ Item: recordData })
       try {
         await finaliseTransaction({ id: 'already_finalised' })
       } catch (e) {
@@ -130,8 +172,8 @@ describe('transaction service', () => {
     it('throws 410 Gone if the transaction has already been finalised (and staged into Dynamics)', async () => {
       const recordData = { status: { id: 'FINALISED' } }
       // See retrieve-transaction.js - 1st response is null on the transaction table, 2nd response is the record from the transaction history table
-      AwsMock.DynamoDB.DocumentClient.__setNextResponses('get', { Item: null }, { Item: recordData })
-
+      docClient.send.mockResolvedValueOnce({ Item: null })
+      docClient.send.mockResolvedValueOnce({ Item: recordData })
       try {
         await finaliseTransaction({ id: 'already_finalised' })
       } catch (e) {
@@ -142,7 +184,7 @@ describe('transaction service', () => {
     })
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: undefined })
+      docClient.send.mockResolvedValueOnce({ Item: undefined })
       try {
         await finaliseTransaction({ id: 'not_found' })
       } catch (e) {
@@ -153,7 +195,7 @@ describe('transaction service', () => {
 
     it('throws 402 Payment Required error if the payment amount does not match the cost', async () => {
       const mockRecord = mockStagedTransactionRecord()
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       try {
         const payload = {
           payment: {
@@ -170,9 +212,9 @@ describe('transaction service', () => {
       }
     })
 
-    it('throws 409 Conflict error if a recurring payment instruction was supplied but the transaciton does not support this', async () => {
-      const mockRecord = Object.assign(mockStagedTransactionRecord(), { isRecurringPaymentSupported: false })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+    it('throws 409 Conflict error if a recurring payment instruction was supplied but the transaction does not support this', async () => {
+      const mockRecord = { ...mockStagedTransactionRecord(), isRecurringPaymentSupported: false }
+      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
       try {
         const payload = {
           payment: {
@@ -211,7 +253,7 @@ describe('transaction service', () => {
     })
 
     it('throws exceptions back up the stack', async () => {
-      AwsMock.DynamoDB.DocumentClient.__throwWithErrorOn('get')
+      docClient.send.mockRejectedValueOnce(new Error('Test error'))
       await expect(finaliseTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
     })
   })
@@ -219,9 +261,26 @@ describe('transaction service', () => {
   describe('finaliseTransaction adjusts licence times according to issue date and start date', () => {
     beforeEach(() => {
       BusinessRulesLib.START_AFTER_PAYMENT_MINUTES = 30
-      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
       jest.clearAllMocks()
     })
+
+    const mockCreateUpdateExpression = (completionFields, updatedPermissions) => {
+      docClient.createUpdateExpression.mockReturnValue({
+        UpdateExpression: 'SET #payment = :payment, #permissions = :permissions, #status = :status',
+        ExpressionAttributeNames: {
+          '#payment': 'payment',
+          '#permissions': 'permissions',
+          '#status': 'status'
+        },
+        ExpressionAttributeValues: {
+          ':payment': completionFields.payment,
+          ':permissions': updatedPermissions,
+          ':status': {
+            id: TRANSACTION_STATUS.FINALISED
+          }
+        }
+      })
+    }
 
     it.each([
       ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z', '2022-09-30T17:14:01.892Z', 22, 'Web Sales'],
@@ -240,23 +299,42 @@ describe('transaction service', () => {
         mockPermission.startDate = startDate
         mockPermission.endDate = endDate
         const completionFields = getCompletionFields()
-        AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
-          Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+
+        const expectedPermissions = mockRecord.permissions.map(p => ({
+          ...p,
+          issueDate: p.issueDate ?? completionFields.payment.timestamp,
+          startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString(),
+          endDate: expect.any(String),
+          referenceNumber: expect.any(String),
+          licensee: {
+            ...p.licensee,
+            obfuscatedDob: expect.any(String)
+          }
+        }))
+
+        mockCreateUpdateExpression(completionFields, expectedPermissions)
+
+        docClient.send = jest.fn(command => {
+          if (command instanceof GetCommand) {
+            return Promise.resolve({ Item: mockRecord })
+          } else if (command instanceof UpdateCommand) {
+            return Promise.resolve({
+              Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+            })
+          } else {
+            return Promise.reject(new Error('Unknown command'))
+          }
         })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
 
         await finaliseTransaction({ id: mockRecord.id, ...completionFields })
 
-        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+        const updateCommandInstance = docClient.send.mock.calls.find(call => call[0] instanceof UpdateCommand)[0]
+        const updatedPermissions = updateCommandInstance.input.ExpressionAttributeValues[':permissions']
+        expect(updatedPermissions[0]).toEqual(
           expect.objectContaining({
-            ExpressionAttributeValues: expect.objectContaining({
-              ':permissions': expect.arrayContaining([
-                expect.objectContaining({
-                  permitId: mockPermission.permitId,
-                  startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString()
-                })
-              ])
-            })
+            permitId: mockPermission.permitId,
+            startDate: moment(issueDate).add(startAfterPaymentMinutes, 'minutes').toISOString()
           })
         )
       }
@@ -273,23 +351,42 @@ describe('transaction service', () => {
       mockPermission.startDate = startDate
       mockPermission.endDate = endDate
       const completionFields = getCompletionFields()
-      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
-        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+
+      const expectedPermissions = mockRecord.permissions.map(p => ({
+        ...p,
+        issueDate: p.issueDate ?? completionFields.payment.timestamp,
+        startDate,
+        endDate: expect.any(String),
+        referenceNumber: expect.any(String),
+        licensee: {
+          ...p.licensee,
+          obfuscatedDob: expect.any(String)
+        }
+      }))
+
+      mockCreateUpdateExpression(completionFields, expectedPermissions)
+
+      docClient.send = jest.fn(command => {
+        if (command instanceof GetCommand) {
+          return Promise.resolve({ Item: mockRecord })
+        } else if (command instanceof UpdateCommand) {
+          return Promise.resolve({
+            Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+          })
+        } else {
+          return Promise.reject(new Error('Unknown command'))
+        }
       })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
 
       await finaliseTransaction({ id: mockRecord.id, ...completionFields })
 
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+      const updateCommandInstance = docClient.send.mock.calls[1][0]
+      const updatedPermissions = updateCommandInstance.input.ExpressionAttributeValues[':permissions']
+      expect(updatedPermissions[0]).toEqual(
         expect.objectContaining({
-          ExpressionAttributeValues: expect.objectContaining({
-            ':permissions': expect.arrayContaining([
-              expect.objectContaining({
-                permitId: mockPermission.permitId,
-                startDate
-              })
-            ])
-          })
+          permitId: mockPermission.permitId,
+          startDate
         })
       )
     })
@@ -308,23 +405,42 @@ describe('transaction service', () => {
       mockPermission.issueDate = issueDate
       mockPermission.startDate = startDate
       const completionFields = getCompletionFields()
-      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
-        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+
+      const expectedPermissions = mockRecord.permissions.map(p => ({
+        ...p,
+        issueDate: p.issueDate ?? completionFields.payment.timestamp,
+        startDate: p.startDate ?? moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString(),
+        endDate,
+        referenceNumber: expect.any(String),
+        licensee: {
+          ...p.licensee,
+          obfuscatedDob: expect.any(String)
+        }
+      }))
+
+      mockCreateUpdateExpression(completionFields, expectedPermissions)
+
+      docClient.send = jest.fn(command => {
+        if (command instanceof GetCommand) {
+          return Promise.resolve({ Item: mockRecord })
+        } else if (command instanceof UpdateCommand) {
+          return Promise.resolve({
+            Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+          })
+        } else {
+          return Promise.reject(new Error('Unknown command'))
+        }
       })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
 
       await finaliseTransaction({ id: mockRecord.id, ...completionFields })
 
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+      const updateCommandInstance = docClient.send.mock.calls[1][0]
+      const updatedPermissions = updateCommandInstance.input.ExpressionAttributeValues[':permissions']
+      expect(updatedPermissions[0]).toEqual(
         expect.objectContaining({
-          ExpressionAttributeValues: expect.objectContaining({
-            ':permissions': expect.arrayContaining([
-              expect.objectContaining({
-                permitId: mockPermission.permitId,
-                endDate
-              })
-            ])
-          })
+          permitId: mockPermission.permitId,
+          endDate
         })
       )
     })
@@ -341,23 +457,42 @@ describe('transaction service', () => {
       mockPermission.startDate = startDate
       mockPermission.endDate = endDate
       const completionFields = getCompletionFields()
-      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
-        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+
+      const expectedPermissions = mockRecord.permissions.map(p => ({
+        ...p,
+        issueDate: p.issueDate ?? completionFields.payment.timestamp,
+        startDate,
+        endDate,
+        referenceNumber: expect.any(String),
+        licensee: {
+          ...p.licensee,
+          obfuscatedDob: expect.any(String)
+        }
+      }))
+
+      mockCreateUpdateExpression(completionFields, expectedPermissions)
+
+      docClient.send = jest.fn(command => {
+        if (command instanceof GetCommand) {
+          return Promise.resolve({ Item: mockRecord })
+        } else if (command instanceof UpdateCommand) {
+          return Promise.resolve({
+            Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+          })
+        } else {
+          return Promise.reject(new Error('Unknown command'))
+        }
       })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+      sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
 
       await finaliseTransaction({ id: mockRecord.id, ...completionFields })
 
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+      const updateCommandInstance = docClient.send.mock.calls[1][0]
+      const updatedPermissions = updateCommandInstance.input.ExpressionAttributeValues[':permissions']
+      expect(updatedPermissions[0]).toEqual(
         expect.objectContaining({
-          ExpressionAttributeValues: expect.objectContaining({
-            ':permissions': expect.arrayContaining([
-              expect.objectContaining({
-                permitId: mockPermission.permitId,
-                endDate
-              })
-            ])
-          })
+          permitId: mockPermission.permitId,
+          endDate
         })
       )
     })
@@ -378,24 +513,43 @@ describe('transaction service', () => {
         mockPermission.startDate = startDate
         mockPermission.endDate = endDate
         const completionFields = getCompletionFields()
-        AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
-          Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+
+        const expectedPermissions = mockRecord.permissions.map(p => ({
+          ...p,
+          issueDate: p.issueDate ?? completionFields.payment.timestamp,
+          startDate,
+          endDate,
+          referenceNumber: expect.any(String),
+          licensee: {
+            ...p.licensee,
+            obfuscatedDob: expect.any(String)
+          }
+        }))
+
+        mockCreateUpdateExpression(completionFields, expectedPermissions)
+
+        docClient.send = jest.fn(command => {
+          if (command instanceof GetCommand) {
+            return Promise.resolve({ Item: mockRecord })
+          } else if (command instanceof UpdateCommand) {
+            return Promise.resolve({
+              Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+            })
+          } else {
+            return Promise.reject(new Error('Unknown command'))
+          }
         })
-        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
 
         await finaliseTransaction({ id: mockRecord.id, ...completionFields })
 
-        expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.update).toHaveBeenCalledWith(
+        const updateCommandInstance = docClient.send.mock.calls[1][0]
+        const updatedPermissions = updateCommandInstance.input.ExpressionAttributeValues[':permissions']
+        expect(updatedPermissions[0]).toEqual(
           expect.objectContaining({
-            ExpressionAttributeValues: expect.objectContaining({
-              ':permissions': expect.arrayContaining([
-                expect.objectContaining({
-                  permitId: mockPermission.permitId,
-                  startDate,
-                  endDate
-                })
-              ])
-            })
+            permitId: mockPermission.permitId,
+            startDate,
+            endDate
           })
         )
       }
@@ -405,29 +559,35 @@ describe('transaction service', () => {
       ['2021-09-30T17:14:01.892Z', '2021-09-30T17:14:01.892Z'],
       ['2021-09-30T23:14:01.892Z', '2021-09-30T23:00:49.892Z'],
       ['2021-09-30T22:14:01.892Z', '2021-09-30T21:44:01.892Z']
-    ])('passes a permission with a start date when generating a permission number', async (issueDate, startDate) => {
+    ])('passes a permission with a start date when generating a permission number', async (issueDate, expectedStartDate) => {
       const mockRecord = mockStagedTransactionRecord()
       const [mockPermission] = mockRecord.permissions
       const completionFields = getCompletionFields(issueDate)
       mockPermission.issueDate = issueDate
       delete mockPermission.startDate
-      AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
-      AwsMock.DynamoDB.DocumentClient.__setResponse('update', {
-        Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+
+      docClient.send = jest.fn(command => {
+        if (command instanceof GetCommand) {
+          return Promise.resolve({ Item: mockRecord })
+        } else if (command instanceof UpdateCommand) {
+          return Promise.resolve({
+            Attributes: { ...mockRecord, ...completionFields, status: { id: TRANSACTION_STATUS.FINALISED } }
+          })
+        } else {
+          return Promise.reject(new Error('Unknown command'))
+        }
       })
-      AwsMock.SQS.__setResponse('sendMessage', { MessageId: 'Test_Message' })
-      // have to do this as Jest holds calling arguments by reference, so we don't
-      // get the permission as it was when generatePermissionNumber was called but how it
-      // ends up by the end of finaliseTransaction...
-      let permission
+      sqs.sendMessage.mockResolvedValueOnce({ MessageId: 'Test_Message' })
+
+      let capturedPermission
       permissionsService.generatePermissionNumber.mockImplementationOnce(p => {
-        permission = JSON.parse(JSON.stringify(p))
-        return startDate
+        capturedPermission = { ...p }
+        return 'some-permission-number'
       })
 
       await finaliseTransaction({ id: mockRecord.id, ...completionFields })
 
-      expect(permission).toEqual(
+      expect(capturedPermission).toEqual(
         expect.objectContaining({
           permitId: mockPermission.permitId,
           startDate: moment(completionFields.payment.timestamp).add(START_AFTER_PAYMENT_MINUTES, 'minutes').toISOString()
