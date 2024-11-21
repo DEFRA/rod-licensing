@@ -38,13 +38,12 @@ describe('The agreed handler', () => {
   })
   beforeEach(jest.clearAllMocks)
 
-  const mockTransactionCacheSet = jest.fn()
-  const getMockRequest = (overrides = {}) => ({
+  const getMockRequest = ({ overrides = {}, transactionSet = () => {} } = {}) => ({
     cache: () => ({
       helpers: {
         transaction: {
           get: async () => ({ cost: 0 }),
-          set: mockTransactionCacheSet
+          set: transactionSet
         },
         status: {
           get: async () => ({
@@ -69,9 +68,11 @@ describe('The agreed handler', () => {
     it('sends the request and transaction to prepare the recurring payment', async () => {
       const transaction = { cost: 0 }
       const mockRequest = getMockRequest({
-        transaction: {
-          get: async () => transaction,
-          set: () => {}
+        overrides: {
+          transaction: {
+            get: async () => transaction,
+            set: () => {}
+          }
         }
       })
       await agreedHandler(mockRequest, getRequestToolkit())
@@ -116,9 +117,11 @@ describe('The agreed handler', () => {
       it('calls preparePayment', async () => {
         const transaction = { id: Symbol('transaction') }
         const request = getMockRequest({
-          transaction: {
-            get: async () => transaction,
-            set: () => {}
+          overrides: {
+            transaction: {
+              get: async () => transaction,
+              set: () => {}
+            }
           }
         })
         const toolkit = getRequestToolkit()
@@ -139,19 +142,21 @@ describe('The agreed handler', () => {
         const id = Symbol('paymentId')
         const transaction = { id: '123', payment: { payment_id: id } }
         const request = getMockRequest({
-          transaction: {
-            get: async () => transaction,
-            set: () => {}
-          },
-          status: {
-            get: async () => ({
-              [COMPLETION_STATUS.agreed]: true,
-              [COMPLETION_STATUS.posted]: false,
-              [COMPLETION_STATUS.finalised]: true,
-              [RECURRING_PAYMENT]: true,
-              [COMPLETION_STATUS.paymentCreated]: true
-            }),
-            set: () => {}
+          overrides: {
+            transaction: {
+              get: async () => transaction,
+              set: () => {}
+            },
+            status: {
+              get: async () => ({
+                [COMPLETION_STATUS.agreed]: true,
+                [COMPLETION_STATUS.posted]: false,
+                [COMPLETION_STATUS.finalised]: true,
+                [RECURRING_PAYMENT]: true,
+                [COMPLETION_STATUS.paymentCreated]: true
+              }),
+              set: () => {}
+            }
           }
         })
         const toolkit = getRequestToolkit()
@@ -193,11 +198,12 @@ describe('The agreed handler', () => {
     it.each(['zxy-098-wvu-765', '467482f1-099d-403d-b6b3-8db7e70d19e3'])(
       "assigns agreement id '%s' to the transaction when recurring payment agreement created",
       async agreementId => {
+        const mockTransactionCacheSet = jest.fn()
         sendRecurringPayment.mockResolvedValueOnce({
           agreement_id: agreementId
         })
 
-        await agreedHandler(getMockRequest(), getRequestToolkit())
+        await agreedHandler(getMockRequest({ transactionSet: mockTransactionCacheSet }), getRequestToolkit())
 
         expect(mockTransactionCacheSet).toHaveBeenCalledWith(
           expect.objectContaining({
