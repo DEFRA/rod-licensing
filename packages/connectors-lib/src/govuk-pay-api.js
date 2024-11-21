@@ -4,7 +4,7 @@
 import fetch from 'node-fetch'
 const GOV_PAY_REQUEST_TIMEOUT_MS_DEFAULT = 10000
 
-const headers = (recurring = false) => ({
+const headers = recurring => ({
   accept: 'application/json',
   authorization: `Bearer ${recurring ? process.env.GOV_PAY_RECURRING_APIKEY : process.env.GOV_PAY_APIKEY}`,
   'content-type': 'application/json'
