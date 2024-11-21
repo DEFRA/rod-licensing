@@ -1,4 +1,12 @@
 
+## v1.55.0-rc.3 (2024-11-21)
+
+#### :rocket: Enhancement
+* [#2078](https://github.com/DEFRA/rod-licensing/pull/2078) Set-output removed from versioning script ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.55.0-rc.2 (2024-11-19)
 
 #### :rocket: Enhancement
