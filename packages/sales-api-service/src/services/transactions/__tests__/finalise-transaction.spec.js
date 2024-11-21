@@ -60,10 +60,6 @@ describe('transaction service', () => {
     TRANSACTION_QUEUE.Url = 'TestQueueUrl'
   })
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
   describe('finaliseTransaction', () => {
     beforeEach(() => {
       jest.clearAllMocks()
