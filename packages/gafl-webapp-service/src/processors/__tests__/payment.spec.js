@@ -1,4 +1,4 @@
-import { preparePayment, prepareRecurringPayment } from '../payment.js'
+import { preparePayment, prepareRecurringPaymentAgreement } from '../payment.js'
 import { licenceTypeAndLengthDisplay } from '../licence-type-display.js'
 import { addLanguageCodeToUri } from '../uri-helper.js'
 import { AGREED } from '../../uri.js'
@@ -20,9 +20,16 @@ const createRequest = (opts = {}, catalog = {}) => ({
   server: { info: { protocol: opts.protocol || '' } }
 })
 
-const createTransaction = ({ isLicenceForYou = true, additionalPermissions = [], cost = 12, licenseeOverrides = {} } = {}) => ({
+const createTransaction = ({
+  isLicenceForYou = true,
+  additionalPermissions = [],
+  cost = 12,
+  licenseeOverrides = {},
+  agreementId
+} = {}) => ({
   id: 'transaction-id',
   cost,
+  agreementId,
   permissions: [
     {
       id: 'permission-id',
@@ -49,7 +56,7 @@ describe('preparePayment', () => {
     it.each(['http', 'https'])('uses SSL when "x-forwarded-proto" header is present, proto "%s"', proto => {
       addLanguageCodeToUri.mockReturnValue(proto + '://localhost:1234/buy/agreed')
       const request = createRequest({ headers: { 'x-forwarded-proto': proto } })
-      const result = preparePayment(request, createTransaction())
+      const result = preparePayment(request, createTransaction(), false)
 
       expect(result.return_url).toBe(`${proto}://localhost:1234/buy/agreed`)
     })
@@ -211,12 +218,30 @@ describe('preparePayment', () => {
       expect(result.email).toBe(undefined)
     })
   })
+
+  describe('if agreementId is not present', () => {
+    it('does not include set_up_agreement', () => {
+      const result = preparePayment(createRequest(), createTransaction())
+      expect(result.set_up_agreement).toBe(undefined)
+    })
+  })
+
+  describe('if agreementId is present', () => {
+    it('set_up_agreement is set to agreementId', () => {
+      const agreementId = 'foo'
+      const recurringPaymentTransaction = createTransaction({ agreementId })
+
+      const result = preparePayment(createRequest(), recurringPaymentTransaction)
+
+      expect(result.set_up_agreement).toBe(agreementId)
+    })
+  })
 })
 
-describe('prepareRecurringPayment', () => {
+describe('prepareRecurringPaymentAgreement', () => {
   it('reference equals transaction.id', async () => {
     const transaction = createTransaction()
-    const result = await prepareRecurringPayment(createRequest(), transaction)
+    const result = await prepareRecurringPaymentAgreement(createRequest(), transaction)
     expect(result.reference).toBe(transaction.id)
   })
 
@@ -227,7 +252,7 @@ describe('prepareRecurringPayment', () => {
     const request = createRequest({}, mockCatalog)
     const transaction = createTransaction()
 
-    const result = await prepareRecurringPayment(request, transaction)
+    const result = await prepareRecurringPaymentAgreement(request, transaction)
     expect(result.description).toBe(mockCatalog.recurring_payment_description)
   })
 
@@ -235,7 +260,7 @@ describe('prepareRecurringPayment', () => {
     const transaction = createTransaction()
     const request = createRequest()
 
-    const result = await prepareRecurringPayment(request, transaction)
-    expect(debug).toHaveBeenCalledWith('Creating prepared recurring payment %o', result)
+    const result = await prepareRecurringPaymentAgreement(request, transaction)
+    expect(debug).toHaveBeenCalledWith('Creating prepared recurring payment agreement %o', result)
   })
 })
