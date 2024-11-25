@@ -14,7 +14,7 @@ import db from 'debug'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { prepareApiTransactionPayload, prepareApiFinalisationPayload } from '../processors/api-transaction.js'
 import { sendPayment, getPaymentStatus, sendRecurringPayment } from '../services/payment/govuk-pay-service.js'
-import { preparePayment, prepareRecurringPayment } from '../processors/payment.js'
+import { preparePayment, prepareRecurringPaymentAgreement } from '../processors/payment.js'
 import { COMPLETION_STATUS, RECURRING_PAYMENT } from '../constants.js'
 import { ORDER_COMPLETE, PAYMENT_CANCELLED, PAYMENT_FAILED } from '../uri.js'
 import { PAYMENT_JOURNAL_STATUS_CODES, GOVUK_PAY_ERROR_STATUS_CODES } from '@defra-fish/business-rules-lib'
@@ -29,7 +29,7 @@ const debug = db('webapp:agreed-handler')
  * @returns {Promise<*>}
  */
 const sendToSalesApi = async (request, transaction, status) => {
-  const apiTransactionPayload = await prepareApiTransactionPayload(request, transaction.id)
+  const apiTransactionPayload = await prepareApiTransactionPayload(request, transaction.id, transaction.agreementId)
   let response
   try {
     response = await salesApi.createTransaction(apiTransactionPayload)
@@ -63,7 +63,7 @@ const createRecurringPayment = async (request, transaction, status) => {
   /*
    * Prepare the payment payload
    */
-  const preparedPayment = await prepareRecurringPayment(request, transaction)
+  const preparedPayment = await prepareRecurringPaymentAgreement(request, transaction)
 
   /*
    * Send the prepared payment to the GOV.UK pay API using the connector
@@ -72,7 +72,11 @@ const createRecurringPayment = async (request, transaction, status) => {
 
   debug(`Created agreement with id ${paymentResponse.agreement_id}`)
   status[COMPLETION_STATUS.recurringAgreement] = true
+
+  transaction.agreementId = paymentResponse.agreement_id
+
   await request.cache().helpers.status.set(status)
+  await request.cache().helpers.transaction.set(transaction)
 }
 
 /**
@@ -88,6 +92,8 @@ const createRecurringPayment = async (request, transaction, status) => {
  * @returns {Promise<void>}
  */
 const createPayment = async (request, transaction, status) => {
+  const recurring = status && status[COMPLETION_STATUS.recurringAgreement] === true
+
   /*
    * Prepare the payment payload
    */
@@ -96,7 +102,7 @@ const createPayment = async (request, transaction, status) => {
   /*
    * Send the prepared payment to the GOV.UK pay API using the connector
    */
-  const paymentResponse = await sendPayment(preparedPayment)
+  const paymentResponse = await sendPayment(preparedPayment, recurring)
 
   /*
    * Used by the payment mop up job, create the payment journal entry which is removed when the user completes the journey
@@ -143,10 +149,12 @@ const createPayment = async (request, transaction, status) => {
  * @returns {Promise<void>}
  */
 const processPayment = async (request, transaction, status) => {
+  const recurring = status && status[COMPLETION_STATUS.recurringAgreement] === true
+
   /*
    * Get the payment status
    */
-  const { state } = await getPaymentStatus(transaction.payment.payment_id)
+  const { state } = await getPaymentStatus(transaction.payment.payment_id, recurring)
 
   if (!state.finished) {
     throw Boom.forbidden('Attempt to access the agreed handler during payment journey')
@@ -241,7 +249,9 @@ const finaliseTransaction = async (request, transaction, status) => {
 export default async (request, h) => {
   const status = await request.cache().helpers.status.get()
   const transaction = await request.cache().helpers.transaction.get()
-  transaction.id = uuidv4()
+  if (!transaction.id) {
+    transaction.id = uuidv4()
+  }
 
   // If the agreed flag is not set to true then throw an exception
   if (!status[COMPLETION_STATUS.agreed]) {

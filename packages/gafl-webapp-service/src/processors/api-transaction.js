@@ -7,7 +7,7 @@ import { countries } from './refdata-helper.js'
 import { salesApi } from '@defra-fish/connectors-lib'
 import { licenceToStart } from '../pages/licence-details/licence-to-start/update-transaction.js'
 
-export const prepareApiTransactionPayload = async (request, transactionId) => {
+export const prepareApiTransactionPayload = async (request, transactionId, agreementId) => {
   const transactionCache = await request.cache().helpers.transaction.get()
   const concessions = await salesApi.concessions.getAll()
   const countryList = await countries.getAll()
@@ -63,7 +63,8 @@ export const prepareApiTransactionPayload = async (request, transactionId) => {
       request.state && request.state[process.env.OIDC_SESSION_COOKIE_NAME]
         ? request.state[process.env.OIDC_SESSION_COOKIE_NAME].oid
         : undefined,
-    transactionId
+    transactionId,
+    agreementId
   }
 }
 
