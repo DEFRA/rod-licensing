@@ -1,4 +1,13 @@
 
+## v1.55.0-rc.6 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#2070](https://github.com/DEFRA/rod-licensing/pull/2070) Remove ftp image and build ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.55.0-rc.5 (2024-11-25)
 
 #### :rocket: Enhancement
