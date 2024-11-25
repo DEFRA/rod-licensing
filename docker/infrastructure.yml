@@ -107,30 +107,3 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-
-  #######################################################
-  # Test SFTP server
-  #######################################################
-  ftp:
-    image: rod_licensing/ftp:${TAG:-latest}
-    build:
-      dockerfile: Dockerfile
-      context: ./resources/infrastructure/sftp
-    depends_on:
-      - localstack
-    ports:
-      - '2222:22'
-    volumes:
-      - ./volumes/sftp:/home/test_sftp_user/share
-    environment:
-      SFTP_USER: test_sftp_user
-      SFTP_FOLDERS: share/pocl;share/fulfilment
-      AWS_SECRETSMANAGER_ENDPOINT: http://host.docker.internal:4566
-      AWS_DEFAULT_REGION: eu-west-2
-      AWS_ACCESS_KEY_ID: local
-      AWS_SECRET_ACCESS_KEY: local
-      SSH_HOST_ED25519_SECRET_ID: /dev/fsh/local/sftp/ssh_ed25519_host_key
-      SSH_HOST_RSA_SECRET_ID: /dev/fsh/local/sftp/ssh_rsa_host_key
-    deploy:
-      restart_policy:
-        condition: on-failure
