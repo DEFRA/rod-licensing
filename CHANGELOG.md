@@ -1,4 +1,13 @@
 
+## v1.55.0-rc.5 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`, `pocl-job`
+  * [#2064](https://github.com/DEFRA/rod-licensing/pull/2064) Remove ftp functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.55.0-rc.4 (2024-11-21)
 
 #### :rocket: Enhancement
