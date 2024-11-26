@@ -120,10 +120,10 @@ describe('govuk-pay-api-connector', () => {
     })
   })
 
-  describe('createRecurringPayment', () => {
+  describe('createRecurringPaymentAgreement', () => {
     it('creates new payments', async () => {
       fetch.mockReturnValue({ ok: true, status: 200 })
-      await expect(govUkPayApi.createRecurringPayment({ cost: 0 })).resolves.toEqual({ ok: true, status: 200 })
+      await expect(govUkPayApi.createRecurringPaymentAgreement({ cost: 0 })).resolves.toEqual({ ok: true, status: 200 })
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement', {
         body: JSON.stringify({ cost: 0 }),
         headers: recurringHeaders,
@@ -137,7 +137,7 @@ describe('govuk-pay-api-connector', () => {
       fetch.mockImplementation(() => {
         throw new Error('')
       })
-      expect(govUkPayApi.createRecurringPayment({ reference: '123' })).rejects.toEqual(Error(''))
+      expect(govUkPayApi.createRecurringPaymentAgreement({ reference: '123' })).rejects.toEqual(Error(''))
       expect(fetch).toHaveBeenCalledWith('http://0.0.0.0/agreement', {
         body: JSON.stringify({ reference: '123' }),
         headers: recurringHeaders,
