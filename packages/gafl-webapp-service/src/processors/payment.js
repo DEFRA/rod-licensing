@@ -50,17 +50,21 @@ export const preparePayment = (request, transaction) => {
     }
   }
 
+  if (transaction.agreementId) {
+    result.set_up_agreement = transaction.agreementId
+  }
+
   debug('Creating prepared payment %o', result)
   return result
 }
 
-export const prepareRecurringPayment = async (request, transaction) => {
+export const prepareRecurringPaymentAgreement = async (request, transaction) => {
   debug('Preparing recurring payment %s', JSON.stringify(transaction, undefined, '\t'))
-  // The recurring card payment for your rod fishing licence
+  // The recurring card payment agreement for your rod fishing licence
   const result = {
     reference: transaction.id,
     description: request.i18n.getCatalog().recurring_payment_description
   }
-  debug('Creating prepared recurring payment %o', result)
+  debug('Creating prepared recurring payment agreement %o', result)
   return result
 }
