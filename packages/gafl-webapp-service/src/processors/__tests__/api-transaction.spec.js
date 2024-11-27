@@ -63,12 +63,20 @@ describe('prepareApiTransactionPayload', () => {
     })
   })
 
-  it('adds transaction id to payload', async () => {
+  it('adds transactionId to payload', async () => {
     const transactionId = Symbol('transactionId')
 
     const payload = await prepareApiTransactionPayload(getMockRequest(), transactionId)
 
     expect(payload.transactionId).toBe(transactionId)
+  })
+
+  it('adds agreementId to payload', async () => {
+    const agreementId = Symbol('agreementId')
+
+    const payload = await prepareApiTransactionPayload(getMockRequest(), 'transaction_id', agreementId)
+
+    expect(payload.agreementId).toBe(agreementId)
   })
 
   const getMockRequest = (overrides = {}, state = {}) => ({
