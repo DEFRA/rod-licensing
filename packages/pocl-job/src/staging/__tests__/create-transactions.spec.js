@@ -1,203 +1,122 @@
-import Project from '../../project.cjs'
-import { createTransactions } from '../create-transactions.js'
-import { RECORD_STAGE, MAX_CREATE_TRANSACTION_BATCH_SIZE } from '../constants.js'
-import * as db from '../../io/db.js'
-import { v4 as uuidv4 } from 'uuid'
-import { salesApi } from '@defra-fish/connectors-lib'
+import { createTransaction, createTransactions } from '../create-transaction.js'
+import {
+  mockTransactionPayload,
+  MOCK_12MONTH_SENIOR_PERMIT,
+  MOCK_1DAY_SENIOR_PERMIT_ENTITY,
+  MOCK_12MONTH_DISABLED_PERMIT
+} from '../../../__mocks__/test-data.js'
+import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
+import { getPermissionCost } from '@defra-fish/business-rules-lib'
+import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
+import { docClient } from '../../../../../connectors-lib/src/aws.js'
+import { PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
 
-jest.mock('@defra-fish/connectors-lib', () => ({
-  salesApi: {
-    ...Object.keys(jest.requireActual('@defra-fish/connectors-lib').salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn() }), {}),
-    concessions: { find: jest.fn(() => ({ id: 'test' })) },
-    permits: { find: jest.fn(() => ({ id: 'test', isForFulfilment: true })) }
+jest.mock('@defra-fish/business-rules-lib')
+jest.mock('../../reference-data.service.js', () => ({
+  ...jest.requireActual('../../reference-data.service.js'),
+  getReferenceDataForEntityAndId: jest.fn(async (entityType, id) => {
+    let item = null
+    if (entityType === MOCK_12MONTH_SENIOR_PERMIT.constructor) {
+      item = [MOCK_12MONTH_SENIOR_PERMIT, MOCK_12MONTH_DISABLED_PERMIT, MOCK_1DAY_SENIOR_PERMIT_ENTITY].find(p => p.id === id)
+    }
+    return item
+  })
+}))
+
+jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn()
   }
 }))
-jest.mock('../../io/db.js', () => ({
-  updateRecordStagingTable: jest.fn(),
-  getProcessedRecords: jest.fn(() => [])
-}))
 
-describe('create-transactions', () => {
+describe('transaction service', () => {
   beforeAll(() => {
-    process.env.POCL_FILE_STAGING_TABLE = 'TestFileTable'
-    process.env.POCL_RECORD_STAGING_TABLE = 'TestRecordTable'
+    TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    getPermissionCost.mockReturnValue(54)
   })
   beforeEach(jest.clearAllMocks)
 
-  it('stages the 2 record test file (under batch-size boundary)', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(2))
-    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
-    expectCreateTransactionCalls(2)
-    expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
-    // First call to update records which were successfully created
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(2)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          createTransactionId: expect.any(String),
-          stage: RECORD_STAGE.TransactionCreated
-        })
-      ])
-    )
-    // Second call to update records which failed (there shouldn't be any for this test)
-    expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
-  })
-
-  it('stages the 25 record test file (on batch-size boundary)', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(MAX_CREATE_TRANSACTION_BATCH_SIZE))
-    await createTransactions(`${Project.root}/src/__mocks__/test-25-records.xml`)
-    expectCreateTransactionCalls(MAX_CREATE_TRANSACTION_BATCH_SIZE)
-    // First call to update records which were successfully created
-    expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_CREATE_TRANSACTION_BATCH_SIZE)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          createTransactionId: expect.any(String),
-          stage: RECORD_STAGE.TransactionCreated
-        })
-      ])
-    )
-    // Second call to update records which failed (there shouldn't be any for this test)
-    expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
-  })
-
-  it('stages the 30 record test file (over batch-size boundary)', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(30))
-    await createTransactions(`${Project.root}/src/__mocks__/test-30-records.xml`)
-    expectCreateTransactionCalls(MAX_CREATE_TRANSACTION_BATCH_SIZE, 5)
-    expect(db.updateRecordStagingTable.mock.calls).toHaveLength(4)
-    // First call of first batch to update records which were successfully created
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_CREATE_TRANSACTION_BATCH_SIZE)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          createTransactionId: expect.any(String),
-          stage: RECORD_STAGE.TransactionCreated
-        })
-      ])
-    )
-    // Second call of first batch to update records which failed (there shouldn't be any for this test)
-    expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
-
-    // First call of second batch to update records which were successfully created
-    expect(db.updateRecordStagingTable.mock.calls[2][1]).toHaveLength(5)
-    expect(db.updateRecordStagingTable.mock.calls[2][1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          createTransactionId: expect.any(String),
-          stage: RECORD_STAGE.TransactionCreated
-        })
-      ])
-    )
-    // Second call of second batch to update records which failed (there shouldn't be any for this test)
-    expect(db.updateRecordStagingTable.mock.calls[3][1]).toHaveLength(0)
-  })
-
-  it('resumes from the second record of the 2 record test file if the first record has already been processed successfully', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(1))
-    db.getProcessedRecords.mockReturnValueOnce([{ id: 'SERIAL 1', stage: RECORD_STAGE.TransactionCreated }])
-    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
-    expectCreateTransactionCalls(1)
-    expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
-    // First call to update records which were successfully created
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(1)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          createTransactionId: expect.any(String),
-          stage: RECORD_STAGE.TransactionCreated
-        })
-      ])
-    )
-    // Second call to update records which failed (there shouldn't be any for this test)
-    expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
-  })
-
-  it('resumes from the second record of the 2 record test file if the first record has already been processed and failed', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(1))
-    db.getProcessedRecords.mockReturnValueOnce([{ id: 'SERIAL 1', stage: RECORD_STAGE.TransactionCreationFailed }])
-    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
-    expectCreateTransactionCalls(1)
-    expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
-    // First call to update records which were successfully created
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(1)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          createTransactionId: expect.any(String),
-          stage: RECORD_STAGE.TransactionCreated
-        })
-      ])
-    )
-    // Second call to update records which failed (there shouldn't be any for this test)
-    expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
-  })
-
-  it('handles exceptions', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
-    const fakeApiError = { statusCode: 422, error: 'Fake error', message: 'Fake error message' }
-    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
-    expectCreateTransactionCalls(2)
-    expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
-    expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(1)
-    expect(db.updateRecordStagingTable.mock.calls[0][1][0]).toEqual(
-      expect.objectContaining({
-        createTransactionId: expect.any(String),
-        stage: RECORD_STAGE.TransactionCreated
+  describe('createTransaction', () => {
+    it('accepts a new transaction', async () => {
+      const mockPayload = mockTransactionPayload()
+      const expectedResult = Object.assign({}, mockPayload, {
+        id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+        expires: expect.any(Number),
+        cost: 54,
+        isRecurringPaymentSupported: true,
+        status: { id: 'STAGED' }
       })
-    )
-    expect(db.updateRecordStagingTable.mock.calls[1][1][0]).toEqual(
-      expect.objectContaining({
-        createTransactionError: fakeApiError,
-        createTransactionPayload: expect.objectContaining({}),
-        stage: RECORD_STAGE.TransactionCreationFailed
+
+      await createTransaction(mockPayload)
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Item: expectedResult,
+        ConditionExpression: 'attribute_not_exists(id)'
       })
-    )
-    expect(salesApi.createStagingException).toHaveBeenCalledWith(
-      expect.objectContaining({
-        transactionFileException: {
-          name: 'test-2-records.xml: FAILED-CREATE-SERIAL 2',
-          description: JSON.stringify(fakeApiError, null, 2),
-          json: expect.any(String),
-          transactionFile: 'test-2-records.xml',
-          type: 'Failure',
-          notes: 'Failed to create the transaction in the Sales API'
+    })
+
+    it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
+      getPermissionCost.mockReturnValueOnce(permitPrice)
+      const mockPayload = mockTransactionPayload()
+      const result = await createTransaction(mockPayload)
+      expect(result.cost).toBe(permitPrice)
+    })
+
+    it('passes startDate and permit to getPermissionCost', async () => {
+      getReferenceDataForEntityAndId.mockReturnValueOnce(MOCK_12MONTH_SENIOR_PERMIT)
+      const mockPayload = mockTransactionPayload()
+      const {
+        permissions: [{ startDate }]
+      } = mockPayload
+      await createTransaction(mockPayload)
+      expect(getPermissionCost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          startDate,
+          permit: MOCK_12MONTH_SENIOR_PERMIT
+        })
+      )
+    })
+
+    it('throws exceptions back up the stack', async () => {
+      docClient.send.mockRejectedValueOnce(new Error('Test error'))
+      await expect(createTransaction(mockTransactionPayload())).rejects.toThrow('Test error')
+    })
+
+    it('uses transaction id if supplied in payload', async () => {
+      const mockPayload = mockTransactionPayload()
+      mockPayload.transactionId = 'abc-123-def-456'
+      const result = await createTransaction(mockPayload)
+      expect(result.id).toBe(mockPayload.transactionId)
+    })
+  })
+
+  describe('createTransactions', () => {
+    it('accepts multiple transactions', async () => {
+      const mockPayload = mockTransactionPayload()
+      const expectedRecord = {
+        ...mockPayload,
+        id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
+        expires: expect.any(Number),
+        cost: 54,
+        isRecurringPaymentSupported: true,
+        status: { id: 'STAGED' }
+      }
+
+      await createTransactions([mockPayload, mockPayload])
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
+        RequestItems: {
+          [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
         }
       })
-    )
-  })
-  it('adds record to staging exception', async () => {
-    salesApi.createTransactions.mockReturnValue(generateApiResponses(201, 422))
-    await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
-    const {
-      calls: [[{ record }]]
-    } = salesApi.createStagingException.mock
-    expect(record).toMatchSnapshot()
+    })
+
+    it('throws exceptions back up the stack', async () => {
+      docClient.send.mockRejectedValueOnce(new Error('Test error'))
+      await expect(createTransactions([mockTransactionPayload()])).rejects.toThrow('Test error')
+    })
   })
 })
-
-const expectCreateTransactionCalls = (...arrayLengths) => {
-  expect(salesApi.createTransactions).toHaveBeenCalledTimes(arrayLengths.length)
-  for (let i = 0; i < arrayLengths.length; i++) {
-    const argumentPassedToCreateTransactions = salesApi.createTransactions.mock.calls[i][0]
-    expect(argumentPassedToCreateTransactions).toBeInstanceOf(Array)
-    expect(argumentPassedToCreateTransactions).toHaveLength(arrayLengths[i])
-  }
-}
-
-const generateApiSuccessResponse = count => {
-  const successResponses = Array(count).fill(201)
-  return generateApiResponses(...successResponses)
-}
-const generateApiResponses = (...responseCodes) => {
-  const response = []
-  for (let i = 0; i < responseCodes.length; i++) {
-    const isSuccess = Math.floor(responseCodes[i] / 100) === 2
-    response.push({
-      statusCode: responseCodes[i],
-      ...(isSuccess ? { response: { id: uuidv4() } } : { error: 'Fake error', message: 'Fake error message' })
-    })
-  }
-  return response
-}
