@@ -1,4 +1,4 @@
-import Config from '../config'
+import Config from '../config.js'
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { createDocumentClient } from '../documentclient-decorator.js'
 const TEST_ENDPOINT = 'http://localhost:8080'
@@ -16,7 +16,6 @@ jest.mock('../documentclient-decorator.js', () => ({
 
 describe('AWS Connectors', () => {
   let mockDocClient
-
   beforeEach(() => {
     jest.resetAllMocks()
 
@@ -27,25 +26,18 @@ describe('AWS Connectors', () => {
       batchWriteAllPromise: jest.fn(),
       createUpdateExpression: jest.fn()
     }
-
     createDocumentClient.mockReturnValue(mockDocClient)
   })
 
   it('checks that mockDocClient is initialised correctly for dynamodb operations', () => {
     expect(mockDocClient).toBeDefined()
-    // expect(mockDocClient.send).toBeInstanceOf(Function)
   })
 
   it('configures dynamodb with a custom endpoint if one is defined in configuration', () => {
-    process.env.AWS_REGION = TEST_REGION
-    Config.aws.region = TEST_REGION
     Config.aws.dynamodb.endpoint = TEST_ENDPOINT
-
     const awsClients = require('../aws.js').default()
-
     expect(DynamoDBClient).toHaveBeenCalledWith(
       expect.objectContaining({
-        region: TEST_REGION,
         endpoint: TEST_ENDPOINT
       })
     )
@@ -54,17 +46,12 @@ describe('AWS Connectors', () => {
   })
 
   it('uses the default dynamodb endpoint if it is not overridden in configuration', () => {
-    const DEFAULT_REGION = 'eu-west-2'
-
-    process.env.AWS_REGION = DEFAULT_REGION
-    Config.aws.region = DEFAULT_REGION
-    delete Config.aws.dynamodb.endpoint
-
+    process.env.AWS_REGION = TEST_REGION
+    Config.aws.region = TEST_REGION
     const awsClients = require('../aws.js').default()
-
     expect(DynamoDBClient).toHaveBeenCalledWith(
       expect.objectContaining({
-        region: DEFAULT_REGION
+        region: TEST_REGION
       })
     )
     expect(createDocumentClient).toHaveBeenCalledWith(expect.any(DynamoDBClient))

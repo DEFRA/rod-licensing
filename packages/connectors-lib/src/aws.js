@@ -9,7 +9,8 @@ export default function () {
   const dynamoDBInstance = new DynamoDBClient({
     region: Config.aws.region,
     ...(Config.aws.dynamodb.endpoint && {
-      endpoint: Config.aws.dynamodb.endpoint
+      endpoint: Config.aws.dynamodb.endpoint,
+      convertEmptyValues: true
     })
   })
 
