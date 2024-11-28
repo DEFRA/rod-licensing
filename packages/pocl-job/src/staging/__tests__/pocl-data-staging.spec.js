@@ -7,21 +7,6 @@ import { finaliseTransactions } from '../finalise-transactions.js'
 import { getFileRecord, updateFileStagingTable } from '../../io/db.js'
 import fs from 'fs'
 
-jest.mock('fs', () => {
-  const originalFs = jest.requireActual('fs')
-  return {
-    ...originalFs,
-    promises: {
-      readFile: jest.fn().mockResolvedValue('mocked file content')
-    },
-    createWriteStream: jest.fn(() => ({
-      on: jest.fn(),
-      end: jest.fn()
-    })),
-    statSync: jest.fn(() => ({ size: 1024 }))
-  }
-})
-
 jest.mock('../create-transactions.js')
 jest.mock('../finalise-transactions.js')
 jest.mock('../../io/db.js')
@@ -34,6 +19,17 @@ jest.mock('@defra-fish/connectors-lib', () => {
     salesApi: {
       ...Object.keys(actual.salesApi).reduce((acc, k) => ({ ...acc, [k]: jest.fn(async () => {}) }), {})
     }
+  }
+})
+
+jest.mock('fs', () => {
+  const originalFs = jest.requireActual('fs')
+  return {
+    ...originalFs,
+    promises: {
+      readFile: jest.fn().mockResolvedValue('mocked file content')
+    },
+    statSync: jest.fn(() => ({ size: 1024 }))
   }
 })
 

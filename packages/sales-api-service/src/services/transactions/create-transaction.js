@@ -2,11 +2,12 @@ import { TRANSACTION_STATUS } from './constants.js'
 import { getReferenceDataForEntityAndId } from '../reference-data.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../config.js'
 import { v4 as uuidv4 } from 'uuid'
-import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
 import { Permit } from '@defra-fish/dynamics-lib'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
-const { docClient } = AWS()
+import { docClient } from '../../../../connectors-lib/src/aws.js'
+import { PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+
 const debug = db('sales:transactions')
 
 /**
@@ -16,9 +17,13 @@ const debug = db('sales:transactions')
  */
 export async function createTransaction (payload) {
   const record = await createTransactionRecord(payload)
-  await docClient
-    .put({ TableName: TRANSACTION_STAGING_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' })
-    .promise()
+  await docClient.send(
+    new PutCommand({
+      TableName: TRANSACTION_STAGING_TABLE.TableName,
+      Item: record,
+      ConditionExpression: 'attribute_not_exists(id)'
+    })
+  )
   debug('Transaction %s successfully created in DynamoDB table %s', record.id, TRANSACTION_STAGING_TABLE.TableName)
   return record
 }
@@ -36,7 +41,7 @@ export async function createTransactions (payload) {
       [TRANSACTION_STAGING_TABLE.TableName]: records.map(record => ({ PutRequest: { Item: record } }))
     }
   }
-  await docClient.batchWriteAllPromise(params)
+  await docClient.send(new BatchWriteCommand(params))
   debug('%d transactions created in batch', records.length)
   return records
 }
@@ -48,7 +53,7 @@ export async function createTransactions (payload) {
  * @returns {Promise<*>}
  */
 async function createTransactionRecord (payload) {
-  const transactionId = uuidv4()
+  const transactionId = payload.transactionId || uuidv4()
   debug('Creating new transaction %s for %s', transactionId, payload.dataSource)
   const record = {
     id: transactionId,

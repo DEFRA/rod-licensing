@@ -10,11 +10,7 @@ jest.mock('fs', () => {
     ...originalFs,
     promises: {
       readFile: jest.fn().mockResolvedValue('mocked file content')
-    },
-    createWriteStream: jest.fn(() => ({
-      on: jest.fn(),
-      end: jest.fn()
-    }))
+    }
   }
 })
 

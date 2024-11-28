@@ -16,10 +16,6 @@ jest.mock('fs', () => {
     promises: {
       readFile: jest.fn().mockResolvedValue('mocked file content')
     },
-    createWriteStream: jest.fn(() => ({
-      on: jest.fn(),
-      end: jest.fn()
-    })),
     createReadStream: jest.fn(() => 'mocked stream'),
     statSync: jest.fn(() => ({ size: 1024 })),
     unlinkSync: jest.fn()
