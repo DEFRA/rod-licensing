@@ -348,7 +348,10 @@ describe('transaction service', () => {
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
-      docClient.send.mockResolvedValueOnce({ Item: undefined })
+
+      // Ensure the mock resolves to an empty object, simulating no item found.
+      docClient.send.mockResolvedValueOnce({})
+
       try {
         await processQueue({ id: mockRecord.id })
       } catch (e) {

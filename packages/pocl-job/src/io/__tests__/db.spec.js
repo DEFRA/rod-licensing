@@ -1,5 +1,6 @@
 import * as db from '../db.js'
 import { docClient } from '../../../../connectors-lib/src/aws.js'
+import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
 
 jest.mock('../../config.js', () => ({
   db: {
@@ -19,20 +20,6 @@ jest.mock('../../../../connectors-lib/src/aws.js', () => ({
   }
 }))
 
-jest.mock('@aws-sdk/lib-dynamodb', () => {
-  const originalModule = jest.requireActual('@aws-sdk/lib-dynamodb')
-  return {
-    ...originalModule,
-    GetCommand: jest.fn(),
-    UpdateCommand: jest.fn(),
-    ScanCommand: jest.fn(),
-    QueryCommand: jest.fn(),
-    BatchWriteCommand: jest.fn()
-  }
-})
-
-const { GetCommand: MockGetCommand, UpdateCommand: MockUpdateCommand } = require('@aws-sdk/lib-dynamodb')
-
 describe('database operations', () => {
   const TEST_FILENAME = 'testfile.xml'
 
@@ -47,12 +34,15 @@ describe('database operations', () => {
 
       const result = await db.getFileRecord(TEST_FILENAME)
 
-      expect(MockGetCommand).toHaveBeenCalledWith({
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(GetCommand))
+
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
         TableName: 'TestFileTable',
         Key: { filename: TEST_FILENAME },
         ConsistentRead: true
       })
-      expect(docClient.send).toHaveBeenCalledWith(expect.any(MockGetCommand))
+
       expect(result).toEqual(mockItem)
     })
   })
@@ -114,22 +104,16 @@ describe('database operations', () => {
         expires: expect.any(Number),
         ...entries
       })
-      expect(MockUpdateCommand).toHaveBeenCalledWith({
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(UpdateCommand))
+
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
         TableName: 'TestFileTable',
         Key: { filename: TEST_FILENAME },
-        UpdateExpression: 'SET #expires = :expires,#param1 = :param1,#param2 = :param2',
-        ExpressionAttributeNames: {
-          '#expires': 'expires',
-          '#param1': 'param1',
-          '#param2': 'param2'
-        },
-        ExpressionAttributeValues: {
-          ':expires': expect.any(Number),
-          ':param1': 'test1',
-          ':param2': 'test2'
-        }
+        UpdateExpression: mockUpdateExpression.UpdateExpression,
+        ExpressionAttributeNames: mockUpdateExpression.ExpressionAttributeNames,
+        ExpressionAttributeValues: mockUpdateExpression.ExpressionAttributeValues
       })
-      expect(docClient.send).toHaveBeenCalledWith(expect.any(MockUpdateCommand))
     })
   })
 
@@ -160,7 +144,6 @@ describe('database operations', () => {
 
     it('is a no-op if records is empty', async () => {
       await db.updateRecordStagingTable(TEST_FILENAME, [])
-
       expect(docClient.batchWriteAllPromise).not.toHaveBeenCalled()
     })
   })
@@ -181,7 +164,7 @@ describe('database operations', () => {
       expect(result).toEqual(mockItems)
     })
 
-    it('retrieves all records for a given set of stages', async () => {
+    it('retrieves all records at given set of stages', async () => {
       const mockItems = []
       docClient.queryAllPromise.mockResolvedValueOnce(mockItems)
 
