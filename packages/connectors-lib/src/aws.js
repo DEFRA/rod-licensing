@@ -1,24 +1,27 @@
 import Config from './config.js'
-import AWS from 'aws-sdk'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
 import { createDocumentClient } from './documentclient-decorator.js'
+import AWS from 'aws-sdk'
 
 const { SQS, S3, SecretsManager } = AWS
 
 export default function () {
-  const dynamoDBInstance = new DynamoDBClient({
-    region: Config.aws.region,
+  const dynamoDBInstance = new DynamoDB({
+    apiVersion: '2012-08-10',
     ...(Config.aws.dynamodb.endpoint && {
-      endpoint: Config.aws.dynamodb.endpoint,
-      convertEmptyValues: true
+      endpoint: Config.aws.dynamodb.endpoint
     })
   })
 
-  const docClient = createDocumentClient(dynamoDBInstance)
-
   return {
     ddb: dynamoDBInstance,
-    docClient,
+    docClient: createDocumentClient({
+      convertEmptyValues: true,
+      apiVersion: '2012-08-10',
+      ...(Config.aws.dynamodb.endpoint && {
+        endpoint: Config.aws.dynamodb.endpoint
+      })
+    }),
     sqs: new SQS({
       apiVersion: '2012-11-05',
       ...(Config.aws.sqs.endpoint && {

@@ -1,6 +1,7 @@
-import config from '../config.js'
-import { docClient } from '../../../connectors-lib/src/aws.js'
 import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
+import config from '../config.js'
+import { AWS } from '@defra-fish/connectors-lib'
+const { docClient } = AWS()
 
 /**
  * Update the POCL file staging table to add or update the entry for the provided filename
@@ -10,15 +11,11 @@ import { GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb'
  * @returns {Promise<void>}
  */
 export const updateFileStagingTable = async ({ filename, ...entries }) => {
-  const updateExpression = docClient.createUpdateExpression({
-    expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta,
-    ...entries
-  })
   await docClient.send(
     new UpdateCommand({
       TableName: config.db.fileStagingTable,
       Key: { filename },
-      ...updateExpression
+      ...docClient.createUpdateExpression({ expires: Math.floor(Date.now() / 1000) + config.db.stagingTtlDelta, ...entries })
     })
   )
 }
@@ -88,7 +85,6 @@ export const getProcessedRecords = async (filename, ...stages) => {
   return docClient.queryAllPromise({
     TableName: config.db.recordStagingTable,
     KeyConditionExpression: 'filename = :filename',
-    // ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues).join(',')})` }),
     ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: { ':filename': filename, ...stageValues },
     ConsistentRead: true

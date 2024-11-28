@@ -25,7 +25,19 @@ import {
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../../config.js'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
-import { docClient } from '../../../../../connectors-lib/src/aws.js'
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
+
+jest.mock('@aws-sdk/lib-dynamodb', () => ({
+  DynamoDBDocument: {
+    from: jest.fn().mockReturnValue({
+      get: jest.fn(),
+      put: jest.fn(),
+      delete: jest.fn(),
+      update: jest.fn(),
+      query: jest.fn()
+    })
+  }
+}))
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -64,20 +76,14 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
-jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
-  docClient: {
-    send: jest.fn()
-  }
-}))
-
 describe('transaction service', () => {
+  let mockDynamoDb
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    mockDynamoDb = DynamoDBDocument.from()
   })
 
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
+  beforeEach(jest.clearAllMocks)
 
   describe('processQueue', () => {
     describe('processes messages related to different licence types', () => {
@@ -160,39 +166,37 @@ describe('transaction service', () => {
         ]
       ])('handles %s', async (description, initialiseMockTransactionRecord, entityExpectations) => {
         const mockRecord = initialiseMockTransactionRecord()
-        docClient.send
-          .mockResolvedValueOnce({ Item: mockRecord }) // GetCommand response
-          .mockResolvedValueOnce({}) // DeleteCommand response
-          .mockResolvedValueOnce({}) // PutCommand response
-
+        mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
+        mockDynamoDb.delete.mockResolvedValueOnce({})
+        mockDynamoDb.put.mockResolvedValueOnce({})
         const result = await processQueue({ id: mockRecord.id })
         expect(result).toBeUndefined()
         expect(persist).toBeCalledWith(entityExpectations, undefined)
-
-        // verifies GetCommand parameters
-        expect(docClient.send.mock.calls[0][0].input).toEqual({
-          TableName: TRANSACTION_STAGING_TABLE.TableName,
-          Key: { id: mockRecord.id },
-          ConsistentRead: true
-        })
-
-        // verifies DeleteCommand parameters
-        expect(docClient.send.mock.calls[1][0].input).toEqual({
-          TableName: TRANSACTION_STAGING_TABLE.TableName,
-          Key: { id: mockRecord.id }
-        })
-
-        // verifies PutCommand parameters
-        const expectedRecord = Object.assign({}, mockRecord, {
+        expect(mockDynamoDb.get).toBeCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
+            Key: { id: mockRecord.id },
+            ConsistentRead: true
+          })
+        )
+        expect(mockDynamoDb.delete).toBeCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_TABLE.TableName,
+            Key: { id: mockRecord.id }
+          })
+        )
+        const expectedRecord = Object.assign(mockRecord, {
           id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
           expires: expect.any(Number)
         })
 
-        expect(docClient.send.mock.calls[2][0].input).toEqual({
-          TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
-          Item: expectedRecord,
-          ConditionExpression: 'attribute_not_exists(id)'
-        })
+        expect(mockDynamoDb.put).toBeCalledWith(
+          expect.objectContaining({
+            TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
+            Item: expectedRecord,
+            ConditionExpression: 'attribute_not_exists(id)'
+          })
+        )
       })
     })
 
@@ -208,7 +212,7 @@ describe('transaction service', () => {
       it('includes a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+        mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -227,7 +231,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
-        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+        mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -255,7 +259,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_12MONTH_SENIOR_PERMIT.id
-        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+        mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -273,7 +277,7 @@ describe('transaction service', () => {
       it('does not include a FulfilmentRequest when the permit and contact are not for postal fulfilment', async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.permissions[0].permitId = MOCK_1DAY_SENIOR_PERMIT_ENTITY.id
-        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+        mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         expect(persist).toBeCalledWith(
           [
@@ -292,7 +296,7 @@ describe('transaction service', () => {
     it('sets isLicenceForYou to Yes on the transaction, if it is true on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = true
-      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+      mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
@@ -302,7 +306,7 @@ describe('transaction service', () => {
     it('sets isLicenceForYou to No on the transaction, if it is false on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = false
-      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+      mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeDefined()
@@ -312,7 +316,7 @@ describe('transaction service', () => {
     it('does not set isLicenceForYou on the transaction, if it is undefined on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = undefined
-      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+      mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
@@ -321,7 +325,7 @@ describe('transaction service', () => {
     it('does not set isLicenceForYou on the transaction, if it is null on the permission', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.permissions[0].isLicenceForYou = null
-      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+      mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
       await processQueue({ id: mockRecord.id })
       const persistMockFirstAgument = persist.mock.calls[0]
       expect(persistMockFirstAgument[0][4].isLicenceForYou).toBeUndefined()
@@ -331,7 +335,7 @@ describe('transaction service', () => {
       const transactionFilename = 'test-file.xml'
       const mockRecord = mockFinalisedTransactionRecord()
       mockRecord.transactionFile = transactionFilename
-      docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+      mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
       const transactionToFileBindingSpy = jest.spyOn(Transaction.prototype, 'bindToAlternateKey')
       const permissionToFileBindingSpy = jest.spyOn(Permission.prototype, 'bindToAlternateKey')
       const testPoclFileEntity = new PoclFile()
@@ -343,7 +347,7 @@ describe('transaction service', () => {
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
-      docClient.send.mockResolvedValueOnce({ Item: undefined })
+      mockDynamoDb.get.mockResolvedValueOnce({ Item: undefined })
       try {
         await processQueue({ id: mockRecord.id })
       } catch (e) {
@@ -356,7 +360,7 @@ describe('transaction service', () => {
       const setup = async () => {
         const mockRecord = mockFinalisedTransactionRecord()
         mockRecord.payment.amount = cost
-        docClient.send.mockResolvedValueOnce({ Item: mockRecord })
+        mockDynamoDb.get.mockResolvedValueOnce({ Item: mockRecord })
         await processQueue({ id: mockRecord.id })
         const {
           mock: {

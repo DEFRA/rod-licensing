@@ -41,7 +41,6 @@
     "@ksmithut/prettier-standard": "^0.0.10",
     "@types/hapi__hapi": "^20.0.10",
     "@types/jest": "^27.4.0",
-    "aws-sdk-client-mock": "^4.1.0",
     "aws-sdk-mock": "^6.2.0",
     "babel-jest": "^27.5.1",
     "clone-deep": "^4.0.1",
@@ -112,6 +111,6 @@
     "@aws-sdk/client-dynamodb": "^3.665.0",
     "@aws-sdk/lib-dynamodb": "^3.665.0",
     "@smithy/shared-ini-file-loader": "^3.1.8",
-    "aws-sdk-client-mock-jest": "^4.1.0"
+    "aws-sdk-client-mock": "^4.0.2"
   }
 }

@@ -1,16 +1,14 @@
 import db from 'debug'
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
-import { DynamoDBDocumentClient, BatchWriteCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
+import { DynamoDB } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocument, BatchWriteCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 const debug = db('connectors:aws')
 
-export const createDocumentClient = (dynamoDBInstance, options = {}) => {
-  const client =
-    dynamoDBInstance ||
-    new DynamoDBClient({
-      ...options,
-      region: options.region || process.env.AWS_REGION || 'eu-west-2'
-    })
-  const docClient = DynamoDBDocumentClient.from(client)
+export const createDocumentClient = (options = {}) => {
+  const client = new DynamoDB({
+    ...options,
+    region: options.region || process.env.AWS_REGION || 'eu-west-2'
+  })
+  const docClient = DynamoDBDocument.from(client)
 
   // Support for large query/scan operations which return results in pages
   const wrapPagedDocumentClientOperation = operationName => {
@@ -35,9 +33,9 @@ export const createDocumentClient = (dynamoDBInstance, options = {}) => {
   docClient.scanAllPromise = wrapPagedDocumentClientOperation('scan')
 
   /**
-   * Handles batch writes which may return UnprocessedItems. If UnprocessedItems are returned then they will be retried with exponential backoff
+   * Handles batch writes which may return UnprocessedItems.  If UnprocessedItems are returned then they will be retried with exponential backoff
    *
-   * @param {BatchWriteCommand} params as per BatchWriteCommand
+   * @param {DocumentClient.BatchWriteItemInput} params as per DynamoDB.DocumentClient.batchWrite
    * @returns {Promise<void>}
    */
   docClient.batchWriteAllPromise = async params => {
@@ -57,7 +55,7 @@ export const createDocumentClient = (dynamoDBInstance, options = {}) => {
         }
         await new Promise(resolve => setTimeout(resolve, unprocessedItemsDelay))
         unprocessedItemsDelay = Math.min(2500, unprocessedItemsDelay * 1.5)
-        debug('Replaying DynamoDB batchWrite operation due to UnprocessedItems: %o', params.RequestItems)
+        debug('Replaying DynamoDB batchWrite operation due to UnprocessedItems: %o', request.RequestItems)
       }
     }
   }

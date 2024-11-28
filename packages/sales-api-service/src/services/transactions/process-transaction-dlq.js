@@ -2,10 +2,9 @@ import { processQueue } from './process-transaction-queue.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { createStagingExceptionFromError } from '../exceptions/exceptions.service.js'
 import { TRANSACTION_STAGING_TABLE } from '../../config.js'
+import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
-import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
-import { docClient } from '../../../../connectors-lib/src/aws.js'
-
+const { docClient } = AWS()
 const debug = db('sales:transactions')
 
 export async function processDlq ({ id }) {
@@ -15,17 +14,15 @@ export async function processDlq ({ id }) {
     await createStagingExceptionFromError(id, exception, transaction)
     if (transaction) {
       try {
-        await docClient.send(
-          new UpdateCommand({
-            TableName: TRANSACTION_STAGING_TABLE.TableName,
-            Key: { id },
-            ConditionExpression: 'attribute_exists(id)',
-            UpdateExpression: 'SET expires = :expires',
-            ExpressionAttributeValues: {
-              ':expires': Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_TABLE.StagingErrorsTtl
-            }
-          })
-        )
+        await docClient.update({
+          TableName: TRANSACTION_STAGING_TABLE.TableName,
+          Key: { id },
+          ConditionExpression: 'attribute_exists(id)',
+          UpdateExpression: 'SET expires = :expires',
+          ExpressionAttributeValues: {
+            ':expires': Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_TABLE.StagingErrorsTtl
+          }
+        })
       } catch (e) {
         console.error('Unable to update expiry on unprocessable transaction: ', transaction, e)
       }

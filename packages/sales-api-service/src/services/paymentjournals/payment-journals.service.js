@@ -1,8 +1,7 @@
-import { PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
+import { AWS } from '@defra-fish/connectors-lib'
 import { PAYMENTS_TABLE } from '../../config.js'
 import db from 'debug'
-import { docClient } from '../../../../connectors-lib/src/aws.js'
-
+const { docClient } = AWS()
 const debug = db('sales:paymentjournals')
 
 /**
@@ -10,15 +9,13 @@ const debug = db('sales:paymentjournals')
  * @param {*} payload
  * @returns {Promise<*>}
  */
-export async function createPaymentJournal (id, payload, expires = Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl) {
-  const record = { id, expires, ...payload }
-  await docClient.send(
-    new PutCommand({
-      TableName: PAYMENTS_TABLE.TableName,
-      Item: record,
-      ConditionExpression: 'attribute_not_exists(id)'
-    })
-  )
+export async function createPaymentJournal (id, payload) {
+  const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
+  await docClient.put({
+    TableName: PAYMENTS_TABLE.TableName,
+    Item: record,
+    ConditionExpression: 'attribute_not_exists(id)'
+  })
   debug('Payment journal stored with payload %o', record)
   return record
 }
@@ -28,43 +25,35 @@ export async function createPaymentJournal (id, payload, expires = Math.floor(Da
  * @param {*} payload
  * @returns {Promise<*>}
  */
-export async function updatePaymentJournal (id, payload, expires = Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl) {
-  const updates = { expires, ...payload }
-  const updateExpression =
-    'SET ' +
-    Object.keys(updates)
-      .map(key => `#${key} = :${key}`)
-      .join(', ')
-  const expressionAttributeNames = Object.keys(updates).reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {})
-  const expressionAttributeValues = Object.keys(updates).reduce((acc, key) => ({ ...acc, [`:${key}`]: updates[key] }), {})
-
-  const result = await docClient.send(
-    new UpdateCommand({
-      TableName: PAYMENTS_TABLE.TableName,
-      Key: { id },
-      UpdateExpression: updateExpression,
-      ExpressionAttributeNames: expressionAttributeNames,
-      ExpressionAttributeValues: expressionAttributeValues,
-      ConditionExpression: 'attribute_exists(id)',
-      ReturnValues: 'ALL_NEW'
-    })
-  )
+export async function updatePaymentJournal (id, payload) {
+  const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
+  const result = await docClient.update({
+    TableName: PAYMENTS_TABLE.TableName,
+    Key: { id },
+    UpdateExpression:
+      'SET ' +
+      Object.keys(updates)
+        .map(key => `#${key} = :${key}`)
+        .join(', '),
+    ExpressionAttributeNames: Object.keys(updates).reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {}),
+    ExpressionAttributeValues: Object.keys(updates).reduce((acc, key) => ({ ...acc, [`:${key}`]: updates[key] }), {}),
+    ConditionExpression: 'attribute_exists(id)',
+    ReturnValues: 'ALL_NEW'
+  })
   return result.Attributes
 }
 
 /**
  * Get an existing payment journal
- * @param {*} payload
+ * @param {*} id
  * @returns {Promise<*>}
  */
 export async function getPaymentJournal (id) {
-  const result = await docClient.send(
-    new GetCommand({
-      TableName: PAYMENTS_TABLE.TableName,
-      Key: { id },
-      ConsistentRead: true
-    })
-  )
+  const result = await docClient.get({
+    TableName: PAYMENTS_TABLE.TableName,
+    Key: { id },
+    ConsistentRead: true
+  })
   return result.Item
 }
 
@@ -74,17 +63,10 @@ export async function getPaymentJournal (id) {
  * @returns {Promise<*>}
  */
 export async function queryJournalsByTimestamp ({ paymentStatus, from, to }) {
-  const result = await docClient.send(
-    new QueryCommand({
-      TableName: PAYMENTS_TABLE.TableName,
-      IndexName: 'PaymentJournalsByStatusAndTimestamp',
-      KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
-      ExpressionAttributeValues: {
-        ':paymentStatus': paymentStatus,
-        ':from': from,
-        ':to': to
-      }
-    })
-  )
-  return result.Items
+  return docClient.query({
+    TableName: PAYMENTS_TABLE.TableName,
+    IndexName: 'PaymentJournalsByStatusAndTimestamp',
+    KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
+    ExpressionAttributeValues: { ':paymentStatus': paymentStatus, ':from': from, ':to': to }
+  })
 }

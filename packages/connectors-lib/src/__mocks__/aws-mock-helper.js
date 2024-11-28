@@ -60,6 +60,12 @@ export const configureAwsSdkMock = (AwsSdk = jest.genMockFromModule('aws-sdk')) 
     'deleteMessage',
     'deleteMessageBatch'
   ])
+  configureMock(AwsSdk.DynamoDB, ['listTables', 'describeTable', 'getItem', 'putItem', 'query', 'scan'], {})
+  configureMock(
+    AwsSdk.DynamoDB.DocumentClient,
+    ['get', 'put', 'update', 'query', 'scan', 'delete', 'createSet', 'batchGet', 'batchWrite'],
+    {}
+  )
   configureMock(AwsSdk.S3, ['listObjectsV2', 'getObject', 'putObject', 'headObject', 'deleteObject', 'upload', 'listBuckets', 'headBucket'])
   configureMock(AwsSdk.SecretsManager, ['getSecretValue'])
 
