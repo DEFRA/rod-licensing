@@ -57,7 +57,7 @@ export const createDocumentClient = (dynamoDBInstance, options = {}) => {
         }
         await new Promise(resolve => setTimeout(resolve, unprocessedItemsDelay))
         unprocessedItemsDelay = Math.min(2500, unprocessedItemsDelay * 1.5)
-        debug('Replaying DynamoDB batchWrite operation due to UnprocessedItems: %o', request.RequestItems)
+        debug('Replaying DynamoDB batchWrite operation due to UnprocessedItems: %o', params.RequestItems)
       }
     }
   }

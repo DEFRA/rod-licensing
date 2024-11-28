@@ -33,7 +33,7 @@ export const getFileRecords = async (...stages) => {
   const stageValues = stages.reduce((acc, s, i) => ({ ...acc, [`:stage${i}`]: s }), {})
   return docClient.scanAllPromise({
     TableName: config.db.fileStagingTable,
-    ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues).join(',')})` }),
+    ...(stages.length && { FilterExpression: `stage IN (${Object.keys(stageValues)})` }),
     ExpressionAttributeValues: stageValues,
     ConsistentRead: true
   })

@@ -29,15 +29,6 @@ jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
   }
 }))
 
-jest.mock('@aws-sdk/lib-dynamodb', () => {
-  const originalModule = jest.requireActual('@aws-sdk/lib-dynamodb')
-  return {
-    ...originalModule,
-    PutCommand: jest.fn(),
-    BatchWriteCommand: jest.fn()
-  }
-})
-
 describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
@@ -58,15 +49,13 @@ describe('transaction service', () => {
       }
 
       await createTransaction(mockPayload)
-
       expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
-      expect(PutCommand).toHaveBeenCalledWith(
-        expect.objectContaining({
-          TableName: TRANSACTION_STAGING_TABLE.TableName,
-          Item: expectedResult,
-          ConditionExpression: 'attribute_not_exists(id)'
-        })
-      )
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Item: expectedResult,
+        ConditionExpression: 'attribute_not_exists(id)'
+      })
     })
 
     it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
@@ -117,15 +106,13 @@ describe('transaction service', () => {
       }
 
       await createTransactions([mockPayload, mockPayload])
-
       expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
-      expect(BatchWriteCommand).toHaveBeenCalledWith(
-        expect.objectContaining({
-          RequestItems: {
-            [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
-          }
-        })
-      )
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
+        RequestItems: {
+          [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
+        }
+      })
     })
 
     it('throws exceptions back up the stack', async () => {

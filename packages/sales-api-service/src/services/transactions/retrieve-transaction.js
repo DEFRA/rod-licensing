@@ -7,7 +7,7 @@ const debug = db('sales:transactions')
 
 export const retrieveStagedTransaction = async id => {
   const result = await docClient.send(new GetCommand({ TableName: TRANSACTION_STAGING_TABLE.TableName, Key: { id }, ConsistentRead: true }))
-  if (!result?.Item) {
+  if (!result.Item) {
     debug('Failed to retrieve a transaction with staging id %s', id)
     const historical = await docClient.send(
       new GetCommand({ TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName, Key: { id }, ConsistentRead: true })
