@@ -9,6 +9,8 @@ import { TRANSACTION_STAGING_TABLE } from '../../../config.js'
 import AwsMock from 'aws-sdk'
 import { getPermissionCost } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId } from '../../reference-data.service.js'
+import { PutCommand, BatchWriteCommand } from '@aws-sdk/lib-dynamodb'
+import { docClient } from '../../../../connectors-lib/src/aws.js'
 
 jest.mock('@defra-fish/business-rules-lib')
 jest.mock('../../reference-data.service.js', () => ({
@@ -20,6 +22,12 @@ jest.mock('../../reference-data.service.js', () => ({
     }
     return item
   })
+}))
+
+jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn()
+  }
 }))
 
 describe('transaction service', () => {
@@ -41,14 +49,14 @@ describe('transaction service', () => {
         status: { id: 'STAGED' }
       })
 
-      const result = await createTransaction(mockPayload)
-      expect(result).toMatchObject(expectedResult)
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.put).toBeCalledWith(
-        expect.objectContaining({
-          TableName: TRANSACTION_STAGING_TABLE.TableName,
-          Item: expectedResult
-        })
-      )
+      await createTransaction(mockPayload)
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
+        TableName: TRANSACTION_STAGING_TABLE.TableName,
+        Item: expectedResult,
+        ConditionExpression: 'attribute_not_exists(id)'
+      })
     })
 
     it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
@@ -90,15 +98,14 @@ describe('transaction service', () => {
         status: { id: 'STAGED' }
       })
 
-      const result = await createTransactions([mockPayload, mockPayload])
-      expect(result).toEqual(expect.arrayContaining([expectedRecord, expectedRecord]))
-      expect(AwsMock.DynamoDB.DocumentClient.mockedMethods.batchWrite).toBeCalledWith(
-        expect.objectContaining({
-          RequestItems: {
-            [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
-          }
-        })
-      )
+      await createTransactions([mockPayload, mockPayload])
+      expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
+      const calledCommandInstance = docClient.send.mock.calls[0][0]
+      expect(calledCommandInstance.input).toEqual({
+        RequestItems: {
+          [TRANSACTION_STAGING_TABLE.TableName]: [{ PutRequest: { Item: expectedRecord } }, { PutRequest: { Item: expectedRecord } }]
+        }
+      })
     })
 
     it('throws exceptions back up the stack', async () => {

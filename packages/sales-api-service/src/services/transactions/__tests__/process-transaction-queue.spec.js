@@ -26,6 +26,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb'
+import { docClient } from '../../../../connectors-lib/src/aws.js'
 
 jest.mock('@aws-sdk/lib-dynamodb', () => ({
   DynamoDBDocument: {
@@ -347,7 +348,9 @@ describe('transaction service', () => {
 
     it('throws 404 not found error if a record cannot be found for the given id', async () => {
       const mockRecord = mockFinalisedTransactionRecord()
-      mockDynamoDb.get.mockResolvedValueOnce({ Item: undefined })
+
+      docClient.send.mockResolvedValueOnce({})
+
       try {
         await processQueue({ id: mockRecord.id })
       } catch (e) {

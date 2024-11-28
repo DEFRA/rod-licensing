@@ -9,7 +9,8 @@ export default function () {
   const dynamoDBInstance = new DynamoDB({
     apiVersion: '2012-08-10',
     ...(Config.aws.dynamodb.endpoint && {
-      endpoint: Config.aws.dynamodb.endpoint
+      endpoint: Config.aws.dynamodb.endpoint,
+      convertEmptyValues: true
     })
   })
 

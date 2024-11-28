@@ -13,6 +13,12 @@ jest.mock('@aws-sdk/lib-dynamodb', () => ({
   }
 }))
 
+jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
+  docClient: {
+    send: jest.fn()
+  }
+}))
+
 describe('payment-journals service', () => {
   beforeAll(async () => {
     PAYMENTS_TABLE.TableName = 'TestTable'
@@ -60,20 +66,20 @@ describe('payment-journals service', () => {
       })
     })
   })
+})
 
-  describe('queryJournalsByTimestamp', () => {
-    it('calls query on dynamodb', async () => {
-      await queryJournalsByTimestamp({ paymentStatus: 'In Progress', from: '2020-05-29T11:44:45.875Z', to: '2020-05-29T11:44:45.875Z' })
-      expect(DynamoDBDocument.from().query).toHaveBeenCalledWith({
-        TableName: PAYMENTS_TABLE.TableName,
-        IndexName: 'PaymentJournalsByStatusAndTimestamp',
-        KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
-        ExpressionAttributeValues: {
-          ':from': '2020-05-29T11:44:45.875Z',
-          ':paymentStatus': 'In Progress',
-          ':to': '2020-05-29T11:44:45.875Z'
-        }
-      })
+describe('queryJournalsByTimestamp', () => {
+  it('calls query on dynamodb', async () => {
+    await queryJournalsByTimestamp({ paymentStatus: 'In Progress', from: '2020-05-29T11:44:45.875Z', to: '2020-05-29T11:44:45.875Z' })
+    expect(DynamoDBDocument.from().query).toHaveBeenCalledWith({
+      TableName: PAYMENTS_TABLE.TableName,
+      IndexName: 'PaymentJournalsByStatusAndTimestamp',
+      KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
+      ExpressionAttributeValues: {
+        ':from': '2020-05-29T11:44:45.875Z',
+        ':paymentStatus': 'In Progress',
+        ':to': '2020-05-29T11:44:45.875Z'
+      }
     })
   })
 })
