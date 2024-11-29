@@ -14,7 +14,7 @@ export const retrieveStagedTransaction = async id => {
         ConsistentRead: true
       })
     )
-    if (result && result.Item) {
+    if (result?.Item) {
       debug('Retrieved transaction record for staging id %s', id)
       return result.Item
     }
@@ -26,7 +26,7 @@ export const retrieveStagedTransaction = async id => {
         ConsistentRead: true
       })
     )
-    if (historical && historical.Item) {
+    if (historical?.Item) {
       throw Boom.resourceGone('The transaction has already been finalised', historical.Item)
     }
     throw Boom.notFound('A transaction for the specified identifier was not found')
