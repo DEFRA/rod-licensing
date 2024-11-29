@@ -1,4 +1,90 @@
 
+## v1.55.0-rc.6 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#2070](https://github.com/DEFRA/rod-licensing/pull/2070) Remove ftp image and build ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.5 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`, `pocl-job`
+  * [#2064](https://github.com/DEFRA/rod-licensing/pull/2064) Remove ftp functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.4 (2024-11-21)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`, `sales-api-service`
+  * [#2074](https://github.com/DEFRA/rod-licensing/pull/2074) Add agreement_id to existing GOV.UK Pay request ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
+
+## v1.55.0-rc.3 (2024-11-21)
+
+#### :rocket: Enhancement
+* [#2078](https://github.com/DEFRA/rod-licensing/pull/2078) Set-output removed from versioning script ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.2 (2024-11-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2077](https://github.com/DEFRA/rod-licensing/pull/2077) Change links for three rod licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.1 (2024-11-19)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2079](https://github.com/DEFRA/rod-licensing/pull/2079) Licence summary licence type capitals ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+
+## v1.55.0-rc.0 (2024-11-13)
+
+#### :rocket: Enhancement
+* `dynamics-lib`
+  * [#2072](https://github.com/DEFRA/rod-licensing/pull/2072) Create activity in CRM ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+#### Committers: 1
+- Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
+## v1.55.0-rc.6 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`
+  * [#2070](https://github.com/DEFRA/rod-licensing/pull/2070) Remove ftp image and build ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
+## v1.55.0-rc.5 (2024-11-25)
+
+#### :rocket: Enhancement
+* `fulfilment-job`, `pocl-job`
+  * [#2064](https://github.com/DEFRA/rod-licensing/pull/2064) Remove ftp functionality ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.55.0-rc.4 (2024-11-21)
 
 #### :rocket: Enhancement
@@ -42,6 +128,7 @@
 
 #### Committers: 1
 - Nabeel Amir ([@nabeelamir-defra](https://github.com/nabeelamir-defra))
+
 
 
 
