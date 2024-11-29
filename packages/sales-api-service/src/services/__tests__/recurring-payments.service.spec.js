@@ -1,11 +1,19 @@
 import { findDueRecurringPayments } from '@defra-fish/dynamics-lib'
-import { getRecurringPayments, processRecurringPayment } from '../recurring-payments.service.js'
+import { getRecurringPayments, processRecurringPayment, generateRecurringPaymentRecord } from '../recurring-payments.service.js'
+import { createHash } from 'node:crypto'
 
 jest.mock('@defra-fish/dynamics-lib', () => ({
   ...jest.requireActual('@defra-fish/dynamics-lib'),
   executeQuery: jest.fn(),
   findById: jest.fn(),
   findDueRecurringPayments: jest.fn()
+}))
+
+jest.mock('node:crypto', () => ({
+  createHash: jest.fn(() => ({
+    update: () => {},
+    digest: () => 'abcdef99987'
+  }))
 }))
 
 const dynamicsLib = jest.requireMock('@defra-fish/dynamics-lib')
@@ -81,6 +89,8 @@ const getMockPermission = () => ({
 })
 
 describe('recurring payments service', () => {
+  const createSampleTransactionRecord = () => ({ payment: { recurring: true }, permissions: [{}] })
+
   beforeEach(jest.clearAllMocks)
   describe('getRecurringPayments', () => {
     it('should equal result of findDueRecurringPayments query', async () => {
@@ -123,7 +133,6 @@ describe('recurring payments service', () => {
             cancelledReason: null,
             endDate: new Date('2023-11-12'),
             agreementId: '435678',
-            publicId: '1234456',
             status: 0
           }
         },
@@ -132,6 +141,120 @@ describe('recurring payments service', () => {
       const contact = getMockContact()
       const result = await processRecurringPayment(transactionRecord, contact)
       expect(result.recurringPayment).toMatchSnapshot()
+    })
+
+    it.each(['abc-123', 'def-987'])('generates a publicId %s for the recurring payment', async samplePublicId => {
+      createHash.mockReturnValue({
+        update: () => {},
+        digest: () => samplePublicId
+      })
+      const result = await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      expect(result.recurringPayment.publicId).toBe(samplePublicId)
+    })
+
+    it('passes the unique id of the entity to the hash.update function', async () => {
+      const update = jest.fn()
+      createHash.mockReturnValueOnce({
+        update,
+        digest: () => {}
+      })
+      const { recurringPayment } = await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      expect(update).toHaveBeenCalledWith(recurringPayment.uniqueContentId)
+    })
+
+    it('hashes using sha256', async () => {
+      await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      expect(createHash).toHaveBeenCalledWith('sha256')
+    })
+
+    it('uses base64 hash string', async () => {
+      const digest = jest.fn()
+      createHash.mockReturnValueOnce({
+        update: () => {},
+        digest
+      })
+      await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      expect(digest).toHaveBeenCalledWith('base64')
+    })
+  })
+
+  describe('generateRecurringPaymentRecord', () => {
+    it.each([
+      [
+        'same day start - next due on issue date plus one year minus ten days',
+        'iujhy7u8ijhy7u8iuuiuu8ie89',
+        {
+          startDate: '2024-11-22T15:30:45.922Z',
+          issueDate: '2024-11-22T15:00:45.922Z',
+          endDate: '2025-11-21T23:59:59.999Z'
+        },
+        '2025-11-12T00:00:00.000Z'
+      ],
+      [
+        'next day start - next due on end date minus ten days',
+        '89iujhy7u8i87yu9iokjuij901',
+        {
+          startDate: '2024-11-23T00:00:00.000Z',
+          issueDate: '2024-11-22T15:00:45.922Z',
+          endDate: '2025-11-22T23:59:59.999Z'
+        },
+        '2025-11-12T00:00:00.000Z'
+      ],
+      [
+        'starts ten days after issue - next due on issue date plus one year',
+        '9o8u7yhui89u8i9oiu8i8u7yhu',
+        {
+          startDate: '2024-12-23T00:00:00.000Z',
+          issueDate: '2024-11-12T15:00:45.922Z',
+          endDate: '2025-12-22T23:59:59.999Z'
+        },
+        '2025-11-12T00:00:00.000Z'
+      ]
+    ])('creates record from transaction with %s', (_d, agreementId, permission, expectedNextDueDate) => {
+      const sampleTransaction = {
+        expires: 1732892402,
+        cost: 35.8,
+        isRecurringPaymentSupported: true,
+        permissions: [
+          {
+            permitId: 'permit-id-1',
+            licensee: {},
+            referenceNumber: '23211125-2WC3FBP-ABNDT8',
+            isLicenceForYou: true,
+            ...permission
+          }
+        ],
+        agreementId,
+        payment: {
+          amount: 35.8,
+          source: 'Gov Pay',
+          method: 'Debit card',
+          timestamp: '2024-11-22T15:00:45.922Z'
+        },
+        id: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
+        dataSource: 'Web Sales',
+        transactionId: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
+        status: { id: 'FINALISED' }
+      }
+
+      const rpRecord = generateRecurringPaymentRecord(sampleTransaction)
+
+      expect(rpRecord).toEqual(
+        expect.objectContaining({
+          payment: expect.objectContaining({
+            recurring: expect.objectContaining({
+              name: '',
+              nextDueDate: expectedNextDueDate,
+              cancelledDate: null,
+              cancelledReason: null,
+              endDate: permission.endDate,
+              agreementId,
+              status: 1
+            })
+          }),
+          permissions: expect.arrayContaining([expect.objectContaining(permission)])
+        })
+      )
     })
   })
 })

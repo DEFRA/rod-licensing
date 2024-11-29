@@ -8,7 +8,7 @@ Object {
   "endDate": 2023-11-12T00:00:00.000Z,
   "name": "Test Name",
   "nextDueDate": 2023-11-02T00:00:00.000Z,
-  "publicId": "1234456",
+  "publicId": "abcdef99987",
   "status": 0,
 }
 `;
