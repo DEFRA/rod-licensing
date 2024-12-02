@@ -5,15 +5,17 @@ import moment from 'moment'
 export const getRecurringPayments = date => executeQuery(findDueRecurringPayments(date))
 
 const getNextDueDate = (startDate, issueDate, endDate) => {
-  if (moment(startDate).isSame(moment(issueDate), 'day')) {
-    return moment(startDate).add(1, 'year').subtract(10, 'days').startOf('day').toISOString()
-  }
-  if (moment(startDate).isBefore(moment(issueDate).add(10, 'days'), 'day')) {
-    return moment(endDate).subtract(10, 'days').startOf('day').toISOString()
-  }
-  if (moment(startDate).isSameOrAfter(moment(issueDate).add(10, 'days'), 'day')) {
+  const mStart = moment(startDate)
+  if (mStart.isAfter(moment(issueDate)) && mStart.isSameOrBefore(moment(issueDate).add(30, 'days'), 'day')) {
+    if (mStart.isSame(moment(issueDate), 'day')) {
+      return moment(startDate).add(1, 'year').subtract(10, 'days').startOf('day').toISOString()
+    }
+    if (mStart.isBefore(moment(issueDate).add(10, 'days'), 'day')) {
+      return moment(endDate).subtract(10, 'days').startOf('day').toISOString()
+    }
     return moment(issueDate).add(1, 'year').startOf('day').toISOString()
   }
+  throw new Error('Invalid dates provided for permission')
 }
 
 export const generateRecurringPaymentRecord = transactionRecord => {

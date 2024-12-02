@@ -179,6 +179,32 @@ describe('recurring payments service', () => {
   })
 
   describe('generateRecurringPaymentRecord', () => {
+    const generateSampleTransaction = (agreementId, permission) => ({
+      expires: 1732892402,
+      cost: 35.8,
+      isRecurringPaymentSupported: true,
+      permissions: [
+        {
+          permitId: 'permit-id-1',
+          licensee: {},
+          referenceNumber: '23211125-2WC3FBP-ABNDT8',
+          isLicenceForYou: true,
+          ...permission
+        }
+      ],
+      agreementId,
+      payment: {
+        amount: 35.8,
+        source: 'Gov Pay',
+        method: 'Debit card',
+        timestamp: '2024-11-22T15:00:45.922Z'
+      },
+      id: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
+      dataSource: 'Web Sales',
+      transactionId: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
+      status: { id: 'FINALISED' }
+    })
+
     it.each([
       [
         'same day start - next due on issue date plus one year minus ten days',
@@ -204,38 +230,24 @@ describe('recurring payments service', () => {
         'starts ten days after issue - next due on issue date plus one year',
         '9o8u7yhui89u8i9oiu8i8u7yhu',
         {
-          startDate: '2024-12-23T00:00:00.000Z',
+          startDate: '2024-11-22T00:00:00.000Z',
           issueDate: '2024-11-12T15:00:45.922Z',
-          endDate: '2025-12-22T23:59:59.999Z'
+          endDate: '2025-11-21T23:59:59.999Z'
+        },
+        '2025-11-12T00:00:00.000Z'
+      ],
+      [
+        'starts twenty days after issue - next due on issue date plus one year',
+        '9o8u7yhui89u8i9oiu8i8u7yhu',
+        {
+          startDate: '2024-12-01T00:00:00.000Z',
+          issueDate: '2024-11-12T15:00:45.922Z',
+          endDate: '2025-01-30T23:59:59.999Z'
         },
         '2025-11-12T00:00:00.000Z'
       ]
     ])('creates record from transaction with %s', (_d, agreementId, permission, expectedNextDueDate) => {
-      const sampleTransaction = {
-        expires: 1732892402,
-        cost: 35.8,
-        isRecurringPaymentSupported: true,
-        permissions: [
-          {
-            permitId: 'permit-id-1',
-            licensee: {},
-            referenceNumber: '23211125-2WC3FBP-ABNDT8',
-            isLicenceForYou: true,
-            ...permission
-          }
-        ],
-        agreementId,
-        payment: {
-          amount: 35.8,
-          source: 'Gov Pay',
-          method: 'Debit card',
-          timestamp: '2024-11-22T15:00:45.922Z'
-        },
-        id: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
-        dataSource: 'Web Sales',
-        transactionId: 'd26d646f-ed0f-4cf1-b6c1-ccfbbd611757',
-        status: { id: 'FINALISED' }
-      }
+      const sampleTransaction = generateSampleTransaction(agreementId, permission)
 
       const rpRecord = generateRecurringPaymentRecord(sampleTransaction)
 
@@ -255,6 +267,29 @@ describe('recurring payments service', () => {
           permissions: expect.arrayContaining([expect.objectContaining(permission)])
         })
       )
+    })
+
+    it.each([
+      [
+        'start date is thirty one days after issue date',
+        {
+          startDate: '2024-12-14T00:00:00.000Z',
+          issueDate: '2024-11-12T15:00:45.922Z',
+          endDate: '2025-12-13T23:59:59.999Z'
+        }
+      ],
+      [
+        'start date precedes issue date',
+        {
+          startDate: '2024-11-11T00:00:00.000Z',
+          issueDate: '2024-11-12T15:00:45.922Z',
+          endDate: '2025-11-10T23:59:59.999Z'
+        }
+      ]
+    ])('throws an error for invalid dates when %s', (_d, permission) => {
+      const sampleTransaction = generateSampleTransaction('hyu78ijhyu78ijuhyu78ij9iu6', permission)
+
+      expect(() => generateRecurringPaymentRecord(sampleTransaction)).toThrow('Invalid dates provided for permission')
     })
   })
 })
