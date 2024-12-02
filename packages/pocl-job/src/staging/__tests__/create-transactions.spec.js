@@ -29,6 +29,7 @@ describe('create-transactions', () => {
     await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
     expectCreateTransactionCalls(2)
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
+    // First call to update records which were successfully created
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(2)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
       expect.arrayContaining([
@@ -38,6 +39,7 @@ describe('create-transactions', () => {
         })
       ])
     )
+    // Second call to update records which failed (there shouldn't be any for this test)
     expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
   })
 
@@ -45,6 +47,7 @@ describe('create-transactions', () => {
     salesApi.createTransactions.mockReturnValue(generateApiSuccessResponse(MAX_CREATE_TRANSACTION_BATCH_SIZE))
     await createTransactions(`${Project.root}/src/__mocks__/test-25-records.xml`)
     expectCreateTransactionCalls(MAX_CREATE_TRANSACTION_BATCH_SIZE)
+    // First call to update records which were successfully created
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_CREATE_TRANSACTION_BATCH_SIZE)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
@@ -55,6 +58,7 @@ describe('create-transactions', () => {
         })
       ])
     )
+    // Second call to update records which failed (there shouldn't be any for this test)
     expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
   })
 
@@ -63,6 +67,7 @@ describe('create-transactions', () => {
     await createTransactions(`${Project.root}/src/__mocks__/test-30-records.xml`)
     expectCreateTransactionCalls(MAX_CREATE_TRANSACTION_BATCH_SIZE, 5)
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(4)
+    // First call of first batch to update records which were successfully created
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(MAX_CREATE_TRANSACTION_BATCH_SIZE)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
       expect.arrayContaining([
@@ -72,7 +77,10 @@ describe('create-transactions', () => {
         })
       ])
     )
+    // Second call of first batch to update records which failed (there shouldn't be any for this test)
     expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
+
+    // First call of second batch to update records which were successfully created
     expect(db.updateRecordStagingTable.mock.calls[2][1]).toHaveLength(5)
     expect(db.updateRecordStagingTable.mock.calls[2][1]).toEqual(
       expect.arrayContaining([
@@ -82,6 +90,7 @@ describe('create-transactions', () => {
         })
       ])
     )
+    // Second call of second batch to update records which failed (there shouldn't be any for this test)
     expect(db.updateRecordStagingTable.mock.calls[3][1]).toHaveLength(0)
   })
 
@@ -91,6 +100,7 @@ describe('create-transactions', () => {
     await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
     expectCreateTransactionCalls(1)
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
+    // First call to update records which were successfully created
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(1)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
       expect.arrayContaining([
@@ -100,6 +110,7 @@ describe('create-transactions', () => {
         })
       ])
     )
+    // Second call to update records which failed (there shouldn't be any for this test)
     expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
   })
 
@@ -109,6 +120,7 @@ describe('create-transactions', () => {
     await createTransactions(`${Project.root}/src/__mocks__/test-2-records.xml`)
     expectCreateTransactionCalls(1)
     expect(db.updateRecordStagingTable.mock.calls).toHaveLength(2)
+    // First call to update records which were successfully created
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toHaveLength(1)
     expect(db.updateRecordStagingTable.mock.calls[0][1]).toEqual(
       expect.arrayContaining([
@@ -118,6 +130,7 @@ describe('create-transactions', () => {
         })
       ])
     )
+    // Second call to update records which failed (there shouldn't be any for this test)
     expect(db.updateRecordStagingTable.mock.calls[1][1]).toHaveLength(0)
   })
 

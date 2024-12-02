@@ -10,8 +10,8 @@ const debug = db('sales:paymentjournals')
  * @param {*} payload
  * @returns {Promise<*>}
  */
-export async function createPaymentJournal (id, payload, expires = Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl) {
-  const record = { id, expires, ...payload }
+export async function createPaymentJournal (id, payload) {
+  const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
   await docClient.send(
     new PutCommand({
       TableName: PAYMENTS_TABLE.TableName,
@@ -28,8 +28,8 @@ export async function createPaymentJournal (id, payload, expires = Math.floor(Da
  * @param {*} payload
  * @returns {Promise<*>}
  */
-export async function updatePaymentJournal (id, payload, expires = Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl) {
-  const updates = { expires, ...payload }
+export async function updatePaymentJournal (id, payload) {
+  const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
   const updateExpression =
     'SET ' +
     Object.keys(updates)
