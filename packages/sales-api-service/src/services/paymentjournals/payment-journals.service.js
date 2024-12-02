@@ -29,7 +29,7 @@ export async function createPaymentJournal (id, payload) {
  * @returns {Promise<*>}
  */
 export async function updatePaymentJournal (id, payload) {
-  const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }  
+  const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
   const updateParams = docClient.createUpdateExpression(updates)
 
   const result = await docClient.send(
