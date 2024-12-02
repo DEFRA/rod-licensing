@@ -39,14 +39,13 @@ describe('transaction service', () => {
   describe('createTransaction', () => {
     it('accepts a new transaction', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedResult = {
-        ...mockPayload,
+      const expectedResult = Object.assign({}, mockPayload, {
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
         isRecurringPaymentSupported: true,
         status: { id: 'STAGED' }
-      }
+      })
 
       await createTransaction(mockPayload)
       expect(docClient.send).toHaveBeenCalledWith(expect.any(PutCommand))
@@ -61,8 +60,8 @@ describe('transaction service', () => {
     it.each([99, 115, 22, 87.99])('uses business rules lib to calculate price (%d)', async permitPrice => {
       getPermissionCost.mockReturnValueOnce(permitPrice)
       const mockPayload = mockTransactionPayload()
-      const result = await createTransaction(mockPayload)
-      expect(result.cost).toBe(permitPrice)
+      const { cost } = await createTransaction(mockPayload)
+      expect(cost).toBe(permitPrice)
     })
 
     it('passes startDate and permit to getPermissionCost', async () => {
@@ -96,14 +95,13 @@ describe('transaction service', () => {
   describe('createTransactions', () => {
     it('accepts multiple transactions', async () => {
       const mockPayload = mockTransactionPayload()
-      const expectedRecord = {
-        ...mockPayload,
+      const expectedRecord = Object.assign({}, mockPayload, {
         id: expect.stringMatching(/[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}/i),
         expires: expect.any(Number),
         cost: 54,
         isRecurringPaymentSupported: true,
         status: { id: 'STAGED' }
-      }
+      })
 
       await createTransactions([mockPayload, mockPayload])
       expect(docClient.send).toHaveBeenCalledWith(expect.any(BatchWriteCommand))
