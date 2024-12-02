@@ -107,10 +107,7 @@ export async function processQueue ({ id }) {
   await docClient.send(
     new PutCommand({
       TableName: TRANSACTION_STAGING_HISTORY_TABLE.TableName,
-      Item: {
-        ...transactionRecord,
-        expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl
-      },
+      Item: Object.assign(transactionRecord, { expires: Math.floor(Date.now() / 1000) + TRANSACTION_STAGING_HISTORY_TABLE.Ttl }),
       ConditionExpression: 'attribute_not_exists(id)'
     })
   )
@@ -167,9 +164,8 @@ const createTransactionEntities = async transactionRecord => {
   transaction.channelId = transactionRecord.channelId
 
   transaction.bindToEntity(Transaction.definition.relationships.transactionCurrency, currency)
-  if (transactionRecord.transactionFile) {
+  transactionRecord.transactionFile &&
     transaction.bindToAlternateKey(Transaction.definition.relationships.poclFile, transactionRecord.transactionFile)
-  }
 
   const chargeJournal = await createTransactionJournal(transactionRecord, transaction, 'Charge', currency)
   const paymentJournal = await createTransactionJournal(transactionRecord, transaction, 'Payment', currency)
