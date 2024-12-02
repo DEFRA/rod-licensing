@@ -28,23 +28,17 @@ export async function createPaymentJournal (id, payload) {
  * @param {*} payload
  * @returns {Promise<*>}
  */
-export async function updatePaymentJournal (id, payload) {
+export async function updatePaymentJournal(id, payload) {
   const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  const updateExpression =
-    'SET ' +
-    Object.keys(updates)
-      .map(key => `#${key} = :${key}`)
-      .join(', ')
-  const expressionAttributeNames = Object.keys(updates).reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {})
-  const expressionAttributeValues = Object.keys(updates).reduce((acc, key) => ({ ...acc, [`:${key}`]: updates[key] }), {})
+  
+  // Use the createUpdateExpression utility to generate the update parameters
+  const updateParams = docClient.createUpdateExpression(updates)
 
   const result = await docClient.send(
     new UpdateCommand({
       TableName: PAYMENTS_TABLE.TableName,
       Key: { id },
-      UpdateExpression: updateExpression,
-      ExpressionAttributeNames: expressionAttributeNames,
-      ExpressionAttributeValues: expressionAttributeValues,
+      ...updateParams,
       ConditionExpression: 'attribute_exists(id)',
       ReturnValues: 'ALL_NEW'
     })

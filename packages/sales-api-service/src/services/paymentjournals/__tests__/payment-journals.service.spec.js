@@ -5,7 +5,18 @@ import { PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/li
 
 jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
   docClient: {
-    send: jest.fn()
+    send: jest.fn(),
+    createUpdateExpression: jest.fn(payload =>
+      Object.entries(payload).reduce(
+        (acc, [k, v], idx) => {
+          acc.UpdateExpression += `${idx > 0 ? ',' : ''}#${k} = :${k}`
+          acc.ExpressionAttributeNames[`#${k}`] = k
+          acc.ExpressionAttributeValues[`:${k}`] = v
+          return acc
+        },
+        { UpdateExpression: 'SET ', ExpressionAttributeNames: {}, ExpressionAttributeValues: {} }
+      )
+    )
   }
 }))
 
@@ -39,7 +50,7 @@ describe('payment-journals service', () => {
       const expectedInput = {
         TableName: PAYMENTS_TABLE.TableName,
         Key: { id: 'test-id' },
-        UpdateExpression: 'SET #expires = :expires, #some = :some',
+        UpdateExpression: 'SET #expires = :expires,#some = :some',
         ExpressionAttributeNames: {
           '#expires': 'expires',
           '#some': 'some'
