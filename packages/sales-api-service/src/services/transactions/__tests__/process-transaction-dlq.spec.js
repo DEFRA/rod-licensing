@@ -7,20 +7,18 @@ import { docClient } from '../../../../../connectors-lib/src/aws.js'
 
 let mockProcessingException
 jest.mock('../process-transaction-queue.js', () => ({
-  processQueue: jest.fn(async () => {
+  processQueue: async () => {
     if (mockProcessingException) {
       throw mockProcessingException
     }
-  })
+  }
 }))
 
 jest.mock('../retrieve-transaction.js', () => ({
   retrieveStagedTransaction: jest.fn(async () => ({ testTransaction: true }))
 }))
 
-jest.mock('../../exceptions/exceptions.service.js', () => ({
-  createStagingExceptionFromError: jest.fn()
-}))
+jest.mock('../../exceptions/exceptions.service.js')
 
 jest.mock('../../../../../connectors-lib/src/aws.js', () => ({
   docClient: {
