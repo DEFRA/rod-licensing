@@ -7,6 +7,7 @@ import {
 import db from 'debug'
 import { permissionForContacts, concessionsByIds, executeQuery, contactForLicenseeNoReference } from '@defra-fish/dynamics-lib'
 const debug = db('sales:renewal-authentication')
+const failAuthenticate = 'The licensee could not be authenticated'
 
 const executeWithErrorLog = async query => {
   try {
@@ -50,12 +51,12 @@ export default [
               })
               .code(200)
           } else if (results.length === 0) {
-            throw Boom.unauthorized('The licensee could not be authenticated')
+            throw Boom.unauthorized(failAuthenticate)
           } else {
             throw new Error('Unable to authenticate, non-unique results for query')
           }
         } else {
-          throw Boom.unauthorized('The licensee could not be authenticated')
+          throw Boom.unauthorized(failAuthenticate)
         }
       },
       description: 'Authenticate a licensee by checking the licence number corresponds with the provided contact details',
@@ -71,7 +72,7 @@ export default [
         'hapi-swagger': {
           responses: {
             200: { description: 'The licensee was successfully authenticated', schema: authenticateRenewalResponseSchema },
-            401: { description: 'The licensee could not be authenticated' }
+            401: { description: failAuthenticate }
           },
           order: 1
         }
