@@ -26,6 +26,7 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '..
 import AwsMock from 'aws-sdk'
 import { POCL_DATA_SOURCE, DDE_DATA_SOURCE } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
+import { processRecurringPayment, generateRecurringPaymentRecord } from '../../recurring-payments.service.js'
 
 jest.mock('../../reference-data.service.js', () => ({
   ...jest.requireActual('../../reference-data.service.js'),
@@ -64,9 +65,12 @@ jest.mock('@defra-fish/business-rules-lib', () => ({
   START_AFTER_PAYMENT_MINUTES: 30
 }))
 
+jest.mock('../../recurring-payments.service.js')
+
 describe('transaction service', () => {
   beforeAll(() => {
     TRANSACTION_STAGING_TABLE.TableName = 'TestTable'
+    processRecurringPayment.mockResolvedValue({})
   })
 
   beforeEach(jest.clearAllMocks)
@@ -125,6 +129,7 @@ describe('transaction service', () => {
         [
           'licences with a recurring payment',
           () => {
+            processRecurringPayment.mockResolvedValueOnce({ recurringPayment: new RecurringPayment() })
             const mockRecord = mockFinalisedTransactionRecord()
             mockRecord.payment.recurring = {
               name: 'Test name',
@@ -367,6 +372,29 @@ describe('transaction service', () => {
       it('for calculating paymentJournal value', async () => {
         const { paymentJournal } = await setup()
         expect(paymentJournal.total).toBe(cost)
+      })
+    })
+
+    describe('recurring payment processing', () => {
+      it('passes transaction record to generateRecurringPaymentRecord', async () => {
+        let grprArg
+        generateRecurringPaymentRecord.mockImplementationOnce(transaction => {
+          grprArg = JSON.parse(JSON.stringify(transaction))
+        })
+        const mockRecord = mockFinalisedTransactionRecord()
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+        await processQueue({ id: mockRecord.id })
+        // jest.fn args aren't immutable and transaction is changed in processQueue, so we use our clone that _is_ immutable
+        expect(grprArg).toEqual(mockRecord)
+      })
+
+      it('passes return value of generateRecurringPaymentRecord to processRecurringPayment', async () => {
+        const rprSymbol = Symbol('rpr')
+        const finalisedTransaction = mockFinalisedTransactionRecord()
+        generateRecurringPaymentRecord.mockReturnValueOnce(rprSymbol)
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: finalisedTransaction })
+        await processQueue({ id: finalisedTransaction.id })
+        expect(processRecurringPayment).toHaveBeenCalledWith(rprSymbol, expect.any(Contact))
       })
     })
   })

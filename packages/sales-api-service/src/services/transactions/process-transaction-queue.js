@@ -12,7 +12,7 @@ import {
 } from '@defra-fish/dynamics-lib'
 import { DDE_DATA_SOURCE, FULFILMENT_SWITCHOVER_DATE, POCL_TRANSACTION_SOURCES } from '@defra-fish/business-rules-lib'
 import { getReferenceDataForEntityAndId, getGlobalOptionSetValue, getReferenceDataForEntity } from '../reference-data.service.js'
-import { processRecurringPayment } from '../recurring-payments.service.js'
+import { generateRecurringPaymentRecord, processRecurringPayment } from '../recurring-payments.service.js'
 import { resolveContactPayload } from '../contacts.service.js'
 import { retrieveStagedTransaction } from './retrieve-transaction.js'
 import { TRANSACTION_STAGING_TABLE, TRANSACTION_STAGING_HISTORY_TABLE } from '../../config.js'
@@ -65,7 +65,7 @@ export async function processQueue ({ id }) {
       isRenewal
     )
 
-    const { recurringPayment } = await processRecurringPayment(transactionRecord, contact)
+    const { recurringPayment } = await processRecurringPayment(generateRecurringPaymentRecord(transactionRecord), contact)
     if (recurringPayment) {
       entities.push(recurringPayment)
     }
