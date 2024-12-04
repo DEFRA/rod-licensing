@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.2 (2024-12-04)
+
+#### :rocket: Enhancement
+* `pocl-job`
+  * [#2085](https://github.com/DEFRA/rod-licensing/pull/2085) FTP POCL references ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.57.0-rc.1 (2024-11-29)
 
 #### :rocket: Enhancement
