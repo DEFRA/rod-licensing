@@ -70,3 +70,111 @@
     </script>
     {{ pricingSummaryScript(data.pricing.byLength, nonce) }}
 {% endblock %}
+
+
+
+
+
+
+{# {% extends "layout.njk" %}
+{% from "radios/macro.njk" import govukRadios %}
+{% from "fieldset/macro.njk" import govukFieldset %}
+{% from "button/macro.njk" import govukButton %}
+{% from "error-summary.njk" import errorSummary %}
+{% from "page-title.njk" import pageTitle %}
+{% from "pricing-summary.njk" import pricingSummary, pricingSummaryScript %}
+
+{% set title = mssgs.licence_length_title_you if data.isLicenceForYou else mssgs.licence_length_title_other %}
+{% set errorMsg = mssgs.licence_length_error_choose %}
+
+{%
+    set errorMap = {
+        'licence-length': {
+            'any.required': { ref: '#selector-12M', text: errorMsg }
+        }
+    }
+%}
+
+{% set 8day %}
+    <p class="govuk-body-m">{{ mssgs.licence_length_eight_day }}</p>
+{% endset -%}
+
+{% set 1day %}
+    <p class="govuk-body-m">{{ mssgs.licence_length_one_day }}</p>
+{% endset -%}
+
+{% block pageTitle %}{{ pageTitle(title, error, mssgs) }}{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ errorSummary(error, errorMap, mssgs.there_is_a_problem) }}
+            <form method="post" novalidate>
+                
+                {% call govukFieldset({
+                    legend: {
+                        text: title,
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-3",
+                        isPageHeading: true
+                    }
+                }) %}
+                    {{ govukRadios({
+                        idPrefix: "licence-length",
+                        name: "licence-length",
+                        items: [
+                            {
+                                id: 'selector-12M',
+                                text: mssgs.licence_type_12m,
+                                value: "12M",
+                                checked: payload['licence-length'] === '12M'
+                            },
+                            {
+                                id: 'selector-8D',
+                                text: mssgs.licence_type_8d,
+                                value: "8D",
+                                checked: payload['licence-length'] === '8D',
+                                conditional: { html: 8day }
+                            },
+                            {
+                                id: 'selector-1D',
+                                text: mssgs.licence_type_1d,
+                                value: "1D",
+                                checked: payload['licence-length'] === '1D',
+                                conditional: { html: 1day }
+                            }
+                        ],
+                        errorMessage: { text: errorMsg } if error
+                    }) }}
+                {% endcall %}
+
+                <div class="govuk-!-margin-bottom-6">
+                    {{ pricingSummary(data.pricing.byLength, {
+                        'total': { desc: mssgs.total },
+                        'payment-edge-case': mssgs.licence_type_payment_edge_case
+                    }, data.licenceTypeStr, mssgs) }}
+                </div>
+
+                {{ govukButton({
+                    attributes: { id: 'continue' },
+                    preventDoubleClick: true,
+                    name: "continue",
+                    text: mssgs.continue,
+                    classes: "govuk-!-margin-top-5"
+                }) }}
+
+                {{ csrf() }}
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bodyEnd %}
+    <script type="module" src="/public/javascript/govuk-frontend-min.js"></script>
+    <script nonce="{{nonce}}" type="module">
+        import { initAll } from '/public/javascript/govuk-frontend-min.js'
+        initAll()
+    </script>
+    {{ pricingSummaryScript(data.pricing.byLength, nonce) }}
+{% endblock %} #}
+
+

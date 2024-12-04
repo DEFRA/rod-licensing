@@ -28,16 +28,28 @@
 
             {% endcall %}
 
-            {{ govukButton({
+            {# {{ govukButton({
+                attributes: { id: 'continue' },
+                preventDoubleClick: true,
+                name: "continue",
+                text: mssgs.continue,
+                classes: "govuk-!-margin-top-5"
+            }) }} #}
+            {# {{ csrf() }} #}
+        </form>
+    </div>
+    {% block pricingSummary %}{% endblock %}
+</div>
+
+{{ govukButton({
                 attributes: { id: 'continue' },
                 preventDoubleClick: true,
                 name: "continue",
                 text: mssgs.continue,
                 classes: "govuk-!-margin-top-5"
             }) }}
-            {{ csrf() }}
-        </form>
-    </div>
-    {% block pricingSummary %}{% endblock %}
-</div>
+                        {{ csrf() }}
+
 {% endblock %}
+
+
