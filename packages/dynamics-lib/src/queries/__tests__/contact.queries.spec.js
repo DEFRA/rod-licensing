@@ -1,4 +1,4 @@
-import { contactForLicensee } from '../contact.queries.js'
+import { contactForLicensee, contactForLicenseeNoReference } from '../contact.queries.js'
 import { dynamicsClient } from '../../client/dynamics-client.js'
 
 jest.mock('dynamics-web-api', () => {
@@ -94,6 +94,19 @@ describe('Contact Queries', () => {
         SuccessMessage: '',
         ErrorMessage: 'contact does not exists',
         ReturnPermissionNumber: null
+      })
+    })
+  })
+
+  describe('contactForLicenseeNoReference', () => {
+    it('should return a predefined query with correct filter', () => {
+      const query = contactForLicenseeNoReference('03/12/1990', 'AB12 3CD')
+
+      expect(query.toRetrieveRequest()).toEqual({
+        collection: 'contacts',
+        expand: [],
+        filter: "defra_postcode eq 'AB12 3CD' and birthdate eq 03/12/1990 and statecode eq 0",
+        select: expect.any(Array)
       })
     })
   })

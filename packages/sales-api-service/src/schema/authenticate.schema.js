@@ -14,9 +14,7 @@ export const authenticateRenewalRequestQuerySchema = Joi.object({
   licenseePostcode: Joi.alternatives().try(
     validation.contact.createUKPostcodeValidator(Joi).description('The postcode of the licensee'),
     validation.contact.createOverseasPostcodeValidator(Joi)
-  ),
-  // AWAIT DATE VALIDATOR
-  licenceEndDate: validation.date.createRealDateValidator(Joi).description('The end date of the licence')
+  )
 }).label('authenticate-renewal-request-query')
 
 export const authenticateRenewalResponseSchema = Joi.object({

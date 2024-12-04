@@ -69,8 +69,7 @@ describe.each([
               'date-of-birth-month': 1,
               'date-of-birth-day': 1,
               postcode: 'AB1 1AB',
-              referenceNumber: 'ABC123',
-              endDate: '2024-11-18'
+              referenceNumber: 'ABC123'
             }
           }),
           setCurrentPermission: async () => {}

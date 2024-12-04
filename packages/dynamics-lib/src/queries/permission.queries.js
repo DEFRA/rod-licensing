@@ -9,17 +9,15 @@ import { ConcessionProof } from '../entities/concession-proof.entity.js'
  * @param permissionReferenceNumber the reference number of the permission used to perform the lookup
  * @param licenseeBirthDate the birth date of the contact associated with the permission
  * @param licenseePostcode the postcode of the contact associated with the permission
- * @param licenceEndDate the end date of the permission
  * @returns {PredefinedQuery}
  */
-export const permissionForLicensee = (permissionReferenceNumber, licenseeBirthDate, licenseePostcode, licenceEndDate) => {
+export const permissionForLicensee = (permissionReferenceNumber, licenseeBirthDate, licenseePostcode) => {
   const { licensee, permit, concessionProofs } = Permission.definition.relationships
   let filter = `endswith(${Permission.definition.mappings.referenceNumber.field}, '${escapeODataStringValue(permissionReferenceNumber)}')`
   filter += ` and ${licensee.property}/${licensee.entity.definition.mappings.postcode.field} eq '${escapeODataStringValue(
     licenseePostcode
   )}'`
   filter += ` and ${licensee.property}/${licensee.entity.definition.mappings.birthDate.field} eq ${licenseeBirthDate}`
-  filter += ` and ${Permission.definition.mappings.endDate.field} eq ${licenceEndDate}`
   filter += ` and ${Permission.definition.defaultFilter}`
   return new PredefinedQuery({
     root: Permission,
@@ -36,5 +34,16 @@ export const permissionForFullReferenceNumber = permissionReferenceNumber => {
     root: Permission,
     filter: filter,
     expand: [licensee, permit, { ...concessionProofs, expand: [ConcessionProof.definition.relationships.concession] }]
+  })
+}
+
+export const permissionForContacts = contactIds => {
+  const { licensee, permit, concessionProofs } = Permission.definition.relationships
+  let filter = `${licensee.property}/${licensee.entity.definition.mappings.id.field} in (${contactIds})`
+  filter += ` and ${Permission.definition.defaultFilter}`
+  return new PredefinedQuery({
+    root: Permission,
+    filter: filter,
+    expand: [licensee, permit, concessionProofs]
   })
 }

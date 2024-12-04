@@ -255,14 +255,13 @@ export const countries = new QueryBuilder(new URL('/option-sets/defra_country', 
  * @param postcode
  * @returns {Promise<*>}
  */
-export const authenticate = async (referenceNumber, birthDate, postcode, endDate) =>
+export const authenticate = async (referenceNumber, birthDate, postcode) =>
   exec2xxOrNull(
     call(
       new URL(
         `/authenticate/renewal/${referenceNumber}?${querystring.stringify({
           licenseeBirthDate: birthDate,
-          licenseePostcode: postcode,
-          licenceEndDate: endDate
+          licenseePostcode: postcode
         })}`,
         urlBase
       ),
