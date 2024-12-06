@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.3 (2024-12-06)
+
+#### :rocket: Enhancement
+* `connectors-lib`, `gafl-webapp-service`
+  * [#2082](https://github.com/DEFRA/rod-licensing/pull/2082) Rename createRecurringPayment to clarify it creates agreements ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.57.0-rc.2 (2024-12-04)
 
 #### :rocket: Enhancement
