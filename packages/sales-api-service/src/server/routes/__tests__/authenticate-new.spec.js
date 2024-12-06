@@ -1,4 +1,4 @@
-import { permissionForLicensee, executeQuery } from '@defra-fish/dynamics-lib'
+import { contactForLicenseeNoReference, executeQuery } from '@defra-fish/dynamics-lib'
 import db from 'debug'
 jest.mock('@defra-fish/dynamics-lib')
 jest.mock('debug')
@@ -10,7 +10,7 @@ describe('executeWithErrorLog', () => {
     executeQuery.mockImplementation(() => {
       throw new Error()
     })
-    permissionForLicensee.mockReturnValueOnce({ filter: 'query filter test' })
+    contactForLicenseeNoReference.mockReturnValueOnce({ filter: 'query filter test' })
     const authenticate = require('../authenticate.js').default
     const [
       {
