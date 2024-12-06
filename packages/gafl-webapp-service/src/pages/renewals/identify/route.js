@@ -4,6 +4,7 @@ import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
+import { dateOfBirthValidator } from '../../../schema/validators/validators.js'
 
 export const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
@@ -27,21 +28,18 @@ export const getData = async request => {
   }
 }
 
-const schema = Joi.object({
-  referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
-  'date-of-birth': validation.contact.createBirthDateValidator(Joi),
-  postcode: validation.contact.createOverseasPostcodeValidator(Joi)
-}).options({ abortEarly: false, allowUnknown: true })
+export const validator = payload => {
+  dateOfBirthValidator(payload)
 
-const validator = async payload => {
-  const dateOfBirth = `${payload['date-of-birth-year']}-${payload['date-of-birth-month']}-${payload['date-of-birth-day']}`
   Joi.assert(
     {
-      'date-of-birth': dateOfBirth,
       postcode: payload.postcode,
       referenceNumber: payload.referenceNumber
     },
-    schema
+    Joi.object({
+      referenceNumber: validation.permission.permissionNumberUniqueComponentValidator(Joi),
+      postcode: validation.contact.createOverseasPostcodeValidator(Joi)
+    }).options({ abortEarly: false })
   )
 }
 
