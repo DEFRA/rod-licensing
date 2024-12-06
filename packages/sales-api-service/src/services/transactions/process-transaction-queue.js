@@ -65,11 +65,6 @@ export async function processQueue ({ id }) {
       isRenewal
     )
 
-    const { recurringPayment } = await processRecurringPayment(generateRecurringPaymentRecord(transactionRecord), contact)
-    if (recurringPayment) {
-      entities.push(recurringPayment)
-    }
-
     permission.bindToEntity(Permission.definition.relationships.licensee, contact)
     permission.bindToEntity(Permission.definition.relationships.permit, permit)
     permission.bindToEntity(Permission.definition.relationships.transaction, transaction)
@@ -78,7 +73,10 @@ export async function processQueue ({ id }) {
 
     entities.push(contact, permission)
 
+    const { recurringPayment } = await processRecurringPayment(generateRecurringPaymentRecord(transactionRecord, permission), contact)
+
     if (recurringPayment && permit.isRecurringPaymentSupported) {
+      entities.push(recurringPayment)
       const paymentInstruction = new RecurringPaymentInstruction()
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.licensee, contact)
       paymentInstruction.bindToEntity(RecurringPaymentInstruction.definition.relationships.permit, permit)

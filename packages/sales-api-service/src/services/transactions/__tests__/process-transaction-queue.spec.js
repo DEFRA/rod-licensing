@@ -148,9 +148,9 @@ describe('transaction service', () => {
             expect.any(Transaction),
             expect.any(TransactionJournal),
             expect.any(TransactionJournal),
-            expect.any(RecurringPayment),
             expect.any(Contact),
             expect.any(Permission),
+            expect.any(RecurringPayment),
             expect.any(RecurringPaymentInstruction),
             expect.any(ConcessionProof)
           ]
@@ -377,15 +377,29 @@ describe('transaction service', () => {
 
     describe('recurring payment processing', () => {
       it('passes transaction record to generateRecurringPaymentRecord', async () => {
-        let grprArg
+        const callingArgs = {}
         generateRecurringPaymentRecord.mockImplementationOnce(transaction => {
-          grprArg = JSON.parse(JSON.stringify(transaction))
+          callingArgs.transaction = JSON.parse(JSON.stringify(transaction))
         })
         const mockRecord = mockFinalisedTransactionRecord()
         AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
         await processQueue({ id: mockRecord.id })
-        // jest.fn args aren't immutable and transaction is changed in processQueue, so we use our clone that _is_ immutable
-        expect(grprArg).toEqual(mockRecord)
+        // jest.fn args aren't immutable and transaction is changed in processQueue, so we use our clone that hasn't changed
+        expect(callingArgs.transaction).toEqual(mockRecord)
+      })
+
+      it('passes permission to generateRecurringPaymentRecord', async () => {
+        const mockRecord = mockFinalisedTransactionRecord()
+        const expectedPermissionData = {}
+        const keysToCopy = ['referenceNumber', 'issueDate', 'startDate', 'endDate', 'isRenewal']
+        for (const key of keysToCopy) {
+          expectedPermissionData[key] = mockRecord.permissions[0][key]
+        }
+        AwsMock.DynamoDB.DocumentClient.__setResponse('get', { Item: mockRecord })
+
+        await processQueue({ id: mockRecord.id })
+
+        expect(generateRecurringPaymentRecord).toHaveBeenCalledWith(expect.any(Object), expect.objectContaining(expectedPermissionData))
       })
 
       it('passes return value of generateRecurringPaymentRecord to processRecurringPayment', async () => {

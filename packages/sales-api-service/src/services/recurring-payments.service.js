@@ -18,7 +18,7 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
   throw new Error('Invalid dates provided for permission')
 }
 
-export const generateRecurringPaymentRecord = transactionRecord => {
+export const generateRecurringPaymentRecord = (transactionRecord, permission) => {
   const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
   return {
     payment: {
@@ -32,7 +32,7 @@ export const generateRecurringPaymentRecord = transactionRecord => {
         status: 1
       }
     },
-    permissions: transactionRecord.permissions
+    permissions: [permission]
   }
 }
 

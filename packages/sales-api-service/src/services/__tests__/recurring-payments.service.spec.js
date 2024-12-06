@@ -1,4 +1,4 @@
-import { findDueRecurringPayments } from '@defra-fish/dynamics-lib'
+import { findDueRecurringPayments, Permission } from '@defra-fish/dynamics-lib'
 import { getRecurringPayments, processRecurringPayment, generateRecurringPaymentRecord } from '../recurring-payments.service.js'
 import { createHash } from 'node:crypto'
 
@@ -89,7 +89,21 @@ const getMockPermission = () => ({
 })
 
 describe('recurring payments service', () => {
-  const createSampleTransactionRecord = () => ({ payment: { recurring: true }, permissions: [{}] })
+  const createSimpleSampleTransactionRecord = () => ({ payment: { recurring: true }, permissions: [{}] })
+  const createSamplePermission = overrides => {
+    const p = new Permission()
+    p.referenceNumber = 'ABC123'
+    p.issueDate = '2024-12-04T11:15:12Z'
+    p.startDate = '2024-12-04T11:45:12Z'
+    p.endDate = '2025-12-03T23:59:59.999Z'
+    p.stagingId = 'aaa-111-bbb-222'
+    p.isRenewal = false
+    p.isLicenseForYou = 1
+    for (const key in overrides) {
+      p[key] = overrides[key]
+    }
+    return p
+  }
 
   beforeEach(jest.clearAllMocks)
   describe('getRecurringPayments', () => {
@@ -148,7 +162,7 @@ describe('recurring payments service', () => {
         update: () => {},
         digest: () => samplePublicId
       })
-      const result = await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      const result = await processRecurringPayment(createSimpleSampleTransactionRecord(), getMockContact())
       expect(result.recurringPayment.publicId).toBe(samplePublicId)
     })
 
@@ -158,12 +172,12 @@ describe('recurring payments service', () => {
         update,
         digest: () => {}
       })
-      const { recurringPayment } = await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      const { recurringPayment } = await processRecurringPayment(createSimpleSampleTransactionRecord(), getMockContact())
       expect(update).toHaveBeenCalledWith(recurringPayment.uniqueContentId)
     })
 
     it('hashes using sha256', async () => {
-      await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      await processRecurringPayment(createSimpleSampleTransactionRecord(), getMockContact())
       expect(createHash).toHaveBeenCalledWith('sha256')
     })
 
@@ -173,13 +187,13 @@ describe('recurring payments service', () => {
         update: () => {},
         digest
       })
-      await processRecurringPayment(createSampleTransactionRecord(), getMockContact())
+      await processRecurringPayment(createSimpleSampleTransactionRecord(), getMockContact())
       expect(digest).toHaveBeenCalledWith('base64')
     })
   })
 
   describe('generateRecurringPaymentRecord', () => {
-    const generateSampleTransaction = (agreementId, permission) => ({
+    const createFinalisedSampleTransaction = (agreementId, permission) => ({
       expires: 1732892402,
       cost: 35.8,
       isRecurringPaymentSupported: true,
@@ -246,10 +260,11 @@ describe('recurring payments service', () => {
         },
         '2025-11-12T00:00:00.000Z'
       ]
-    ])('creates record from transaction with %s', (_d, agreementId, permission, expectedNextDueDate) => {
-      const sampleTransaction = generateSampleTransaction(agreementId, permission)
+    ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate) => {
+      const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData)
+      const permission = createSamplePermission(permissionData)
 
-      const rpRecord = generateRecurringPaymentRecord(sampleTransaction)
+      const rpRecord = generateRecurringPaymentRecord(sampleTransaction, permission)
 
       expect(rpRecord).toEqual(
         expect.objectContaining({
@@ -259,12 +274,12 @@ describe('recurring payments service', () => {
               nextDueDate: expectedNextDueDate,
               cancelledDate: null,
               cancelledReason: null,
-              endDate: permission.endDate,
+              endDate: permissionData.endDate,
               agreementId,
               status: 1
             })
           }),
-          permissions: expect.arrayContaining([expect.objectContaining(permission)])
+          permissions: expect.arrayContaining([permission])
         })
       )
     })
@@ -287,7 +302,7 @@ describe('recurring payments service', () => {
         }
       ]
     ])('throws an error for invalid dates when %s', (_d, permission) => {
-      const sampleTransaction = generateSampleTransaction('hyu78ijhyu78ijuhyu78ij9iu6', permission)
+      const sampleTransaction = createFinalisedSampleTransaction('hyu78ijhyu78ijuhyu78ij9iu6', permission)
 
       expect(() => generateRecurringPaymentRecord(sampleTransaction)).toThrow('Invalid dates provided for permission')
     })
