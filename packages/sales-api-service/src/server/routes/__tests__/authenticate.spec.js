@@ -98,7 +98,7 @@ describe('authenticate handler', () => {
           method: 'GET',
           url: '/authenticate/renewal/CD379B?licenseeBirthDate=2000-01-01&licenseePostcode=AB12 3CD'
         })
-        expect(permissionForContacts).toHaveBeenCalledWith(MOCK_EXISTING_CONTACT_ENTITY.id)
+        expect(permissionForContacts).toHaveBeenCalledWith([MOCK_EXISTING_CONTACT_ENTITY.id])
       })
 
       it('returns 200 from a renewal request', async () => {
@@ -131,7 +131,7 @@ describe('authenticate handler', () => {
           expanded: {}
         }
       ])
-      executeQuery.mockResolvedValueOnce([{}, {}])
+      executeQuery.mockResolvedValueOnce([{ entity: { referenceNumber: 'CD379B' } }, { entity: { referenceNumber: 'CD379B' } }])
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn())
       const result = await server.inject({
         method: 'GET',

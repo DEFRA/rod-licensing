@@ -16,8 +16,11 @@ export const permissionForFullReferenceNumber = permissionReferenceNumber => {
 
 export const permissionForContacts = contactIds => {
   const { licensee, permit, concessionProofs } = Permission.definition.relationships
-  let filter = `${licensee.property}/${licensee.entity.definition.mappings.id.field} in (${contactIds})`
+  const formattedContactIds = contactIds.map(id => `defra_ContactId/contactid eq '${id}'`).join(' or ')
+
+  let filter = `(${formattedContactIds})`
   filter += ` and ${Permission.definition.defaultFilter}`
+
   return new PredefinedQuery({
     root: Permission,
     filter: filter,

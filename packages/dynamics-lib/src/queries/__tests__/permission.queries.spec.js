@@ -19,7 +19,7 @@ describe('Permission Queries', () => {
 
   describe('permissionForContacts', () => {
     it('builds a filter to run a query for a permission with contact id', async () => {
-      const query = permissionForContacts('12345')
+      const query = permissionForContacts(['12345'])
       expect(query.toRetrieveRequest()).toEqual({
         collection: 'defra_permissions',
         expand: expect.arrayContaining([
@@ -27,7 +27,7 @@ describe('Permission Queries', () => {
           expect.objectContaining({ property: 'defra_PermitId' }),
           expect.objectContaining({ property: 'defra_defra_permission_defra_concessionproof_PermissionId' })
         ]),
-        filter: 'defra_ContactId/contactid in (12345) and statecode eq 0',
+        filter: "(defra_ContactId/contactid eq '12345') and statecode eq 0",
         select: expect.any(Array)
       })
     })
