@@ -134,28 +134,4 @@ export class RecurringPayment extends BaseEntity {
   set status (status) {
     super._setState('status', status)
   }
-
-  /**
-   * The ID of the associated contact
-   * @type {string}
-   */
-  get contactId () {
-    return super._getState('contactId')
-  }
-
-  set contactId (contactId) {
-    super._setState('contactId', contactId)
-  }
-
-  /**
-   * The ID of the associated active permission
-   * @type {string}
-   */
-  get activePermission () {
-    return super._getState('activePermission')
-  }
-
-  set activePermission (activePermission) {
-    super._setState('activePermission', activePermission)
-  }
 }
