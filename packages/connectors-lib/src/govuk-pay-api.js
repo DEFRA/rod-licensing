@@ -15,7 +15,7 @@ const headers = recurring => ({
  * @param preparedPayment - see the GOV.UK pay API reference for details
  * @returns {Promise<*>}
  */
-export const createRecurringPayment = async preparedPayment => {
+export const createRecurringPaymentAgreement = async preparedPayment => {
   try {
     return fetch(process.env.GOV_PAY_RCP_API_URL, {
       headers: headers(true),
