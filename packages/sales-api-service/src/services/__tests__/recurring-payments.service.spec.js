@@ -259,6 +259,26 @@ describe('recurring payments service', () => {
           endDate: '2025-01-30T23:59:59.999Z'
         },
         '2025-11-12T00:00:00.000Z'
+      ],
+      [
+        "issued on 29th Feb '24, starts on 30th March '24 - next due on 28th Feb '25",
+        'hy7u8ijhyu78jhyu8iu8hjiujn',
+        {
+          startDate: '2024-03-30T00:00:00.000Z',
+          issueDate: '2024-02-29T12:38:24.123Z',
+          endDate: '2025-03-29T23:59:59.999Z'
+        },
+        '2025-02-28T00:00:00.000Z'
+      ],
+      [
+        "issued on 30th March '25 at 1am, starts at 1:30am - next due on 20th March '26",
+        'jhy67uijhy67u87yhtgjui8u7j',
+        {
+          startDate: '2025-03-30T01:30:00.000Z',
+          issueDate: '2025-03-30T01:00:00.000Z',
+          endDate: '2026-03-29T23:59:59.999Z'
+        },
+        '2026-03-20T00:00:00.000Z'
       ]
     ])('creates record from transaction with %s', (_d, agreementId, permissionData, expectedNextDueDate) => {
       const sampleTransaction = createFinalisedSampleTransaction(agreementId, permissionData)
