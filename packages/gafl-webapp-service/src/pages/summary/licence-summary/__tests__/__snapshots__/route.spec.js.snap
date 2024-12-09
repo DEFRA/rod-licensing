@@ -1128,18 +1128,6 @@ Array [
     },
   },
   Object {
-    "actions": Object {
-      "items": Array [
-        Object {
-          "attributes": Object {
-            "id": "change-licence-length",
-          },
-          "href": "/buy/licence-length",
-          "text": "contact_summary_change",
-          "visuallyHiddenText": "licence_summary_length",
-        },
-      ],
-    },
     "key": Object {
       "text": "licence_summary_length",
     },
