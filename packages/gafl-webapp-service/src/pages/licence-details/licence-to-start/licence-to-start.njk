@@ -8,14 +8,37 @@
 
 {%
     set errorMap = {
-        'licence-to-start': {
-            'any.required': { ref: '#licence-to-start', text: mssgs.licence_start_error_choose_when }
-        },
-        'licence-start-date': {
-            'date.format': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_format },
-            'date.max': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days },
-            'date.min': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days }
-        }
+      'full-date': {
+        'object.missing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error }
+      },
+      'day-and-month': {
+        'object.missing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_missing_day_and_month }
+      },
+      'day-and-year': {
+        'object.missing': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_missing_day_and_year }
+      },
+      'month-and-year': {
+        'object.missing': { ref: '#licence-start-date-month', text: mssgs.licence_start_error_missing_month_and_year }
+      },
+      'day': {
+        'any.required': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_missing_day }
+      },
+      'month': {
+        'any.required': { ref: '#licence-start-date-month', text: mssgs.licence_start_error_missing_month }
+      },
+      'year': {
+        'any.required': { ref: '#licence-start-date-year', text: mssgs.licence_start_error_missing_year }
+      },
+      'non-numeric': {
+        'number.base': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_non_numeric }
+      },
+      'invalid-date': {
+        'any.custom': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_date_real }
+      },
+      'date-range': {
+        'date.min': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days },
+        'date.max': { ref: '#licence-start-date-day', text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days }
+      }
     }
 %}
 
@@ -23,21 +46,21 @@
     {
       name: "day",
       label: mssgs.dob_day,
-      classes: "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isDayError else "govuk-input--width-2",
       value: payload['licence-start-date-day'],
       attributes: { maxlength : 2 }
     },
     {
       name: "month",
       label: mssgs.dob_month,
-      classes: "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isMonthError else "govuk-input--width-2",
       value: payload['licence-start-date-month'],
       attributes: { maxlength : 2 }
     },
     {
       name: "year",
       label: mssgs.dob_year,
-      classes: "govuk-input--width-4",
+      classes: "govuk-input--width-4 govuk-input--error" if data.isYearError else "govuk-input--width-4",
       value: payload['licence-start-date-year'],
       attributes: { maxlength : 4 }
     }
@@ -53,7 +76,7 @@
       id: "licence-start-date",
       namePrefix: "licence-start-date",
       items: dateInputItems,
-      errorMessage: { text: mssgs.licence_start_error_within + data.advancedPurchaseMaxDays + mssgs.licence_start_days } if error['licence-start-date'],
+      errorMessage: { text: errorMap[data.error.errorKey][data.error.errorValue].text } if data.error,
       hint: {
         text: mssgs.licence_start_hint + data.maxStartDate
       }
