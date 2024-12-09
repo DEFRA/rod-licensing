@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { dateOfBirthValidator, startDateValidator } from '../validators.js'
+import { dateOfBirthValidator, startDateValidator, getErrorFlags } from '../validators.js'
 import moment from 'moment-timezone'
 const dateSchema = require('../../date.schema.js')
 
@@ -178,5 +178,31 @@ describe('startDate validator', () => {
   it('throws an error if licence-to-start is set to an invalid value', () => {
     const samplePayload = { 'licence-to-start': '12th-of-never' }
     expect(() => startDateValidator(samplePayload)).toThrow()
+  })
+})
+
+describe('getErrorFlags', () => {
+  it('sets all error flags to be false when there are no errors', () => {
+    const result = getErrorFlags()
+    expect(result).toEqual({ isDayError: false, isMonthError: false, isYearError: false })
+  })
+
+  it.each([
+    ['full-date', { isDayError: true, isMonthError: true, isYearError: true }],
+    ['day-and-month', { isDayError: true, isMonthError: true, isYearError: false }],
+    ['month-and-year', { isDayError: false, isMonthError: true, isYearError: true }],
+    ['day-and-year', { isDayError: true, isMonthError: false, isYearError: true }],
+    ['day', { isDayError: true, isMonthError: false, isYearError: false }],
+    ['month', { isDayError: false, isMonthError: true, isYearError: false }],
+    ['year', { isDayError: false, isMonthError: false, isYearError: true }],
+    ['invalid-date', { isDayError: true, isMonthError: true, isYearError: true }],
+    ['date-range', { isDayError: true, isMonthError: true, isYearError: true }],
+    ['non-numeric', { isDayError: true, isMonthError: true, isYearError: true }]
+  ])('when error is %s, should set %o in flags', (errorKey, expected) => {
+    const error = { [errorKey]: 'anything.at.all' }
+
+    const result = getErrorFlags(error)
+
+    expect(result).toEqual(expect.objectContaining(expected))
   })
 })

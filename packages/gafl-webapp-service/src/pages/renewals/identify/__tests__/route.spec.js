@@ -2,7 +2,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData, validator } from '../route.js'
 import { IDENTIFY, NEW_TRANSACTION } from '../../../../uri.js'
-import { dateOfBirthValidator } from '../../../../schema/validators/validators.js'
+import { dateOfBirthValidator, getErrorFlags } from '../../../../schema/validators/validators.js'
 
 jest.mock('../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../uri.js', () => ({
@@ -14,13 +14,16 @@ jest.mock('../../../../processors/uri-helper.js')
 jest.mock('../../../../schema/validators/validators.js')
 
 describe('getData', () => {
-  const getMockRequest = referenceNumber => ({
+  const getMockRequest = (referenceNumber, pageGet = async () => ({})) => ({
     cache: () => ({
       helpers: {
         status: {
           getCurrentPermission: () => ({
             referenceNumber: referenceNumber
           })
+        },
+        page: {
+          getCurrentPermission: pageGet
         }
       }
     })
@@ -43,6 +46,25 @@ describe('getData', () => {
   it.each([['09F6VF'], ['013AH6'], ['LK563F']])('getData returns referenceNumber', async referenceNumber => {
     const result = await getData(getMockRequest(referenceNumber))
     expect(result.referenceNumber).toEqual(referenceNumber)
+  })
+
+  it('adds return value of getErrorFlags to the page data', async () => {
+    const errorFlags = { unique: Symbol('error-flags') }
+    getErrorFlags.mockReturnValueOnce(errorFlags)
+    const result = await getData(getMockRequest())
+    expect(result).toEqual(expect.objectContaining(errorFlags))
+  })
+
+  it('passes error to getErrorFlags', async () => {
+    const error = Symbol('error')
+    await getData(getMockRequest(undefined, async () => ({ error })))
+    expect(getErrorFlags).toHaveBeenCalledWith(error)
+  })
+
+  it('passes correct page name when getting page cache', async () => {
+    const pageGet = jest.fn(() => ({}))
+    await getData(getMockRequest(undefined, pageGet))
+    expect(pageGet).toHaveBeenCalledWith(IDENTIFY.page)
   })
 })
 

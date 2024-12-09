@@ -4,11 +4,12 @@ import Joi from 'joi'
 import { validation } from '@defra-fish/business-rules-lib'
 import { addLanguageCodeToUri } from '../../../processors/uri-helper.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { dateOfBirthValidator } from '../../../schema/validators/validators.js'
+import { dateOfBirthValidator, getErrorFlags } from '../../../schema/validators/validators.js'
 
 export const getData = async request => {
   // If we are supplied a permission number, validate it or throw 400
   const permission = await request.cache().helpers.status.getCurrentPermission()
+  const page = await request.cache().helpers.page.getCurrentPermission(IDENTIFY.page)
 
   if (permission.referenceNumber) {
     const validatePermissionNumber = validation.permission
@@ -24,7 +25,8 @@ export const getData = async request => {
     referenceNumber: permission.referenceNumber,
     uri: {
       new: addLanguageCodeToUri(request, NEW_TRANSACTION.uri)
-    }
+    },
+    ...getErrorFlags(page?.error)
   }
 }
 

@@ -36,7 +36,7 @@
       'invalid-date': {
         'any.custom': { ref: '#date-of-birth-day', text: mssgs.dob_error_date_real }
       },
-      'birthDate': {
+      'date-range': {
         'date.min': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_min },
         'date.max': { ref: '#date-of-birth-day', text: mssgs.dob_error_year_max }
       }
@@ -47,21 +47,21 @@
     {
       label: mssgs.dob_day,
       name: 'day',
-      classes: "govuk-input--width-2 govuk-input--error" if error['full-date'] or error['day-and-month'] or error['day-and-year'] or error['day'] or error['invalid-date'] or error['birthDate'] else "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isDayError else "govuk-input--width-2",
       value: payload['date-of-birth-day'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_month,
       name: 'month',
-      classes: "govuk-input--width-2 govuk-input--error" if error['full-date'] or error['day-and-month'] or error['month-and-year'] or error['month'] or error['invalid-date'] or error['birthDate'] else "govuk-input--width-2",
+      classes: "govuk-input--width-2 govuk-input--error" if data.isMonthError else "govuk-input--width-2",
       value: payload['date-of-birth-month'],
       attributes: { maxlength : 2 }
     },
     {
       label: mssgs.dob_year,
       name: 'year',
-      classes: "govuk-input--width-4 govuk-input--error" if error['full-date'] or error['month-and-year'] or error['day-and-year'] or error['year'] or error['invalid-date'] or error['birthDate'] else "govuk-input--width-4",
+      classes: "govuk-input--width-4 govuk-input--error" if data.isYearError else "govuk-input--width-4",
       value: payload['date-of-birth-year'],
       attributes: { maxlength : 4 }
     }
