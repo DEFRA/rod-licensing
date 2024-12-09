@@ -1,10 +1,16 @@
 import db from 'debug'
-import AWS from 'aws-sdk'
-const { DynamoDB } = AWS
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import { DynamoDBDocumentClient, BatchWriteCommand, QueryCommand, ScanCommand } from '@aws-sdk/lib-dynamodb'
 const debug = db('connectors:aws')
 
-export const createDocumentClient = options => {
-  const docClient = new DynamoDB.DocumentClient(options)
+export const createDocumentClient = (dynamoDBInstance, options = {}) => {
+  const client =
+    dynamoDBInstance ||
+    new DynamoDBClient({
+      ...options,
+      region: options.region || process.env.AWS_REGION || 'eu-west-2'
+    })
+  const docClient = DynamoDBDocumentClient.from(client)
 
   // Support for large query/scan operations which return results in pages
   const wrapPagedDocumentClientOperation = operationName => {
@@ -12,10 +18,13 @@ export const createDocumentClient = options => {
       const items = []
       let lastEvaluatedKey = null
       do {
-        const response = await docClient[operationName]({
-          ...params,
-          ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
-        }).promise()
+        const Command = operationName === 'query' ? QueryCommand : ScanCommand
+        const response = await docClient.send(
+          new Command({
+            ...params,
+            ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey })
+          })
+        )
         lastEvaluatedKey = response.LastEvaluatedKey
         response.Items && items.push(...response.Items)
       } while (lastEvaluatedKey)
@@ -26,9 +35,9 @@ export const createDocumentClient = options => {
   docClient.scanAllPromise = wrapPagedDocumentClientOperation('scan')
 
   /**
-   * Handles batch writes which may return UnprocessedItems.  If UnprocessedItems are returned then they will be retried with exponential backoff
+   * Handles batch writes which may return UnprocessedItems. If UnprocessedItems are returned then they will be retried with exponential backoff
    *
-   * @param {DocumentClient.BatchWriteItemInput} params as per DynamoDB.DocumentClient.batchWrite
+   * @param {BatchWriteCommand} params as per BatchWriteCommand
    * @returns {Promise<void>}
    */
   docClient.batchWriteAllPromise = async params => {
@@ -37,13 +46,13 @@ export const createDocumentClient = options => {
     let unprocessedItemsDelay = 500
     let maxRetries = 10
     while (hasUnprocessedItems) {
-      const result = await docClient.batchWrite(request).promise()
+      const result = await docClient.send(new BatchWriteCommand(request))
       hasUnprocessedItems = !!Object.keys(result.UnprocessedItems ?? {}).length
       if (hasUnprocessedItems) {
         request = { ...params, RequestItems: result.UnprocessedItems }
         if (maxRetries-- === 0) {
           throw new Error(
-            'Failed to write items to DynamoDB using batch write.  UnprocessedItems were returned and maxRetries has been reached.'
+            'Failed to write items to DynamoDB using batch write. UnprocessedItems were returned and maxRetries has been reached.'
           )
         }
         await new Promise(resolve => setTimeout(resolve, unprocessedItemsDelay))

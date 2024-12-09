@@ -6,9 +6,11 @@ import { TRANSACTION_STAGING_TABLE, TRANSACTION_QUEUE } from '../../config.js'
 import { POCL_TRANSACTION_SOURCES, START_AFTER_PAYMENT_MINUTES } from '@defra-fish/business-rules-lib'
 import moment from 'moment'
 import Boom from '@hapi/boom'
-import { AWS } from '@defra-fish/connectors-lib'
 import db from 'debug'
-const { sqs, docClient } = AWS()
+import { sqs } from '@defra-fish/connectors-lib'
+import { docClient } from '../../../../connectors-lib/src/aws.js'
+import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
+
 const debug = db('sales:transactions')
 
 const getAdjustedStartDate = ({ issueDate, startDate, dataSource }) => {
@@ -48,8 +50,8 @@ export async function finaliseTransaction ({ id, ...payload }) {
     permission.licensee.obfuscatedDob = await getObfuscatedDob(permission.licensee)
   }
 
-  const { Attributes: updatedRecord } = await docClient
-    .update({
+  const { Attributes: updatedRecord } = await docClient.send(
+    new UpdateCommand({
       TableName: TRANSACTION_STAGING_TABLE.TableName,
       Key: { id },
       ...docClient.createUpdateExpression({
@@ -59,17 +61,15 @@ export async function finaliseTransaction ({ id, ...payload }) {
       }),
       ReturnValues: 'ALL_NEW'
     })
-    .promise()
+  )
   debug('Updated transaction record for identifier %s', id)
 
-  const receipt = await sqs
-    .sendMessage({
-      QueueUrl: TRANSACTION_QUEUE.Url,
-      MessageGroupId: id,
-      MessageDeduplicationId: id,
-      MessageBody: JSON.stringify({ id })
-    })
-    .promise()
+  const receipt = await sqs.sendMessage({
+    QueueUrl: TRANSACTION_QUEUE.Url,
+    MessageGroupId: id,
+    MessageDeduplicationId: id,
+    MessageBody: JSON.stringify({ id })
+  })
 
   debug('Sent transaction %s to staging queue with message-id %s', id, receipt.MessageId)
   updatedRecord.status.messageId = receipt.MessageId

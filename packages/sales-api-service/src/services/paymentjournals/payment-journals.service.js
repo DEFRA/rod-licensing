@@ -1,7 +1,8 @@
-import { AWS } from '@defra-fish/connectors-lib'
+import { PutCommand, UpdateCommand, GetCommand, QueryCommand } from '@aws-sdk/lib-dynamodb'
 import { PAYMENTS_TABLE } from '../../config.js'
 import db from 'debug'
-const { docClient } = AWS()
+import { docClient } from '../../../../connectors-lib/src/aws.js'
+
 const debug = db('sales:paymentjournals')
 
 /**
@@ -11,7 +12,13 @@ const debug = db('sales:paymentjournals')
  */
 export async function createPaymentJournal (id, payload) {
   const record = { id, expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  await docClient.put({ TableName: PAYMENTS_TABLE.TableName, Item: record, ConditionExpression: 'attribute_not_exists(id)' }).promise()
+  await docClient.send(
+    new PutCommand({
+      TableName: PAYMENTS_TABLE.TableName,
+      Item: record,
+      ConditionExpression: 'attribute_not_exists(id)'
+    })
+  )
   debug('Payment journal stored with payload %o', record)
   return record
 }
@@ -23,15 +30,17 @@ export async function createPaymentJournal (id, payload) {
  */
 export async function updatePaymentJournal (id, payload) {
   const updates = { expires: Math.floor(Date.now() / 1000) + PAYMENTS_TABLE.Ttl, ...payload }
-  const result = await docClient
-    .update({
+  const updateParams = docClient.createUpdateExpression(updates)
+
+  const result = await docClient.send(
+    new UpdateCommand({
       TableName: PAYMENTS_TABLE.TableName,
       Key: { id },
-      ...docClient.createUpdateExpression(updates),
+      ...updateParams,
       ConditionExpression: 'attribute_exists(id)',
       ReturnValues: 'ALL_NEW'
     })
-    .promise()
+  )
   return result.Attributes
 }
 
@@ -41,7 +50,13 @@ export async function updatePaymentJournal (id, payload) {
  * @returns {Promise<*>}
  */
 export async function getPaymentJournal (id) {
-  const result = await docClient.get({ TableName: PAYMENTS_TABLE.TableName, Key: { id }, ConsistentRead: true }).promise()
+  const result = await docClient.send(
+    new GetCommand({
+      TableName: PAYMENTS_TABLE.TableName,
+      Key: { id },
+      ConsistentRead: true
+    })
+  )
   return result.Item
 }
 
@@ -51,10 +66,17 @@ export async function getPaymentJournal (id) {
  * @returns {Promise<*>}
  */
 export async function queryJournalsByTimestamp ({ paymentStatus, from, to }) {
-  return docClient.queryAllPromise({
-    TableName: PAYMENTS_TABLE.TableName,
-    IndexName: 'PaymentJournalsByStatusAndTimestamp',
-    KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
-    ExpressionAttributeValues: { ':paymentStatus': paymentStatus, ':from': from, ':to': to }
-  })
+  const result = await docClient.send(
+    new QueryCommand({
+      TableName: PAYMENTS_TABLE.TableName,
+      IndexName: 'PaymentJournalsByStatusAndTimestamp',
+      KeyConditionExpression: 'paymentStatus = :paymentStatus AND paymentTimestamp BETWEEN :from AND :to',
+      ExpressionAttributeValues: {
+        ':paymentStatus': paymentStatus,
+        ':from': from,
+        ':to': to
+      }
+    })
+  )
+  return result.Items
 }
