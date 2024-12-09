@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.4 (2024-12-09)
+
+#### :rocket: Enhancement
+* `gafl-webapp-service`
+  * [#2022](https://github.com/DEFRA/rod-licensing/pull/2022) Apply more specific date error messages ([@irisfaraway](https://github.com/irisfaraway))
+
+#### Committers: 1
+- Iris Faraway ([@irisfaraway](https://github.com/irisfaraway))
+
 ## v1.57.0-rc.3 (2024-12-06)
 
 #### :rocket: Enhancement
