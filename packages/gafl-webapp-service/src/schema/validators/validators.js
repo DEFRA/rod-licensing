@@ -43,7 +43,7 @@ export const startDateValidator = payload => {
   }
 }
 
-export const getErrorFlags = error => {
+export const getDateErrorFlags = error => {
   const errorFlags = { isDayError: false, isMonthError: false, isYearError: false }
   const commonErrors = ['full-date', 'invalid-date', 'date-range', 'non-numeric']
 

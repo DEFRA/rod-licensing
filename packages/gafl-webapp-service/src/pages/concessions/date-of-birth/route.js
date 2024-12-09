@@ -2,7 +2,7 @@ import { DATE_OF_BIRTH, LICENCE_FOR } from '../../../uri.js'
 import pageRoute from '../../../routes/page-route.js'
 import { nextPage } from '../../../routes/next-page.js'
 import GetDataRedirect from '../../../handlers/get-data-redirect.js'
-import { dateOfBirthValidator, getErrorFlags } from '../../../schema/validators/validators.js'
+import { dateOfBirthValidator, getDateErrorFlags } from '../../../schema/validators/validators.js'
 
 const redirectToStartOfJourney = status => {
   if (!status[LICENCE_FOR.page]) {
@@ -14,7 +14,7 @@ export const getData = async request => {
   const { isLicenceForYou } = await request.cache().helpers.transaction.getCurrentPermission()
   const status = await request.cache().helpers.status.getCurrentPermission()
   const page = await request.cache().helpers.page.getCurrentPermission(DATE_OF_BIRTH.page)
-  const pageData = { isLicenceForYou, ...getErrorFlags(page?.error) }
+  const pageData = { isLicenceForYou, ...getDateErrorFlags(page?.error) }
 
   redirectToStartOfJourney(status)
 

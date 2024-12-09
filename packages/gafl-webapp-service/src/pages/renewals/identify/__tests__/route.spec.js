@@ -2,7 +2,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import { addLanguageCodeToUri } from '../../../../processors/uri-helper.js'
 import { getData, validator } from '../route.js'
 import { IDENTIFY, NEW_TRANSACTION } from '../../../../uri.js'
-import { dateOfBirthValidator, getErrorFlags } from '../../../../schema/validators/validators.js'
+import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 jest.mock('../../../../routes/page-route.js', () => jest.fn())
 jest.mock('../../../../uri.js', () => ({
@@ -50,7 +50,7 @@ describe('getData', () => {
 
   it('adds return value of getErrorFlags to the page data', async () => {
     const errorFlags = { unique: Symbol('error-flags') }
-    getErrorFlags.mockReturnValueOnce(errorFlags)
+    getDateErrorFlags.mockReturnValueOnce(errorFlags)
     const result = await getData(getMockRequest())
     expect(result).toEqual(expect.objectContaining(errorFlags))
   })
@@ -58,7 +58,7 @@ describe('getData', () => {
   it('passes error to getErrorFlags', async () => {
     const error = Symbol('error')
     await getData(getMockRequest(undefined, async () => ({ error })))
-    expect(getErrorFlags).toHaveBeenCalledWith(error)
+    expect(getDateErrorFlags).toHaveBeenCalledWith(error)
   })
 
   it('passes correct page name when getting page cache', async () => {

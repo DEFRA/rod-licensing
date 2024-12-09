@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { dateOfBirthValidator, startDateValidator, getErrorFlags } from '../validators.js'
+import { dateOfBirthValidator, startDateValidator, getDateErrorFlags } from '../validators.js'
 import moment from 'moment-timezone'
 const dateSchema = require('../../date.schema.js')
 
@@ -183,7 +183,7 @@ describe('startDate validator', () => {
 
 describe('getErrorFlags', () => {
   it('sets all error flags to be false when there are no errors', () => {
-    const result = getErrorFlags()
+    const result = getDateErrorFlags()
     expect(result).toEqual({ isDayError: false, isMonthError: false, isYearError: false })
   })
 
@@ -201,7 +201,7 @@ describe('getErrorFlags', () => {
   ])('when error is %s, should set %o in flags', (errorKey, expected) => {
     const error = { [errorKey]: 'anything.at.all' }
 
-    const result = getErrorFlags(error)
+    const result = getDateErrorFlags(error)
 
     expect(result).toEqual(expect.objectContaining(expected))
   })

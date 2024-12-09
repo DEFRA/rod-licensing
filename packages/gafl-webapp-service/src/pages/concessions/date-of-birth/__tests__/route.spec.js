@@ -2,7 +2,7 @@ import { getData } from '../route'
 import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { DATE_OF_BIRTH, LICENCE_FOR } from '../../../../uri.js'
-import { dateOfBirthValidator, getErrorFlags } from '../../../../schema/validators/validators.js'
+import { dateOfBirthValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 jest.mock('../../../../routes/next-page.js')
 jest.mock('../../../../routes/page-route.js')
@@ -83,7 +83,7 @@ describe('name > route', () => {
 
     it('adds return value of getErrorFlags to the page data', async () => {
       const errorFlags = { unique: Symbol('error-flags') }
-      getErrorFlags.mockReturnValueOnce(errorFlags)
+      getDateErrorFlags.mockReturnValueOnce(errorFlags)
       const result = await getData(mockRequest())
       expect(result).toEqual(expect.objectContaining(errorFlags))
     })
@@ -91,7 +91,7 @@ describe('name > route', () => {
     it('passes error to getErrorFlags', async () => {
       const error = Symbol('error')
       await getData(mockRequest({ pageGet: async () => ({ error }) }))
-      expect(getErrorFlags).toHaveBeenCalledWith(error)
+      expect(getDateErrorFlags).toHaveBeenCalledWith(error)
     })
 
     it('passes correct page name when getting page cache', async () => {

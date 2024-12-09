@@ -2,7 +2,7 @@ import pageRoute from '../../../../routes/page-route.js'
 import { nextPage } from '../../../../routes/next-page.js'
 import { getData } from '../route'
 import { LICENCE_TO_START } from '../../../../uri.js'
-import { startDateValidator, getErrorFlags } from '../../../../schema/validators/validators.js'
+import { startDateValidator, getDateErrorFlags } from '../../../../schema/validators/validators.js'
 
 jest.mock('../../../../routes/next-page.js')
 jest.mock('../../../../routes/page-route.js')
@@ -34,7 +34,7 @@ describe('licence-to-start > route', () => {
 
   describe('getData', () => {
     beforeEach(() => {
-      getErrorFlags.mockClear()
+      getDateErrorFlags.mockClear()
     })
 
     it('should return isLicenceForYou as true, if isLicenceForYou is true on the transaction cache', async () => {
@@ -74,7 +74,7 @@ describe('licence-to-start > route', () => {
 
     it('adds return value of getErrorFlags to the page data', async () => {
       const errorFlags = { unique: Symbol('error-flags') }
-      getErrorFlags.mockReturnValueOnce(errorFlags)
+      getDateErrorFlags.mockReturnValueOnce(errorFlags)
       const result = await getData(getMockRequest())
       expect(result).toEqual(expect.objectContaining(errorFlags))
     })
@@ -82,7 +82,7 @@ describe('licence-to-start > route', () => {
     it('passes error to getErrorFlags', async () => {
       const error = Symbol('error')
       await getData(getMockRequest(undefined, async () => ({ error })))
-      expect(getErrorFlags).toHaveBeenCalledWith(error)
+      expect(getDateErrorFlags).toHaveBeenCalledWith(error)
     })
   })
 
