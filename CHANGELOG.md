@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.6 (2024-12-10)
+
+#### :rocket: Enhancement
+* `dynamics-lib`, `sales-api-service`
+  * [#2081](https://github.com/DEFRA/rod-licensing/pull/2081) Create RP Record in CRM ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.57.0-rc.5 (2024-12-10)
 
 #### :bug: Bug Fix
