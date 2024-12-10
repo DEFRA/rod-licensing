@@ -21,9 +21,19 @@
         {{ title }}
       </h1>
 
-      <p class="govuk-body contact-scroll" id="contact-information" aria-labelledby="contact-information">
-        {{ contactInfo }}
-      </p>
+
+      {% if data.licensee.preferredMethodOfConfirmation == 'Email' %}
+        <p class="govuk-body contact-scroll" id="contact-information" aria-labelledby="contact-information">
+          {{ contactInfo }}
+        </p>
+      {% else %}
+        <meta name="format-detection" content="telephone=no">
+          <p class="govuk-body contact-scroll" id="contact-information" aria-labelledby="contact-information">
+            {{ contactInfo }}
+          </p>
+        </meta>
+      {% endif %}
+
 
       <p class="govuk-body govuk-!-margin-bottom-6">
         <a class="govuk-link" href="{{ data.uri.change }}">
