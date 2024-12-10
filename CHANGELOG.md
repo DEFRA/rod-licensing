@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.5 (2024-12-10)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2088](https://github.com/DEFRA/rod-licensing/pull/2088) Change length link junior licence ([@ScottDormand96](https://github.com/ScottDormand96))
+
+#### Committers: 1
+- Scott Dormand ([@ScottDormand96](https://github.com/ScottDormand96))
+
 ## v1.57.0-rc.4 (2024-12-09)
 
 #### :rocket: Enhancement
