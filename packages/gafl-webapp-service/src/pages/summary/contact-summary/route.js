@@ -70,7 +70,7 @@ class RowGenerator {
 
   _generateRow (label, text, rawHref, visuallyHiddenText, id) {
     const href = addLanguageCodeToUri(this.request, rawHref)
-    return {
+    const row = {
       key: {
         text: label
       },
@@ -90,6 +90,11 @@ class RowGenerator {
         }
       })
     }
+    if (text.startsWith('Text message')) {
+      row.value.meta = '<meta name="format-detection" content="telephone=no">'
+    }
+
+    return row
   }
 
   generateStandardRow (label, text, rawHref, visuallyHiddenText, id) {
