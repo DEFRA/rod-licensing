@@ -282,7 +282,7 @@
   "dob_error_non_numeric": "Rhowch rifau yn unig",
   "dob_error_year_min": "Mae’r dyddiad geni yn rhy bell yn ôl",
   "dob_error_year_max": "Mae'n rhaid i’r dyddiad geni fod yn y gorffennol",
-  "dob_error": "Rhowch y dyddiad geni",
+  "dob_error": "Rhowch dyddiad geni",
   "dob_month": "Mis",
   "dob_privacy_link_prefix": "Os nad ydych yn darparu dyddiad geni cywir, gallai hynny achosi oedi wrth adnewyddu trwydded, neu olygu nad yw’r drwydded yn ddilys. Darllenwch am ",
   "dob_privacy_link": "sut yr ydym ni'n defnyddio data personol (yn agor ar dudalen newydd)",
