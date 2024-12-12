@@ -20,21 +20,24 @@ const getNextDueDate = (startDate, issueDate, endDate) => {
 }
 
 export const generateRecurringPaymentRecord = (transactionRecord, permission) => {
-  const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
-  return {
-    payment: {
-      recurring: {
-        name: '',
-        nextDueDate: getNextDueDate(startDate, issueDate, endDate),
-        cancelledDate: null,
-        cancelledReason: null,
-        endDate,
-        agreementId: transactionRecord.agreementId,
-        status: 1
-      }
-    },
-    permissions: [permission]
+  if (transactionRecord.agreementId) {
+    const [{ startDate, issueDate, endDate }] = transactionRecord.permissions
+    return {
+      payment: {
+        recurring: {
+          name: '',
+          nextDueDate: getNextDueDate(startDate, issueDate, endDate),
+          cancelledDate: null,
+          cancelledReason: null,
+          endDate,
+          agreementId: transactionRecord.agreementId,
+          status: 1
+        }
+      },
+      permissions: [permission]
+    }
   }
+  return { payment: { recurring: false } }
 }
 
 /**
