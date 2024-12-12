@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.9 (2024-12-12)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2093](https://github.com/DEFRA/rod-licensing/pull/2093) Fix DOB message in Welsh ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.57.0-rc.8 (2024-12-12)
 
 #### :bug: Bug Fix
