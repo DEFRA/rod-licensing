@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.8 (2024-12-12)
+
+#### :bug: Bug Fix
+* `sales-api-service`
+  * [#2092](https://github.com/DEFRA/rod-licensing/pull/2092) Fix RP creation bug ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 
 ## v1.57.0-rc.6 (2024-12-10)
 
