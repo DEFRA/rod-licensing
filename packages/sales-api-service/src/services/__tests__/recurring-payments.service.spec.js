@@ -326,5 +326,17 @@ describe('recurring payments service', () => {
 
       expect(() => generateRecurringPaymentRecord(sampleTransaction)).toThrow('Invalid dates provided for permission')
     })
+
+    it('returns a false flag when agreementId is not present', () => {
+      const sampleTransaction = createFinalisedSampleTransaction(null, {
+        startDate: '2024-11-22T15:30:45.922Z',
+        issueDate: '2024-11-22T15:00:45.922Z',
+        endDate: '2025-11-21T23:59:59.999Z'
+      })
+
+      const rpRecord = generateRecurringPaymentRecord(sampleTransaction)
+
+      expect(rpRecord.payment.recurring).toBeFalsy()
+    })
   })
 })
