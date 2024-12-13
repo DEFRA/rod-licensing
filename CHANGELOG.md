@@ -1,4 +1,13 @@
 
+## v1.57.0-rc.12 (2024-12-13)
+
+#### :bug: Bug Fix
+* `gafl-webapp-service`
+  * [#2095](https://github.com/DEFRA/rod-licensing/pull/2095) Missing inline error on renewals id page ([@jaucourt](https://github.com/jaucourt))
+
+#### Committers: 1
+- Phil Benson ([@jaucourt](https://github.com/jaucourt))
+
 ## v1.57.0-rc.11 (2024-12-13)
 
 #### :rocket: Enhancement
