@@ -11,26 +11,26 @@ jest.mock('dynamics-web-api', () => {
 
 describe('Activity Service', () => {
   describe('createActivity', () => {
-    const mockResponse = {
+    const getSuccessResponse = () => ({
       '@odata.context': 'https://dynamics.com/api/data/v9.1/defra_CreateRCRActivityResponse',
       RCRActivityId: 'abc123',
       ReturnStatus: 'success',
       SuccessMessage: 'RCR Activity - created successfully',
       ErrorMessage: null,
       oDataContext: 'https://dynamics.com/api/data/v9.1/defra_CreateRCRActivityResponse'
-    }
+    })
 
-    const errorResponse = {
+    const getErrorResponse = () => ({
       '@odata.context': 'https://dynamics.com/api/data/v9.1/.defra_CreateRCRActivityResponse',
       RCRActivityId: null,
       ReturnStatus: 'error',
       SuccessMessage: '',
       ErrorMessage: 'Failed to create activity',
       oDataContext: 'https://dynamics.com/api/data/v9.1/$metadata#Microsoft.Dynamics.CRM.defra_CreateRCRActivityResponse'
-    }
+    })
 
     it('should call dynamicsClient with correct parameters', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
+      dynamicsClient.executeUnboundAction.mockResolvedValue(getSuccessResponse())
 
       await createActivity('contact-identifier-123', 2023)
 
@@ -42,11 +42,12 @@ describe('Activity Service', () => {
     })
 
     it('should return the CRM response correctly', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
+      const successResponse = getSuccessResponse()
+      dynamicsClient.executeUnboundAction.mockResolvedValue(successResponse)
 
       const result = await createActivity('contact-identifier-123', 2024)
 
-      expect(result).toEqual(mockResponse)
+      expect(result).toEqual(successResponse)
     })
 
     it('should handle error in dynamicsClient response', async () => {
@@ -57,7 +58,7 @@ describe('Activity Service', () => {
     })
 
     it('should handle the case where activity creation fails', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(errorResponse)
+      dynamicsClient.executeUnboundAction.mockResolvedValue(getErrorResponse())
 
       const result = await createActivity('invalid-contact-id', 2024)
 
@@ -71,25 +72,25 @@ describe('Activity Service', () => {
   })
 
   describe('updateActivity', () => {
-    const mockResponse = {
+    const getSuccessResponse = () => ({
       '@odata.context': 'https://dynamics.om/api/data/v9.1/defra_UpdateRCRActivityResponse',
       ReturnStatus: 'success',
       SuccessMessage: 'RCR Activity - updated successfully',
       ErrorMessage: null,
       oDataContext: 'https://dynamics.com/api/data/v9.1/defra_UpdateRCRActivityResponse'
-    }
+    })
 
-    const errorResponse = {
+    const getErrorResponse = () => ({
       '@odata.context': 'https://dynamics.om/api/data/v9.1/defra_UpdateRCRActivityResponse',
       RCRActivityId: null,
       ReturnStatus: 'error',
       SuccessMessage: '',
       ErrorMessage: 'Failed to update activity',
       oDataContext: 'https://dynamics.com/api/data/v9.1/defra_UpdateRCRActivityResponse'
-    }
+    })
 
     it('should call dynamicsClient with correct parameters', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
+      dynamicsClient.executeUnboundAction.mockResolvedValue(getSuccessResponse())
 
       await updateActivity('contact-identifier-123', 2023)
 
@@ -101,11 +102,12 @@ describe('Activity Service', () => {
     })
 
     it('should return the CRM response correctly', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(mockResponse)
+      const successResponse = getSuccessResponse()
+      dynamicsClient.executeUnboundAction.mockResolvedValue(successResponse)
 
       const result = await updateActivity('contact-identifier-123', 2024)
 
-      expect(result).toEqual(mockResponse)
+      expect(result).toEqual(successResponse)
     })
 
     it('should handle error in dynamicsClient response', async () => {
@@ -116,7 +118,7 @@ describe('Activity Service', () => {
     })
 
     it('should handle the case where activity creation fails', async () => {
-      dynamicsClient.executeUnboundAction.mockResolvedValue(errorResponse)
+      dynamicsClient.executeUnboundAction.mockResolvedValue(getErrorResponse())
 
       const result = await updateActivity('invalid-contact-id', 2024)
 
